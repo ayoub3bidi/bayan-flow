@@ -1,6 +1,16 @@
 {
   "name": "algorithm-visualizer",
-  "description": "A web-based tool for visualizing algorithms",
+  "description": "Interactive sorting algorithm visualizer with step-by-step animations",
+  "keywords": ["algorithms", "visualization", "sorting", "education"],
+  "author": "Ayoub Abidi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ayoub3bidi/algorithm-visualizer"
+  },
+  "bugs": {
+    "url": "https://github.com/ayoub3bidi/algorithm-visualizer/issues"
+  },
   "private": true,
   "version": "0.0.1",
   "type": "module",
