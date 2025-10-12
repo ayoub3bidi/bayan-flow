@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import ArrayVisualizer from './components/ArrayVisualizer';
 import ControlPanel from './components/ControlPanel';
 import SettingsPanel from './components/SettingsPanel';
@@ -39,9 +40,9 @@ function App() {
   }, [selectedAlgorithm, array]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header repoOwner="ayoub3bidi" repoName="algorithm-visualizer" />
-      <div className="pt-16 p-6">
+      <main className="flex-1 pt-20 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Settings Panel */}
@@ -84,7 +85,14 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
+      <Footer
+        repoOwner="ayoub3bidi"
+        repoName="algorithm-visualizer"
+        version="0.0.0"
+        authorName="Ayoub Abidi"
+        authorGithub="ayoub3bidi"
+      />
     </div>
   );
 }
