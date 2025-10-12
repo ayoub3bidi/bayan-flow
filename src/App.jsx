@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Header from './components/Header';
 import ArrayVisualizer from './components/ArrayVisualizer';
 import ControlPanel from './components/ControlPanel';
 import SettingsPanel from './components/SettingsPanel';
@@ -38,46 +39,49 @@ function App() {
   }, [selectedAlgorithm, array]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Settings Panel */}
-          <div className="lg:col-span-1">
-            <SettingsPanel
-              selectedAlgorithm={selectedAlgorithm}
-              onAlgorithmChange={handleAlgorithmChange}
-              speed={speed}
-              onSpeedChange={setSpeed}
-              arraySize={arraySize}
-              onArraySizeChange={handleArraySizeChange}
-              onGenerateArray={handleGenerateArray}
-              isPlaying={visualization.isPlaying}
-            />
-          </div>
-
-          {/* Visualization Area */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Array Visualizer */}
-            <div className="h-[500px]">
-              <ArrayVisualizer
-                array={visualization.array}
-                states={visualization.states}
-                description={visualization.description}
+    <div className="min-h-screen bg-gray-50">
+      <Header repoOwner="ayoub3bidi" repoName="algorithm-visualizer" />
+      <div className="pt-16 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Settings Panel */}
+            <div className="lg:col-span-1">
+              <SettingsPanel
+                selectedAlgorithm={selectedAlgorithm}
+                onAlgorithmChange={handleAlgorithmChange}
+                speed={speed}
+                onSpeedChange={setSpeed}
+                arraySize={arraySize}
+                onArraySizeChange={handleArraySizeChange}
+                onGenerateArray={handleGenerateArray}
+                isPlaying={visualization.isPlaying}
               />
             </div>
 
-            {/* Control Panel */}
-            <ControlPanel
-              isPlaying={visualization.isPlaying}
-              isComplete={visualization.isComplete}
-              onPlay={visualization.play}
-              onPause={visualization.pause}
-              onReset={visualization.reset}
-              onStepForward={visualization.stepForward}
-              onStepBackward={visualization.stepBackward}
-              currentStep={visualization.currentStep}
-              totalSteps={visualization.totalSteps}
-            />
+            {/* Visualization Area */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Array Visualizer */}
+              <div className="h-[500px]">
+                <ArrayVisualizer
+                  array={visualization.array}
+                  states={visualization.states}
+                  description={visualization.description}
+                />
+              </div>
+
+              {/* Control Panel */}
+              <ControlPanel
+                isPlaying={visualization.isPlaying}
+                isComplete={visualization.isComplete}
+                onPlay={visualization.play}
+                onPause={visualization.pause}
+                onReset={visualization.reset}
+                onStepForward={visualization.stepForward}
+                onStepBackward={visualization.stepBackward}
+                currentStep={visualization.currentStep}
+                totalSteps={visualization.totalSteps}
+              />
+            </div>
           </div>
         </div>
       </div>
