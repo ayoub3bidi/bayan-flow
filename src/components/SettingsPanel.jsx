@@ -1,20 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shuffle, ChevronDown, Check } from 'lucide-react';
+import { Shuffle, ChevronDown, Check, Play, Hand } from 'lucide-react';
+import { ANIMATION_SPEEDS, VISUALIZATION_MODES } from '../constants';
 
-/**
- * SettingsPanel Component
- * Provides settings for algorithm selection, speed control, and array generation
- *
- * @param {string} selectedAlgorithm - Currently selected algorithm
- * @param {Function} onAlgorithmChange - Handler for algorithm selection
- * @param {number} speed - Current animation speed
- * @param {Function} onSpeedChange - Handler for speed change
- * @param {number} arraySize - Current array size
- * @param {Function} onArraySizeChange - Handler for array size change
- * @param {Function} onGenerateArray - Handler for generating new array
- * @param {boolean} isPlaying - Whether animation is currently playing
- */
 function SettingsPanel({
   selectedAlgorithm,
   onAlgorithmChange,
@@ -24,6 +12,8 @@ function SettingsPanel({
   onArraySizeChange,
   onGenerateArray,
   isPlaying,
+  mode,
+  onModeChange,
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -34,14 +24,19 @@ function SettingsPanel({
     { value: 'mergeSort', label: 'Merge Sort', complexity: 'O(n log n)' },
   ];
 
-  const speeds = [
-    { value: 1000, label: 'Slow' },
-    { value: 500, label: 'Medium' },
-    { value: 100, label: 'Fast' },
-    { value: 10, label: 'Very Fast' },
+  // Build options from constants to avoid drift
+  const speedOptions = [
+    { value: ANIMATION_SPEEDS.SLOW, label: 'Slow' },
+    { value: ANIMATION_SPEEDS.MEDIUM, label: 'Medium' },
+    { value: ANIMATION_SPEEDS.FAST, label: 'Fast' },
+    { value: ANIMATION_SPEEDS.VERY_FAST, label: 'Very Fast' },
   ];
 
   const selectedAlgo = algorithms.find(a => a.value === selectedAlgorithm);
+  const currentSpeedIndex = Math.max(
+    0,
+    speedOptions.findIndex(s => s.value === speed)
+  );
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -77,14 +72,14 @@ function SettingsPanel({
         <button
           onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
           disabled={isPlaying}
-          className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300"
+          className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300"
         >
           <div className="flex flex-col">
             <span className="text-gray-900 font-medium">
-              {selectedAlgo?.label}
+              {selectedAlgo?.label || 'Select algorithm'}
             </span>
             <span className="text-xs text-gray-500 mt-0.5">
-              {selectedAlgo?.complexity}
+              {selectedAlgo?.complexity || ''}
             </span>
           </div>
           <motion.div
@@ -93,7 +88,7 @@ function SettingsPanel({
           >
             <ChevronDown
               size={20}
-              className={`${isDropdownOpen ? 'text-primary-500' : 'text-gray-400'}`}
+              className={`${isDropdownOpen ? 'text-blue-500' : 'text-gray-400'}`}
             />
           </motion.div>
         </button>
@@ -115,9 +110,9 @@ function SettingsPanel({
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-primary-50 ${
+                  className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-blue-50 ${
                     selectedAlgorithm === algo.value
-                      ? 'bg-primary-50 text-primary-700'
+                      ? 'bg-blue-50 text-blue-700'
                       : 'text-gray-700'
                   }`}
                 >
@@ -137,7 +132,7 @@ function SettingsPanel({
                         damping: 25,
                       }}
                     >
-                      <Check size={18} className="text-primary-600" />
+                      <Check size={18} className="text-blue-600" />
                     </motion.div>
                   )}
                 </motion.button>
@@ -147,24 +142,73 @@ function SettingsPanel({
         </AnimatePresence>
       </div>
 
-      {/* Speed Control */}
+      {/* Mode Toggle */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Animation Speed: {speeds.find(s => s.value === speed)?.label}
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
+          Control Mode
         </label>
+        <div className="flex rounded-lg border-2 border-gray-300 overflow-hidden bg-gray-50">
+          <button
+            onClick={() =>
+              !isPlaying && onModeChange(VISUALIZATION_MODES.AUTOPLAY)
+            }
+            disabled={isPlaying}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+              mode === VISUALIZATION_MODES.AUTOPLAY
+                ? 'bg-blue-500 text-white shadow-md border-blue-500'
+                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+            } ${isPlaying ? 'opacity-50' : ''}`}
+          >
+            <Play size={16} />
+            Autoplay
+          </button>
+          <button
+            onClick={() =>
+              !isPlaying && onModeChange(VISUALIZATION_MODES.MANUAL)
+            }
+            disabled={isPlaying}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+              mode === VISUALIZATION_MODES.MANUAL
+                ? 'bg-blue-500 text-white shadow-md border-blue-500'
+                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+            } ${isPlaying ? 'opacity-50' : ''}`}
+          >
+            <Hand size={16} />
+            Manual
+          </button>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">
+          {mode === VISUALIZATION_MODES.AUTOPLAY
+            ? 'Animation plays automatically at selected speed'
+            : 'Use step controls to advance manually'}
+        </p>
+      </div>
+
+      {/* Speed Control */}
+      <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Animation Speed: {speedOptions[currentSpeedIndex]?.label}
+          {mode === VISUALIZATION_MODES.MANUAL && (
+            <span className="text-xs text-gray-500 ml-2">(Autoplay only)</span>
+          )}
+        </label>
+
         <input
           type="range"
-          min="0"
-          max="3"
-          step="1"
-          value={speeds.findIndex(s => s.value === speed)}
-          onChange={e => onSpeedChange(speeds[parseInt(e.target.value)].value)}
-          disabled={isPlaying}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          min={0}
+          max={speedOptions.length - 1}
+          step={1}
+          value={currentSpeedIndex}
+          onChange={e =>
+            onSpeedChange(speedOptions[parseInt(e.target.value, 10)].value)
+          }
+          disabled={isPlaying || mode === VISUALIZATION_MODES.MANUAL}
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
+
         <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>Slow</span>
-          <span>Very Fast</span>
+          <span>{speedOptions[0].label}</span>
+          <span>{speedOptions[speedOptions.length - 1].label}</span>
         </div>
       </div>
 
@@ -179,9 +223,9 @@ function SettingsPanel({
           max="100"
           step="5"
           value={arraySize}
-          onChange={e => onArraySizeChange(parseInt(e.target.value))}
+          onChange={e => onArraySizeChange(parseInt(e.target.value, 10))}
           disabled={isPlaying}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <div className="flex justify-between text-xs text-gray-500 mt-1">
           <span>5</span>
@@ -189,19 +233,11 @@ function SettingsPanel({
         </div>
       </div>
 
-      {/* Generate New Array Button */}
-      <button
-        onClick={onGenerateArray}
-        disabled={isPlaying}
-        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
-      >
-        <Shuffle size={20} />
-        Generate New Array
-      </button>
-
       {/* Legend */}
-      <div className="pt-4 border-t border-gray-200">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">Legend</h3>
+      <div>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">
+          Legend (Movements Explanation)
+        </h3>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-blue-500 rounded"></div>

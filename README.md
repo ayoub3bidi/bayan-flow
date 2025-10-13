@@ -15,8 +15,12 @@
 ## Features
 
 - **Multiple Sorting Algorithms**: Visualize Bubble Sort, Quick Sort, and Merge Sort
+- **Dual Control Modes**: 
+  - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
+  - **Manual**: User-controlled step advancement for detailed analysis
 - **Interactive Controls**: Play, pause, step forward/backward through algorithm execution
 - **Customizable Settings**: 
+  - Choose between Autoplay and Manual control modes
   - Adjust animation speed (Slow, Medium, Fast, Very Fast)
   - Change array size (5-100 elements)
   - Generate new random arrays
@@ -178,17 +182,18 @@ export function bubbleSortPure(array) {
 ### Visualization Hook
 
 The `useVisualization` custom hook manages:
-- Animation playback state
+- Animation playback state (autoplay/manual modes)
 - Step navigation (forward/backward)
-- Speed control
-- Play/pause functionality
+- Speed control (autoplay mode only)
+- Play/pause/stop functionality
+- Mode-specific behavior and UI controls
 
 ### Component Architecture
 
 - **App.jsx**: Main orchestrator, manages global state
 - **ArrayVisualizer**: Renders the bar chart visualization
-- **ControlPanel**: Playback controls (play, pause, step)
-- **SettingsPanel**: Algorithm and speed configuration
+- **ControlPanel**: Mode-aware playback controls (play, pause, stop, step)
+- **SettingsPanel**: Algorithm selection, mode toggle, and speed configuration
 - **InfoPanel**: Displays current step description
 
 ## Extending the Project
@@ -267,6 +272,7 @@ The project includes comprehensive tests for:
 - **Edge cases**: Empty arrays, single elements, duplicates
 - **Consistency**: All algorithms produce identical results
 - **Utility functions**: Array generation and validation
+- **Visualization hook**: Autoplay/manual mode behavior, timing, and controls
 
 Run tests with:
 

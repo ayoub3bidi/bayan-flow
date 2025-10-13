@@ -7,6 +7,8 @@ import { Play, Pause, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
  *
  * @param {boolean} isPlaying - Whether animation is currently playing
  * @param {boolean} isComplete - Whether animation has completed
+ * @param {boolean} isAutoplayActive - Whether autoplay is currently active
+ * @param {string} mode - Current visualization mode ('autoplay' or 'manual')
  * @param {Function} onPlay - Handler for play button
  * @param {Function} onPause - Handler for pause button
  * @param {Function} onReset - Handler for reset button
@@ -18,6 +20,8 @@ import { Play, Pause, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
 function ControlPanel({
   isPlaying,
   isComplete,
+  isAutoplayActive,
+  mode,
   onPlay,
   onPause,
   onReset,
@@ -37,7 +41,7 @@ function ControlPanel({
       transition={{ delay: 0.2 }}
     >
       <div className="flex items-center justify-center gap-2 flex-wrap">
-        {/* Step Backward */}
+        {/* Step Backward - Always visible */}
         <button
           onClick={onStepBackward}
           disabled={isPlaying || currentStep === 0}
@@ -47,7 +51,28 @@ function ControlPanel({
           <SkipBack size={20} />
         </button>
 
-        {/* Reset - moved to center */}
+        {/* Play/Pause Button - Different behavior based on mode */}
+        {mode === 'autoplay' &&
+          (isPlaying ? (
+            <button
+              onClick={onPause}
+              className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
+              title="Pause"
+            >
+              <Pause size={20} />
+            </button>
+          ) : (
+            <button
+              onClick={onPlay}
+              disabled={isComplete}
+              className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
+              title="Play"
+            >
+              <Play size={20} />
+            </button>
+          ))}
+
+        {/* Reset Button */}
         <button
           onClick={onReset}
           disabled={isPlaying}
@@ -57,15 +82,17 @@ function ControlPanel({
           <RotateCcw size={20} />
         </button>
 
-        {/* Step Forward */}
-        <button
-          onClick={onStepForward}
-          disabled={isPlaying || isComplete}
-          className={`${buttonBaseClasses} bg-gray-100 hover:bg-gray-200 text-gray-700`}
-          title="Step Forward"
-        >
-          <SkipForward size={20} />
-        </button>
+        {/* Step Forward - Only visible in manual mode */}
+        {mode === 'manual' && (
+          <button
+            onClick={onStepForward}
+            disabled={isPlaying || isComplete}
+            className={`${buttonBaseClasses} bg-gray-100 hover:bg-gray-200 text-gray-700`}
+            title="Step Forward"
+          >
+            <SkipForward size={20} />
+          </button>
+        )}
       </div>
 
       {/* Progress Bar */}

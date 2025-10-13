@@ -7,7 +7,11 @@ import SettingsPanel from './components/SettingsPanel';
 import { useVisualization } from './hooks/useVisualization';
 import { generateRandomArray } from './utils/arrayHelpers';
 import { algorithms } from './algorithms';
-import { DEFAULT_ARRAY_SIZE, ANIMATION_SPEEDS } from './constants';
+import {
+  DEFAULT_ARRAY_SIZE,
+  ANIMATION_SPEEDS,
+  VISUALIZATION_MODES,
+} from './constants';
 
 function App() {
   const [arraySize, setArraySize] = useState(DEFAULT_ARRAY_SIZE);
@@ -16,7 +20,8 @@ function App() {
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubbleSort');
-  const visualization = useVisualization(array, speed);
+  const [mode, setMode] = useState(VISUALIZATION_MODES.AUTOPLAY);
+  const visualization = useVisualization(array, speed, mode);
   const handleGenerateArray = () => {
     const newArray = generateRandomArray(arraySize);
     setArray(newArray);
@@ -56,6 +61,8 @@ function App() {
                 onArraySizeChange={handleArraySizeChange}
                 onGenerateArray={handleGenerateArray}
                 isPlaying={visualization.isPlaying}
+                mode={mode}
+                onModeChange={setMode}
               />
             </div>
 
@@ -74,6 +81,8 @@ function App() {
               <ControlPanel
                 isPlaying={visualization.isPlaying}
                 isComplete={visualization.isComplete}
+                isAutoplayActive={visualization.isAutoplayActive}
+                mode={mode}
                 onPlay={visualization.play}
                 onPause={visualization.pause}
                 onReset={visualization.reset}

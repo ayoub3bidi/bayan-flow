@@ -19,10 +19,10 @@ export const PATHFINDING_ALGORITHMS = {
 };
 
 export const ANIMATION_SPEEDS = {
-  SLOW: 1000,
-  MEDIUM: 500,
-  FAST: 100,
-  VERY_FAST: 10,
+  SLOW: 8000,
+  MEDIUM: 4800,
+  FAST: 2400,
+  VERY_FAST: 1200,
 };
 
 export const ELEMENT_STATES = {
@@ -51,6 +51,11 @@ export const NODE_STATES = {
   VISITED: 'visited',
   PATH: 'path',
   CURRENT: 'current',
+};
+
+export const VISUALIZATION_MODES = {
+  AUTOPLAY: 'autoplay',
+  MANUAL: 'manual',
 };
 
 export const DEFAULT_ARRAY_SIZE = 20;
