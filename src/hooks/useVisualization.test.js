@@ -3,17 +3,17 @@ import { renderHook, act } from '@testing-library/react';
 import { useVisualization } from './useVisualization';
 import { ELEMENT_STATES, VISUALIZATION_MODES } from '../constants';
 
-// Mock the delay function
-vi.mock('../utils/arrayHelpers', () => ({
-  delay: vi.fn(() => Promise.resolve()),
-}));
-
 describe('useVisualization Hook', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
 
   afterEach(() => {
+    //! Critical: run all pending timers before cleanup
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+    vi.clearAllTimers();
     vi.useRealTimers();
     vi.clearAllMocks();
   });
@@ -111,7 +111,6 @@ describe('useVisualization Hook', () => {
         result.current.loadSteps(mockSteps);
       });
 
-      // Play should act like stepForward in manual mode
       act(() => {
         result.current.play();
       });
@@ -131,16 +130,14 @@ describe('useVisualization Hook', () => {
         result.current.loadSteps(mockSteps);
       });
 
-      // Go to last step
       act(() => {
-        result.current.play(); // Step 1
-        result.current.play(); // Step 2 (final)
+        result.current.play();
+        result.current.play();
       });
 
       expect(result.current.currentStep).toBe(2);
       expect(result.current.isComplete).toBe(true);
 
-      // Try to play again - should not advance
       act(() => {
         result.current.play();
       });
@@ -188,8 +185,8 @@ describe('useVisualization Hook', () => {
   });
 
   describe('Autoplay Mode', () => {
-    it('should start autoplay correctly', async () => {
-      const { result } = renderHook(() =>
+    it('should start autoplay correctly', () => {
+      const { result, unmount } = renderHook(() =>
         useVisualization([3, 1, 2], 100, VISUALIZATION_MODES.AUTOPLAY)
       );
 
@@ -204,7 +201,6 @@ describe('useVisualization Hook', () => {
       expect(result.current.isPlaying).toBe(true);
       expect(result.current.isAutoplayActive).toBe(true);
 
-      // Fast-forward timers to simulate autoplay progression
       act(() => {
         vi.advanceTimersByTime(100);
       });
@@ -218,11 +214,16 @@ describe('useVisualization Hook', () => {
       expect(result.current.currentStep).toBe(2);
       expect(result.current.isComplete).toBe(true);
       expect(result.current.isPlaying).toBe(false);
-      expect(result.current.isAutoplayActive).toBe(false);
+
+      // Cleanup
+      act(() => {
+        result.current.pause();
+      });
+      unmount();
     });
 
     it('should pause autoplay correctly', () => {
-      const { result } = renderHook(() =>
+      const { result, unmount } = renderHook(() =>
         useVisualization([3, 1, 2], 100, VISUALIZATION_MODES.AUTOPLAY)
       );
 
@@ -239,10 +240,12 @@ describe('useVisualization Hook', () => {
 
       expect(result.current.isPlaying).toBe(false);
       expect(result.current.isAutoplayActive).toBe(false);
+
+      unmount();
     });
 
     it('should pause and resume autoplay', () => {
-      const { result } = renderHook(() =>
+      const { result, unmount } = renderHook(() =>
         useVisualization([3, 1, 2], 100, VISUALIZATION_MODES.AUTOPLAY)
       );
 
@@ -259,12 +262,17 @@ describe('useVisualization Hook', () => {
 
       expect(result.current.isPlaying).toBe(false);
 
-      // Resume
       act(() => {
         result.current.play();
       });
 
       expect(result.current.isPlaying).toBe(true);
+
+      // Cleanup
+      act(() => {
+        result.current.pause();
+      });
+      unmount();
     });
   });
 
@@ -314,7 +322,7 @@ describe('useVisualization Hook', () => {
         },
       ];
 
-      const { result } = renderHook(() =>
+      const { result, unmount } = renderHook(() =>
         useVisualization([42], 500, VISUALIZATION_MODES.AUTOPLAY)
       );
 
@@ -325,12 +333,13 @@ describe('useVisualization Hook', () => {
       expect(result.current.array).toEqual([42]);
       expect(result.current.totalSteps).toBe(1);
 
-      // In autoplay mode with single step, should complete immediately
       act(() => {
         result.current.play();
       });
 
       expect(result.current.isComplete).toBe(true);
+
+      unmount();
     });
 
     it('should handle play when already complete', () => {
@@ -340,14 +349,12 @@ describe('useVisualization Hook', () => {
 
       act(() => {
         result.current.loadSteps(mockSteps);
-        // Go to completion
         result.current.stepForward();
         result.current.stepForward();
       });
 
       expect(result.current.isComplete).toBe(true);
 
-      // Try to play when complete - should not start
       act(() => {
         result.current.play();
       });
@@ -366,7 +373,6 @@ describe('useVisualization Hook', () => {
 
       expect(result.current.currentStep).toBe(0);
 
-      // Try to step backward from beginning - should not change
       act(() => {
         result.current.stepBackward();
       });
