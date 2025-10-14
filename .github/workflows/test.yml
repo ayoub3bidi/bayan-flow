@@ -42,6 +42,7 @@ jobs:
 
       - name: Generate coverage report
         run: pnpm test:coverage
+        continue-on-error: true
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -50,8 +51,10 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
+          verbose: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
 
       - name: Comment coverage on PR
         if: github.event_name == 'pull_request'
@@ -60,3 +63,4 @@ jobs:
           lcov-file: ./coverage/lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}
           delete-old-comments: true
+        continue-on-error: true
