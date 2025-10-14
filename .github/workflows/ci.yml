@@ -49,14 +49,10 @@ jobs:
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
-    # Optionally run in parallel with quality checks
-    # Or require quality to pass first: needs: quality
     
     strategy:
       matrix:
         node-version: [20.x]
-        # Optionally test on multiple Node versions:
-        # node-version: [18.x, 20.x, 22.x]
 
     steps:
       - name: Checkout code
