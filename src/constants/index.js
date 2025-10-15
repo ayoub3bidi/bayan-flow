@@ -58,6 +58,47 @@ export const VISUALIZATION_MODES = {
   MANUAL: 'manual',
 };
 
+export const ALGORITHM_COMPLEXITY = {
+  bubbleSort: {
+    name: 'Bubble Sort',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(1)',
+  },
+  quickSort: {
+    name: 'Quick Sort',
+    timeComplexity: {
+      best: 'O(n log n)',
+      average: 'O(n log n)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(log n)',
+  },
+  mergeSort: {
+    name: 'Merge Sort',
+    timeComplexity: {
+      best: 'O(n log n)',
+      average: 'O(n log n)',
+      worst: 'O(n log n)',
+    },
+    spaceComplexity: 'O(n)',
+  },
+};
+
+export const COMPLEXITY_FUNCTIONS = {
+  // eslint-disable-next-line no-unused-vars
+  'O(1)': n => 1,
+  'O(log n)': n => Math.log2(n),
+  'O(n)': n => n,
+  'O(n log n)': n => n * Math.log2(n),
+  'O(n²)': n => n * n,
+  'O(n³)': n => n * n * n,
+  'O(2^n)': n => Math.pow(2, n),
+};
+
 export const DEFAULT_ARRAY_SIZE = 20;
 export const GRID_ROWS = 20;
 export const GRID_COLS = 40;

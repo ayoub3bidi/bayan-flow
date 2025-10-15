@@ -25,9 +25,12 @@
   - Change array size (5-100 elements)
   - Generate new random arrays
 - **Visual Feedback**: Color-coded states for comparing, swapping, sorted elements
+- **Algorithm Analysis**: Interactive complexity panel with Big-O notation and performance graphs
+- **Educational Content**: Real-world use cases and detailed algorithm descriptions
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Smooth Animations**: Powered by Framer Motion for fluid transitions
 - **Real-time Description**: Step-by-step explanation of algorithm operations
+- **Accessibility**: Full keyboard navigation and screen reader support
 
 ## Installation
 
@@ -128,6 +131,7 @@ algorithm-visualizer/
 │   ├── components/        # React components
 │   │   ├── ArrayBar.jsx
 │   │   ├── ArrayVisualizer.jsx
+│   │   ├── ComplexityPanel.jsx
 │   │   ├── ControlPanel.jsx
 │   │   ├── SettingsPanel.jsx
 │   │   ├── InfoPanel.jsx
@@ -192,9 +196,10 @@ The `useVisualization` custom hook manages:
 
 - **App.jsx**: Main orchestrator, manages global state
 - **ArrayVisualizer**: Renders the bar chart visualization
-- **ControlPanel**: Mode-aware playback controls (play, pause, stop, step)
+- **ControlPanel**: Mode-aware playback controls (play, pause, step)
 - **SettingsPanel**: Algorithm selection, mode toggle, and speed configuration
 - **InfoPanel**: Displays current step description
+- **ComplexityPanel**: Interactive algorithm analysis with performance graphs
 
 ## Extending the Project
 
@@ -242,6 +247,54 @@ const algorithms = [
 ```
 
 4. Write tests in `src/algorithms/algorithms.test.js`
+
+5. Add complexity metadata in `src/constants/index.js`:
+
+```javascript
+export const ALGORITHM_COMPLEXITY = {
+  // ... existing algorithms
+  insertionSort: {
+    name: 'Insertion Sort',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(1)',
+    useCases: [
+      'Small datasets or nearly sorted arrays',
+      'Online algorithms where data arrives sequentially',
+      'As a subroutine in hybrid algorithms like Timsort',
+      'When simplicity and low overhead are priorities',
+    ],
+    description: 'Builds the final sorted array one item at a time...',
+  },
+};
+```
+
+### Using the ComplexityPanel
+
+The ComplexityPanel automatically appears when a visualization completes:
+
+```javascript
+// Subscribe to visualization completion
+useEffect(() => {
+  if (visualization.isComplete && !visualization.isPlaying) {
+    setShowComplexityPanel(true);
+  }
+}, [visualization.isComplete, visualization.isPlaying]);
+
+// Manual control
+const openComplexityPanel = () => setShowComplexityPanel(true);
+const closeComplexityPanel = () => setShowComplexityPanel(false);
+```
+
+**Features:**
+- Interactive performance graph with hover tooltips
+- Keyboard navigation (arrow keys to move between data points)
+- Copy complexity analysis to clipboard
+- Expandable details with use cases and descriptions
+- Linear/logarithmic scale toggle for the graph
 
 ### Adding Pathfinding Algorithms
 

@@ -74,6 +74,8 @@ function App() {
                   array={visualization.array}
                   states={visualization.states}
                   description={visualization.description}
+                  isComplete={visualization.isComplete}
+                  algorithm={selectedAlgorithm}
                 />
               </div>
 
