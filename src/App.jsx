@@ -4,6 +4,8 @@ import Footer from './components/Footer';
 import ArrayVisualizer from './components/ArrayVisualizer';
 import ControlPanel from './components/ControlPanel';
 import SettingsPanel from './components/SettingsPanel';
+import FloatingActionButton from './components/FloatingActionButton';
+import PythonCodePanel from './components/PythonCodePanel';
 import { useVisualization } from './hooks/useVisualization';
 import { generateRandomArray } from './utils/arrayHelpers';
 import { algorithms } from './algorithms';
@@ -21,6 +23,7 @@ function App() {
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubbleSort');
   const [mode, setMode] = useState(VISUALIZATION_MODES.AUTOPLAY);
+  const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const visualization = useVisualization(array, speed, mode);
   const handleGenerateArray = () => {
     const newArray = generateRandomArray(arraySize);
@@ -103,6 +106,21 @@ function App() {
         version="0.0.0"
         authorName="Ayoub Abidi"
         authorGithub="ayoub3bidi"
+      />
+
+      {/* Floating Action Button - Only show when panel is closed */}
+      {!isPythonPanelOpen && (
+        <FloatingActionButton
+          onClick={() => setIsPythonPanelOpen(true)}
+          disabled={!selectedAlgorithm}
+        />
+      )}
+
+      {/* Python Code Panel */}
+      <PythonCodePanel
+        isOpen={isPythonPanelOpen}
+        onClose={() => setIsPythonPanelOpen(false)}
+        algorithm={selectedAlgorithm}
       />
     </div>
   );

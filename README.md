@@ -15,6 +15,7 @@
 ## Features
 
 - **Multiple Sorting Algorithms**: Visualize Bubble Sort, Quick Sort, and Merge Sort
+- **Python Code Examples**: View, copy, and download Python implementations of each algorithm
 - **Dual Control Modes**: 
   - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
   - **Manual**: User-controlled step advancement for detailed analysis
@@ -27,6 +28,7 @@
 - **Visual Feedback**: Color-coded states for comparing, swapping, sorted elements
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and performance graphs
 - **Educational Content**: Real-world use cases and detailed algorithm descriptions
+- **Code Learning**: Floating action button for easy access to Python implementations
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Smooth Animations**: Powered by Framer Motion for fluid transitions
 - **Real-time Description**: Step-by-step explanation of algorithm operations
@@ -122,6 +124,11 @@ algorithm-visualizer/
 ├── public/                 # Static assets
 ├── src/
 │   ├── algorithms/        # Algorithm implementations
+│   │   ├── python/        # Python code examples
+│   │   │   ├── bubble_sort.py
+│   │   │   ├── quick_sort.py
+│   │   │   ├── merge_sort.py
+│   │   │   └── ... other algorithms (soon)
 │   │   ├── bubbleSort.js
 │   │   ├── quickSort.js
 │   │   ├── mergeSort.js
@@ -137,6 +144,8 @@ algorithm-visualizer/
 │   │   ├── InfoPanel.jsx
 │   │   ├── Header.jsx
 │   │   └── Footer.jsx
+│   │   └── FloatingActionButton.jsx
+│   │   └── PythonCodePanel.jsx
 │   ├── hooks/            # Custom React hooks
 │   │   └── useVisualization.js
 │   ├── utils/            # Utility functions

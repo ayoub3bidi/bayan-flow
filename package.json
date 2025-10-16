@@ -33,6 +33,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@octokit/rest": "^22.0.0",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
