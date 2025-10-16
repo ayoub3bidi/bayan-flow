@@ -5,16 +5,21 @@ import { readFileSync } from 'fs';
 const rawPythonPlugin = () => {
   return {
     name: 'raw-python',
+    resolveId(id) {
+      if (id.includes('.py?raw')) {
+        return id;
+      }
+    },
     load(id) {
-      if (id.endsWith('.py?raw')) {
+      if (id.includes('.py?raw')) {
         const filePath = id.replace('?raw', '');
         try {
           const content = readFileSync(filePath, 'utf-8');
           return `export default ${JSON.stringify(content)};`;
         } catch (error) {
-          console.error(error);
-          console.warn(`Could not read Python file: ${filePath}`);
-          return `export default '';`;
+          console.error('Error reading Python file:', error);
+          // Return mock content for tests
+          return `export default "def mock_algorithm(): pass";`;
         }
       }
     },
@@ -40,5 +45,26 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'src/test/'],
     },
+    server: {
+      deps: {
+        inline: ['**/*.py'],
+      },
+    },
+    alias: {
+      // Mock Python raw imports at the alias level
+      '../algorithms/python/bubble_sort.py?raw': new URL(
+        './src/test/mocks/bubble_sort.js',
+        import.meta.url
+      ).pathname,
+      '../algorithms/python/quick_sort.py?raw': new URL(
+        './src/test/mocks/quick_sort.js',
+        import.meta.url
+      ).pathname,
+      '../algorithms/python/merge_sort.py?raw': new URL(
+        './src/test/mocks/merge_sort.js',
+        import.meta.url
+      ).pathname,
+    },
   },
+  assetsInclude: ['**/*.py'],
 });

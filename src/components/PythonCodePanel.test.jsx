@@ -2,6 +2,25 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PythonCodePanel from './PythonCodePanel';
 
+// Mock raw Python imports first
+vi.mock('../algorithms/python/bubble_sort.py?raw', () => ({
+  default: `def bubble_sort(arr):
+    """Bubble Sort Algorithm"""
+    return sorted(arr)`,
+}));
+
+vi.mock('../algorithms/python/quick_sort.py?raw', () => ({
+  default: `def quick_sort(arr):
+    """Quick Sort Algorithm"""
+    return sorted(arr)`,
+}));
+
+vi.mock('../algorithms/python/merge_sort.py?raw', () => ({
+  default: `def merge_sort(arr):
+    """Merge Sort Algorithm"""
+    return sorted(arr)`,
+}));
+
 // Mock the python algorithms module
 vi.mock('../algorithms/python', () => ({
   getPythonCode: vi.fn(),
