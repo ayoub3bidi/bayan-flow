@@ -17,6 +17,21 @@ vi.mock('./merge_sort.py?raw', () => ({
     'def merge_sort(arr):\n    """Merge Sort Algorithm"""\n    return sorted(arr)',
 }));
 
+vi.mock('./bfs.py?raw', () => ({
+  default:
+    'def bfs(grid, start, end):\n    """Breadth-First Search Algorithm"""\n    return []',
+}));
+
+vi.mock('./dijkstra.py?raw', () => ({
+  default:
+    'def dijkstra(grid, start, end):\n    """Dijkstra\'s Algorithm"""\n    return []',
+}));
+
+vi.mock('./astar.py?raw', () => ({
+  default:
+    'def astar(grid, start, end):\n    """A* Search Algorithm"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -35,6 +50,24 @@ describe('Python Algorithms Index', () => {
       const code = getPythonCode('mergeSort');
       expect(code).toContain('def merge_sort');
       expect(code).toContain('Merge Sort Algorithm');
+    });
+
+    it('returns Python code for BFS', () => {
+      const code = getPythonCode('bfs');
+      expect(code).toContain('def bfs');
+      expect(code).toContain('Breadth-First Search');
+    });
+
+    it('returns Python code for Dijkstra', () => {
+      const code = getPythonCode('dijkstra');
+      expect(code).toContain('def dijkstra');
+      expect(code).toContain('Dijkstra');
+    });
+
+    it('returns Python code for A*', () => {
+      const code = getPythonCode('aStar');
+      expect(code).toContain('def astar');
+      expect(code).toContain('A* Search');
     });
 
     it('returns null for unknown algorithm', () => {
@@ -69,6 +102,21 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Merge Sort');
     });
 
+    it('returns correct display name for BFS', () => {
+      const name = getAlgorithmDisplayName('bfs');
+      expect(name).toBe('Breadth-First Search (BFS)');
+    });
+
+    it('returns correct display name for Dijkstra', () => {
+      const name = getAlgorithmDisplayName('dijkstra');
+      expect(name).toBe("Dijkstra's Algorithm");
+    });
+
+    it('returns correct display name for A*', () => {
+      const name = getAlgorithmDisplayName('aStar');
+      expect(name).toBe('A* Search');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -87,7 +135,14 @@ describe('Python Algorithms Index', () => {
 
   describe('algorithm coverage', () => {
     it('has Python implementations for all supported algorithms', () => {
-      const supportedAlgorithms = ['bubbleSort', 'quickSort', 'mergeSort'];
+      const supportedAlgorithms = [
+        'bubbleSort',
+        'quickSort',
+        'mergeSort',
+        'bfs',
+        'dijkstra',
+        'aStar',
+      ];
 
       supportedAlgorithms.forEach(algorithm => {
         const code = getPythonCode(algorithm);

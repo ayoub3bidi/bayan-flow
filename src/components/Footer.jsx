@@ -77,7 +77,7 @@ function Footer({
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
               An interactive, educational web application for visualizing
-              sorting algorithms in real-time.
+              sorting/pathfinding algorithms in real-time.
             </p>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">

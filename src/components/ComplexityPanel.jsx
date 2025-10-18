@@ -1,16 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ALGORITHM_COMPLEXITY, COMPLEXITY_FUNCTIONS } from '../constants';
+import {
+  ALGORITHM_COMPLEXITY,
+  PATHFINDING_COMPLEXITY,
+  COMPLEXITY_FUNCTIONS,
+} from '../constants';
 
 /**
  * @param {string} algorithm - Current algorithm name
+ * @param {boolean} isPathfinding - Whether this is a pathfinding algorithm
  */
-function ComplexityPanel({ algorithm }) {
+function ComplexityPanel({ algorithm, isPathfinding = false }) {
   const [isLogScale, setIsLogScale] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [animationProgress, setAnimationProgress] = useState(0);
   const svgRef = useRef(null);
-  const complexityData = ALGORITHM_COMPLEXITY[algorithm];
+  const complexityData = isPathfinding
+    ? PATHFINDING_COMPLEXITY[algorithm]
+    : ALGORITHM_COMPLEXITY[algorithm];
 
   // Animate curve drawing on mount
   useEffect(() => {

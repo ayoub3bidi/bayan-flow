@@ -1,15 +1,36 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shuffle, ChevronDown, Check, Play, Hand } from 'lucide-react';
-import { ANIMATION_SPEEDS, VISUALIZATION_MODES } from '../constants';
+import {
+  Shuffle,
+  ChevronDown,
+  Check,
+  Play,
+  Hand,
+  Grid3x3,
+  BarChart3,
+} from 'lucide-react';
+import {
+  ANIMATION_SPEEDS,
+  VISUALIZATION_MODES,
+  ALGORITHM_TYPES,
+  GRID_SIZES,
+  GRID_ELEMENT_STATES,
+  GRID_STATE_COLORS,
+  ELEMENT_STATES,
+  STATE_COLORS,
+} from '../constants';
 
 function SettingsPanel({
+  algorithmType,
+  onAlgorithmTypeChange,
   selectedAlgorithm,
   onAlgorithmChange,
   speed,
   onSpeedChange,
   arraySize,
   onArraySizeChange,
+  gridSize,
+  onGridSizeChange,
   onGenerateArray,
   isPlaying,
   mode,
@@ -18,10 +39,31 @@ function SettingsPanel({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const algorithms = [
+  const sortingAlgorithms = [
     { value: 'bubbleSort', label: 'Bubble Sort', complexity: 'O(n²)' },
     { value: 'quickSort', label: 'Quick Sort', complexity: 'O(n log n)' },
     { value: 'mergeSort', label: 'Merge Sort', complexity: 'O(n log n)' },
+  ];
+
+  const pathfindingAlgorithms = [
+    { value: 'bfs', label: 'Breadth-First Search', complexity: 'O(V + E)' },
+    {
+      value: 'dijkstra',
+      label: "Dijkstra's Algorithm",
+      complexity: 'O((V+E) log V)',
+    },
+    { value: 'aStar', label: 'A* Search', complexity: 'O(b^d)' },
+  ];
+
+  const algorithms =
+    algorithmType === ALGORITHM_TYPES.SORTING
+      ? sortingAlgorithms
+      : pathfindingAlgorithms;
+
+  const gridSizeOptions = [
+    { value: GRID_SIZES.SMALL, label: 'Small (15×15)' },
+    { value: GRID_SIZES.MEDIUM, label: 'Medium (25×25)' },
+    { value: GRID_SIZES.LARGE, label: 'Large (35×35)' },
   ];
 
   // Build options from constants to avoid drift
@@ -62,13 +104,45 @@ function SettingsPanel({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.1 }}
     >
-      {/* Algorithm Selection - Custom Dropdown */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
+          Algorithm Type
+        </label>
+        <div className="flex rounded-lg border-2 border-gray-300 overflow-hidden bg-gray-50">
+          <button
+            onClick={() =>
+              !isPlaying && onAlgorithmTypeChange(ALGORITHM_TYPES.SORTING)
+            }
+            disabled={isPlaying}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+              algorithmType === ALGORITHM_TYPES.SORTING
+                ? 'bg-blue-500 text-white shadow-md border-blue-500'
+                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+            } ${isPlaying ? 'opacity-50' : ''}`}
+          >
+            <BarChart3 size={16} />
+            Sorting
+          </button>
+          <button
+            onClick={() =>
+              !isPlaying && onAlgorithmTypeChange(ALGORITHM_TYPES.PATHFINDING)
+            }
+            disabled={isPlaying}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+              algorithmType === ALGORITHM_TYPES.PATHFINDING
+                ? 'bg-blue-500 text-white shadow-md border-blue-500'
+                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+            } ${isPlaying ? 'opacity-50' : ''}`}
+          >
+            <Grid3x3 size={16} />
+            Pathfinding
+          </button>
+        </div>
+      </div>
       <div className="relative" ref={dropdownRef}>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Chosen Algorithm
         </label>
-
-        {/* Dropdown Button */}
         <button
           onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
           disabled={isPlaying}
@@ -92,8 +166,6 @@ function SettingsPanel({
             />
           </motion.div>
         </button>
-
-        {/* Dropdown Menu */}
         <AnimatePresence>
           {isDropdownOpen && (
             <motion.div
@@ -141,8 +213,6 @@ function SettingsPanel({
           )}
         </AnimatePresence>
       </div>
-
-      {/* Mode Toggle */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-3">
           Control Mode
@@ -183,8 +253,6 @@ function SettingsPanel({
             : 'Use step controls to advance manually'}
         </p>
       </div>
-
-      {/* Speed Control */}
       <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Animation Speed: {speedOptions[currentSpeedIndex]?.label}
@@ -211,56 +279,136 @@ function SettingsPanel({
           <span>{speedOptions[speedOptions.length - 1].label}</span>
         </div>
       </div>
-
-      {/* Array Size Control */}
+      {algorithmType === ALGORITHM_TYPES.SORTING ? (
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Array Size: {arraySize}
+          </label>
+          <input
+            type="range"
+            min="5"
+            max="100"
+            step="5"
+            value={arraySize}
+            onChange={e => onArraySizeChange(parseInt(e.target.value, 10))}
+            disabled={isPlaying}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>5</span>
+            <span>100</span>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Grid Size
+          </label>
+          <div className="space-y-2">
+            {gridSizeOptions.map(option => (
+              <button
+                key={option.value}
+                onClick={() => !isPlaying && onGridSizeChange(option.value)}
+                disabled={isPlaying}
+                className={`w-full px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed ${
+                  gridSize === option.value
+                    ? 'bg-blue-500 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                } ${isPlaying ? 'opacity-50' : ''}`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Array Size: {arraySize}
-        </label>
-        <input
-          type="range"
-          min="5"
-          max="100"
-          step="5"
-          value={arraySize}
-          onChange={e => onArraySizeChange(parseInt(e.target.value, 10))}
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Legend</h3>
+        {algorithmType === ALGORITHM_TYPES.SORTING ? (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-blue-500 rounded"></div>
+              <span className="text-xs text-gray-600">Default</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-amber-400 rounded"></div>
+              <span className="text-xs text-gray-600">Comparing</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-red-500 rounded"></div>
+              <span className="text-xs text-gray-600">Swapping</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-500 rounded"></div>
+              <span className="text-xs text-gray-600">Sorted</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-purple-500 rounded"></div>
+              <span className="text-xs text-gray-600">Pivot</span>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{
+                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.START],
+                }}
+              ></div>
+              <span className="text-xs text-gray-600">Start</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{
+                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.END],
+                }}
+              ></div>
+              <span className="text-xs text-gray-600">End</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{
+                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.OPEN],
+                }}
+              ></div>
+              <span className="text-xs text-gray-600">Open (Queue)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{
+                  backgroundColor:
+                    GRID_STATE_COLORS[GRID_ELEMENT_STATES.CLOSED],
+                }}
+              ></div>
+              <span className="text-xs text-gray-600">Closed (Visited)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{
+                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.PATH],
+                }}
+              ></div>
+              <span className="text-xs text-gray-600">Path</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {algorithmType === ALGORITHM_TYPES.PATHFINDING && (
+        <button
+          onClick={onGenerateArray}
           disabled={isPlaying}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>5</span>
-          <span>100</span>
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
-          Legend (Movements Explanation)
-        </h3>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-500 rounded"></div>
-            <span className="text-xs text-gray-600">Default</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-amber-400 rounded"></div>
-            <span className="text-xs text-gray-600">Comparing</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span className="text-xs text-gray-600">Swapping</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span className="text-xs text-gray-600">Sorted</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-purple-500 rounded"></div>
-            <span className="text-xs text-gray-600">Pivot</span>
-          </div>
-        </div>
-      </div>
+          className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-sm rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
+        >
+          <Shuffle size={18} />
+          Random Start & End Points
+        </button>
+      )}
     </motion.div>
   );
 }

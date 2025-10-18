@@ -2,7 +2,7 @@
 
 <p align="center">
     <img src="./logo.png" alt="Algorithm Visualizer Logo" width="80"/> <br/>
-    <strong>An interactive, educational web application for visualizing sorting algorithms in real-time</strong>
+    <strong>An interactive, educational web application for visualizing sorting and pathfinding algorithms in real-time</strong>
 </p>
 
 <p align="center">
@@ -14,21 +14,30 @@
 
 ## Features
 
+### Sorting Mode
 - **Multiple Sorting Algorithms**: Visualize Bubble Sort, Quick Sort, and Merge Sort
-- **Python Code Examples**: View, copy, and download Python implementations of each algorithm
+- **Array Customization**: Adjust array size (5-100 elements) and generate new random arrays
+- **Visual Feedback**: Color-coded states for comparing, swapping, sorted elements
+
+### Pathfinding Mode
+- **Multiple Pathfinding Algorithms**: Visualize BFS, Dijkstra's Algorithm, and A* Search
+- **Grid Visualization**: Interactive grid-based pathfinding with configurable sizes (15×15, 25×25, 35×35)
+- **Random Start/End**: Automatically generates random start and end positions for each grid
+- **Visual States**: Color-coded cells showing open (queue), closed (visited), and final path
+- **Step-by-Step Animation**: Watch algorithms explore the grid in real-time
+
+### Common Features
 - **Dual Control Modes**: 
   - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
   - **Manual**: User-controlled step advancement for detailed analysis
 - **Interactive Controls**: Play, pause, step forward/backward through algorithm execution
 - **Customizable Settings**: 
+  - Switch between Sorting and Pathfinding modes
   - Choose between Autoplay and Manual control modes
   - Adjust animation speed (Slow, Medium, Fast, Very Fast)
-  - Change array size (5-100 elements)
-  - Generate new random arrays
-- **Visual Feedback**: Color-coded states for comparing, swapping, sorted elements
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and performance graphs
 - **Educational Content**: Real-world use cases and detailed algorithm descriptions
-- **Code Learning**: Floating action button for easy access to Python implementations
+- **Python Code Examples**: View, copy, and download Python implementations (sorting algorithms)
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Smooth Animations**: Powered by Framer Motion for fluid transitions
 - **Real-time Description**: Step-by-step explanation of algorithm operations
@@ -124,6 +133,12 @@ algorithm-visualizer/
 ├── public/                 # Static assets
 ├── src/
 │   ├── algorithms/        # Algorithm implementations
+│   │   ├── pathfinding/   # Pathfinding algorithms
+│   │   │   ├── bfs.js
+│   │   │   ├── dijkstra.js
+│   │   │   ├── aStar.js
+│   │   │   ├── index.js
+│   │   │   └── pathfinding.test.js
 │   │   ├── python/        # Python code examples
 │   │   │   ├── bubble_sort.py
 │   │   │   ├── quick_sort.py
@@ -134,10 +149,11 @@ algorithm-visualizer/
 │   │   ├── mergeSort.js
 │   │   ├── index.js
 │   │   └── algorithms.test.js
-│   │   └── ... other algorithms (soon)
 │   ├── components/        # React components
 │   │   ├── ArrayBar.jsx
 │   │   ├── ArrayVisualizer.jsx
+│   │   ├── GridCell.jsx
+│   │   ├── GridVisualizer.jsx
 │   │   ├── ComplexityPanel.jsx
 │   │   ├── ControlPanel.jsx
 │   │   ├── SettingsPanel.jsx
@@ -147,10 +163,13 @@ algorithm-visualizer/
 │   │   └── FloatingActionButton.jsx
 │   │   └── PythonCodePanel.jsx
 │   ├── hooks/            # Custom React hooks
-│   │   └── useVisualization.js
+│   │   ├── useVisualization.js
+│   │   └── usePathfindingVisualization.js
 │   ├── utils/            # Utility functions
 │   │   ├── arrayHelpers.js
-│   │   └── arrayHelpers.test.js
+│   │   ├── arrayHelpers.test.js
+│   │   ├── gridHelpers.js
+│   │   └── gridHelpers.test.js
 │   ├── constants/        # App constants
 │   │   └── index.js
 │   ├── test/            # Test configuration
@@ -305,14 +324,72 @@ const closeComplexityPanel = () => setShowComplexityPanel(false);
 - Expandable details with use cases and descriptions
 - Linear/logarithmic scale toggle for the graph
 
-### Adding Pathfinding Algorithms
+### Adding More Pathfinding Algorithms
 
-The project is structured to support pathfinding visualizations using D3.js:
+To add a new pathfinding algorithm:
 
-1. Create a new component for grid visualization
-2. Implement pathfinding algorithms (Dijkstra, A*, BFS, DFS)
-3. Use D3.js for graph layout and rendering
-4. Follow the same step-based animation pattern
+1. Create a new file in `src/algorithms/pathfinding/` (e.g., `dfs.js`):
+
+```javascript
+import { GRID_ELEMENT_STATES } from '../../constants';
+
+export function dfs(grid, start, end, rows, cols) {
+  const steps = [];
+  // Implement algorithm with step recording
+  // Each step should include: { grid, states, description }
+  return steps;
+}
+
+export function dfsPure(start, end, rows, cols) {
+  // Pure implementation for testing
+  return path;
+}
+```
+
+2. Export it in `src/algorithms/pathfinding/index.js`:
+
+```javascript
+import { dfs, dfsPure } from './dfs';
+
+export const pathfindingAlgorithms = {
+  // ... existing algorithms
+  dfs,
+};
+```
+
+3. Add it to the SettingsPanel dropdown in `src/components/SettingsPanel.jsx`:
+
+```javascript
+const pathfindingAlgorithms = [
+  // ... existing algorithms
+  { value: 'dfs', label: 'Depth-First Search', complexity: 'O(V + E)' },
+];
+```
+
+4. Write tests in `src/algorithms/pathfinding/pathfinding.test.js`
+
+5. Add complexity metadata in `src/constants/index.js`:
+
+```javascript
+export const PATHFINDING_COMPLEXITY = {
+  // ... existing algorithms
+  dfs: {
+    name: 'Depth-First Search',
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description: 'DFS explores as far as possible along each branch...',
+    useCases: [
+      'Maze solving',
+      'Topological sorting',
+      'Detecting cycles in graphs',
+    ],
+  },
+};
+```
 
 ### Customizing Colors
 

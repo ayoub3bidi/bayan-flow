@@ -122,7 +122,7 @@ function Header({
                 Algorithm Visualizer
               </h1>
               <p className="text-[10px] text-gray-600 hidden sm:block leading-none mt-0.5">
-                Interactive Sorting Visualization
+                Interactive Sorting/Pathfinding Visualization
               </p>
             </div>
           </motion.div>
