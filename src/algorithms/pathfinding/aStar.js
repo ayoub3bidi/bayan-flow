@@ -265,7 +265,7 @@ export function aStarPure(start, end, rows, cols) {
         const tentativeG = gScore[current.row][current.col] + 1;
 
         if (tentativeG < gScore[newRow][newCol]) {
-          parent[newRow][newCol] = current;
+          parent[newRow][newCol] = { row: current.row, col: current.col };
           gScore[newRow][newCol] = tentativeG;
           fScore[newRow][newCol] =
             tentativeG + manhattanDistance({ row: newRow, col: newCol }, end);

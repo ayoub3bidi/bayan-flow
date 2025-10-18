@@ -228,7 +228,7 @@ export function dijkstraPure(start, end, rows, cols) {
         const newDist = distances[current.row][current.col] + 1;
         if (newDist < distances[newRow][newCol]) {
           distances[newRow][newCol] = newDist;
-          parent[newRow][newCol] = current;
+          parent[newRow][newCol] = { row: current.row, col: current.col };
           pq.push({ row: newRow, col: newCol, dist: newDist });
         }
       }
