@@ -1,0 +1,57 @@
+codecov:
+  require_ci_to_pass: true  # Wait for CI to pass before posting comments
+  notify:
+    wait_for_ci: true       # Wait for all CI checks before sending notifications
+
+# Coverage thresholds and status checks
+coverage:
+  precision: 2              # Number of decimal places (e.g., 85.43%)
+  round: down              # Round coverage down
+  range: "70...100"        # Color coding: red (0-70), yellow (70-90), green (90-100)
+  
+  status:
+    # Project coverage check (overall coverage)
+    project:
+      default:
+        target: auto       # Compare to base commit (previous coverage)
+        threshold: 1%      # Allow 1% drop without failing (adjust as needed)
+        informational: false  # Set to true to make non-blocking
+        if_ci_failed: error   # Fail if CI fails
+    
+    # Patch coverage check (new code coverage)
+    patch:
+      default:
+        target: 80%        # Require 80% coverage on new code
+        threshold: 5%      # Allow 5% variance
+        informational: false
+        if_ci_failed: error
+
+# Pull request comment configuration
+comment:
+  layout: "header, diff, flags, files, footer"  # Customize comment sections
+  behavior: default                              # Update existing comment
+  require_changes: false                         # Always show comment (even if no changes)
+  require_base: false                            # Don't require base commit coverage
+  require_head: true                             # Require head commit coverage
+  hide_project_coverage: false                   # SHOW project coverage (important!)
+  
+  # Show coverage change in PR title/header
+  after_n_builds: 1  # Post comment after 1 build completes
+
+# GitHub Checks configuration
+github_checks:
+  annotations: true  # Show inline annotations on changed lines (set false if too cluttered)
+
+# Ignore paths (don't include in coverage calculations)
+ignore:
+  - "**/*.test.js"
+  - "**/*.test.jsx"
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/node_modules/**"
+  - "vite.config.js"
+  - "vitest.config.js"
+  - "eslint.config.js"
+  - "tailwind.config.js"
+  - "postcss.config.js"
