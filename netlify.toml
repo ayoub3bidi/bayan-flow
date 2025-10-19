@@ -1,0 +1,23 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+  
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "9"
+
+# Production branch (main)
+[context.production]
+  command = "pnpm build"
+  
+# Develop branch (beta environment)
+[context.develop]
+  command = "pnpm build"
+  
+# Deploy previews for PRs
+[context.deploy-preview]
+  command = "pnpm build"
+
+# Branch deploys (non-production branches)
+[context.branch-deploy]
+  command = "pnpm build"
