@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/ayoub3bidi/algorithm-visualizer/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📚 Documentation
+    url: https://github.com/ayoub3bidi/algorithm-visualizer/tree/main/docs
+    about: Read the project documentation and usage guide
+  - name: 🐛 Security Issue
+    url: https://github.com/ayoub3bidi/algorithm-visualizer/security/advisories/new
+    about: Report a security vulnerability (private)

@@ -1,0 +1,86 @@
+name: Algorithm Request
+description: Request a new algorithm to be added
+title: "[Algorithm]: "
+labels: ["algorithm", "enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Request a new sorting or pathfinding algorithm to be visualized.
+
+  - type: input
+    id: algorithm-name
+    attributes:
+      label: Algorithm Name
+      description: Name of the algorithm
+      placeholder: "e.g., Heap Sort, Insertion Sort, Bellman-Ford"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Algorithm Type
+      options:
+        - Sorting Algorithm
+        - Pathfinding Algorithm
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Algorithm Description
+      description: Brief explanation of how the algorithm works
+      placeholder: Describe the algorithm's approach and key characteristics
+    validations:
+      required: true
+
+  - type: textarea
+    id: complexity
+    attributes:
+      label: Time/Space Complexity
+      description: Known complexity characteristics
+      placeholder: |
+        Time: O(n log n)
+        Space: O(n)
+    validations:
+      required: false
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Real-World Use Cases
+      description: Where is this algorithm commonly used?
+      placeholder: List practical applications
+    validations:
+      required: false
+
+  - type: textarea
+    id: educational-value
+    attributes:
+      label: Educational Value
+      description: Why would this algorithm be valuable to visualize?
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to documentation, papers, or resources
+      placeholder: Provide URLs or citations
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: This algorithm is not already implemented
+          required: true
+        - label: This algorithm is commonly taught/used
+          required: false
