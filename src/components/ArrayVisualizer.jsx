@@ -52,6 +52,21 @@ function ArrayVisualizer({
             exit={{ opacity: 0 }}
             className="w-full h-full bg-gradient-to-br from-white to-gray-50 p-6 flex flex-col"
           >
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-6 py-4 border-b border-gray-200 mb-4">
+              {legendItems.map(item => (
+                <div key={item.state} className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded shadow-sm"
+                    style={{ backgroundColor: STATE_COLORS[item.state] }}
+                  />
+                  <span className="text-xs font-medium text-gray-700">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
             {/* Array Visualization */}
             <div className="flex-1 flex items-center justify-center flex-wrap gap-2 pb-10">
               {array.map((value, index) => (
@@ -66,21 +81,6 @@ function ArrayVisualizer({
               ))}
             </div>
 
-            {/* Legend */}
-            <div className="flex items-center justify-center gap-6 py-4 border-t border-gray-200 mt-4">
-              {legendItems.map(item => (
-                <div key={item.state} className="flex items-center gap-2">
-                  <div
-                    className="w-4 h-4 rounded shadow-sm"
-                    style={{ backgroundColor: STATE_COLORS[item.state] }}
-                  />
-                  <span className="text-xs font-medium text-gray-700">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
             {/* Description */}
             <AnimatePresence mode="wait">
               {description && (
@@ -90,7 +90,7 @@ function ArrayVisualizer({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute bottom-20 left-1/2 transform -translate-x-1/2 max-w-2xl"
+                  className="absolute bottom-6 left-1/2 transform -translate-x-1/2 max-w-2xl"
                 >
                   <div className="bg-gradient-to-r px-6 py-3 rounded-full shadow-xl border-2 border-white/30 backdrop-blur-sm">
                     <p className="text-sm font-semibold text-center whitespace-nowrap">

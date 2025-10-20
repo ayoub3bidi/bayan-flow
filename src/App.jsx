@@ -155,7 +155,7 @@ function App() {
             {/* Visualization Area */}
             <div className="lg:col-span-3 space-y-6">
               {/* Visualizer */}
-              <div className="h-[500px]">
+              <div className="h-[650px]">
                 {algorithmType === ALGORITHM_TYPES.SORTING ? (
                   <ArrayVisualizer
                     array={sortingVisualization.array}
