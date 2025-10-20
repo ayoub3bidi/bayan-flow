@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import GridCell from './GridCell';
 import ComplexityPanel from './ComplexityPanel';
+import { GRID_ELEMENT_STATES, GRID_STATE_COLORS } from '../constants';
 
 /**
  * @param {string[][]} states - 2D array of cell states
@@ -23,12 +24,20 @@ function GridVisualizer({
     if (isComplete) {
       const timer = setTimeout(() => {
         setShowComplexityPanel(true);
-      }, 1000); // 1 second delay to ensure all animations finish
+      }, 1000);
       return () => clearTimeout(timer);
     } else {
       setShowComplexityPanel(false);
     }
   }, [isComplete]);
+
+  const legendItems = [
+    { state: GRID_ELEMENT_STATES.START, label: 'Start' },
+    { state: GRID_ELEMENT_STATES.END, label: 'End' },
+    { state: GRID_ELEMENT_STATES.OPEN, label: 'Open (Queue)' },
+    { state: GRID_ELEMENT_STATES.CLOSED, label: 'Closed (Visited)' },
+    { state: GRID_ELEMENT_STATES.PATH, label: 'Path' },
+  ];
 
   return (
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
@@ -39,64 +48,93 @@ function GridVisualizer({
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-full bg-gradient-to-br from-white to-gray-50 p-6 flex flex-col items-center justify-center"
+            className="w-full h-full bg-gradient-to-br from-white to-gray-50 p-6 flex flex-col"
           >
-            <div className="inline-flex flex-col items-center">
-              <div className="flex mb-1">
-                <div className="w-8" /> {/* Spacer for row labels */}
-                {Array.from({ length: gridSize }).map((_, colIndex) => (
-                  <div
-                    key={`col-${colIndex}`}
-                    className={`text-xs font-mono text-gray-500 text-center ${
-                      gridSize <= 15 ? 'w-6' : gridSize <= 25 ? 'w-4' : 'w-3'
-                    }`}
-                  >
-                    {colIndex % (gridSize > 25 ? 5 : gridSize > 15 ? 3 : 2) ===
-                    0
-                      ? colIndex
-                      : ''}
-                  </div>
-                ))}
-              </div>
-              <div className="flex">
-                <div className="flex flex-col justify-around mr-1">
-                  {Array.from({ length: gridSize }).map((_, rowIndex) => (
+            {/* Grid Visualization */}
+            <div className="flex-1 flex items-center justify-center">
+              <div className="inline-flex flex-col items-center">
+                {/* Column Labels */}
+                <div className="flex mb-1">
+                  <div className="w-8" />
+                  {Array.from({ length: gridSize }).map((_, colIndex) => (
                     <div
-                      key={`row-${rowIndex}`}
-                      className={`text-xs font-mono text-gray-500 text-right w-7 ${
-                        gridSize <= 15 ? 'h-6' : gridSize <= 25 ? 'h-4' : 'h-3'
-                      } flex items-center justify-end`}
+                      key={`col-${colIndex}`}
+                      className={`text-xs font-mono text-gray-500 text-center ${
+                        gridSize <= 15 ? 'w-6' : gridSize <= 25 ? 'w-4' : 'w-3'
+                      }`}
                     >
-                      {rowIndex %
+                      {colIndex %
                         (gridSize > 25 ? 5 : gridSize > 15 ? 3 : 2) ===
                       0
-                        ? rowIndex
+                        ? colIndex
                         : ''}
                     </div>
                   ))}
                 </div>
-                <div
-                  className="inline-grid gap-0"
-                  style={{
-                    gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
-                  }}
-                  role="grid"
-                  aria-label="Pathfinding grid visualization"
-                >
-                  {states.map((row, rowIndex) =>
-                    row.map((state, colIndex) => (
-                      <GridCell
-                        key={`${rowIndex}-${colIndex}`}
-                        state={state}
-                        row={rowIndex}
-                        col={colIndex}
-                        gridSize={gridSize}
-                      />
-                    ))
-                  )}
+
+                {/* Grid with Row Labels */}
+                <div className="flex">
+                  <div className="flex flex-col justify-around mr-1">
+                    {Array.from({ length: gridSize }).map((_, rowIndex) => (
+                      <div
+                        key={`row-${rowIndex}`}
+                        className={`text-xs font-mono text-gray-500 text-right w-7 ${
+                          gridSize <= 15
+                            ? 'h-6'
+                            : gridSize <= 25
+                              ? 'h-4'
+                              : 'h-3'
+                        } flex items-center justify-end`}
+                      >
+                        {rowIndex %
+                          (gridSize > 25 ? 5 : gridSize > 15 ? 3 : 2) ===
+                        0
+                          ? rowIndex
+                          : ''}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div
+                    className="inline-grid gap-0"
+                    style={{
+                      gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
+                    }}
+                    role="grid"
+                    aria-label="Pathfinding grid visualization"
+                  >
+                    {states.map((row, rowIndex) =>
+                      row.map((state, colIndex) => (
+                        <GridCell
+                          key={`${rowIndex}-${colIndex}`}
+                          state={state}
+                          row={rowIndex}
+                          col={colIndex}
+                          gridSize={gridSize}
+                        />
+                      ))
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-6 py-6 border-t border-gray-200 mt-4">
+              {legendItems.map(item => (
+                <div key={item.state} className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded shadow-sm"
+                    style={{ backgroundColor: GRID_STATE_COLORS[item.state] }}
+                  />
+                  <span className="text-xs font-medium text-gray-700">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Description */}
             <AnimatePresence mode="wait">
               {description && (
                 <motion.div
@@ -105,7 +143,7 @@ function GridVisualizer({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="mt-6 max-w-2xl"
+                  className="absolute bottom-20 left-1/2 transform -translate-x-1/2 max-w-2xl"
                 >
                   <div className="bg-gradient-to-r px-6 py-3 rounded-full shadow-xl border-2 border-white/30 backdrop-blur-sm">
                     <p className="text-sm font-semibold text-center">

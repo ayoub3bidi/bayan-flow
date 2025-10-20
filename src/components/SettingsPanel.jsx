@@ -14,10 +14,6 @@ import {
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
   GRID_SIZES,
-  GRID_ELEMENT_STATES,
-  GRID_STATE_COLORS,
-  ELEMENT_STATES,
-  STATE_COLORS,
 } from '../constants';
 
 function SettingsPanel({
@@ -66,7 +62,6 @@ function SettingsPanel({
     { value: GRID_SIZES.LARGE, label: 'Large (35×35)' },
   ];
 
-  // Build options from constants to avoid drift
   const speedOptions = [
     { value: ANIMATION_SPEEDS.SLOW, label: 'Slow' },
     { value: ANIMATION_SPEEDS.MEDIUM, label: 'Medium' },
@@ -80,7 +75,6 @@ function SettingsPanel({
     speedOptions.findIndex(s => s.value === speed)
   );
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -139,6 +133,7 @@ function SettingsPanel({
           </button>
         </div>
       </div>
+
       <div className="relative" ref={dropdownRef}>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Chosen Algorithm
@@ -213,6 +208,7 @@ function SettingsPanel({
           )}
         </AnimatePresence>
       </div>
+
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-3">
           Control Mode
@@ -253,6 +249,7 @@ function SettingsPanel({
             : 'Use step controls to advance manually'}
         </p>
       </div>
+
       <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Animation Speed: {speedOptions[currentSpeedIndex]?.label}
@@ -279,6 +276,7 @@ function SettingsPanel({
           <span>{speedOptions[speedOptions.length - 1].label}</span>
         </div>
       </div>
+
       {algorithmType === ALGORITHM_TYPES.SORTING ? (
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -322,82 +320,6 @@ function SettingsPanel({
           </div>
         </div>
       )}
-      <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">Legend</h3>
-        {algorithmType === ALGORITHM_TYPES.SORTING ? (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-blue-500 rounded"></div>
-              <span className="text-xs text-gray-600">Default</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-amber-400 rounded"></div>
-              <span className="text-xs text-gray-600">Comparing</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-500 rounded"></div>
-              <span className="text-xs text-gray-600">Swapping</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-500 rounded"></div>
-              <span className="text-xs text-gray-600">Sorted</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-purple-500 rounded"></div>
-              <span className="text-xs text-gray-600">Pivot</span>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.START],
-                }}
-              ></div>
-              <span className="text-xs text-gray-600">Start</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.END],
-                }}
-              ></div>
-              <span className="text-xs text-gray-600">End</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.OPEN],
-                }}
-              ></div>
-              <span className="text-xs text-gray-600">Open (Queue)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor:
-                    GRID_STATE_COLORS[GRID_ELEMENT_STATES.CLOSED],
-                }}
-              ></div>
-              <span className="text-xs text-gray-600">Closed (Visited)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{
-                  backgroundColor: GRID_STATE_COLORS[GRID_ELEMENT_STATES.PATH],
-                }}
-              ></div>
-              <span className="text-xs text-gray-600">Path</span>
-            </div>
-          </div>
-        )}
-      </div>
 
       {algorithmType === ALGORITHM_TYPES.PATHFINDING && (
         <button

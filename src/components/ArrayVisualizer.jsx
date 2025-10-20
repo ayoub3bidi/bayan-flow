@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import ArrayBar from './ArrayBar';
 import ComplexityPanel from './ComplexityPanel';
+import { ELEMENT_STATES, STATE_COLORS } from '../constants';
 
 /**
  * @param {number[]} array - The array to visualize
@@ -25,12 +26,20 @@ function ArrayVisualizer({
     if (isComplete) {
       const timer = setTimeout(() => {
         setShowComplexityPanel(true);
-      }, 1000); // 1 second delay to ensure all animations finish
+      }, 1000);
       return () => clearTimeout(timer);
     } else {
       setShowComplexityPanel(false);
     }
   }, [isComplete]);
+
+  const legendItems = [
+    { state: ELEMENT_STATES.DEFAULT, label: 'Default' },
+    { state: ELEMENT_STATES.COMPARING, label: 'Comparing' },
+    { state: ELEMENT_STATES.SWAPPING, label: 'Swapping' },
+    { state: ELEMENT_STATES.SORTED, label: 'Sorted' },
+    { state: ELEMENT_STATES.PIVOT, label: 'Pivot' },
+  ];
 
   return (
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
@@ -41,9 +50,10 @@ function ArrayVisualizer({
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-full bg-gradient-to-br from-white to-gray-50 p-6"
+            className="w-full h-full bg-gradient-to-br from-white to-gray-50 p-6 flex flex-col"
           >
-            <div className="flex items-center justify-center h-full flex-wrap gap-2">
+            {/* Array Visualization */}
+            <div className="flex-1 flex items-center justify-center flex-wrap gap-2 pb-10">
               {array.map((value, index) => (
                 <ArrayBar
                   key={`${index}-${value}`}
@@ -56,6 +66,22 @@ function ArrayVisualizer({
               ))}
             </div>
 
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-6 py-4 border-t border-gray-200 mt-4">
+              {legendItems.map(item => (
+                <div key={item.state} className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded shadow-sm"
+                    style={{ backgroundColor: STATE_COLORS[item.state] }}
+                  />
+                  <span className="text-xs font-medium text-gray-700">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Description */}
             <AnimatePresence mode="wait">
               {description && (
                 <motion.div
@@ -64,7 +90,7 @@ function ArrayVisualizer({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute bottom-6 left-1/2 transform -translate-x-1/2 max-w-2xl"
+                  className="absolute bottom-20 left-1/2 transform -translate-x-1/2 max-w-2xl"
                 >
                   <div className="bg-gradient-to-r px-6 py-3 rounded-full shadow-xl border-2 border-white/30 backdrop-blur-sm">
                     <p className="text-sm font-semibold text-center whitespace-nowrap">
