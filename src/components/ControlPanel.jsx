@@ -1,5 +1,12 @@
 import { motion } from 'framer-motion';
-import { Play, Pause, RotateCcw, SkipBack, SkipForward, Shuffle } from 'lucide-react';
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  SkipBack,
+  SkipForward,
+  Shuffle,
+} from 'lucide-react';
 
 /**
  * ControlPanel Component
