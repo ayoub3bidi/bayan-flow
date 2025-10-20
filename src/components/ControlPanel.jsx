@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Play, Pause, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
+import { Play, Pause, RotateCcw, SkipBack, SkipForward, Shuffle } from 'lucide-react';
 
 /**
  * ControlPanel Component
@@ -16,6 +16,8 @@ import { Play, Pause, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
  * @param {Function} onStepBackward - Handler for step backward button
  * @param {number} currentStep - Current step in the animation
  * @param {number} totalSteps - Total number of steps
+ * @param {Function} onGenerateArray - Handler for generating new random start/end points
+ * @param {string} algorithmType - Current algorithm type ('sorting' or 'pathfinding')
  */
 function ControlPanel({
   isPlaying,
@@ -29,6 +31,8 @@ function ControlPanel({
   onStepBackward,
   currentStep,
   totalSteps,
+  onGenerateArray,
+  algorithmType,
 }) {
   const buttonBaseClasses =
     'p-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100';
@@ -91,6 +95,18 @@ function ControlPanel({
             title="Step Forward"
           >
             <SkipForward size={20} />
+          </button>
+        )}
+
+        {/* Random Start & End Points - Only visible in pathfinding mode */}
+        {algorithmType === 'pathfinding' && (
+          <button
+            onClick={onGenerateArray}
+            disabled={isPlaying}
+            className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
+            title="Random Start & End Points"
+          >
+            <Shuffle size={20} />
           </button>
         )}
       </div>

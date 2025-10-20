@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Shuffle,
   ChevronDown,
   Check,
   Play,
@@ -27,7 +26,6 @@ function SettingsPanel({
   onArraySizeChange,
   gridSize,
   onGridSizeChange,
-  onGenerateArray,
   isPlaying,
   mode,
   onModeChange,
@@ -319,17 +317,6 @@ function SettingsPanel({
             ))}
           </div>
         </div>
-      )}
-
-      {algorithmType === ALGORITHM_TYPES.PATHFINDING && (
-        <button
-          onClick={onGenerateArray}
-          disabled={isPlaying}
-          className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-sm rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
-        >
-          <Shuffle size={18} />
-          Random Start & End Points
-        </button>
       )}
     </motion.div>
   );

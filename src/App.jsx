@@ -145,7 +145,6 @@ function App() {
                 onArraySizeChange={handleArraySizeChange}
                 gridSize={gridSize}
                 onGridSizeChange={handleGridSizeChange}
-                onGenerateArray={handleGenerateArray}
                 isPlaying={visualization.isPlaying}
                 mode={mode}
                 onModeChange={setMode}
@@ -188,6 +187,8 @@ function App() {
                 onStepBackward={visualization.stepBackward}
                 currentStep={visualization.currentStep}
                 totalSteps={visualization.totalSteps}
+                onGenerateArray={handleGenerateArray}
+                algorithmType={algorithmType}
               />
             </div>
           </div>
