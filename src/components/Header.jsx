@@ -1,17 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, GitFork, Tag, ExternalLink } from 'lucide-react';
+import { Star, ExternalLink } from 'lucide-react';
 
-/**
- * @param {string} repoOwner - GitHub repository owner (default: 'ayoub3bidi')
- * @param {string} repoName - GitHub repository name (default: 'algorithm-visualizer')
- */
-function Header({
-  repoOwner = 'ayoub3bidi',
-  repoName = 'algorithm-visualizer',
-}) {
+function Header() {
   const [repoData, setRepoData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const repoOwner = 'ayoub3bidi';
+  const repoName = 'algorithm-visualizer';
 
   useEffect(() => {
     const fetchGitHubData = async () => {
@@ -58,20 +53,6 @@ function Header({
     e.preventDefault();
     window.open(repoData.url, '_blank', 'noopener,noreferrer');
   };
-
-  const StatBadge = ({ icon: Icon, value, label }) => (
-    <motion.div
-      className="flex items-center gap-1.5 px-2.5 py-1 bg-white/40 backdrop-blur-md rounded-full border border-white/60 shadow-sm"
-      whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
-      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-    >
-      <Icon size={13} className="text-gray-700" />
-      <span className="text-xs font-semibold text-gray-900">{value}</span>
-      <span className="text-[10px] text-gray-600 hidden sm:inline">
-        {label}
-      </span>
-    </motion.div>
-  );
 
   return (
     <motion.header
@@ -128,41 +109,34 @@ function Header({
           </motion.div>
 
           {!loading && repoData && (
-            <div className="flex items-center gap-2">
-              <div className="hidden md:flex items-center gap-1.5">
-                <StatBadge icon={Tag} value={repoData.latestTag} label="" />
-                <StatBadge icon={Star} value={repoData.stars} label="stars" />
-                <StatBadge
-                  icon={GitFork}
-                  value={repoData.forks}
-                  label="forks"
-                />
+            <motion.button
+              onClick={handleGitHubClick}
+              className="flex items-center cursor-pointer gap-2 px-3 py-1.5 bg-white/40 backdrop-blur-md rounded-full border border-white/60 shadow-sm hover:shadow-md transition-shadow"
+              whileHover={{
+                scale: 1.05,
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+            >
+              <div className="flex items-center gap-1.5">
+                <Star size={14} className="text-gray-700" fill="currentColor" />
+                <span className="text-xs font-semibold text-gray-900">
+                  {repoData.stars}
+                </span>
               </div>
-
-              <motion.button
-                onClick={handleGitHubClick}
-                className="flex items-center gap-2 px-3.5 py-1.5 bg-gray-900/90 backdrop-blur-sm text-white rounded-lg font-medium text-xs shadow-md hover:shadow-lg transition-shadow"
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-              >
+              <div className="w-px h-4 bg-gray-300" />
+              <div className="flex items-center gap-1.5">
                 <svg
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-3.5 h-3.5"
+                  className="w-3.5 h-3.5 text-gray-700"
                 >
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
                 </svg>
-                <span className="hidden sm:inline">
-                  {repoOwner}/{repoName}
-                </span>
-                <span className="sm:hidden">GitHub</span>
-                <ExternalLink size={12} className="opacity-70" />
-              </motion.button>
-            </div>
+                <ExternalLink size={12} className="text-gray-700" />
+              </div>
+            </motion.button>
           )}
 
           {loading && (

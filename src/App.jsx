@@ -124,7 +124,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header repoOwner="ayoub3bidi" repoName="algorithm-visualizer" />
+      <Header />
       <main className="flex-1 pt-20 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -193,13 +193,7 @@ function App() {
           </div>
         </div>
       </main>
-      <Footer
-        repoOwner="ayoub3bidi"
-        repoName="algorithm-visualizer"
-        version="0.0.0"
-        authorName="Ayoub Abidi"
-        authorGithub="ayoub3bidi"
-      />
+      <Footer />
 
       {/* Floating Action Button - Only show when panel is closed */}
       {!isPythonPanelOpen && (

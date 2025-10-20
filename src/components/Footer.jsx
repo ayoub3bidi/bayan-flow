@@ -1,26 +1,19 @@
 import { motion } from 'framer-motion';
 import { FileText, AlertCircle } from 'lucide-react';
 
-/**
- * @param {string} repoOwner - GitHub repository owner
- * @param {string} repoName - GitHub repository name
- * @param {string} version - Current version (default: '0.0.0')
- * @param {string} authorName - Author name (default: 'Ayoub Abidi')
- * @param {string} authorGithub - Author GitHub username
- */
-function Footer({
-  repoOwner = 'ayoub3bidi',
-  repoName = 'algorithm-visualizer',
-  version = '0.0.0',
-  authorName = 'Ayoub Abidi',
-  authorGithub = 'ayoub3bidi',
-}) {
+function Footer() {
   const currentYear = new Date().getFullYear();
+  const repoOwner = 'ayoub3bidi';
+  const repoName = 'algorithm-visualizer';
+  const version = '0.0.0';
+  const authorName = 'Ayoub Abidi';
+  const authorGithub = 'ayoub3bidi';
+  const bmcUsername = 'ayoub3bidi';
   const links = [
     {
       label: 'Documentation',
       icon: FileText,
-      href: `https://github.com/${repoOwner}/${repoName}#readme`,
+      href: `https://github.com/${repoOwner}/${repoName}/tree/main/docs`,
     },
     {
       label: 'Report Issue',
@@ -28,9 +21,19 @@ function Footer({
       href: `https://github.com/${repoOwner}/${repoName}/issues`,
     },
   ];
+
+  const handleBMCClick = () => {
+    window.open(
+      `https://www.buymeacoffee.com/${bmcUsername}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
+  };
+
   const handleLinkClick = href => {
     window.open(href, '_blank', 'noopener,noreferrer');
   };
+
   return (
     <motion.footer
       className="relative w-full mt-auto border-t border-white/20"
@@ -40,7 +43,8 @@ function Footer({
     >
       <div className="absolute inset-0 bg-white/70 backdrop-blur-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
@@ -88,7 +92,7 @@ function Footer({
               </span>
             </div>
           </div>
-          {/* Right: Quick Links */}
+          {/* Center: Quick Links */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-gray-900">Quick Links</h3>
             <div className="flex flex-col gap-2">
@@ -105,6 +109,25 @@ function Footer({
                   <span>{link.label}</span>
                 </motion.button>
               ))}
+            </div>
+          </div>
+          {/* Right: Support */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold text-gray-900">Support</h3>
+            <div className="flex flex-col items-start">
+              <p className="text-xs text-gray-600 mb-3">
+                Enjoying this project? Support my work!
+              </p>
+              <motion.button
+                onClick={handleBMCClick}
+                className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              >
+                <span className="text-lg">☕</span>
+                <span>Buy me a coffee</span>
+              </motion.button>
             </div>
           </div>
         </div>
