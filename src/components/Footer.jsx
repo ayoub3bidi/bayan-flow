@@ -36,12 +36,12 @@ function Footer() {
 
   return (
     <motion.footer
-      className="relative w-full mt-auto border-t border-white/20"
+      className="relative w-full mt-auto border-t border-[var(--color-glass-border)]"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, type: 'spring', stiffness: 100, damping: 20 }}
     >
-      <div className="absolute inset-0 bg-white/70 backdrop-blur-lg" />
+      <div className="absolute inset-0 bg-[var(--color-glass-bg)] backdrop-blur-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Left: Project Info */}
@@ -75,11 +75,11 @@ function Footer() {
                   />
                 </svg>
               </div>
-              <h3 className="text-sm font-bold text-gray-900">
+              <h3 className="text-sm font-bold text-text-primary">
                 Algorithm Visualizer
               </h3>
             </div>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <p className="text-xs text-text-secondary leading-relaxed">
               An interactive, educational web application for visualizing
               sorting/pathfinding algorithms in real-time.
             </p>
@@ -94,13 +94,13 @@ function Footer() {
           </div>
           {/* Center: Quick Links */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-gray-900">Quick Links</h3>
+            <h3 className="text-sm font-bold text-text-primary">Quick Links</h3>
             <div className="flex flex-col gap-2">
               {links.map(link => (
                 <motion.button
                   key={link.label}
                   onClick={() => handleLinkClick(link.href)}
-                  className="flex items-center gap-2 text-xs text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-white/60 backdrop-blur-sm text-left"
+                  className="flex items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
                   whileHover={{ scale: 1.02, x: 2 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 17 }}
@@ -113,9 +113,9 @@ function Footer() {
           </div>
           {/* Right: Support */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-gray-900">Support</h3>
+            <h3 className="text-sm font-bold text-text-primary">Support</h3>
             <div className="flex flex-col items-start">
-              <p className="text-xs text-gray-600 mb-3">
+              <p className="text-xs text-text-secondary mb-3">
                 Enjoying this project? Support my work!
               </p>
               <motion.button
@@ -132,15 +132,15 @@ function Footer() {
           </div>
         </div>
         {/* Bottom: Copyright centered */}
-        <div className="mt-8 pt-6 border-t border-gray-200/50">
+        <div className="mt-8 pt-6 border-t border-gray-200">
           <div className="flex justify-center">
-            <p className="text-xs text-gray-600 text-center">
+            <p className="text-xs text-text-secondary text-center">
               © {currentYear}{' '}
               <motion.button
                 onClick={() =>
                   handleLinkClick(`https://github.com/${authorGithub}`)
                 }
-                className="font-semibold text-gray-900 hover:text-blue-600 transition-colors underline decoration-dotted underline-offset-2"
+                className="font-semibold text-text-primary hover:text-[#3b82f6] transition-colors underline decoration-dotted underline-offset-2"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, Check } from 'lucide-react';
 import { getPythonCode, getAlgorithmDisplayName } from '../algorithms/python';
 import Editor from '@monaco-editor/react';
+import { useTheme } from '../hooks/useTheme';
 
 /**
  * @param {Object} props
@@ -13,6 +14,9 @@ import Editor from '@monaco-editor/react';
 function PythonCodePanel({ isOpen, onClose, algorithm }) {
   const [isMobile, setIsMobile] = useState(false);
   const panelRef = useRef(null);
+  const editorRef = useRef(null);
+  const monacoRef = useRef(null);
+  const { isDark } = useTheme();
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -74,6 +78,14 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
   const pythonCode = getPythonCode(algorithm);
   const displayName = getAlgorithmDisplayName(algorithm);
 
+  // Update Monaco editor theme when theme changes
+  useEffect(() => {
+    if (monacoRef.current && editorRef.current) {
+      const newTheme = isDark ? 'vs-dark' : 'vs-light';
+      monacoRef.current.editor.setTheme(newTheme);
+    }
+  }, [isDark]);
+
   // Panel variants for different screen sizes
   const panelVariants = {
     hidden: {
@@ -112,7 +124,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
           <>
             {/* Backdrop */}
             <motion.div
-              className="fixed inset-0 bg-white/20 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
               style={{ top: '56px' }} // Start below header (header height is 14 * 4 = 56px)
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -124,7 +136,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
             <motion.div
               ref={panelRef}
               className={`
-                fixed z-40 bg-white shadow-xl
+                fixed z-40 bg-surface shadow-xl
                 ${
                   isMobile
                     ? 'inset-x-0 bottom-0 rounded-t-lg max-h-[90vh]'
@@ -140,10 +152,10 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
             >
               <div className="flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-center justify-end p-4 border-b">
+                <div className="flex items-center justify-end p-4 border-b border-gray-200">
                   <button
                     onClick={onClose}
-                    className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors"
                     aria-label="Close panel"
                   >
                     <X size={20} />
@@ -152,9 +164,9 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
 
                 {/* Content */}
                 <div className="flex-1 p-6 flex items-center justify-center">
-                  <div className="text-center text-gray-500">
+                  <div className="text-center text-text-secondary">
                     <div className="text-6xl mb-4">🐍</div>
-                    <h3 className="text-lg font-medium mb-2">
+                    <h3 className="text-lg font-medium mb-2 text-text-primary">
                       No Python Implementation Available
                     </h3>
                     <p className="text-sm">
@@ -176,7 +188,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-white/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
             style={{ top: '56px' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -188,7 +200,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
           <motion.div
             ref={panelRef}
             className={`
-              fixed z-40 bg-white shadow-xl
+              fixed z-40 bg-surface shadow-xl
               ${
                 isMobile
                   ? 'inset-x-0 bottom-0 rounded-t-lg max-h-[90vh]'
@@ -209,7 +221,11 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                   height="100%"
                   defaultLanguage="python"
                   value={pythonCode}
-                  theme="vs-light"
+                  theme={isDark ? 'vs-dark' : 'vs-light'}
+                  onMount={(editor, monaco) => {
+                    editorRef.current = editor;
+                    monacoRef.current = monaco;
+                  }}
                   options={{
                     readOnly: true,
                     minimap: { enabled: false },
@@ -226,8 +242,10 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                     },
                   }}
                   loading={
-                    <div className="flex items-center justify-center h-full">
-                      <div className="text-gray-500">Loading editor...</div>
+                    <div className="flex items-center justify-center h-full bg-surface">
+                      <div className="text-text-secondary">
+                        Loading editor...
+                      </div>
                     </div>
                   }
                 />

@@ -50,7 +50,7 @@ function ArrayVisualizer({
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-full bg-gradient-to-br from-white to-gray-50 p-6 flex flex-col"
+            className="w-full h-full bg-surface p-6 flex flex-col"
           >
             {/* Legend */}
             <div className="flex items-center justify-center gap-6 py-4 border-b border-gray-200 mb-4">
@@ -60,7 +60,7 @@ function ArrayVisualizer({
                     className="w-4 h-4 rounded shadow-sm"
                     style={{ backgroundColor: STATE_COLORS[item.state] }}
                   />
-                  <span className="text-xs font-medium text-gray-700">
+                  <span className="text-xs font-medium text-text-primary">
                     {item.label}
                   </span>
                 </div>
@@ -92,8 +92,8 @@ function ArrayVisualizer({
                   transition={{ duration: 0.3 }}
                   className="absolute bottom-6 left-1/2 transform -translate-x-1/2 max-w-2xl"
                 >
-                  <div className="bg-gradient-to-r px-6 py-3 rounded-full shadow-xl border-2 border-white/30 backdrop-blur-sm">
-                    <p className="text-sm font-semibold text-center whitespace-nowrap">
+                  <div className="bg-surface-elevated px-6 py-3 rounded-full shadow-xl border-2 border-gray-200 backdrop-blur-sm">
+                    <p className="text-sm font-semibold text-center whitespace-nowrap text-text-primary">
                       {description}
                     </p>
                   </div>
