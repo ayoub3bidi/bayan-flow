@@ -1,5 +1,14 @@
+import { useContext } from 'react';
+import { ThemeContext } from '../contexts/ThemeContextDefinition';
+
 /**
- * Re-export useTheme from ThemeContext for backward compatibility
- * This maintains the existing import paths while using the centralized context
+ * Custom hook for accessing theme context
+ * @returns {Object} Theme state and control functions
  */
-export { useTheme } from '../contexts/ThemeContext';
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}

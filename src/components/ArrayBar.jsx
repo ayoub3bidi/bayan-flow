@@ -12,20 +12,8 @@ import { STATE_COLORS } from '../constants';
  * @param {number} index - Index of the bar in the array
  * @param {number} arrayLength - Total length of array (for label sizing)
  */
-function ArrayBar({ value, state, maxValue, index, arrayLength }) {
-  const heightPercentage = (value / maxValue) * 100;
+function ArrayBar({ value, state, index, arrayLength }) {
   const color = STATE_COLORS[state];
-
-  // Determine if we should show labels based on array size
-  const shouldShowLabel = arrayLength <= 50;
-
-  // Calculate font size based on array length
-  const getFontSize = () => {
-    if (arrayLength <= 10) return 'text-sm';
-    if (arrayLength <= 20) return 'text-xs';
-    if (arrayLength <= 35) return 'text-[10px]';
-    return 'text-[8px]';
-  };
 
   // Animation variants for swap effect
   const barVariants = {

@@ -1,12 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
-
-const ThemeContext = createContext(undefined);
+import { useState, useEffect, useCallback } from 'react';
+import { ThemeContext } from './ThemeContextDefinition';
 
 /**
  * Theme Provider Component
@@ -34,7 +27,7 @@ export function ThemeProvider({ children }) {
   const [isSystemDark, setIsSystemDark] = useState(() => {
     try {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch (e) {
+    } catch {
       return false;
     }
   });
@@ -122,16 +115,4 @@ export function ThemeProvider({ children }) {
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
-}
-
-/**
- * Custom hook for accessing theme context
- * @returns {Object} Theme state and control functions
- */
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
 }

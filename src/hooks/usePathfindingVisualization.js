@@ -113,7 +113,7 @@ export function usePathfindingVisualization(
     [clearAutoplayTimeout]
   );
 
-  const computeEffectiveDelay = (baseDelay, gridSize, totalSteps) => {
+  const computeEffectiveDelay = baseDelay => {
     // Use the user's selected speed directly without modification
     // The speed constants are already well-calibrated:
     // SLOW: 8000ms, MEDIUM: 4800ms, FAST: 2400ms, VERY_FAST: 1200ms

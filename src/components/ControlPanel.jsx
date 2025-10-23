@@ -29,7 +29,6 @@ import {
 function ControlPanel({
   isPlaying,
   isComplete,
-  isAutoplayActive,
   mode,
   onPlay,
   onPause,

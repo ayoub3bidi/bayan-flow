@@ -178,7 +178,6 @@ function App() {
               <ControlPanel
                 isPlaying={visualization.isPlaying}
                 isComplete={visualization.isComplete}
-                isAutoplayActive={visualization.isAutoplayActive}
                 mode={mode}
                 onPlay={visualization.play}
                 onPause={visualization.pause}
