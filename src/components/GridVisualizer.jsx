@@ -48,7 +48,7 @@ function GridVisualizer({
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-full bg-gradient-to-br from-white to-gray-50 p-6 flex flex-col"
+            className="w-full h-full bg-surface p-6 flex flex-col"
           >
             {/* Legend */}
             <div className="flex items-center justify-center gap-6 py-4 border-b border-gray-200">
@@ -58,7 +58,7 @@ function GridVisualizer({
                     className="w-4 h-4 rounded shadow-sm"
                     style={{ backgroundColor: GRID_STATE_COLORS[item.state] }}
                   />
-                  <span className="text-xs font-medium text-gray-700">
+                  <span className="text-xs font-medium text-text-primary">
                     {item.label}
                   </span>
                 </div>
@@ -74,7 +74,7 @@ function GridVisualizer({
                   {Array.from({ length: gridSize }).map((_, colIndex) => (
                     <div
                       key={`col-${colIndex}`}
-                      className={`text-xs font-mono text-gray-500 text-center ${
+                      className={`text-xs font-mono text-text-secondary text-center ${
                         gridSize <= 15 ? 'w-6' : gridSize <= 25 ? 'w-4' : 'w-3'
                       }`}
                     >
@@ -93,7 +93,7 @@ function GridVisualizer({
                     {Array.from({ length: gridSize }).map((_, rowIndex) => (
                       <div
                         key={`row-${rowIndex}`}
-                        className={`text-xs font-mono text-gray-500 text-right w-7 ${
+                        className={`text-xs font-mono text-text-secondary text-right w-7 ${
                           gridSize <= 15
                             ? 'h-6'
                             : gridSize <= 25
@@ -145,8 +145,8 @@ function GridVisualizer({
                   transition={{ duration: 0.3 }}
                   className="absolute bottom-6 left-1/2 transform -translate-x-1/2 max-w-2xl"
                 >
-                  <div className="bg-gradient-to-r px-6 py-3 rounded-full shadow-xl border-2 border-white/30 backdrop-blur-sm">
-                    <p className="text-sm font-semibold text-center">
+                  <div className="bg-surface-elevated px-6 py-3 rounded-full shadow-xl border-2 border-gray-200 backdrop-blur-sm">
+                    <p className="text-sm font-semibold text-center text-text-primary">
                       {description}
                     </p>
                   </div>

@@ -15,7 +15,7 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
       className={`
         fixed right-6 top-1/2 -translate-y-1/2 z-50
         w-14 h-14 bg-blue-600 hover:bg-blue-700 
-        disabled:bg-gray-400 disabled:cursor-not-allowed
+        disabled:bg-disabled-bg disabled:cursor-not-allowed
         text-white rounded-full shadow-lg hover:shadow-xl
         flex items-center justify-center
         transition-colors duration-200

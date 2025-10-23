@@ -95,18 +95,20 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="w-full h-full bg-gradient-to-br from-white to-gray-50 flex items-center justify-center p-6"
+      className="w-full h-full bg-surface flex items-center justify-center p-6"
     >
       <div className="rounded-xl p-6 max-w-5xl w-full">
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-text-primary">
               Complexity Analysis
             </h2>
-            <p className="text-sm text-gray-600">{algorithm.toUpperCase()}</p>
+            <p className="text-sm text-text-secondary">
+              {algorithm.toUpperCase()}
+            </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600">Linear</span>
+            <span className="text-sm text-text-secondary">Linear</span>
             <button
               onClick={() => setIsLogScale(!isLogScale)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
@@ -121,30 +123,36 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                 }`}
               />
             </button>
-            <span className="text-sm text-gray-600">Log</span>
+            <span className="text-sm text-text-secondary">Log</span>
           </div>
         </div>
         <div className="flex gap-6">
           <div className="space-y-4 flex-shrink-0">
             <div>
-              <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+              <h3 className="text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wide">
                 Time Complexity
               </h3>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 w-16">Best:</span>
+                  <span className="text-xs text-text-green-500 w-16">
+                    Best:
+                  </span>
                   <code className="bg-green-100 text-green-800 px-2 py-1 rounded font-mono text-xs font-semibold">
                     {complexityData.timeComplexity.best}
                   </code>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 w-16">Average:</span>
+                  <span className="text-xs text-text-tertiary w-16">
+                    Average:
+                  </span>
                   <code className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono text-xs font-semibold">
                     {complexityData.timeComplexity.average}
                   </code>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 w-16">Worst:</span>
+                  <span className="text-xs text-text-tertiary w-16">
+                    Worst:
+                  </span>
                   <code className="bg-red-100 text-red-800 px-2 py-1 rounded font-mono text-xs font-semibold">
                     {complexityData.timeComplexity.worst}
                   </code>
@@ -152,7 +160,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
               </div>
             </div>
             <div>
-              <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+              <h3 className="text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wide">
                 Space Complexity
               </h3>
               <code className="bg-purple-100 text-purple-800 px-2 py-1 rounded font-mono text-xs font-semibold inline-block">
@@ -161,10 +169,10 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
             </div>
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            <h3 className="text-sm font-semibold text-text-primary mb-2">
               Performance Graph
             </h3>
-            <div className="text-xs text-gray-600 mb-3">
+            <div className="text-xs text-text-secondary mb-3">
               X-axis: Input size • Y-axis: Operations (
               {complexityData.timeComplexity.average})
             </div>
@@ -174,7 +182,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                 ref={svgRef}
                 width={width}
                 height={height}
-                className="border border-gray-200 rounded bg-gray-50"
+                className="border border-gray-200 rounded bg-bg"
               >
                 <g transform={`translate(${margin.left}, ${margin.top})`}>
                   <defs>
@@ -187,7 +195,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                       <path
                         d="M 40 0 L 0 0 0 40"
                         fill="none"
-                        stroke="#f3f4f6"
+                        stroke="var(--color-border)"
                         strokeWidth="1"
                       />
                     </pattern>
@@ -202,7 +210,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     y1={chartHeight}
                     x2={chartWidth}
                     y2={chartHeight}
-                    stroke="#6b7280"
+                    stroke="var(--color-text-secondary)"
                     strokeWidth="2"
                   />
                   <line
@@ -210,13 +218,13 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     y1="0"
                     x2="0"
                     y2={chartHeight}
-                    stroke="#6b7280"
+                    stroke="var(--color-text-secondary)"
                     strokeWidth="2"
                   />
                   <path
                     d={generatePath()}
                     fill="none"
-                    stroke="#3b82f6"
+                    stroke="var(--color-primary)"
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -232,8 +240,8 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                         cx={xScale(point.n)}
                         cy={yScale(point.value)}
                         r="3"
-                        fill="#3b82f6"
-                        stroke="#ffffff"
+                        fill="var(--color-primary)"
+                        stroke="var(--color-surface)"
                         strokeWidth="2"
                         className="cursor-pointer transition-all duration-200"
                         onMouseEnter={() => setHoveredPoint(point)}
@@ -244,7 +252,8 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     x={chartWidth / 2}
                     y={chartHeight + 35}
                     textAnchor="middle"
-                    className="text-xs fill-gray-600 font-medium"
+                    className="text-xs font-medium"
+                    fill="var(--color-text-secondary)"
                   >
                     Input Size (n)
                   </text>
@@ -253,7 +262,8 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     y={-45}
                     textAnchor="middle"
                     transform={`rotate(-90, -45, ${chartHeight / 2})`}
-                    className="text-xs fill-gray-600 font-medium"
+                    className="text-xs font-medium"
+                    fill="var(--color-text-secondary)"
                   >
                     Operations ({isLogScale ? 'log' : 'linear'})
                   </text>
@@ -261,7 +271,8 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     x="0"
                     y={chartHeight + 15}
                     textAnchor="start"
-                    className="text-xs fill-gray-500"
+                    className="text-xs"
+                    fill="var(--color-text-tertiary)"
                   >
                     0
                   </text>
@@ -269,7 +280,8 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     x={chartWidth}
                     y={chartHeight + 15}
                     textAnchor="end"
-                    className="text-xs fill-gray-500"
+                    className="text-xs"
+                    fill="var(--color-text-tertiary)"
                   >
                     {maxN.toLocaleString()}
                   </text>
@@ -277,7 +289,8 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     x="-10"
                     y={chartHeight + 4}
                     textAnchor="end"
-                    className="text-xs fill-gray-500"
+                    className="text-xs"
+                    fill="var(--color-text-tertiary)"
                   >
                     0
                   </text>
@@ -285,7 +298,8 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     x="-10"
                     y="4"
                     textAnchor="end"
-                    className="text-xs fill-gray-500"
+                    className="text-xs"
+                    fill="var(--color-text-tertiary)"
                   >
                     {isLogScale
                       ? `10^${Math.round(Math.log10(maxValue))}`
@@ -294,7 +308,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                 </g>
               </svg>
               {hoveredPoint && (
-                <div className="absolute top-2 left-2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-10">
+                <div className="absolute top-2 left-2 bg-surface-elevated border border-gray-200 text-text-primary text-xs px-3 py-2 rounded shadow-lg z-10">
                   <div>n = {hoveredPoint.n}</div>
                   <div>
                     ops ≈ {Math.round(hoveredPoint.value).toLocaleString()}

@@ -1,9 +1,42 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
+  safelist: [
+    'bg-surface',
+    'bg-surface-elevated',
+    'bg-bg',
+    'text-text-primary',
+    'text-text-secondary',
+    'text-interactive-text',
+    'bg-interactive-bg',
+    'bg-interactive-bg-hover',
+  ],
   theme: {
     extend: {
       colors: {
+        bg: 'var(--color-bg)',
+        surface: 'var(--color-surface)',
+        'surface-elevated': 'var(--color-surface-elevated)',
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
+        'text-tertiary': 'var(--color-text-tertiary)',
+        border: 'var(--color-border)',
+        'border-hover': 'var(--color-border-hover)',
+        'theme-primary': 'var(--color-primary)',
+        'theme-primary-hover': 'var(--color-primary-hover)',
+        'theme-primary-light': 'var(--color-primary-light)',
+        accent: 'var(--color-accent)',
+        'accent-hover': 'var(--color-accent-hover)',
+
+        // Interactive states
+        'interactive-bg': 'var(--color-interactive-bg)',
+        'interactive-bg-hover': 'var(--color-interactive-bg-hover)',
+        'interactive-text': 'var(--color-interactive-text)',
+        'interactive-border': 'var(--color-interactive-border)',
+        'disabled-bg': 'var(--color-disabled-bg)',
+
+        // Keep existing primary scale for backward compatibility
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',

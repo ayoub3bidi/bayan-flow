@@ -91,16 +91,16 @@ function SettingsPanel({
 
   return (
     <motion.div
-      className="bg-white rounded-lg shadow-lg p-6 space-y-6"
+      className="bg-surface rounded-lg shadow-lg p-6 space-y-6"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.1 }}
     >
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-text-primary mb-3">
           Algorithm Type
         </label>
-        <div className="flex rounded-lg border-2 border-gray-300 overflow-hidden bg-gray-50">
+        <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
           <button
             onClick={() =>
               !isPlaying && onAlgorithmTypeChange(ALGORITHM_TYPES.SORTING)
@@ -108,8 +108,8 @@ function SettingsPanel({
             disabled={isPlaying}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
               algorithmType === ALGORITHM_TYPES.SORTING
-                ? 'bg-blue-500 text-white shadow-md border-blue-500'
-                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+                ? 'bg-theme-primary-consistent text-white shadow-md'
+                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <BarChart3 size={16} />
@@ -122,8 +122,8 @@ function SettingsPanel({
             disabled={isPlaying}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
               algorithmType === ALGORITHM_TYPES.PATHFINDING
-                ? 'bg-blue-500 text-white shadow-md border-blue-500'
-                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+                ? 'bg-theme-primary-consistent text-white shadow-md'
+                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Grid3x3 size={16} />
@@ -133,19 +133,19 @@ function SettingsPanel({
       </div>
 
       <div className="relative" ref={dropdownRef}>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-text-primary mb-2">
           Chosen Algorithm
         </label>
         <button
           onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
           disabled={isPlaying}
-          className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300"
+          className="w-full px-4 py-3 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)]"
         >
           <div className="flex flex-col">
-            <span className="text-gray-900 font-medium">
+            <span className="text-text-primary font-medium">
               {selectedAlgo?.label || 'Select algorithm'}
             </span>
-            <span className="text-xs text-gray-500 mt-0.5">
+            <span className="text-xs text-text-secondary mt-0.5">
               {selectedAlgo?.complexity || ''}
             </span>
           </div>
@@ -155,7 +155,7 @@ function SettingsPanel({
           >
             <ChevronDown
               size={20}
-              className={`${isDropdownOpen ? 'text-blue-500' : 'text-gray-400'}`}
+              className={`${isDropdownOpen ? 'text-[#3b82f6]' : 'text-text-tertiary'}`}
             />
           </motion.div>
         </button>
@@ -166,7 +166,7 @@ function SettingsPanel({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-xl overflow-hidden"
+              className="absolute z-10 w-full mt-2 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden"
             >
               {algorithms.map((algo, index) => (
                 <motion.button
@@ -175,15 +175,15 @@ function SettingsPanel({
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-blue-50 ${
+                  className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
                     selectedAlgorithm === algo.value
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-700'
+                      ? 'bg-theme-primary-light text-theme-primary'
+                      : 'text-text-primary'
                   }`}
                 >
                   <div className="flex flex-col">
                     <span className="font-medium">{algo.label}</span>
-                    <span className="text-xs text-gray-500 mt-0.5">
+                    <span className="text-xs text-text-secondary mt-0.5">
                       Time: {algo.complexity}
                     </span>
                   </div>
@@ -197,7 +197,7 @@ function SettingsPanel({
                         damping: 25,
                       }}
                     >
-                      <Check size={18} className="text-blue-600" />
+                      <Check size={18} className="text-[#3b82f6]" />
                     </motion.div>
                   )}
                 </motion.button>
@@ -208,10 +208,10 @@ function SettingsPanel({
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-text-primary mb-3">
           Control Mode
         </label>
-        <div className="flex rounded-lg border-2 border-gray-300 overflow-hidden bg-gray-50">
+        <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
           <button
             onClick={() =>
               !isPlaying && onModeChange(VISUALIZATION_MODES.AUTOPLAY)
@@ -219,8 +219,8 @@ function SettingsPanel({
             disabled={isPlaying}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
               mode === VISUALIZATION_MODES.AUTOPLAY
-                ? 'bg-blue-500 text-white shadow-md border-blue-500'
-                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+                ? 'bg-theme-primary-consistent text-white shadow-md'
+                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Play size={16} />
@@ -233,15 +233,15 @@ function SettingsPanel({
             disabled={isPlaying}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
               mode === VISUALIZATION_MODES.MANUAL
-                ? 'bg-blue-500 text-white shadow-md border-blue-500'
-                : 'bg-transparent text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer'
+                ? 'bg-theme-primary-consistent text-white shadow-md'
+                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Hand size={16} />
             Manual
           </button>
         </div>
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-text-secondary mt-2">
           {mode === VISUALIZATION_MODES.AUTOPLAY
             ? 'Animation plays automatically at selected speed'
             : 'Use step controls to advance manually'}
@@ -249,10 +249,12 @@ function SettingsPanel({
       </div>
 
       <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-text-primary mb-2">
           Animation Speed: {speedOptions[currentSpeedIndex]?.label}
           {mode === VISUALIZATION_MODES.MANUAL && (
-            <span className="text-xs text-gray-500 ml-2">(Autoplay only)</span>
+            <span className="text-xs text-text-secondary ml-2">
+              (Autoplay only)
+            </span>
           )}
         </label>
 
@@ -269,7 +271,7 @@ function SettingsPanel({
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
 
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
+        <div className="flex justify-between text-xs text-text-secondary mt-1">
           <span>{speedOptions[0].label}</span>
           <span>{speedOptions[speedOptions.length - 1].label}</span>
         </div>
@@ -277,7 +279,7 @@ function SettingsPanel({
 
       {algorithmType === ALGORITHM_TYPES.SORTING ? (
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-text-primary mb-2">
             Array Size: {arraySize}
           </label>
           <input
@@ -290,14 +292,14 @@ function SettingsPanel({
             disabled={isPlaying}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-text-secondary mt-1">
             <span>5</span>
             <span>100</span>
           </div>
         </div>
       ) : (
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-text-primary mb-2">
             Grid Size
           </label>
           <div className="flex gap-2">
@@ -308,8 +310,8 @@ function SettingsPanel({
                 disabled={isPlaying}
                 className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed ${
                   gridSize === option.value
-                    ? 'bg-blue-500 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-theme-primary-consistent text-white shadow-md'
+                    : 'bg-surface-elevated text-text-primary hover:bg-border cursor-pointer'
                 } ${isPlaying ? 'opacity-50' : ''}`}
               >
                 {option.value}×{option.value}

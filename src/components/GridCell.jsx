@@ -18,7 +18,7 @@ function GridCell({ state, row, col, gridSize }) {
 
   return (
     <motion.div
-      className={`${getCellSize()} border border-gray-300 rounded-sm`}
+      className={`${getCellSize()} border rounded-sm`}
       initial={{ backgroundColor: GRID_STATE_COLORS.default }}
       animate={{ backgroundColor: color }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -26,6 +26,7 @@ function GridCell({ state, row, col, gridSize }) {
       aria-label={`Cell at row ${row}, column ${col}, state: ${state}`}
       style={{
         backgroundColor: color,
+        borderColor: 'var(--color-grid-border)',
       }}
     />
   );

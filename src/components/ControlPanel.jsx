@@ -29,7 +29,6 @@ import {
 function ControlPanel({
   isPlaying,
   isComplete,
-  isAutoplayActive,
   mode,
   onPlay,
   onPause,
@@ -46,7 +45,7 @@ function ControlPanel({
 
   return (
     <motion.div
-      className="bg-white rounded-lg shadow-lg p-4"
+      className="bg-surface rounded-lg shadow-lg p-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
@@ -56,7 +55,7 @@ function ControlPanel({
         <button
           onClick={onStepBackward}
           disabled={isPlaying || currentStep === 0}
-          className={`${buttonBaseClasses} bg-gray-100 hover:bg-gray-200 text-gray-700`}
+          className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Step Backward"
         >
           <SkipBack size={20} />
@@ -67,7 +66,7 @@ function ControlPanel({
           (isPlaying ? (
             <button
               onClick={onPause}
-              className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
+              className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600text-white`}
               title="Pause"
             >
               <Pause size={20} />
@@ -87,7 +86,7 @@ function ControlPanel({
         <button
           onClick={onReset}
           disabled={isPlaying}
-          className={`${buttonBaseClasses} bg-gray-100 hover:bg-gray-200 text-gray-700`}
+          className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Reset"
         >
           <RotateCcw size={20} />
@@ -98,7 +97,7 @@ function ControlPanel({
           <button
             onClick={onStepForward}
             disabled={isPlaying || isComplete}
-            className={`${buttonBaseClasses} bg-gray-100 hover:bg-gray-200 text-gray-700`}
+            className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title="Step Forward"
           >
             <SkipForward size={20} />
@@ -120,7 +119,7 @@ function ControlPanel({
 
       {/* Progress Bar */}
       <div className="mt-4">
-        <div className="flex justify-between text-xs text-gray-600 mb-1">
+        <div className="flex justify-between text-xs text-text-secondary mb-1">
           <span>Step {currentStep + 1}</span>
           <span>Total: {totalSteps} Steps</span>
         </div>
