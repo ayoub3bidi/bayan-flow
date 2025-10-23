@@ -64,7 +64,7 @@ User Action (Play Button)
     ↓
 App Component
     ↓
-useVisualization Hook
+useSortingVisualization Hook
     ↓
 Algorithm Function (e.g., bubbleSort)
     ↓
@@ -222,7 +222,7 @@ for (let step of steps) {
 
 ## State Management
 
-### Custom Hook: useVisualization
+### Custom Hook: useSortingVisualization
 
 This hook encapsulates all visualization logic:
 

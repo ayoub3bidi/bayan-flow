@@ -15,7 +15,7 @@ import { generateRandomStartEnd, createEmptyGrid } from '../utils/gridHelpers';
 export function usePathfindingVisualization(
   gridSize = DEFAULT_GRID_SIZE,
   speed,
-  mode = VISUALIZATION_MODES.AUTOPLAY
+  mode = VISUALIZATION_MODES.MANUAL
 ) {
   const [grid, setGrid] = useState(() => createEmptyGrid(gridSize, gridSize));
   const [states, setStates] = useState(() =>

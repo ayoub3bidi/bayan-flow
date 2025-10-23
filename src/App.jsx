@@ -7,7 +7,7 @@ import ControlPanel from './components/ControlPanel';
 import SettingsPanel from './components/SettingsPanel';
 import FloatingActionButton from './components/FloatingActionButton';
 import PythonCodePanel from './components/PythonCodePanel';
-import { useVisualization } from './hooks/useVisualization';
+import { useSortingVisualization } from './hooks/useSortingVisualization';
 import { usePathfindingVisualization } from './hooks/usePathfindingVisualization';
 import { generateRandomArray } from './utils/arrayHelpers';
 import { createEmptyGrid } from './utils/gridHelpers';
@@ -32,10 +32,10 @@ function App() {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubbleSort');
   const [selectedPathfindingAlgorithm, setSelectedPathfindingAlgorithm] =
     useState('bfs');
-  const [mode, setMode] = useState(VISUALIZATION_MODES.AUTOPLAY);
+  const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
 
-  const sortingVisualization = useVisualization(array, speed, mode);
+  const sortingVisualization = useSortingVisualization(array, speed, mode);
   const pathfindingVisualization = usePathfindingVisualization(
     gridSize,
     speed,

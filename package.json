@@ -1,13 +1,23 @@
 {
   "name": "algorithm-visualizer",
-  "description": "Interactive sorting algorithm visualizer with step-by-step animations",
+  "description": "Interactive algorithm visualizer with step-by-step animations for sorting and pathfinding algorithms",
   "keywords": [
     "algorithms",
     "visualization",
     "sorting",
-    "education"
+    "pathfinding",
+    "education",
+    "react",
+    "interactive",
+    "learning",
+    "computer-science",
+    "data-structures"
   ],
-  "author": "Ayoub Abidi",
+  "author": {
+    "name": "Ayoub Abidi",
+    "email": "contact@ayoub3bidi.me",
+    "url": "https://github.com/ayoub3bidi"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -16,9 +26,14 @@
   "bugs": {
     "url": "https://github.com/ayoub3bidi/algorithm-visualizer/issues"
   },
+  "homepage": "https://github.com/ayoub3bidi/algorithm-visualizer#readme",
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -66,7 +66,7 @@ function ArrayBar({ value, state, maxValue }) {
 // App.jsx - Manages state, coordinates
 function App() {
   const [array, setArray] = useState([]);
-  const visualization = useVisualization(array);
+  const visualization = useSortingVisualization(array);
   
   return <ArrayVisualizer array={visualization.array} />;
 }
@@ -77,8 +77,8 @@ function App() {
 Extract reusable logic into hooks:
 
 ```javascript
-// useVisualization.js
-export function useVisualization(initialArray, speed) {
+// useSortingVisualization.js
+export function useSortingVisualization(initialArray, speed) {
   const [array, setArray] = useState(initialArray);
   // ... complex visualization logic
   
@@ -141,7 +141,7 @@ const [array, setArray] = useState([]);
 
 **Custom Hooks for Complex Logic:**
 ```javascript
-const visualization = useVisualization(array, speed);
+const visualization = useSortingVisualization(array, speed);
 ```
 
 ### 5. Animation Best Practices
@@ -174,7 +174,7 @@ components/
   └── ControlPanel.jsx     # Feature component
 
 hooks/
-  └── useVisualization.js  # Shared logic
+  └── useSortingVisualization.js  # Shared logic
 
 algorithms/
   ├── bubbleSort.js        # Algorithm + tests
@@ -343,7 +343,7 @@ it.only('debugs this test', () => {
 
 ### Animation Debugging
 ```javascript
-// Add console.log in useVisualization
+// Add console.log in useSortingVisualization
 const play = useCallback(async () => {
   for (let step of steps) {
     console.log('Step:', step);  // Debug

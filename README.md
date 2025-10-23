@@ -28,12 +28,12 @@
 
 ### Common Features
 - **Dual Control Modes**: 
+  - **Manual**: User-controlled step advancement for detailed analysis (default)
   - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
-  - **Manual**: User-controlled step advancement for detailed analysis
 - **Interactive Controls**: Play, pause, step forward/backward through algorithm execution
 - **Customizable Settings**: 
   - Switch between Sorting and Pathfinding modes
-  - Choose between Autoplay and Manual control modes
+  - Choose between Manual (default) and Autoplay control modes
   - Adjust animation speed (Slow, Medium, Fast, Very Fast)
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and performance graphs
 - **Educational Content**: Real-world use cases and detailed algorithm descriptions
@@ -163,7 +163,7 @@ algorithm-visualizer/
 │   │   └── FloatingActionButton.jsx
 │   │   └── PythonCodePanel.jsx
 │   ├── hooks/            # Custom React hooks
-│   │   ├── useVisualization.js
+│   │   ├── useSortingVisualization.js
 │   │   └── usePathfindingVisualization.js
 │   ├── utils/            # Utility functions
 │   │   ├── arrayHelpers.js
@@ -213,7 +213,7 @@ export function bubbleSortPure(array) {
 
 ### Visualization Hook
 
-The `useVisualization` custom hook manages:
+The `useSortingVisualization` custom hook manages:
 - Animation playback state (autoplay/manual modes)
 - Step navigation (forward/backward)
 - Speed control (autoplay mode only)

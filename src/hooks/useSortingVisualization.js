@@ -5,10 +5,10 @@ import {
   DEFAULT_ARRAY_SIZE,
 } from '../constants';
 
-export function useVisualization(
+export function useSortingVisualization(
   initialArray,
   speed,
-  mode = VISUALIZATION_MODES.AUTOPLAY
+  mode = VISUALIZATION_MODES.MANUAL
 ) {
   const [array, setArray] = useState(initialArray);
   const [states, setStates] = useState(
