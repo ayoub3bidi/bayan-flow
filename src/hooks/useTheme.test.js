@@ -34,6 +34,8 @@ describe('useTheme', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    // Restore matchMedia mock to default state
+    global.matchMedia = vi.fn(() => matchMediaMock);
   });
 
   describe('Initialization', () => {

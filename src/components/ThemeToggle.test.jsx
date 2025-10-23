@@ -83,7 +83,7 @@ describe('ThemeToggle', () => {
       const checkbox = screen.getByRole('switch');
       checkbox.focus();
       expect(checkbox).toHaveFocus();
-      
+
       // Native checkbox behavior: Space/Enter trigger click
       // We already test click above, so just verify it's focusable
     });
