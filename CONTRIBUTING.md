@@ -182,9 +182,10 @@ Use the algorithm request template and include:
 ```
 src/
 ├── algorithms/          # Algorithm implementations
+│   ├── sorting/        # Sorting algorithms
 │   ├── pathfinding/    # Pathfinding algorithms
 │   ├── python/         # Python code examples
-│   └── *.js           # Sorting algorithms
+│   └── index.js       # Main algorithms export
 ├── components/         # React components
 ├── hooks/             # Custom React hooks
 ├── utils/             # Utility functions
@@ -196,9 +197,9 @@ src/
 
 #### Sorting Algorithms
 
-1. Create algorithm file in `src/algorithms/`:
+1. Create algorithm file in `src/algorithms/sorting/`:
    ```javascript
-   import { ELEMENT_STATES } from '../constants';
+   import { ELEMENT_STATES } from '../../constants';
 
    export function yourSort(array) {
      const steps = [];
@@ -216,10 +217,10 @@ src/
    }
    ```
 
-2. Export in `src/algorithms/index.js`
+2. Export in `src/algorithms/sorting/index.js`
 3. Add to settings panel dropdown
 4. Add complexity metadata in constants
-5. Write tests in `src/algorithms/algorithms.test.js`
+5. Write tests in `src/algorithms/sorting/algorithms.test.js`
 6. Add Python implementation in `src/algorithms/python/`
 
 #### Pathfinding Algorithms

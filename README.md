@@ -133,6 +133,12 @@ algorithm-visualizer/
 ├── public/                 # Static assets
 ├── src/
 │   ├── algorithms/        # Algorithm implementations
+│   │   ├── sorting/       # Sorting algorithms
+│   │   │   ├── bubbleSort.js
+│   │   │   ├── quickSort.js
+│   │   │   ├── mergeSort.js
+│   │   │   ├── index.js
+│   │   │   └── algorithms.test.js
 │   │   ├── pathfinding/   # Pathfinding algorithms
 │   │   │   ├── bfs.js
 │   │   │   ├── dijkstra.js
@@ -144,11 +150,7 @@ algorithm-visualizer/
 │   │   │   ├── quick_sort.py
 │   │   │   ├── merge_sort.py
 │   │   │   └── ... other algorithms (soon)
-│   │   ├── bubbleSort.js
-│   │   ├── quickSort.js
-│   │   ├── mergeSort.js
-│   │   ├── index.js
-│   │   └── algorithms.test.js
+│   │   └── index.js
 │   ├── components/        # React components
 │   │   ├── ArrayBar.jsx
 │   │   ├── ArrayVisualizer.jsx

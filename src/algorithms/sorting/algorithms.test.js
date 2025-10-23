@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { bubbleSortPure } from './bubbleSort';
 import { quickSortPure } from './quickSort';
 import { mergeSortPure } from './mergeSort';
-import { isSorted, generateRandomArray } from '../utils/arrayHelpers';
+import { isSorted, generateRandomArray } from '../../utils/arrayHelpers';
 
 /**
  * Test suite for sorting algorithms

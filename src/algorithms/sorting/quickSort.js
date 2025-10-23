@@ -1,4 +1,4 @@
-import { ELEMENT_STATES } from '../constants';
+import { ELEMENT_STATES } from '../../constants';
 
 /**
  * Quick Sort Algorithm

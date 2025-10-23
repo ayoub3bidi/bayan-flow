@@ -337,21 +337,33 @@ const handlePlay = useCallback(() => {
 
 ## Future Enhancements
 
-### Pathfinding Algorithms (D3.js)
+### Algorithm Organization
 
-**Planned Structure:**
+**Current Structure:**
 ```
 src/
   algorithms/
+    sorting/
+      bubbleSort.js
+      quickSort.js
+      mergeSort.js
+      index.js
+      algorithms.test.js
     pathfinding/
       dijkstra.js
       aStar.js
       bfs.js
-      dfs.js
+      index.js
+      pathfinding.test.js
+    python/
+      bubble_sort.py
+      quick_sort.py
+      merge_sort.py
+    index.js
   components/
+    ArrayVisualizer.jsx
     GridVisualizer.jsx
-    GridNode.jsx
-    PathfindingControls.jsx
+    ControlPanel.jsx
 ```
 
 **D3.js Integration:**

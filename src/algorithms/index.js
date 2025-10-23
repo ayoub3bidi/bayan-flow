@@ -1,6 +1,6 @@
-import { bubbleSort, bubbleSortPure } from './bubbleSort';
-import { quickSort, quickSortPure } from './quickSort';
-import { mergeSort, mergeSortPure } from './mergeSort';
+import { bubbleSort, bubbleSortPure } from './sorting/bubbleSort';
+import { quickSort, quickSortPure } from './sorting/quickSort';
+import { mergeSort, mergeSortPure } from './sorting/mergeSort';
 
 export const algorithms = {
   bubbleSort,
