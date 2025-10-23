@@ -311,7 +311,7 @@ function SettingsPanel({
                 className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed ${
                   gridSize === option.value
                     ? 'bg-theme-primary-consistent text-white shadow-md'
-                    : 'bg-surface-elevated text-text-primary hover:bg-border'
+                    : 'bg-surface-elevated text-text-primary hover:bg-border cursor-pointer'
                 } ${isPlaying ? 'opacity-50' : ''}`}
               >
                 {option.value}×{option.value}
