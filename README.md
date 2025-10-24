@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/React-19.1-blue" alt="React" />
   <img src="https://img.shields.io/badge/Vite-7.1-purple" alt="Vite" />
   <img src="https://img.shields.io/badge/Tailwind-4.1-cyan" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
+  <img src="https://img.shields.io/badge/license-MPL--2.0-orange" alt="License" />
 </p>
 
 ## Features
@@ -420,3 +420,25 @@ Run tests with:
 ```bash
 pnpm test
 ```
+
+## License
+
+This project is dual-licensed:
+
+### Open Source License
+Licensed under the [Mozilla Public License 2.0 (MPL-2.0)](./LICENSE).
+
+- ✅ Free to use, modify, and distribute
+- ✅ Usable in commercial projects
+- ✅ Modifications to MPL-licensed files must remain under MPL-2.0
+- ✅ Can be combined with proprietary code in larger works
+
+### Commercial License
+For proprietary use without source disclosure, liability coverage, or custom terms, contact:
+**[contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)**
+
+See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) for more information.
+
+---
+
+**Made with ❤️ by [Ayoub Abidi](https://github.com/ayoub3bidi)**

@@ -1,4 +1,12 @@
 /**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) 2025 Ayoub Abidi
+ */
+
+/**
  * Generates a random array of specified size with values between min and max
  * @param {number} size - The size of the array to generate
  * @param {number} min - Minimum value (default: 5)

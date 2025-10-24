@@ -280,6 +280,35 @@ pnpm test:coverage
 pnpm test:ui
 ```
 
+## License Compliance
+
+### Contribution Requirements
+
+By contributing to this project, you agree that:
+
+- Your contributions will be licensed under **MPL-2.0**
+- All new files must include the MPL-2.0 header at the top:
+
+```javascript
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) 2025 Ayoub Abidi
+ */
+```
+
+- Contributions must be MPL-2.0 compatible
+- You have the right to submit your contribution under MPL-2.0
+- Your contribution does not violate any third-party licenses
+
+### Third-Party Dependencies
+
+- Only add dependencies licensed under MPL-2.0-compatible licenses (MIT, Apache-2.0, BSD, ISC)
+- **Do not** add GPL-licensed dependencies (incompatible with MPL-2.0)
+- Document any new dependencies and their licenses in your pull request
+
 ## Documentation
 
 ### Code Documentation
