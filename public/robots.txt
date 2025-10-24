@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://algoviz-app.netlify.app/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

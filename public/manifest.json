@@ -1,0 +1,26 @@
+{
+  "name": "Algorithm Visualizer",
+  "short_name": "AlgoViz",
+  "description": "Interactive educational tool for learning sorting and pathfinding algorithms",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "categories": ["education"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

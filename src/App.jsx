@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ArrayVisualizer from './components/ArrayVisualizer';
@@ -6,7 +6,9 @@ import GridVisualizer from './components/GridVisualizer';
 import ControlPanel from './components/ControlPanel';
 import SettingsPanel from './components/SettingsPanel';
 import FloatingActionButton from './components/FloatingActionButton';
-import PythonCodePanel from './components/PythonCodePanel';
+
+const PythonCodePanel = lazy(() => import('./components/PythonCodePanel'));
+const ComplexityPanel = lazy(() => import('./components/ComplexityPanel'));
 import { useSortingVisualization } from './hooks/useSortingVisualization';
 import { usePathfindingVisualization } from './hooks/usePathfindingVisualization';
 import { generateRandomArray } from './utils/arrayHelpers';
@@ -124,12 +126,23 @@ function App() {
 
   return (
     <div className="min-h-screen bg-bg flex flex-col">
+      {/* Skip Navigation Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <Header />
-      <main className="flex-1 pt-20 p-6">
+      <main className="flex-1 pt-20 p-6" role="main" id="main-content">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Settings Panel */}
-            <div className="lg:col-span-1">
+            <aside
+              className="lg:col-span-1"
+              role="complementary"
+              aria-label="Algorithm settings"
+            >
               <SettingsPanel
                 algorithmType={algorithmType}
                 onAlgorithmTypeChange={handleAlgorithmTypeChange}
@@ -149,12 +162,20 @@ function App() {
                 mode={mode}
                 onModeChange={setMode}
               />
-            </div>
+            </aside>
 
             {/* Visualization Area */}
-            <div className="lg:col-span-3 space-y-6">
+            <section
+              className="lg:col-span-3 space-y-6"
+              role="region"
+              aria-label="Algorithm visualization"
+            >
               {/* Visualizer */}
-              <div className="h-[650px]">
+              <div
+                className="h-[650px]"
+                role="img"
+                aria-label={`${algorithmType === ALGORITHM_TYPES.SORTING ? selectedAlgorithm : selectedPathfindingAlgorithm} algorithm visualization`}
+              >
                 {algorithmType === ALGORITHM_TYPES.SORTING ? (
                   <ArrayVisualizer
                     array={sortingVisualization.array}
@@ -189,7 +210,7 @@ function App() {
                 onGenerateArray={handleGenerateArray}
                 algorithmType={algorithmType}
               />
-            </div>
+            </section>
           </div>
         </div>
       </main>
@@ -204,15 +225,23 @@ function App() {
       )}
 
       {/* Python Code Panel */}
-      <PythonCodePanel
-        isOpen={isPythonPanelOpen}
-        onClose={() => setIsPythonPanelOpen(false)}
-        algorithm={
-          algorithmType === ALGORITHM_TYPES.SORTING
-            ? selectedAlgorithm
-            : selectedPathfindingAlgorithm
+      <Suspense
+        fallback={
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="text-white">Loading...</div>
+          </div>
         }
-      />
+      >
+        <PythonCodePanel
+          isOpen={isPythonPanelOpen}
+          onClose={() => setIsPythonPanelOpen(false)}
+          algorithm={
+            algorithmType === ALGORITHM_TYPES.SORTING
+              ? selectedAlgorithm
+              : selectedPathfindingAlgorithm
+          }
+        />
+      </Suspense>
     </div>
   );
 }
