@@ -74,7 +74,7 @@ function ControlPanel({
           (isPlaying ? (
             <button
               onClick={onPause}
-              className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600text-white`}
+              className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
               title="Pause"
             >
               <Pause size={20} />

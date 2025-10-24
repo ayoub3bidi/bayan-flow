@@ -7,11 +7,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  ELEMENT_STATES,
-  VISUALIZATION_MODES,
-  DEFAULT_ARRAY_SIZE,
-} from '../constants';
+import { ELEMENT_STATES, VISUALIZATION_MODES } from '../constants';
 
 export function useSortingVisualization(
   initialArray,
@@ -83,21 +79,8 @@ export function useSortingVisualization(
     [clearAutoplayTimeout]
   );
 
-  const computeEffectiveDelay = (baseDelay, arrayLength, totalSteps) => {
-    const MAX_TOTAL_MS = 30000;
-    const MIN_DELAY_MS = 30;
-    const MAX_DELAY_MS = 10000;
-
-    const scaled = Math.round(
-      baseDelay * (DEFAULT_ARRAY_SIZE / Math.max(1, arrayLength))
-    );
-
-    let final = scaled;
-    if (totalSteps && final * totalSteps > MAX_TOTAL_MS) {
-      final = Math.max(MIN_DELAY_MS, Math.floor(MAX_TOTAL_MS / totalSteps));
-    }
-
-    return Math.max(MIN_DELAY_MS, Math.min(final, MAX_DELAY_MS));
+  const computeEffectiveDelay = baseDelay => {
+    return baseDelay;
   };
 
   const play = useCallback(() => {
@@ -150,10 +133,7 @@ export function useSortingVisualization(
         return;
       }
 
-      const arrayLen =
-        (step.array && step.array.length) || array.length || DEFAULT_ARRAY_SIZE;
-      const totalSteps = stepsRef.current.length || 0;
-      const effectiveDelay = computeEffectiveDelay(speed, arrayLen, totalSteps);
+      const effectiveDelay = computeEffectiveDelay(speed);
 
       clearAutoplayTimeout();
       autoplayTimeoutRef.current = setTimeout(() => {
@@ -162,14 +142,7 @@ export function useSortingVisualization(
     };
 
     runAutoplay(currentStep);
-  }, [
-    currentStep,
-    speed,
-    isComplete,
-    mode,
-    array.length,
-    clearAutoplayTimeout,
-  ]);
+  }, [currentStep, speed, isComplete, mode, clearAutoplayTimeout]);
 
   const pause = useCallback(() => {
     animationRef.current = null;
