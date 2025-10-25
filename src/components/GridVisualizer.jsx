@@ -237,7 +237,7 @@ function GridVisualizer({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-[90%] sm:max-w-2xl"
+                  className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center"
                 >
                   <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200 backdrop-blur-sm">
                     <p
