@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import GridCell from './GridCell';
 import ComplexityPanel from './ComplexityPanel';
+import SwipeTutorial from './SwipeTutorial';
 import { GRID_ELEMENT_STATES, GRID_STATE_COLORS } from '../constants';
 import useSwipe from '../hooks/useSwipe';
 
@@ -36,6 +37,39 @@ function GridVisualizer({
 }) {
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const [legendCollapsed, setLegendCollapsed] = useState(false);
+  const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
+
+  // Show swipe tutorial on mobile when user scrolls to visualization area
+  useEffect(() => {
+    const isMobile = window.innerWidth < 640;
+    const hasSteps = states && states.length > 0;
+    const isManualMode = mode === 'manual';
+    const hasSeenTutorial = localStorage.getItem('swipeTutorialSeen');
+
+    if (
+      isMobile &&
+      isManualMode &&
+      hasSteps &&
+      !hasSeenTutorial &&
+      !isComplete
+    ) {
+      const handleScroll = () => {
+        if (window.scrollY > 100) {
+          // Trigger when scrolled 100px down
+          setShowSwipeTutorial(true);
+          window.removeEventListener('scroll', handleScroll);
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [mode, states, isComplete]);
+
+  const handleDismissTutorial = () => {
+    setShowSwipeTutorial(false);
+    localStorage.setItem('swipeTutorialSeen', 'true');
+  };
 
   useEffect(() => {
     if (isComplete) {
@@ -220,6 +254,12 @@ function GridVisualizer({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Swipe Tutorial Overlay */}
+      <SwipeTutorial
+        show={showSwipeTutorial}
+        onDismiss={handleDismissTutorial}
+      />
     </div>
   );
 }

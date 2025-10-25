@@ -31,6 +31,7 @@
   - **Manual**: User-controlled step advancement for detailed analysis (default)
   - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
 - **Interactive Controls**: Play, pause, step forward/backward through algorithm execution
+- **Mobile Swipe Gestures**: Swipe left/right on mobile devices to navigate steps in manual mode with an attractive tutorial overlay
 - **Customizable Settings**: 
   - Switch between Sorting and Pathfinding modes
   - Choose between Manual (default) and Autoplay control modes
