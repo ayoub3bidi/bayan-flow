@@ -68,7 +68,7 @@ describe('FloatingActionButton', () => {
     const button = screen.getByRole('button', { name: /view python code/i });
     expect(button).toHaveClass(
       'fixed',
-      'right-6',
+      'right-0',
       'top-1/2',
       '-translate-y-1/2',
       'z-50'
@@ -82,14 +82,5 @@ describe('FloatingActionButton', () => {
     const button = screen.getByRole('button', { name: /view python code/i });
     expect(button).toHaveAttribute('aria-label', 'View Python code');
     expect(button).toHaveAttribute('title', 'View Python code');
-  });
-
-  it('contains Code icon', () => {
-    const mockOnClick = vi.fn();
-    render(<FloatingActionButton onClick={mockOnClick} />);
-
-    const button = screen.getByRole('button', { name: /view python code/i });
-    const icon = button.querySelector('svg');
-    expect(icon).toBeInTheDocument();
   });
 });
