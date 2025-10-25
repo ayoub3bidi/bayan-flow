@@ -50,8 +50,8 @@ function Footer() {
       transition={{ delay: 0.3, type: 'spring', stiffness: 100, damping: 20 }}
     >
       <div className="absolute inset-0 bg-[var(--color-glass-bg)] backdrop-blur-lg" />
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -128,10 +128,11 @@ function Footer() {
               </p>
               <motion.button
                 onClick={handleBMCClick}
-                className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors touch-manipulation min-h-[44px]"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                aria-label="Buy me a coffee - Support this project"
               >
                 <span className="text-lg">☕</span>
                 <span>Buy me a coffee</span>
@@ -140,7 +141,7 @@ function Footer() {
           </div>
         </div>
         {/* Bottom: Copyright centered */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
           <div className="flex justify-center">
             <p className="text-xs text-text-secondary text-center">
               © {currentYear}{' '}

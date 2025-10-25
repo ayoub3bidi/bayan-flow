@@ -7,10 +7,12 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { ChevronDown } from 'lucide-react';
 import ArrayBar from './ArrayBar';
 import ComplexityPanel from './ComplexityPanel';
 import { ELEMENT_STATES, STATE_COLORS } from '../constants';
+import useSwipe from '../hooks/useSwipe';
 
 /**
  * @param {number[]} array - The array to visualize
@@ -18,6 +20,9 @@ import { ELEMENT_STATES, STATE_COLORS } from '../constants';
  * @param {string} description - Current step description
  * @param {boolean} isComplete - Whether the visualization is complete
  * @param {string} algorithm - Current algorithm name
+ * @param {Function} onStepForward - Handler for step forward
+ * @param {Function} onStepBackward - Handler for step backward
+ * @param {string} mode - Control mode ('autoplay' or 'manual')
  */
 function ArrayVisualizer({
   array,
@@ -25,10 +30,14 @@ function ArrayVisualizer({
   description,
   isComplete,
   algorithm,
+  onStepForward,
+  onStepBackward,
+  mode,
 }) {
-  const maxValue = Math.max(...array, 1);
+  const maxValue = useMemo(() => Math.max(...array, 1), [array]);
   const arrayLength = array.length;
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
+  const [legendCollapsed, setLegendCollapsed] = useState(false);
 
   useEffect(() => {
     if (isComplete) {
@@ -49,6 +58,13 @@ function ArrayVisualizer({
     { state: ELEMENT_STATES.PIVOT, label: 'Pivot' },
   ];
 
+  // Swipe gesture support for manual mode
+  const swipe = useSwipe({
+    onLeft: mode === 'manual' && onStepBackward ? onStepBackward : undefined,
+    onRight: mode === 'manual' && onStepForward ? onStepForward : undefined,
+    threshold: 50,
+  });
+
   return (
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
       <AnimatePresence mode="wait">
@@ -58,25 +74,57 @@ function ArrayVisualizer({
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-full bg-surface p-6 flex flex-col"
+            className="w-full h-full bg-surface p-3 sm:p-6 flex flex-col"
+            {...(mode === 'manual' ? swipe : {})}
+            role="application"
+            aria-label="Array visualization - Swipe left/right to navigate steps"
           >
-            {/* Legend */}
-            <div className="flex items-center justify-center gap-6 py-4 border-b border-gray-200 mb-4">
-              {legendItems.map(item => (
-                <div key={item.state} className="flex items-center gap-2">
-                  <div
-                    className="w-4 h-4 rounded shadow-sm"
-                    style={{ backgroundColor: STATE_COLORS[item.state] }}
+            {/* Legend - Collapsible on mobile */}
+            <div className="border-b border-gray-200 mb-2 sm:mb-4">
+              <button
+                onClick={() => setLegendCollapsed(!legendCollapsed)}
+                className="w-full flex items-center justify-between py-2 sm:hidden touch-manipulation"
+                aria-expanded={!legendCollapsed}
+                aria-label="Toggle legend"
+              >
+                <span className="text-xs font-semibold text-text-primary">
+                  Legend
+                </span>
+                <motion.div
+                  animate={{ rotate: legendCollapsed ? -90 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDown
+                    size={16}
+                    className="text-text-secondary"
+                    aria-hidden="true"
                   />
-                  <span className="text-xs font-medium text-text-primary">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
+                </motion.div>
+              </button>
+              <div
+                className={`flex items-center justify-center gap-3 sm:gap-6 py-3 sm:py-4 flex-wrap ${
+                  legendCollapsed ? 'hidden sm:flex' : 'flex'
+                }`}
+              >
+                {legendItems.map(item => (
+                  <div
+                    key={item.state}
+                    className="flex items-center gap-1.5 sm:gap-2"
+                  >
+                    <div
+                      className="w-3 h-3 sm:w-4 sm:h-4 rounded shadow-sm"
+                      style={{ backgroundColor: STATE_COLORS[item.state] }}
+                    />
+                    <span className="text-[10px] sm:text-xs font-medium text-text-primary whitespace-nowrap">
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Array Visualization */}
-            <div className="flex-1 flex items-center justify-center flex-wrap gap-2 pb-10">
+            <div className="flex-1 flex items-center justify-center flex-wrap gap-1 sm:gap-2 pb-10 px-2 overflow-x-auto touch-pan-y">
               {array.map((value, index) => (
                 <ArrayBar
                   key={`${index}-${value}`}
@@ -98,10 +146,14 @@ function ArrayVisualizer({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute bottom-6 left-1/2 transform -translate-x-1/2 max-w-2xl"
+                  className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-[90%] sm:max-w-2xl"
                 >
-                  <div className="bg-surface-elevated px-6 py-3 rounded-full shadow-xl border-2 border-gray-200 backdrop-blur-sm">
-                    <p className="text-sm font-semibold text-center whitespace-nowrap text-text-primary">
+                  <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200 backdrop-blur-sm">
+                    <p
+                      className="text-xs sm:text-sm font-semibold text-center text-text-primary"
+                      role="status"
+                      aria-live="polite"
+                    >
                       {description}
                     </p>
                   </div>

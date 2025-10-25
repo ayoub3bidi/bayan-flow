@@ -82,3 +82,5 @@ if __name__ == "__main__":
     print(f"Already sorted: {merge_sort([1, 2, 3, 4, 5])}")
     print(f"Reverse sorted: {merge_sort([5, 4, 3, 2, 1])}")
     print(f"Duplicates: {merge_sort([3, 1, 4, 1, 5, 9, 2, 6, 5])}")
+
+

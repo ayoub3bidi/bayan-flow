@@ -191,6 +191,9 @@ function App() {
                     description={sortingVisualization.description}
                     isComplete={sortingVisualization.isComplete}
                     algorithm={selectedAlgorithm}
+                    onStepForward={sortingVisualization.stepForward}
+                    onStepBackward={sortingVisualization.stepBackward}
+                    mode={mode}
                   />
                 ) : (
                   <GridVisualizer
@@ -199,6 +202,9 @@ function App() {
                     isComplete={pathfindingVisualization.isComplete}
                     algorithm={selectedPathfindingAlgorithm}
                     gridSize={gridSize}
+                    onStepForward={pathfindingVisualization.stepForward}
+                    onStepBackward={pathfindingVisualization.stepBackward}
+                    mode={mode}
                   />
                 )}
               </div>
