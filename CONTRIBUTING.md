@@ -1,6 +1,6 @@
-# Contributing to Algorithm Visualizer
+# Contributing to Bayan Flow
 
-Thank you for your interest in contributing to Algorithm Visualizer! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to Bayan Flow! This document provides guidelines and information for contributors.
 
 ## Table of Contents
 
@@ -23,12 +23,12 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/algorithm-visualizer.git
-   cd algorithm-visualizer
+   git clone https://github.com/your-username/bayan-flow.git
+   cd bayan-flow
    ```
 3. **Add the upstream remote**:
    ```bash
-   git remote add upstream https://github.com/ayoub3bidi/algorithm-visualizer.git
+   git remote add upstream https://github.com/ayoub3bidi/bayan-flow.git
    ```
 
 ## Development Setup
@@ -344,4 +344,4 @@ Contributors will be recognized in:
 - Release notes for significant contributions
 - Special mentions for major features
 
-Thank you for contributing to Algorithm Visualizer! 🎉
+Thank you for contributing to Bayan Flow! 🎉

@@ -15,7 +15,7 @@ function Header() {
   const [repoData, setRepoData] = useState(null);
   const [loading, setLoading] = useState(true);
   const repoOwner = 'ayoub3bidi';
-  const repoName = 'algorithm-visualizer';
+  const repoName = 'bayan-flow';
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -83,37 +83,48 @@ function Header() {
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
-                className="w-4 h-4 sm:w-5 sm:h-5"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
               >
+                {/* Bayan Flow logo - representing clarity through flowing waves */}
                 <path
-                  d="M3 8L12 3L21 8L12 13L3 8Z"
+                  d="M3 7C3 7 6 4 12 4C18 4 21 7 21 7"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeOpacity="0.95"
+                />
+                <path
+                  d="M3 12C3 12 6 9 12 9C18 9 21 12 21 12"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeOpacity="0.75"
+                />
+                <path
+                  d="M3 17C3 17 6 14 12 14C18 14 21 17 21 17"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeOpacity="0.55"
+                />
+                {/* Clarity dot */}
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="1.5"
                   fill="white"
                   fillOpacity="0.9"
-                />
-                <path
-                  d="M3 12L12 17L21 12"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M3 16L12 21L21 16"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
                 />
               </svg>
             </div>
             <div className="flex flex-col">
               <h1 className="text-sm sm:text-base md:text-lg font-bold text-text-primary tracking-tight leading-none">
-                Algorithm Visualizer
+                Bayan Flow
               </h1>
               <p className="text-[10px] text-text-secondary hidden sm:block leading-none mt-0.5">
-                Interactive Visualization
+                Clarity in Algorithms
               </p>
             </div>
           </motion.div>

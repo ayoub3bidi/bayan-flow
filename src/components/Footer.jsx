@@ -12,7 +12,7 @@ import { FileText, AlertCircle } from 'lucide-react';
 function Footer() {
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
-  const repoName = 'algorithm-visualizer';
+  const repoName = 'bayan-flow';
   const version = '0.0.0';
   const authorName = 'Ayoub Abidi';
   const authorGithub = 'ayoub3bidi';
@@ -59,37 +59,49 @@ function Footer() {
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
-                  className="w-4 h-4"
+                  className="w-5 h-5"
                   xmlns="http://www.w3.org/2000/svg"
                 >
+                  {/* Bayan Flow logo - representing clarity through flowing waves */}
                   <path
-                    d="M3 8L12 3L21 8L12 13L3 8Z"
+                    d="M3 7C3 7 6 4 12 4C18 4 21 7 21 7"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeOpacity="0.95"
+                  />
+                  <path
+                    d="M3 12C3 12 6 9 12 9C18 9 21 12 21 12"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeOpacity="0.75"
+                  />
+                  <path
+                    d="M3 17C3 17 6 14 12 14C18 14 21 17 21 17"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeOpacity="0.55"
+                  />
+                  {/* Clarity dot */}
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="1.5"
                     fill="white"
                     fillOpacity="0.9"
-                  />
-                  <path
-                    d="M3 12L12 17L21 12"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M3 16L12 21L21 16"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
               <h3 className="text-sm font-bold text-text-primary">
-                Algorithm Visualizer
+                Bayan Flow
               </h3>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
               An interactive, educational web application for visualizing
-              sorting/pathfinding algorithms in real-time.
+              sorting/pathfinding algorithms with clarity. Bayan (بيان) means
+              clarity in Arabic.
             </p>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">

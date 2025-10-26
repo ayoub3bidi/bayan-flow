@@ -1,6 +1,6 @@
 # Architecture Overview
 
-This document provides an in-depth explanation of the Algorithm Visualizer architecture, design patterns, and implementation details.
+This document provides an in-depth explanation of the Bayan Flow architecture, design patterns, and implementation details.
 
 ## Table of Contents
 
@@ -391,7 +391,7 @@ src/
 
 ## Conclusion
 
-The Algorithm Visualizer is built with:
+The Bayan Flow is built with:
 - **Modularity**: Easy to add new algorithms
 - **Maintainability**: Clean separation of concerns
 - **Testability**: Comprehensive test coverage

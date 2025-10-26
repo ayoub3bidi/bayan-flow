@@ -1,8 +1,9 @@
-# Algorithm Visualizer
+# Bayan Flow
 
 <p align="center">
-    <img src="./logo.png" alt="Algorithm Visualizer Logo" width="80"/> <br/>
-    <strong>An interactive, educational web application for visualizing sorting and pathfinding algorithms in real-time</strong>
+    <img src="./logo.png" alt="Bayan Flow Logo" width="120"/> <br/>
+    <strong>Learn algorithms with clarity through interactive, real-time visualizations</strong><br/>
+    <em>Bayan (بيان) means clarity in Arabic</em>
 </p>
 
 <p align="center">
@@ -62,8 +63,8 @@ npm install -g pnpm
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/ayoub3bidi/algorithm-visualizer.git
-cd algorithm-visualizer
+git clone https://github.com/ayoub3bidi/bayan-flow.git
+cd bayan-flow
 ```
 
 2. Install dependencies:
@@ -130,7 +131,7 @@ pnpm test:coverage
 ## Project Structure
 
 ```
-algorithm-visualizer/
+bayan-flow/
 ├── public/                 # Static assets
 ├── src/
 │   ├── algorithms/        # Algorithm implementations

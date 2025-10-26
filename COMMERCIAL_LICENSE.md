@@ -2,7 +2,7 @@
 
 ## Overview
 
-Algorithm Visualizer is dual-licensed to provide flexibility for different use cases:
+Bayan Flow is dual-licensed to provide flexibility for different use cases:
 
 1. **Open Source License**: Mozilla Public License 2.0 (MPL-2.0) - Free for most uses
 2. **Commercial License**: Available for organizations requiring additional terms
@@ -17,7 +17,7 @@ Algorithm Visualizer is dual-licensed to provide flexibility for different use c
 - Using for internal business purposes
 - Embedding in commercial applications with source disclosure
 
-**The MPL-2.0 allows commercial use!** Most companies can use Algorithm Visualizer without a commercial license.
+**The MPL-2.0 allows commercial use!** Most companies can use Bayan Flow without a commercial license.
 
 ### ⚠️ You MIGHT Want a Commercial License If:
 
@@ -150,7 +150,7 @@ Ready to discuss a commercial license?
 ### Contact Information
 
 **Email**: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)  
-**Subject**: "Commercial License - Algorithm Visualizer"
+**Subject**: "Commercial License - Bayan Flow"
 
 **Please include:**
 - Company name and size
@@ -190,4 +190,4 @@ If you don't need a full commercial license but want to support the project and 
 
 **Questions?** Don't hesitate to reach out: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
 
-*Algorithm Visualizer is currently maintained by [Ayoub Abidi](https://github.com/ayoub3bidi)*
+*Bayan Flow is currently maintained by [Ayoub Abidi](https://github.com/ayoub3bidi)*

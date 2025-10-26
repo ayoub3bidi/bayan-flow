@@ -1,7 +1,7 @@
 {
-  "name": "Algorithm Visualizer",
-  "short_name": "AlgoViz",
-  "description": "Interactive educational tool for learning sorting and pathfinding algorithms",
+  "name": "Bayan Flow",
+  "short_name": "BayanFlow",
+  "description": "Bayan Flow: Interactive educational tool for learning sorting and pathfinding algorithms with clarity",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

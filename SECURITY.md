@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-We actively support the following versions of Algorithm Visualizer:
+We actively support the following versions of Bayan Flow:
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -10,7 +10,7 @@ We actively support the following versions of Algorithm Visualizer:
 
 ## Reporting a Vulnerability
 
-We take the security of Algorithm Visualizer seriously. If you discover a security vulnerability, please follow these steps:
+We take the security of Bayan Flow seriously. If you discover a security vulnerability, please follow these steps:
 
 ### How to Report
 
@@ -41,7 +41,7 @@ We follow responsible disclosure practices:
 
 ### Recognition
 
-We appreciate security researchers who help keep Algorithm Visualizer safe. With your permission, we will:
+We appreciate security researchers who help keep Bayan Flow safe. With your permission, we will:
 
 - Acknowledge your contribution in our security advisories
 - Include you in our hall of fame (if you wish)
@@ -65,7 +65,7 @@ We appreciate security researchers who help keep Algorithm Visualizer safe. With
 
 ## Security Features
 
-Algorithm Visualizer implements several security measures:
+Bayan Flow implements several security measures:
 
 - **Client-side only**: No server-side data processing or storage
 - **No external API calls**: All algorithms run locally in the browser
@@ -83,6 +83,6 @@ Algorithm Visualizer implements several security measures:
 
 For security-related questions or concerns, please contact:
 - Email: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
-- Subject line: "Algorithm Visualizer Security"
+- Subject line: "Bayan Flow Security"
 
-Thank you for helping keep Algorithm Visualizer secure!
+Thank you for helping keep Bayan Flow secure!

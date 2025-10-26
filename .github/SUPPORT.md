@@ -1,6 +1,6 @@
 # Getting Support
 
-Thank you for using Algorithm Visualizer! If you need help or have questions, here are the best ways to get support:
+Thank you for using Bayan Flow! If you need help or have questions, here are the best ways to get support:
 
 ## 📚 Documentation
 
@@ -23,7 +23,7 @@ If you've found a bug, please:
    - Browser and OS information
    - Screenshots or error messages
 
-[Report a Bug →](https://github.com/ayoub3bidi/algorithm-visualizer/issues/new?assignees=&labels=bug&template=bug_report.yml)
+[Report a Bug →](https://github.com/ayoub3bidi/bayan-flow/issues/new?assignees=&labels=bug&template=bug_report.yml)
 
 ## 💡 Feature Requests
 
@@ -33,7 +33,7 @@ Have an idea for a new feature?
 2. **Use the feature request template**
 3. **Explain the use case** and why it would be valuable
 
-[Request a Feature →](https://github.com/ayoub3bidi/algorithm-visualizer/issues/new?assignees=&labels=enhancement&template=feature_request.yml)
+[Request a Feature →](https://github.com/ayoub3bidi/bayan-flow/issues/new?assignees=&labels=enhancement&template=feature_request.yml)
 
 ## 🔍 Algorithm Requests
 
@@ -43,21 +43,21 @@ Want to see a specific algorithm visualized?
 2. **Provide algorithm details** including complexity and use cases
 3. **Include reference materials** if available
 
-[Request an Algorithm →](https://github.com/ayoub3bidi/algorithm-visualizer/issues/new?assignees=&labels=algorithm-request&template=algorithm_request.yml)
+[Request an Algorithm →](https://github.com/ayoub3bidi/bayan-flow/issues/new?assignees=&labels=algorithm-request&template=algorithm_request.yml)
 
 ## ❓ Questions and Discussions
 
 For general questions, discussions, or help:
 
-- **[GitHub Discussions](https://github.com/ayoub3bidi/algorithm-visualizer/discussions)** - Best for open-ended questions and community discussions
-- **[Q&A Template](https://github.com/ayoub3bidi/algorithm-visualizer/issues/new?assignees=&labels=question&template=question.yml)** - For specific technical questions
+- **[GitHub Discussions](https://github.com/ayoub3bidi/bayan-flow/discussions)** - Best for open-ended questions and community discussions
+- **[Q&A Template](https://github.com/ayoub3bidi/bayan-flow/issues/new?assignees=&labels=question&template=question.yml)** - For specific technical questions
 
 ## 📧 Direct Contact
 
 For sensitive issues or private inquiries:
 
 - **Email**: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
-- **Subject**: Include "Algorithm Visualizer" in the subject line
+- **Subject**: Include "Bayan Flow" in the subject line
 
 ## 🚀 Contributing
 
@@ -104,7 +104,7 @@ When seeking support, please:
 For security-related issues, please **do not** create public issues. Instead:
 
 - **Email**: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
-- **Subject**: "Algorithm Visualizer Security"
+- **Subject**: "Bayan Flow Security"
 - **Follow our [Security Policy](../SECURITY.md)**
 
 ## 📈 Project Status
@@ -115,4 +115,4 @@ For security-related issues, please **do not** create public issues. Instead:
 
 ---
 
-Thank you for being part of the Algorithm Visualizer community! 🎉
+Thank you for being part of the Bayan Flow community! 🎉

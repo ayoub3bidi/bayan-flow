@@ -1,6 +1,6 @@
 {
-  "name": "algorithm-visualizer",
-  "description": "Interactive algorithm visualizer with step-by-step animations for sorting and pathfinding algorithms",
+  "name": "bayan-flow",
+  "description": "Bayan Flow - Interactive algorithm visualizer with step-by-step animations for sorting and pathfinding algorithms. Bayan (بيان) means clarity in Arabic.",
   "keywords": [
     "algorithms",
     "visualization",
@@ -21,12 +21,12 @@
   "license": "MPL-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ayoub3bidi/algorithm-visualizer"
+    "url": "https://github.com/ayoub3bidi/bayan-flow"
   },
   "bugs": {
-    "url": "https://github.com/ayoub3bidi/algorithm-visualizer/issues"
+    "url": "https://github.com/ayoub3bidi/bayan-flow/issues"
   },
-  "homepage": "https://github.com/ayoub3bidi/algorithm-visualizer#readme",
+  "homepage": "https://bayanflow.netlify.app",
   "private": true,
   "version": "0.0.1",
   "type": "module",
