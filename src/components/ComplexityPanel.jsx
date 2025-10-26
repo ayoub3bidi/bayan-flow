@@ -64,10 +64,11 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
 
   const graphData = generateGraphData();
 
-  // SVG dimensions - optimized for space
-  const width = 650;
-  const height = 350;
-  const margin = { top: 30, right: 30, bottom: 50, left: 70 };
+  // SVG dimensions - responsive for mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  const width = isMobile ? 320 : 650;
+  const height = isMobile ? 280 : 350;
+  const margin = { top: 30, right: 50, bottom: 60, left: 60 };
   const chartWidth = width - margin.left - margin.right;
   const chartHeight = height - margin.top - margin.bottom;
 
@@ -193,7 +194,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                 ref={svgRef}
                 width={width}
                 height={height}
-                className="border border-gray-200 rounded bg-bg min-w-[500px]"
+                className="border border-gray-200 rounded bg-bg w-full"
               >
                 <g transform={`translate(${margin.left}, ${margin.top})`}>
                   <defs>
