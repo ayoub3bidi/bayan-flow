@@ -87,3 +87,5 @@ if __name__ == "__main__":
     
     no_path = bfs(blocked_grid, (0, 1), (2, 1))
     print(f"\nBlocked grid result: {no_path}")
+
+

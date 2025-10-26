@@ -19,9 +19,11 @@ function GridCell({ state, row, col, gridSize }) {
   const color = GRID_STATE_COLORS[state] || GRID_STATE_COLORS.default;
 
   const getCellSize = () => {
-    if (gridSize <= 15) return 'w-6 h-6';
-    if (gridSize <= 25) return 'w-4 h-4';
-    return 'w-3 h-3';
+    // Responsive sizing based on both grid size and screen width
+    // Mobile first: smaller cells
+    if (gridSize <= 15) return 'w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6';
+    if (gridSize <= 25) return 'w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4';
+    return 'w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3';
   };
 
   return (

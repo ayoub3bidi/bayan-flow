@@ -99,13 +99,13 @@ function SettingsPanel({
 
   return (
     <motion.div
-      className="bg-surface rounded-lg shadow-lg p-6 space-y-6"
+      className="bg-surface rounded-lg shadow-lg p-4 sm:p-6 space-y-4 sm:space-y-6"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.1 }}
     >
       <div>
-        <label className="block text-sm font-semibold text-text-primary mb-3">
+        <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
           Algorithm Type
         </label>
         <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
@@ -114,28 +114,28 @@ function SettingsPanel({
               !isPlaying && onAlgorithmTypeChange(ALGORITHM_TYPES.SORTING)
             }
             disabled={isPlaying}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
               algorithmType === ALGORITHM_TYPES.SORTING
                 ? 'bg-theme-primary-consistent text-white shadow-md'
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <BarChart3 size={16} />
-            Sorting
+            <span className="hidden sm:inline">Sorting</span>
           </button>
           <button
             onClick={() =>
               !isPlaying && onAlgorithmTypeChange(ALGORITHM_TYPES.PATHFINDING)
             }
             disabled={isPlaying}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
               algorithmType === ALGORITHM_TYPES.PATHFINDING
                 ? 'bg-theme-primary-consistent text-white shadow-md'
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Grid3x3 size={16} />
-            Pathfinding
+            <span className="hidden sm:inline">Pathfinding</span>
           </button>
         </div>
       </div>
@@ -147,7 +147,7 @@ function SettingsPanel({
         <button
           onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
           disabled={isPlaying}
-          className="w-full px-4 py-3 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)]"
+          className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)] touch-manipulation"
         >
           <div className="flex flex-col">
             <span className="text-text-primary font-medium">
@@ -216,7 +216,7 @@ function SettingsPanel({
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-text-primary mb-3">
+        <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
           Control Mode
         </label>
         <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
@@ -225,28 +225,28 @@ function SettingsPanel({
               !isPlaying && onModeChange(VISUALIZATION_MODES.AUTOPLAY)
             }
             disabled={isPlaying}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
               mode === VISUALIZATION_MODES.AUTOPLAY
                 ? 'bg-theme-primary-consistent text-white shadow-md'
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Play size={16} />
-            Autoplay
+            <span className="hidden sm:inline">Autoplay</span>
           </button>
           <button
             onClick={() =>
               !isPlaying && onModeChange(VISUALIZATION_MODES.MANUAL)
             }
             disabled={isPlaying}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed ${
+            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
               mode === VISUALIZATION_MODES.MANUAL
                 ? 'bg-theme-primary-consistent text-white shadow-md'
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Hand size={16} />
-            Manual
+            <span className="hidden sm:inline">Manual</span>
           </button>
         </div>
         <p className="text-xs text-text-secondary mt-2">
@@ -316,7 +316,7 @@ function SettingsPanel({
                 key={option.value}
                 onClick={() => !isPlaying && onGridSizeChange(option.value)}
                 disabled={isPlaying}
-                className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed ${
+                className={`flex-1 px-3 py-2 min-h-[44px] text-xs font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed touch-manipulation ${
                   gridSize === option.value
                     ? 'bg-theme-primary-consistent text-white shadow-md'
                     : 'bg-surface-elevated text-text-primary hover:bg-border cursor-pointer'

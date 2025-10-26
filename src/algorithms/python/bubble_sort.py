@@ -51,3 +51,5 @@ if __name__ == "__main__":
     print(f"Single element: {bubble_sort([42])}")
     print(f"Already sorted: {bubble_sort([1, 2, 3, 4, 5])}")
     print(f"Reverse sorted: {bubble_sort([5, 4, 3, 2, 1])}")
+
+

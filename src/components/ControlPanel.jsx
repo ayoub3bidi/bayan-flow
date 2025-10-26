@@ -49,24 +49,26 @@ function ControlPanel({
   algorithmType,
 }) {
   const buttonBaseClasses =
-    'p-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100';
+    'p-3 min-w-[44px] min-h-[44px] rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation';
 
   return (
     <motion.div
-      className="bg-surface rounded-lg shadow-lg p-4"
+      className="bg-surface rounded-lg shadow-lg p-3 sm:p-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
       <div className="flex items-center justify-center gap-2 flex-wrap">
+        {/* Step controls and play/pause/reset container */}
         {/* Step Backward - Always visible */}
         <button
           onClick={onStepBackward}
           disabled={isPlaying || currentStep === 0}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Step Backward"
+          aria-label="Step Backward"
         >
-          <SkipBack size={20} />
+          <SkipBack size={20} aria-hidden="true" />
         </button>
 
         {/* Play/Pause Button - Different behavior based on mode */}
@@ -76,8 +78,9 @@ function ControlPanel({
               onClick={onPause}
               className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
               title="Pause"
+              aria-label="Pause"
             >
-              <Pause size={20} />
+              <Pause size={20} aria-hidden="true" />
             </button>
           ) : (
             <button
@@ -85,8 +88,9 @@ function ControlPanel({
               disabled={isComplete}
               className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
               title="Play"
+              aria-label="Play"
             >
-              <Play size={20} />
+              <Play size={20} aria-hidden="true" />
             </button>
           ))}
 
@@ -96,8 +100,9 @@ function ControlPanel({
           disabled={isPlaying}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Reset"
+          aria-label="Reset"
         >
-          <RotateCcw size={20} />
+          <RotateCcw size={20} aria-hidden="true" />
         </button>
 
         {/* Step Forward - Only visible in manual mode */}
@@ -107,8 +112,9 @@ function ControlPanel({
             disabled={isPlaying || isComplete}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title="Step Forward"
+            aria-label="Step Forward"
           >
-            <SkipForward size={20} />
+            <SkipForward size={20} aria-hidden="true" />
           </button>
         )}
 
@@ -119,8 +125,9 @@ function ControlPanel({
             disabled={isPlaying}
             className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
             title="Random Start & End Points"
+            aria-label="Random Start & End Points"
           >
-            <Shuffle size={20} />
+            <Shuffle size={20} aria-hidden="true" />
           </button>
         )}
       </div>

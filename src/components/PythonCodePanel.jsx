@@ -132,8 +132,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
           <>
             {/* Backdrop */}
             <motion.div
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
-              style={{ top: '56px' }} // Start below header (header height is 14 * 4 = 56px)
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[55]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -144,12 +143,8 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
             <motion.div
               ref={panelRef}
               className={`
-                fixed z-40 bg-surface shadow-xl
-                ${
-                  isMobile
-                    ? 'inset-x-0 bottom-0 rounded-t-lg max-h-[90vh]'
-                    : 'right-0 w-full max-w-2xl h-full'
-                }
+                fixed z-[60] bg-surface shadow-xl
+                ${isMobile ? 'inset-0' : 'right-0 w-full max-w-2xl h-full'}
               `}
               style={!isMobile ? { top: '56px' } : {}}
               variants={isMobile ? mobileVariants : panelVariants}
@@ -160,10 +155,15 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
             >
               <div className="flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-center justify-end p-4 border-b border-gray-200">
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                  {isMobile && (
+                    <h2 className="text-lg font-semibold text-text-primary">
+                      Python Code
+                    </h2>
+                  )}
                   <button
                     onClick={onClose}
-                    className="p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors"
+                    className={`p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors ${!isMobile ? 'ml-auto' : ''}`}
                     aria-label="Close panel"
                   >
                     <X size={20} />
@@ -196,8 +196,8 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
-            style={{ top: '56px' }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[55]"
+            style={!isMobile ? { top: '56px' } : {}}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -208,12 +208,8 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
           <motion.div
             ref={panelRef}
             className={`
-              fixed z-40 bg-surface shadow-xl
-              ${
-                isMobile
-                  ? 'inset-x-0 bottom-0 rounded-t-lg max-h-[90vh]'
-                  : 'right-0 w-full max-w-2xl h-full'
-              }
+              fixed z-[60] bg-surface shadow-xl
+              ${isMobile ? 'inset-0' : 'right-0 w-full max-w-2xl h-full'}
             `}
             style={!isMobile ? { top: '56px' } : {}}
             variants={isMobile ? mobileVariants : panelVariants}
@@ -222,7 +218,23 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
             exit="exit"
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           >
-            <div className="flex flex-col h-full pb-15">
+            <div className="flex flex-col h-full">
+              {/* Header - show on mobile */}
+              {isMobile && (
+                <div className="flex items-center justify-between p-4 border-b border-gray-200 shrink-0">
+                  <h2 className="text-lg font-semibold text-text-primary">
+                    {displayName}
+                  </h2>
+                  <button
+                    onClick={onClose}
+                    className="p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors"
+                    aria-label="Close panel"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              )}
+
               {/* Code Editor */}
               <div className="flex-1 overflow-hidden">
                 <Editor
@@ -236,9 +248,9 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                   }}
                   options={{
                     readOnly: true,
-                    minimap: { enabled: false },
+                    minimap: { enabled: !isMobile },
                     scrollBeyondLastLine: false,
-                    fontSize: 14,
+                    fontSize: isMobile ? 12 : 14,
                     lineNumbers: 'on',
                     folding: true,
                     wordWrap: 'on',
