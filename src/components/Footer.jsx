@@ -6,15 +6,37 @@
 
 import { motion } from 'framer-motion';
 import { FileText, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 function Footer() {
+  const [version, setVersion] = useState('0.0.0');
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
   const repoName = 'bayan-flow';
-  const version = '0.0.0';
   const authorName = 'Ayoub Abidi';
   const authorGithub = 'ayoub3bidi';
   const bmcUsername = 'ayoub3bidi';
+
+  useEffect(() => {
+    const fetchLatestVersion = async () => {
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch release data');
+        }
+        const data = await response.json();
+        const versionTag = data.tag_name.replace(/^v/, '');
+        setVersion(versionTag);
+      } catch (error) {
+        console.error('Failed to fetch latest version:', error);
+      }
+    };
+
+    fetchLatestVersion();
+  }, [repoOwner, repoName]);
+
   const links = [
     {
       label: 'Documentation',
@@ -98,8 +120,9 @@ function Footer() {
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
               An interactive, educational web application for visualizing
-              sorting/pathfinding algorithms with clarity. Bayan (بيان) means
-              clarity in Arabic.
+              sorting/pathfinding algorithms with clarity.
+              <br />
+              Bayan (بيان) means clarity in Arabic.
             </p>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
