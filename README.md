@@ -10,8 +10,10 @@
   <img src="https://img.shields.io/badge/React-19.1-blue" alt="React" />
   <img src="https://img.shields.io/badge/Vite-7.1-purple" alt="Vite" />
   <img src="https://img.shields.io/badge/Tailwind-4.1-cyan" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/license-MPL--2.0-orange" alt="License" />
+  <img src="https://img.shields.io/badge/license-Elastic--2.0-blue" alt="License" />
 </p>
+
+> **License**: Elastic License 2.0 OR Commercial — see [LICENSE](./LICENSE) and [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md)
 
 ## Features
 
@@ -427,19 +429,22 @@ pnpm test
 
 This project is dual-licensed:
 
-### Open Source License
-Licensed under the [Mozilla Public License 2.0 (MPL-2.0)](./LICENSE).
+### Elastic License 2.0
+Licensed under the [Elastic License 2.0](./LICENSE).
 
 - ✅ Free to use, modify, and distribute
-- ✅ Usable in commercial projects
-- ✅ Modifications to MPL-licensed files must remain under MPL-2.0
-- ✅ Can be combined with proprietary code in larger works
+- ✅ Suitable for educational and development use
+- ❌ Cannot be provided as a hosted/managed service
+- ✅ Can be used internally within organizations
 
 ### Commercial License
-For proprietary use without source disclosure, liability coverage, or custom terms, contact:
+For organizations requiring rights to host as a paid service, white-labeling, custom terms, or indemnity, contact:
 **[contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)**
 
 See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) for more information.
+
+### Trademark
+The "Bayan Flow" name and logo are trademarks. See [TRADEMARK.md](./TRADEMARK.md) for usage guidelines.
 
 ---
 

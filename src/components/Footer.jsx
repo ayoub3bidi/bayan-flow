@@ -1,9 +1,7 @@
 /**
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  * Copyright (c) 2025 Ayoub Abidi
+ * Licensed under Elastic License 2.0 OR Commercial
+ * See LICENSE for details.
  */
 
 import { motion } from 'framer-motion';
@@ -105,7 +103,7 @@ function Footer() {
             </p>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
-                MPL-2.0 License
+                Elastic-2.0 License
               </span>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                 v{version}
