@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "schedule": ["before 3am on Monday"],
+  "labels": ["dependencies"],
+  "automerge": false,
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "groupName": "testing libraries",
+      "matchPackagePatterns": ["^@testing-library/", "^@vitest/", "^vitest$"],
+      "schedule": ["before 3am on Monday"]
+    },
+    {
+      "groupName": "eslint packages",
+      "matchPackagePatterns": ["^eslint", "^@eslint/"],
+      "schedule": ["before 3am on Monday"]
+    },
+    {
+      "groupName": "React ecosystem",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "schedule": ["before 3am on Monday"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true
+  }
+}

@@ -1,0 +1,42 @@
+# Documentation changes
+documentation:
+  - changed-files:
+    - any-glob-to-any-file: ['docs/**/*', '**/*.md', 'README.md', 'CONTRIBUTING.md']
+
+# Algorithm implementations
+algorithm:
+  - changed-files:
+    - any-glob-to-any-file: ['src/algorithms/**/*']
+
+# UI/Style changes
+style:
+  - changed-files:
+    - any-glob-to-any-file: 
+      - 'src/components/**/*'
+      - 'src/**/*.css'
+      - 'tailwind.config.js'
+
+# Tests
+tests:
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.test.js', '**/*.test.jsx', 'src/test/**/*']
+
+# CI/CD
+ci:
+  - changed-files:
+    - any-glob-to-any-file: ['.github/**/*', 'netlify.toml', '**/*.yml', '**/*.yaml']
+
+# Dependencies
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file: ['package.json', 'pnpm-lock.yaml']
+
+# Configuration
+config:
+  - changed-files:
+    - any-glob-to-any-file: 
+      - 'vite.config.js'
+      - 'vitest.config.js'
+      - 'eslint.config.js'
+      - '.prettierrc'
+      - 'postcss.config.js'
