@@ -28,7 +28,7 @@
   },
   "homepage": "https://bayanflow.netlify.app",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "engines": {
     "node": ">=18.0.0",

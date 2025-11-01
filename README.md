@@ -40,12 +40,10 @@
   - Choose between Manual (default) and Autoplay control modes
   - Adjust animation speed (Slow, Medium, Fast, Very Fast)
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and performance graphs
-- **Educational Content**: Real-world use cases and detailed algorithm descriptions
-- **Python Code Examples**: View, copy, and download Python implementations (sorting algorithms)
+- **Python Code Examples**: View Python implementations
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Smooth Animations**: Powered by Framer Motion for fluid transitions
 - **Real-time Description**: Step-by-step explanation of algorithm operations
-- **Accessibility**: Full keyboard navigation and screen reader support
 
 ## Installation
 

@@ -14,7 +14,6 @@ function Footer() {
   const repoOwner = 'ayoub3bidi';
   const repoName = 'bayan-flow';
   const authorName = 'Ayoub Abidi';
-  const authorGithub = 'ayoub3bidi';
   const bmcUsername = 'ayoub3bidi';
 
   useEffect(() => {
@@ -179,9 +178,7 @@ function Footer() {
             <p className="text-xs text-text-secondary text-center">
               © {currentYear}{' '}
               <motion.button
-                onClick={() =>
-                  handleLinkClick(`https://github.com/${authorGithub}`)
-                }
+                onClick={() => handleLinkClick('https://ayoub3bidi.me')}
                 className="font-semibold text-text-primary hover:text-[#3b82f6] transition-colors underline decoration-dotted underline-offset-2"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
