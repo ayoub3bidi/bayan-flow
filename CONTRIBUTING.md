@@ -3,7 +3,7 @@
 Thank you for your interest in contributing to Bayan Flow! This document provides guidelines and information for contributors.
 
 > Notes:
-> - Create a PR targeting `develop` not `main`.
+> - Create a PR that **ALWAYS** targets `develop` not `main`.
 > - All PRs must pass CI (lint, tests, build) before merge.
 
 ## Table of Contents

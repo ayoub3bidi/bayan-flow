@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import ThemeToggle from './ThemeToggle';
+import { GitBranch } from 'lucide-react';
 
 function Header() {
   const [repoData, setRepoData] = useState(null);
@@ -70,84 +71,90 @@ function Header() {
     >
       {/* Glass morphism background */}
       <div className="absolute inset-0 bg-[var(--color-glass-bg)] backdrop-blur-lg border-b border-[var(--color-glass-border)] shadow-lg" />
-
       <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <nav
           className="flex items-center justify-between h-14 gap-2 sm:gap-4"
           role="navigation"
           aria-label="Main navigation"
         >
-          <motion.div
-            className="flex items-center gap-2 sm:gap-2.5"
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 300 }}
-          >
-            <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                className="w-5 h-5 sm:w-6 sm:h-6"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                {/* Bayan Flow logo - representing clarity through flowing waves */}
-                <path
-                  d="M3 7C3 7 6 4 12 4C18 4 21 7 21 7"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeOpacity="0.95"
-                />
-                <path
-                  d="M3 12C3 12 6 9 12 9C18 9 21 12 21 12"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeOpacity="0.75"
-                />
-                <path
-                  d="M3 17C3 17 6 14 12 14C18 14 21 17 21 17"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeOpacity="0.55"
-                />
-                {/* Clarity dot */}
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="1.5"
-                  fill="white"
-                  fillOpacity="0.9"
-                />
-              </svg>
-            </div>
-            <div className="flex flex-col">
-              <h1 className="text-sm sm:text-base md:text-lg font-bold text-text-primary tracking-tight leading-none">
-                Bayan Flow
-              </h1>
-              <p className="text-[10px] text-text-secondary hidden sm:block leading-none mt-0.5">
-                Clarity in Algorithms
-              </p>
-            </div>
-          </motion.div>
-
           <div className="flex items-center gap-2 sm:gap-3">
+            <motion.div
+              className="flex items-center gap-2 sm:gap-2.5"
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="w-5 h-5 sm:w-6 sm:h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  {/* Bayan Flow logo - representing clarity through flowing waves */}
+                  <path
+                    d="M3 7C3 7 6 4 12 4C18 4 21 7 21 7"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeOpacity="0.95"
+                  />
+                  <path
+                    d="M3 12C3 12 6 9 12 9C18 9 21 12 21 12"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeOpacity="0.75"
+                  />
+                  <path
+                    d="M3 17C3 17 6 14 12 14C18 14 21 17 21 17"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeOpacity="0.55"
+                  />
+                  {/* Clarity dot */}
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="1.5"
+                    fill="white"
+                    fillOpacity="0.9"
+                  />
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-sm sm:text-base md:text-lg font-bold text-text-primary tracking-tight leading-none">
+                  Bayan Flow
+                </h1>
+                <p className="text-[10px] text-text-secondary hidden sm:block leading-none mt-0.5">
+                  Clarity in Algorithms
+                </p>
+              </div>
+            </motion.div>
+
             {isDevBranch && (
               <a
                 href={devSiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-medium border border-amber-200 shadow-sm hover:shadow-md transition"
+                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 text-green-900 text-xs font-medium border border-green-200 shadow-sm hover:shadow-md transition-all animate-pulse"
                 aria-label={`Dev site — branch ${branchName}`}
                 title={`Dev preview — branch: ${branchName}`}
               >
-                <span className="font-mono tabular-nums text-xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <GitBranch className="w-3 h-3" />
+                <span className="font-mono tabular-nums text-xs hidden sm:inline">
                   {branchName}
                 </span>
               </a>
             )}
+          </div>
 
+          <div className="flex items-center gap-2 sm:gap-3">
             {loading ? (
               <div className="h-9 w-16 sm:w-[170px] bg-interactive-bg backdrop-blur-md rounded-md animate-pulse" />
             ) : (
