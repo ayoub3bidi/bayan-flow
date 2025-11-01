@@ -15,6 +15,11 @@ function Header() {
   const repoOwner = 'ayoub3bidi';
   const repoName = 'bayan-flow';
   const { theme, toggleTheme } = useTheme();
+  const branchName = (import.meta.env.VITE_GIT_BRANCH ?? '').trim();
+  const isDevBranch =
+    !!branchName && !['main', 'master', 'production'].includes(branchName);
+  const devSiteUrl =
+    import.meta.env.VITE_DEV_SITE_URL || 'https://dev-bayanflow.netlify.app';
 
   useEffect(() => {
     const fetchGitHubData = async () => {
@@ -128,6 +133,21 @@ function Header() {
           </motion.div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            {isDevBranch && (
+              <a
+                href={devSiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-medium border border-amber-200 shadow-sm hover:shadow-md transition"
+                aria-label={`Dev site — branch ${branchName}`}
+                title={`Dev preview — branch: ${branchName}`}
+              >
+                <span className="font-mono tabular-nums text-xs">
+                  {branchName}
+                </span>
+              </a>
+            )}
+
             {loading ? (
               <div className="h-9 w-16 sm:w-[170px] bg-interactive-bg backdrop-blur-md rounded-md animate-pulse" />
             ) : (

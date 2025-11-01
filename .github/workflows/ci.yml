@@ -136,6 +136,9 @@ jobs:
 
       - name: Build project
         run: pnpm build
+        env:
+          VITE_GIT_BRANCH: ${{ github.ref_name }}
+          VITE_DEV_SITE_URL: 'https://dev-bayanflow.netlify.app'
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -176,28 +179,34 @@ jobs:
 
       - name: Build project
         run: pnpm build
+        env:
+          # embed branch name into Vite build so the frontend can read it at runtime
+          VITE_GIT_BRANCH: ${{ github.ref_name }}
+          # optional: clickable dev site URL to use in the badge
+          VITE_DEV_SITE_URL: 'https://dev-bayanflow.netlify.app'
 
       - name: Deploy to Netlify
+        id: netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: './dist'
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions"
+          deploy-message: "Deploy from GitHub Actions (${{ github.ref_name }})"
           enable-pull-request-comment: true
           enable-commit-comment: true
           overwrites-pull-request-comment: true
           github-deployment-environment: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/develop' && 'beta' || 'preview' }}
-          alias: ${{ github.ref == 'refs/heads/develop' && 'beta' || '' }}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 5
+          # Use the dev site ID when building from develop, otherwise production site ID
+          NETLIFY_SITE_ID: ${{ github.ref == 'refs/heads/develop' && secrets.NETLIFY_SITE_ID_DEV || secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 10
 
       - name: Output deployment URL
         if: always()
         run: |
-          echo "Deployment completed!"
+          echo "Netlify deploy URL: ${{ steps.netlify.outputs.deploy-url }}"
 
   # Job 5: All checks passed (optional but useful for branch protection)
   all-checks-pass:

@@ -15,6 +15,9 @@
 
 > **License**: Elastic License 2.0 OR Commercial — see [LICENSE](./LICENSE) and [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md)
 
+- **Production (main)**: `https://bayanflow.netlify.app` (permanent production site connected to the `main` branch)
+- **Dev (develop)**: `https://dev-bayanflow.netlify.app` (permanent dev site connected to the `develop` branch)
+
 ## Features
 
 ### Sorting Mode
