@@ -13,8 +13,27 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://bayanflow.netlify.app/" />
 
-    <!-- Umami Analytics -->
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="c096589e-f026-47e9-b458-aeb6850d5d5c"></script>
+    <!-- Umami Analytics - Dynamically loaded based on environment -->
+    <script>
+      (function() {
+        const hostname = window.location.hostname;
+        let websiteId;
+        if (hostname === 'dev-bayanflow.netlify.app' || hostname.includes('deploy-preview')) {
+          // Develop
+          websiteId = 'b21ffc5d-66c1-4bfc-9e54-e05dbbe26852';
+        } else if (hostname === 'bayanflow.netlify.app' || hostname === 'www.bayanflow.netlify.app') {
+          // main
+          websiteId = 'c096589e-f026-47e9-b458-aeb6850d5d5c';
+        }
+        if (websiteId) {
+          const script = document.createElement('script');
+          script.defer = true;
+          script.src = 'https://cloud.umami.is/script.js';
+          script.setAttribute('data-website-id', websiteId);
+          document.head.appendChild(script);
+        }
+      })();
+    </script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
