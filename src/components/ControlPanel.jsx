@@ -12,6 +12,8 @@ import {
   SkipBack,
   SkipForward,
   Shuffle,
+  Maximize,
+  Minimize,
 } from 'lucide-react';
 
 /**
@@ -31,6 +33,8 @@ import {
  * @param {number} totalSteps - Total number of steps
  * @param {Function} onGenerateArray - Handler for generating new random start/end points
  * @param {string} algorithmType - Current algorithm type ('sorting' or 'pathfinding')
+ * @param {boolean} isFullScreen - Whether full-screen mode is active
+ * @param {Function} onToggleFullScreen - Handler for toggling full-screen mode
  */
 function ControlPanel({
   isPlaying,
@@ -45,6 +49,8 @@ function ControlPanel({
   totalSteps,
   onGenerateArray,
   algorithmType,
+  isFullScreen,
+  onToggleFullScreen,
 }) {
   const buttonBaseClasses =
     'p-3 min-w-[44px] min-h-[44px] rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation';
@@ -128,6 +134,20 @@ function ControlPanel({
             <Shuffle size={20} aria-hidden="true" />
           </button>
         )}
+
+        {/* Full Screen Toggle */}
+        <button
+          onClick={onToggleFullScreen}
+          className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white`}
+          title={isFullScreen ? 'Exit Full Screen (Esc)' : 'Go Full Screen (F)'}
+          aria-label={isFullScreen ? 'Exit Full Screen' : 'Go Full Screen'}
+        >
+          {isFullScreen ? (
+            <Minimize size={20} aria-hidden="true" />
+          ) : (
+            <Maximize size={20} aria-hidden="true" />
+          )}
+        </button>
       </div>
 
       {/* Progress Bar */}
