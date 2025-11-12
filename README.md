@@ -325,10 +325,7 @@ const closeComplexityPanel = () => setShowComplexityPanel(false);
 ```
 
 **Features:**
-- Interactive performance graph with hover tooltips
-- Keyboard navigation (arrow keys to move between data points)
-- Copy complexity analysis to clipboard
-- Expandable details with use cases and descriptions
+- Performance graph
 - Linear/logarithmic scale toggle for the graph
 
 ### Adding More Pathfinding Algorithms
