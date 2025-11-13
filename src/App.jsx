@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect, lazy, Suspense } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ArrayVisualizer from './components/ArrayVisualizer';
@@ -17,10 +18,12 @@ const PythonCodePanel = lazy(() => import('./components/PythonCodePanel'));
 const ComplexityPanel = lazy(() => import('./components/ComplexityPanel'));
 import { useSortingVisualization } from './hooks/useSortingVisualization';
 import { usePathfindingVisualization } from './hooks/usePathfindingVisualization';
+import { useFullScreen } from './hooks/useFullScreen';
 import { generateRandomArray } from './utils/arrayHelpers';
 import { createEmptyGrid } from './utils/gridHelpers';
 import { algorithms } from './algorithms';
 import { pathfindingAlgorithms } from './algorithms/pathfinding';
+import { soundManager } from './utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
   DEFAULT_GRID_SIZE,
@@ -43,6 +46,8 @@ function App() {
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
 
+  const { isFullScreen, toggleFullScreen } = useFullScreen();
+
   const sortingVisualization = useSortingVisualization(array, speed, mode);
   const pathfindingVisualization = usePathfindingVisualization(
     gridSize,
@@ -58,8 +63,10 @@ function App() {
     if (algorithmType === ALGORITHM_TYPES.SORTING) {
       const newArray = generateRandomArray(arraySize);
       setArray(newArray);
+      soundManager.playArrayGenerate();
     } else {
       pathfindingVisualization.generateNewGrid();
+      soundManager.playArrayGenerate();
     }
   };
   const handleAlgorithmChange = algorithmName => {
@@ -139,104 +146,180 @@ function App() {
       >
         Skip to main content
       </a>
-      <Header />
-      <main className="flex-1 pt-20 p-6" role="main" id="main-content">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Settings Panel */}
-            <aside
-              className="lg:col-span-1"
-              role="complementary"
-              aria-label="Algorithm settings"
-            >
-              <SettingsPanel
-                algorithmType={algorithmType}
-                onAlgorithmTypeChange={handleAlgorithmTypeChange}
-                selectedAlgorithm={
-                  algorithmType === ALGORITHM_TYPES.SORTING
-                    ? selectedAlgorithm
-                    : selectedPathfindingAlgorithm
-                }
-                onAlgorithmChange={handleAlgorithmChange}
-                speed={speed}
-                onSpeedChange={setSpeed}
-                arraySize={arraySize}
-                onArraySizeChange={handleArraySizeChange}
-                gridSize={gridSize}
-                onGridSizeChange={handleGridSizeChange}
-                isPlaying={visualization.isPlaying}
-                mode={mode}
-                onModeChange={setMode}
-              />
-            </aside>
 
-            {/* Visualization Area */}
-            <section
-              className="lg:col-span-3 space-y-6"
-              role="region"
-              aria-label="Algorithm visualization"
+      <AnimatePresence mode="wait">
+        {isFullScreen ? (
+          <motion.div
+            key="fullscreen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="w-screen h-screen bg-gray-900 flex flex-col p-4"
+            role="main"
+            id="main-content"
+          >
+            {/* Full Screen Visualizer */}
+            <div className="flex-1 mb-4">
+              {algorithmType === ALGORITHM_TYPES.SORTING ? (
+                <ArrayVisualizer
+                  array={sortingVisualization.array}
+                  states={sortingVisualization.states}
+                  description={sortingVisualization.description}
+                  isComplete={sortingVisualization.isComplete}
+                  algorithm={selectedAlgorithm}
+                  onStepForward={sortingVisualization.stepForward}
+                  onStepBackward={sortingVisualization.stepBackward}
+                  mode={mode}
+                />
+              ) : (
+                <GridVisualizer
+                  states={pathfindingVisualization.states}
+                  description={pathfindingVisualization.description}
+                  isComplete={pathfindingVisualization.isComplete}
+                  algorithm={selectedPathfindingAlgorithm}
+                  gridSize={gridSize}
+                  onStepForward={pathfindingVisualization.stepForward}
+                  onStepBackward={pathfindingVisualization.stepBackward}
+                  mode={mode}
+                />
+              )}
+            </div>
+
+            {/* Full Screen Control Panel */}
+            <ControlPanel
+              isPlaying={visualization.isPlaying}
+              isComplete={visualization.isComplete}
+              mode={mode}
+              onPlay={visualization.play}
+              onPause={visualization.pause}
+              onReset={visualization.reset}
+              onStepForward={visualization.stepForward}
+              onStepBackward={visualization.stepBackward}
+              currentStep={visualization.currentStep}
+              totalSteps={visualization.totalSteps}
+              onGenerateArray={handleGenerateArray}
+              algorithmType={algorithmType}
+              isFullScreen={isFullScreen}
+              onToggleFullScreen={toggleFullScreen}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="normal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col min-h-screen"
+          >
+            <Header />
+            <main
+              className="flex-1 pt-20 p-6 pb-32"
+              role="main"
+              id="main-content"
             >
-              {/* Visualizer */}
-              <div
-                className="h-[650px]"
-                role="img"
-                aria-label={`${algorithmType === ALGORITHM_TYPES.SORTING ? selectedAlgorithm : selectedPathfindingAlgorithm} algorithm visualization`}
-              >
-                {algorithmType === ALGORITHM_TYPES.SORTING ? (
-                  <ArrayVisualizer
-                    array={sortingVisualization.array}
-                    states={sortingVisualization.states}
-                    description={sortingVisualization.description}
-                    isComplete={sortingVisualization.isComplete}
-                    algorithm={selectedAlgorithm}
-                    onStepForward={sortingVisualization.stepForward}
-                    onStepBackward={sortingVisualization.stepBackward}
-                    mode={mode}
-                  />
-                ) : (
-                  <GridVisualizer
-                    states={pathfindingVisualization.states}
-                    description={pathfindingVisualization.description}
-                    isComplete={pathfindingVisualization.isComplete}
-                    algorithm={selectedPathfindingAlgorithm}
-                    gridSize={gridSize}
-                    onStepForward={pathfindingVisualization.stepForward}
-                    onStepBackward={pathfindingVisualization.stepBackward}
-                    mode={mode}
-                  />
-                )}
+              <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                  {/* Settings Panel */}
+                  <aside
+                    className="lg:col-span-1"
+                    role="complementary"
+                    aria-label="Algorithm settings"
+                  >
+                    <SettingsPanel
+                      algorithmType={algorithmType}
+                      onAlgorithmTypeChange={handleAlgorithmTypeChange}
+                      selectedAlgorithm={
+                        algorithmType === ALGORITHM_TYPES.SORTING
+                          ? selectedAlgorithm
+                          : selectedPathfindingAlgorithm
+                      }
+                      onAlgorithmChange={handleAlgorithmChange}
+                      speed={speed}
+                      onSpeedChange={setSpeed}
+                      arraySize={arraySize}
+                      onArraySizeChange={handleArraySizeChange}
+                      gridSize={gridSize}
+                      onGridSizeChange={handleGridSizeChange}
+                      isPlaying={visualization.isPlaying}
+                      mode={mode}
+                      onModeChange={setMode}
+                    />
+                  </aside>
+
+                  {/* Visualization Area */}
+                  <section
+                    className="lg:col-span-3 space-y-6"
+                    role="region"
+                    aria-label="Algorithm visualization"
+                  >
+                    {/* Visualizer */}
+                    <div
+                      className="h-[650px]"
+                      role="img"
+                      aria-label={`${algorithmType === ALGORITHM_TYPES.SORTING ? selectedAlgorithm : selectedPathfindingAlgorithm} algorithm visualization`}
+                    >
+                      {algorithmType === ALGORITHM_TYPES.SORTING ? (
+                        <ArrayVisualizer
+                          array={sortingVisualization.array}
+                          states={sortingVisualization.states}
+                          description={sortingVisualization.description}
+                          isComplete={sortingVisualization.isComplete}
+                          algorithm={selectedAlgorithm}
+                          onStepForward={sortingVisualization.stepForward}
+                          onStepBackward={sortingVisualization.stepBackward}
+                          mode={mode}
+                        />
+                      ) : (
+                        <GridVisualizer
+                          states={pathfindingVisualization.states}
+                          description={pathfindingVisualization.description}
+                          isComplete={pathfindingVisualization.isComplete}
+                          algorithm={selectedPathfindingAlgorithm}
+                          gridSize={gridSize}
+                          onStepForward={pathfindingVisualization.stepForward}
+                          onStepBackward={pathfindingVisualization.stepBackward}
+                          mode={mode}
+                        />
+                      )}
+                    </div>
+
+                    {/* Control Panel */}
+                    <ControlPanel
+                      isPlaying={visualization.isPlaying}
+                      isComplete={visualization.isComplete}
+                      mode={mode}
+                      onPlay={visualization.play}
+                      onPause={visualization.pause}
+                      onReset={visualization.reset}
+                      onStepForward={visualization.stepForward}
+                      onStepBackward={visualization.stepBackward}
+                      currentStep={visualization.currentStep}
+                      totalSteps={visualization.totalSteps}
+                      onGenerateArray={handleGenerateArray}
+                      algorithmType={algorithmType}
+                      isFullScreen={isFullScreen}
+                      onToggleFullScreen={toggleFullScreen}
+                    />
+                  </section>
+                </div>
               </div>
+            </main>
+            <Footer />
 
-              {/* Control Panel */}
-              <ControlPanel
-                isPlaying={visualization.isPlaying}
-                isComplete={visualization.isComplete}
-                mode={mode}
-                onPlay={visualization.play}
-                onPause={visualization.pause}
-                onReset={visualization.reset}
-                onStepForward={visualization.stepForward}
-                onStepBackward={visualization.stepBackward}
-                currentStep={visualization.currentStep}
-                totalSteps={visualization.totalSteps}
-                onGenerateArray={handleGenerateArray}
-                algorithmType={algorithmType}
+            {/* Floating Action Button - Only show when panel is closed */}
+            {!isPythonPanelOpen && (
+              <FloatingActionButton
+                onClick={() => setIsPythonPanelOpen(true)}
+                disabled={!selectedAlgorithm}
               />
-            </section>
-          </div>
-        </div>
-      </main>
-      <Footer />
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Floating Action Button - Only show when panel is closed */}
-      {!isPythonPanelOpen && (
-        <FloatingActionButton
-          onClick={() => setIsPythonPanelOpen(true)}
-          disabled={!selectedAlgorithm}
-        />
-      )}
-
-      {/* Python Code Panel */}
+      {/* Python Code Panel - Always available */}
       <Suspense
         fallback={
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

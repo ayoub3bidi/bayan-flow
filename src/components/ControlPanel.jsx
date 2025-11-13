@@ -12,7 +12,10 @@ import {
   SkipBack,
   SkipForward,
   Shuffle,
+  Maximize,
+  Minimize,
 } from 'lucide-react';
+import { soundManager } from '../utils/soundManager';
 
 /**
  * ControlPanel Component
@@ -31,6 +34,8 @@ import {
  * @param {number} totalSteps - Total number of steps
  * @param {Function} onGenerateArray - Handler for generating new random start/end points
  * @param {string} algorithmType - Current algorithm type ('sorting' or 'pathfinding')
+ * @param {boolean} isFullScreen - Whether full-screen mode is active
+ * @param {Function} onToggleFullScreen - Handler for toggling full-screen mode
  */
 function ControlPanel({
   isPlaying,
@@ -45,6 +50,8 @@ function ControlPanel({
   totalSteps,
   onGenerateArray,
   algorithmType,
+  isFullScreen,
+  onToggleFullScreen,
 }) {
   const buttonBaseClasses =
     'p-3 min-w-[44px] min-h-[44px] rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation';
@@ -60,7 +67,10 @@ function ControlPanel({
         {/* Step controls and play/pause/reset container */}
         {/* Step Backward - Always visible */}
         <button
-          onClick={onStepBackward}
+          onClick={() => {
+            soundManager.playUIClick();
+            onStepBackward();
+          }}
           disabled={isPlaying || currentStep === 0}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Step Backward"
@@ -73,7 +83,10 @@ function ControlPanel({
         {mode === 'autoplay' &&
           (isPlaying ? (
             <button
-              onClick={onPause}
+              onClick={() => {
+                soundManager.playUIClick();
+                onPause();
+              }}
               className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
               title="Pause"
               aria-label="Pause"
@@ -82,7 +95,10 @@ function ControlPanel({
             </button>
           ) : (
             <button
-              onClick={onPlay}
+              onClick={() => {
+                soundManager.playUIClick();
+                onPlay();
+              }}
               disabled={isComplete}
               className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
               title="Play"
@@ -94,7 +110,10 @@ function ControlPanel({
 
         {/* Reset Button */}
         <button
-          onClick={onReset}
+          onClick={() => {
+            soundManager.playUIClick();
+            onReset();
+          }}
           disabled={isPlaying}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Reset"
@@ -106,7 +125,10 @@ function ControlPanel({
         {/* Step Forward - Only visible in manual mode */}
         {mode === 'manual' && (
           <button
-            onClick={onStepForward}
+            onClick={() => {
+              soundManager.playUIClick();
+              onStepForward();
+            }}
             disabled={isPlaying || isComplete}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title="Step Forward"
@@ -119,7 +141,10 @@ function ControlPanel({
         {/* Random Start & End Points - Only visible in pathfinding mode */}
         {algorithmType === 'pathfinding' && (
           <button
-            onClick={onGenerateArray}
+            onClick={() => {
+              soundManager.playArrayGenerate();
+              onGenerateArray();
+            }}
             disabled={isPlaying}
             className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
             title="Random Start & End Points"
@@ -128,6 +153,20 @@ function ControlPanel({
             <Shuffle size={20} aria-hidden="true" />
           </button>
         )}
+
+        {/* Full Screen Toggle */}
+        <button
+          onClick={onToggleFullScreen}
+          className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white`}
+          title={isFullScreen ? 'Exit Full Screen (Esc)' : 'Go Full Screen (F)'}
+          aria-label={isFullScreen ? 'Exit Full Screen' : 'Go Full Screen'}
+        >
+          {isFullScreen ? (
+            <Minimize size={20} aria-hidden="true" />
+          ) : (
+            <Maximize size={20} aria-hidden="true" />
+          )}
+        </button>
       </div>
 
       {/* Progress Bar */}

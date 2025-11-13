@@ -13,6 +13,8 @@ import {
   Hand,
   Grid3x3,
   BarChart3,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import {
   ANIMATION_SPEEDS,
@@ -20,6 +22,7 @@ import {
   ALGORITHM_TYPES,
   GRID_SIZES,
 } from '../constants';
+import { soundManager } from '../utils/soundManager';
 
 function SettingsPanel({
   algorithmType,
@@ -37,6 +40,7 @@ function SettingsPanel({
   onModeChange,
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const dropdownRef = useRef(null);
 
   const sortingAlgorithms = [
@@ -93,6 +97,17 @@ function SettingsPanel({
   const handleAlgorithmSelect = value => {
     onAlgorithmChange(value);
     setIsDropdownOpen(false);
+  };
+
+  const handleSoundToggle = async () => {
+    if (isSoundEnabled) {
+      soundManager.disable();
+      setIsSoundEnabled(false);
+    } else {
+      await soundManager.enable();
+      setIsSoundEnabled(true);
+      soundManager.playUIClick();
+    }
   };
 
   return (
@@ -281,6 +296,24 @@ function SettingsPanel({
           <span>{speedOptions[0].label}</span>
           <span>{speedOptions[speedOptions.length - 1].label}</span>
         </div>
+      </div>
+
+      {/* Sound Toggle */}
+      <div>
+        <label className="block text-sm font-semibold text-text-primary mb-2">
+          Sound Effects
+        </label>
+        <button
+          onClick={handleSoundToggle}
+          className={`flex items-center justify-center gap-2 w-full px-4 py-3 min-h-[44px] text-sm font-medium rounded-lg transition-all duration-200 touch-manipulation ${
+            isSoundEnabled
+              ? 'bg-theme-primary-consistent text-white shadow-md'
+              : 'bg-surface-elevated text-text-primary hover:bg-border'
+          }`}
+        >
+          {isSoundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+          {isSoundEnabled ? 'Sound On' : 'Sound Off'}
+        </button>
       </div>
 
       {algorithmType === ALGORITHM_TYPES.SORTING ? (

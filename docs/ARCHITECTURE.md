@@ -9,9 +9,10 @@ This document provides an in-depth explanation of the Bayan Flow architecture, d
 3. [Data Flow](#data-flow)
 4. [Algorithm Implementation](#algorithm-implementation)
 5. [Animation System](#animation-system)
-6. [State Management](#state-management)
-7. [Testing Strategy](#testing-strategy)
-8. [Performance Optimizations](#performance-optimizations)
+6. [Audio System](#audio-system)
+7. [State Management](#state-management)
+8. [Testing Strategy](#testing-strategy)
+9. [Performance Optimizations](#performance-optimizations)
 
 ## System Architecture
 
@@ -219,6 +220,60 @@ for (let step of steps) {
   await delay(speed);  // Configurable delay
 }
 ```
+
+## Audio System
+
+### SoundManager Architecture
+
+The audio system uses **Tone.js** for Web Audio API abstraction and provides contextual sound feedback for algorithm operations.
+
+**Core Design:**
+```javascript
+class SoundManager {
+  constructor() {
+    this.isEnabled = false;
+    this.softSynth = new Tone.Synth({...});      // UI sounds
+    this.pluckSynth = new Tone.PluckSynth({...}); // Compare sounds
+    this.metallicSynth = new Tone.MetalSynth({...}); // Swap sounds
+    this.polySynth = new Tone.PolySynth({...});   // Chord sounds
+  }
+}
+```
+
+### Sound Mapping Strategy
+
+**Sorting Operations:**
+- **Compare**: Pluck synth with frequency mapped to element value (150-350Hz)
+- **Swap**: Metallic synth for distinct swap feedback
+- **Pivot**: Soft synth with lower frequency range (100-200Hz)
+- **Sorted**: Major chord (C-E-G) for completion celebration
+
+**Pathfinding Operations:**
+- **Node Visit**: Soft synth at 220Hz (A3 note)
+- **Path Found**: Extended chord (C3-E3-G3-C4) for success
+- **UI Interactions**: Brief G4 note for clicks
+
+### Integration Pattern
+
+**Hook Integration:**
+```javascript
+const executeStep = useCallback((step) => {
+  // Update visual state
+  setArray(step.array);
+  setStates(step.states);
+  
+  // Trigger contextual audio
+  if (step.states.includes(ELEMENT_STATES.SWAPPING)) {
+    soundManager.playSwap(step.array[swapIndex]);
+  }
+}, []);
+```
+
+**Benefits:**
+- **Non-blocking**: Audio failures don't affect visualization
+- **User-controlled**: Easy enable/disable toggle
+- **Performance**: Early returns when disabled
+- **Contextual**: Sounds match visual operations
 
 ## State Management
 
