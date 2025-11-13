@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ELEMENT_STATES, VISUALIZATION_MODES } from '../constants';
+import { soundManager } from '../utils/soundManager';
 
 export function useSortingVisualization(
   initialArray,
@@ -81,6 +82,39 @@ export function useSortingVisualization(
     return baseDelay;
   };
 
+  const executeStep = useCallback(step => {
+    setArray(step.array);
+    setStates(step.states);
+    setDescription(step.description);
+
+    // Play sounds based on step states
+    const hasComparing = step.states.includes(ELEMENT_STATES.COMPARING);
+    const hasSwapping = step.states.includes(ELEMENT_STATES.SWAPPING);
+    const hasPivot = step.states.includes(ELEMENT_STATES.PIVOT);
+    const hasSorted = step.states.includes(ELEMENT_STATES.SORTED);
+
+    if (hasSwapping) {
+      const swapIndex = step.states.indexOf(ELEMENT_STATES.SWAPPING);
+      soundManager.playSwap(step.array[swapIndex]);
+    } else if (hasPivot) {
+      const pivotIndex = step.states.indexOf(ELEMENT_STATES.PIVOT);
+      soundManager.playPivot(step.array[pivotIndex]);
+    } else if (hasComparing) {
+      const compareIndex = step.states.indexOf(ELEMENT_STATES.COMPARING);
+      soundManager.playCompare(step.array[compareIndex]);
+    }
+
+    if (
+      hasSorted &&
+      step.states.every(
+        state =>
+          state === ELEMENT_STATES.SORTED || state === ELEMENT_STATES.DEFAULT
+      )
+    ) {
+      soundManager.playSorted();
+    }
+  }, []);
+
   const play = useCallback(() => {
     if (stepsRef.current.length === 0 || isComplete) return;
 
@@ -88,9 +122,7 @@ export function useSortingVisualization(
       if (currentStep < stepsRef.current.length - 1) {
         const nextStep = currentStep + 1;
         const step = stepsRef.current[nextStep];
-        setArray(step.array);
-        setStates(step.states);
-        setDescription(step.description);
+        executeStep(step);
         setCurrentStep(nextStep);
 
         if (nextStep === stepsRef.current.length - 1) {
@@ -118,9 +150,7 @@ export function useSortingVisualization(
       }
 
       const step = stepsRef.current[stepIndex];
-      setArray(step.array);
-      setStates(step.states);
-      setDescription(step.description);
+      executeStep(step);
       setCurrentStep(stepIndex);
 
       if (stepIndex === stepsRef.current.length - 1) {
@@ -140,7 +170,7 @@ export function useSortingVisualization(
     };
 
     runAutoplay(currentStep);
-  }, [currentStep, speed, isComplete, mode, clearAutoplayTimeout]);
+  }, [currentStep, speed, isComplete, mode, clearAutoplayTimeout, executeStep]);
 
   const pause = useCallback(() => {
     animationRef.current = null;
@@ -166,16 +196,14 @@ export function useSortingVisualization(
     if (currentStep < stepsRef.current.length - 1) {
       const nextStep = currentStep + 1;
       const step = stepsRef.current[nextStep];
-      setArray(step.array);
-      setStates(step.states);
-      setDescription(step.description);
+      executeStep(step);
       setCurrentStep(nextStep);
 
       if (nextStep === stepsRef.current.length - 1) {
         setIsComplete(true);
       }
     }
-  }, [currentStep]);
+  }, [currentStep, executeStep]);
 
   const stepBackward = useCallback(() => {
     if (currentStep > 0) {

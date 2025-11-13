@@ -23,6 +23,7 @@ import { generateRandomArray } from './utils/arrayHelpers';
 import { createEmptyGrid } from './utils/gridHelpers';
 import { algorithms } from './algorithms';
 import { pathfindingAlgorithms } from './algorithms/pathfinding';
+import { soundManager } from './utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
   DEFAULT_GRID_SIZE,
@@ -62,8 +63,10 @@ function App() {
     if (algorithmType === ALGORITHM_TYPES.SORTING) {
       const newArray = generateRandomArray(arraySize);
       setArray(newArray);
+      soundManager.playArrayGenerate();
     } else {
       pathfindingVisualization.generateNewGrid();
+      soundManager.playArrayGenerate();
     }
   };
   const handleAlgorithmChange = algorithmName => {

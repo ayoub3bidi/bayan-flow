@@ -15,6 +15,7 @@ import {
   Maximize,
   Minimize,
 } from 'lucide-react';
+import { soundManager } from '../utils/soundManager';
 
 /**
  * ControlPanel Component
@@ -66,7 +67,10 @@ function ControlPanel({
         {/* Step controls and play/pause/reset container */}
         {/* Step Backward - Always visible */}
         <button
-          onClick={onStepBackward}
+          onClick={() => {
+            soundManager.playUIClick();
+            onStepBackward();
+          }}
           disabled={isPlaying || currentStep === 0}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Step Backward"
@@ -79,7 +83,10 @@ function ControlPanel({
         {mode === 'autoplay' &&
           (isPlaying ? (
             <button
-              onClick={onPause}
+              onClick={() => {
+                soundManager.playUIClick();
+                onPause();
+              }}
               className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
               title="Pause"
               aria-label="Pause"
@@ -88,7 +95,10 @@ function ControlPanel({
             </button>
           ) : (
             <button
-              onClick={onPlay}
+              onClick={() => {
+                soundManager.playUIClick();
+                onPlay();
+              }}
               disabled={isComplete}
               className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
               title="Play"
@@ -100,7 +110,10 @@ function ControlPanel({
 
         {/* Reset Button */}
         <button
-          onClick={onReset}
+          onClick={() => {
+            soundManager.playUIClick();
+            onReset();
+          }}
           disabled={isPlaying}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
           title="Reset"
@@ -112,7 +125,10 @@ function ControlPanel({
         {/* Step Forward - Only visible in manual mode */}
         {mode === 'manual' && (
           <button
-            onClick={onStepForward}
+            onClick={() => {
+              soundManager.playUIClick();
+              onStepForward();
+            }}
             disabled={isPlaying || isComplete}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title="Step Forward"
@@ -125,7 +141,10 @@ function ControlPanel({
         {/* Random Start & End Points - Only visible in pathfinding mode */}
         {algorithmType === 'pathfinding' && (
           <button
-            onClick={onGenerateArray}
+            onClick={() => {
+              soundManager.playArrayGenerate();
+              onGenerateArray();
+            }}
             disabled={isPlaying}
             className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
             title="Random Start & End Points"

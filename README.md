@@ -38,10 +38,15 @@
   - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
 - **Interactive Controls**: Play, pause, step forward/backward through algorithm execution
 - **Mobile Swipe Gestures**: Swipe left/right on mobile devices to navigate steps in manual mode with an attractive tutorial overlay
+- **Audio Feedback**: Optional sound effects for algorithm operations and UI interactions
+  - **Sorting**: Distinct sounds for comparing, swapping, pivot selection, and completion
+  - **Pathfinding**: Audio cues for node exploration and path discovery
+  - **UI Sounds**: Click feedback and array generation sounds
 - **Customizable Settings**: 
   - Switch between Sorting and Pathfinding modes
   - Choose between Manual (default) and Autoplay control modes
   - Adjust animation speed (Slow, Medium, Fast, Very Fast)
+  - Toggle sound effects on/off
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and performance graphs
 - **Python Code Examples**: View Python implementations
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
@@ -54,6 +59,7 @@
 
 - Node.js (v18 or higher)
 - pnpm (v8 or higher)
+- Modern browser with Web Audio API support (for sound effects)
 
 If you don't have pnpm installed:
 
@@ -176,7 +182,8 @@ bayan-flow/
 │   │   ├── arrayHelpers.js
 │   │   ├── arrayHelpers.test.js
 │   │   ├── gridHelpers.js
-│   │   └── gridHelpers.test.js
+│   │   ├── gridHelpers.test.js
+│   │   └── soundManager.js
 │   ├── constants/        # App constants
 │   │   └── index.js
 │   ├── test/            # Test configuration

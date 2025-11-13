@@ -398,6 +398,54 @@ const debouncedSize = useDebounce(arraySize, 300);
 ### Issue: Types Not Working
 **Solution:** Restart TypeScript server
 
+### Issue: Audio Not Working
+**Solution:** Check browser autoplay policy, ensure user interaction before enabling
+
+## Sound System Integration
+
+### Adding Sound to New Algorithms
+
+**Step 1: Identify Sound Events**
+```javascript
+// In your algorithm implementation
+if (hasSwapping) {
+  soundManager.playSwap(elementValue);
+} else if (hasComparing) {
+  soundManager.playCompare(elementValue);
+}
+```
+
+**Step 2: Update Hook Integration**
+```javascript
+const executeStep = useCallback((step) => {
+  // Update visual state
+  setArray(step.array);
+  setStates(step.states);
+  
+  // Add sound logic
+  const hasNewState = step.states.includes(NEW_STATE);
+  if (hasNewState) {
+    soundManager.playNewSound();
+  }
+}, []);
+```
+
+**Step 3: Add New Sound Methods**
+```javascript
+// In soundManager.js
+playNewSound() {
+  if (!this.isEnabled) return;
+  this.synth.triggerAttackRelease('C4', '8n');
+}
+```
+
+### Sound Design Guidelines
+
+- **Frequency Mapping**: Map element values to frequencies for intuitive audio feedback
+- **Duration**: Keep sounds brief (64n to 8n note values) to avoid overlap
+- **Volume**: Use moderate levels to prevent fatigue
+- **Fallback**: Always check `isEnabled` before playing sounds
+
 ## Conclusion
 
 This project follows modern React best practices:
@@ -407,5 +455,6 @@ This project follows modern React best practices:
 - Test-driven development
 - Performance optimization
 - Clean code principles
+- Accessible audio feedback
 
 All contributions are welcome!
