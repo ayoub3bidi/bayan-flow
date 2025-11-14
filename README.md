@@ -38,6 +38,7 @@
   - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
 - **Interactive Controls**: Play, pause, step forward/backward through algorithm execution
 - **Mobile Swipe Gestures**: Swipe left/right on mobile devices to navigate steps in manual mode with an attractive tutorial overlay
+- **Full-screen Mode**: Toggle full-screen view for immersive experience
 - **Audio Feedback**: Optional sound effects for algorithm operations and UI interactions
   - **Sorting**: Distinct sounds for comparing, swapping, pivot selection, and completion
   - **Pathfinding**: Audio cues for node exploration and path discovery
@@ -165,20 +166,24 @@ bayan-flow/
 │   ├── components/        # React components
 │   │   ├── ArrayBar.jsx
 │   │   ├── ArrayVisualizer.jsx
-│   │   ├── GridCell.jsx
-│   │   ├── GridVisualizer.jsx
 │   │   ├── ComplexityPanel.jsx
 │   │   ├── ControlPanel.jsx
-│   │   ├── SettingsPanel.jsx
-│   │   ├── InfoPanel.jsx
-│   │   ├── Header.jsx
-│   │   └── Footer.jsx
 │   │   └── FloatingActionButton.jsx
+│   │   └── Footer.jsx
+│   │   ├── GridCell.jsx
+│   │   ├── GridVisualizer.jsx
+│   │   ├── Header.jsx
+│   │   ├── LanguageSwitcher.jsx
 │   │   └── PythonCodePanel.jsx
+│   │   ├── SettingsPanel.jsx
+│   │   ├── SwipeTutorial.jsx
+│   │   ├── ThemeToggle.jsx
 │   ├── hooks/            # Custom React hooks
 │   │   ├── useSortingVisualization.js
 │   │   └── usePathfindingVisualization.js
+│   ├── i18n/             # Internationalization
 │   ├── utils/            # Utility functions
+│   │   ├── algorithmTranslations.js
 │   │   ├── arrayHelpers.js
 │   │   ├── arrayHelpers.test.js
 │   │   ├── gridHelpers.js
@@ -412,6 +417,100 @@ export const STATE_COLORS = {
   [ELEMENT_STATES.COMPARING]: '#yourColor',
   // ... other states
 };
+```
+
+## Internationalization
+
+Bayan Flow supports multiple languages with automatic browser language detection and manual language switching.
+
+### Supported Languages
+
+- **English** (default)
+- **French** (Français)
+
+### Features
+
+- **Automatic Detection**: Detects browser language on first visit
+- **Manual Switching**: Language switcher in the header
+- **Persistent Selection**: Saves language preference in localStorage
+- **Fallback**: Falls back to English for unsupported languages
+
+### Adding a New Language
+
+1. Create a new translation file in `src/i18n/locales/[lang]/translation.json`:
+
+```json
+{
+  "header": {
+    "title": "Bayan Flow",
+    "subtitle": "Your translated subtitle"
+  },
+  "settings": {
+    "algorithm": "Your translation",
+    "speed": "Your translation"
+  }
+  // ... other translations
+}
+```
+
+2. Add the language to the i18n configuration in `src/i18n/index.js`:
+
+```javascript
+import newLang from './locales/[lang]/translation.json';
+
+const resources = {
+  en: { translation: en },
+  fr: { translation: fr },
+  [lang]: { translation: newLang }, // Add your language
+};
+
+// Update supported languages
+supportedLngs: ['en', 'fr', '[lang]'],
+```
+
+3. Add the language option to `LanguageSwitcher.jsx`:
+
+```javascript
+const languages = [
+  { code: 'en', name: t('languages.en'), flag: '🇺🇸' },
+  { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' },
+  { code: '[lang]', name: t('languages.[lang]'), flag: '🏳️' },
+];
+```
+
+4. Add the language name translations to all existing translation files:
+
+```json
+{
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "[lang]": "Your Language Name"
+  }
+}
+```
+
+### Translation Keys Structure
+
+```
+header.*          - Header component text
+settings.*        - Settings panel labels
+modes.*           - Visualization modes
+algorithms.*      - Algorithm names
+complexity.*      - Big-O notation (usually same across languages)
+speeds.*          - Animation speed labels
+controls.*        - Control button labels
+info.*            - Status and progress messages
+complexity_panel.* - Algorithm analysis panel
+languages.*       - Language names for switcher
+```
+
+### Testing Translations
+
+Run the i18n tests to ensure translations work correctly:
+
+```bash
+pnpm test src/i18n/i18n.test.js
 ```
 
 ## Testing Philosophy

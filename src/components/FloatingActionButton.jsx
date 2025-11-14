@@ -5,6 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 /**
  * @param {Object} props
@@ -13,6 +14,7 @@ import { motion } from 'framer-motion';
  * @param {string} props.className - Additional CSS classes
  */
 function FloatingActionButton({ onClick, disabled = false, className = '' }) {
+  const { t } = useTranslation();
   return (
     <>
       {/* Desktop: Side FAB */}
@@ -40,8 +42,8 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
           stiffness: 300,
           damping: 25,
         }}
-        aria-label="View Python code"
-        title="View Python code"
+        aria-label={t('visualization.viewPythonCode')}
+        title={t('visualization.viewPythonCode')}
       >
         <span className="font-medium writing-mode-vertical transform rotate-360">
           Code
@@ -74,8 +76,8 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
           stiffness: 300,
           damping: 25,
         }}
-        aria-label="View Python code"
-        title="View Python code"
+        aria-label={t('visualization.viewPythonCode')}
+        title={t('visualization.viewPythonCode')}
       >
         <svg
           viewBox="0 0 24 24"

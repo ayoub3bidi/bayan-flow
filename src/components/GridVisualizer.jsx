@@ -7,6 +7,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import GridCell from './GridCell';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
@@ -33,6 +34,7 @@ function GridVisualizer({
   onStepBackward,
   mode,
 }) {
+  const { t } = useTranslation();
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const [legendCollapsed, setLegendCollapsed] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
@@ -81,11 +83,14 @@ function GridVisualizer({
   }, [isComplete]);
 
   const legendItems = [
-    { state: GRID_ELEMENT_STATES.START, label: 'Start' },
-    { state: GRID_ELEMENT_STATES.END, label: 'End' },
-    { state: GRID_ELEMENT_STATES.OPEN, label: 'Queue' },
-    { state: GRID_ELEMENT_STATES.CLOSED, label: 'Visited' },
-    { state: GRID_ELEMENT_STATES.PATH, label: 'Path' },
+    { state: GRID_ELEMENT_STATES.START, label: t('legend.pathfinding.start') },
+    { state: GRID_ELEMENT_STATES.END, label: t('legend.pathfinding.end') },
+    { state: GRID_ELEMENT_STATES.OPEN, label: t('legend.pathfinding.queue') },
+    {
+      state: GRID_ELEMENT_STATES.CLOSED,
+      label: t('legend.pathfinding.visited'),
+    },
+    { state: GRID_ELEMENT_STATES.PATH, label: t('legend.pathfinding.path') },
   ];
 
   // Swipe gesture support for manual mode
@@ -115,10 +120,10 @@ function GridVisualizer({
                 onClick={() => setLegendCollapsed(!legendCollapsed)}
                 className="w-full flex items-center justify-between py-2 sm:hidden touch-manipulation"
                 aria-expanded={!legendCollapsed}
-                aria-label="Toggle legend"
+                aria-label={t('legend.toggle')}
               >
                 <span className="text-xs font-semibold text-text-primary">
-                  Legend
+                  {t('legend.title')}
                 </span>
                 <motion.div
                   animate={{ rotate: legendCollapsed ? -90 : 0 }}

@@ -7,6 +7,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getPythonCode, getAlgorithmDisplayName } from '../algorithms/python';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
@@ -18,6 +19,7 @@ import { useTheme } from '../hooks/useTheme';
  * @param {string} props.algorithm - Current algorithm name
  */
 function PythonCodePanel({ isOpen, onClose, algorithm }) {
+  const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const panelRef = useRef(null);
   const editorRef = useRef(null);
@@ -156,13 +158,13 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                   {isMobile && (
                     <h2 className="text-lg font-semibold text-text-primary">
-                      Python Code
+                      {t('python_code.title')}
                     </h2>
                   )}
                   <button
                     onClick={onClose}
                     className={`p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors ${!isMobile ? 'ml-auto' : ''}`}
-                    aria-label="Close panel"
+                    aria-label={t('python_code.close')}
                   >
                     <X size={20} />
                   </button>

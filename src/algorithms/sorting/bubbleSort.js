@@ -5,6 +5,10 @@
  */
 
 import { ELEMENT_STATES } from '../../constants';
+import {
+  getAlgorithmDescription,
+  ALGORITHM_STEPS,
+} from '../../utils/algorithmTranslations';
 
 /**
  * Bubble Sort Algorithm
@@ -27,7 +31,9 @@ export function bubbleSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.DEFAULT),
-    description: 'Starting Bubble Sort',
+    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
+      algorithm: 'Bubble Sort',
+    }),
   });
 
   for (let i = 0; i < n - 1; i++) {
@@ -47,7 +53,10 @@ export function bubbleSort(array) {
       steps.push({
         array: [...arr],
         states: [...states],
-        description: `Comparing ${arr[j]} and ${arr[j + 1]}`,
+        description: getAlgorithmDescription(ALGORITHM_STEPS.COMPARING, {
+          a: arr[j],
+          b: arr[j + 1],
+        }),
       });
 
       // Swap if elements are in wrong order
@@ -63,7 +72,10 @@ export function bubbleSort(array) {
         steps.push({
           array: [...arr],
           states: swapStates,
-          description: `Swapped ${arr[j + 1]} and ${arr[j]}`,
+          description: getAlgorithmDescription(ALGORITHM_STEPS.SWAPPING, {
+            a: arr[j + 1],
+            b: arr[j],
+          }),
         });
       }
     }
@@ -77,7 +89,13 @@ export function bubbleSort(array) {
     steps.push({
       array: [...arr],
       states: sortedStates,
-      description: `Pass ${i + 1} complete. Element at position ${n - i - 1} is in correct position.`,
+      description: getAlgorithmDescription(
+        ALGORITHM_STEPS.BUBBLE_PASS_COMPLETE,
+        {
+          pass: i + 1,
+          position: n - i - 1,
+        }
+      ),
     });
 
     // If no swaps occurred, array is sorted
@@ -90,7 +108,7 @@ export function bubbleSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.SORTED),
-    description: 'Array is fully sorted!',
+    description: getAlgorithmDescription(ALGORITHM_STEPS.COMPLETED),
   });
 
   return steps;

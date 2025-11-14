@@ -7,6 +7,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ArrayBar from './ArrayBar';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
@@ -33,6 +34,7 @@ function ArrayVisualizer({
   onStepBackward,
   mode,
 }) {
+  const { t } = useTranslation();
   const maxValue = useMemo(() => Math.max(...array, 1), [array]);
   const arrayLength = array.length;
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
@@ -83,11 +85,11 @@ function ArrayVisualizer({
   }, [isComplete]);
 
   const legendItems = [
-    { state: ELEMENT_STATES.DEFAULT, label: 'Default' },
-    { state: ELEMENT_STATES.COMPARING, label: 'Comparing' },
-    { state: ELEMENT_STATES.SWAPPING, label: 'Swapping' },
-    { state: ELEMENT_STATES.SORTED, label: 'Sorted' },
-    { state: ELEMENT_STATES.PIVOT, label: 'Pivot' },
+    { state: ELEMENT_STATES.DEFAULT, label: t('legend.sorting.default') },
+    { state: ELEMENT_STATES.COMPARING, label: t('legend.sorting.comparing') },
+    { state: ELEMENT_STATES.SWAPPING, label: t('legend.sorting.swapping') },
+    { state: ELEMENT_STATES.SORTED, label: t('legend.sorting.sorted') },
+    { state: ELEMENT_STATES.PIVOT, label: t('legend.sorting.pivot') },
   ];
 
   // Swipe gesture support for manual mode
@@ -117,10 +119,10 @@ function ArrayVisualizer({
                 onClick={() => setLegendCollapsed(!legendCollapsed)}
                 className="w-full flex items-center justify-between py-2 sm:hidden touch-manipulation"
                 aria-expanded={!legendCollapsed}
-                aria-label="Toggle legend"
+                aria-label={t('legend.toggle')}
               >
                 <span className="text-xs font-semibold text-text-primary">
-                  Legend
+                  {t('legend.title')}
                 </span>
                 <motion.div
                   animate={{ rotate: legendCollapsed ? -90 : 0 }}

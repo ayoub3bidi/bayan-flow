@@ -1,0 +1,166 @@
+{
+  "header": {
+    "title": "Bayan Flow",
+    "subtitle": "Clarté dans les Algorithmes",
+    "starOnGithub": "Étoiler sur GitHub",
+    "viewOnGithub": "Voir sur GitHub"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "mode": "Mode",
+    "algorithm": "Algorithme",
+    "speed": "Vitesse",
+    "arraySize": "Taille du Tableau",
+    "gridSize": "Taille de la Grille",
+    "sound": "Son",
+    "language": "Langue"
+  },
+  "modes": {
+    "sorting": "Tri",
+    "pathfinding": "Recherche de Chemin",
+    "manual": "Manuel",
+    "autoplay": "Lecture Auto"
+  },
+  "algorithms": {
+    "sorting": {
+      "bubbleSort": "Tri à Bulles",
+      "quickSort": "Tri Rapide",
+      "mergeSort": "Tri par Fusion"
+    },
+    "pathfinding": {
+      "bfs": "Parcours en Largeur",
+      "dijkstra": "Algorithme de Dijkstra",
+      "aStar": "Recherche A*"
+    },
+    "descriptions": {
+      "bubbleSort": "Démarrage du Tri à Bulles",
+      "quickSort": "Démarrage du Tri Rapide",
+      "mergeSort": "Démarrage du Tri par Fusion",
+      "bfs": "Démarrage du Parcours en Largeur",
+      "dijkstra": "Démarrage de l'Algorithme de Dijkstra",
+      "aStar": "Démarrage de la Recherche A*"
+    }
+  },
+  "complexity": {
+    "bubbleSort": "O(n²)",
+    "quickSort": "O(n log n)",
+    "mergeSort": "O(n log n)",
+    "bfs": "O(V + E)",
+    "dijkstra": "O((V+E) log V)",
+    "aStar": "O(b^d)"
+  },
+  "speeds": {
+    "slow": "Lent",
+    "medium": "Moyen",
+    "fast": "Rapide",
+    "veryFast": "Très Rapide"
+  },
+  "gridSizes": {
+    "small": "Petit (15×15)",
+    "medium": "Moyen (25×25)",
+    "large": "Grand (35×35)"
+  },
+  "controls": {
+    "play": "Lecture",
+    "pause": "Pause",
+    "stop": "Arrêt",
+    "stepForward": "Étape Suivante",
+    "stepBackward": "Étape Précédente",
+    "reset": "Réinitialiser",
+    "generateArray": "Générer Nouveau Tableau",
+    "goFullScreen": "Plein Écran (F)",
+    "exitFullScreen": "Quitter le Plein Écran (Esc)"
+  },
+  "info": {
+    "step": "Étape {{current}} sur {{total}}",
+    "steps": "Étapes",
+    "completed": "Algorithme terminé !",
+    "ready": "Prêt à commencer",
+    "pathFound": "Chemin trouvé !",
+    "noPath": "Aucun chemin n'existe"
+  },
+  "complexity_panel": {
+    "title": "Analyse de l'Algorithme",
+    "timeComplexity": "Complexité Temporelle",
+    "spaceComplexity": "Complexité Spatiale",
+    "best": "Meilleur",
+    "average": "Moyen",
+    "worst": "Pire",
+    "useCases": "Cas d'Usage",
+    "description": "Description",
+    "performance": "Graphique de Performance",
+    "linearScale": "Échelle Linéaire",
+    "logScale": "Échelle Log",
+    "close": "Fermer"
+  },
+  "swipe_tutorial": {
+    "title": "Glisser pour Naviguer",
+    "subtitle": "Utilisez les gestes de glissement pour contrôler la visualisation",
+    "leftSwipe": "Glissez à gauche pour l'étape suivante",
+    "rightSwipe": "Glissez à droite pour l'étape précédente",
+    "gotIt": "Compris !"
+  },
+  "python_code": {
+    "title": "Implémentation Python",
+    "close": "Fermer"
+  },
+  "footer": {
+    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri/recherche de chemin avec clarté.",
+    "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
+    "madeWith": "Fait avec",
+    "by": "par",
+    "license": "Sous licence Elastic License 2.0",
+    "viewDocs": "Voir la Documentation",
+    "reportIssue": "Signaler un Problème",
+    "contribute": "Contribuer",
+    "quickLinks": "Liens Rapides",
+    "support": "Soutien",
+    "enjoying": "Vous appréciez ce projet ? Soutenez mon travail !",
+    "buyMeCoffee": "Offrez-moi un café",
+    "allRightsReserved": "Tous droits réservés"
+  },
+  "legend": {
+    "title": "Légende",
+    "toggle": "Basculer la légende",
+    "sorting": {
+      "default": "Défaut",
+      "comparing": "Comparaison",
+      "swapping": "Échange",
+      "sorted": "Trié",
+      "pivot": "Pivot"
+    },
+    "pathfinding": {
+      "start": "Début",
+      "end": "Fin",
+      "queue": "File",
+      "visited": "Visité",
+      "path": "Chemin"
+    }
+  },
+  "visualization": {
+    "description": "Visualisation interactive d'algorithme",
+    "viewPythonCode": "Voir le code Python"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français"
+  },
+  "algorithmSteps": {
+    "starting": "Démarrage {{algorithm}}",
+    "completed": "Tableau entièrement trié !",
+    "comparing": "Comparaison {{a}} et {{b}}",
+    "swapping": "Échange {{a}} et {{b}}",
+    "bubblePassComplete": "Passe {{pass}} terminée. Élément à la position {{position}} est à la bonne place.",
+    "pivotSelected": "Pivot sélectionné : {{pivot}} à l'index {{index}}",
+    "pivotPlaced": "Pivot {{pivot}} placé à la position correcte {{position}}",
+    "dividing": "Division du tableau : [{{start}}...{{mid}}] et [{{midNext}}...{{end}}]",
+    "merging": "Fusion : comparaison {{a}} et {{b}}",
+    "placed": "{{value}} placé à la position {{position}}",
+    "placedRemaining": "{{value}} restant placé à la position {{position}}",
+    "mergedSection": "Section fusionnée [{{start}}...{{end}}]",
+    "exploring": "Exploration de la cellule ({{row}}, {{col}})",
+    "addedToQueue": "{{count}} cellules ajoutées à la file",
+    "pathFound": "Chemin trouvé ! Longueur : {{length}} cellules",
+    "noPath": "Aucun chemin trouvé"
+  }
+}

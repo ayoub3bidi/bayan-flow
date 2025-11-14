@@ -5,6 +5,10 @@
  */
 
 import { ELEMENT_STATES } from '../../constants';
+import {
+  getAlgorithmDescription,
+  ALGORITHM_STEPS,
+} from '../../utils/algorithmTranslations';
 
 /**
  * Quick Sort Algorithm
@@ -26,7 +30,9 @@ export function quickSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.DEFAULT),
-    description: 'Starting Quick Sort',
+    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
+      algorithm: 'Quick Sort',
+    }),
   });
 
   quickSortHelper(arr, 0, n - 1, steps);
@@ -34,7 +40,7 @@ export function quickSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.SORTED),
-    description: 'Array is fully sorted!',
+    description: getAlgorithmDescription(ALGORITHM_STEPS.COMPLETED),
   });
 
   return steps;
@@ -61,7 +67,10 @@ function partition(arr, low, high, steps) {
   steps.push({
     array: [...arr],
     states: pivotStates,
-    description: `Selected pivot: ${pivot} at index ${high}`,
+    description: getAlgorithmDescription(ALGORITHM_STEPS.PIVOT_SELECTED, {
+      pivot,
+      index: high,
+    }),
   });
 
   let i = low - 1;
@@ -76,7 +85,10 @@ function partition(arr, low, high, steps) {
     steps.push({
       array: [...arr],
       states: compareStates,
-      description: `Comparing ${arr[j]} with pivot ${pivot}`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.COMPARING, {
+        a: arr[j],
+        b: pivot,
+      }),
     });
 
     if (arr[j] < pivot) {
@@ -94,7 +106,10 @@ function partition(arr, low, high, steps) {
       steps.push({
         array: [...arr],
         states: swapStates,
-        description: `Swapped ${arr[i]} and ${arr[j]}`,
+        description: getAlgorithmDescription(ALGORITHM_STEPS.SWAPPING, {
+          a: arr[i],
+          b: arr[j],
+        }),
       });
     }
   }
@@ -108,7 +123,10 @@ function partition(arr, low, high, steps) {
   steps.push({
     array: [...arr],
     states: finalStates,
-    description: `Pivot ${pivot} placed at correct position ${i + 1}`,
+    description: getAlgorithmDescription(ALGORITHM_STEPS.PIVOT_PLACED, {
+      pivot,
+      position: i + 1,
+    }),
   });
 
   return i + 1;

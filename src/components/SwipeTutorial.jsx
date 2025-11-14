@@ -7,6 +7,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Full-screen swipe tutorial overlay with attractive animations
@@ -14,6 +15,7 @@ import { useEffect } from 'react';
  * @param {Function} onDismiss - Callback when tutorial is dismissed
  */
 function SwipeTutorial({ show, onDismiss }) {
+  const { t } = useTranslation();
   // Auto-dismiss after 3 seconds
   useEffect(() => {
     if (show) {
@@ -49,7 +51,7 @@ function SwipeTutorial({ show, onDismiss }) {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="text-white text-xl font-bold mb-8"
           >
-            Swipe left or right to go through the steps
+            {t('swipe_tutorial.title')}
           </motion.h2>
 
           {/* Animated arrows with glove-like hands */}
@@ -75,7 +77,7 @@ function SwipeTutorial({ show, onDismiss }) {
                 transition={{ duration: 1.5, repeat: Infinity }}
                 className="text-white text-sm font-medium"
               >
-                Previous
+                {t('controls.stepBackward')}
               </motion.div>
             </motion.div>
 
@@ -122,7 +124,7 @@ function SwipeTutorial({ show, onDismiss }) {
                 transition={{ duration: 1.5, repeat: Infinity, delay: 0.75 }}
                 className="text-white text-sm font-medium"
               >
-                Next
+                {t('controls.stepForward')}
               </motion.div>
             </motion.div>
           </div>
@@ -134,7 +136,7 @@ function SwipeTutorial({ show, onDismiss }) {
             transition={{ delay: 1, duration: 0.5 }}
             className="text-white/70 text-sm"
           >
-            Tap anywhere to continue
+            {t('swipe_tutorial.gotIt')}
           </motion.p>
         </motion.div>
       </motion.div>

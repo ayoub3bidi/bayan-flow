@@ -16,6 +16,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
@@ -39,24 +40,45 @@ function SettingsPanel({
   mode,
   onModeChange,
 }) {
+  const { t } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const dropdownRef = useRef(null);
 
   const sortingAlgorithms = [
-    { value: 'bubbleSort', label: 'Bubble Sort', complexity: 'O(n²)' },
-    { value: 'quickSort', label: 'Quick Sort', complexity: 'O(n log n)' },
-    { value: 'mergeSort', label: 'Merge Sort', complexity: 'O(n log n)' },
+    {
+      value: 'bubbleSort',
+      label: t('algorithms.sorting.bubbleSort'),
+      complexity: t('complexity.bubbleSort'),
+    },
+    {
+      value: 'quickSort',
+      label: t('algorithms.sorting.quickSort'),
+      complexity: t('complexity.quickSort'),
+    },
+    {
+      value: 'mergeSort',
+      label: t('algorithms.sorting.mergeSort'),
+      complexity: t('complexity.mergeSort'),
+    },
   ];
 
   const pathfindingAlgorithms = [
-    { value: 'bfs', label: 'Breadth-First Search', complexity: 'O(V + E)' },
+    {
+      value: 'bfs',
+      label: t('algorithms.pathfinding.bfs'),
+      complexity: t('complexity.bfs'),
+    },
     {
       value: 'dijkstra',
-      label: "Dijkstra's Algorithm",
-      complexity: 'O((V+E) log V)',
+      label: t('algorithms.pathfinding.dijkstra'),
+      complexity: t('complexity.dijkstra'),
     },
-    { value: 'aStar', label: 'A* Search', complexity: 'O(b^d)' },
+    {
+      value: 'aStar',
+      label: t('algorithms.pathfinding.aStar'),
+      complexity: t('complexity.aStar'),
+    },
   ];
 
   const algorithms =
@@ -65,16 +87,16 @@ function SettingsPanel({
       : pathfindingAlgorithms;
 
   const gridSizeOptions = [
-    { value: GRID_SIZES.SMALL, label: 'Small (15×15)' },
-    { value: GRID_SIZES.MEDIUM, label: 'Medium (25×25)' },
-    { value: GRID_SIZES.LARGE, label: 'Large (35×35)' },
+    { value: GRID_SIZES.SMALL, label: t('gridSizes.small') },
+    { value: GRID_SIZES.MEDIUM, label: t('gridSizes.medium') },
+    { value: GRID_SIZES.LARGE, label: t('gridSizes.large') },
   ];
 
   const speedOptions = [
-    { value: ANIMATION_SPEEDS.SLOW, label: 'Slow' },
-    { value: ANIMATION_SPEEDS.MEDIUM, label: 'Medium' },
-    { value: ANIMATION_SPEEDS.FAST, label: 'Fast' },
-    { value: ANIMATION_SPEEDS.VERY_FAST, label: 'Very Fast' },
+    { value: ANIMATION_SPEEDS.SLOW, label: t('speeds.slow') },
+    { value: ANIMATION_SPEEDS.MEDIUM, label: t('speeds.medium') },
+    { value: ANIMATION_SPEEDS.FAST, label: t('speeds.fast') },
+    { value: ANIMATION_SPEEDS.VERY_FAST, label: t('speeds.veryFast') },
   ];
 
   const selectedAlgo = algorithms.find(a => a.value === selectedAlgorithm);
@@ -119,7 +141,7 @@ function SettingsPanel({
     >
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
-          Algorithm Type
+          {t('settings.mode')}
         </label>
         <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
           <button
@@ -134,7 +156,7 @@ function SettingsPanel({
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <BarChart3 size={16} />
-            <span className="hidden sm:inline">Sorting</span>
+            <span className="hidden sm:inline">{t('modes.sorting')}</span>
           </button>
           <button
             onClick={() =>
@@ -148,14 +170,14 @@ function SettingsPanel({
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Grid3x3 size={16} />
-            <span className="hidden sm:inline">Pathfinding</span>
+            <span className="hidden sm:inline">{t('modes.pathfinding')}</span>
           </button>
         </div>
       </div>
 
       <div className="relative" ref={dropdownRef}>
         <label className="block text-sm font-semibold text-text-primary mb-2">
-          Chosen Algorithm
+          {t('settings.algorithm')}
         </label>
         <button
           onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
@@ -245,7 +267,7 @@ function SettingsPanel({
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Play size={16} />
-            <span className="hidden sm:inline">Autoplay</span>
+            <span className="hidden sm:inline">{t('modes.autoplay')}</span>
           </button>
           <button
             onClick={() =>
@@ -259,7 +281,7 @@ function SettingsPanel({
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Hand size={16} />
-            <span className="hidden sm:inline">Manual</span>
+            <span className="hidden sm:inline">{t('modes.manual')}</span>
           </button>
         </div>
         <p className="text-xs text-text-secondary mt-2">
@@ -271,10 +293,10 @@ function SettingsPanel({
 
       <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
         <label className="block text-sm font-semibold text-text-primary mb-2">
-          Animation Speed: {speedOptions[currentSpeedIndex]?.label}
+          {t('settings.speed')}: {speedOptions[currentSpeedIndex]?.label}
           {mode === VISUALIZATION_MODES.MANUAL && (
             <span className="text-xs text-text-secondary ml-2">
-              (Autoplay only)
+              ({t('modes.autoplay')} only)
             </span>
           )}
         </label>
@@ -301,7 +323,7 @@ function SettingsPanel({
       {/* Sound Toggle */}
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-2">
-          Sound Effects
+          {t('settings.sound')}
         </label>
         <button
           onClick={handleSoundToggle}
@@ -319,7 +341,7 @@ function SettingsPanel({
       {algorithmType === ALGORITHM_TYPES.SORTING ? (
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-2">
-            Array Size: {arraySize}
+            {t('settings.arraySize')}: {arraySize}
           </label>
           <input
             type="range"
@@ -339,7 +361,7 @@ function SettingsPanel({
       ) : (
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-2">
-            Grid Size
+            {t('settings.gridSize')}
           </label>
           <div className="flex gap-2">
             {gridSizeOptions.map(option => (
