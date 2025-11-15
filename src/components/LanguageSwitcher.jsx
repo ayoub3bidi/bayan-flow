@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check, Globe } from 'lucide-react';
+import { ChevronDown, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 function LanguageSwitcher() {
@@ -42,20 +42,22 @@ function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 h-9 px-3 py-2 bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+        className="flex items-center gap-2 h-9 px-3 py-2 bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer touch-manipulation"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         aria-label={t('settings.language')}
       >
+        {/* Desktop: Show flag + chevron */}
         <span className="text-sm font-medium text-text-primary hidden sm:inline">
           {currentLanguage.flag}
         </span>
         <ChevronDown
           size={14}
-          className={`text-text-secondary transition-transform duration-200 ${
+          className={`hidden sm:block text-text-secondary transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
+        <span className="text-lg sm:hidden">{currentLanguage.flag}</span>
       </motion.button>
 
       <AnimatePresence>
