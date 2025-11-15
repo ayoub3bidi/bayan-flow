@@ -256,7 +256,7 @@ function App() {
                   >
                     {/* Visualizer */}
                     <div
-                      className="h-[650px]"
+                      className="h-[620px]"
                       role="img"
                       aria-label={`${algorithmType === ALGORITHM_TYPES.SORTING ? selectedAlgorithm : selectedPathfindingAlgorithm} algorithm visualization`}
                     >

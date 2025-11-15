@@ -165,11 +165,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'kern' 1;
+  font-optical-sizing: auto;
+  line-height: 1.5;
   color: var(--color-text-primary);
   background-color: var(--color-bg);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+  scrollbar-gutter: stable;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -230,6 +234,48 @@ body {
 
 .text-theme-primary {
   color: var(--color-primary);
+}
+
+/* Cross-platform layout utilities */
+.leading-consistent {
+  line-height: 1.5;
+}
+
+.leading-tight-consistent {
+  line-height: 1.25;
+}
+
+.leading-relaxed-consistent {
+  line-height: 1.625;
+}
+
+/* Normalize button and input heights across platforms */
+.min-h-touch {
+  min-height: 44px;
+}
+
+.h-touch {
+  height: 44px;
+}
+
+/* Viewport-aware containers */
+.min-h-screen-safe {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.h-screen-safe {
+  height: 100vh;
+  height: 100svh;
+}
+
+/* Panel spacing normalization */
+.space-y-consistent > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-consistent-sm > * + * {
+  margin-top: 0.75rem;
 }
 
 .bg-bg {

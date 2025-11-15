@@ -49,7 +49,7 @@ function ArrayBar({ value, state, index, arrayLength }) {
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center min-w-0 mx-1"
+      className="flex flex-col items-center justify-center min-w-0 mx-2"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.01, type: 'spring' }}

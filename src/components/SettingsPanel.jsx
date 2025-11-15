@@ -134,13 +134,13 @@ function SettingsPanel({
 
   return (
     <motion.div
-      className="bg-surface rounded-lg shadow-lg p-4 sm:p-6 space-y-4 sm:space-y-6"
+      className="bg-surface rounded-lg shadow-lg p-4 sm:p-6 space-y-consistent leading-consistent"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.1 }}
     >
       <div>
-        <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
+        <label className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent">
           {t('settings.mode')}
         </label>
         <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
@@ -149,7 +149,7 @@ function SettingsPanel({
               !isPlaying && onAlgorithmTypeChange(ALGORITHM_TYPES.SORTING)
             }
             disabled={isPlaying}
-            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
+            className={`flex-1 px-3 py-3 h-touch text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation leading-tight-consistent ${
               algorithmType === ALGORITHM_TYPES.SORTING
                 ? 'bg-theme-primary-consistent text-white shadow-md'
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
@@ -163,7 +163,7 @@ function SettingsPanel({
               !isPlaying && onAlgorithmTypeChange(ALGORITHM_TYPES.PATHFINDING)
             }
             disabled={isPlaying}
-            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
+            className={`flex-1 px-3 py-3 h-touch text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation leading-tight-consistent ${
               algorithmType === ALGORITHM_TYPES.PATHFINDING
                 ? 'bg-theme-primary-consistent text-white shadow-md'
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
@@ -176,13 +176,13 @@ function SettingsPanel({
       </div>
 
       <div className="relative" ref={dropdownRef}>
-        <label className="block text-sm font-semibold text-text-primary mb-2">
+        <label className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent">
           {t('settings.algorithm')}
         </label>
         <button
           onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
           disabled={isPlaying}
-          className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)] touch-manipulation"
+          className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)] touch-manipulation leading-consistent"
         >
           <div className="flex flex-col">
             <span className="text-text-primary font-medium">

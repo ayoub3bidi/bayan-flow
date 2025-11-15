@@ -56,11 +56,11 @@ function ControlPanel({
 }) {
   const { t } = useTranslation();
   const buttonBaseClasses =
-    'p-3 min-w-[44px] min-h-[44px] rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation';
+    'p-3 h-touch rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation leading-tight-consistent';
 
   return (
     <motion.div
-      className="bg-surface rounded-lg shadow-lg p-3 sm:p-4"
+      className="bg-surface rounded-lg shadow-lg p-3 sm:p-4 leading-consistent"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
