@@ -250,13 +250,13 @@ function App() {
 
                   {/* Visualization Area */}
                   <section
-                    className="lg:col-span-3 space-y-6"
+                    className="lg:col-span-3 flex flex-col gap-6 h-[calc(100vh-200px)] lg:h-[calc(100vh-140px)]"
                     role="region"
                     aria-label="Algorithm visualization"
                   >
                     {/* Visualizer */}
                     <div
-                      className="h-[620px]"
+                      className="flex-1 min-h-0"
                       role="img"
                       aria-label={`${algorithmType === ALGORITHM_TYPES.SORTING ? selectedAlgorithm : selectedPathfindingAlgorithm} algorithm visualization`}
                     >
