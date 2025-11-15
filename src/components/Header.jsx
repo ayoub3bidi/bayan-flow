@@ -141,7 +141,7 @@ function Header() {
                 href={devSiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 text-green-900 text-xs font-medium border border-green-200 shadow-sm hover:shadow-md transition-all animate-pulse"
+                className="hidden sm:inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 text-green-900 text-xs font-medium border border-green-200 shadow-sm hover:shadow-md transition-all animate-pulse"
                 aria-label={`Dev site — branch ${branchName}`}
                 title={`Dev preview — branch: ${branchName}`}
               >
@@ -150,7 +150,7 @@ function Header() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
                 <GitBranch className="w-3 h-3" />
-                <span className="font-mono tabular-nums text-xs hidden sm:inline">
+                <span className="font-mono tabular-nums text-xs">
                   {branchName}
                 </span>
               </a>
