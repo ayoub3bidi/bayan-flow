@@ -110,7 +110,9 @@
   },
   "python_code": {
     "title": "Implémentation Python",
-    "close": "Fermer"
+    "close": "Fermer",
+    "not_available": "Implémentation Python Non Disponible",
+    "not_available_desc": "L'implémentation Python pour {{algorithm}} arrive bientôt !"
   },
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri/recherche de chemin avec clarté.",

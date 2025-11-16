@@ -110,7 +110,9 @@
   },
   "python_code": {
     "title": "Python Implementation",
-    "close": "Close"
+    "close": "Close",
+    "not_available": "No Python Implementation Available",
+    "not_available_desc": "Python implementation for {{algorithm}} is coming soon!"
   },
   "footer": {
     "description": "An interactive, educational web application for visualizing sorting/pathfinding algorithms with clarity.",
