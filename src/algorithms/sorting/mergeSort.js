@@ -5,6 +5,10 @@
  */
 
 import { ELEMENT_STATES } from '../../constants';
+import {
+  getAlgorithmDescription,
+  ALGORITHM_STEPS,
+} from '../../utils/algorithmTranslations';
 
 /**
  * Merge Sort Algorithm
@@ -25,7 +29,9 @@ export function mergeSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.DEFAULT),
-    description: 'Starting Merge Sort',
+    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
+      algorithm: 'Merge Sort',
+    }),
   });
 
   mergeSortHelper(arr, 0, n - 1, steps);
@@ -33,7 +39,7 @@ export function mergeSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.SORTED),
-    description: 'Array is fully sorted!',
+    description: getAlgorithmDescription(ALGORITHM_STEPS.COMPLETED),
   });
 
   return steps;
@@ -55,7 +61,12 @@ function mergeSortHelper(arr, left, right, steps) {
     steps.push({
       array: [...arr],
       states: divideStates,
-      description: `Dividing array: [${left}...${mid}] and [${mid + 1}...${right}]`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.DIVIDING, {
+        start: left,
+        mid: mid,
+        midNext: mid + 1,
+        end: right,
+      }),
     });
 
     mergeSortHelper(arr, left, mid, steps);
@@ -91,7 +102,10 @@ function merge(arr, left, mid, right, steps) {
     steps.push({
       array: [...arr],
       states: mergeStates,
-      description: `Merging: comparing ${leftArr[i]} and ${rightArr[j]}`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.MERGING, {
+        a: leftArr[i],
+        b: rightArr[j],
+      }),
     });
 
     if (leftArr[i] <= rightArr[j]) {
@@ -108,7 +122,10 @@ function merge(arr, left, mid, right, steps) {
     steps.push({
       array: [...arr],
       states: swapStates,
-      description: `Placed ${arr[k]} at position ${k}`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.PLACED, {
+        value: arr[k],
+        position: k,
+      }),
     });
 
     k++;
@@ -124,7 +141,10 @@ function merge(arr, left, mid, right, steps) {
     steps.push({
       array: [...arr],
       states: swapStates,
-      description: `Placed remaining ${arr[k]} at position ${k}`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.PLACED_REMAINING, {
+        value: arr[k],
+        position: k,
+      }),
     });
 
     i++;
@@ -141,7 +161,10 @@ function merge(arr, left, mid, right, steps) {
     steps.push({
       array: [...arr],
       states: swapStates,
-      description: `Placed remaining ${arr[k]} at position ${k}`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.PLACED_REMAINING, {
+        value: arr[k],
+        position: k,
+      }),
     });
 
     j++;
@@ -157,7 +180,10 @@ function merge(arr, left, mid, right, steps) {
   steps.push({
     array: [...arr],
     states: mergedStates,
-    description: `Merged section [${left}...${right}]`,
+    description: getAlgorithmDescription(ALGORITHM_STEPS.MERGED_SECTION, {
+      start: left,
+      end: right,
+    }),
   });
 }
 

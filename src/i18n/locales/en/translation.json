@@ -1,0 +1,177 @@
+{
+  "header": {
+    "title": "Bayan Flow",
+    "subtitle": "Clarity in Algorithms",
+    "starOnGithub": "Star on GitHub",
+    "viewOnGithub": "View on GitHub"
+  },
+  "settings": {
+    "title": "Settings",
+    "mode": "Mode",
+    "algorithm": "Algorithm",
+    "speed": "Speed",
+    "arraySize": "Array Size",
+    "gridSize": "Grid Size",
+    "sound": "Sound",
+    "language": "Language",
+    "controlMode": "Control Mode",
+    "selectAlgorithm": "Select algorithm",
+    "time": "Time",
+    "soundOn": "Sound On",
+    "soundOff": "Sound Off",
+    "autoplayDescription": "Animation plays automatically at selected speed",
+    "manualDescription": "Use step controls to advance manually",
+    "autoplayOnly": "only"
+  },
+  "modes": {
+    "sorting": "Sorting",
+    "pathfinding": "Pathfinding",
+    "manual": "Manual",
+    "autoplay": "Autoplay"
+  },
+  "algorithms": {
+    "sorting": {
+      "bubbleSort": "Bubble Sort",
+      "quickSort": "Quick Sort",
+      "mergeSort": "Merge Sort"
+    },
+    "pathfinding": {
+      "bfs": "Breadth-First Search",
+      "dijkstra": "Dijkstra's Algorithm",
+      "aStar": "A* Search"
+    },
+    "descriptions": {
+      "bubbleSort": "Starting Bubble Sort",
+      "quickSort": "Starting Quick Sort",
+      "mergeSort": "Starting Merge Sort",
+      "bfs": "Starting Breadth-First Search",
+      "dijkstra": "Starting Dijkstra's Algorithm",
+      "aStar": "Starting A* Search"
+    }
+  },
+  "complexity": {
+    "bubbleSort": "O(n²)",
+    "quickSort": "O(n log n)",
+    "mergeSort": "O(n log n)",
+    "bfs": "O(V + E)",
+    "dijkstra": "O((V+E) log V)",
+    "aStar": "O(b^d)"
+  },
+  "speeds": {
+    "slow": "Slow",
+    "medium": "Medium",
+    "fast": "Fast",
+    "veryFast": "Very Fast"
+  },
+  "gridSizes": {
+    "small": "Small (15×15)",
+    "medium": "Medium (25×25)",
+    "large": "Large (35×35)"
+  },
+  "controls": {
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "stepForward": "Step Forward",
+    "stepBackward": "Step Backward",
+    "reset": "Reset",
+    "generateArray": "Generate New Array",
+    "goFullScreen": "Go Full Screen (F)",
+    "exitFullScreen": "Exit Full Screen (Esc)"
+  },
+  "info": {
+    "step": "Step {{current}} of {{total}}",
+    "steps": "Steps",
+    "completed": "Algorithm completed!",
+    "ready": "Ready to start",
+    "pathFound": "Path found!",
+    "noPath": "No path exists"
+  },
+  "complexity_panel": {
+    "title": "Algorithm Analysis",
+    "timeComplexity": "Time Complexity",
+    "spaceComplexity": "Space Complexity",
+    "best": "Best",
+    "average": "Average",
+    "worst": "Worst",
+    "useCases": "Use Cases",
+    "description": "Description",
+    "performance": "Performance Graph",
+    "linearScale": "Linear Scale",
+    "logScale": "Log Scale",
+    "close": "Close"
+  },
+  "swipe_tutorial": {
+    "title": "Swipe to Navigate",
+    "subtitle": "Use swipe gestures to control the visualization",
+    "leftSwipe": "Swipe left for next step",
+    "rightSwipe": "Swipe right for previous step",
+    "gotIt": "Got it!"
+  },
+  "python_code": {
+    "title": "Python Implementation",
+    "close": "Close",
+    "not_available": "No Python Implementation Available",
+    "not_available_desc": "Python implementation for {{algorithm}} is coming soon!"
+  },
+  "footer": {
+    "description": "An interactive, educational web application for visualizing sorting/pathfinding algorithms with clarity.",
+    "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
+    "madeWith": "Made with",
+    "by": "by",
+    "license": "Licensed under Elastic License 2.0",
+    "viewDocs": "View Documentation",
+    "reportIssue": "Report Issue",
+    "contribute": "Contribute",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "enjoying": "Enjoying this project? Support my work!",
+    "buyMeCoffee": "Buy me a coffee",
+    "allRightsReserved": "All rights reserved"
+  },
+  "legend": {
+    "title": "Legend",
+    "toggle": "Toggle legend",
+    "sorting": {
+      "default": "Default",
+      "comparing": "Comparing",
+      "swapping": "Swapping",
+      "sorted": "Sorted",
+      "pivot": "Pivot"
+    },
+    "pathfinding": {
+      "start": "Start",
+      "end": "End",
+      "queue": "Queue",
+      "visited": "Visited",
+      "path": "Path"
+    }
+  },
+  "visualization": {
+    "description": "Interactive algorithm visualization",
+    "viewPythonCode": "View Python code"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "algorithmSteps": {
+    "starting": "Starting {{algorithm}}",
+    "completed": "Array is fully sorted!",
+    "comparing": "Comparing {{a}} and {{b}}",
+    "swapping": "Swapped {{a}} and {{b}}",
+    "bubblePassComplete": "Pass {{pass}} complete. Element at position {{position}} is in correct position.",
+    "pivotSelected": "Selected pivot: {{pivot}} at index {{index}}",
+    "pivotPlaced": "Pivot {{pivot}} placed at correct position {{position}}",
+    "dividing": "Dividing array: [{{start}}...{{mid}}] and [{{midNext}}...{{end}}]",
+    "merging": "Merging: comparing {{a}} and {{b}}",
+    "placed": "Placed {{value}} at position {{position}}",
+    "placedRemaining": "Placed remaining {{value}} at position {{position}}",
+    "mergedSection": "Merged section [{{start}}...{{end}}]",
+    "exploring": "Exploring cell ({{row}}, {{col}})",
+    "addedToQueue": "Added {{count}} cells to queue",
+    "pathFound": "Path found! Length: {{length}} cells",
+    "noPath": "No path found"
+  }
+}

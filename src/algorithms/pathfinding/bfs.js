@@ -5,6 +5,10 @@
  */
 
 import { GRID_ELEMENT_STATES } from '../../constants';
+import {
+  getAlgorithmDescription,
+  ALGORITHM_STEPS,
+} from '../../utils/algorithmTranslations';
 
 /**
  * Breadth-First Search (BFS) Pathfinding Algorithm
@@ -60,7 +64,9 @@ export function bfs(grid, start, end, rows, cols) {
   steps.push({
     grid: grid.map(row => [...row]),
     states: states.map(row => [...row]),
-    description: 'Starting BFS pathfinding',
+    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
+      algorithm: 'BFS',
+    }),
   });
 
   const queue = [start];
@@ -88,7 +94,10 @@ export function bfs(grid, start, end, rows, cols) {
     steps.push({
       grid: grid.map(row => [...row]),
       states: states.map(row => [...row]),
-      description: `Exploring cell (${current.row}, ${current.col})`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.EXPLORING, {
+        row: current.row,
+        col: current.col,
+      }),
     });
 
     if (current.row === end.row && current.col === end.col) {
@@ -121,7 +130,9 @@ export function bfs(grid, start, end, rows, cols) {
       steps.push({
         grid: grid.map(row => [...row]),
         states: states.map(row => [...row]),
-        description: `Added ${queue.length} cells to queue`,
+        description: getAlgorithmDescription(ALGORITHM_STEPS.ADDED_TO_QUEUE, {
+          count: queue.length,
+        }),
       });
     }
   }
@@ -147,13 +158,15 @@ export function bfs(grid, start, end, rows, cols) {
     steps.push({
       grid: grid.map(row => [...row]),
       states: states.map(row => [...row]),
-      description: `Path found! Length: ${path.length} cells`,
+      description: getAlgorithmDescription(ALGORITHM_STEPS.PATH_FOUND, {
+        length: path.length,
+      }),
     });
   } else {
     steps.push({
       grid: grid.map(row => [...row]),
       states: states.map(row => [...row]),
-      description: 'No path found',
+      description: getAlgorithmDescription(ALGORITHM_STEPS.NO_PATH),
     });
   }
 

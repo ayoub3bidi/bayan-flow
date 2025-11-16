@@ -1,0 +1,177 @@
+{
+  "header": {
+    "title": "بيان Flow",
+    "subtitle": "الوضوح في الخوارزميات",
+    "starOnGithub": "نجمة على GitHub",
+    "viewOnGithub": "عرض على GitHub"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "mode": "الوضع",
+    "algorithm": "الخوارزمية",
+    "speed": "السرعة",
+    "arraySize": "حجم المصفوفة",
+    "gridSize": "حجم الشبكة",
+    "sound": "الصوت",
+    "language": "اللغة",
+    "controlMode": "وضع التحكم",
+    "selectAlgorithm": "اختر الخوارزمية",
+    "time": "الوقت",
+    "soundOn": "الصوت مفعّل",
+    "soundOff": "الصوت متوقف",
+    "autoplayDescription": "تشغيل الرسوم المتحركة تلقائياً بالسرعة المحددة",
+    "manualDescription": "استخدم عناصر التحكم للتقدم يدوياً",
+    "autoplayOnly": "فقط"
+  },
+  "modes": {
+    "sorting": "الترتيب",
+    "pathfinding": "إيجاد المسار",
+    "manual": "يدوي",
+    "autoplay": "تشغيل تلقائي"
+  },
+  "algorithms": {
+    "sorting": {
+      "bubbleSort": "الترتيب الفقاعي",
+      "quickSort": "الترتيب السريع",
+      "mergeSort": "ترتيب الدمج"
+    },
+    "pathfinding": {
+      "bfs": "البحث بالعرض أولاً",
+      "dijkstra": "خوارزمية ديكسترا",
+      "aStar": "خوارزمية A*"
+    },
+    "descriptions": {
+      "bubbleSort": "بدء الترتيب الفقاعي",
+      "quickSort": "بدء الترتيب السريع",
+      "mergeSort": "بدء ترتيب الدمج",
+      "bfs": "بدء البحث بالعرض أولاً",
+      "dijkstra": "بدء خوارزمية ديكسترا",
+      "aStar": "بدء خوارزمية A*"
+    }
+  },
+  "complexity": {
+    "bubbleSort": "O(n²)",
+    "quickSort": "O(n log n)",
+    "mergeSort": "O(n log n)",
+    "bfs": "O(V + E)",
+    "dijkstra": "O((V+E) log V)",
+    "aStar": "O(b^d)"
+  },
+  "speeds": {
+    "slow": "بطيء",
+    "medium": "متوسط",
+    "fast": "سريع",
+    "veryFast": "سريع جداً"
+  },
+  "gridSizes": {
+    "small": "صغير (15×15)",
+    "medium": "متوسط (25×25)",
+    "large": "كبير (35×35)"
+  },
+  "controls": {
+    "play": "تشغيل",
+    "pause": "إيقاف مؤقت",
+    "stop": "إيقاف",
+    "stepForward": "الخطوة التالية",
+    "stepBackward": "الخطوة السابقة",
+    "reset": "إعادة تعيين",
+    "generateArray": "إنشاء مصفوفة جديدة",
+    "goFullScreen": "ملء الشاشة (F)",
+    "exitFullScreen": "الخروج من ملء الشاشة (Esc)"
+  },
+  "info": {
+    "step": "الخطوة {{current}} من {{total}}",
+    "steps": "الخطوات",
+    "completed": "اكتملت الخوارزمية!",
+    "ready": "جاهز للبدء",
+    "pathFound": "تم العثور على المسار!",
+    "noPath": "لا يوجد مسار"
+  },
+  "complexity_panel": {
+    "title": "تحليل الخوارزمية",
+    "timeComplexity": "التعقيد الزمني",
+    "spaceComplexity": "التعقيد المكاني",
+    "best": "الأفضل",
+    "average": "المتوسط",
+    "worst": "الأسوأ",
+    "useCases": "حالات الاستخدام",
+    "description": "الوصف",
+    "performance": "رسم بياني للأداء",
+    "linearScale": "مقياس خطي",
+    "logScale": "مقياس لوغاريتمي",
+    "close": "إغلاق"
+  },
+  "swipe_tutorial": {
+    "title": "اسحب للتنقل",
+    "subtitle": "استخدم إيماءات السحب للتحكم في العرض المرئي",
+    "leftSwipe": "اسحب يساراً للخطوة السابقة",
+    "rightSwipe": "اسحب يميناً للخطوة التالية",
+    "gotIt": "فهمت!"
+  },
+  "python_code": {
+    "title": "تطبيق بايثون",
+    "close": "إغلاق",
+    "not_available": "تطبيق بايثون غير متوفر",
+    "not_available_desc": "تطبيق بايثون لـ {{algorithm}} قادم قريباً!"
+  },
+  "footer": {
+    "description": "تطبيق ويب تفاعلي وتعليمي لتصور خوارزميات الترتيب والبحث عن المسار بوضوح.",
+    "descriptionNote": "بيان تعني الوضوح باللغة العربية.",
+    "madeWith": "صنع بـ",
+    "by": "بواسطة",
+    "license": "مرخص بموجب ترخيص Elastic 2.0",
+    "viewDocs": "عرض التوثيق",
+    "reportIssue": "الإبلاغ عن مشكلة",
+    "contribute": "المساهمة",
+    "quickLinks": "روابط سريعة",
+    "support": "الدعم",
+    "enjoying": "هل تستمتع بهذا المشروع؟ ادعم عملي!",
+    "buyMeCoffee": "اشترِ لي قهوة",
+    "allRightsReserved": "جميع الحقوق محفوظة"
+  },
+  "legend": {
+    "title": "الدليل",
+    "toggle": "تبديل الدليل",
+    "sorting": {
+      "default": "افتراضي",
+      "comparing": "المقارنة",
+      "swapping": "التبديل",
+      "sorted": "مرتب",
+      "pivot": "المحور"
+    },
+    "pathfinding": {
+      "start": "البداية",
+      "end": "النهاية",
+      "queue": "قائمة الانتظار",
+      "visited": "تمت الزيارة",
+      "path": "المسار"
+    }
+  },
+  "visualization": {
+    "description": "تصور تفاعلي للخوارزمية",
+    "viewPythonCode": "عرض كود بايثون"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "algorithmSteps": {
+    "starting": "بدء {{algorithm}}",
+    "completed": "المصفوفة مرتبة بالكامل!",
+    "comparing": "مقارنة {{a}} و {{b}}",
+    "swapping": "تبديل {{a}} و {{b}}",
+    "bubblePassComplete": "اكتملت التمريرة {{pass}}. العنصر في الموضع {{position}} في المكان الصحيح.",
+    "pivotSelected": "تم اختيار المحور: {{pivot}} في الفهرس {{index}}",
+    "pivotPlaced": "المحور {{pivot}} في الموضع الصحيح {{position}}",
+    "dividing": "تقسيم المصفوفة: [{{start}}...{{mid}}] و [{{midNext}}...{{end}}]",
+    "merging": "الدمج: مقارنة {{a}} و {{b}}",
+    "placed": "وضع {{value}} في الموضع {{position}}",
+    "placedRemaining": "وضع {{value}} المتبقي في الموضع {{position}}",
+    "mergedSection": "تم دمج القسم [{{start}}...{{end}}]",
+    "exploring": "استكشاف الخلية ({{row}}, {{col}})",
+    "addedToQueue": "تمت إضافة {{count}} خلايا إلى قائمة الانتظار",
+    "pathFound": "تم العثور على المسار! الطول: {{length}} خلية",
+    "noPath": "لم يتم العثور على مسار"
+  }
+}

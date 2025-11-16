@@ -7,8 +7,10 @@
 import { motion } from 'framer-motion';
 import { FileText, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function Footer() {
+  const { t } = useTranslation();
   const [version, setVersion] = useState('0.0.0');
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
@@ -38,12 +40,12 @@ function Footer() {
 
   const links = [
     {
-      label: 'Documentation',
+      label: t('footer.viewDocs'),
       icon: FileText,
       href: `https://github.com/${repoOwner}/${repoName}/tree/main/docs`,
     },
     {
-      label: 'Report Issue',
+      label: t('footer.reportIssue'),
       icon: AlertCircle,
       href: `https://github.com/${repoOwner}/${repoName}/issues`,
     },
@@ -118,10 +120,9 @@ function Footer() {
               </h3>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
-              An interactive, educational web application for visualizing
-              sorting/pathfinding algorithms with clarity.
+              {t('footer.description')}
               <br />
-              Bayan (بيان) means clarity in Arabic.
+              {t('footer.descriptionNote')}
             </p>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
@@ -134,7 +135,9 @@ function Footer() {
           </div>
           {/* Center: Quick Links */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-text-primary">Quick Links</h3>
+            <h3 className="text-sm font-bold text-text-primary">
+              {t('footer.quickLinks')}
+            </h3>
             <div className="flex flex-col gap-2">
               {links.map(link => (
                 <motion.button
@@ -153,10 +156,12 @@ function Footer() {
           </div>
           {/* Right: Support */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-text-primary">Support</h3>
+            <h3 className="text-sm font-bold text-text-primary">
+              {t('footer.support')}
+            </h3>
             <div className="flex flex-col items-start">
               <p className="text-xs text-text-secondary mb-3">
-                Enjoying this project? Support my work!
+                {t('footer.enjoying')}
               </p>
               <div className="flex flex-col gap-3">
                 <motion.button
@@ -168,7 +173,7 @@ function Footer() {
                   aria-label="Buy me a coffee - Support this project"
                 >
                   <span className="text-lg">☕</span>
-                  <span>Buy me a coffee</span>
+                  <span>{t('footer.buyMeCoffee')}</span>
                 </motion.button>
                 <motion.a
                   href="https://www.producthunt.com/products/bayan-flow?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-bayan-flow"
@@ -203,7 +208,7 @@ function Footer() {
               >
                 {authorName}
               </motion.button>
-              . All rights reserved.
+              . {t('footer.allRightsReserved')}
             </p>
           </div>
         </div>
