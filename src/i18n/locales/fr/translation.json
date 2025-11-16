@@ -13,7 +13,15 @@
     "arraySize": "Taille du Tableau",
     "gridSize": "Taille de la Grille",
     "sound": "Son",
-    "language": "Langue"
+    "language": "Langue",
+    "controlMode": "Mode de Contrôle",
+    "selectAlgorithm": "Sélectionner un algorithme",
+    "time": "Temps",
+    "soundOn": "Son Activé",
+    "soundOff": "Son Désactivé",
+    "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
+    "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
+    "autoplayOnly": "uniquement"
   },
   "modes": {
     "sorting": "Tri",
@@ -143,7 +151,8 @@
   },
   "languages": {
     "en": "English",
-    "fr": "Français"
+    "fr": "Français",
+    "ar": "العربية"
   },
   "algorithmSteps": {
     "starting": "Démarrage {{algorithm}}",

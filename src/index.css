@@ -176,6 +176,12 @@ body {
   scrollbar-gutter: stable;
 }
 
+[dir='rtl'] body {
+  font-family:
+    'Segoe UI', 'Tahoma', 'Arial', sans-serif, 'Noto Sans Arabic',
+    'Arabic UI Text';
+}
+
 .scrollbar-thin::-webkit-scrollbar {
   width: 8px;
   height: 8px;

@@ -54,9 +54,14 @@ function ControlPanel({
   isFullScreen,
   onToggleFullScreen,
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.dir() === 'rtl';
   const buttonBaseClasses =
     'p-3 h-touch rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation leading-tight-consistent';
+
+  // Icon components that flip in RTL
+  const BackwardIcon = isRTL ? SkipForward : SkipBack;
+  const ForwardIcon = isRTL ? SkipBack : SkipForward;
 
   return (
     <motion.div
@@ -78,7 +83,7 @@ function ControlPanel({
           title={t('controls.stepBackward')}
           aria-label={t('controls.stepBackward')}
         >
-          <SkipBack size={20} aria-hidden="true" />
+          <BackwardIcon size={20} aria-hidden="true" />
         </button>
 
         {/* Play/Pause Button - Different behavior based on mode */}
@@ -136,7 +141,7 @@ function ControlPanel({
             title={t('controls.stepForward')}
             aria-label={t('controls.stepForward')}
           >
-            <SkipForward size={20} aria-hidden="true" />
+            <ForwardIcon size={20} aria-hidden="true" />
           </button>
         )}
 

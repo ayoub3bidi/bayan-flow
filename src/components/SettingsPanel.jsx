@@ -186,7 +186,7 @@ function SettingsPanel({
         >
           <div className="flex flex-col">
             <span className="text-text-primary font-medium">
-              {selectedAlgo?.label || 'Select algorithm'}
+              {selectedAlgo?.label || t('settings.selectAlgorithm')}
             </span>
             <span className="text-xs text-text-secondary mt-0.5">
               {selectedAlgo?.complexity || ''}
@@ -227,7 +227,7 @@ function SettingsPanel({
                   <div className="flex flex-col">
                     <span className="font-medium">{algo.label}</span>
                     <span className="text-xs text-text-secondary mt-0.5">
-                      Time: {algo.complexity}
+                      {t('settings.time')}: {algo.complexity}
                     </span>
                   </div>
                   {selectedAlgorithm === algo.value && (
@@ -252,7 +252,7 @@ function SettingsPanel({
 
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
-          Control Mode
+          {t('settings.controlMode')}
         </label>
         <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
           <button
@@ -286,8 +286,8 @@ function SettingsPanel({
         </div>
         <p className="text-xs text-text-secondary mt-2">
           {mode === VISUALIZATION_MODES.AUTOPLAY
-            ? 'Animation plays automatically at selected speed'
-            : 'Use step controls to advance manually'}
+            ? t('settings.autoplayDescription')
+            : t('settings.manualDescription')}
         </p>
       </div>
 
@@ -296,7 +296,7 @@ function SettingsPanel({
           {t('settings.speed')}: {speedOptions[currentSpeedIndex]?.label}
           {mode === VISUALIZATION_MODES.MANUAL && (
             <span className="text-xs text-text-secondary ml-2">
-              ({t('modes.autoplay')} only)
+              ({t('modes.autoplay')} {t('settings.autoplayOnly')})
             </span>
           )}
         </label>
@@ -334,7 +334,7 @@ function SettingsPanel({
           }`}
         >
           {isSoundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          {isSoundEnabled ? 'Sound On' : 'Sound Off'}
+          {isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')}
         </button>
       </div>
 

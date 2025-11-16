@@ -17,6 +17,7 @@ function LanguageSwitcher() {
   const languages = [
     { code: 'en', name: t('languages.en'), flag: '🇬🇧' },
     { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' },
+    { code: 'ar', name: t('languages.ar'), flag: '🇸🇦' },
   ];
 
   const currentLanguage =

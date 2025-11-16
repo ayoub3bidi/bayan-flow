@@ -15,10 +15,10 @@ export default {
   theme: {
     extend: {
       spacing: {
-        'touch': '44px',
+        touch: '44px',
       },
       lineHeight: {
-        'consistent': '1.5',
+        consistent: '1.5',
         'tight-consistent': '1.25',
         'relaxed-consistent': '1.625',
       },

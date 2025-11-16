@@ -13,7 +13,15 @@
     "arraySize": "Array Size",
     "gridSize": "Grid Size",
     "sound": "Sound",
-    "language": "Language"
+    "language": "Language",
+    "controlMode": "Control Mode",
+    "selectAlgorithm": "Select algorithm",
+    "time": "Time",
+    "soundOn": "Sound On",
+    "soundOff": "Sound Off",
+    "autoplayDescription": "Animation plays automatically at selected speed",
+    "manualDescription": "Use step controls to advance manually",
+    "autoplayOnly": "only"
   },
   "modes": {
     "sorting": "Sorting",
@@ -143,7 +151,8 @@
   },
   "languages": {
     "en": "English",
-    "fr": "Français"
+    "fr": "Français",
+    "ar": "العربية"
   },
   "algorithmSteps": {
     "starting": "Starting {{algorithm}}",

@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isRTL } from '../utils/rtlManager';
 
 /**
  * Full-screen swipe tutorial overlay with attractive animations
@@ -15,7 +16,8 @@ import { useTranslation } from 'react-i18next';
  * @param {Function} onDismiss - Callback when tutorial is dismissed
  */
 function SwipeTutorial({ show, onDismiss }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRtl = isRTL(i18n.language);
   // Auto-dismiss after 3 seconds
   useEffect(() => {
     if (show) {
@@ -56,10 +58,10 @@ function SwipeTutorial({ show, onDismiss }) {
 
           {/* Animated arrows with glove-like hands */}
           <div className="flex items-center justify-center gap-12 mb-8">
-            {/* Left swipe animation */}
+            {/* Left/Right swipe animation - swapped in RTL */}
             <motion.div
               animate={{
-                x: [-20, 0, -20],
+                x: isRtl ? [20, 0, 20] : [-20, 0, -20],
                 scale: [1, 1.1, 1],
               }}
               transition={{
@@ -70,7 +72,11 @@ function SwipeTutorial({ show, onDismiss }) {
               className="flex flex-col items-center gap-2"
             >
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <ChevronLeft size={24} className="text-blue-600" />
+                {isRtl ? (
+                  <ChevronRight size={24} className="text-blue-600" />
+                ) : (
+                  <ChevronLeft size={24} className="text-blue-600" />
+                )}
               </div>
               <motion.div
                 animate={{ opacity: [0.5, 1, 0.5] }}
@@ -102,10 +108,10 @@ function SwipeTutorial({ show, onDismiss }) {
               />
             </motion.div>
 
-            {/* Right swipe animation */}
+            {/* Right/Left swipe animation - swapped in RTL */}
             <motion.div
               animate={{
-                x: [20, 0, 20],
+                x: isRtl ? [-20, 0, -20] : [20, 0, 20],
                 scale: [1, 1.1, 1],
               }}
               transition={{
@@ -117,7 +123,11 @@ function SwipeTutorial({ show, onDismiss }) {
               className="flex flex-col items-center gap-2"
             >
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <ChevronRight size={24} className="text-blue-600" />
+                {isRtl ? (
+                  <ChevronLeft size={24} className="text-blue-600" />
+                ) : (
+                  <ChevronRight size={24} className="text-blue-600" />
+                )}
               </div>
               <motion.div
                 animate={{ opacity: [0.5, 1, 0.5] }}

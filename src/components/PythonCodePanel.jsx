@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Copy, Check } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getPythonCode, getAlgorithmDisplayName } from '../algorithms/python';
 import Editor from '@monaco-editor/react';
@@ -19,12 +19,13 @@ import { useTheme } from '../hooks/useTheme';
  * @param {string} props.algorithm - Current algorithm name
  */
 function PythonCodePanel({ isOpen, onClose, algorithm }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const panelRef = useRef(null);
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
   const { isDark } = useTheme();
+  const isRTL = i18n.dir() === 'rtl';
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -94,10 +95,10 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
     }
   }, [isDark]);
 
-  // Panel variants for different screen sizes
+  // Panel variants for desktop (side panel)
   const panelVariants = {
     hidden: {
-      x: '100%',
+      x: isRTL ? '-100%' : '100%',
       opacity: 0,
     },
     visible: {
@@ -105,11 +106,12 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
       opacity: 1,
     },
     exit: {
-      x: '100%',
+      x: isRTL ? '-100%' : '100%',
       opacity: 0,
     },
   };
 
+  // Mobile variants (bottom sheet)
   const mobileVariants = {
     hidden: {
       y: '100%',
@@ -144,7 +146,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
               ref={panelRef}
               className={`
                 fixed z-[60] bg-surface shadow-xl
-                ${isMobile ? 'inset-0' : 'right-0 w-full max-w-2xl h-full'}
+                ${isMobile ? 'inset-0' : `${isRTL ? 'left-0' : 'right-0'} w-full max-w-2xl h-full`}
               `}
               style={!isMobile ? { top: '56px' } : {}}
               variants={isMobile ? mobileVariants : panelVariants}
@@ -163,7 +165,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                   )}
                   <button
                     onClick={onClose}
-                    className={`p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors ${!isMobile ? 'ml-auto' : ''}`}
+                    className={`p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors ${!isMobile ? (isRTL ? 'mr-auto' : 'ml-auto') : ''}`}
                     aria-label={t('python_code.close')}
                   >
                     <X size={20} />
@@ -175,10 +177,14 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                   <div className="text-center text-text-secondary">
                     <div className="text-6xl mb-4">🐍</div>
                     <h3 className="text-lg font-medium mb-2 text-text-primary">
-                      No Python Implementation Available
+                      {t('python_code.not_available') ||
+                        'No Python Implementation Available'}
                     </h3>
                     <p className="text-sm">
-                      Python code for {displayName} is not yet available.
+                      {t('python_code.not_available_desc', {
+                        algorithm: displayName,
+                      }) ||
+                        `Python code for ${displayName} is not yet available.`}
                     </p>
                   </div>
                 </div>
@@ -209,7 +215,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
             ref={panelRef}
             className={`
               fixed z-[60] bg-surface shadow-xl
-              ${isMobile ? 'inset-0' : 'right-0 w-full max-w-2xl h-full'}
+              ${isMobile ? 'inset-0' : `${isRTL ? 'left-0' : 'right-0'} w-full max-w-2xl h-full`}
             `}
             style={!isMobile ? { top: '56px' } : {}}
             variants={isMobile ? mobileVariants : panelVariants}
@@ -223,12 +229,12 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
               {isMobile && (
                 <div className="flex items-center justify-between p-4 border-b border-gray-200 shrink-0">
                   <h2 className="text-lg font-semibold text-text-primary">
-                    {displayName}
+                    {t('python_code.title')}: {displayName}
                   </h2>
                   <button
                     onClick={onClose}
                     className="p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors"
-                    aria-label="Close panel"
+                    aria-label={t('python_code.close')}
                   >
                     <X size={20} />
                   </button>
@@ -236,7 +242,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
               )}
 
               {/* Code Editor */}
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 overflow-hidden" dir="ltr">
                 <Editor
                   height="100%"
                   defaultLanguage="python"
@@ -264,7 +270,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                   loading={
                     <div className="flex items-center justify-center h-full bg-surface">
                       <div className="text-text-secondary">
-                        Loading editor...
+                        {t('python_code.loading') || 'Loading editor...'}
                       </div>
                     </div>
                   }
