@@ -111,6 +111,7 @@
   "python_code": {
     "title": "Implémentation Python",
     "close": "Fermer",
+    "loading": "Chargement...",
     "not_available": "Implémentation Python Non Disponible",
     "not_available_desc": "L'implémentation Python pour {{algorithm}} arrive bientôt !"
   },
