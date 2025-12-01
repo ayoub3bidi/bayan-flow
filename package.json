@@ -59,7 +59,7 @@
     "tone": "^15.1.22"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^9.39.1",
     "@tailwindcss/postcss": "^4.1.14",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -70,11 +70,11 @@
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.22",
     "d3": "^7.9.0",
-    "eslint": "^9.36.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.22",
+    "eslint-plugin-react-refresh": "^0.4.24",
     "framer-motion": "^12.23.24",
     "globals": "^16.4.0",
     "jsdom": "^27.0.0",
