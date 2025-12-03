@@ -21,7 +21,7 @@ importers:
         specifier: ^24.2.3
         version: 24.2.3
       i18next-browser-languagedetector:
-        specifier: ^8.0.2
+        specifier: ^8.2.0
         version: 8.2.0
       lucide-react:
         specifier: ^0.544.0
