@@ -133,6 +133,7 @@
   "legend": {
     "title": "Legend",
     "toggle": "Toggle legend",
+    "close": "Close legend",
     "sorting": {
       "default": "Default",
       "comparing": "Comparing",

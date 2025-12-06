@@ -250,7 +250,7 @@ function App() {
 
                   {/* Visualization Area */}
                   <section
-                    className="lg:col-span-3 flex flex-col gap-6 h-[calc(100vh-200px)] lg:h-[calc(100vh-140px)]"
+                    className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-160px)] lg:h-[calc(100vh-85px)]"
                     role="region"
                     aria-label="Algorithm visualization"
                   >

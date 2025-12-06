@@ -133,6 +133,8 @@
   "legend": {
     "title": "Légende",
     "toggle": "Basculer la légende",
+    "close": "Fermer la légende",
+    "show": "Afficher la légende",
     "sorting": {
       "default": "Défaut",
       "comparing": "Comparaison",
