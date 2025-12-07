@@ -6,10 +6,11 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
+import Button from '../ui/Button';
 
 function RoadmapCTA() {
   const { t } = useTranslation();
@@ -17,8 +18,8 @@ function RoadmapCTA() {
   return (
     <Section className="relative overflow-hidden">
       {/* Gradient transition to footer background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-glass-bg)]/30 to-[var(--color-glass-bg)] pointer-events-none" />
-      
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-(--color-glass-bg)/30 to-(--color-glass-bg) pointer-events-none" />
+
       <Container className="relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.95 }}
@@ -28,19 +29,19 @@ function RoadmapCTA() {
           className="relative overflow-hidden"
         >
           {/* Background Gradient */}
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-br from-theme-primary/10 via-accent/5 to-transparent rounded-3xl"
+          <motion.div
+            className="absolute inset-0 bg-linear-to-br from-theme-primary/10 via-accent/5 to-transparent rounded-3xl"
             animate={{
               backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
             }}
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: 'linear'
+              ease: 'linear',
             }}
             style={{ backgroundSize: '200% 200%' }}
           />
-          
+
           {/* Decorative Elements */}
           <motion.div
             className="absolute top-0 right-0 w-64 h-64 bg-theme-primary/5 rounded-full blur-3xl"
@@ -76,26 +77,7 @@ function RoadmapCTA() {
             </p>
 
             <Link to="/roadmap">
-              <motion.button
-                className="relative inline-flex items-center gap-2 px-8 py-4 bg-theme-primary hover:bg-theme-primary-hover text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 overflow-hidden group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {/* Shine effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '100%' }}
-                  transition={{ duration: 0.6 }}
-                />
-                <span className="relative">{t('landing.roadmapCTA.button')}</span>
-                <motion.div
-                  whileHover={{ x: 5 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                >
-                  <ArrowRight size={20} />
-                </motion.div>
-              </motion.button>
+              <Button variant="cta">{t('landing.roadmapCTA.button')}</Button>
             </Link>
           </div>
         </motion.div>

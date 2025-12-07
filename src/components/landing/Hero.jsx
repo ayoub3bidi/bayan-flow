@@ -25,12 +25,12 @@ function Hero() {
           <motion.h1
             className="landing-h1 text-text-primary mb-6"
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0, 
+            animate={{
+              opacity: 1,
+              y: 0,
               scale: 1,
             }}
-            transition={{ 
+            transition={{
               opacity: { duration: 0.8, delay: 0.2 },
               y: { duration: 0.8, delay: 0.2, type: 'spring', stiffness: 100 },
               scale: { duration: 0.8, delay: 0.2 },
@@ -46,11 +46,11 @@ function Hero() {
             className="landing-body text-text-secondary max-w-2xl mx-auto mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.8, 
+            transition={{
+              duration: 0.8,
               delay: 0.4,
               type: 'spring',
-              stiffness: 100
+              stiffness: 100,
             }}
           >
             {t('landing.hero.subtitle')}
@@ -59,11 +59,11 @@ function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.8, 
+            transition={{
+              duration: 0.8,
               delay: 0.6,
               type: 'spring',
-              stiffness: 100
+              stiffness: 100,
             }}
           >
             <motion.div
@@ -71,7 +71,7 @@ function Hero() {
               whileTap={{ scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
-              <Button to="/app" variant="primary">
+              <Button to="/app" variant="cta">
                 {t('landing.hero.cta')}
               </Button>
             </motion.div>
