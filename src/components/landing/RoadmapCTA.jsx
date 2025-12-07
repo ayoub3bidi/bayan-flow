@@ -21,14 +21,25 @@ function RoadmapCTA() {
       
       <Container className="relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, type: 'spring', stiffness: 100 }}
           className="relative overflow-hidden"
         >
           {/* Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-theme-primary/10 via-accent/5 to-transparent rounded-3xl"></div>
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-br from-theme-primary/10 via-accent/5 to-transparent rounded-3xl"
+            animate={{
+              backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: 'linear'
+            }}
+            style={{ backgroundSize: '200% 200%' }}
+          />
           
           {/* Decorative Elements */}
           <motion.div
@@ -50,7 +61,7 @@ function RoadmapCTA() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary/10 text-theme-primary rounded-full text-sm font-semibold mb-6"
             >
               <Sparkles size={16} />
@@ -66,12 +77,24 @@ function RoadmapCTA() {
 
             <Link to="/roadmap">
               <motion.button
-                className="inline-flex items-center gap-2 px-8 py-4 bg-theme-primary hover:bg-theme-primary-hover text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                className="relative inline-flex items-center gap-2 px-8 py-4 bg-theme-primary hover:bg-theme-primary-hover text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 overflow-hidden group"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {t('landing.roadmapCTA.button')}
-                <ArrowRight size={20} />
+                {/* Shine effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{ duration: 0.6 }}
+                />
+                <span className="relative">{t('landing.roadmapCTA.button')}</span>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <ArrowRight size={20} />
+                </motion.div>
               </motion.button>
             </Link>
           </div>

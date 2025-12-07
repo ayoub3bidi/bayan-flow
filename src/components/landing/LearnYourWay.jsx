@@ -47,10 +47,19 @@ function LearnYourWay() {
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              initial={{ opacity: 0, x: index === 0 ? -50 : 50, scale: 0.95 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ 
+                duration: 0.7, 
+                delay: index * 0.15,
+                type: 'spring',
+                stiffness: 100
+              }}
+              whileHover={{
+                scale: 1.03,
+                transition: { type: 'spring', stiffness: 300 }
+              }}
               className="group relative"
             >
               {/* Glass morphism card */}
@@ -62,10 +71,16 @@ function LearnYourWay() {
                 <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 -z-10`} />
 
                 <div className="relative flex items-start gap-4">
-                  {/* Icon with gradient */}
-                  <div className={`flex-shrink-0 w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
+                  {/* Icon with gradient and pulse */}
+                  <motion.div 
+                    className={`flex-shrink-0 w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg`}
+                    whileHover={{ 
+                      scale: [1, 1.1, 1.05, 1.1, 1],
+                      transition: { duration: 0.6 }
+                    }}
+                  >
                     <feature.icon className="w-7 h-7 text-white" />
-                  </div>
+                  </motion.div>
                   
                   {/* Content */}
                   <div className="flex-1">

@@ -52,11 +52,21 @@ function AlgorithmTypes() {
           {modes.map((mode, index) => (
             <motion.div
               key={mode.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              initial={{ opacity: 0, rotateY: 90, scale: 0.8 }}
+              whileInView={{ opacity: 1, rotateY: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ 
+                duration: 0.7, 
+                delay: index * 0.15,
+                type: 'spring',
+                stiffness: 100
+              }}
+              whileHover={{
+                scale: 1.02,
+                transition: { type: 'spring', stiffness: 300 }
+              }}
               className="group relative"
+              style={{ perspective: '1000px' }}
             >
               {/* Glass morphism card */}
               <div className="relative bg-[var(--color-glass-bg)] backdrop-blur-xl p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 dark:border-white/5 h-full overflow-hidden">
@@ -67,10 +77,17 @@ function AlgorithmTypes() {
                 <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${mode.gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 -z-10`} />
 
                 <div className="relative">
-                  {/* Gradient Icon Background */}
-                  <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${mode.gradient} mb-6 shadow-lg`}>
+                  {/* Gradient Icon Background with rotation */}
+                  <motion.div 
+                    className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${mode.gradient} mb-6 shadow-lg`}
+                    whileHover={{ 
+                      rotate: [0, -10, 10, -5, 5, 0],
+                      scale: 1.1,
+                      transition: { duration: 0.5 }
+                    }}
+                  >
                     <mode.icon className="w-8 h-8 text-white" />
-                  </div>
+                  </motion.div>
 
                   {/* Content */}
                   <h3 className="text-2xl font-bold text-text-primary mb-3">
