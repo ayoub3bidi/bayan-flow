@@ -9,16 +9,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-function LanguageSwitcher() {
+/**
+ * @param {Object} props
+ * @param {string[]} [props.excludeLanguages] - Array of language codes to exclude from the dropdown
+ */
+function LanguageSwitcher({ excludeLanguages = [] }) {
   const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const languages = [
+  const allLanguages = [
     { code: 'en', name: t('languages.en'), flag: '🇬🇧' },
     { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' },
     { code: 'ar', name: t('languages.ar'), flag: '🇸🇦' },
   ];
+
+  // Filter out excluded languages
+  const languages = allLanguages.filter(
+    lang => !excludeLanguages.includes(lang.code)
+  );
 
   const currentLanguage =
     languages.find(lang => lang.code === i18n.language) || languages[0];

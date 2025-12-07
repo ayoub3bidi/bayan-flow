@@ -5,7 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle } from 'lucide-react';
+import { FileText, AlertCircle, Map } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -49,6 +49,11 @@ function Footer() {
       icon: AlertCircle,
       href: `https://github.com/${repoOwner}/${repoName}/issues`,
     },
+    {
+      label: t('landing.footer.seeRoadmap'),
+      icon: Map,
+      href: `/roadmap`,
+    }
   ];
 
   const handleBMCClick = () => {

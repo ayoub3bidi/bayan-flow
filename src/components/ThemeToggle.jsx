@@ -5,14 +5,23 @@
  */
 
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
+import { ThemeContext } from '../contexts/ThemeContextDefinition';
 
 /**
  * @param {Object} props
- * @param {string} props.theme - Current theme ('light' or 'dark')
- * @param {Function} props.onToggle - Callback function to toggle theme
+ * @param {string} [props.theme] - Optional theme override ('light' or 'dark')
+ * @param {Function} [props.onToggle] - Optional callback override to toggle theme
  * @param {string} [props.className] - Additional CSS classes
  */
-function ThemeToggle({ theme, onToggle, className = '' }) {
+function ThemeToggle({ theme: themeProp, onToggle: onToggleProp, className = '' }) {
+  // Use context if props are not provided
+  const context = useContext(ThemeContext);
+  
+  // Use props if provided, otherwise fall back to context
+  const theme = themeProp ?? context?.theme ?? 'light';
+  const onToggle = onToggleProp ?? context?.toggleTheme ?? (() => {});
+  
   const isDark = theme === 'dark';
 
   return (

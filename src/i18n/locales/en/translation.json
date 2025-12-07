@@ -175,5 +175,84 @@
     "addedToQueue": "Added {{count}} cells to queue",
     "pathFound": "Path found! Length: {{length}} cells",
     "noPath": "No path found"
+  },
+  "landing": {
+    "hero": {
+      "title": "Finally, Algorithms Make Sense",
+      "subtitle": "Watch sorting and pathfinding algorithms come to life with interactive, step-by-step visualizations. Learn at your own pace.",
+      "cta": "Start Visualizing"
+    },
+    "learnYourWay": {
+      "heading": "Learn Your Way",
+      "autoPlay": {
+        "title": "Auto-Play Mode",
+        "description": "Sit back and watch algorithms unfold automatically at your preferred speed. Perfect for understanding the big picture."
+      },
+      "manual": {
+        "title": "Manual Control",
+        "description": "Step through each operation manually. Pause, rewind, and analyze every decision the algorithm makes."
+      },
+      "tagline": "You decide how fast you learn."
+    },
+    "clarity": {
+      "heading": "No Clutter, Just Clarity",
+      "description": "Bayan Flow strips away complexity to reveal the beauty of algorithms. Clean interface, clear explanations, and vivid animations help you see what's really happening."
+    },
+    "algorithmTypes": {
+      "heading": "Two Powerful Modes",
+      "subheading": "Explore sorting and pathfinding algorithms with interactive visualizations",
+      "available": "Available Algorithms:",
+      "sorting": {
+        "title": "Sorting Algorithms",
+        "description": "Watch how different sorting algorithms organize data step by step. Perfect for understanding comparison-based sorting.",
+        "algorithms": "Bubble Sort, Quick Sort, Merge Sort"
+      },
+      "pathfinding": {
+        "title": "Pathfinding Algorithms",
+        "description": "See how pathfinding algorithms navigate through grids to find the shortest path between two points.",
+        "algorithms": "BFS, Dijkstra, A* Search"
+      }
+    },
+    "features": {
+      "heading": "Powerful Features",
+      "subheading": "Everything you need to master algorithms",
+      "customization": {
+        "title": "Customizable",
+        "description": "Adjust array size (5-100) or grid size (15×15 to 35×35) to see how algorithms perform with different data sizes."
+      },
+      "pythonCode": {
+        "title": "Python Code",
+        "description": "View clean Python implementations for each algorithm. Learn by reading real code examples."
+      },
+      "sound": {
+        "title": "Interactive Sound",
+        "description": "Enable audio feedback to hear algorithms in action. Experimental feature for enhanced learning.",
+        "badge": "Experimental"
+      },
+      "fullscreen": {
+        "title": "Full Screen",
+        "description": "Immersive full-screen mode perfect for presentations and classroom teaching."
+      }
+    },
+    "roadmapCTA": {
+      "badge": "Coming Soon",
+      "heading": "See What's Next",
+      "description": "We're constantly improving Bayan Flow with new algorithms, features, and learning tools. Check out our roadmap to see what's coming and what we're working on right now.",
+      "button": "View Roadmap"
+    },
+    "footer": {
+      "quickActions": "Quick Actions",
+      "startVisualizing": "Start Visualizing",
+      "seeRoadmap": "See the Roadmap"
+    }
+  },
+  "roadmap": {
+    "hero": {
+      "title": "Where We're Going",
+      "subtitle": "Every update, every devlog. See what's live and what's next."
+    },
+    "timeline": {
+      "sampleNote": "Timeline items are samples. Replace with actual roadmap content."
+    }
   }
 }

@@ -176,5 +176,84 @@
     "addedToQueue": "{{count}} cellules ajoutées à la file",
     "pathFound": "Chemin trouvé ! Longueur : {{length}} cellules",
     "noPath": "Aucun chemin trouvé"
+  },
+  "landing": {
+    "hero": {
+      "title": "Enfin, les Algorithmes Ont un Sens",
+      "subtitle": "Regardez les algorithmes de tri et de recherche de chemin prendre vie avec des visualisations interactives, étape par étape. Apprenez à votre propre rythme.",
+      "cta": "Commencer la Visualisation"
+    },
+    "learnYourWay": {
+      "heading": "Apprenez à Votre Manière",
+      "autoPlay": {
+        "title": "Mode Lecture Automatique",
+        "description": "Asseyez-vous et regardez les algorithmes se dérouler automatiquement à votre vitesse préférée. Parfait pour comprendre la vue d'ensemble."
+      },
+      "manual": {
+        "title": "Contrôle Manuel",
+        "description": "Parcourez chaque opération manuellement. Mettez en pause, rembobinez et analysez chaque décision prise par l'algorithme."
+      },
+      "tagline": "Vous décidez de la vitesse à laquelle vous apprenez."
+    },
+    "clarity": {
+      "heading": "Pas de Désordre, Juste de la Clarté",
+      "description": "Bayan Flow élimine la complexité pour révéler la beauté des algorithmes. Interface épurée, explications claires et animations vives vous aident à voir ce qui se passe réellement."
+    },
+    "algorithmTypes": {
+      "heading": "Deux Modes Puissants",
+      "subheading": "Explorez les algorithmes de tri et de recherche de chemin avec des visualisations interactives",
+      "available": "Algorithmes Disponibles :",
+      "sorting": {
+        "title": "Algorithmes de Tri",
+        "description": "Regardez comment différents algorithmes de tri organisent les données étape par étape. Parfait pour comprendre le tri par comparaison.",
+        "algorithms": "Tri à Bulles, Tri Rapide, Tri par Fusion"
+      },
+      "pathfinding": {
+        "title": "Algorithmes de Recherche de Chemin",
+        "description": "Voyez comment les algorithmes de recherche de chemin naviguent à travers les grilles pour trouver le chemin le plus court entre deux points.",
+        "algorithms": "BFS, Dijkstra, Recherche A*"
+      }
+    },
+    "features": {
+      "heading": "Fonctionnalités Puissantes",
+      "subheading": "Tout ce dont vous avez besoin pour maîtriser les algorithmes",
+      "customization": {
+        "title": "Personnalisable",
+        "description": "Ajustez la taille du tableau (5-100) ou la taille de la grille (15×15 à 35×35) pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
+      },
+      "pythonCode": {
+        "title": "Code Python",
+        "description": "Consultez des implémentations Python propres pour chaque algorithme. Apprenez en lisant des exemples de code réels."
+      },
+      "sound": {
+        "title": "Son Interactif",
+        "description": "Activez le retour audio pour entendre les algorithmes en action. Fonctionnalité expérimentale pour un apprentissage amélioré.",
+        "badge": "Expérimental"
+      },
+      "fullscreen": {
+        "title": "Plein Écran",
+        "description": "Mode plein écran immersif parfait pour les présentations et l'enseignement en classe."
+      }
+    },
+    "roadmapCTA": {
+      "badge": "Bientôt Disponible",
+      "heading": "Découvrez ce qui Arrive",
+      "description": "Nous améliorons constamment Bayan Flow avec de nouveaux algorithmes, fonctionnalités et outils d'apprentissage. Consultez notre feuille de route pour voir ce qui arrive et sur quoi nous travaillons actuellement.",
+      "button": "Voir la Feuille de Route"
+    },
+    "footer": {
+      "quickActions": "Actions Rapides",
+      "startVisualizing": "Commencer la Visualisation",
+      "seeRoadmap": "Voir la Feuille de Route"
+    }
+  },
+  "roadmap": {
+    "hero": {
+      "title": "Notre Direction",
+      "subtitle": "Chaque mise à jour, chaque journal de développement. Voyez ce qui est en direct et ce qui est prévu."
+    },
+    "timeline": {
+      "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route."
+    }
   }
 }
