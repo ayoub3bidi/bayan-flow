@@ -226,7 +226,7 @@
       },
       "sound": {
         "title": "Interactive Sound",
-        "description": "Enable audio feedback to hear algorithms in action. Experimental feature for enhanced learning.",
+        "description": "Enable audio feedback to hear algorithms in action.",
         "badge": "Experimental"
       },
       "fullscreen": {

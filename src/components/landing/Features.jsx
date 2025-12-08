@@ -31,7 +31,7 @@ function Features() {
       title: t('landing.features.sound.title'),
       description: t('landing.features.sound.description'),
       gradient: 'from-rose-500 to-pink-500',
-      // badge: t('landing.features.sound.badge'),
+      badge: t('landing.features.sound.badge'),
     },
     {
       icon: Maximize,
@@ -123,12 +123,12 @@ function Features() {
                   </motion.div>
 
                   {/* Title with optional badge */}
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="text-lg font-bold text-text-primary">
                       {feature.title}
                     </h3>
                     {feature.badge && (
-                      <span className="px-2 py-0.5 bg-accent/10 text-accent text-xs font-medium rounded-full">
+                      <span className="px-2.5 py-1 bg-linear-to-r from-accent/20 to-accent/10 text-accent text-xs font-semibold rounded-full border border-accent/30 whitespace-nowrap shadow-sm">
                         {feature.badge}
                       </span>
                     )}

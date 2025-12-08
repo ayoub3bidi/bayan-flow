@@ -227,7 +227,7 @@
       },
       "sound": {
         "title": "Son Interactif",
-        "description": "Activez le retour audio pour entendre les algorithmes en action. Fonctionnalité expérimentale pour un apprentissage amélioré.",
+        "description": "Activez le retour audio pour entendre les algorithmes en action.",
         "badge": "Expérimental"
       },
       "fullscreen": {
