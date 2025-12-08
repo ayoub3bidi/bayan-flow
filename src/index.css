@@ -304,11 +304,11 @@ body {
 }
 
 /* Panel spacing normalization */
-.space-y-consistent>*+* {
+.space-y-consistent > * + * {
   margin-top: 1rem;
 }
 
-.space-y-consistent-sm>*+* {
+.space-y-consistent-sm > * + * {
   margin-top: 0.75rem;
 }
 
@@ -352,7 +352,6 @@ body {
 
 /* Radial Gradient Animation for Hero Mobile */
 @keyframes radialPulse {
-
   0%,
   100% {
     background-position: 0% 50%;
@@ -366,20 +365,24 @@ body {
 }
 
 .radial-gradient-animated {
-  background: radial-gradient(circle at center,
-      rgba(43, 127, 255, 0.15) 0%,
-      rgba(96, 165, 250, 0.1) 25%,
-      rgba(14, 165, 233, 0.05) 50%,
-      transparent 100%);
+  background: radial-gradient(
+    circle at center,
+    rgba(43, 127, 255, 0.15) 0%,
+    rgba(96, 165, 250, 0.1) 25%,
+    rgba(14, 165, 233, 0.05) 50%,
+    transparent 100%
+  );
   background-size: 200% 200%;
   animation: radialPulse 8s ease-in-out infinite;
 }
 
 .dark .radial-gradient-animated {
-  background: radial-gradient(circle at center,
-      rgba(96, 165, 250, 0.2) 0%,
-      rgba(43, 127, 255, 0.12) 25%,
-      rgba(56, 189, 248, 0.08) 50%,
-      transparent 100%);
+  background: radial-gradient(
+    circle at center,
+    rgba(96, 165, 250, 0.2) 0%,
+    rgba(43, 127, 255, 0.12) 25%,
+    rgba(56, 189, 248, 0.08) 50%,
+    transparent 100%
+  );
   background-size: 200% 200%;
 }

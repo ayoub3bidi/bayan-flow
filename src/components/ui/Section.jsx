@@ -6,9 +6,7 @@
 
 function Section({ children, className = '' }) {
   return (
-    <section className={`py-20 md:py-32 ${className}`}>
-      {children}
-    </section>
+    <section className={`py-20 md:py-32 ${className}`}>{children}</section>
   );
 }
 

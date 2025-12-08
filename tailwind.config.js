@@ -61,8 +61,8 @@ export default {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
-        'shimmer': 'shimmer 2s infinite',
-        'float': 'float 3s ease-in-out infinite',
+        shimmer: 'shimmer 2s infinite',
+        float: 'float 3s ease-in-out infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'gradient-shift': 'gradientShift 3s ease infinite',
         'bounce-subtle': 'bounceSubtle 0.6s ease-out',

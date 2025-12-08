@@ -25,10 +25,7 @@ function TechPattern() {
         transition={{ duration: 2, ease: 'easeOut' }}
         className="fixed left-0 top-0 w-96 h-full pointer-events-none z-0 overflow-hidden"
       >
-        <svg
-          className="w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern
               id="tech-grid-left"
@@ -93,10 +90,7 @@ function TechPattern() {
         transition={{ duration: 2, ease: 'easeOut' }}
         className="fixed right-0 top-0 w-96 h-full pointer-events-none z-0 overflow-hidden"
       >
-        <svg
-          className="w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern
               id="tech-grid-right"

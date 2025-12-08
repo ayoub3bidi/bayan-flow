@@ -55,35 +55,39 @@ function AlgorithmTypes() {
               initial={{ opacity: 0, rotateY: 90, scale: 0.8 }}
               whileInView={{ opacity: 1, rotateY: 0, scale: 1 }}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{ 
-                duration: 0.7, 
+              transition={{
+                duration: 0.7,
                 delay: index * 0.15,
                 type: 'spring',
-                stiffness: 100
+                stiffness: 100,
               }}
               whileHover={{
                 scale: 1.02,
-                transition: { type: 'spring', stiffness: 300 }
+                transition: { type: 'spring', stiffness: 300 },
               }}
               className="group relative"
               style={{ perspective: '1000px' }}
             >
               {/* Glass morphism card */}
-              <div className="relative bg-[var(--color-glass-bg)] backdrop-blur-xl p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 dark:border-white/5 h-full overflow-hidden">
+              <div className="relative bg-(--color-glass-bg) backdrop-blur-xl p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 dark:border-white/5 h-full overflow-hidden">
                 {/* Gradient glow on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${mode.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
-                
+                <div
+                  className={`absolute inset-0 bg-linear-to-br ${mode.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+                />
+
                 {/* Animated border glow */}
-                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${mode.gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 -z-10`} />
+                <div
+                  className={`absolute inset-0 rounded-3xl bg-linear-to-br ${mode.gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 -z-10`}
+                />
 
                 <div className="relative">
                   {/* Gradient Icon Background with rotation */}
-                  <motion.div 
-                    className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${mode.gradient} mb-6 shadow-lg`}
-                    whileHover={{ 
+                  <motion.div
+                    className={`inline-flex p-4 rounded-2xl bg-linear-to-br ${mode.gradient} mb-6 shadow-lg`}
+                    whileHover={{
                       rotate: [0, -10, 10, -5, 5, 0],
                       scale: 1.1,
-                      transition: { duration: 0.5 }
+                      transition: { duration: 0.5 },
                     }}
                   >
                     <mode.icon className="w-8 h-8 text-white" />
@@ -96,7 +100,7 @@ function AlgorithmTypes() {
                   <p className="text-text-secondary mb-4 leading-relaxed">
                     {mode.description}
                   </p>
-                  
+
                   {/* Algorithms */}
                   <div className="pt-4 border-t border-white/10 dark:border-white/5">
                     <p className="text-sm font-semibold text-text-secondary mb-2">

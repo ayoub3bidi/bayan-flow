@@ -252,6 +252,11 @@
       "title": "Notre Direction",
       "subtitle": "Chaque mise à jour, chaque journal de développement. Voyez ce qui est en direct et ce qui est prévu."
     },
+    "status": {
+      "completed": "Terminé",
+      "inProgress": "En Cours",
+      "planned": "Prévu"
+    },
     "timeline": {
       "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route."
     }

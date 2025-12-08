@@ -19,8 +19,8 @@ function LandingPage() {
   return (
     <div className="min-h-screen relative">
       {/* Unified smooth gradient background */}
-      <div className="fixed inset-0 bg-gradient-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
-      
+      <div className="fixed inset-0 bg-linear-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
+
       {/* Animated Tech Pattern */}
       <div className="relative">
         <TechPattern />

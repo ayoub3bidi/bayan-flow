@@ -249,7 +249,12 @@
   "roadmap": {
     "hero": {
       "title": "Where We're Going",
-      "subtitle": "Every update, every devlog. See what's live and what's next."
+      "subtitle": "Every update, every DevLog. See what's live and what's next."
+    },
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "planned": "Planned"
     },
     "timeline": {
       "sampleNote": "Timeline items are samples. Replace with actual roadmap content."

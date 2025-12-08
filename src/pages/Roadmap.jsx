@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import RoadmapHero from '../components/roadmap/RoadmapHero';
@@ -12,26 +13,11 @@ import Footer from '../components/Footer';
 import ThemeToggle from '../components/ThemeToggle';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 
-// Sample timeline data - replace with actual roadmap content
-const timelineItems = [
-  {
-    date: 'December 2025',
-    title: 'Initial Release',
-    description: 'Launched Bayan Flow with sorting algorithms (Bubble, Quick, Merge) and pathfinding algorithms (BFS, Dijkstra, A*). Features include manual and autoplay modes, dark mode, and multi-language support.',
-  },
-  {
-    date: 'Q1 2026',
-    title: 'Enhanced Visualizations',
-    description: 'Adding more algorithms including Insertion Sort, Selection Sort, and DFS. Improved mobile experience with better touch gestures and responsive design.',
-  },
-  {
-    date: 'Q2 2026',
-    title: 'Interactive Learning',
-    description: 'Introduction of step-by-step tutorials, code explanations, and algorithm comparisons. Users can now compare performance across different algorithms side-by-side.',
-  },
-];
-
 function Roadmap() {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
   return (
     <div className="min-h-screen bg-bg flex flex-col">
       {/* Theme Toggle & Language Switcher */}
@@ -54,7 +40,7 @@ function Roadmap() {
       {/* Roadmap Content */}
       <div className="flex-1">
         <RoadmapHero />
-        <Timeline items={timelineItems} />
+        <Timeline />
       </div>
 
       {/* Footer */}
