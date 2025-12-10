@@ -43,7 +43,7 @@ function Hero() {
           </motion.h1>
 
           <motion.p
-            className="landing-body text-text-secondary max-w-2xl mx-auto mb-10"
+            className="landing-body text-text-secondary max-w-auto mx-auto mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
