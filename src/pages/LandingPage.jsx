@@ -17,7 +17,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher';
 
 function LandingPage() {
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-x-hidden">
       {/* Unified smooth gradient background */}
       <div className="fixed inset-0 bg-linear-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
 
@@ -27,7 +27,7 @@ function LandingPage() {
       </div>
 
       {/* Theme Toggle & Language Switcher */}
-      <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
         <LanguageSwitcher excludeLanguages={['ar']} />
         <ThemeToggle />
       </div>

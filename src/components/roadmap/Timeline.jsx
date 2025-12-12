@@ -14,8 +14,8 @@ function Timeline() {
     <section className="relative py-20 bg-surface overflow-visible">
       {/* Simple Vertical Timeline Line - starts from first item, fades to dots */}
       <div
-        className="hidden md:block absolute left-1/2 -translate-x-1/2 pointer-events-none z-0"
-        style={{ top: '140px', bottom: '180px' }}
+        className="hidden md:block absolute left-1/2 transform -translate-x-1/2 pointer-events-none z-0"
+        style={{ top: '140px', bottom: '180px', width: '2px' }}
       >
         {/* Animated line that draws in */}
         <motion.div

@@ -198,10 +198,23 @@ body {
   line-height: 1.5;
   color: var(--color-text-primary);
   background-color: var(--color-bg);
+  overflow-x: hidden; /* Prevent horizontal scroll */
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
   scrollbar-gutter: stable;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Improve touch targets on mobile */
+  button,
+  [role='button'],
+  input[type='button'],
+  input[type='submit'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 [dir='rtl'] body {

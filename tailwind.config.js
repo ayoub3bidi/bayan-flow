@@ -14,6 +14,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '475px', // Extra small breakpoint for better mobile control
+      },
       spacing: {
         touch: '44px',
       },

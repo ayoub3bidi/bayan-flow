@@ -19,21 +19,24 @@ function Roadmap() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
   return (
-    <div className="min-h-screen bg-bg flex flex-col">
+    <div className="min-h-screen bg-bg flex flex-col overflow-x-hidden">
       {/* Theme Toggle & Language Switcher */}
-      <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
         <LanguageSwitcher excludeLanguages={['ar']} />
         <ThemeToggle />
       </div>
 
       {/* Back to Home Link */}
-      <div className="fixed top-6 left-6 z-50">
+      <div className="fixed top-4 left-4 sm:top-6 sm:left-6 z-50">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-elevated text-text-primary rounded-lg transition-colors border border-border"
+          className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-surface hover:bg-surface-elevated text-text-primary rounded-lg transition-colors border border-border text-sm"
         >
-          <ArrowLeft size={20} />
-          <span className="text-sm font-medium">Back to Home</span>
+          <ArrowLeft size={16} className="sm:w-5 sm:h-5" />
+          <span className="text-xs sm:text-sm font-medium hidden xs:inline">
+            Back to Home
+          </span>
+          <span className="text-xs sm:text-sm font-medium xs:hidden">Back</span>
         </Link>
       </div>
 
