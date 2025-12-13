@@ -5,83 +5,228 @@ This document provides an in-depth explanation of the Bayan Flow architecture, d
 ## Table of Contents
 
 1. [System Architecture](#system-architecture)
-2. [Component Hierarchy](#component-hierarchy)
-3. [Data Flow](#data-flow)
-4. [Algorithm Implementation](#algorithm-implementation)
-5. [Animation System](#animation-system)
-6. [Audio System](#audio-system)
-7. [State Management](#state-management)
-8. [Testing Strategy](#testing-strategy)
-9. [Performance Optimizations](#performance-optimizations)
+2. [Routing & Pages](#routing--pages)
+3. [Component Hierarchy](#component-hierarchy)
+4. [Data Flow](#data-flow)
+5. [Theme System](#theme-system)
+6. [Internationalization](#internationalization)
+7. [Algorithm Implementation](#algorithm-implementation)
+8. [Animation System](#animation-system)
+9. [Audio System](#audio-system)
+10. [State Management](#state-management)
+11. [Testing Strategy](#testing-strategy)
+12. [Performance Optimizations](#performance-optimizations)
 
 ## System Architecture
 
-### Component Responsibilities
+### Application Structure
 
-#### **App.jsx** (Orchestrator)
-- Manages global application state
-- Coordinates data flow between components
-- Handles user interactions (algorithm selection, array generation)
-- Loads algorithm steps into visualization hook
+Bayan Flow is built as a single-page application (SPA) with multiple routes:
+
+```
+┌─────────────────────────────────────┐
+│         React Router (BrowserRouter)│
+├─────────────────────────────────────┤
+│  /          → LandingPage           │
+│  /roadmap   → Roadmap               │
+│  /app       → VisualizerApp         │
+└─────────────────────────────────────┘
+```
+
+### Global Providers
+
+```javascript
+<ThemeProvider>
+  <BrowserRouter>
+    <Routes>
+      {/* Routes */}
+    </Routes>
+  </BrowserRouter>
+</ThemeProvider>
+```
+
+**Provider Hierarchy:**
+1. **ThemeProvider**: Global theme state (light/dark mode)
+2. **BrowserRouter**: Client-side routing
+3. **i18next**: Internationalization (initialized in main.jsx)
+
+## Routing & Pages
+
+### Route Structure
+
+```javascript
+// main.jsx
+<Routes>
+  <Route path="/" element={<LandingPage />} />
+  <Route path="/app" element={<VisualizerApp />} />
+  <Route path="/roadmap" element={<Roadmap />} />
+</Routes>
+```
+
+### Page Responsibilities
+
+#### **LandingPage** (`/`)
+- Marketing homepage
+- Hero section with CTA
+- Feature highlights
+- Algorithm type overview
+- Roadmap CTA
+- No visualizer functionality
+
+**Components:**
+- Hero, LearnYourWay, AlgorithmTypes, Features, ClaritySection, RoadmapCTA
+- Footer, ThemeToggle, LanguageSwitcher
+- TechPattern (animated background)
+
+#### **VisualizerApp** (`/app`)
+- Main algorithm visualization interface
+- Sorting and pathfinding modes
+- Full control panel and settings
+- Python code viewer
+- Complexity analysis
 
 **Key State:**
 ```javascript
-- arraySize: Current array size (5-100)
-- array: The array being visualized
-- speed: Animation speed (10-1000ms)
+- algorithmType: 'sorting' | 'pathfinding'
+- array: Current array being visualized
 - selectedAlgorithm: Current algorithm name
+- speed: Animation speed
+- mode: 'manual' | 'autoplay'
+- isFullScreen: Full-screen mode state
 ```
 
-#### **ArrayVisualizer** (Presentation)
-- Renders the array as animated bars
-- Receives array and state data as props
-- Purely presentational, no business logic
+#### **Roadmap** (`/roadmap`)
+- Public development timeline
+- Completed/in-progress/planned features
+- Video embeds for releases
+- Status badges
+- Animated timeline
 
-#### **ArrayBar** (Atomic Component)
-- Individual bar visualization
+**Data Source:** `src/data/roadmapData.js`
+
+## Component Hierarchy
+
+### Page-Level Components
+
+```
+LandingPage
+├── ThemeToggle
+├── LanguageSwitcher
+├── TechPattern (background)
+├── Hero
+├── LearnYourWay
+├── AlgorithmTypes
+├── Features
+├── ClaritySection
+├── RoadmapCTA
+└── Footer
+
+VisualizerApp
+├── Header
+├── SettingsPanel
+├── ArrayVisualizer / GridVisualizer
+├── ControlPanel
+├── FloatingActionButton
+├── PythonCodePanel (lazy)
+├── ComplexityPanel (lazy)
+└── Footer
+
+Roadmap
+├── ThemeToggle
+├── LanguageSwitcher
+├── Back to Home Link
+├── RoadmapHero
+├── Timeline
+│   └── TimelineItem (multiple)
+└── Footer
+```
+
+### Component Responsibilities
+
+#### **VisualizerApp** (Orchestrator)
+- Manages global visualization state
+- Coordinates data flow between components
+- Handles algorithm selection and generation
+- Manages full-screen mode
+- Lazy loads heavy components
+
+**Key State:**
+```javascript
+- algorithmType: Current mode (sorting/pathfinding)
+- array/grid: Data being visualized
+- speed: Animation speed (10-1000ms)
+- selectedAlgorithm: Current algorithm
+- mode: Control mode (manual/autoplay)
+- isPythonPanelOpen: Python panel visibility
+```
+
+#### **ArrayVisualizer/GridVisualizer** (Presentation)
+- Renders visualization based on mode
+- Purely presentational, receives data as props
+- Handles swipe gestures for mobile
+- Shows auto-hiding legend
+- Displays step descriptions
+
+#### **ArrayBar/GridCell** (Atomic Components)
+- Individual visualization elements
 - Color-coded based on element state
 - Animated using Framer Motion
 
 #### **ControlPanel** (Interaction)
-- Playback controls (play, pause, step)
+- Mode-aware playback controls
 - Progress tracking
-- Communicates with visualization hook via callbacks
+- Full-screen toggle
+- Generate new array/grid button
 
 #### **SettingsPanel** (Configuration)
+- Algorithm type toggle (sorting/pathfinding)
 - Algorithm selection dropdown
-- Speed and size sliders
-- Array generation trigger
+- Control mode toggle (manual/autoplay)
+- Speed slider (autoplay only)
+- Array size / Grid size controls
+- Sound toggle
 
-#### **InfoPanel** (Information Display)
-- Shows current algorithm step description
-- Real-time updates during animation
+#### **PythonCodePanel** (Code Viewer)
+- Monaco editor integration
+- Syntax highlighting
+- Theme-aware (light/dark)
+- Side panel (desktop) / Bottom sheet (mobile)
+- Lazy loaded for performance
+
+#### **ComplexityPanel** (Analysis)
+- Algorithm complexity visualization
+- Big-O notation display
+- Interactive performance graph
+- Linear/logarithmic scale toggle
+- Use cases and descriptions
+- Shown after algorithm completion
 
 ## Data Flow
 
 ### Algorithm Execution Flow
 
 ```
-User Action (Play Button)
+User Action (Select Algorithm)
     ↓
-App Component
-    ↓
-useSortingVisualization Hook
+VisualizerApp Component
     ↓
 Algorithm Function (e.g., bubbleSort)
     ↓
 Generate Animation Steps[]
     ↓
-Load into Hook State
+Load into Visualization Hook
     ↓
-Playback Loop (with speed delay)
+User Action (Play/Step)
     ↓
-Update Current Step State
+Hook Updates Current Step
     ↓
 Trigger React Re-render
     ↓
-ArrayVisualizer Updates
+Visualizer Updates
     ↓
-Framer Motion Animates Transitions
+Framer Motion Animates
+    ↓
+Sound Manager Plays Audio
 ```
 
 ### Step Generation Pattern
@@ -100,6 +245,143 @@ Each algorithm generates an array of step objects:
   ],
   description: 'Comparing 2 and 8'  // Human-readable description
 }
+```
+
+For pathfinding:
+
+```javascript
+{
+  grid: [[0, 0, ...], ...],      // Grid state
+  states: [['default', ...], ...], // Cell states
+  description: 'Exploring cell (2, 3)'
+}
+```
+
+## Theme System
+
+### Architecture
+
+```javascript
+// Context Definition
+ThemeContext = createContext(undefined)
+
+// Provider Implementation
+<ThemeProvider>
+  - Manages theme state ('light' | 'dark')
+  - Persists to localStorage
+  - Detects system preference
+  - Listens for system changes
+  - Applies CSS classes to document root
+</ThemeProvider>
+
+// Hook Usage
+const { theme, toggleTheme, isDark, isLight } = useTheme()
+```
+
+### CSS Variable System
+
+```css
+/* Light Mode (default) */
+:root {
+  --color-bg: #f9fafb;
+  --color-surface: #ffffff;
+  --color-text-primary: #364153;
+  --color-primary: #2b7fff;
+  /* ... 50+ variables */
+}
+
+/* Dark Mode */
+.dark {
+  --color-bg: #0a0f1a;
+  --color-surface: #1a2332;
+  --color-text-primary: #f9fafb;
+  --color-primary: #60a5fa;
+  /* ... matching variables */
+}
+```
+
+**Benefits:**
+- Instant theme switching (no re-render needed for styled components)
+- Consistent theming across all components
+- Easy to customize
+- Smooth transitions
+
+### Theme Detection Flow
+
+```
+App Initialization
+    ↓
+Check localStorage for saved theme
+    ↓
+If no saved theme → Check system preference
+    ↓
+Apply theme to document root
+    ↓
+Listen for system preference changes
+    ↓
+Auto-update only if no user preference saved
+```
+
+## Internationalization
+
+### i18n Architecture
+
+```javascript
+// Configuration
+i18n
+  .use(LanguageDetector)      // Auto-detect language
+  .use(initReactI18next)       // React integration
+  .init({
+    resources: { en, fr, ar }, // Translation files
+    fallbackLng: 'en',         // Fallback language
+    supportedLngs: ['en', 'fr', 'ar'],
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage']
+    }
+  })
+```
+
+### RTL Support
+
+```javascript
+// rtlManager.js
+RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur']
+
+initRTL(i18n) → {
+  - Set document dir attribute
+  - Listen for language changes
+  - Update dir on change
+}
+
+// Automatic layout flipping for Arabic
+<div className={isRTL ? 'flex-row-reverse' : 'flex-row'}>
+```
+
+### Translation Structure
+
+```json
+{
+  "header": { "title": "...", "subtitle": "..." },
+  "settings": { "algorithm": "...", "speed": "..." },
+  "controls": { "play": "...", "pause": "..." },
+  "algorithms": {
+    "sorting": { "bubbleSort": "..." },
+    "pathfinding": { "bfs": "..." }
+  }
+}
+```
+
+**Usage:**
+```javascript
+const { t, i18n } = useTranslation()
+const isRTL = i18n.dir() === 'rtl'
+
+// Simple translation
+<h1>{t('header.title')}</h1>
+
+// With interpolation
+<p>{t('info.step', { current: 5, total: 10 })}</p>
 ```
 
 ## Algorithm Implementation
@@ -125,7 +407,10 @@ export function bubbleSort(array) {
       steps.push({
         array: [...arr],
         states: createStates(j, j+1, 'comparing'),
-        description: `Comparing ${arr[j]} and ${arr[j+1]}`
+        description: getAlgorithmDescription(
+          ALGORITHM_STEPS.COMPARING,
+          { a: arr[j], b: arr[j+1] }
+        )
       });
       
       if (arr[j] > arr[j+1]) {
@@ -135,7 +420,10 @@ export function bubbleSort(array) {
         steps.push({
           array: [...arr],
           states: createStates(j, j+1, 'swapping'),
-          description: `Swapped ${arr[j+1]} and ${arr[j]}`
+          description: getAlgorithmDescription(
+            ALGORITHM_STEPS.SWAPPING,
+            { a: arr[j+1], b: arr[j] }
+          )
         });
       }
     }
@@ -166,6 +454,35 @@ export function bubbleSortPure(array) {
 - **Testability**: Pure functions easy to test
 - **Maintainability**: Changes to algorithm don't affect animation
 - **Debuggability**: Can test algorithm correctness independently
+- **Internationalization**: Description keys enable multi-language support
+
+### Algorithm Translation System
+
+```javascript
+// algorithmTranslations.js
+export const ALGORITHM_STEPS = {
+  COMPARING: 'comparing',
+  SWAPPING: 'swapping',
+  PIVOT_SELECTED: 'pivotSelected',
+  // ... more step types
+}
+
+// Usage in algorithms
+import { getAlgorithmDescription, ALGORITHM_STEPS } from '../utils/algorithmTranslations'
+
+description: getAlgorithmDescription(
+  ALGORITHM_STEPS.COMPARING,
+  { a: arr[j], b: arr[j+1] }
+)
+
+// Translation files
+{
+  "algorithmSteps": {
+    "comparing": "Comparing {{a}} and {{b}}",
+    "swapping": "Swapped {{a}} and {{b}}"
+  }
+}
+```
 
 ## Animation System
 
@@ -186,11 +503,33 @@ export function bubbleSortPure(array) {
 />
 ```
 
+**Page Transitions:**
+
+```javascript
+<AnimatePresence mode="wait">
+  {isFullScreen ? (
+    <motion.div
+      key="fullscreen"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {/* Fullscreen content */}
+    </motion.div>
+  ) : (
+    <motion.div key="normal" {...}>
+      {/* Normal content */}
+    </motion.div>
+  )}
+</AnimatePresence>
+```
+
 **Benefits:**
 - Hardware-accelerated (uses GPU)
 - Declarative syntax
 - Automatic interpolation
 - Built-in spring physics
+- AnimatePresence for enter/exit animations
 
 ### State Color Mapping
 
@@ -207,27 +546,36 @@ const STATE_COLORS = {
 
 ### Animation Speed Control
 
-The `delay()` utility creates async pauses:
+Speed is user-configurable via constants:
 
 ```javascript
-export const delay = ms => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+export const ANIMATION_SPEEDS = {
+  SLOW: 8000,
+  MEDIUM: 4800,
+  FAST: 2400,
+  VERY_FAST: 1200,
 };
+```
 
-// Usage in playback loop
-for (let step of steps) {
-  updateVisualization(step);
-  await delay(speed);  // Configurable delay
-}
+**Autoplay Mode:**
+```javascript
+const runAutoplay = (stepIndex) => {
+  if (stepIndex >= steps.length) return;
+  
+  executeStep(steps[stepIndex]);
+  
+  autoplayTimeoutRef.current = setTimeout(() => {
+    runAutoplay(stepIndex + 1);
+  }, speed); // User-selected speed
+};
 ```
 
 ## Audio System
 
 ### SoundManager Architecture
 
-The audio system uses **Tone.js** for Web Audio API abstraction and provides contextual sound feedback for algorithm operations.
+The audio system uses **Tone.js** for Web Audio API abstraction:
 
-**Core Design:**
 ```javascript
 class SoundManager {
   constructor() {
@@ -236,6 +584,18 @@ class SoundManager {
     this.pluckSynth = new Tone.PluckSynth({...}); // Compare sounds
     this.metallicSynth = new Tone.MetalSynth({...}); // Swap sounds
     this.polySynth = new Tone.PolySynth({...});   // Chord sounds
+    this.membrane = new Tone.MembraneSynth({...});
+  }
+  
+  async enable() {
+    await Tone.start();
+    this.isEnabled = true;
+  }
+  
+  playCompare(value) {
+    if (!this.isEnabled) return;
+    const freq = 150 + ((value - 5) / 95) * 200;
+    this.pluckSynth.triggerAttackRelease(freq, '16n');
   }
 }
 ```
@@ -255,16 +615,16 @@ class SoundManager {
 
 ### Integration Pattern
 
-**Hook Integration:**
 ```javascript
 const executeStep = useCallback((step) => {
-  // Update visual state
   setArray(step.array);
   setStates(step.states);
   
   // Trigger contextual audio
   if (step.states.includes(ELEMENT_STATES.SWAPPING)) {
-    soundManager.playSwap(step.array[swapIndex]);
+    soundManager.playSwap();
+  } else if (step.states.includes(ELEMENT_STATES.COMPARING)) {
+    soundManager.playCompare(step.array[compareIndex]);
   }
 }, []);
 ```
@@ -277,70 +637,186 @@ const executeStep = useCallback((step) => {
 
 ## State Management
 
-### Custom Hook: useSortingVisualization
+### Custom Hooks Architecture
 
-This hook encapsulates all visualization logic:
+#### **useSortingVisualization**
 
-**State Variables:**
 ```javascript
-- array: Current array state
-- states: Element state array (colors)
-- isPlaying: Animation playing?
-- currentStep: Current step index
-- steps: All animation steps
-- description: Current step description
-- isComplete: Animation finished?
-```
-
-**Methods:**
-```javascript
-- loadSteps(steps): Load algorithm steps
-- play(): Start animation
-- pause(): Stop animation
-- reset(): Go back to start
-- stepForward(): Next step
-- stepBackward(): Previous step
+export function useSortingVisualization(initialArray, speed, mode) {
+  const [array, setArray] = useState(initialArray);
+  const [states, setStates] = useState([]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [steps, setSteps] = useState([]);
+  const [description, setDescription] = useState('');
+  const [isComplete, setIsComplete] = useState(false);
+  const [isAutoplayActive, setIsAutoplayActive] = useState(false);
+  
+  const stepsRef = useRef([]);
+  const autoplayTimeoutRef = useRef(null);
+  
+  // Methods
+  const loadSteps = useCallback(...);
+  const play = useCallback(...);
+  const pause = useCallback(...);
+  const reset = useCallback(...);
+  const stepForward = useCallback(...);
+  const stepBackward = useCallback(...);
+  
+  return {
+    array, states, isPlaying, currentStep, totalSteps,
+    description, isComplete, mode,
+    loadSteps, play, pause, reset, stepForward, stepBackward
+  };
+}
 ```
 
 **Key Features:**
-1. **Ref for Steps**: Uses `useRef` to avoid stale closures
-2. **Async Playback**: Handles Promise-based delays
+1. **Ref for Steps**: Uses `useRef` to avoid stale closures in async operations
+2. **Async Playback**: Handles Promise-based delays with cleanup
 3. **Cancellable**: Can interrupt animation mid-play
 4. **Bidirectional**: Can step forward and backward
+5. **Mode-Aware**: Different behavior for manual vs autoplay
+
+#### **usePathfindingVisualization**
+
+Similar to sorting hook but manages:
+- 2D grid state instead of 1D array
+- Start/end position generation
+- Grid size changes
+- Grid regeneration
+
+#### **useTheme**
+
+```javascript
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within ThemeProvider');
+  }
+  return context;
+}
+```
+
+Returns:
+```javascript
+{
+  theme: 'light' | 'dark',
+  setTheme: (theme) => void,
+  toggleTheme: () => void,
+  isSystemDark: boolean,
+  isDark: boolean,
+  isLight: boolean
+}
+```
+
+#### **useFullScreen**
+
+```javascript
+export function useFullScreen() {
+  const [isFullScreen, setIsFullScreen] = useState(() => 
+    localStorage.getItem('flowModeEnabled') === 'true'
+  );
+  
+  const toggleFullScreen = useCallback(...);
+  const exitFullScreen = useCallback(...);
+  
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'f') toggleFullScreen();
+      if (e.key === 'Escape') exitFullScreen();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+  
+  return { isFullScreen, toggleFullScreen, exitFullScreen };
+}
+```
+
+#### **useSwipe**
+
+```javascript
+export function useSwipe({ onLeft, onRight, threshold = 30 }) {
+  const startX = useRef(null);
+  const startY = useRef(null);
+  
+  const onTouchStart = (e) => {
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+  };
+  
+  const onTouchEnd = (e) => {
+    const dx = e.changedTouches[0].clientX - startX.current;
+    const dy = e.changedTouches[0].clientY - startY.current;
+    
+    // Ignore vertical swipes (prioritize scrolling)
+    if (Math.abs(dy) > Math.abs(dx)) return;
+    
+    if (Math.abs(dx) >= threshold) {
+      dx > 0 ? onRight() : onLeft();
+    }
+  };
+  
+  return { onTouchStart, onTouchMove, onTouchEnd };
+}
+```
 
 ## Testing Strategy
 
 ### Unit Tests
 
 **Algorithm Tests** (`algorithms.test.js`):
-- Verify sorting correctness
-- Test edge cases (empty, single element, duplicates)
-- Ensure all algorithms produce same result
-- Performance testing on large arrays
-
-**Utility Tests** (`arrayHelpers.test.js`):
-- Array generation functions
-- Validation functions (isSorted)
-- Helper utilities (cloneArray)
-
-### Test Structure
-
 ```javascript
 describe('Sorting Algorithms', () => {
   const testCases = [
     { name: 'empty array', input: [], expected: [] },
     { name: 'single element', input: [42], expected: [42] },
-    // ... more cases
+    { name: 'already sorted', input: [1,2,3], expected: [1,2,3] },
+    { name: 'reverse sorted', input: [3,2,1], expected: [1,2,3] },
   ];
 
   describe('Bubble Sort', () => {
     testCases.forEach(({ name, input, expected }) => {
       it(`should sort ${name}`, () => {
-        const result = bubbleSortPure(input);
-        expect(result).toEqual(expected);
-        expect(isSorted(result)).toBe(true);
+        expect(bubbleSortPure(input)).toEqual(expected);
       });
     });
+  });
+});
+```
+
+**Hook Tests** (`useTheme.test.js`):
+```javascript
+describe('useTheme', () => {
+  it('should initialize with system preference', () => {
+    matchMedia.mockReturnValue({ matches: true });
+    const { result } = renderHook(() => useTheme(), {
+      wrapper: ThemeProvider
+    });
+    expect(result.current.theme).toBe('dark');
+  });
+  
+  it('should toggle theme', () => {
+    const { result } = renderHook(() => useTheme(), {
+      wrapper: ThemeProvider
+    });
+    act(() => result.current.toggleTheme());
+    expect(result.current.theme).toBe('dark');
+  });
+});
+```
+
+**Component Tests** (`ThemeToggle.test.jsx`):
+```javascript
+describe('ThemeToggle', () => {
+  it('should call onToggle when clicked', () => {
+    const onToggle = vi.fn();
+    render(<ThemeToggle theme="light" onToggle={onToggle} />);
+    
+    fireEvent.click(screen.getByRole('switch'));
+    expect(onToggle).toHaveBeenCalled();
   });
 });
 ```
@@ -348,10 +824,10 @@ describe('Sorting Algorithms', () => {
 ### Running Tests
 
 ```bash
-pnpm test        # Watch mode (development)
-pnpm test:run    # Single run (CI/CD)
-pnpm test:ui     # Visual test UI
-pnpm test:coverage  # Coverage report
+pnpm test              # Watch mode
+pnpm test:run          # Single run
+pnpm test:ui           # Visual UI
+pnpm test:coverage     # Coverage report
 ```
 
 ## Performance Optimizations
@@ -373,8 +849,18 @@ const handlePlay = useCallback(() => {
 3. **Key Props for List Items**
 ```javascript
 {array.map((value, index) => (
-  <ArrayBar key={`${index}-${value}`} ... />
+  <ArrayBar key={`${index}-${value}`} {...} />
 ))}
+```
+
+4. **Code Splitting with Lazy Loading**
+```javascript
+const PythonCodePanel = lazy(() => import('./components/PythonCodePanel'));
+const ComplexityPanel = lazy(() => import('./components/ComplexityPanel'));
+
+<Suspense fallback={<LoadingSpinner />}>
+  <PythonCodePanel {...} />
+</Suspense>
 ```
 
 ### Animation Optimizations
@@ -389,68 +875,58 @@ const handlePlay = useCallback(() => {
 2. **Tree Shaking**: Dead code elimination
 3. **CSS Purging**: Tailwind removes unused styles
 4. **Minification**: Production builds are compressed
+5. **Asset Optimization**: Image and SVG optimization
+
+### Memory Management
+
+- **Cleanup in useEffect**: Remove event listeners on unmount
+- **Ref Usage**: Avoid stale closures in async operations
+- **Timeout Cleanup**: Clear timeouts on component unmount
+
+```javascript
+useEffect(() => {
+  return () => {
+    clearAutoplayTimeout();
+    animationRef.current = null;
+  };
+}, [clearAutoplayTimeout]);
+```
 
 ## Future Enhancements
 
-### Algorithm Organization
+### Planned Features
 
-**Current Structure:**
-```
-src/
-  algorithms/
-    sorting/
-      bubbleSort.js
-      quickSort.js
-      mergeSort.js
-      index.js
-      algorithms.test.js
-    pathfinding/
-      dijkstra.js
-      aStar.js
-      bfs.js
-      index.js
-      pathfinding.test.js
-    python/
-      bubble_sort.py
-      quick_sort.py
-      merge_sort.py
-    index.js
-  components/
-    ArrayVisualizer.jsx
-    GridVisualizer.jsx
-    ControlPanel.jsx
-```
+1. **Additional Algorithms**
+   - Insertion Sort, Selection Sort, Heap Sort
+   - DFS, Bellman-Ford, Floyd-Warshall
 
-**D3.js Integration:**
-- Force-directed graph layouts
-- Node/edge visualization
-- Interactive graph editing
-- Animated path traversal
+2. **Graph Visualization Mode**
+   - D3.js integration
+   - Force-directed layouts
+   - Interactive graph editing
 
-### Additional Sorting Algorithms
+3. **Advanced Features**
+   - Algorithm comparison mode
+   - Export visualization as video
+   - Custom array/grid input
+   - Collaborative mode
 
-- Insertion Sort
-- Selection Sort
-- Heap Sort
-- Radix Sort
-- Counting Sort
-
-### Advanced Features
-
-- Algorithm comparison mode
-- Time complexity visualization
-- Space complexity tracking
-- Custom array input
-- Export visualization as video
-- Share visualization links
+4. **Educational Enhancements**
+   - Step-by-step tutorials
+   - Quiz mode
+   - Code playground
+   - Performance benchmarking
 
 ## Conclusion
 
-The Bayan Flow is built with:
-- **Modularity**: Easy to add new algorithms
+Bayan Flow is built with:
+- **Modularity**: Easy to add new algorithms and features
 - **Maintainability**: Clean separation of concerns
 - **Testability**: Comprehensive test coverage
 - **Performance**: Optimized for smooth animations
 - **Extensibility**: Ready for future enhancements
+- **Accessibility**: WCAG 2.1 AA compliant
+- **Internationalization**: Multi-language support with RTL
+- **Theming**: Flexible dark/light mode system
 
 The architecture supports scaling to include more algorithm types, more complex visualizations, and advanced features while maintaining code quality and performance.
