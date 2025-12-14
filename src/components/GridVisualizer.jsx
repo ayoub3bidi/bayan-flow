@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import GridCell from './GridCell';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
+import AutoHidingLegend from './AutoHidingLegend';
 import { GRID_ELEMENT_STATES, GRID_STATE_COLORS } from '../constants';
 import useSwipe from '../hooks/useSwipe';
 
@@ -36,7 +37,6 @@ function GridVisualizer({
 }) {
   const { t } = useTranslation();
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
-  const [legendCollapsed, setLegendCollapsed] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
 
   // Show swipe tutorial on mobile when user scrolls to visualization area
@@ -109,57 +109,32 @@ function GridVisualizer({
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-full bg-surface p-3 sm:p-6 flex flex-col"
+            className={`w-full h-full bg-surface flex flex-col ${
+              gridSize <= 15 ? 'p-2 sm:p-4' : 'p-1.5 sm:p-3'
+            }`}
             {...(mode === 'manual' ? swipe : {})}
             role="application"
             aria-label="Grid visualization - Swipe left/right to navigate steps"
           >
-            {/* Legend - Collapsible on mobile */}
-            <div className="border-b border-gray-200 mb-2 sm:mb-4">
-              <button
-                onClick={() => setLegendCollapsed(!legendCollapsed)}
-                className="w-full flex items-center justify-between py-2 sm:hidden touch-manipulation"
-                aria-expanded={!legendCollapsed}
-                aria-label={t('legend.toggle')}
-              >
-                <span className="text-xs font-semibold text-text-primary">
-                  {t('legend.title')}
-                </span>
-                <motion.div
-                  animate={{ rotate: legendCollapsed ? -90 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDown
-                    size={16}
-                    className="text-text-secondary"
-                    aria-hidden="true"
-                  />
-                </motion.div>
-              </button>
-              <div
-                className={`flex items-center justify-center gap-3 sm:gap-6 py-3 sm:py-4 flex-wrap ${
-                  legendCollapsed ? 'hidden sm:flex' : 'flex'
-                }`}
-              >
-                {legendItems.map(item => (
-                  <div
-                    key={item.state}
-                    className="flex items-center gap-1.5 sm:gap-2"
-                  >
-                    <div
-                      className="w-3 h-3 sm:w-4 sm:h-4 rounded shadow-sm"
-                      style={{ backgroundColor: GRID_STATE_COLORS[item.state] }}
-                    />
-                    <span className="text-[10px] sm:text-xs font-medium text-text-primary whitespace-nowrap">
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Auto-hiding Legend */}
+            <AutoHidingLegend
+              legendItems={legendItems.map(item => ({
+                ...item,
+                color: GRID_STATE_COLORS[item.state],
+              }))}
+              isComplete={isComplete}
+            />
 
             {/* Grid Visualization */}
-            <div className="flex-1 flex items-center justify-center pb-10 sm:pb-16 overflow-auto touch-pan-y">
+            <div
+              className={`flex-1 flex items-center justify-center overflow-auto touch-pan-y ${
+                gridSize <= 15
+                  ? 'pb-12 sm:pb-14'
+                  : gridSize <= 25
+                    ? 'pb-11 sm:pb-12'
+                    : 'pb-10 sm:pb-11'
+              }`}
+            >
               <div className="inline-flex flex-col items-center">
                 {/* Column Labels */}
                 <div className="flex mb-1">

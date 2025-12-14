@@ -6,31 +6,31 @@
 
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import ArrayVisualizer from './components/ArrayVisualizer';
-import GridVisualizer from './components/GridVisualizer';
-import ControlPanel from './components/ControlPanel';
-import SettingsPanel from './components/SettingsPanel';
-import FloatingActionButton from './components/FloatingActionButton';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import ArrayVisualizer from '../components/ArrayVisualizer';
+import GridVisualizer from '../components/GridVisualizer';
+import ControlPanel from '../components/ControlPanel';
+import SettingsPanel from '../components/SettingsPanel';
+import FloatingActionButton from '../components/FloatingActionButton';
 
-const PythonCodePanel = lazy(() => import('./components/PythonCodePanel'));
-const ComplexityPanel = lazy(() => import('./components/ComplexityPanel'));
-import { useSortingVisualization } from './hooks/useSortingVisualization';
-import { usePathfindingVisualization } from './hooks/usePathfindingVisualization';
-import { useFullScreen } from './hooks/useFullScreen';
-import { generateRandomArray } from './utils/arrayHelpers';
-import { createEmptyGrid } from './utils/gridHelpers';
-import { algorithms } from './algorithms';
-import { pathfindingAlgorithms } from './algorithms/pathfinding';
-import { soundManager } from './utils/soundManager';
+const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
+const ComplexityPanel = lazy(() => import('../components/ComplexityPanel'));
+import { useSortingVisualization } from '../hooks/useSortingVisualization';
+import { usePathfindingVisualization } from '../hooks/usePathfindingVisualization';
+import { useFullScreen } from '../hooks/useFullScreen';
+import { generateRandomArray } from '../utils/arrayHelpers';
+import { createEmptyGrid } from '../utils/gridHelpers';
+import { algorithms } from '../algorithms';
+import { pathfindingAlgorithms } from '../algorithms/pathfinding';
+import { soundManager } from '../utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
   DEFAULT_GRID_SIZE,
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
-} from './constants';
+} from '../constants';
 
 function App() {
   const [algorithmType, setAlgorithmType] = useState(ALGORITHM_TYPES.SORTING);
@@ -250,7 +250,7 @@ function App() {
 
                   {/* Visualization Area */}
                   <section
-                    className="lg:col-span-3 flex flex-col gap-6 h-[calc(100vh-200px)] lg:h-[calc(100vh-140px)]"
+                    className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-160px)] lg:h-[calc(100vh-85px)]"
                     role="region"
                     aria-label="Algorithm visualization"
                   >

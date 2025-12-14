@@ -5,7 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle } from 'lucide-react';
+import { FileText, AlertCircle, Map } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -49,6 +49,11 @@ function Footer() {
       icon: AlertCircle,
       href: `https://github.com/${repoOwner}/${repoName}/issues`,
     },
+    {
+      label: t('landing.footer.seeRoadmap'),
+      icon: Map,
+      href: `/roadmap`,
+    },
   ];
 
   const handleBMCClick = () => {
@@ -65,18 +70,18 @@ function Footer() {
 
   return (
     <motion.footer
-      className="relative w-full mt-auto border-t border-[var(--color-glass-border)]"
+      className="relative w-full mt-auto border-t border-(--color-glass-border)"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, type: 'spring', stiffness: 100, damping: 20 }}
     >
-      <div className="absolute inset-0 bg-[var(--color-glass-bg)] backdrop-blur-lg" />
+      <div className="absolute inset-0 bg-(--color-glass-bg) backdrop-blur-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
+              <div className="flex items-center justify-center w-8 h-8 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -166,7 +171,7 @@ function Footer() {
               <div className="flex flex-col gap-3">
                 <motion.button
                   onClick={handleBMCClick}
-                  className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors touch-manipulation min-h-[44px]"
+                  className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors touch-manipulation min-h-11"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 17 }}
