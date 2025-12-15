@@ -70,6 +70,7 @@ function Footer() {
 
   return (
     <motion.footer
+      data-testid="footer"
       className="relative w-full mt-auto border-t border-(--color-glass-border)"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}

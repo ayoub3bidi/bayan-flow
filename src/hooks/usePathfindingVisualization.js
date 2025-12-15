@@ -9,9 +9,12 @@ import {
   GRID_ELEMENT_STATES,
   VISUALIZATION_MODES,
   DEFAULT_GRID_SIZE,
-} from '../constants';
-import { generateRandomStartEnd, createEmptyGrid } from '../utils/gridHelpers';
-import { soundManager } from '../utils/soundManager';
+} from '../constants/index.js';
+import {
+  generateRandomStartEnd,
+  createEmptyGrid,
+} from '../utils/gridHelpers.js';
+import { soundManager } from '../utils/soundManager.js';
 
 /**
  * @param {number} gridSize - Size of the grid (N x N)
@@ -106,6 +109,9 @@ export function usePathfindingVisualization(
   const loadSteps = useCallback(
     algorithmSteps => {
       clearAutoplayTimeout();
+      setIsPlaying(false);
+      setIsAutoplayActive(false);
+      stepsRef.current = algorithmSteps; // Update ref immediately for synchronous access
       setSteps(algorithmSteps);
       setCurrentStep(0);
       setIsComplete(false);
@@ -237,16 +243,14 @@ export function usePathfindingVisualization(
     if (currentStep < stepsRef.current.length - 1) {
       const nextStep = currentStep + 1;
       const step = stepsRef.current[nextStep];
-      setGrid(step.grid);
-      setStates(step.states);
-      setDescription(step.description);
+      executeStep(step);
       setCurrentStep(nextStep);
 
       if (nextStep === stepsRef.current.length - 1) {
         setIsComplete(true);
       }
     }
-  }, [currentStep]);
+  }, [currentStep, executeStep]);
 
   const stepBackward = useCallback(() => {
     if (currentStep > 0) {

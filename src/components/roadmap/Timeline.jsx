@@ -11,7 +11,10 @@ import { roadmapData } from '../../data/roadmapData';
 
 function Timeline() {
   return (
-    <section className="relative py-20 bg-surface overflow-visible">
+    <section
+      data-testid="timeline"
+      className="relative py-20 bg-surface overflow-visible"
+    >
       {/* Simple Vertical Timeline Line - starts from first item, fades to dots */}
       <div
         className="hidden md:block absolute left-1/2 transform -translate-x-1/2 pointer-events-none z-0"

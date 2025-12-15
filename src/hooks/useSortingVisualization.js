@@ -5,8 +5,8 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ELEMENT_STATES, VISUALIZATION_MODES } from '../constants';
-import { soundManager } from '../utils/soundManager';
+import { ELEMENT_STATES, VISUALIZATION_MODES } from '../constants/index.js';
+import { soundManager } from '../utils/soundManager.js';
 
 export function useSortingVisualization(
   initialArray,

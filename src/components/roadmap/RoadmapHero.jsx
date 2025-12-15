@@ -12,7 +12,10 @@ function RoadmapHero() {
   const { t } = useTranslation();
 
   return (
-    <section className="relative py-20 md:py-32 bg-bg overflow-hidden">
+    <section
+      data-testid="roadmap-hero"
+      className="relative py-20 md:py-32 bg-bg overflow-hidden"
+    >
       {/* Radial gradient background - matching landing page */}
       <div className="absolute inset-0 radial-gradient-animated" />
 
