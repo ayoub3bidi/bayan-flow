@@ -3,6 +3,12 @@ codecov:
   notify:
     wait_for_ci: true       # Wait for all CI checks before sending notifications
 
+  branch: main  # Default comparison branch
+
+  branches:
+    - main
+    - develop
+
 # Coverage thresholds and status checks
 coverage:
   precision: 2              # Number of decimal places (e.g., 85.43%)

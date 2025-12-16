@@ -12,7 +12,11 @@ import {
   SkipBack,
   SkipForward,
   Shuffle,
+  Maximize,
+  Minimize,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { soundManager } from '../utils/soundManager';
 
 /**
  * ControlPanel Component
@@ -31,6 +35,8 @@ import {
  * @param {number} totalSteps - Total number of steps
  * @param {Function} onGenerateArray - Handler for generating new random start/end points
  * @param {string} algorithmType - Current algorithm type ('sorting' or 'pathfinding')
+ * @param {boolean} isFullScreen - Whether full-screen mode is active
+ * @param {Function} onToggleFullScreen - Handler for toggling full-screen mode
  */
 function ControlPanel({
   isPlaying,
@@ -45,13 +51,21 @@ function ControlPanel({
   totalSteps,
   onGenerateArray,
   algorithmType,
+  isFullScreen,
+  onToggleFullScreen,
 }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.dir() === 'rtl';
   const buttonBaseClasses =
-    'p-3 min-w-[44px] min-h-[44px] rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation';
+    'p-3 h-touch rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation leading-tight-consistent';
+
+  // Icon components that flip in RTL
+  const BackwardIcon = isRTL ? SkipForward : SkipBack;
+  const ForwardIcon = isRTL ? SkipBack : SkipForward;
 
   return (
     <motion.div
-      className="bg-surface rounded-lg shadow-lg p-3 sm:p-4"
+      className="bg-surface rounded-lg shadow-lg p-3 sm:p-4 leading-consistent"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
@@ -60,33 +74,42 @@ function ControlPanel({
         {/* Step controls and play/pause/reset container */}
         {/* Step Backward - Always visible */}
         <button
-          onClick={onStepBackward}
+          onClick={() => {
+            soundManager.playUIClick();
+            onStepBackward();
+          }}
           disabled={isPlaying || currentStep === 0}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-          title="Step Backward"
-          aria-label="Step Backward"
+          title={t('controls.stepBackward')}
+          aria-label={t('controls.stepBackward')}
         >
-          <SkipBack size={20} aria-hidden="true" />
+          <BackwardIcon size={20} aria-hidden="true" />
         </button>
 
         {/* Play/Pause Button - Different behavior based on mode */}
         {mode === 'autoplay' &&
           (isPlaying ? (
             <button
-              onClick={onPause}
+              onClick={() => {
+                soundManager.playUIClick();
+                onPause();
+              }}
               className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
-              title="Pause"
-              aria-label="Pause"
+              title={t('controls.pause')}
+              aria-label={t('controls.pause')}
             >
               <Pause size={20} aria-hidden="true" />
             </button>
           ) : (
             <button
-              onClick={onPlay}
+              onClick={() => {
+                soundManager.playUIClick();
+                onPlay();
+              }}
               disabled={isComplete}
               className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
-              title="Play"
-              aria-label="Play"
+              title={t('controls.play')}
+              aria-label={t('controls.play')}
             >
               <Play size={20} aria-hidden="true" />
             </button>
@@ -94,11 +117,14 @@ function ControlPanel({
 
         {/* Reset Button */}
         <button
-          onClick={onReset}
+          onClick={() => {
+            soundManager.playUIClick();
+            onReset();
+          }}
           disabled={isPlaying}
           className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-          title="Reset"
-          aria-label="Reset"
+          title={t('controls.reset')}
+          aria-label={t('controls.reset')}
         >
           <RotateCcw size={20} aria-hidden="true" />
         </button>
@@ -106,35 +132,67 @@ function ControlPanel({
         {/* Step Forward - Only visible in manual mode */}
         {mode === 'manual' && (
           <button
-            onClick={onStepForward}
+            onClick={() => {
+              soundManager.playUIClick();
+              onStepForward();
+            }}
             disabled={isPlaying || isComplete}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-            title="Step Forward"
-            aria-label="Step Forward"
+            title={t('controls.stepForward')}
+            aria-label={t('controls.stepForward')}
           >
-            <SkipForward size={20} aria-hidden="true" />
+            <ForwardIcon size={20} aria-hidden="true" />
           </button>
         )}
 
         {/* Random Start & End Points - Only visible in pathfinding mode */}
         {algorithmType === 'pathfinding' && (
           <button
-            onClick={onGenerateArray}
+            onClick={() => {
+              soundManager.playArrayGenerate();
+              onGenerateArray();
+            }}
             disabled={isPlaying}
             className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
-            title="Random Start & End Points"
-            aria-label="Random Start & End Points"
+            title={t('controls.generateArray')}
+            aria-label={t('controls.generateArray')}
           >
             <Shuffle size={20} aria-hidden="true" />
           </button>
         )}
+
+        {/* Full Screen Toggle */}
+        <button
+          onClick={onToggleFullScreen}
+          className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white`}
+          title={
+            isFullScreen
+              ? t('controls.exitFullScreen')
+              : t('controls.goFullScreen')
+          }
+          aria-label={
+            isFullScreen
+              ? t('controls.exitFullScreen')
+              : t('controls.goFullScreen')
+          }
+        >
+          {isFullScreen ? (
+            <Minimize size={20} aria-hidden="true" />
+          ) : (
+            <Maximize size={20} aria-hidden="true" />
+          )}
+        </button>
       </div>
 
       {/* Progress Bar */}
       <div className="mt-4">
         <div className="flex justify-between text-xs text-text-secondary mb-1">
-          <span>Step {currentStep + 1}</span>
-          <span>Total: {totalSteps} Steps</span>
+          <span>
+            {t('info.step', { current: currentStep + 1, total: totalSteps })}
+          </span>
+          <span>
+            {totalSteps} {t('info.steps')}
+          </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
           <motion.div

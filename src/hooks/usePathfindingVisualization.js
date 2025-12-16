@@ -9,8 +9,12 @@ import {
   GRID_ELEMENT_STATES,
   VISUALIZATION_MODES,
   DEFAULT_GRID_SIZE,
-} from '../constants';
-import { generateRandomStartEnd, createEmptyGrid } from '../utils/gridHelpers';
+} from '../constants/index.js';
+import {
+  generateRandomStartEnd,
+  createEmptyGrid,
+} from '../utils/gridHelpers.js';
+import { soundManager } from '../utils/soundManager.js';
 
 /**
  * @param {number} gridSize - Size of the grid (N x N)
@@ -105,6 +109,9 @@ export function usePathfindingVisualization(
   const loadSteps = useCallback(
     algorithmSteps => {
       clearAutoplayTimeout();
+      setIsPlaying(false);
+      setIsAutoplayActive(false);
+      stepsRef.current = algorithmSteps; // Update ref immediately for synchronous access
       setSteps(algorithmSteps);
       setCurrentStep(0);
       setIsComplete(false);
@@ -126,6 +133,26 @@ export function usePathfindingVisualization(
     return baseDelay;
   };
 
+  const executeStep = useCallback(step => {
+    setGrid(step.grid);
+    setStates(step.states);
+    setDescription(step.description);
+
+    // Play sounds based on step states
+    const hasOpen = step.states.some(row =>
+      row.includes(GRID_ELEMENT_STATES.OPEN)
+    );
+    const hasPath = step.states.some(row =>
+      row.includes(GRID_ELEMENT_STATES.PATH)
+    );
+
+    if (hasPath && step.description.toLowerCase().includes('path found')) {
+      soundManager.playPathFound();
+    } else if (hasOpen) {
+      soundManager.playNodeVisit();
+    }
+  }, []);
+
   const play = useCallback(() => {
     if (stepsRef.current.length === 0 || isComplete) return;
 
@@ -133,9 +160,7 @@ export function usePathfindingVisualization(
       if (currentStep < stepsRef.current.length - 1) {
         const nextStep = currentStep + 1;
         const step = stepsRef.current[nextStep];
-        setGrid(step.grid);
-        setStates(step.states);
-        setDescription(step.description);
+        executeStep(step);
         setCurrentStep(nextStep);
 
         if (nextStep === stepsRef.current.length - 1) {
@@ -163,9 +188,7 @@ export function usePathfindingVisualization(
       }
 
       const step = stepsRef.current[stepIndex];
-      setGrid(step.grid);
-      setStates(step.states);
-      setDescription(step.description);
+      executeStep(step);
       setCurrentStep(stepIndex);
 
       if (stepIndex === stepsRef.current.length - 1) {
@@ -186,7 +209,15 @@ export function usePathfindingVisualization(
     };
 
     runAutoplay(currentStep);
-  }, [currentStep, speed, isComplete, mode, gridSize, clearAutoplayTimeout]);
+  }, [
+    currentStep,
+    speed,
+    isComplete,
+    mode,
+    gridSize,
+    clearAutoplayTimeout,
+    executeStep,
+  ]);
 
   const pause = useCallback(() => {
     animationRef.current = null;
@@ -212,16 +243,14 @@ export function usePathfindingVisualization(
     if (currentStep < stepsRef.current.length - 1) {
       const nextStep = currentStep + 1;
       const step = stepsRef.current[nextStep];
-      setGrid(step.grid);
-      setStates(step.states);
-      setDescription(step.description);
+      executeStep(step);
       setCurrentStep(nextStep);
 
       if (nextStep === stepsRef.current.length - 1) {
         setIsComplete(true);
       }
     }
-  }, [currentStep]);
+  }, [currentStep, executeStep]);
 
   const stepBackward = useCallback(() => {
     if (currentStep > 0) {

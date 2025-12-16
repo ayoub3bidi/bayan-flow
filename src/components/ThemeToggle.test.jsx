@@ -8,6 +8,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ThemeToggle from './ThemeToggle';
 
+// Mock ThemeContext to test fallback behavior
+vi.mock('../contexts/ThemeContextDefinition', () => ({
+  ThemeContext: {},
+}));
+
 describe('ThemeToggle', () => {
   describe('Rendering', () => {
     it('should render toggle button', () => {
@@ -147,6 +152,51 @@ describe('ThemeToggle', () => {
 
       button = screen.getByRole('switch');
       expect(button).toHaveAttribute('aria-label', 'Switch to light mode');
+    });
+  });
+
+  describe('Fallback behavior', () => {
+    it('should use fallback values when no props or context are provided', () => {
+      render(<ThemeToggle />);
+
+      const button = screen.getByRole('switch');
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-checked', 'false');
+      expect(button).toHaveAttribute('aria-label', 'Switch to dark mode');
+      expect(screen.getByText('Light mode active')).toBeInTheDocument();
+    });
+
+    it('should use fallback theme when only onToggle is provided', () => {
+      const onToggle = vi.fn();
+      render(<ThemeToggle onToggle={onToggle} />);
+
+      const button = screen.getByRole('switch');
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-checked', 'false');
+      expect(button).toHaveAttribute('aria-label', 'Switch to dark mode');
+    });
+
+    it('should use fallback onToggle when only theme is provided', () => {
+      render(<ThemeToggle theme="dark" />);
+
+      const button = screen.getByRole('switch');
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-checked', 'true');
+      expect(button).toHaveAttribute('aria-label', 'Switch to light mode');
+      expect(screen.getByText('Dark mode active')).toBeInTheDocument();
+    });
+
+    it('should handle context with undefined theme property', () => {
+      // This test covers the branch where context exists but properties are undefined
+      vi.doMock('../contexts/ThemeContextDefinition', () => ({
+        ThemeContext: {},
+      }));
+
+      render(<ThemeToggle />);
+
+      const button = screen.getByRole('switch');
+      expect(button).toHaveAttribute('aria-checked', 'false');
+      expect(button).toHaveAttribute('aria-label', 'Switch to dark mode');
     });
   });
 

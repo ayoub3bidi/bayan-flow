@@ -15,6 +15,9 @@
 
 > **License**: Elastic License 2.0 OR Commercial — see [LICENSE](./LICENSE) and [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md)
 
+- **Production (main)**: [bayanflow.netlify.app](https://bayanflow.netlify.app) (permanent production site connected to the `main` branch)
+- **Dev (develop)**: [dev-bayanflow.netlify.app](https://dev-bayanflow.netlify.app) (permanent dev site connected to the `develop` branch)
+
 ## Features
 
 ### Sorting Mode
@@ -35,22 +38,32 @@
   - **Autoplay**: Automatic step-by-step animation with play/pause/stop controls
 - **Interactive Controls**: Play, pause, step forward/backward through algorithm execution
 - **Mobile Swipe Gestures**: Swipe left/right on mobile devices to navigate steps in manual mode with an attractive tutorial overlay
+- **Full-screen Mode**: Toggle full-screen view for immersive experience
+- **Audio Feedback**: Optional sound effects for algorithm operations and UI interactions
+  - **Sorting**: Distinct sounds for comparing, swapping, pivot selection, and completion
+  - **Pathfinding**: Audio cues for node exploration and path discovery
+  - **UI Sounds**: Click feedback and array generation sounds
 - **Customizable Settings**: 
   - Switch between Sorting and Pathfinding modes
   - Choose between Manual (default) and Autoplay control modes
   - Adjust animation speed (Slow, Medium, Fast, Very Fast)
+  - Toggle sound effects on/off
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and performance graphs
-- **Python Code Examples**: View Python implementations
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Python Code Examples**: View Python implementations in Monaco editor with syntax highlighting
+- **Internationalization**: Full support for English, French, and Arabic (with RTL layout)
+- **Theme System**: Light/dark mode with system preference detection and persistence
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Smooth Animations**: Powered by Framer Motion for fluid transitions
 - **Real-time Description**: Step-by-step explanation of algorithm operations
+- **Accessibility**: Skip navigation, ARIA labels, keyboard shortcuts, and screen reader support
 
 ## Installation
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v24 or higher)
 - pnpm (v8 or higher)
+- Modern browser with Web Audio API support (for sound effects)
 
 If you don't have pnpm installed:
 
@@ -151,49 +164,90 @@ bayan-flow/
 │   │   │   ├── bubble_sort.py
 │   │   │   ├── quick_sort.py
 │   │   │   ├── merge_sort.py
-│   │   │   └── ... other algorithms (soon)
+│   │   │   ├── bfs.py
+│   │   │   ├── dijkstra.py
+│   │   │   ├── astar.py
+│   │   │   └── index.js
 │   │   └── index.js
 │   ├── components/        # React components
+│   │   ├── landing/       # Landing page components
+│   │   │   ├── Hero.jsx
+│   │   │   ├── LearnYourWay.jsx
+│   │   │   ├── AlgorithmTypes.jsx
+│   │   │   ├── Features.jsx
+│   │   │   ├── ClaritySection.jsx
+│   │   │   ├── RoadmapCTA.jsx
+│   │   │   └── TechPattern.jsx
+│   │   ├── roadmap/       # Roadmap page components
+│   │   │   ├── RoadmapHero.jsx
+│   │   │   ├── Timeline.jsx
+│   │   │   └── TimelineItem.jsx
+│   │   ├── ui/            # Reusable UI primitives
+│   │   │   ├── Button.jsx
+│   │   │   ├── Container.jsx
+│   │   │   └── Section.jsx
 │   │   ├── ArrayBar.jsx
 │   │   ├── ArrayVisualizer.jsx
-│   │   ├── GridCell.jsx
-│   │   ├── GridVisualizer.jsx
+│   │   ├── AutoHidingLegend.jsx
 │   │   ├── ComplexityPanel.jsx
 │   │   ├── ControlPanel.jsx
-│   │   ├── SettingsPanel.jsx
-│   │   ├── InfoPanel.jsx
+│   │   ├── FloatingActionButton.jsx
+│   │   ├── Footer.jsx
+│   │   ├── GridCell.jsx
+│   │   ├── GridVisualizer.jsx
 │   │   ├── Header.jsx
-│   │   └── Footer.jsx
-│   │   └── FloatingActionButton.jsx
-│   │   └── PythonCodePanel.jsx
-│   ├── hooks/            # Custom React hooks
+│   │   ├── LanguageSwitcher.jsx
+│   │   ├── PythonCodePanel.jsx
+│   │   ├── SettingsPanel.jsx
+│   │   ├── SwipeTutorial.jsx
+│   │   └── ThemeToggle.jsx
+│   ├── contexts/          # React contexts
+│   │   ├── ThemeContext.jsx
+│   │   └── ThemeContextDefinition.js
+│   ├── data/              # Application data
+│   │   └── roadmapData.js
+│   ├── hooks/             # Custom React hooks
+│   │   ├── useFullScreen.js
+│   │   ├── usePathfindingVisualization.js
 │   │   ├── useSortingVisualization.js
-│   │   └── usePathfindingVisualization.js
-│   ├── utils/            # Utility functions
-│   │   ├── arrayHelpers.js
-│   │   ├── arrayHelpers.test.js
-│   │   ├── gridHelpers.js
-│   │   └── gridHelpers.test.js
-│   ├── constants/        # App constants
+│   │   ├── useSwipe.js
+│   │   └── useTheme.js
+│   ├── i18n/              # Internationalization
+│   │   ├── locales/
+│   │   │   ├── en/translation.json
+│   │   │   ├── fr/translation.json
+│   │   │   └── ar/translation.json
 │   │   └── index.js
-│   ├── test/            # Test configuration
+│   ├── pages/             # Route pages
+│   │   ├── LandingPage.jsx
+│   │   ├── VisualizerApp.jsx
+│   │   └── Roadmap.jsx
+│   ├── utils/             # Utility functions
+│   │   ├── algorithmTranslations.js
+│   │   ├── arrayHelpers.js
+│   │   ├── gridHelpers.js
+│   │   ├── rtlManager.js
+│   │   └── soundManager.js
+│   ├── constants/         # App constants
+│   │   └── index.js
+│   ├── test/              # Test configuration
 │   │   └── setup.js
-│   ├── App.jsx          # Main app component
-│   ├── main.jsx         # App entry point
-│   └── index.css        # Global styles
-├── .prettierrc          # Prettier configuration
-├── eslint.config.js     # ESLint configuration
-├── tailwind.config.js   # Tailwind CSS configuration
-├── vite.config.js       # Vite configuration
-├── vitest.config.js     # Vitest configuration
-└── package.json         # Project dependencies
+│   ├── App.jsx            # Legacy (kept for compatibility)
+│   ├── main.jsx           # App entry point with routing
+│   └── index.css          # Global styles with CSS variables
+├── .prettierrc            # Prettier configuration
+├── eslint.config.js       # ESLint configuration
+├── tailwind.config.js     # Tailwind CSS configuration
+├── vite.config.js         # Vite configuration
+├── vitest.config.js       # Vitest configuration
+└── package.json           # Project dependencies
 ```
 
 ## How It Works
 
 ### Algorithm Implementation
 
-Each sorting algorithm is implemented in two versions:
+Each algorithm is implemented in two versions:
 
 1. **Visualization Version**: Generates step-by-step animation frames
 2. **Pure Version**: Standard implementation for testing
@@ -217,7 +271,7 @@ export function bubbleSortPure(array) {
 
 ### Visualization Hook
 
-The `useSortingVisualization` custom hook manages:
+The `useSortingVisualization` and `usePathfindingVisualization` custom hooks manage:
 - Animation playback state (autoplay/manual modes)
 - Step navigation (forward/backward)
 - Speed control (autoplay mode only)
@@ -226,186 +280,84 @@ The `useSortingVisualization` custom hook manages:
 
 ### Component Architecture
 
-- **App.jsx**: Main orchestrator, manages global state
-- **ArrayVisualizer**: Renders the bar chart visualization
-- **ControlPanel**: Mode-aware playback controls (play, pause, step)
-- **SettingsPanel**: Algorithm selection, mode toggle, and speed configuration
-- **InfoPanel**: Displays current step description
-- **ComplexityPanel**: Interactive algorithm analysis with performance graphs
+- **Pages**: Route-level components (LandingPage, VisualizerApp, Roadmap)
+- **Layout Components**: Header, Footer, Container, Section
+- **Feature Components**: ArrayVisualizer, GridVisualizer, ControlPanel
+- **UI Primitives**: Button, ThemeToggle, LanguageSwitcher
+- **Contexts**: ThemeContext for global theme state
 
 ## Extending the Project
 
 ### Adding a New Sorting Algorithm
 
-1. Create a new file in `src/algorithms/` (e.g., `insertionSort.js`):
+1. Create implementation in `src/algorithms/sorting/[algorithm].js`
+2. Export in `src/algorithms/sorting/index.js`
+3. Add to dropdown in `src/components/SettingsPanel.jsx`
+4. Add complexity data in `src/constants/index.js`
+5. Add Python implementation in `src/algorithms/python/[algorithm].py`
+6. Write tests in `src/algorithms/sorting/algorithms.test.js`
+7. Add translations in all language files
 
-```javascript
-import { ELEMENT_STATES } from '../constants';
+See [DEVELOPMENT.md](./docs/DEVELOPMENT.md) for detailed instructions.
 
-export function insertionSort(array) {
-  const steps = [];
-  const arr = [...array];
-  
-  // Implement algorithm with step recording
-  // Each step should include: { array, states, description }
-  
-  return steps;
+### Adding a New Language
+
+1. Create translation file: `src/i18n/locales/[lang]/translation.json`
+2. Import in `src/i18n/index.js`
+3. Add to `supportedLngs` array
+4. Update `LanguageSwitcher.jsx` with language option
+5. If RTL language, add to `RTL_LANGUAGES` in `src/utils/rtlManager.js`
+
+### Customizing the Theme
+
+Modify CSS variables in `src/index.css`:
+
+```css
+:root {
+  --color-primary: #2b7fff;
+  --color-bg: #f9fafb;
+  /* ... other variables */
 }
 
-export function insertionSortPure(array) {
-  // Pure implementation for testing
-  return sortedArray;
-}
-```
-
-2. Export it in `src/algorithms/index.js`:
-
-```javascript
-import { insertionSort, insertionSortPure } from './insertionSort';
-
-export const algorithms = {
-  // ... existing algorithms
-  insertionSort,
-};
-```
-
-3. Add it to the SettingsPanel dropdown in `src/components/SettingsPanel.jsx`:
-
-```javascript
-const algorithms = [
-  // ... existing algorithms
-  { value: 'insertionSort', label: 'Insertion Sort', complexity: 'O(n²)' },
-];
-```
-
-4. Write tests in `src/algorithms/algorithms.test.js`
-
-5. Add complexity metadata in `src/constants/index.js`:
-
-```javascript
-export const ALGORITHM_COMPLEXITY = {
-  // ... existing algorithms
-  insertionSort: {
-    name: 'Insertion Sort',
-    timeComplexity: {
-      best: 'O(n)',
-      average: 'O(n²)',
-      worst: 'O(n²)',
-    },
-    spaceComplexity: 'O(1)',
-    useCases: [
-      'Small datasets or nearly sorted arrays',
-      'Online algorithms where data arrives sequentially',
-      'As a subroutine in hybrid algorithms like Timsort',
-      'When simplicity and low overhead are priorities',
-    ],
-    description: 'Builds the final sorted array one item at a time...',
-  },
-};
-```
-
-### Using the ComplexityPanel
-
-The ComplexityPanel automatically appears when a visualization completes:
-
-```javascript
-// Subscribe to visualization completion
-useEffect(() => {
-  if (visualization.isComplete && !visualization.isPlaying) {
-    setShowComplexityPanel(true);
-  }
-}, [visualization.isComplete, visualization.isPlaying]);
-
-// Manual control
-const openComplexityPanel = () => setShowComplexityPanel(true);
-const closeComplexityPanel = () => setShowComplexityPanel(false);
-```
-
-**Features:**
-- Interactive performance graph with hover tooltips
-- Keyboard navigation (arrow keys to move between data points)
-- Copy complexity analysis to clipboard
-- Expandable details with use cases and descriptions
-- Linear/logarithmic scale toggle for the graph
-
-### Adding More Pathfinding Algorithms
-
-To add a new pathfinding algorithm:
-
-1. Create a new file in `src/algorithms/pathfinding/` (e.g., `dfs.js`):
-
-```javascript
-import { GRID_ELEMENT_STATES } from '../../constants';
-
-export function dfs(grid, start, end, rows, cols) {
-  const steps = [];
-  // Implement algorithm with step recording
-  // Each step should include: { grid, states, description }
-  return steps;
-}
-
-export function dfsPure(start, end, rows, cols) {
-  // Pure implementation for testing
-  return path;
+.dark {
+  --color-primary: #60a5fa;
+  --color-bg: #0a0f1a;
+  /* ... other variables */
 }
 ```
 
-2. Export it in `src/algorithms/pathfinding/index.js`:
+## Internationalization
+
+Bayan Flow supports multiple languages with automatic browser language detection and manual language switching.
+
+### Supported Languages
+
+- **English** (default)
+- **French** (Français)
+- **Arabic** (العربية) with RTL support
+
+### Features
+
+- **Automatic Detection**: Detects browser language on first visit
+- **Manual Switching**: Language switcher in header
+- **Persistent Selection**: Saves preference in localStorage
+- **RTL Layout**: Automatic layout flip for Arabic
+- **Fallback**: Falls back to English for unsupported languages
+
+### Adding Translations
+
+All translatable strings use the `t()` function from react-i18next:
 
 ```javascript
-import { dfs, dfsPure } from './dfs';
+import { useTranslation } from 'react-i18next';
 
-export const pathfindingAlgorithms = {
-  // ... existing algorithms
-  dfs,
-};
+function Component() {
+  const { t } = useTranslation();
+  return <h1>{t('header.title')}</h1>;
+}
 ```
 
-3. Add it to the SettingsPanel dropdown in `src/components/SettingsPanel.jsx`:
-
-```javascript
-const pathfindingAlgorithms = [
-  // ... existing algorithms
-  { value: 'dfs', label: 'Depth-First Search', complexity: 'O(V + E)' },
-];
-```
-
-4. Write tests in `src/algorithms/pathfinding/pathfinding.test.js`
-
-5. Add complexity metadata in `src/constants/index.js`:
-
-```javascript
-export const PATHFINDING_COMPLEXITY = {
-  // ... existing algorithms
-  dfs: {
-    name: 'Depth-First Search',
-    timeComplexity: {
-      best: 'O(V + E)',
-      average: 'O(V + E)',
-      worst: 'O(V + E)',
-    },
-    spaceComplexity: 'O(V)',
-    description: 'DFS explores as far as possible along each branch...',
-    useCases: [
-      'Maze solving',
-      'Topological sorting',
-      'Detecting cycles in graphs',
-    ],
-  },
-};
-```
-
-### Customizing Colors
-
-Modify `src/constants/index.js`:
-
-```javascript
-export const STATE_COLORS = {
-  [ELEMENT_STATES.DEFAULT]: '#yourColor',
-  [ELEMENT_STATES.COMPARING]: '#yourColor',
-  // ... other states
-};
-```
+Translation files are located in `src/i18n/locales/[lang]/translation.json`.
 
 ## Testing Philosophy
 
@@ -414,14 +366,40 @@ The project includes comprehensive tests for:
 - **Algorithm correctness**: Verify sorting produces correct results
 - **Edge cases**: Empty arrays, single elements, duplicates
 - **Consistency**: All algorithms produce identical results
-- **Utility functions**: Array generation and validation
-- **Visualization hook**: Autoplay/manual mode behavior, timing, and controls
+- **Utility functions**: Array generation, grid helpers, sound manager
+- **Visualization hooks**: Autoplay/manual mode behavior, timing
+- **Theme system**: Light/dark mode switching, persistence
+- **Internationalization**: Translation loading, language switching
+- **Components**: UI components, accessibility features
 
 Run tests with:
 
 ```bash
 pnpm test
 ```
+
+## Accessibility
+
+Bayan Flow is built with accessibility in mind:
+
+- **Keyboard Navigation**: Full keyboard support (F for fullscreen, Esc to exit)
+- **Screen Reader Support**: ARIA labels, roles, and live regions
+- **Skip Navigation**: Skip to main content link
+- **High Contrast**: Theme-aware colors with sufficient contrast ratios
+- **Touch-Friendly**: 44px minimum touch targets on mobile
+- **Motion Preferences**: Respects `prefers-reduced-motion`
+- **Semantic HTML**: Proper heading hierarchy and landmarks
+
+## Performance
+
+- **Code Splitting**: Lazy loading for Python code panel and complexity panel
+- **Optimized Animations**: GPU-accelerated transforms
+- **Efficient Re-renders**: React.memo, useMemo, useCallback
+- **Asset Optimization**: Vite build optimization
+- **Tree Shaking**: Dead code elimination
+- **CSS Purging**: Unused Tailwind classes removed
+
+**Note**: Web Audio API support required for sound features.
 
 ## License
 

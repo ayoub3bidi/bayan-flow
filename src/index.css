@@ -4,6 +4,9 @@
  * See LICENSE for details.
  */
 
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @import 'tailwindcss';
 
 /* Theme Color Tokens */
@@ -17,6 +20,10 @@
   --color-text-primary: #364153;
   --color-text-secondary: #6b7280;
   --color-text-tertiary: #9ca3af;
+  --color-accent-secondary: #8b5cf6;
+  /* Purple for secondary actions/highlights */
+  --color-accent-tertiary: #ec4899;
+  /* Pink for tertiary actions/highlights */
 
   /* Border colors - Subtle in light mode */
   --color-border: #f3f4f6;
@@ -147,14 +154,35 @@
   --color-scrollbar-track: #1f2937;
   --color-scrollbar-thumb: #4b5563;
   --color-scrollbar-thumb-hover: #6b7280;
+
+  /* Glass morphism */
+  --color-glass-bg: rgba(26, 35, 50, 0.7);
+  --color-glass-border: rgba(255, 255, 255, 0.05);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   font-family:
+    'Inter',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -165,11 +193,34 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'kern' 1;
+  font-optical-sizing: auto;
+  line-height: 1.5;
   color: var(--color-text-primary);
   background-color: var(--color-bg);
+  overflow-x: hidden; /* Prevent horizontal scroll */
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+  scrollbar-gutter: stable;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Improve touch targets on mobile */
+  button,
+  [role='button'],
+  input[type='button'],
+  input[type='submit'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+[dir='rtl'] body {
+  font-family:
+    'Segoe UI', 'Tahoma', 'Arial', sans-serif, 'Noto Sans Arabic',
+    'Arabic UI Text';
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -232,10 +283,119 @@ body {
   color: var(--color-primary);
 }
 
+/* Cross-platform layout utilities */
+.leading-consistent {
+  line-height: 1.5;
+}
+
+.leading-tight-consistent {
+  line-height: 1.25;
+}
+
+.leading-relaxed-consistent {
+  line-height: 1.625;
+}
+
+/* Normalize button and input heights across platforms */
+.min-h-touch {
+  min-height: 44px;
+}
+
+.h-touch {
+  height: 44px;
+}
+
+/* Viewport-aware containers */
+.min-h-screen-safe {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.h-screen-safe {
+  height: 100vh;
+  height: 100svh;
+}
+
+/* Panel spacing normalization */
+.space-y-consistent > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-consistent-sm > * + * {
+  margin-top: 0.75rem;
+}
+
 .bg-bg {
   background-color: var(--color-bg);
 }
 
 .bg-border {
   background-color: var(--color-border);
+}
+
+/* Landing Page Typography Utilities */
+.landing-h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.landing-h2 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.landing-body {
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+  .landing-h1 {
+    font-size: 2.5rem;
+  }
+
+  .landing-h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Radial Gradient Animation for Hero Mobile */
+@keyframes radialPulse {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.8;
+  }
+
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+.radial-gradient-animated {
+  background: radial-gradient(
+    circle at center,
+    rgba(43, 127, 255, 0.15) 0%,
+    rgba(96, 165, 250, 0.1) 25%,
+    rgba(14, 165, 233, 0.05) 50%,
+    transparent 100%
+  );
+  background-size: 200% 200%;
+  animation: radialPulse 8s ease-in-out infinite;
+}
+
+.dark .radial-gradient-animated {
+  background: radial-gradient(
+    circle at center,
+    rgba(96, 165, 250, 0.2) 0%,
+    rgba(43, 127, 255, 0.12) 25%,
+    rgba(56, 189, 248, 0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 200%;
 }

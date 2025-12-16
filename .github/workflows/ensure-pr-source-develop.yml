@@ -1,0 +1,81 @@
+name: pr-source-enforcer
+
+# Runs when a PR targets `main`
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  enforce_pr_source:
+    runs-on: ubuntu-latest
+    outputs:
+      allowed: ${{ steps.check.outputs.allowed }}
+    steps:
+      - name: Set up shell
+        run: echo "starting pr-source-enforcer"
+
+      - name: Read inputs
+        id: check
+        run: |
+          # Allowed mergers come from a repo secret, comma-separated.
+          # Set this secret in your repo settings: Settings -> Secrets -> Actions -> New repository secret
+          # Example value: ayoub,my-org-release-bot
+          ALLOWED="${{ secrets.ALLOWED_MERGERS }}"
+
+          # PR metadata from github context
+          HEAD_REF="${{ github.event.pull_request.head.ref }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
+
+          echo "HEAD_REF=$HEAD_REF"
+          echo "PR_AUTHOR=$PR_AUTHOR"
+          echo "TARGET_BRANCH=$TARGET_BRANCH"
+
+          # Normalize values (lowercase) for comparison
+          head_lc="$(echo "$HEAD_REF" | tr '[:upper:]' '[:lower:]')"
+          author_lc="$(echo "$PR_AUTHOR" | tr '[:upper:]' '[:lower:]')"
+          allowed_lc="$(echo "$ALLOWED" | tr '[:upper:]' '[:lower:]')"
+
+          # Default to empty allowed list if secret missing
+          if [ -z "$allowed_lc" ]; then
+            echo "Warning: ALLOWED_MERGERS secret is empty or missing. No users will be allowed as bypassers."
+          fi
+
+          # Check conditions: allowed if head is 'develop' OR author is in allowed list
+          allowed="false"
+          if [ "$head_lc" = "develop" ]; then
+            allowed="true"
+          else
+            # iterate allowed list
+            IFS=',' read -ra arr <<< "$allowed_lc"
+            for u in "${arr[@]}"; do
+              u_trim="$(echo "$u" | xargs)" # trim spaces
+              if [ -n "$u_trim" ] && [ "$u_trim" = "$author_lc" ]; then
+                allowed="true"
+                break
+              fi
+            done
+          fi
+
+          echo "allowed=$allowed"
+          echo "::set-output name=allowed::$allowed"
+
+      - name: Fail if not allowed
+        if: steps.check.outputs.allowed != 'true'
+        run: |
+          head_ref="${{ github.event.pull_request.head.ref }}"
+          author="${{ github.event.pull_request.user.login }}"
+          echo "ERROR: PR targeting 'main' is not allowed. Head branch is '$head_ref' and PR author is '$author'."
+          echo "Only PRs whose head branch is 'develop' or PRs authored by an allowed merger (repo secret ALLOWED_MERGERS) may target 'main'."
+          exit 1
+
+      - name: Success note
+        if: steps.check.outputs.allowed == 'true'
+        run: |
+          echo "OK: PR allowed to target main (head branch is develop or author is allowed)."

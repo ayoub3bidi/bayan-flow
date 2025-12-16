@@ -7,9 +7,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ArrayBar from './ArrayBar';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
+import AutoHidingLegend from './AutoHidingLegend';
 import { ELEMENT_STATES, STATE_COLORS } from '../constants';
 import useSwipe from '../hooks/useSwipe';
 
@@ -33,10 +35,10 @@ function ArrayVisualizer({
   onStepBackward,
   mode,
 }) {
+  const { t } = useTranslation();
   const maxValue = useMemo(() => Math.max(...array, 1), [array]);
   const arrayLength = array.length;
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
-  const [legendCollapsed, setLegendCollapsed] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
 
   // Show swipe tutorial on mobile when user scrolls to visualization area
@@ -83,11 +85,11 @@ function ArrayVisualizer({
   }, [isComplete]);
 
   const legendItems = [
-    { state: ELEMENT_STATES.DEFAULT, label: 'Default' },
-    { state: ELEMENT_STATES.COMPARING, label: 'Comparing' },
-    { state: ELEMENT_STATES.SWAPPING, label: 'Swapping' },
-    { state: ELEMENT_STATES.SORTED, label: 'Sorted' },
-    { state: ELEMENT_STATES.PIVOT, label: 'Pivot' },
+    { state: ELEMENT_STATES.DEFAULT, label: t('legend.sorting.default') },
+    { state: ELEMENT_STATES.COMPARING, label: t('legend.sorting.comparing') },
+    { state: ELEMENT_STATES.SWAPPING, label: t('legend.sorting.swapping') },
+    { state: ELEMENT_STATES.SORTED, label: t('legend.sorting.sorted') },
+    { state: ELEMENT_STATES.PIVOT, label: t('legend.sorting.pivot') },
   ];
 
   // Swipe gesture support for manual mode
@@ -111,52 +113,17 @@ function ArrayVisualizer({
             role="application"
             aria-label="Array visualization - Swipe left/right to navigate steps"
           >
-            {/* Legend - Collapsible on mobile */}
-            <div className="border-b border-gray-200 mb-2 sm:mb-4">
-              <button
-                onClick={() => setLegendCollapsed(!legendCollapsed)}
-                className="w-full flex items-center justify-between py-2 sm:hidden touch-manipulation"
-                aria-expanded={!legendCollapsed}
-                aria-label="Toggle legend"
-              >
-                <span className="text-xs font-semibold text-text-primary">
-                  Legend
-                </span>
-                <motion.div
-                  animate={{ rotate: legendCollapsed ? -90 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDown
-                    size={16}
-                    className="text-text-secondary"
-                    aria-hidden="true"
-                  />
-                </motion.div>
-              </button>
-              <div
-                className={`flex items-center justify-center gap-3 sm:gap-6 py-3 sm:py-4 flex-wrap ${
-                  legendCollapsed ? 'hidden sm:flex' : 'flex'
-                }`}
-              >
-                {legendItems.map(item => (
-                  <div
-                    key={item.state}
-                    className="flex items-center gap-1.5 sm:gap-2"
-                  >
-                    <div
-                      className="w-3 h-3 sm:w-4 sm:h-4 rounded shadow-sm"
-                      style={{ backgroundColor: STATE_COLORS[item.state] }}
-                    />
-                    <span className="text-[10px] sm:text-xs font-medium text-text-primary whitespace-nowrap">
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Auto-hiding Legend */}
+            <AutoHidingLegend
+              legendItems={legendItems.map(item => ({
+                ...item,
+                color: STATE_COLORS[item.state],
+              }))}
+              isComplete={isComplete}
+            />
 
             {/* Array Visualization */}
-            <div className="flex-1 flex items-center justify-center flex-wrap gap-1 sm:gap-2 pb-10 px-2 overflow-x-auto touch-pan-y">
+            <div className="flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 pb-10 px-2 overflow-x-auto touch-pan-y">
               {array.map((value, index) => (
                 <ArrayBar
                   key={`${index}-${value}`}

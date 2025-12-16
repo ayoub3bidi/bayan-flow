@@ -102,7 +102,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="w-full h-full bg-surface flex items-center justify-center p-3 sm:p-6 overflow-auto"
+      className="w-full h-full bg-surface flex items-center justify-center p-3 sm:p-6 overflow-auto leading-consistent"
     >
       <div className="rounded-xl p-3 sm:p-6 max-w-5xl w-full">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-gray-200">

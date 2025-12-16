@@ -5,10 +5,12 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle } from 'lucide-react';
+import { FileText, AlertCircle, Map } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function Footer() {
+  const { t } = useTranslation();
   const [version, setVersion] = useState('0.0.0');
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
@@ -38,14 +40,19 @@ function Footer() {
 
   const links = [
     {
-      label: 'Documentation',
+      label: t('footer.viewDocs'),
       icon: FileText,
       href: `https://github.com/${repoOwner}/${repoName}/tree/main/docs`,
     },
     {
-      label: 'Report Issue',
+      label: t('footer.reportIssue'),
       icon: AlertCircle,
       href: `https://github.com/${repoOwner}/${repoName}/issues`,
+    },
+    {
+      label: t('landing.footer.seeRoadmap'),
+      icon: Map,
+      href: `/roadmap`,
     },
   ];
 
@@ -63,18 +70,19 @@ function Footer() {
 
   return (
     <motion.footer
-      className="relative w-full mt-auto border-t border-[var(--color-glass-border)]"
+      data-testid="footer"
+      className="relative w-full mt-auto border-t border-(--color-glass-border)"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, type: 'spring', stiffness: 100, damping: 20 }}
     >
-      <div className="absolute inset-0 bg-[var(--color-glass-bg)] backdrop-blur-lg" />
+      <div className="absolute inset-0 bg-(--color-glass-bg) backdrop-blur-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
+              <div className="flex items-center justify-center w-8 h-8 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -118,10 +126,9 @@ function Footer() {
               </h3>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
-              An interactive, educational web application for visualizing
-              sorting/pathfinding algorithms with clarity.
+              {t('footer.description')}
               <br />
-              Bayan (بيان) means clarity in Arabic.
+              {t('footer.descriptionNote')}
             </p>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
@@ -134,7 +141,9 @@ function Footer() {
           </div>
           {/* Center: Quick Links */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-text-primary">Quick Links</h3>
+            <h3 className="text-sm font-bold text-text-primary">
+              {t('footer.quickLinks')}
+            </h3>
             <div className="flex flex-col gap-2">
               {links.map(link => (
                 <motion.button
@@ -153,22 +162,42 @@ function Footer() {
           </div>
           {/* Right: Support */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-text-primary">Support</h3>
+            <h3 className="text-sm font-bold text-text-primary">
+              {t('footer.support')}
+            </h3>
             <div className="flex flex-col items-start">
               <p className="text-xs text-text-secondary mb-3">
-                Enjoying this project? Support my work!
+                {t('footer.enjoying')}
               </p>
-              <motion.button
-                onClick={handleBMCClick}
-                className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors touch-manipulation min-h-[44px]"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                aria-label="Buy me a coffee - Support this project"
-              >
-                <span className="text-lg">☕</span>
-                <span>Buy me a coffee</span>
-              </motion.button>
+              <div className="flex flex-col gap-3">
+                <motion.button
+                  onClick={handleBMCClick}
+                  className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors touch-manipulation min-h-11"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  aria-label="Buy me a coffee - Support this project"
+                >
+                  <span className="text-lg">☕</span>
+                  <span>{t('footer.buyMeCoffee')}</span>
+                </motion.button>
+                <motion.a
+                  href="https://www.producthunt.com/products/bayan-flow?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-bayan-flow"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                >
+                  <img
+                    src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
+                    alt="Bayan Flow - Interactive algorithm visualizer | Product Hunt"
+                    width="250"
+                    height="54"
+                    className="w-[250px] h-[54px]"
+                  />
+                </motion.a>
+              </div>
             </div>
           </div>
         </div>
@@ -185,7 +214,7 @@ function Footer() {
               >
                 {authorName}
               </motion.button>
-              . All rights reserved.
+              . {t('footer.allRightsReserved')}
             </p>
           </div>
         </div>

@@ -9,10 +9,14 @@
 # Production branch (main)
 [context.production]
   command = "pnpm build"
+  [context.production.environment]
+    VITE_GIT_BRANCH = "main"
   
 # Develop branch (beta environment)
 [context.develop]
   command = "pnpm build"
+  [context.develop.environment]
+    VITE_GIT_BRANCH = "develop"
   
 # Deploy previews for PRs
 [context.deploy-preview]
