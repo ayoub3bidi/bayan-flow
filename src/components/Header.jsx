@@ -161,7 +161,8 @@ function Header() {
             {loading ? (
               <div className="h-8 w-12 sm:h-9 sm:w-16 md:w-[170px] bg-interactive-bg backdrop-blur-md rounded-md animate-pulse" />
             ) : (
-              repoData && (
+              repoData &&
+              repoData.stars >= 1000 && (
                 <>
                   {/* Full GitHub button - Desktop only */}
                   <motion.button
