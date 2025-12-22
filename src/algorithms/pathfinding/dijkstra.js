@@ -67,7 +67,7 @@ export function dijkstra(grid, start, end, rows, cols) {
   steps.push({
     grid: grid.map(row => [...row]),
     states: states.map(row => [...row]),
-    description: "Starting Dijkstra's algorithm",
+    description: 'algorithms.descriptions.dijkstra',
   });
 
   distances[start.row][start.col] = 0;

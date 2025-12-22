@@ -31,9 +31,7 @@ export function bubbleSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.DEFAULT),
-    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
-      algorithm: 'Bubble Sort',
-    }),
+    description: 'algorithms.descriptions.bubbleSort',
   });
 
   for (let i = 0; i < n - 1; i++) {

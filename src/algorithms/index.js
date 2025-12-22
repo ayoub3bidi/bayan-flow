@@ -7,18 +7,21 @@
 import { bubbleSort, bubbleSortPure } from './sorting/bubbleSort';
 import { quickSort, quickSortPure } from './sorting/quickSort';
 import { mergeSort, mergeSortPure } from './sorting/mergeSort';
+import { selectionSort, selectionSortPure } from './sorting/selectionSort';
 
 export const algorithms = {
   bubbleSort,
   quickSort,
   mergeSort,
+  selectionSort,
 };
 
 export const pureAlgorithms = {
   bubbleSort: bubbleSortPure,
   quickSort: quickSortPure,
   mergeSort: mergeSortPure,
+  selectionSort: selectionSortPure,
 };
 
-export { bubbleSort, quickSort, mergeSort };
-export { bubbleSortPure, quickSortPure, mergeSortPure };
+export { bubbleSort, quickSort, mergeSort, selectionSort };
+export { bubbleSortPure, quickSortPure, mergeSortPure, selectionSortPure };

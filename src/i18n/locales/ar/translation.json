@@ -33,7 +33,8 @@
     "sorting": {
       "bubbleSort": "الترتيب الفقاعي",
       "quickSort": "الترتيب السريع",
-      "mergeSort": "ترتيب الدمج"
+      "mergeSort": "ترتيب الدمج",
+      "selectionSort": "الترتيب بالاختيار"
     },
     "pathfinding": {
       "bfs": "البحث بالعرض أولاً",
@@ -55,7 +56,8 @@
     "mergeSort": "O(n log n)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
-    "aStar": "O(b^d)"
+    "aStar": "O(b^d)",
+    "selectionSort": "O(n²)"
   },
   "speeds": {
     "slow": "بطيء",
@@ -175,7 +177,10 @@
     "exploring": "استكشاف الخلية ({{row}}, {{col}})",
     "addedToQueue": "تمت إضافة {{count}} خلايا إلى قائمة الانتظار",
     "pathFound": "تم العثور على المسار! الطول: {{length}} خلية",
-    "noPath": "لم يتم العثور على مسار"
+    "noPath": "لم يتم العثور على مسار",
+    "selectionFindingMin": "البحث عن الحد الأدنى في المنطقة غير المرتبة بدءاً من الموضع {{position}}",
+    "selectionNewMin": "تم العثور على حد أدنى جديد: {{value}} في الموضع {{position}}",
+    "selectionPlaced": "تم وضع {{value}} في الموضع الصحيح {{position}}"
   },
   "roadmap": {
     "hero": {

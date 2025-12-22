@@ -30,9 +30,7 @@ export function quickSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.DEFAULT),
-    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
-      algorithm: 'Quick Sort',
-    }),
+    description: 'algorithms.descriptions.quickSort',
   });
 
   quickSortHelper(arr, 0, n - 1, steps);

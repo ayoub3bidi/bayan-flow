@@ -101,6 +101,22 @@ export const ALGORITHM_COMPLEXITY = {
     },
     spaceComplexity: 'O(n)',
   },
+  selectionSort: {
+    name: 'Selection Sort',
+    timeComplexity: {
+      best: 'O(n²)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Selection Sort divides the array into sorted and unsorted regions. It repeatedly finds the minimum element from the unsorted region and swaps it with the first unsorted element.',
+    useCases: [
+      'Small datasets where simplicity is preferred',
+      'When memory write operations are costly (fewer swaps than bubble sort)',
+      'Educational purposes to understand sorting fundamentals',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {

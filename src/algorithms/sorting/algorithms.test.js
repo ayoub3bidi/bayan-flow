@@ -8,6 +8,7 @@ import { describe, it, expect } from 'vitest';
 import { bubbleSortPure } from './bubbleSort';
 import { quickSortPure } from './quickSort';
 import { mergeSortPure } from './mergeSort';
+import { selectionSortPure } from './selectionSort';
 import { isSorted, generateRandomArray } from '../../utils/arrayHelpers';
 
 /**
@@ -102,6 +103,22 @@ describe('Sorting Algorithms', () => {
     });
   });
 
+  describe('Selection Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = selectionSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = selectionSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
   describe('Algorithm Consistency', () => {
     it('all algorithms should produce the same result', () => {
       const testArray = generateRandomArray(50);
@@ -109,9 +126,11 @@ describe('Sorting Algorithms', () => {
       const bubbleResult = bubbleSortPure([...testArray]);
       const quickResult = quickSortPure([...testArray]);
       const mergeResult = mergeSortPure([...testArray]);
+      const selectionResult = selectionSortPure([...testArray]);
 
       expect(bubbleResult).toEqual(quickResult);
       expect(quickResult).toEqual(mergeResult);
+      expect(mergeResult).toEqual(selectionResult);
     });
   });
 });

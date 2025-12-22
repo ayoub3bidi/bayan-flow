@@ -40,6 +40,11 @@ export const ALGORITHM_STEPS = {
   PLACED_REMAINING: 'placedRemaining',
   MERGED_SECTION: 'mergedSection',
 
+  // Selection Sort
+  SELECTION_FINDING_MIN: 'selectionFindingMin',
+  SELECTION_NEW_MIN: 'selectionNewMin',
+  SELECTION_PLACED: 'selectionPlaced',
+
   // Pathfinding
   EXPLORING: 'exploring',
   ADDED_TO_QUEUE: 'addedToQueue',

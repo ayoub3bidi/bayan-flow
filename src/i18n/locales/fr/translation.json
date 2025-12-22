@@ -33,7 +33,8 @@
     "sorting": {
       "bubbleSort": "Tri à Bulles",
       "quickSort": "Tri Rapide",
-      "mergeSort": "Tri par Fusion"
+      "mergeSort": "Tri par Fusion",
+      "selectionSort": "Tri par Sélection"
     },
     "pathfinding": {
       "bfs": "Parcours en Largeur",
@@ -55,7 +56,8 @@
     "mergeSort": "O(n log n)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
-    "aStar": "O(b^d)"
+    "aStar": "O(b^d)",
+    "selectionSort": "O(n²)"
   },
   "speeds": {
     "slow": "Lent",
@@ -175,7 +177,10 @@
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "addedToQueue": "{{count}} cellules ajoutées à la file",
     "pathFound": "Chemin trouvé ! Longueur : {{length}} cellules",
-    "noPath": "Aucun chemin trouvé"
+    "noPath": "Aucun chemin trouvé",
+    "selectionFindingMin": "Recherche du minimum dans la région non triée commençant à la position {{position}}",
+    "selectionNewMin": "Nouveau minimum trouvé : {{value}} à la position {{position}}",
+    "selectionPlaced": "{{value}} placé à la position correcte {{position}}"
   },
   "landing": {
     "hero": {

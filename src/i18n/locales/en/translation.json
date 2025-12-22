@@ -33,7 +33,8 @@
     "sorting": {
       "bubbleSort": "Bubble Sort",
       "quickSort": "Quick Sort",
-      "mergeSort": "Merge Sort"
+      "mergeSort": "Merge Sort",
+      "selectionSort": "Selection Sort"
     },
     "pathfinding": {
       "bfs": "Breadth-First Search",
@@ -44,6 +45,7 @@
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
       "mergeSort": "Starting Merge Sort",
+      "selectionSort": "Starting Selection Sort",
       "bfs": "Starting Breadth-First Search",
       "dijkstra": "Starting Dijkstra's Algorithm",
       "aStar": "Starting A* Search"
@@ -53,6 +55,7 @@
     "bubbleSort": "O(n²)",
     "quickSort": "O(n log n)",
     "mergeSort": "O(n log n)",
+    "selectionSort": "O(n²)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -174,7 +177,10 @@
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "addedToQueue": "Added {{count}} cells to queue",
     "pathFound": "Path found! Length: {{length}} cells",
-    "noPath": "No path found"
+    "noPath": "No path found",
+    "selectionFindingMin": "Finding minimum in unsorted region starting at position {{position}}",
+    "selectionNewMin": "New minimum found: {{value}} at position {{position}}",
+    "selectionPlaced": "Placed {{value}} at correct position {{position}}"
   },
   "landing": {
     "hero": {
