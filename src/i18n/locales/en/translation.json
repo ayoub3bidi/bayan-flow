@@ -34,7 +34,8 @@
       "bubbleSort": "Bubble Sort",
       "quickSort": "Quick Sort",
       "mergeSort": "Merge Sort",
-      "selectionSort": "Selection Sort"
+      "selectionSort": "Selection Sort",
+      "insertionSort": "Insertion Sort"
     },
     "pathfinding": {
       "bfs": "Breadth-First Search",
@@ -46,6 +47,7 @@
       "quickSort": "Starting Quick Sort",
       "mergeSort": "Starting Merge Sort",
       "selectionSort": "Starting Selection Sort",
+      "insertionSort": "Starting Insertion Sort",
       "bfs": "Starting Breadth-First Search",
       "dijkstra": "Starting Dijkstra's Algorithm",
       "aStar": "Starting A* Search"
@@ -56,6 +58,7 @@
     "quickSort": "O(n log n)",
     "mergeSort": "O(n log n)",
     "selectionSort": "O(n²)",
+    "insertionSort": "O(n²)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -180,7 +183,11 @@
     "noPath": "No path found",
     "selectionFindingMin": "Finding minimum in unsorted region starting at position {{position}}",
     "selectionNewMin": "New minimum found: {{value}} at position {{position}}",
-    "selectionPlaced": "Placed {{value}} at correct position {{position}}"
+    "selectionPlaced": "Placed {{value}} at correct position {{position}}",
+    "insertionKey": "Selecting {{value}} at position {{position}} to insert into sorted portion",
+    "insertionShift": "Shifting {{value}} from position {{from}} to {{to}}",
+    "insertionPlaced": "Inserted {{value}} at correct position {{position}}",
+    "insertionPassComplete": "Pass {{pass}} complete. First {{elements}} elements are now sorted."
   },
   "landing": {
     "hero": {

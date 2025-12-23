@@ -8,6 +8,7 @@ import bubbleSortPython from './bubble_sort.py?raw';
 import quickSortPython from './quick_sort.py?raw';
 import mergeSortPython from './merge_sort.py?raw';
 import selectionSortPython from './selection_sort.py?raw';
+import insertionSortPython from './insertion_sort.py?raw';
 import bfsPython from './bfs.py?raw';
 import dijkstraPython from './dijkstra.py?raw';
 import astarPython from './astar.py?raw';
@@ -17,6 +18,7 @@ export const pythonAlgorithms = {
   quickSort: quickSortPython,
   mergeSort: mergeSortPython,
   selectionSort: selectionSortPython,
+  insertionSort: insertionSortPython,
   bfs: bfsPython,
   dijkstra: dijkstraPython,
   aStar: astarPython,
@@ -27,6 +29,7 @@ export const algorithmDisplayNames = {
   quickSort: 'Quick Sort',
   mergeSort: 'Merge Sort',
   selectionSort: 'Selection Sort',
+  insertionSort: 'Insertion Sort',
   bfs: 'Breadth-First Search (BFS)',
   dijkstra: "Dijkstra's Algorithm",
   aStar: 'A* Search',

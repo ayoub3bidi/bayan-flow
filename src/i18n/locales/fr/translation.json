@@ -34,7 +34,8 @@
       "bubbleSort": "Tri à Bulles",
       "quickSort": "Tri Rapide",
       "mergeSort": "Tri par Fusion",
-      "selectionSort": "Tri par Sélection"
+      "selectionSort": "Tri par Sélection",
+      "insertionSort": "Tri par Insertion"
     },
     "pathfinding": {
       "bfs": "Parcours en Largeur",
@@ -45,6 +46,8 @@
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
       "mergeSort": "Démarrage du Tri par Fusion",
+      "selectionSort": "Démarrage du Tri par Sélection",
+      "insertionSort": "Démarrage du Tri par Insertion",
       "bfs": "Démarrage du Parcours en Largeur",
       "dijkstra": "Démarrage de l'Algorithme de Dijkstra",
       "aStar": "Démarrage de la Recherche A*"
@@ -57,7 +60,8 @@
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)",
-    "selectionSort": "O(n²)"
+    "selectionSort": "O(n²)",
+    "insertionSort": "O(n²)"
   },
   "speeds": {
     "slow": "Lent",
@@ -180,7 +184,11 @@
     "noPath": "Aucun chemin trouvé",
     "selectionFindingMin": "Recherche du minimum dans la région non triée commençant à la position {{position}}",
     "selectionNewMin": "Nouveau minimum trouvé : {{value}} à la position {{position}}",
-    "selectionPlaced": "{{value}} placé à la position correcte {{position}}"
+    "selectionPlaced": "{{value}} placé à la position correcte {{position}}",
+    "insertionKey": "Sélection de {{value}} à la position {{position}} pour l'insérer dans la portion triée",
+    "insertionShift": "Décalage de {{value}} de la position {{from}} vers {{to}}",
+    "insertionPlaced": "{{value}} inséré à la position correcte {{position}}",
+    "insertionPassComplete": "Passe {{pass}} terminée. Les {{elements}} premiers éléments sont maintenant triés."
   },
   "landing": {
     "hero": {

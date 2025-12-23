@@ -8,12 +8,14 @@ import { bubbleSort, bubbleSortPure } from './sorting/bubbleSort';
 import { quickSort, quickSortPure } from './sorting/quickSort';
 import { mergeSort, mergeSortPure } from './sorting/mergeSort';
 import { selectionSort, selectionSortPure } from './sorting/selectionSort';
+import { insertionSort, insertionSortPure } from './sorting/insertionSort';
 
 export const algorithms = {
   bubbleSort,
   quickSort,
   mergeSort,
   selectionSort,
+  insertionSort,
 };
 
 export const pureAlgorithms = {
@@ -21,7 +23,14 @@ export const pureAlgorithms = {
   quickSort: quickSortPure,
   mergeSort: mergeSortPure,
   selectionSort: selectionSortPure,
+  insertionSort: insertionSortPure,
 };
 
-export { bubbleSort, quickSort, mergeSort, selectionSort };
-export { bubbleSortPure, quickSortPure, mergeSortPure, selectionSortPure };
+export { bubbleSort, quickSort, mergeSort, selectionSort, insertionSort };
+export {
+  bubbleSortPure,
+  quickSortPure,
+  mergeSortPure,
+  selectionSortPure,
+  insertionSortPure,
+};

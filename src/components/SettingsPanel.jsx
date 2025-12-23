@@ -66,6 +66,11 @@ function SettingsPanel({
       label: t('algorithms.sorting.selectionSort'),
       complexity: t('complexity.selectionSort'),
     },
+    {
+      value: 'insertionSort',
+      label: t('algorithms.sorting.insertionSort'),
+      complexity: t('complexity.insertionSort'),
+    },
   ];
 
   const pathfindingAlgorithms = [

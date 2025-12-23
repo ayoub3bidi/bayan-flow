@@ -34,7 +34,8 @@
       "bubbleSort": "الترتيب الفقاعي",
       "quickSort": "الترتيب السريع",
       "mergeSort": "ترتيب الدمج",
-      "selectionSort": "الترتيب بالاختيار"
+      "selectionSort": "الترتيب بالاختيار",
+      "insertionSort": "الترتيب بالإدراج"
     },
     "pathfinding": {
       "bfs": "البحث بالعرض أولاً",
@@ -45,6 +46,8 @@
       "bubbleSort": "بدء الترتيب الفقاعي",
       "quickSort": "بدء الترتيب السريع",
       "mergeSort": "بدء ترتيب الدمج",
+      "selectionSort": "بدء الترتيب بالاختيار",
+      "insertionSort": "بدء الترتيب بالإدراج",
       "bfs": "بدء البحث بالعرض أولاً",
       "dijkstra": "بدء خوارزمية ديكسترا",
       "aStar": "بدء خوارزمية A*"
@@ -57,7 +60,8 @@
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)",
-    "selectionSort": "O(n²)"
+    "selectionSort": "O(n²)",
+    "insertionSort": "O(n²)"
   },
   "speeds": {
     "slow": "بطيء",
@@ -180,7 +184,11 @@
     "noPath": "لم يتم العثور على مسار",
     "selectionFindingMin": "البحث عن الحد الأدنى في المنطقة غير المرتبة بدءاً من الموضع {{position}}",
     "selectionNewMin": "تم العثور على حد أدنى جديد: {{value}} في الموضع {{position}}",
-    "selectionPlaced": "تم وضع {{value}} في الموضع الصحيح {{position}}"
+    "selectionPlaced": "تم وضع {{value}} في الموضع الصحيح {{position}}",
+    "insertionKey": "اختيار {{value}} في الموضع {{position}} لإدراجه في الجزء المرتب",
+    "insertionShift": "نقل {{value}} من الموضع {{from}} إلى {{to}}",
+    "insertionPlaced": "تم إدراج {{value}} في الموضع الصحيح {{position}}",
+    "insertionPassComplete": "اكتملت التمريرة {{pass}}. أول {{elements}} عناصر مرتبة الآن."
   },
   "roadmap": {
     "hero": {

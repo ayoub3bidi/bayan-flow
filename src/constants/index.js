@@ -117,6 +117,23 @@ export const ALGORITHM_COMPLEXITY = {
       'Educational purposes to understand sorting fundamentals',
     ],
   },
+  insertionSort: {
+    name: 'Insertion Sort',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Insertion Sort builds the final sorted array one item at a time. It iterates through the array, removing one element per iteration, finding the location it belongs within the sorted list, and inserting it there.',
+    useCases: [
+      'Small datasets or nearly sorted arrays',
+      'Online algorithms where data arrives sequentially',
+      'When simplicity and adaptive behavior are important',
+      'Efficient for arrays with few elements out of place',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {

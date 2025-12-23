@@ -9,6 +9,7 @@ import { bubbleSortPure } from './bubbleSort';
 import { quickSortPure } from './quickSort';
 import { mergeSortPure } from './mergeSort';
 import { selectionSortPure } from './selectionSort';
+import { insertionSortPure } from './insertionSort';
 import { isSorted, generateRandomArray } from '../../utils/arrayHelpers';
 
 /**
@@ -119,6 +120,30 @@ describe('Sorting Algorithms', () => {
     });
   });
 
+  describe('Insertion Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = insertionSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = insertionSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should be efficient for nearly sorted arrays', () => {
+      // Create a nearly sorted array (only a few elements out of place)
+      const nearlySorted = [1, 2, 3, 4, 5, 6, 8, 7, 9, 10];
+      const sorted = insertionSortPure(nearlySorted);
+      expect(sorted).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
   describe('Algorithm Consistency', () => {
     it('all algorithms should produce the same result', () => {
       const testArray = generateRandomArray(50);
@@ -127,10 +152,12 @@ describe('Sorting Algorithms', () => {
       const quickResult = quickSortPure([...testArray]);
       const mergeResult = mergeSortPure([...testArray]);
       const selectionResult = selectionSortPure([...testArray]);
+      const insertionResult = insertionSortPure([...testArray]);
 
       expect(bubbleResult).toEqual(quickResult);
       expect(quickResult).toEqual(mergeResult);
       expect(mergeResult).toEqual(selectionResult);
+      expect(selectionResult).toEqual(insertionResult);
     });
   });
 });

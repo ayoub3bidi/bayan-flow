@@ -45,6 +45,12 @@ export const ALGORITHM_STEPS = {
   SELECTION_NEW_MIN: 'selectionNewMin',
   SELECTION_PLACED: 'selectionPlaced',
 
+  // Insertion Sort
+  INSERTION_KEY: 'insertionKey',
+  INSERTION_SHIFT: 'insertionShift',
+  INSERTION_PLACED: 'insertionPlaced',
+  INSERTION_PASS_COMPLETE: 'insertionPassComplete',
+
   // Pathfinding
   EXPLORING: 'exploring',
   ADDED_TO_QUEUE: 'addedToQueue',
