@@ -35,7 +35,8 @@
       "quickSort": "الترتيب السريع",
       "mergeSort": "ترتيب الدمج",
       "selectionSort": "الترتيب بالاختيار",
-      "insertionSort": "الترتيب بالإدراج"
+      "insertionSort": "الترتيب بالإدراج",
+      "heapSort": "ترتيب الكومة"
     },
     "pathfinding": {
       "bfs": "البحث بالعرض أولاً",
@@ -48,6 +49,7 @@
       "mergeSort": "بدء ترتيب الدمج",
       "selectionSort": "بدء الترتيب بالاختيار",
       "insertionSort": "بدء الترتيب بالإدراج",
+      "heapSort": "بدء ترتيب الكومة",
       "bfs": "بدء البحث بالعرض أولاً",
       "dijkstra": "بدء خوارزمية ديكسترا",
       "aStar": "بدء خوارزمية A*"
@@ -61,7 +63,8 @@
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)",
     "selectionSort": "O(n²)",
-    "insertionSort": "O(n²)"
+    "insertionSort": "O(n²)",
+    "heapSort": "O(n log n)"
   },
   "speeds": {
     "slow": "بطيء",
@@ -188,7 +191,10 @@
     "insertionKey": "اختيار {{value}} في الموضع {{position}} لإدراجه في الجزء المرتب",
     "insertionShift": "نقل {{value}} من الموضع {{from}} إلى {{to}}",
     "insertionPlaced": "تم إدراج {{value}} في الموضع الصحيح {{position}}",
-    "insertionPassComplete": "اكتملت التمريرة {{pass}}. أول {{elements}} عناصر مرتبة الآن."
+    "insertionPassComplete": "اكتملت التمريرة {{pass}}. أول {{elements}} عناصر مرتبة الآن.",
+    "heapHeapify": "إعادة ترتيب الشجرة الفرعية في الفهرس {{index}} (القيمة: {{value}})",
+    "heapExtractMax": "استخراج القيمة القصوى {{value}} إلى الموضع {{position}}",
+    "heapPlaced": "تم وضع {{value}} في الموضع المرتب {{position}}"
   },
   "roadmap": {
     "hero": {

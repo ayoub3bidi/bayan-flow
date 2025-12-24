@@ -10,6 +10,7 @@ import { quickSortPure } from './quickSort';
 import { mergeSortPure } from './mergeSort';
 import { selectionSortPure } from './selectionSort';
 import { insertionSortPure } from './insertionSort';
+import { heapSortPure } from './heapSort';
 import { isSorted, generateRandomArray } from '../../utils/arrayHelpers';
 
 /**
@@ -144,6 +145,30 @@ describe('Sorting Algorithms', () => {
     });
   });
 
+  describe('Heap Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = heapSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = heapSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should have consistent O(n log n) performance', () => {
+      // Heap sort should handle already sorted arrays efficiently
+      const alreadySorted = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const sorted = heapSortPure(alreadySorted);
+      expect(sorted).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
   describe('Algorithm Consistency', () => {
     it('all algorithms should produce the same result', () => {
       const testArray = generateRandomArray(50);
@@ -153,11 +178,13 @@ describe('Sorting Algorithms', () => {
       const mergeResult = mergeSortPure([...testArray]);
       const selectionResult = selectionSortPure([...testArray]);
       const insertionResult = insertionSortPure([...testArray]);
+      const heapResult = heapSortPure([...testArray]);
 
       expect(bubbleResult).toEqual(quickResult);
       expect(quickResult).toEqual(mergeResult);
       expect(mergeResult).toEqual(selectionResult);
       expect(selectionResult).toEqual(insertionResult);
+      expect(insertionResult).toEqual(heapResult);
     });
   });
 });

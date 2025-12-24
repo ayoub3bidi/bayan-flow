@@ -35,7 +35,8 @@
       "quickSort": "Quick Sort",
       "mergeSort": "Merge Sort",
       "selectionSort": "Selection Sort",
-      "insertionSort": "Insertion Sort"
+      "insertionSort": "Insertion Sort",
+      "heapSort": "Heap Sort"
     },
     "pathfinding": {
       "bfs": "Breadth-First Search",
@@ -48,6 +49,7 @@
       "mergeSort": "Starting Merge Sort",
       "selectionSort": "Starting Selection Sort",
       "insertionSort": "Starting Insertion Sort",
+      "heapSort": "Starting Heap Sort",
       "bfs": "Starting Breadth-First Search",
       "dijkstra": "Starting Dijkstra's Algorithm",
       "aStar": "Starting A* Search"
@@ -59,6 +61,7 @@
     "mergeSort": "O(n log n)",
     "selectionSort": "O(n²)",
     "insertionSort": "O(n²)",
+    "heapSort": "O(n log n)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -187,7 +190,10 @@
     "insertionKey": "Selecting {{value}} at position {{position}} to insert into sorted portion",
     "insertionShift": "Shifting {{value}} from position {{from}} to {{to}}",
     "insertionPlaced": "Inserted {{value}} at correct position {{position}}",
-    "insertionPassComplete": "Pass {{pass}} complete. First {{elements}} elements are now sorted."
+    "insertionPassComplete": "Pass {{pass}} complete. First {{elements}} elements are now sorted.",
+    "heapHeapify": "Heapifying subtree rooted at index {{index}} (value: {{value}})",
+    "heapExtractMax": "Extracting maximum value {{value}} to position {{position}}",
+    "heapPlaced": "Placed {{value}} at sorted position {{position}}"
   },
   "landing": {
     "hero": {

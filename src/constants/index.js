@@ -15,6 +15,7 @@ export const SORTING_ALGORITHMS = {
   QUICK_SORT: 'quickSort',
   INSERTION_SORT: 'insertionSort',
   SELECTION_SORT: 'selectionSort',
+  HEAP_SORT: 'heapSort',
 };
 
 export const PATHFINDING_ALGORITHMS = {
@@ -132,6 +133,23 @@ export const ALGORITHM_COMPLEXITY = {
       'Online algorithms where data arrives sequentially',
       'When simplicity and adaptive behavior are important',
       'Efficient for arrays with few elements out of place',
+    ],
+  },
+  heapSort: {
+    name: 'Heap Sort',
+    timeComplexity: {
+      best: 'O(n log n)',
+      average: 'O(n log n)',
+      worst: 'O(n log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Heap Sort is a comparison-based sorting algorithm that uses a binary heap data structure. It divides its input into a sorted and an unsorted region, and iteratively shrinks the unsorted region by extracting the largest element from the heap and inserting it into the sorted region.',
+    useCases: [
+      'When consistent O(n log n) performance is required',
+      'Systems with limited memory (in-place sorting)',
+      'Priority queue implementations',
+      'When worst-case performance guarantees are needed',
     ],
   },
 };

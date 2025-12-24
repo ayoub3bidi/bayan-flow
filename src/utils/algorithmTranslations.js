@@ -51,6 +51,11 @@ export const ALGORITHM_STEPS = {
   INSERTION_PLACED: 'insertionPlaced',
   INSERTION_PASS_COMPLETE: 'insertionPassComplete',
 
+  // Heap Sort
+  HEAP_HEAPIFY: 'heapHeapify',
+  HEAP_EXTRACT_MAX: 'heapExtractMax',
+  HEAP_PLACED: 'heapPlaced',
+
   // Pathfinding
   EXPLORING: 'exploring',
   ADDED_TO_QUEUE: 'addedToQueue',

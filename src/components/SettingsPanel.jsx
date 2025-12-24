@@ -71,6 +71,11 @@ function SettingsPanel({
       label: t('algorithms.sorting.insertionSort'),
       complexity: t('complexity.insertionSort'),
     },
+    {
+      value: 'heapSort',
+      label: t('algorithms.sorting.heapSort'),
+      complexity: t('complexity.heapSort'),
+    },
   ];
 
   const pathfindingAlgorithms = [

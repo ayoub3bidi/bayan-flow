@@ -35,7 +35,8 @@
       "quickSort": "Tri Rapide",
       "mergeSort": "Tri par Fusion",
       "selectionSort": "Tri par Sélection",
-      "insertionSort": "Tri par Insertion"
+      "insertionSort": "Tri par Insertion",
+      "heapSort": "Tri par Tas"
     },
     "pathfinding": {
       "bfs": "Parcours en Largeur",
@@ -48,6 +49,7 @@
       "mergeSort": "Démarrage du Tri par Fusion",
       "selectionSort": "Démarrage du Tri par Sélection",
       "insertionSort": "Démarrage du Tri par Insertion",
+      "heapSort": "Démarrage du Tri par Tas",
       "bfs": "Démarrage du Parcours en Largeur",
       "dijkstra": "Démarrage de l'Algorithme de Dijkstra",
       "aStar": "Démarrage de la Recherche A*"
@@ -61,7 +63,8 @@
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)",
     "selectionSort": "O(n²)",
-    "insertionSort": "O(n²)"
+    "insertionSort": "O(n²)",
+    "heapSort": "O(n log n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -188,7 +191,10 @@
     "insertionKey": "Sélection de {{value}} à la position {{position}} pour l'insérer dans la portion triée",
     "insertionShift": "Décalage de {{value}} de la position {{from}} vers {{to}}",
     "insertionPlaced": "{{value}} inséré à la position correcte {{position}}",
-    "insertionPassComplete": "Passe {{pass}} terminée. Les {{elements}} premiers éléments sont maintenant triés."
+    "insertionPassComplete": "Passe {{pass}} terminée. Les {{elements}} premiers éléments sont maintenant triés.",
+    "heapHeapify": "Heapification du sous-arbre enraciné à l'index {{index}} (valeur : {{value}})",
+    "heapExtractMax": "Extraction de la valeur maximale {{value}} vers la position {{position}}",
+    "heapPlaced": "{{value}} placé à la position triée {{position}}"
   },
   "landing": {
     "hero": {

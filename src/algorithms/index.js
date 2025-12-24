@@ -9,6 +9,7 @@ import { quickSort, quickSortPure } from './sorting/quickSort';
 import { mergeSort, mergeSortPure } from './sorting/mergeSort';
 import { selectionSort, selectionSortPure } from './sorting/selectionSort';
 import { insertionSort, insertionSortPure } from './sorting/insertionSort';
+import { heapSort, heapSortPure } from './sorting/heapSort';
 
 export const algorithms = {
   bubbleSort,
@@ -16,6 +17,7 @@ export const algorithms = {
   mergeSort,
   selectionSort,
   insertionSort,
+  heapSort,
 };
 
 export const pureAlgorithms = {
@@ -24,13 +26,22 @@ export const pureAlgorithms = {
   mergeSort: mergeSortPure,
   selectionSort: selectionSortPure,
   insertionSort: insertionSortPure,
+  heapSort: heapSortPure,
 };
 
-export { bubbleSort, quickSort, mergeSort, selectionSort, insertionSort };
+export {
+  bubbleSort,
+  quickSort,
+  mergeSort,
+  selectionSort,
+  insertionSort,
+  heapSort,
+};
 export {
   bubbleSortPure,
   quickSortPure,
   mergeSortPure,
   selectionSortPure,
   insertionSortPure,
+  heapSortPure,
 };
