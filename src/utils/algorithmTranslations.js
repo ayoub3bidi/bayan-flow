@@ -56,6 +56,13 @@ export const ALGORITHM_STEPS = {
   HEAP_EXTRACT_MAX: 'heapExtractMax',
   HEAP_PLACED: 'heapPlaced',
 
+  // Shell Sort
+  SHELL_GAP: 'shellGap',
+  SHELL_SELECTING: 'shellSelecting',
+  SHELL_SHIFTING: 'shellShifting',
+  SHELL_PLACED: 'shellPlaced',
+  SHELL_GAP_COMPLETE: 'shellGapComplete',
+
   // Pathfinding
   EXPLORING: 'exploring',
   ADDED_TO_QUEUE: 'addedToQueue',

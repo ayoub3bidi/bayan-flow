@@ -10,6 +10,7 @@ import mergeSortPython from './merge_sort.py?raw';
 import selectionSortPython from './selection_sort.py?raw';
 import insertionSortPython from './insertion_sort.py?raw';
 import heapSortPython from './heap_sort.py?raw';
+import shellSortPython from './shell_sort.py?raw';
 import bfsPython from './bfs.py?raw';
 import dijkstraPython from './dijkstra.py?raw';
 import astarPython from './astar.py?raw';
@@ -21,6 +22,7 @@ export const pythonAlgorithms = {
   selectionSort: selectionSortPython,
   insertionSort: insertionSortPython,
   heapSort: heapSortPython,
+  shellSort: shellSortPython,
   bfs: bfsPython,
   dijkstra: dijkstraPython,
   aStar: astarPython,
@@ -33,6 +35,7 @@ export const algorithmDisplayNames = {
   selectionSort: 'Selection Sort',
   insertionSort: 'Insertion Sort',
   heapSort: 'Heap Sort',
+  shellSort: 'Shell Sort',
   bfs: 'Breadth-First Search (BFS)',
   dijkstra: "Dijkstra's Algorithm",
   aStar: 'A* Search',

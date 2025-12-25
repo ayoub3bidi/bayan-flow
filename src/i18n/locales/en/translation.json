@@ -36,7 +36,8 @@
       "mergeSort": "Merge Sort",
       "selectionSort": "Selection Sort",
       "insertionSort": "Insertion Sort",
-      "heapSort": "Heap Sort"
+      "heapSort": "Heap Sort",
+      "shellSort": "Shell Sort"
     },
     "pathfinding": {
       "bfs": "Breadth-First Search",
@@ -50,6 +51,7 @@
       "selectionSort": "Starting Selection Sort",
       "insertionSort": "Starting Insertion Sort",
       "heapSort": "Starting Heap Sort",
+      "shellSort": "Starting Shell Sort",
       "bfs": "Starting Breadth-First Search",
       "dijkstra": "Starting Dijkstra's Algorithm",
       "aStar": "Starting A* Search"
@@ -62,6 +64,7 @@
     "selectionSort": "O(n²)",
     "insertionSort": "O(n²)",
     "heapSort": "O(n log n)",
+    "shellSort": "O(n^1.25)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -193,7 +196,12 @@
     "insertionPassComplete": "Pass {{pass}} complete. First {{elements}} elements are now sorted.",
     "heapHeapify": "Heapifying subtree rooted at index {{index}} (value: {{value}})",
     "heapExtractMax": "Extracting maximum value {{value}} to position {{position}}",
-    "heapPlaced": "Placed {{value}} at sorted position {{position}}"
+    "heapPlaced": "Placed {{value}} at sorted position {{position}}",
+    "shellGap": "Starting gap sequence with gap size: {{gap}}",
+    "shellSelecting": "Selecting {{value}} at position {{position}} for gap-{{gap}} insertion",
+    "shellShifting": "Shifting {{value}} from position {{from}} to {{to}}",
+    "shellPlaced": "Placed {{value}} at position {{position}}",
+    "shellGapComplete": "Completed gap-{{gap}} sequence. Array is now {{gap}}-sorted."
   },
   "landing": {
     "hero": {

@@ -11,6 +11,7 @@ import { mergeSortPure } from './mergeSort';
 import { selectionSortPure } from './selectionSort';
 import { insertionSortPure } from './insertionSort';
 import { heapSortPure } from './heapSort';
+import { shellSortPure } from './shellSort';
 import { isSorted, generateRandomArray } from '../../utils/arrayHelpers';
 
 /**
@@ -169,6 +170,36 @@ describe('Sorting Algorithms', () => {
     });
   });
 
+  describe('Shell Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = shellSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = shellSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should be more efficient than insertion sort for larger arrays', () => {
+      // Shell sort should handle larger arrays better than insertion sort
+      const largerArray = generateRandomArray(50);
+      const sorted = shellSortPure(largerArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should handle already sorted arrays', () => {
+      const alreadySorted = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const sorted = shellSortPure(alreadySorted);
+      expect(sorted).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
   describe('Algorithm Consistency', () => {
     it('all algorithms should produce the same result', () => {
       const testArray = generateRandomArray(50);
@@ -179,12 +210,14 @@ describe('Sorting Algorithms', () => {
       const selectionResult = selectionSortPure([...testArray]);
       const insertionResult = insertionSortPure([...testArray]);
       const heapResult = heapSortPure([...testArray]);
+      const shellResult = shellSortPure([...testArray]);
 
       expect(bubbleResult).toEqual(quickResult);
       expect(quickResult).toEqual(mergeResult);
       expect(mergeResult).toEqual(selectionResult);
       expect(selectionResult).toEqual(insertionResult);
       expect(insertionResult).toEqual(heapResult);
+      expect(heapResult).toEqual(shellResult);
     });
   });
 });

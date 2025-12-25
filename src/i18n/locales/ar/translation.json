@@ -36,7 +36,8 @@
       "mergeSort": "ترتيب الدمج",
       "selectionSort": "الترتيب بالاختيار",
       "insertionSort": "الترتيب بالإدراج",
-      "heapSort": "ترتيب الكومة"
+      "heapSort": "ترتيب الكومة",
+      "shellSort": "ترتيب شيل"
     },
     "pathfinding": {
       "bfs": "البحث بالعرض أولاً",
@@ -50,6 +51,7 @@
       "selectionSort": "بدء الترتيب بالاختيار",
       "insertionSort": "بدء الترتيب بالإدراج",
       "heapSort": "بدء ترتيب الكومة",
+      "shellSort": "بدء ترتيب شيل",
       "bfs": "بدء البحث بالعرض أولاً",
       "dijkstra": "بدء خوارزمية ديكسترا",
       "aStar": "بدء خوارزمية A*"
@@ -64,7 +66,8 @@
     "aStar": "O(b^d)",
     "selectionSort": "O(n²)",
     "insertionSort": "O(n²)",
-    "heapSort": "O(n log n)"
+    "heapSort": "O(n log n)",
+    "shellSort": "O(n^1.25)"
   },
   "speeds": {
     "slow": "بطيء",
@@ -194,7 +197,12 @@
     "insertionPassComplete": "اكتملت التمريرة {{pass}}. أول {{elements}} عناصر مرتبة الآن.",
     "heapHeapify": "إعادة ترتيب الشجرة الفرعية في الفهرس {{index}} (القيمة: {{value}})",
     "heapExtractMax": "استخراج القيمة القصوى {{value}} إلى الموضع {{position}}",
-    "heapPlaced": "تم وضع {{value}} في الموضع المرتب {{position}}"
+    "heapPlaced": "تم وضع {{value}} في الموضع المرتب {{position}}",
+    "shellGap": "بدء تسلسل الفجوة بحجم فجوة: {{gap}}",
+    "shellSelecting": "اختيار {{value}} في الموضع {{position}} للإدراج بفجوة-{{gap}}",
+    "shellShifting": "نقل {{value}} من الموضع {{from}} إلى {{to}} (الفجوة: {{gap}})",
+    "shellPlaced": "تم وضع {{value}} في الموضع {{position}}",
+    "shellGapComplete": "اكتمل تسلسل الفجوة-{{gap}}. المصفوفة الآن مرتبة بفجوة-{{gap}}."
   },
   "roadmap": {
     "hero": {

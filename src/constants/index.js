@@ -16,6 +16,7 @@ export const SORTING_ALGORITHMS = {
   INSERTION_SORT: 'insertionSort',
   SELECTION_SORT: 'selectionSort',
   HEAP_SORT: 'heapSort',
+  SHELL_SORT: 'shellSort',
 };
 
 export const PATHFINDING_ALGORITHMS = {
@@ -152,6 +153,23 @@ export const ALGORITHM_COMPLEXITY = {
       'When worst-case performance guarantees are needed',
     ],
   },
+  shellSort: {
+    name: 'Shell Sort',
+    timeComplexity: {
+      best: 'O(n log n)',
+      average: 'O(n^1.25)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Shell Sort is an optimization of Insertion Sort that allows the exchange of items that are far apart. The algorithm sorts elements at specific intervals (gaps), gradually reducing the gap until it becomes 1.',
+    useCases: [
+      'Medium-sized datasets where O(n²) is acceptable',
+      'When a simple, in-place sorting algorithm is needed',
+      'Better than insertion sort for larger datasets',
+      'Good for embedded systems with limited memory',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {
@@ -161,6 +179,7 @@ export const COMPLEXITY_FUNCTIONS = {
   'O(n)': n => n,
   'O(n log n)': n => n * Math.log2(n),
   'O(n²)': n => n * n,
+  'O(n^1.25)': n => Math.pow(n, 1.25),
   'O(n³)': n => n * n * n,
   'O(2^n)': n => Math.pow(2, n),
   'O(V + E)': n => n + n * 4, // Approximation: V vertices + E edges (grid has ~4 edges per vertex)

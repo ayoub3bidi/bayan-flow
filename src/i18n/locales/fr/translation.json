@@ -36,7 +36,8 @@
       "mergeSort": "Tri par Fusion",
       "selectionSort": "Tri par Sélection",
       "insertionSort": "Tri par Insertion",
-      "heapSort": "Tri par Tas"
+      "heapSort": "Tri par Tas",
+      "shellSort": "Tri de Shell"
     },
     "pathfinding": {
       "bfs": "Parcours en Largeur",
@@ -50,6 +51,7 @@
       "selectionSort": "Démarrage du Tri par Sélection",
       "insertionSort": "Démarrage du Tri par Insertion",
       "heapSort": "Démarrage du Tri par Tas",
+      "shellSort": "Démarrage du Tri de Shell",
       "bfs": "Démarrage du Parcours en Largeur",
       "dijkstra": "Démarrage de l'Algorithme de Dijkstra",
       "aStar": "Démarrage de la Recherche A*"
@@ -59,12 +61,13 @@
     "bubbleSort": "O(n²)",
     "quickSort": "O(n log n)",
     "mergeSort": "O(n log n)",
-    "bfs": "O(V + E)",
-    "dijkstra": "O((V+E) log V)",
-    "aStar": "O(b^d)",
     "selectionSort": "O(n²)",
     "insertionSort": "O(n²)",
-    "heapSort": "O(n log n)"
+    "heapSort": "O(n log n)",
+    "shellSort": "O(n^1.25)",
+    "bfs": "O(V + E)",
+    "dijkstra": "O((V+E) log V)",
+    "aStar": "O(b^d)"
   },
   "speeds": {
     "slow": "Lent",
@@ -194,7 +197,12 @@
     "insertionPassComplete": "Passe {{pass}} terminée. Les {{elements}} premiers éléments sont maintenant triés.",
     "heapHeapify": "Heapification du sous-arbre enraciné à l'index {{index}} (valeur : {{value}})",
     "heapExtractMax": "Extraction de la valeur maximale {{value}} vers la position {{position}}",
-    "heapPlaced": "{{value}} placé à la position triée {{position}}"
+    "heapPlaced": "{{value}} placé à la position triée {{position}}",
+    "shellGap": "Démarrage de la séquence de gap avec une taille de gap : {{gap}}",
+    "shellSelecting": "Sélection de {{value}} à la position {{position}} pour l'insertion avec gap-{{gap}}",
+    "shellShifting": "Décalage de {{value}} de la position {{from}} vers {{to}}",
+    "shellPlaced": "{{value}} placé à la position {{position}}",
+    "shellGapComplete": "Séquence de gap-{{gap}} terminée. Le tableau est maintenant {{gap}}-trié."
   },
   "landing": {
     "hero": {
