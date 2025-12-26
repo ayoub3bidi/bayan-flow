@@ -39,9 +39,9 @@ export function insertionSort(array) {
     const key = arr[i];
     let j = i - 1;
 
-    // Show current element being inserted as pivot
+    // Show current element being inserted as auxiliary (key element)
     const keyStates = Array(n).fill(ELEMENT_STATES.DEFAULT);
-    keyStates[i] = ELEMENT_STATES.PIVOT;
+    keyStates[i] = ELEMENT_STATES.AUXILIARY;
 
     // Mark already sorted elements
     for (let k = 0; k < i; k++) {

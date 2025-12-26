@@ -177,6 +177,7 @@
     "comparing": "مقارنة {{a}} و {{b}}",
     "swapping": "تبديل {{a}} و {{b}}",
     "bubblePassComplete": "اكتملت التمريرة {{pass}}. العنصر في الموضع {{position}} في المكان الصحيح.",
+    "bubbleEarlyTermination": "المصفوفة مرتبة! إنهاء مبكر بعد {{pass}} تمريرات (تم توفير {{totalPasses}} تمريرة إجمالية).",
     "pivotSelected": "تم اختيار المحور: {{pivot}} في الفهرس {{index}}",
     "pivotPlaced": "المحور {{pivot}} في الموضع الصحيح {{position}}",
     "dividing": "تقسيم المصفوفة: [{{start}}...{{mid}}] و [{{midNext}}...{{end}}]",

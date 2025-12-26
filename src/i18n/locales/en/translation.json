@@ -176,6 +176,7 @@
     "comparing": "Comparing {{a}} and {{b}}",
     "swapping": "Swapped {{a}} and {{b}}",
     "bubblePassComplete": "Pass {{pass}} complete. Element at position {{position}} is in correct position.",
+    "bubbleEarlyTermination": "Array is sorted! Early termination after {{pass}} passes (saved {{totalPasses}} total passes).",
     "pivotSelected": "Selected pivot: {{pivot}} at index {{index}}",
     "pivotPlaced": "Pivot {{pivot}} placed at correct position {{position}}",
     "dividing": "Dividing array: [{{start}}...{{mid}}] and [{{midNext}}...{{end}}]",

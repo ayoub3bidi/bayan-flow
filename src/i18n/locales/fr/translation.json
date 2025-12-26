@@ -177,6 +177,7 @@
     "comparing": "Comparaison {{a}} et {{b}}",
     "swapping": "Échange {{a}} et {{b}}",
     "bubblePassComplete": "Passe {{pass}} terminée. Élément à la position {{position}} est à la bonne place.",
+    "bubbleEarlyTermination": "Tableau trié ! Arrêt anticipé après {{pass}} passes ({{totalPasses}} passes totales économisées).",
     "pivotSelected": "Pivot sélectionné : {{pivot}} à l'index {{index}}",
     "pivotPlaced": "Pivot {{pivot}} placé à la position correcte {{position}}",
     "dividing": "Division du tableau : [{{start}}...{{mid}}] et [{{midNext}}...{{end}}]",

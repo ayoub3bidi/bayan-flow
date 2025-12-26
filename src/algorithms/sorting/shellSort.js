@@ -88,13 +88,16 @@ export function shellSort(array) {
         steps.push({
           array: [...arr],
           states: compareStates,
-          description: getAlgorithmDescription(ALGORITHM_STEPS.SHELL_COMPARING, {
-            a: arr[j - gap],
-            b: temp,
-            gap,
-            posA: j - gap,
-            posB: j,
-          }),
+          description: getAlgorithmDescription(
+            ALGORITHM_STEPS.SHELL_COMPARING,
+            {
+              a: arr[j - gap],
+              b: temp,
+              gap,
+              posA: j - gap,
+              posB: j,
+            }
+          ),
         });
 
         // Shift element

@@ -28,6 +28,7 @@ export const ALGORITHM_STEPS = {
 
   // Bubble Sort
   BUBBLE_PASS_COMPLETE: 'bubblePassComplete',
+  BUBBLE_EARLY_TERMINATION: 'bubbleEarlyTermination',
 
   // Quick Sort
   PIVOT_SELECTED: 'pivotSelected',

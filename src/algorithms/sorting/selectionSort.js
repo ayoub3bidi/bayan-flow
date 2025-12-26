@@ -37,18 +37,18 @@ export function selectionSort(array) {
   for (let i = 0; i < n - 1; i++) {
     let minIndex = i;
 
-    // Show current position as pivot (where we'll place minimum)
-    const pivotStates = Array(n).fill(ELEMENT_STATES.DEFAULT);
-    pivotStates[i] = ELEMENT_STATES.PIVOT;
+    // Show current position as target (where we'll place minimum)
+    const targetStates = Array(n).fill(ELEMENT_STATES.DEFAULT);
+    targetStates[i] = ELEMENT_STATES.AUXILIARY;
 
     // Mark already sorted elements
     for (let k = 0; k < i; k++) {
-      pivotStates[k] = ELEMENT_STATES.SORTED;
+      targetStates[k] = ELEMENT_STATES.SORTED;
     }
 
     steps.push({
       array: [...arr],
-      states: pivotStates,
+      states: targetStates,
       description: getAlgorithmDescription(
         ALGORITHM_STEPS.SELECTION_FINDING_MIN,
         {
@@ -66,8 +66,8 @@ export function selectionSort(array) {
         compareStates[k] = ELEMENT_STATES.SORTED;
       }
 
-      compareStates[i] = ELEMENT_STATES.PIVOT;
-      compareStates[minIndex] = ELEMENT_STATES.AUXILIARY;
+      compareStates[i] = ELEMENT_STATES.AUXILIARY;
+      compareStates[minIndex] = ELEMENT_STATES.COMPARING;
       compareStates[j] = ELEMENT_STATES.COMPARING;
 
       steps.push({
@@ -87,8 +87,8 @@ export function selectionSort(array) {
         for (let k = 0; k < i; k++) {
           newMinStates[k] = ELEMENT_STATES.SORTED;
         }
-        newMinStates[i] = ELEMENT_STATES.PIVOT;
-        newMinStates[minIndex] = ELEMENT_STATES.AUXILIARY;
+        newMinStates[i] = ELEMENT_STATES.AUXILIARY;
+        newMinStates[minIndex] = ELEMENT_STATES.COMPARING;
 
         steps.push({
           array: [...arr],
