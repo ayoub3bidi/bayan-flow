@@ -59,6 +59,7 @@ export const ALGORITHM_STEPS = {
   // Shell Sort
   SHELL_GAP: 'shellGap',
   SHELL_SELECTING: 'shellSelecting',
+  SHELL_COMPARING: 'shellComparing',
   SHELL_SHIFTING: 'shellShifting',
   SHELL_PLACED: 'shellPlaced',
   SHELL_GAP_COMPLETE: 'shellGapComplete',

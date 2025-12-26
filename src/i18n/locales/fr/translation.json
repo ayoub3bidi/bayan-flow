@@ -198,11 +198,12 @@
     "heapHeapify": "Heapification du sous-arbre enraciné à l'index {{index}} (valeur : {{value}})",
     "heapExtractMax": "Extraction de la valeur maximale {{value}} vers la position {{position}}",
     "heapPlaced": "{{value}} placé à la position triée {{position}}",
-    "shellGap": "Démarrage de la séquence de gap avec une taille de gap : {{gap}}",
-    "shellSelecting": "Sélection de {{value}} à la position {{position}} pour l'insertion avec gap-{{gap}}",
-    "shellShifting": "Décalage de {{value}} de la position {{from}} vers {{to}}",
-    "shellPlaced": "{{value}} placé à la position {{position}}",
-    "shellGapComplete": "Séquence de gap-{{gap}} terminée. Le tableau est maintenant {{gap}}-trié."
+    "shellGap": "Utilisation de la séquence de Knuth avec écart: {{gap}} (comparaison d'éléments à {{gap}} positions)",
+    "shellSelecting": "Sélection de l'élément {{value}} à la position {{position}} pour le tri par insertion avec écart-{{gap}}",
+    "shellComparing": "Comparaison de {{a}} (pos {{posA}}) avec {{b}} à travers un écart de {{gap}} positions",
+    "shellShifting": "Déplacement de {{value}} de la position {{from}} à {{to}}",
+    "shellPlaced": "{{value}} placé à sa position correcte {{position}} pour cet écart",
+    "shellGapComplete": "Passage avec écart-{{gap}} terminé. Le tableau est maintenant {{gap}}-trié, passage à un écart plus petit."
   },
   "landing": {
     "hero": {

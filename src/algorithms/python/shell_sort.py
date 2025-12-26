@@ -1,14 +1,19 @@
 def shell_sort(arr):
     """
-    Shell Sort Algorithm
+    Shell Sort Algorithm (Using Knuth's Gap Sequence)
     
-    Time Complexity: O(n log n) to O(n²)
+    Time Complexity: O(n^(3/2)) with Knuth's sequence
     Space Complexity: O(1)
 
     Shell Sort is an optimization of Insertion Sort that allows the exchange of items
     that are far apart. The algorithm sorts elements at specific intervals (gaps),
     gradually reducing the gap until it becomes 1 (at which point it's essentially
     insertion sort on a nearly sorted array).
+    
+    This implementation uses Knuth's gap sequence: 1, 4, 13, 40, 121, 364...
+    Formula: gap = (3^k - 1) / 2, which provides O(n^(3/2)) worst-case performance.
+    This is significantly better than the original Shell sequence (n/2, n/4, n/8...)
+    which has O(n²) worst-case complexity.
     
     Args:
         arr: List of comparable elements to sort
@@ -19,9 +24,13 @@ def shell_sort(arr):
     array = arr.copy()
     n = len(array)
     
-    # Start with a large gap, then reduce the gap
-    gap = n // 2
+    # Calculate initial gap using Knuth's sequence: (3^k - 1) / 2
+    # Start with the largest gap less than n/3
+    gap = 1
+    while gap < n // 3:
+        gap = gap * 3 + 1  # 1, 4, 13, 40, 121, 364...
     
+    # Start with the calculated gap, then reduce using reverse formula
     while gap > 0:
         # Do a gapped insertion sort for this gap size
         # The first gap elements array[0..gap-1] are already in gapped order
@@ -40,8 +49,8 @@ def shell_sort(arr):
             # Put temp (the original array[i]) in its correct location
             array[j] = temp
         
-        # Reduce the gap for the next iteration
-        gap //= 2
+        # Reduce gap using Knuth's sequence: gap = (gap - 1) / 3
+        gap = (gap - 1) // 3
     
     return array
 

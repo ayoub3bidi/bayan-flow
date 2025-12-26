@@ -198,11 +198,12 @@
     "heapHeapify": "إعادة ترتيب الشجرة الفرعية في الفهرس {{index}} (القيمة: {{value}})",
     "heapExtractMax": "استخراج القيمة القصوى {{value}} إلى الموضع {{position}}",
     "heapPlaced": "تم وضع {{value}} في الموضع المرتب {{position}}",
-    "shellGap": "بدء تسلسل الفجوة بحجم فجوة: {{gap}}",
-    "shellSelecting": "اختيار {{value}} في الموضع {{position}} للإدراج بفجوة-{{gap}}",
-    "shellShifting": "نقل {{value}} من الموضع {{from}} إلى {{to}} (الفجوة: {{gap}})",
-    "shellPlaced": "تم وضع {{value}} في الموضع {{position}}",
-    "shellGapComplete": "اكتمل تسلسل الفجوة-{{gap}}. المصفوفة الآن مرتبة بفجوة-{{gap}}."
+    "shellGap": "استخدام تسلسل Knuth بحجم فجوة: {{gap}} (مقارنة العناصر على بعد {{gap}} موضع)",
+    "shellSelecting": "اختيار العنصر {{value}} في الموضع {{position}} للإدراج بفجوة-{{gap}}",
+    "shellComparing": "مقارنة {{a}} (موضع {{posA}}) مع {{b}} عبر فجوة {{gap}} موضع",
+    "shellShifting": "نقل {{value}} من الموضع {{from}} إلى {{to}}",
+    "shellPlaced": "تم وضع {{value}} في موضعه الصحيح {{position}} لهذه الفجوة",
+    "shellGapComplete": "اكتملت تمريرة الفجوة-{{gap}}. المصفوفة الآن مرتبة بفجوة-{{gap}}، الانتقال إلى فجوة أصغر."
   },
   "roadmap": {
     "hero": {

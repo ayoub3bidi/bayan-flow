@@ -197,11 +197,12 @@
     "heapHeapify": "Heapifying subtree rooted at index {{index}} (value: {{value}})",
     "heapExtractMax": "Extracting maximum value {{value}} to position {{position}}",
     "heapPlaced": "Placed {{value}} at sorted position {{position}}",
-    "shellGap": "Starting gap sequence with gap size: {{gap}}",
-    "shellSelecting": "Selecting {{value}} at position {{position}} for gap-{{gap}} insertion",
+    "shellGap": "Using Knuth's gap sequence with gap size: {{gap}} (comparing elements {{gap}} positions apart)",
+    "shellSelecting": "Selecting element {{value}} at position {{position}} for gap-{{gap}} insertion sort",
+    "shellComparing": "Comparing {{a}} (pos {{posA}}) with {{b}} across gap of {{gap}} positions",
     "shellShifting": "Shifting {{value}} from position {{from}} to {{to}}",
-    "shellPlaced": "Placed {{value}} at position {{position}}",
-    "shellGapComplete": "Completed gap-{{gap}} sequence. Array is now {{gap}}-sorted."
+    "shellPlaced": "Placed {{value}} at its correct position {{position}} for this gap",
+    "shellGapComplete": "Completed gap-{{gap}} pass. Array is now {{gap}}-sorted, moving to smaller gap."
   },
   "landing": {
     "hero": {

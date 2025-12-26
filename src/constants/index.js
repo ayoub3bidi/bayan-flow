@@ -157,17 +157,18 @@ export const ALGORITHM_COMPLEXITY = {
     name: 'Shell Sort',
     timeComplexity: {
       best: 'O(n log n)',
-      average: 'O(n^1.25)',
-      worst: 'O(n²)',
+      average: 'O(n^(3/2))',
+      worst: 'O(n^(3/2))',
     },
     spaceComplexity: 'O(1)',
     description:
-      'Shell Sort is an optimization of Insertion Sort that allows the exchange of items that are far apart. The algorithm sorts elements at specific intervals (gaps), gradually reducing the gap until it becomes 1.',
+      "Shell Sort is an optimization of Insertion Sort that allows the exchange of items that are far apart. This implementation uses Knuth's gap sequence (1, 4, 13, 40, 121...), which provides significantly better performance than the original Shell sequence.",
     useCases: [
-      'Medium-sized datasets where O(n²) is acceptable',
+      'Medium-sized datasets where O(n log n) is preferred but O(n²) is acceptable',
       'When a simple, in-place sorting algorithm is needed',
       'Better than insertion sort for larger datasets',
       'Good for embedded systems with limited memory',
+      'Educational purposes to understand gap-based sorting strategies',
     ],
   },
 };
@@ -178,8 +179,9 @@ export const COMPLEXITY_FUNCTIONS = {
   'O(log n)': n => Math.log2(n),
   'O(n)': n => n,
   'O(n log n)': n => n * Math.log2(n),
-  'O(n²)': n => n * n,
   'O(n^1.25)': n => Math.pow(n, 1.25),
+  'O(n^(3/2))': n => Math.pow(n, 1.5),
+  'O(n²)': n => n * n,
   'O(n³)': n => n * n * n,
   'O(2^n)': n => Math.pow(2, n),
   'O(V + E)': n => n + n * 4, // Approximation: V vertices + E edges (grid has ~4 edges per vertex)
