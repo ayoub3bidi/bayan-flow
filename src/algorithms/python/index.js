@@ -14,6 +14,7 @@ import shellSortPython from './shell_sort.py?raw';
 import bfsPython from './bfs.py?raw';
 import dijkstraPython from './dijkstra.py?raw';
 import astarPython from './astar.py?raw';
+import radixSortPython from './radix_sort.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -23,6 +24,7 @@ export const pythonAlgorithms = {
   insertionSort: insertionSortPython,
   heapSort: heapSortPython,
   shellSort: shellSortPython,
+  radixSort: radixSortPython,
   bfs: bfsPython,
   dijkstra: dijkstraPython,
   aStar: astarPython,
@@ -36,6 +38,7 @@ export const algorithmDisplayNames = {
   insertionSort: 'Insertion Sort',
   heapSort: 'Heap Sort',
   shellSort: 'Shell Sort',
+  radixSort: 'Radix Sort',
   bfs: 'Breadth-First Search (BFS)',
   dijkstra: "Dijkstra's Algorithm",
   aStar: 'A* Search',

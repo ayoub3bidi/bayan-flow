@@ -37,7 +37,8 @@
       "selectionSort": "الترتيب بالاختيار",
       "insertionSort": "الترتيب بالإدراج",
       "heapSort": "ترتيب الكومة",
-      "shellSort": "ترتيب شيل"
+      "shellSort": "ترتيب شيل",
+      "radixSort": "ترتيب التجذير"
     },
     "pathfinding": {
       "bfs": "البحث بالعرض أولاً",
@@ -52,6 +53,7 @@
       "insertionSort": "بدء الترتيب بالإدراج",
       "heapSort": "بدء ترتيب الكومة",
       "shellSort": "بدء ترتيب شيل",
+      "radixSort": "بدء ترتيب التجذير",
       "bfs": "بدء البحث بالعرض أولاً",
       "dijkstra": "بدء خوارزمية ديكسترا",
       "aStar": "بدء خوارزمية A*"
@@ -67,7 +69,8 @@
     "selectionSort": "O(n²)",
     "insertionSort": "O(n²)",
     "heapSort": "O(n log n)",
-    "shellSort": "O(n^1.25)"
+    "shellSort": "O(n^1.25)",
+    "radixSort": "O(nk)"
   },
   "speeds": {
     "slow": "بطيء",
@@ -204,7 +207,10 @@
     "shellComparing": "مقارنة {{a}} (موضع {{posA}}) مع {{b}} عبر فجوة {{gap}} موضع",
     "shellShifting": "نقل {{value}} من الموضع {{from}} إلى {{to}}",
     "shellPlaced": "تم وضع {{value}} في موضعه الصحيح {{position}} لهذه الفجوة",
-    "shellGapComplete": "اكتملت تمريرة الفجوة-{{gap}}. المصفوفة الآن مرتبة بفجوة-{{gap}}، الانتقال إلى فجوة أصغر."
+    "shellGapComplete": "اكتملت تمريرة الفجوة-{{gap}}. المصفوفة الآن مرتبة بفجوة-{{gap}}، الانتقال إلى فجوة أصغر.",
+    "radixBucketPush": "إضافة {{val}} إلى الدلو {{bucket}} (الرقم: {{digit}})",
+    "radixCollect": "جمع {{val}} من الدلو {{bucket}} إلى الموضع {{position}}",
+    "radixPassComplete": "اكتملت التمريرة {{pass}} (تمت معالجة موضع الرقم)"
   },
   "roadmap": {
     "hero": {

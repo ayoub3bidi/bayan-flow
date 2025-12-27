@@ -37,7 +37,8 @@
       "selectionSort": "Tri par Sélection",
       "insertionSort": "Tri par Insertion",
       "heapSort": "Tri par Tas",
-      "shellSort": "Tri de Shell"
+      "shellSort": "Tri de Shell",
+      "radixSort": "Tri Radix"
     },
     "pathfinding": {
       "bfs": "Parcours en Largeur",
@@ -52,6 +53,7 @@
       "insertionSort": "Démarrage du Tri par Insertion",
       "heapSort": "Démarrage du Tri par Tas",
       "shellSort": "Démarrage du Tri de Shell",
+      "radixSort": "Démarrage du Tri Radix",
       "bfs": "Démarrage du Parcours en Largeur",
       "dijkstra": "Démarrage de l'Algorithme de Dijkstra",
       "aStar": "Démarrage de la Recherche A*"
@@ -65,6 +67,7 @@
     "insertionSort": "O(n²)",
     "heapSort": "O(n log n)",
     "shellSort": "O(n^1.25)",
+    "radixSort": "O(nk)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -204,7 +207,10 @@
     "shellComparing": "Comparaison de {{a}} (pos {{posA}}) avec {{b}} à travers un écart de {{gap}} positions",
     "shellShifting": "Déplacement de {{value}} de la position {{from}} à {{to}}",
     "shellPlaced": "{{value}} placé à sa position correcte {{position}} pour cet écart",
-    "shellGapComplete": "Passage avec écart-{{gap}} terminé. Le tableau est maintenant {{gap}}-trié, passage à un écart plus petit."
+    "shellGapComplete": "Passage avec écart-{{gap}} terminé. Le tableau est maintenant {{gap}}-trié, passage à un écart plus petit.",
+    "radixBucketPush": "Ajout de {{val}} au seau {{bucket}} (chiffre : {{digit}})",
+    "radixCollect": "Collecte de {{val}} du seau {{bucket}} vers la position {{position}}",
+    "radixPassComplete": "Passe {{pass}} terminée (position du chiffre traitée)"
   },
   "landing": {
     "hero": {

@@ -17,6 +17,7 @@ export const SORTING_ALGORITHMS = {
   SELECTION_SORT: 'selectionSort',
   HEAP_SORT: 'heapSort',
   SHELL_SORT: 'shellSort',
+  RADIX_SORT: 'radixSort',
 };
 
 export const PATHFINDING_ALGORITHMS = {
@@ -171,6 +172,23 @@ export const ALGORITHM_COMPLEXITY = {
       'Educational purposes to understand gap-based sorting strategies',
     ],
   },
+  radixSort: {
+    name: 'Radix Sort',
+    timeComplexity: {
+      best: 'O(nk)',
+      average: 'O(nk)',
+      worst: 'O(nk)',
+    },
+    spaceComplexity: 'O(n + k)',
+    description:
+      'Radix Sort is a non-comparative sorting algorithm that sorts integers by processing individual digits. It distributes numbers into buckets based on their radix (base) and then collects them, repeating for each digit position.',
+    useCases: [
+      'Sorting integers or fixed-length strings',
+      'When the range of values (k) is not significantly larger than n',
+      'When comparison operations are expensive',
+      'Stable sorting requirements',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {
@@ -188,6 +206,7 @@ export const COMPLEXITY_FUNCTIONS = {
   'O((V + E) log V)': n => (n + n * 4) * Math.log2(n),
   'O(E)': n => n * 4, // Approximation for grid edges
   'O(b^d)': n => Math.pow(4, Math.log2(n)), // Approximation: branching factor 4, depth log(n)
+  'O(nk)': n => n * Math.log10(n), // Approximation: k ≈ log10(n) for distinct numbers
 };
 
 export const DEFAULT_ARRAY_SIZE = 20;

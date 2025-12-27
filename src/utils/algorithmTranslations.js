@@ -70,4 +70,9 @@ export const ALGORITHM_STEPS = {
   ADDED_TO_QUEUE: 'addedToQueue',
   PATH_FOUND: 'pathFound',
   NO_PATH: 'noPath',
+
+  // Radix Sort
+  RADIX_BUCKET_PUSH: 'radixBucketPush',
+  RADIX_COLLECT: 'radixCollect',
+  RADIX_PASS_COMPLETE: 'radixPassComplete',
 };

@@ -5,6 +5,7 @@ import { selectionSort, selectionSortPure } from './selectionSort';
 import { insertionSort, insertionSortPure } from './insertionSort';
 import { heapSort, heapSortPure } from './heapSort';
 import { shellSort, shellSortPure } from './shellSort';
+import { radixSort, radixSortPure } from './radixSort';
 
 export const sortingAlgorithms = {
   bubbleSort,
@@ -14,6 +15,7 @@ export const sortingAlgorithms = {
   insertionSort,
   heapSort,
   shellSort,
+  radixSort,
 };
 
 export const pureSortingAlgorithms = {
@@ -24,6 +26,7 @@ export const pureSortingAlgorithms = {
   insertionSort: insertionSortPure,
   heapSort: heapSortPure,
   shellSort: shellSortPure,
+  radixSort: radixSortPure,
 };
 
 export {
@@ -34,6 +37,7 @@ export {
   insertionSort,
   heapSort,
   shellSort,
+  radixSort,
 };
 export {
   bubbleSortPure,
@@ -43,4 +47,5 @@ export {
   insertionSortPure,
   heapSortPure,
   shellSortPure,
+  radixSortPure,
 };

@@ -37,7 +37,8 @@
       "selectionSort": "Selection Sort",
       "insertionSort": "Insertion Sort",
       "heapSort": "Heap Sort",
-      "shellSort": "Shell Sort"
+      "shellSort": "Shell Sort",
+      "radixSort": "Radix Sort"
     },
     "pathfinding": {
       "bfs": "Breadth-First Search",
@@ -52,6 +53,7 @@
       "insertionSort": "Starting Insertion Sort",
       "heapSort": "Starting Heap Sort",
       "shellSort": "Starting Shell Sort",
+      "radixSort": "Starting Radix Sort",
       "bfs": "Starting Breadth-First Search",
       "dijkstra": "Starting Dijkstra's Algorithm",
       "aStar": "Starting A* Search"
@@ -65,6 +67,7 @@
     "insertionSort": "O(n²)",
     "heapSort": "O(n log n)",
     "shellSort": "O(n^1.25)",
+    "radixSort": "O(nk)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -203,7 +206,10 @@
     "shellComparing": "Comparing {{a}} (pos {{posA}}) with {{b}} across gap of {{gap}} positions",
     "shellShifting": "Shifting {{value}} from position {{from}} to {{to}}",
     "shellPlaced": "Placed {{value}} at its correct position {{position}} for this gap",
-    "shellGapComplete": "Completed gap-{{gap}} pass. Array is now {{gap}}-sorted, moving to smaller gap."
+    "shellGapComplete": "Completed gap-{{gap}} pass. Array is now {{gap}}-sorted, moving to smaller gap.",
+    "radixBucketPush": "Pushing {{val}} to bucket {{bucket}} (digit: {{digit}})",
+    "radixCollect": "Collecting {{val}} from bucket {{bucket}} to position {{position}}",
+    "radixPassComplete": "Pass {{pass}} complete (processed digit position)"
   },
   "landing": {
     "hero": {
