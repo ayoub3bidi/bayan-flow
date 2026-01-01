@@ -15,6 +15,9 @@ export const SORTING_ALGORITHMS = {
   QUICK_SORT: 'quickSort',
   INSERTION_SORT: 'insertionSort',
   SELECTION_SORT: 'selectionSort',
+  HEAP_SORT: 'heapSort',
+  SHELL_SORT: 'shellSort',
+  RADIX_SORT: 'radixSort',
 };
 
 export const PATHFINDING_ALGORITHMS = {
@@ -101,6 +104,91 @@ export const ALGORITHM_COMPLEXITY = {
     },
     spaceComplexity: 'O(n)',
   },
+  selectionSort: {
+    name: 'Selection Sort',
+    timeComplexity: {
+      best: 'O(n²)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Selection Sort divides the array into sorted and unsorted regions. It repeatedly finds the minimum element from the unsorted region and swaps it with the first unsorted element.',
+    useCases: [
+      'Small datasets where simplicity is preferred',
+      'When memory write operations are costly (fewer swaps than bubble sort)',
+      'Educational purposes to understand sorting fundamentals',
+    ],
+  },
+  insertionSort: {
+    name: 'Insertion Sort',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Insertion Sort builds the final sorted array one item at a time. It iterates through the array, removing one element per iteration, finding the location it belongs within the sorted list, and inserting it there.',
+    useCases: [
+      'Small datasets or nearly sorted arrays',
+      'Online algorithms where data arrives sequentially',
+      'When simplicity and adaptive behavior are important',
+      'Efficient for arrays with few elements out of place',
+    ],
+  },
+  heapSort: {
+    name: 'Heap Sort',
+    timeComplexity: {
+      best: 'O(n log n)',
+      average: 'O(n log n)',
+      worst: 'O(n log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Heap Sort is a comparison-based sorting algorithm that uses a binary heap data structure. It divides its input into a sorted and an unsorted region, and iteratively shrinks the unsorted region by extracting the largest element from the heap and inserting it into the sorted region.',
+    useCases: [
+      'When consistent O(n log n) performance is required',
+      'Systems with limited memory (in-place sorting)',
+      'Priority queue implementations',
+      'When worst-case performance guarantees are needed',
+    ],
+  },
+  shellSort: {
+    name: 'Shell Sort',
+    timeComplexity: {
+      best: 'O(n log n)',
+      average: 'O(n^(3/2))',
+      worst: 'O(n^(3/2))',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      "Shell Sort is an optimization of Insertion Sort that allows the exchange of items that are far apart. This implementation uses Knuth's gap sequence (1, 4, 13, 40, 121...), which provides significantly better performance than the original Shell sequence.",
+    useCases: [
+      'Medium-sized datasets where O(n log n) is preferred but O(n²) is acceptable',
+      'When a simple, in-place sorting algorithm is needed',
+      'Better than insertion sort for larger datasets',
+      'Good for embedded systems with limited memory',
+      'Educational purposes to understand gap-based sorting strategies',
+    ],
+  },
+  radixSort: {
+    name: 'Radix Sort',
+    timeComplexity: {
+      best: 'O(nk)',
+      average: 'O(nk)',
+      worst: 'O(nk)',
+    },
+    spaceComplexity: 'O(n + k)',
+    description:
+      'Radix Sort is a non-comparative sorting algorithm that sorts integers by processing individual digits. It distributes numbers into buckets based on their radix (base) and then collects them, repeating for each digit position.',
+    useCases: [
+      'Sorting integers or fixed-length strings',
+      'When the range of values (k) is not significantly larger than n',
+      'When comparison operations are expensive',
+      'Stable sorting requirements',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {
@@ -109,6 +197,8 @@ export const COMPLEXITY_FUNCTIONS = {
   'O(log n)': n => Math.log2(n),
   'O(n)': n => n,
   'O(n log n)': n => n * Math.log2(n),
+  'O(n^1.25)': n => Math.pow(n, 1.25),
+  'O(n^(3/2))': n => Math.pow(n, 1.5),
   'O(n²)': n => n * n,
   'O(n³)': n => n * n * n,
   'O(2^n)': n => Math.pow(2, n),
@@ -116,6 +206,7 @@ export const COMPLEXITY_FUNCTIONS = {
   'O((V + E) log V)': n => (n + n * 4) * Math.log2(n),
   'O(E)': n => n * 4, // Approximation for grid edges
   'O(b^d)': n => Math.pow(4, Math.log2(n)), // Approximation: branching factor 4, depth log(n)
+  'O(nk)': n => n * Math.log10(n), // Approximation: k ≈ log10(n) for distinct numbers
 };
 
 export const DEFAULT_ARRAY_SIZE = 20;

@@ -8,6 +8,11 @@ import { describe, it, expect } from 'vitest';
 import { bubbleSortPure } from './bubbleSort';
 import { quickSortPure } from './quickSort';
 import { mergeSortPure } from './mergeSort';
+import { selectionSortPure } from './selectionSort';
+import { insertionSortPure } from './insertionSort';
+import { heapSortPure } from './heapSort';
+import { shellSortPure } from './shellSort';
+import { radixSortPure } from './radixSort';
 import { isSorted, generateRandomArray } from '../../utils/arrayHelpers';
 
 /**
@@ -102,6 +107,116 @@ describe('Sorting Algorithms', () => {
     });
   });
 
+  describe('Selection Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = selectionSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = selectionSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
+  describe('Insertion Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = insertionSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = insertionSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should be efficient for nearly sorted arrays', () => {
+      // Create a nearly sorted array (only a few elements out of place)
+      const nearlySorted = [1, 2, 3, 4, 5, 6, 8, 7, 9, 10];
+      const sorted = insertionSortPure(nearlySorted);
+      expect(sorted).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
+  describe('Heap Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = heapSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = heapSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should have consistent O(n log n) performance', () => {
+      // Heap sort should handle already sorted arrays efficiently
+      const alreadySorted = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const sorted = heapSortPure(alreadySorted);
+      expect(sorted).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
+  describe('Shell Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = shellSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = shellSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should be more efficient than insertion sort for larger arrays', () => {
+      // Shell sort should handle larger arrays better than insertion sort
+      const largerArray = generateRandomArray(50);
+      const sorted = shellSortPure(largerArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+
+    it('should handle already sorted arrays', () => {
+      const alreadySorted = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const sorted = shellSortPure(alreadySorted);
+      expect(sorted).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
+  describe('Radix Sort', () => {
+    testCases.forEach(({ name, input, expected }) => {
+      it(`should sort ${name}`, () => {
+        const result = radixSortPure(input);
+        expect(result).toEqual(expected);
+        expect(isSorted(result)).toBe(true);
+      });
+    });
+
+    it('should handle large random arrays', () => {
+      const largeArray = generateRandomArray(100);
+      const sorted = radixSortPure(largeArray);
+      expect(isSorted(sorted)).toBe(true);
+    });
+  });
+
   describe('Algorithm Consistency', () => {
     it('all algorithms should produce the same result', () => {
       const testArray = generateRandomArray(50);
@@ -109,9 +224,19 @@ describe('Sorting Algorithms', () => {
       const bubbleResult = bubbleSortPure([...testArray]);
       const quickResult = quickSortPure([...testArray]);
       const mergeResult = mergeSortPure([...testArray]);
+      const selectionResult = selectionSortPure([...testArray]);
+      const insertionResult = insertionSortPure([...testArray]);
+      const heapResult = heapSortPure([...testArray]);
+      const shellResult = shellSortPure([...testArray]);
+      const radixResult = radixSortPure([...testArray]);
 
       expect(bubbleResult).toEqual(quickResult);
       expect(quickResult).toEqual(mergeResult);
+      expect(mergeResult).toEqual(selectionResult);
+      expect(selectionResult).toEqual(insertionResult);
+      expect(insertionResult).toEqual(heapResult);
+      expect(heapResult).toEqual(shellResult);
+      expect(shellResult).toEqual(radixResult);
     });
   });
 });

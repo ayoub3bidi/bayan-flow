@@ -33,7 +33,12 @@
     "sorting": {
       "bubbleSort": "Bubble Sort",
       "quickSort": "Quick Sort",
-      "mergeSort": "Merge Sort"
+      "mergeSort": "Merge Sort",
+      "selectionSort": "Selection Sort",
+      "insertionSort": "Insertion Sort",
+      "heapSort": "Heap Sort",
+      "shellSort": "Shell Sort",
+      "radixSort": "Radix Sort"
     },
     "pathfinding": {
       "bfs": "Breadth-First Search",
@@ -44,6 +49,11 @@
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
       "mergeSort": "Starting Merge Sort",
+      "selectionSort": "Starting Selection Sort",
+      "insertionSort": "Starting Insertion Sort",
+      "heapSort": "Starting Heap Sort",
+      "shellSort": "Starting Shell Sort",
+      "radixSort": "Starting Radix Sort",
       "bfs": "Starting Breadth-First Search",
       "dijkstra": "Starting Dijkstra's Algorithm",
       "aStar": "Starting A* Search"
@@ -53,6 +63,11 @@
     "bubbleSort": "O(n²)",
     "quickSort": "O(n log n)",
     "mergeSort": "O(n log n)",
+    "selectionSort": "O(n²)",
+    "insertionSort": "O(n²)",
+    "heapSort": "O(n log n)",
+    "shellSort": "O(n^1.25)",
+    "radixSort": "O(nk)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -164,6 +179,7 @@
     "comparing": "Comparing {{a}} and {{b}}",
     "swapping": "Swapped {{a}} and {{b}}",
     "bubblePassComplete": "Pass {{pass}} complete. Element at position {{position}} is in correct position.",
+    "bubbleEarlyTermination": "Array is sorted! Early termination after {{pass}} passes (saved {{totalPasses}} total passes).",
     "pivotSelected": "Selected pivot: {{pivot}} at index {{index}}",
     "pivotPlaced": "Pivot {{pivot}} placed at correct position {{position}}",
     "dividing": "Dividing array: [{{start}}...{{mid}}] and [{{midNext}}...{{end}}]",
@@ -174,7 +190,26 @@
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "addedToQueue": "Added {{count}} cells to queue",
     "pathFound": "Path found! Length: {{length}} cells",
-    "noPath": "No path found"
+    "noPath": "No path found",
+    "selectionFindingMin": "Finding minimum in unsorted region starting at position {{position}}",
+    "selectionNewMin": "New minimum found: {{value}} at position {{position}}",
+    "selectionPlaced": "Placed {{value}} at correct position {{position}}",
+    "insertionKey": "Selecting {{value}} at position {{position}} to insert into sorted portion",
+    "insertionShift": "Shifting {{value}} from position {{from}} to {{to}}",
+    "insertionPlaced": "Inserted {{value}} at correct position {{position}}",
+    "insertionPassComplete": "Pass {{pass}} complete. First {{elements}} elements are now sorted.",
+    "heapHeapify": "Heapifying subtree rooted at index {{index}} (value: {{value}})",
+    "heapExtractMax": "Extracting maximum value {{value}} to position {{position}}",
+    "heapPlaced": "Placed {{value}} at sorted position {{position}}",
+    "shellGap": "Using Knuth's gap sequence with gap size: {{gap}} (comparing elements {{gap}} positions apart)",
+    "shellSelecting": "Selecting element {{value}} at position {{position}} for gap-{{gap}} insertion sort",
+    "shellComparing": "Comparing {{a}} (pos {{posA}}) with {{b}} across gap of {{gap}} positions",
+    "shellShifting": "Shifting {{value}} from position {{from}} to {{to}}",
+    "shellPlaced": "Placed {{value}} at its correct position {{position}} for this gap",
+    "shellGapComplete": "Completed gap-{{gap}} pass. Array is now {{gap}}-sorted, moving to smaller gap.",
+    "radixBucketPush": "Pushing {{val}} to bucket {{bucket}} (digit: {{digit}})",
+    "radixCollect": "Collecting {{val}} from bucket {{bucket}} to position {{position}}",
+    "radixPassComplete": "Pass {{pass}} complete (processed digit position)"
   },
   "landing": {
     "hero": {

@@ -28,6 +28,7 @@ export const ALGORITHM_STEPS = {
 
   // Bubble Sort
   BUBBLE_PASS_COMPLETE: 'bubblePassComplete',
+  BUBBLE_EARLY_TERMINATION: 'bubbleEarlyTermination',
 
   // Quick Sort
   PIVOT_SELECTED: 'pivotSelected',
@@ -40,9 +41,38 @@ export const ALGORITHM_STEPS = {
   PLACED_REMAINING: 'placedRemaining',
   MERGED_SECTION: 'mergedSection',
 
+  // Selection Sort
+  SELECTION_FINDING_MIN: 'selectionFindingMin',
+  SELECTION_NEW_MIN: 'selectionNewMin',
+  SELECTION_PLACED: 'selectionPlaced',
+
+  // Insertion Sort
+  INSERTION_KEY: 'insertionKey',
+  INSERTION_SHIFT: 'insertionShift',
+  INSERTION_PLACED: 'insertionPlaced',
+  INSERTION_PASS_COMPLETE: 'insertionPassComplete',
+
+  // Heap Sort
+  HEAP_HEAPIFY: 'heapHeapify',
+  HEAP_EXTRACT_MAX: 'heapExtractMax',
+  HEAP_PLACED: 'heapPlaced',
+
+  // Shell Sort
+  SHELL_GAP: 'shellGap',
+  SHELL_SELECTING: 'shellSelecting',
+  SHELL_COMPARING: 'shellComparing',
+  SHELL_SHIFTING: 'shellShifting',
+  SHELL_PLACED: 'shellPlaced',
+  SHELL_GAP_COMPLETE: 'shellGapComplete',
+
   // Pathfinding
   EXPLORING: 'exploring',
   ADDED_TO_QUEUE: 'addedToQueue',
   PATH_FOUND: 'pathFound',
   NO_PATH: 'noPath',
+
+  // Radix Sort
+  RADIX_BUCKET_PUSH: 'radixBucketPush',
+  RADIX_COLLECT: 'radixCollect',
+  RADIX_PASS_COMPLETE: 'radixPassComplete',
 };

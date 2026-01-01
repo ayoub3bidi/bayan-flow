@@ -29,9 +29,7 @@ export function mergeSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.DEFAULT),
-    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
-      algorithm: 'Merge Sort',
-    }),
+    description: 'algorithms.descriptions.mergeSort',
   });
 
   mergeSortHelper(arr, 0, n - 1, steps);

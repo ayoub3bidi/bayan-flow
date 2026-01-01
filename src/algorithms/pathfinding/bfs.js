@@ -64,9 +64,7 @@ export function bfs(grid, start, end, rows, cols) {
   steps.push({
     grid: grid.map(row => [...row]),
     states: states.map(row => [...row]),
-    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
-      algorithm: 'BFS',
-    }),
+    description: 'algorithms.descriptions.bfs',
   });
 
   const queue = [start];

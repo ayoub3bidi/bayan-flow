@@ -76,7 +76,7 @@ export function aStar(grid, start, end, rows, cols) {
   steps.push({
     grid: grid.map(row => [...row]),
     states: states.map(row => [...row]),
-    description: 'Starting A* pathfinding',
+    description: 'algorithms.descriptions.aStar',
   });
 
   gScore[start.row][start.col] = 0;

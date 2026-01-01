@@ -223,7 +223,7 @@ function GridVisualizer({
                       role="status"
                       aria-live="polite"
                     >
-                      {description}
+                      {t(description)}
                     </p>
                   </div>
                 </motion.div>

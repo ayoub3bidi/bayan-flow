@@ -33,7 +33,12 @@
     "sorting": {
       "bubbleSort": "Tri à Bulles",
       "quickSort": "Tri Rapide",
-      "mergeSort": "Tri par Fusion"
+      "mergeSort": "Tri par Fusion",
+      "selectionSort": "Tri par Sélection",
+      "insertionSort": "Tri par Insertion",
+      "heapSort": "Tri par Tas",
+      "shellSort": "Tri de Shell",
+      "radixSort": "Tri Radix"
     },
     "pathfinding": {
       "bfs": "Parcours en Largeur",
@@ -44,6 +49,11 @@
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
       "mergeSort": "Démarrage du Tri par Fusion",
+      "selectionSort": "Démarrage du Tri par Sélection",
+      "insertionSort": "Démarrage du Tri par Insertion",
+      "heapSort": "Démarrage du Tri par Tas",
+      "shellSort": "Démarrage du Tri de Shell",
+      "radixSort": "Démarrage du Tri Radix",
       "bfs": "Démarrage du Parcours en Largeur",
       "dijkstra": "Démarrage de l'Algorithme de Dijkstra",
       "aStar": "Démarrage de la Recherche A*"
@@ -53,6 +63,11 @@
     "bubbleSort": "O(n²)",
     "quickSort": "O(n log n)",
     "mergeSort": "O(n log n)",
+    "selectionSort": "O(n²)",
+    "insertionSort": "O(n²)",
+    "heapSort": "O(n log n)",
+    "shellSort": "O(n^1.25)",
+    "radixSort": "O(nk)",
     "bfs": "O(V + E)",
     "dijkstra": "O((V+E) log V)",
     "aStar": "O(b^d)"
@@ -165,6 +180,7 @@
     "comparing": "Comparaison {{a}} et {{b}}",
     "swapping": "Échange {{a}} et {{b}}",
     "bubblePassComplete": "Passe {{pass}} terminée. Élément à la position {{position}} est à la bonne place.",
+    "bubbleEarlyTermination": "Tableau trié ! Arrêt anticipé après {{pass}} passes ({{totalPasses}} passes totales économisées).",
     "pivotSelected": "Pivot sélectionné : {{pivot}} à l'index {{index}}",
     "pivotPlaced": "Pivot {{pivot}} placé à la position correcte {{position}}",
     "dividing": "Division du tableau : [{{start}}...{{mid}}] et [{{midNext}}...{{end}}]",
@@ -175,7 +191,26 @@
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "addedToQueue": "{{count}} cellules ajoutées à la file",
     "pathFound": "Chemin trouvé ! Longueur : {{length}} cellules",
-    "noPath": "Aucun chemin trouvé"
+    "noPath": "Aucun chemin trouvé",
+    "selectionFindingMin": "Recherche du minimum dans la région non triée commençant à la position {{position}}",
+    "selectionNewMin": "Nouveau minimum trouvé : {{value}} à la position {{position}}",
+    "selectionPlaced": "{{value}} placé à la position correcte {{position}}",
+    "insertionKey": "Sélection de {{value}} à la position {{position}} pour l'insérer dans la portion triée",
+    "insertionShift": "Décalage de {{value}} de la position {{from}} vers {{to}}",
+    "insertionPlaced": "{{value}} inséré à la position correcte {{position}}",
+    "insertionPassComplete": "Passe {{pass}} terminée. Les {{elements}} premiers éléments sont maintenant triés.",
+    "heapHeapify": "Heapification du sous-arbre enraciné à l'index {{index}} (valeur : {{value}})",
+    "heapExtractMax": "Extraction de la valeur maximale {{value}} vers la position {{position}}",
+    "heapPlaced": "{{value}} placé à la position triée {{position}}",
+    "shellGap": "Utilisation de la séquence de Knuth avec écart: {{gap}} (comparaison d'éléments à {{gap}} positions)",
+    "shellSelecting": "Sélection de l'élément {{value}} à la position {{position}} pour le tri par insertion avec écart-{{gap}}",
+    "shellComparing": "Comparaison de {{a}} (pos {{posA}}) avec {{b}} à travers un écart de {{gap}} positions",
+    "shellShifting": "Déplacement de {{value}} de la position {{from}} à {{to}}",
+    "shellPlaced": "{{value}} placé à sa position correcte {{position}} pour cet écart",
+    "shellGapComplete": "Passage avec écart-{{gap}} terminé. Le tableau est maintenant {{gap}}-trié, passage à un écart plus petit.",
+    "radixBucketPush": "Ajout de {{val}} au seau {{bucket}} (chiffre : {{digit}})",
+    "radixCollect": "Collecte de {{val}} du seau {{bucket}} vers la position {{position}}",
+    "radixPassComplete": "Passe {{pass}} terminée (position du chiffre traitée)"
   },
   "landing": {
     "hero": {

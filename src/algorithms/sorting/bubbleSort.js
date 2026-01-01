@@ -31,9 +31,7 @@ export function bubbleSort(array) {
   steps.push({
     array: [...arr],
     states: Array(n).fill(ELEMENT_STATES.DEFAULT),
-    description: getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
-      algorithm: 'Bubble Sort',
-    }),
+    description: 'algorithms.descriptions.bubbleSort',
   });
 
   for (let i = 0; i < n - 1; i++) {
@@ -98,8 +96,22 @@ export function bubbleSort(array) {
       ),
     });
 
-    // If no swaps occurred, array is sorted
+    // If no swaps occurred, array is sorted - show early termination
     if (!swapped) {
+      const earlyTerminationStates = Array(n).fill(ELEMENT_STATES.SORTED);
+
+      steps.push({
+        array: [...arr],
+        states: earlyTerminationStates,
+        description: getAlgorithmDescription(
+          ALGORITHM_STEPS.BUBBLE_EARLY_TERMINATION,
+          {
+            pass: i + 1,
+            totalPasses: n - 1,
+          }
+        ),
+      });
+
       break;
     }
   }
