@@ -32,7 +32,27 @@ export function radixSort(array) {
     description: 'algorithms.descriptions.radixSort',
   });
 
-  const maxNum = Math.max(...arr); // Assume non-negative for visualizer
+  if (n === 0) {
+    steps.push({
+      array: [...arr],
+      states: Array(n).fill(ELEMENT_STATES.SORTED),
+      description: getAlgorithmDescription(ALGORITHM_STEPS.COMPLETED),
+    });
+    return steps;
+  }
+
+  // Handle negative numbers by shifting
+  const minVal = Math.min(...arr);
+  const shift = minVal < 0 ? -minVal : 0;
+
+  // Shift array to non-negative if needed
+  if (shift > 0) {
+    for (let i = 0; i < n; i++) {
+      arr[i] += shift;
+    }
+  }
+
+  const maxNum = Math.max(...arr);
   let maxDigits = 0;
   if (maxNum === 0) maxDigits = 1;
   else maxDigits = Math.floor(Math.log10(Math.abs(maxNum))) + 1;
@@ -99,6 +119,13 @@ export function radixSort(array) {
         }
       ),
     });
+  }
+
+  // Shift back to original range if needed
+  if (shift > 0) {
+    for (let i = 0; i < n; i++) {
+      arr[i] -= shift;
+    }
   }
 
   // Final sorted state

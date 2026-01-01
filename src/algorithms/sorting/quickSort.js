@@ -56,8 +56,26 @@ function quickSortHelper(arr, low, high, steps) {
 }
 
 function partition(arr, low, high, steps) {
-  const pivot = arr[high];
   const n = arr.length;
+
+  // Median-of-three pivot selection for better performance
+  const mid = Math.floor((low + high) / 2);
+
+  // Sort low, mid, high to find median
+  if (arr[low] > arr[mid]) {
+    [arr[low], arr[mid]] = [arr[mid], arr[low]];
+  }
+  if (arr[low] > arr[high]) {
+    [arr[low], arr[high]] = [arr[high], arr[low]];
+  }
+  if (arr[mid] > arr[high]) {
+    [arr[mid], arr[high]] = [arr[high], arr[mid]];
+  }
+
+  // Place median at high position (our pivot position)
+  [arr[mid], arr[high]] = [arr[high], arr[mid]];
+
+  const pivot = arr[high];
 
   // Show pivot selection
   const pivotStates = Array(n).fill(ELEMENT_STATES.DEFAULT);
@@ -147,6 +165,23 @@ export function quickSortPure(array) {
   }
 
   function partitionPure(arr, low, high) {
+    // Median-of-three pivot selection for better performance
+    const mid = Math.floor((low + high) / 2);
+
+    // Sort low, mid, high to find median
+    if (arr[low] > arr[mid]) {
+      [arr[low], arr[mid]] = [arr[mid], arr[low]];
+    }
+    if (arr[low] > arr[high]) {
+      [arr[low], arr[high]] = [arr[high], arr[low]];
+    }
+    if (arr[mid] > arr[high]) {
+      [arr[mid], arr[high]] = [arr[high], arr[mid]];
+    }
+
+    // Place median at high position (our pivot position)
+    [arr[mid], arr[high]] = [arr[high], arr[mid]];
+
     const pivot = arr[high];
     let i = low - 1;
 
