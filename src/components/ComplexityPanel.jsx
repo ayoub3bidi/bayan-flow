@@ -6,6 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   ALGORITHM_COMPLEXITY,
   PATHFINDING_COMPLEXITY,
@@ -17,6 +18,7 @@ import {
  * @param {boolean} isPathfinding - Whether this is a pathfinding algorithm
  */
 function ComplexityPanel({ algorithm, isPathfinding = false }) {
+  const { t } = useTranslation();
   const [isLogScale, setIsLogScale] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [animationProgress, setAnimationProgress] = useState(0);
@@ -103,12 +105,13 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className="w-full h-full bg-surface flex items-center justify-center p-3 sm:p-6 overflow-auto leading-consistent"
+      dir="auto"
     >
       <div className="rounded-xl p-3 sm:p-6 max-w-5xl w-full">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-gray-200">
           <div className="hidden sm:block">
             <h2 className="text-lg sm:text-xl font-bold text-text-primary">
-              Complexity Analysis
+              {t('complexity_panel.title')}
             </h2>
             <p className="text-xs sm:text-sm text-text-secondary">
               {algorithm.toUpperCase()}
@@ -116,7 +119,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="text-xs sm:text-sm text-text-secondary">
-              Linear
+              {t('complexity_panel.linearScale')}
             </span>
             <button
               onClick={() => setIsLogScale(!isLogScale)}
@@ -125,43 +128,47 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
               }`}
               role="switch"
               aria-checked={isLogScale}
-              aria-label="Toggle logarithmic scale"
+              aria-label={t('complexity_panel.toggleScale')}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  isLogScale ? 'translate-x-6' : 'translate-x-1'
+                  isLogScale
+                    ? 'translate-x-6 rtl:-translate-x-6'
+                    : 'translate-x-1 rtl:-translate-x-1'
                 }`}
               />
             </button>
-            <span className="text-xs sm:text-sm text-text-secondary">Log</span>
+            <span className="text-xs sm:text-sm text-text-secondary">
+              {t('complexity_panel.logScale')}
+            </span>
           </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           <div className="space-y-3 sm:space-y-4 flex-shrink-0 w-full lg:w-auto">
             <div>
               <h3 className="text-[10px] sm:text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wide">
-                Time Complexity
+                {t('complexity_panel.timeComplexity')}
               </h3>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] sm:text-xs text-text-green-500 w-12 sm:w-16">
-                    Best:
+                  <span className="text-[10px] sm:text-xs text-text-green-500 w-12 sm:w-16 rtl:text-right">
+                    {t('complexity_panel.best')}:
                   </span>
                   <code className="bg-green-100 text-green-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold">
                     {complexityData.timeComplexity.best}
                   </code>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] sm:text-xs text-text-tertiary w-12 sm:w-16">
-                    Average:
+                  <span className="text-[10px] sm:text-xs text-text-tertiary w-12 sm:w-16 rtl:text-right">
+                    {t('complexity_panel.average')}:
                   </span>
                   <code className="bg-blue-100 text-blue-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold">
                     {complexityData.timeComplexity.average}
                   </code>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] sm:text-xs text-text-tertiary w-12 sm:w-16">
-                    Worst:
+                  <span className="text-[10px] sm:text-xs text-text-tertiary w-12 sm:w-16 rtl:text-right">
+                    {t('complexity_panel.worst')}:
                   </span>
                   <code className="bg-red-100 text-red-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold">
                     {complexityData.timeComplexity.worst}
@@ -171,7 +178,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
             </div>
             <div>
               <h3 className="text-[10px] sm:text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wide">
-                Space Complexity
+                {t('complexity_panel.spaceComplexity')}
               </h3>
               <code className="bg-purple-100 text-purple-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold inline-block">
                 {complexityData.spaceComplexity}
@@ -180,11 +187,12 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
           </div>
           <div className="flex-1 w-full overflow-x-auto">
             <h3 className="text-xs sm:text-sm font-semibold text-text-primary mb-2">
-              Performance Graph
+              {t('complexity_panel.performance')}
             </h3>
             <div className="text-[10px] sm:text-xs text-text-secondary mb-3">
-              X-axis: Input size • Y-axis: Operations (
-              {complexityData.timeComplexity.average})
+              {t('complexity_panel.axisLabels', {
+                complexity: complexityData.timeComplexity.average,
+              })}
             </div>
 
             <div className="relative w-full overflow-x-auto">
@@ -265,7 +273,7 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     className="text-xs font-medium"
                     fill="var(--color-text-secondary)"
                   >
-                    Input Size (n)
+                    {t('complexity_panel.inputSize')}
                   </text>
                   <text
                     x={-chartHeight / 2}
@@ -275,7 +283,11 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                     className="text-xs font-medium"
                     fill="var(--color-text-secondary)"
                   >
-                    Operations ({isLogScale ? 'log' : 'linear'})
+                    {t('complexity_panel.operations', {
+                      scale: isLogScale
+                        ? t('complexity_panel.log')
+                        : t('complexity_panel.linear'),
+                    })}
                   </text>
                   <text
                     x="0"
@@ -318,10 +330,13 @@ function ComplexityPanel({ algorithm, isPathfinding = false }) {
                 </g>
               </svg>
               {hoveredPoint && (
-                <div className="absolute top-2 left-2 bg-surface-elevated border border-gray-200 text-text-primary text-xs px-3 py-2 rounded shadow-lg z-10">
-                  <div>n = {hoveredPoint.n}</div>
+                <div className="absolute top-2 ltr:left-2 rtl:right-2 bg-surface-elevated border border-gray-200 text-text-primary text-xs px-3 py-2 rounded shadow-lg z-10">
                   <div>
-                    ops ≈ {Math.round(hoveredPoint.value).toLocaleString()}
+                    {t('complexity_panel.hoverN')} = {hoveredPoint.n}
+                  </div>
+                  <div>
+                    {t('complexity_panel.hoverOps')} ≈{' '}
+                    {Math.round(hoveredPoint.value).toLocaleString()}
                   </div>
                 </div>
               )}
