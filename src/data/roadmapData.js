@@ -34,7 +34,7 @@ export const roadmapData = [
     title: 'UX, Accessibility & Localization (0.2.0)',
     description:
       'Added fullscreen mode, localization (English / Français / العربية), and experimental audio cues. Applied minor visual and layout fixes to improve clarity and usability.',
-    videoUrl: '',
+    videoUrl: 'https://www.youtube.com/embed/8t4vh3ovldo',
     status: 'completed',
   },
   {

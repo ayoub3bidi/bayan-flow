@@ -103,7 +103,7 @@
     "noPath": "No path exists"
   },
   "complexity_panel": {
-    "title": "Algorithm Analysis",
+    "title": "Complexity Analysis",
     "timeComplexity": "Time Complexity",
     "spaceComplexity": "Space Complexity",
     "best": "Best",
@@ -112,9 +112,17 @@
     "useCases": "Use Cases",
     "description": "Description",
     "performance": "Performance Graph",
-    "linearScale": "Linear Scale",
-    "logScale": "Log Scale",
-    "close": "Close"
+    "linearScale": "Linear",
+    "logScale": "Log",
+    "toggleScale": "Toggle logarithmic scale",
+    "close": "Close",
+    "axisLabels": "X-axis: Input size • Y-axis: Operations ({{complexity}})",
+    "inputSize": "Input Size (n)",
+    "operations": "Operations ({{scale}})",
+    "linear": "linear",
+    "log": "log",
+    "hoverN": "n",
+    "hoverOps": "ops"
   },
   "swipe_tutorial": {
     "title": "Swipe to Navigate",
