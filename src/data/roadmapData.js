@@ -51,7 +51,7 @@ export const roadmapData = [
     date: 'Q2 2026',
     title: 'New Algorithm Families (0.4.0)',
     description:
-      'Introduce new algorithm categories beyond sorting and pathfinding (e.g., graph operations, dynamic programming basics), refine existing implementations for better time/space complexity, and build a deeper Python integration layer to support algorithm execution, analysis, and educational examples.',
+      'Introduce new algorithm categories beyond sorting and pathfinding (e.g., graph operations, dynamic programming basics). Add visualization export (record and download as video), an educational panel with algorithm history and fun facts, and an interactive code panel where users can edit Python, run it, and pass test checks—LeetCode-style.',
     videoUrl: '',
     status: 'planned',
   },
