@@ -181,6 +181,7 @@
     "title": "نظرة على الخوارزمية",
     "close": "إغلاق",
     "viewInsight": "عرض نظرة على الخوارزمية",
+    "insightLabel": "نظرة",
     "inventor": "المخترع",
     "year": "السنة",
     "unknown": "غير معروف",
@@ -470,7 +471,8 @@
   },
   "visualization": {
     "description": "تصور تفاعلي للخوارزمية",
-    "viewPythonCode": "عرض كود بايثون"
+    "viewPythonCode": "عرض كود بايثون",
+    "codeLabel": "كود"
   },
   "languages": {
     "en": "English",

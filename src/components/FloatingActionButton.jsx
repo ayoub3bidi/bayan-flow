@@ -48,7 +48,7 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
         title={t('visualization.viewPythonCode')}
       >
         <span className="font-medium writing-mode-vertical transform rotate-360">
-          Code
+          {t('visualization.codeLabel')}
         </span>
       </motion.button>
 

@@ -390,8 +390,11 @@ function InsightFloatingActionButton({
   disabled = false,
   label = 'Insight',
 }) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
+  const buttonText = t('insight_panel.insightLabel', {
+    defaultValue: 'Insight',
+  });
 
   return (
     <>
@@ -420,7 +423,7 @@ function InsightFloatingActionButton({
         title={label}
       >
         <span className="font-medium writing-mode-vertical transform rotate-360">
-          Insight
+          {buttonText}
         </span>
       </motion.button>
 

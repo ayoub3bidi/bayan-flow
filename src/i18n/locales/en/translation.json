@@ -182,6 +182,7 @@
     "title": "Algorithm Insight",
     "close": "Close",
     "viewInsight": "View Algorithm Insight",
+    "insightLabel": "Insight",
     "inventor": "Inventor",
     "year": "Year",
     "unknown": "Unknown",
@@ -470,7 +471,8 @@
   },
   "visualization": {
     "description": "Interactive algorithm visualization",
-    "viewPythonCode": "View Python code"
+    "viewPythonCode": "View Python code",
+    "codeLabel": "Code"
   },
   "languages": {
     "en": "English",

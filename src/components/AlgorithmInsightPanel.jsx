@@ -182,22 +182,21 @@ function PanelContent({
 }) {
   return (
     <>
-      {/* Header */}
+      {/* Header — RTL: dir + right-align like body sections; icon at visual start (right) */}
       <div
+        dir={isRTL ? 'rtl' : 'ltr'}
         className={`
         flex items-center px-5 py-4
         border-b border-panel-border flex-shrink-0
-        ${isRTL ? 'flex-row-reverse' : ''}
+        ${isRTL ? 'flex-row-reverse justify-end text-right' : ''}
       `}
       >
-        <div
-          className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
-        >
+        <div className="flex items-center gap-2 min-w-0">
           <Lightbulb
             className="w-5 h-5 text-amber-500 flex-shrink-0"
             aria-hidden="true"
           />
-          <div>
+          <div className={`min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}>
             <h2 className="text-base font-bold text-primary leading-tight">
               {t('insight_panel.title')}
             </h2>
@@ -218,11 +217,12 @@ function PanelContent({
           </p>
         ) : (
           <>
-            {/* Meta banner: inventor + year */}
+            {/* Meta banner: inventor + year (centered) */}
             {meta && (
               <div
+                dir={isRTL ? 'rtl' : 'ltr'}
                 className={`
-                flex flex-wrap gap-4 py-3 px-4 rounded-xl
+                flex flex-wrap justify-center items-center gap-4 py-3 px-4 rounded-xl
                 bg-amber-500/10 border border-amber-500/20
                 ${isRTL ? 'flex-row-reverse' : ''}
               `}
@@ -266,54 +266,56 @@ function PanelContent({
               </section>
             )}
 
-            {/* Real-world Uses */}
+            {/* Real-world Applications */}
             {realUses.length > 0 && (
-              <section>
+              <section
+                dir={isRTL ? 'rtl' : 'ltr'}
+                className={isRTL ? 'text-right' : ''}
+              >
                 <h3 className="text-sm font-bold uppercase tracking-wide text-primary mb-2">
                   {t('insight_panel.realWorldUses')}
                 </h3>
-                <ul
-                  className={`space-y-2 text-sm text-primary leading-relaxed ${
-                    isRTL ? 'list-none' : 'list-none'
-                  }`}
-                >
+                <ul className="space-y-2 text-sm text-primary leading-relaxed list-none ps-0">
                   {realUses.map((use, i) => (
                     <li
                       key={i}
-                      className={`flex gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}
+                      className={`flex gap-2 items-start ${isRTL ? 'flex-row-reverse text-right' : ''}`}
                     >
                       <span
-                        className="text-amber-500 flex-shrink-0 mt-0.5"
+                        className={`text-amber-500 flex-shrink-0 mt-0.5 ${isRTL ? 'ms-2' : 'me-2'}`}
                         aria-hidden="true"
                       >
                         ▸
                       </span>
-                      <span>{use}</span>
+                      <span className="flex-1 text-start">{use}</span>
                     </li>
                   ))}
                 </ul>
               </section>
             )}
 
-            {/* Facts */}
+            {/* Interesting Facts */}
             {facts.length > 0 && (
-              <section>
+              <section
+                dir={isRTL ? 'rtl' : 'ltr'}
+                className={isRTL ? 'text-right' : ''}
+              >
                 <h3 className="text-sm font-bold uppercase tracking-wide text-primary mb-2">
                   {t('insight_panel.facts')}
                 </h3>
-                <ul className="space-y-2 text-sm text-primary leading-relaxed">
+                <ul className="space-y-2 text-sm text-primary leading-relaxed list-none ps-0">
                   {facts.map((fact, i) => (
                     <li
                       key={i}
-                      className={`flex gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}
+                      className={`flex gap-2 items-start ${isRTL ? 'flex-row-reverse text-right' : ''}`}
                     >
                       <span
-                        className="text-blue-400 flex-shrink-0 mt-0.5"
+                        className={`text-blue-400 flex-shrink-0 mt-0.5 ${isRTL ? 'ms-2' : 'me-2'}`}
                         aria-hidden="true"
                       >
                         ✦
                       </span>
-                      <span>{fact}</span>
+                      <span className="flex-1 text-start">{fact}</span>
                     </li>
                   ))}
                 </ul>

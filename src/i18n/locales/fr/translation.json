@@ -181,6 +181,7 @@
     "title": "Aperçu de l'Algorithme",
     "close": "Fermer",
     "viewInsight": "Voir l'Aperçu de l'Algorithme",
+    "insightLabel": "Aperçu",
     "inventor": "Inventeur",
     "year": "Année",
     "unknown": "Inconnu",
@@ -470,7 +471,8 @@
   },
   "visualization": {
     "description": "Visualisation interactive d'algorithme",
-    "viewPythonCode": "Voir le code Python"
+    "viewPythonCode": "Voir le code Python",
+    "codeLabel": "Code"
   },
   "languages": {
     "en": "English",
