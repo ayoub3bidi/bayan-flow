@@ -6,7 +6,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, X } from 'lucide-react';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
 
 // ─── Animation variants (mirror PythonCodePanel style) ──────────────────────
@@ -113,6 +113,8 @@ function AlgorithmInsightPanel({
             <PanelContent
               t={t}
               isRTL={isRTL}
+              isMobile={false}
+              onClose={onClose}
               algorithmName={algorithmName}
               meta={meta}
               history={history}
@@ -123,16 +125,10 @@ function AlgorithmInsightPanel({
             />
           </motion.div>
 
-          {/* ── Mobile bottom-sheet ────────────────────────────────────── */}
+          {/* ── Mobile full-screen ──────────────────────────────────────── */}
           <motion.div
             key="insight-panel-mobile"
-            className={`
-              flex md:hidden flex-col
-              fixed bottom-0 left-0 right-0
-              h-[80vh] rounded-t-2xl
-              bg-surface border-t border-panel-border
-              shadow-2xl z-50 overflow-hidden
-            `}
+            className="flex md:hidden flex-col fixed inset-0 bg-surface shadow-2xl z-50 overflow-hidden"
             variants={mobileVariants}
             initial="hidden"
             animate="visible"
@@ -142,16 +138,11 @@ function AlgorithmInsightPanel({
             aria-modal="true"
             aria-label={t('insight_panel.title')}
           >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-              <div
-                className="w-10 h-1 rounded-full bg-panel-border"
-                aria-hidden="true"
-              />
-            </div>
             <PanelContent
               t={t}
               isRTL={isRTL}
+              isMobile={true}
+              onClose={onClose}
               algorithmName={algorithmName}
               meta={meta}
               history={history}
@@ -172,6 +163,8 @@ function AlgorithmInsightPanel({
 function PanelContent({
   t,
   isRTL,
+  isMobile,
+  onClose,
   algorithmName,
   meta,
   history,
@@ -182,16 +175,17 @@ function PanelContent({
 }) {
   return (
     <>
-      {/* Header — RTL: dir + right-align like body sections; icon at visual start (right) */}
+      {/* Header — RTL support; mobile: close button on trailing side */}
       <div
         dir={isRTL ? 'rtl' : 'ltr'}
         className={`
         flex items-center px-5 py-4
         border-b border-panel-border flex-shrink-0
-        ${isRTL ? 'flex-row-reverse justify-end text-right' : ''}
+        ${isMobile ? 'justify-between' : ''}
+        ${isRTL ? 'flex-row-reverse text-right' : ''}
       `}
       >
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <Lightbulb
             className="w-5 h-5 text-amber-500 flex-shrink-0"
             aria-hidden="true"
@@ -207,6 +201,16 @@ function PanelContent({
             )}
           </div>
         </div>
+        {isMobile && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 text-secondary hover:text-primary rounded-lg hover:bg-panel-hover transition-colors flex-shrink-0 -my-2 -mx-1"
+            aria-label={t('insight_panel.close')}
+          >
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       {/* Body */}
