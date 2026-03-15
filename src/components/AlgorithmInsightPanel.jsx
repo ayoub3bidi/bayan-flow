@@ -7,7 +7,6 @@
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightbulb } from 'lucide-react';
-import AlgorithmInsightSection from './AlgorithmInsightSection';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
 
 // ─── Animation variants (mirror PythonCodePanel style) ──────────────────────
@@ -212,7 +211,7 @@ function PanelContent({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
         {!hasContent ? (
           <p className="text-sm text-secondary text-center py-8">
             {t('insight_panel.noData')}
@@ -245,32 +244,38 @@ function PanelContent({
 
             {/* History */}
             {history && (
-              <AlgorithmInsightSection
-                title={t('insight_panel.history')}
-                defaultOpen
-              >
-                <p>{history}</p>
-              </AlgorithmInsightSection>
+              <section>
+                <h3 className="text-sm font-bold uppercase tracking-wide text-primary mb-2">
+                  {t('insight_panel.history')}
+                </h3>
+                <p className="text-sm text-primary leading-relaxed">
+                  {history}
+                </p>
+              </section>
             )}
 
             {/* Core Idea / Intuition */}
             {intuition && (
-              <AlgorithmInsightSection
-                title={t('insight_panel.intuition')}
-                defaultOpen
-              >
-                <p>{intuition}</p>
-              </AlgorithmInsightSection>
+              <section>
+                <h3 className="text-sm font-bold uppercase tracking-wide text-primary mb-2">
+                  {t('insight_panel.intuition')}
+                </h3>
+                <p className="text-sm text-primary leading-relaxed">
+                  {intuition}
+                </p>
+              </section>
             )}
 
             {/* Real-world Uses */}
             {realUses.length > 0 && (
-              <AlgorithmInsightSection
-                title={t('insight_panel.realWorldUses')}
-                defaultOpen={false}
-              >
+              <section>
+                <h3 className="text-sm font-bold uppercase tracking-wide text-primary mb-2">
+                  {t('insight_panel.realWorldUses')}
+                </h3>
                 <ul
-                  className={`space-y-2 ${isRTL ? 'list-none' : 'list-none'}`}
+                  className={`space-y-2 text-sm text-primary leading-relaxed ${
+                    isRTL ? 'list-none' : 'list-none'
+                  }`}
                 >
                   {realUses.map((use, i) => (
                     <li
@@ -287,16 +292,16 @@ function PanelContent({
                     </li>
                   ))}
                 </ul>
-              </AlgorithmInsightSection>
+              </section>
             )}
 
             {/* Facts */}
             {facts.length > 0 && (
-              <AlgorithmInsightSection
-                title={t('insight_panel.facts')}
-                defaultOpen={false}
-              >
-                <ul className="space-y-2">
+              <section>
+                <h3 className="text-sm font-bold uppercase tracking-wide text-primary mb-2">
+                  {t('insight_panel.facts')}
+                </h3>
+                <ul className="space-y-2 text-sm text-primary leading-relaxed">
                   {facts.map((fact, i) => (
                     <li
                       key={i}
@@ -312,7 +317,7 @@ function PanelContent({
                     </li>
                   ))}
                 </ul>
-              </AlgorithmInsightSection>
+              </section>
             )}
           </>
         )}
