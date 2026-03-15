@@ -177,6 +177,262 @@
     "not_available": "Implémentation Python Non Disponible",
     "not_available_desc": "L'implémentation Python pour {{algorithm}} arrive bientôt !"
   },
+  "insight_panel": {
+    "title": "Aperçu de l'Algorithme",
+    "close": "Fermer",
+    "viewInsight": "Voir l'Aperçu de l'Algorithme",
+    "inventor": "Inventeur",
+    "year": "Année",
+    "unknown": "Inconnu",
+    "history": "Histoire",
+    "intuition": "Idée Principale",
+    "realWorldUses": "Applications Réelles",
+    "facts": "Faits Intéressants",
+    "noData": "Aucun aperçu supplémentaire disponible pour cet algorithme pour le moment.",
+    "algorithms": {
+      "bubbleSort": {
+        "history": "Le tri à bulles est l'un des premiers algorithmes de tri. Le terme a été popularisé par Iverson en 1962, bien que des algorithmes similaires soient apparus dans les années 1950. Malgré sa simplicité, il a servi de référence pendant des décennies de recherche sur le tri.",
+        "intuition": "Imaginez que vous parcourez répétitivement une liste de nombres. Chaque fois que vous trouvez deux nombres adjacents dans le mauvais ordre, vous les échangez. Après chaque passage complet, le plus grand nombre non trié 'remonte' à sa position correcte. Répétez jusqu'à ce qu'aucun échange ne soit nécessaire.",
+        "realWorldUses_0": "Enseignement et démonstrations académiques des concepts de tri",
+        "realWorldUses_1": "Détection d'une liste presque triée (variante avec arrêt anticipé)",
+        "realWorldUses_2": "Pipelines graphiques pour trier un très petit nombre d'éléments (ordre de profondeur des polygones)",
+        "facts_0": "Le nom 'Tri à Bulles' a été formellement inventé par Kenneth Iverson dans son livre de 1962 A Programming Language.",
+        "facts_1": "Malgré sa complexité moyenne O(n²), il effectue un optimal O(n) sur une entrée déjà triée avec la variante d'arrêt anticipé.",
+        "facts_2": "Donald Knuth l'a décrit comme 'non recommandé pour la plupart des usages' dans The Art of Computer Programming, mais il reste l'un des algorithmes les plus enseignés."
+      },
+      "quickSort": {
+        "history": "Inventé par Tony Hoare en 1959 alors qu'il était étudiant visiteur à l'Université d'État de Moscou, travaillant sur la traduction automatique. Il avait besoin de trier des mots pour un projet de dictionnaire russe-anglais. L'algorithme a été publié en 1961 et est resté l'un des algorithmes de tri pratiques les plus rapides pendant des décennies.",
+        "intuition": "Choisissez un élément comme 'pivot'. Réarrangez les autres éléments de sorte que tout ce qui est plus petit que le pivot aille à gauche et tout ce qui est plus grand aille à droite. Le pivot est maintenant à sa position correcte finale. Appliquez récursivement la même idée aux sous-tableaux gauche et droit. Diviser pour régner !",
+        "realWorldUses_0": "Tri par défaut dans de nombreuses bibliothèques standard (qsort en C, Arrays.sort en Java)",
+        "realWorldUses_1": "Moteurs de bases de données pour le tri en mémoire des résultats de requêtes",
+        "realWorldUses_2": "Noyaux de systèmes d'exploitation pour l'ordonnancement et les structures de gestion mémoire",
+        "realWorldUses_3": "Programmation compétitive comme tri polyvalent de référence",
+        "facts_0": "Tony Hoare a inventé le Tri Rapide à 25 ans — il a remporté le Prix Turing en 1980.",
+        "facts_1": "La performance moyenne O(n log n) vient du pivot qui divise le tableau à peu près en deux à chaque fois.",
+        "facts_2": "Le pire cas O(n²) survient quand le pivot est toujours le plus petit ou le plus grand élément — résolu en pratique par une sélection aléatoire du pivot.",
+        "facts_3": "Le Tri Rapide n'est pas stable : les éléments égaux peuvent apparaître dans un ordre relatif différent après le tri."
+      },
+      "mergeSort": {
+        "history": "Le tri par fusion a été conçu par John von Neumann en 1945, ce qui en fait l'un des plus anciens algorithmes diviser-pour-régner. Il a été initialement conçu pour une utilisation efficace sur les premières bandes magnétiques, où l'accès séquentiel était la seule opération efficace.",
+        "intuition": "Divisez le tableau en deux moitiés, triez indépendamment chaque moitié (récursivement), puis fusionnez les deux moitiés triées en un seul résultat. Fusionner deux listes déjà triées est simple : comparez le début de chaque liste et choisissez le plus petit. La fusion est O(n) et la profondeur de récursion est O(log n).",
+        "realWorldUses_0": "Arrays.sort de Java pour les objets (utilise TimSort, un hybride du tri par fusion)",
+        "realWorldUses_1": "Tri externe de fichiers trop volumineux pour tenir en mémoire",
+        "realWorldUses_2": "Comptage des inversions dans un tableau — tâche fondamentale en analyse de données",
+        "realWorldUses_3": "Tri parallèle dans les systèmes distribués (chaque nœud trie un bloc, puis les blocs sont fusionnés)",
+        "facts_0": "Le tri par fusion a été l'un des premiers algorithmes conçus spécifiquement autour des contraintes du matériel de stockage sur bande.",
+        "facts_1": "C'est le seul algorithme simple O(n log n) qui est également stable (préserve l'ordre des éléments égaux).",
+        "facts_2": "John von Neumann est aussi connu pour l'architecture von Neumann — la conception sur laquelle sont construits la plupart des ordinateurs modernes.",
+        "facts_3": "TimSort, utilisé par Python et Java, est un hybride du tri par fusion et du tri par insertion optimisé pour les données du monde réel."
+      },
+      "insertionSort": {
+        "history": "Le tri par insertion est une technique de tri ancienne qui reflète la façon dont les gens trient naturellement les cartes à jouer dans leurs mains. Il a été utilisé de manière informelle pendant des siècles et formalisé en informatique dans les années 1950.",
+        "intuition": "Pensez à la façon dont vous trieriez une main de cartes. Vous ramassez les cartes une par une et insérez chaque nouvelle carte à sa position correcte parmi les cartes déjà triées. Dans la version informatique, vous scannez vers la gauche jusqu'à trouver le bon emplacement, en décalant les éléments au passage.",
+        "realWorldUses_0": "Utilisé comme cas de base pour les petits sous-tableaux dans TimSort et IntroSort",
+        "realWorldUses_1": "Tri des flux de données entrants en temps réel où les éléments arrivent un par un",
+        "realWorldUses_2": "Systèmes embarqués avec mémoire très limitée où la simplicité du code importe",
+        "facts_0": "Le tri par insertion est optimal pour des tailles d'entrée inférieures à environ 10–20 éléments, c'est pourquoi les algorithmes hybrides l'utilisent pour les petites partitions.",
+        "facts_1": "C'est un algorithme en ligne : il peut trier une liste au fur et à mesure de la réception des éléments sans avoir besoin de toute l'entrée au préalable.",
+        "facts_2": "Le nombre d'échanges est égal au nombre d'inversions dans l'entrée — une mesure utile en combinatoire."
+      },
+      "selectionSort": {
+        "history": "Le tri par sélection est l'un des algorithmes de tri les plus intuitifs, utilisant une stratégie qui précède les ordinateurs. Il fonctionne en trouvant répétitivement l'élément minimum restant et en le plaçant à sa position correcte.",
+        "intuition": "Divisez le tableau en une région triée (à gauche) et une région non triée. Scannez la région non triée pour trouver le plus petit élément, échangez-le avec le premier élément non trié — agrandissant ainsi la région triée d'un élément. Répétez jusqu'à ce que tout le tableau soit trié.",
+        "realWorldUses_0": "Situations où le nombre d'écritures doit être minimisé (mémoire flash, EEPROM)",
+        "realWorldUses_1": "Environnements d'enseignement où la simplicité est privilégiée sur les performances",
+        "realWorldUses_2": "Petits systèmes embarqués où la taille du code et le comportement prévisible sont critiques",
+        "facts_0": "Le tri par sélection effectue toujours exactement n(n-1)/2 comparaisons quel que soit l'ordre d'entrée — il n'est pas adaptatif.",
+        "facts_1": "Il effectue au maximum n-1 échanges, ce qui lui donne un avantage sur le tri à bulles sur les supports où les écritures sont coûteuses.",
+        "facts_2": "Le tri par sélection n'est pas stable dans sa forme standard."
+      },
+      "heapSort": {
+        "history": "Le tri par tas a été inventé par J. W. J. Williams en 1964, qui a également introduit la structure de données tas dans le même article. Robert Floyd a ensuite amélioré la phase de construction du tas, réduisant son temps à O(n).",
+        "intuition": "Un tas-max est un arbre où chaque parent est plus grand que ses enfants. Réarrangez d'abord le tableau en un tas-max. Ensuite, extrayez répétitivement le plus grand élément (la racine), placez-le à la fin du tableau et restaurez la propriété du tas. Le résultat est un tableau trié.",
+        "realWorldUses_0": "Files de priorité dans les ordonnanceurs de systèmes d'exploitation",
+        "realWorldUses_1": "Algorithmes de graphes comme Dijkstra et Prim nécessitant une extraction efficace du minimum/maximum",
+        "realWorldUses_2": "Systèmes temps réel embarqués nécessitant une performance garantie O(n log n) dans le pire des cas",
+        "facts_0": "Le tri par tas est en place et atteint O(n log n) dans le pire cas — ce que le tri rapide ne peut garantir.",
+        "facts_1": "La structure de données tas inventée pour le tri par tas est le fondement des files de priorité utilisées partout en informatique.",
+        "facts_2": "Malgré son optimalité théorique, le tri par tas est rarement le plus rapide en pratique en raison d'une mauvaise localité de cache."
+      },
+      "shellSort": {
+        "history": "Le tri de Shell a été inventé par Donald Shell en 1959 et publié dans Communications of the ACM. C'était l'un des premiers algorithmes à franchir la barrière O(n²) pour le tri à usage général, même sans preuve formelle à l'époque.",
+        "intuition": "Le tri de Shell est une généralisation du tri par insertion. Au lieu de comparer des éléments adjacents, il compare des éléments séparés par un écart. L'écart commence grand (triant des éléments éloignés) et rétrécit progressivement jusqu'à 1 (un passage final de tri par insertion). Les éléments étant déplacés sur de grandes distances tôt, les passages finaux sont très efficaces.",
+        "realWorldUses_0": "Systèmes embarqués où la taille du code importe mais O(n²) est trop lent",
+        "realWorldUses_1": "Tri de jeux de données de taille moyenne où une implémentation simple est préférée",
+        "realWorldUses_2": "La bibliothèque uClibc du noyau Linux utilise le tri de Shell pour sa simplicité et ses performances raisonnables",
+        "facts_0": "La séquence d'écarts optimale pour le tri de Shell est encore un problème de recherche ouvert en informatique.",
+        "facts_1": "Avec la séquence d'écarts de Knuth (1, 4, 13, 40, ...) le cas moyen est approximativement O(n^1.5).",
+        "facts_2": "Donald Shell a publié l'algorithme à 29 ans ; c'était l'un des articles algorithmiques marquants de l'époque."
+      },
+      "radixSort": {
+        "history": "Le tri radix remonte à 1887 quand Herman Hollerith l'utilisait sur des machines à cartes perforées. Il a été formalisé pour les ordinateurs dans les années 1950. Sa nature non comparative le rend théoriquement plus rapide que les tris par comparaison pour les données entières.",
+        "intuition": "Triez les nombres chiffre par chiffre, du chiffre le moins significatif au plus significatif. Utilisez un tri stable (comme le tri par comptage) à chaque position de chiffre. Après traitement de toutes les positions, les nombres sont complètement triés. L'idée clé : trier chiffre par chiffre de manière stable rend l'ensemble correct.",
+        "realWorldUses_0": "Tri de grands tableaux d'entiers ou de chaînes de longueur fixe dans les bases de données",
+        "realWorldUses_1": "Routage de paquets réseau et tri d'adresses IP",
+        "realWorldUses_2": "Construction de tableaux de suffixes en bioinformatique et traitement de texte",
+        "facts_0": "Le tri radix est l'un des plus anciens algorithmes de tri, antérieur aux ordinateurs programmables.",
+        "facts_1": "Son temps linéaire O(nk) est atteint sans jamais comparer deux éléments directement.",
+        "facts_2": "L'algorithme fonctionne en variantes LSD (chiffre le moins significatif d'abord) et MSD (chiffre le plus significatif d'abord)."
+      },
+      "countingSort": {
+        "history": "Le tri par comptage a été décrit par Harold H. Seward en 1954. Il fonctionne en comptant les occurrences de chaque valeur et en utilisant cette information pour placer chaque élément directement à sa position triée correcte.",
+        "intuition": "Comptez combien de fois chaque valeur apparaît dans l'entrée. Calculez ensuite les comptes cumulatifs pour déterminer où commence le bloc trié de chaque valeur. Placez finalement chaque élément à sa position de sortie correcte. Il n'y a pas de comparaisons entre éléments — juste de l'arithmétique sur les comptes.",
+        "realWorldUses_0": "Tri de caractères ou de petits entiers dans des pipelines de traitement de texte",
+        "realWorldUses_1": "Utilisé comme sous-routine dans le tri radix pour chaque position de chiffre",
+        "realWorldUses_2": "Calcul d'histogrammes et analyse de fréquences en traitement d'images",
+        "facts_0": "Le tri par comptage atteint un temps linéaire O(n + k) — mieux que tout tri par comparaison pour les petites plages.",
+        "facts_1": "C'est un tri stable, ce qui est essentiel pour son utilisation dans le tri radix.",
+        "facts_2": "L'algorithme nécessite O(k) espace supplémentaire pour le tableau de comptage, le rendant impraticable quand k >> n."
+      },
+      "bucketSort": {
+        "history": "Le tri par seaux est un algorithme de tri par distribution dont les origines conceptuelles remontent aux débuts de l'informatique. Il distribue les éléments dans des seaux, trie chaque seau et concatène les résultats.",
+        "intuition": "Imaginez distribuer du courrier dans des bacs étiquetés par région. Chaque bac contient le courrier pour une plage spécifique d'adresses. Vous triez chaque bac indépendamment, puis collectez les bacs dans l'ordre. Le tri par seaux applique la même idée aux nombres distribués sur une plage connue.",
+        "realWorldUses_0": "Tri des nombres à virgule flottante uniformément distribués dans [0, 1)",
+        "realWorldUses_1": "Organisation des données dans les systèmes d'information géographique par plages de coordonnées",
+        "realWorldUses_2": "Tri efficace en mémoire externe quand les données peuvent être partitionnées par plage de valeurs",
+        "facts_0": "Le tri par seaux atteint en moyenne O(n + k) quand l'entrée est uniformément distribuée.",
+        "facts_1": "Le pire cas dégénère en O(n²) si tous les éléments tombent dans un seul seau.",
+        "facts_2": "Ce n'est pas un tri par comparaison — les éléments sont placés par valeur, pas par comparaison par paires."
+      },
+      "cycleSort": {
+        "history": "Le tri par cycle a été formalisé par Brendan Kehoe vers 1990. Il est théoriquement optimal pour minimiser les écritures, effectuant exactement n-1 opérations d'écriture dans le pire des cas — moins que tout autre algorithme de tri.",
+        "intuition": "Toute permutation d'éléments peut être décomposée en cycles. Un cycle indique : l'élément A doit aller là où B est, B doit aller là où C est, ..., et le dernier élément doit aller là où A était. Le tri par cycle trace chaque cycle et effectue exactement le nombre minimum d'écritures nécessaires pour le résoudre.",
+        "realWorldUses_0": "Dispositifs de mémoire flash où les écritures sont coûteuses et dégradent le matériel",
+        "realWorldUses_1": "Tri EEPROM où les cycles d'écriture sont limités",
+        "realWorldUses_2": "Démonstrations éducatives de l'optimisation de la complexité des écritures",
+        "facts_0": "Le tri par cycle est le seul algorithme de tri prouvé optimal en nombre d'écritures.",
+        "facts_1": "Le nombre d'écritures est n moins le nombre de cycles dans la permutation.",
+        "facts_2": "Malgré sa propriété unique, le tri par cycle est rarement utilisé en pratique en raison de sa complexité temporelle O(n²)."
+      },
+      "combSort": {
+        "history": "Le tri à peigne a été inventé par Włodzimierz Dobosiewicz en 1980 et popularisé par Stephen Lacey et Richard Box dans un article de Byte Magazine de 1991. Il améliore le tri à bulles en utilisant un écart rétrécissant.",
+        "intuition": "Le tri à peigne étend le tri à bulles avec un changement clé : au lieu de comparer des éléments adjacents (écart = 1), commencez par un grand écart et réduisez-le d'un facteur 1,3 à chaque passage. Cela permet de déplacer rapidement les petites valeurs proches de la fin (appelées 'tortues') vers le début — la faiblesse clé du tri à bulles.",
+        "realWorldUses_0": "Tri en place simple où le problème des 'tortues' du tri à bulles cause de mauvaises performances",
+        "realWorldUses_1": "Systèmes embarqués où un cas moyen meilleur que O(n²) est souhaité avec un code minimal",
+        "realWorldUses_2": "Contextes éducatifs pour démontrer les améliorations basées sur les séquences d'écarts",
+        "facts_0": "Le facteur de réduction de ~1,3 a été déterminé empiriquement comme étant quasi-optimal.",
+        "facts_1": "Le tri à peigne élimine le 'problème des tortues' qui ralentit le tri à bulles sur certaines entrées.",
+        "facts_2": "Le pire cas reste O(n²), mais les performances du cas moyen sont significativement meilleures."
+      },
+      "timSort": {
+        "history": "TimSort a été conçu et implémenté par Tim Peters en 2002 pour le langage de programmation Python. Il a été conçu pour les données du monde réel, qui sont souvent partiellement triées. Aujourd'hui, c'est le tri par défaut dans Python, Java (pour les objets), Swift, Android et plusieurs autres plateformes.",
+        "intuition": "TimSort recherche des sous-séquences naturellement ordonnées ('runs') dans l'entrée. Si un run est trop court, il l'étend avec le tri par insertion. Ensuite, il fusionne ces runs en utilisant une stratégie empruntée au tri par fusion, avec une comptabilité soigneuse pour éviter le travail redondant sur les données déjà ordonnées.",
+        "realWorldUses_0": "Les fonctions sort() et sorted() intégrées de Python",
+        "realWorldUses_1": "Arrays.sort() de Java pour les objets et Collections.sort()",
+        "realWorldUses_2": "Implémentation de tri de la plateforme Android",
+        "realWorldUses_3": "Tout jeu de données du monde réel avec des séquences ordonnées naturellement",
+        "facts_0": "Tim Peters a conçu TimSort spécifiquement parce que les données du monde réel sont rarement totalement aléatoires.",
+        "facts_1": "TimSort est à la fois stable et adaptatif — il est plus rapide que O(n log n) sur les entrées partiellement triées.",
+        "facts_2": "Il a été formellement prouvé correct et ses garanties de pire cas ont été vérifiées par des chercheurs académiques en 2015.",
+        "facts_3": "Le nom 'TimSort' est informel ; Tim Peters l'a suggéré en plaisantant quand l'algorithme a été adopté dans Java."
+      },
+      "bogoSort": {
+        "history": "Le tri Bogo (aussi appelé tri par permutation ou tri stupide) n'a pas d'inventeur sérieux ni de date d'origine — c'est un algorithme de plaisanterie du folklore informatique, utilisé pour illustrer l'absurdité des approches non analytiques.",
+        "intuition": "Mélangez aléatoirement tout le tableau. Vérifiez s'il est trié. Sinon, mélangez à nouveau. Répétez indéfiniment. L'algorithme se termine finalement avec une probabilité 1 (théoriquement), mais en pratique il est astronomiquement improbable de trier même un petit tableau rapidement.",
+        "realWorldUses_0": "Démonstrations en classe sur l'importance de l'analyse algorithmique",
+        "realWorldUses_1": "Exemples humoristiques dans les manuels et cours d'algorithmique",
+        "facts_0": "Le nombre moyen de mélanges nécessaires pour trier n éléments est n! (factoriel), qui croît plus vite que tout polynôme ou exponentielle.",
+        "facts_1": "Le pire cas est techniquement non borné — l'algorithme pourrait ne jamais se terminer.",
+        "facts_2": "Le tri Bogo a la distinction d'être l'algorithme de tri le moins efficace communément discuté en académie."
+      },
+      "bfs": {
+        "history": "La recherche en largeur (BFS) a été décrite pour la première fois par Konrad Zuse dans sa thèse de 1945. Edward F. Moore l'a redécouverte indépendamment en 1959 pour trouver les chemins les plus courts dans des labyrinthes. C. Y. Lee l'a ensuite appliquée au routage de circuits en 1961.",
+        "intuition": "Commencez à un nœud source. Explorez d'abord tous ses voisins immédiats, puis tous leurs voisins, puis les leurs — en s'étendant vers l'extérieur par 'vagues' concentriques. Cette exploration niveau par niveau garantit que la première fois que vous atteignez une destination, vous avez pris le chemin le plus court.",
+        "realWorldUses_0": "Trouver le chemin le plus court dans des réseaux non pondérés (graphes sociaux, routage)",
+        "realWorldUses_1": "Robots d'exploration web (parcours du web en largeur depuis une URL de départ)",
+        "realWorldUses_2": "Parcours en ordre de niveau des arbres dans les compilateurs et parseurs XML",
+        "realWorldUses_3": "Diffusion dans les réseaux pair-à-pair (Bitcoin, découverte de voisins BitTorrent)",
+        "facts_0": "BFS garantit le chemin le plus court dans les graphes non pondérés — une propriété non partagée par DFS.",
+        "facts_1": "L'algorithme a été réinventé plusieurs fois indépendamment, montrant sa naturalité et son utilité.",
+        "facts_2": "BFS est la base de nombreux autres algorithmes dont l'algorithme de Dijkstra (une généralisation pondérée).",
+        "facts_3": "Son utilisation mémoire est O(V) dans le pire cas — il doit stocker tous les nœuds de la frontière actuelle."
+      },
+      "dijkstra": {
+        "history": "Edsger W. Dijkstra a conçu cet algorithme en 1956 et l'a publié en 1959. Il l'a conçu en environ 20 minutes dans un café d'Amsterdam, le qualifiant plus tard d'une de ses créations les plus élégantes. Il était initialement destiné à démontrer les capacités de l'ordinateur ARMAC.",
+        "intuition": "Maintenez un ensemble de nœuds visités et une file de priorité de distances provisoires. Développez toujours le nœud non visité avec la plus petite distance connue. Quand vous développez un nœud, vérifiez si passer par lui offre un chemin plus court vers ses voisins. Répétez jusqu'à atteindre la destination.",
+        "realWorldUses_0": "Logiciels GPS et cartographie (calcul d'itinéraire Google Maps, Apple Maps)",
+        "realWorldUses_1": "Protocoles de routage Internet (OSPF — Open Shortest Path First)",
+        "realWorldUses_2": "Optimisation des réseaux aériens et logistiques",
+        "realWorldUses_3": "Planification de mouvement de robots dans des environnements connus",
+        "facts_0": "Dijkstra a conçu l'algorithme en ~20 minutes sans crayon ni papier.",
+        "facts_1": "L'algorithme échoue avec des poids négatifs — utilisez Bellman-Ford dans ce cas.",
+        "facts_2": "Dijkstra a reçu le Prix Turing en 1972, l'une des plus hautes distinctions en informatique.",
+        "facts_3": "Avec un tas de Fibonacci, Dijkstra s'exécute en O(E + V log V) — optimal pour les graphes denses."
+      },
+      "aStar": {
+        "history": "A* a été développé en 1968 par Peter Hart, Nils Nilsson et Bertram Raphael au Stanford Research Institute dans le cadre du projet robotique Shakey — l'un des premiers robots IA. Ils avaient besoin d'un algorithme de recherche de chemin général et efficace pour guider le robot dans l'espace physique.",
+        "intuition": "A* étend Dijkstra en ajoutant une heuristique : une estimation de la distance du nœud actuel à l'objectif. Pour chaque nœud, calculez f(n) = g(n) + h(n), où g(n) est le coût réel depuis le départ et h(n) est le coût estimé jusqu'à l'objectif. Développez toujours le nœud avec le plus petit f(n). Une bonne heuristique focalise la recherche vers l'objectif.",
+        "realWorldUses_0": "Recherche de chemin dans les jeux vidéo (pratiquement tous les jeux commerciaux utilisent A* ou une variante)",
+        "realWorldUses_1": "Navigation robotique et planification de chemin pour véhicules autonomes",
+        "realWorldUses_2": "Routage cartographique dans les applications de navigation avec pénalités de virage et trafic",
+        "realWorldUses_3": "Résolution de puzzles (8-puzzle, 15-puzzle, problèmes de planification en IA)",
+        "facts_0": "A* est optimal et complet : il trouvera toujours le chemin le plus court s'il en existe un, avec une heuristique admissible.",
+        "facts_1": "L'heuristique de distance de Manhattan est admissible pour la recherche de chemin sur grille sans diagonales.",
+        "facts_2": "A* dégénère en Dijkstra quand h(n) = 0 et en Recherche Gloutonne quand g(n) = 0.",
+        "facts_3": "Le projet robot Shakey où A* a été créé était une étape marquante dans l'histoire de l'intelligence artificielle."
+      },
+      "bidirectionalSearch": {
+        "history": "La recherche bidirectionnelle a été décrite par Pohl en 1969 comme moyen de réduire drastiquement l'espace de recherche dans les grands graphes. En exécutant deux recherches BFS simultanées — une depuis le départ, une depuis l'objectif — les frontières se rejoignent au milieu, couvrant environ la racine carrée du total des nœuds.",
+        "intuition": "Exécutez deux recherches BFS simultanément : une en avant depuis le départ et une en arrière depuis l'objectif. Les recherches s'étendent niveau par niveau, chacune maintenant ses propres ensembles visités. Quand un nœud est découvert par les deux recherches (les frontières se croisent), un chemin complet est trouvé en combinant les deux chemins partiels.",
+        "realWorldUses_0": "Requêtes de chemin le plus court dans les grands réseaux sociaux (ex: six degrés de séparation)",
+        "realWorldUses_1": "Planification d'itinéraires avec départ et destination connus",
+        "realWorldUses_2": "IA de jeux pour la recherche de chemin dans de très grandes cartes",
+        "facts_0": "BFS bidirectionnel explore O(b^(d/2)) nœuds au lieu de O(b^d) — exponentiellement moins pour les recherches profondes.",
+        "facts_1": "Garantir le chemin le plus court nécessite une synchronisation soigneuse du moment où les frontières se rejoignent.",
+        "facts_2": "Dijkstra bidirectionnel était utilisé dans le routage original de Google Maps avant d'être remplacé par des techniques plus sophistiquées."
+      },
+      "greedyBestFirstSearch": {
+        "history": "La recherche gloutonne du meilleur d'abord est une simplification de A*. En ignorant le coût réel g(n) et en s'étendant uniquement sur la base de l'heuristique h(n), elle privilégie la vitesse sur l'optimalité. Le compromis est qu'elle peut trouver un chemin non optimal.",
+        "intuition": "Développez toujours le nœud qui semble le plus proche de l'objectif selon votre heuristique. Ne vous préoccupez pas de la distance déjà parcourue — concentrez-vous simplement sur la distance estimée restante. Cette avidité la rend rapide, mais peut mener vers des impasses ou des chemins sous-optimaux.",
+        "realWorldUses_0": "IA de jeux en temps réel où trouver n'importe quel chemin rapidement est plus précieux que le chemin optimal",
+        "realWorldUses_1": "Navigation dans les grands environnements ouverts où les guidances heuristiques sont fiables",
+        "realWorldUses_2": "Passe initiale de recherche de chemin dans les planificateurs multi-étapes où l'optimalité est affinée ensuite",
+        "facts_0": "La recherche gloutonne n'est pas garantie de trouver le chemin le plus court.",
+        "facts_1": "Elle peut étendre beaucoup moins de nœuds que A* ou Dijkstra quand l'heuristique est très précise.",
+        "facts_2": "Avec une heuristique parfaite, la recherche gloutonne va directement à l'objectif sans explorer les nœuds non pertinents."
+      },
+      "jumpPointSearch": {
+        "history": "La recherche par points de saut a été inventée par Daniel Harabor et Alban Grastien et présentée à AAAI 2011. Elle a été conçue spécifiquement pour les cartes de grille à coût uniforme — la représentation standard dans la navigation de jeux — et peut être plus d'un ordre de grandeur plus rapide que A* sur ces cartes.",
+        "intuition": "Sur une grille à coût uniforme, de nombreux chemins sont symétriques (même coût mais routes différentes). JPS élimine cette symétrie en avançant tout droit ou en diagonale jusqu'à atteindre un 'point de saut' — un nœud avec des voisins forcés non accessibles par le chemin en ligne droite. Seuls les points de saut sont ajoutés à l'ensemble ouvert.",
+        "realWorldUses_0": "Moteurs de recherche de chemin dans les jeux de stratégie en temps réel (RTS)",
+        "realWorldUses_1": "Navigation robotique dans les environnements cartographiés en grille",
+        "realWorldUses_2": "Recherche de chemin à grande échelle avec des centaines d'agents simultanés",
+        "facts_0": "JPS peut être 10 à 100 fois plus rapide que A* standard sur les cartes de grille ouvertes.",
+        "facts_1": "Il ne fonctionne correctement que sur les grilles à coût uniforme (tous les coûts de déplacement égaux).",
+        "facts_2": "L'innovation clé est d'identifier et de sauter les chemins symétriques, réduisant drastiquement l'espace de recherche."
+      },
+      "bellmanFord": {
+        "history": "L'algorithme de Bellman-Ford a été développé indépendamment par Richard Bellman et Lester Ford Jr. en 1956–1958. Il résout le problème du plus court chemin à source unique pour les graphes avec des poids d'arêtes négatifs — un cas où l'algorithme de Dijkstra échoue.",
+        "intuition": "Relâchez toutes les arêtes à plusieurs reprises. À chaque relaxation, mettez à jour l'estimation de distance vers un nœud si passer par son voisin donne un chemin plus court. Après V-1 itérations (V = nombre de sommets), tous les plus courts chemins sont trouvés. Si les distances changent encore lors d'une V-ème itération, le graphe contient un cycle de poids négatif.",
+        "realWorldUses_0": "Protocoles de routage à vecteur de distance (RIP — Routing Information Protocol)",
+        "realWorldUses_1": "Détection d'arbitrage de devises (cycles négatifs dans les graphes de taux de change)",
+        "realWorldUses_2": "Analyse de topologie réseau avec des coûts pouvant être négatifs (ex: subventions)",
+        "facts_0": "Bellman-Ford fonctionne avec des poids d'arêtes négatifs, contrairement à Dijkstra.",
+        "facts_1": "Sa complexité O(VE) le rend plus lent que Dijkstra mais plus général.",
+        "facts_2": "Bellman-Ford peut détecter les cycles de poids négatifs — aucun chemin le plus court n'existe en leur présence."
+      },
+      "idaStar": {
+        "history": "IDA* (A* à approfondissement itératif) a été inventé par Richard Korf en 1985 comme alternative économe en mémoire à A*. Alors que A* stocke tous les nœuds générés en mémoire, IDA* utilise la recherche en profondeur avec des seuils de coût croissants de manière itérative, nécessitant seulement O(d) de mémoire.",
+        "intuition": "Effectuez une recherche en profondeur avec un seuil de coût. Commencez avec la valeur heuristique de la racine comme seuil. Explorez les chemins dont le coût total f(n) = g(n) + h(n) ne dépasse pas le seuil. Si l'objectif n'est pas trouvé, augmentez le seuil au coût minimum qui l'a dépassé lors de la dernière itération. Répétez.",
+        "realWorldUses_0": "Résolution de puzzles avec de grands espaces d'états (15-puzzle, Rubik's Cube)",
+        "realWorldUses_1": "Problèmes de planification IA où la mémoire est limitée",
+        "realWorldUses_2": "Recherche dans les arbres de jeux où l'utilisation mémoire en largeur est prohibitive",
+        "facts_0": "IDA* utilise O(d) de mémoire — linéaire en la profondeur de la solution — contre l'usage mémoire exponentiel de A*.",
+        "facts_1": "Comme A*, IDA* est optimal et complet avec une heuristique admissible.",
+        "facts_2": "Le compromis est le temps : IDA* peut ré-étendre des nœuds plusieurs fois, contrairement à A* qui met en cache les états visités."
+      },
+      "dStarLite": {
+        "history": "D* Lite a été développé par Sven Koenig et Maxim Likhachev en 2002 comme version simplifiée et améliorée de l'algorithme D* original d'Anthony Stentz (1994). Il est conçu pour les environnements dynamiques où le graphe change au fur et à mesure que l'agent se déplace.",
+        "intuition": "D* Lite planifie un chemin du départ à l'objectif (comme A*). Lorsque le robot se déplace et découvre de nouveaux obstacles ou des coûts modifiés, il met à jour efficacement le plan existant plutôt que de replanifier depuis zéro. Il maintient des informations de cohérence sur quelles parties du plan sont encore valides.",
+        "realWorldUses_0": "Navigation des rovers Mars de la NASA (Spirit et Opportunity utilisaient des algorithmes de la famille D*)",
+        "realWorldUses_1": "Navigation de robots terrestres autonomes dans des environnements dynamiques",
+        "realWorldUses_2": "Exploration de terrains inconnus avec construction incrémentale de carte",
+        "facts_0": "D* Lite a été utilisé sur les rovers Mars de la NASA pour une vraie navigation de mission.",
+        "facts_1": "Le 'Lite' dans D* Lite signifie qu'il est plus simple à implémenter et à comprendre que D* original.",
+        "facts_2": "Il est significativement plus efficace que de replanifier depuis zéro à chaque changement."
+      }
+    }
+  },
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri/recherche de chemin avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
