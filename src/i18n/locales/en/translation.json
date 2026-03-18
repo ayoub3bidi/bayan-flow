@@ -209,9 +209,9 @@
         "realWorldUses_1": "Database engines for in-memory sorting of query result sets",
         "realWorldUses_2": "Operating system kernels for scheduling and memory management structures",
         "realWorldUses_3": "Competitive programming as a go-to general-purpose sort",
-        "facts_0": "Tony Hoare invented Quick Sort at age 25 — he later won the Turing Award in 1980.",
+        "facts_0": "Tony Hoare invented Quick Sort at age 25. He later won the Turing Award in 1980.",
         "facts_1": "The average case O(n log n) performance comes from the pivot splitting the array roughly in half each time.",
-        "facts_2": "The worst case O(n²) occurs when the pivot is always the smallest or largest element — solved in practice with random pivot selection.",
+        "facts_2": "The worst case O(n²) occurs when the pivot is always the smallest or largest element. In practice this is solved with random pivot selection.",
         "facts_3": "Quick Sort is not stable: equal elements may appear in a different relative order after sorting."
       },
       "mergeSort": {
@@ -219,11 +219,11 @@
         "intuition": "Split the array in half, sort each half independently (recursively), then merge the two sorted halves into one sorted result. Merging two already-sorted lists is easy: just compare the front of each list and pick the smaller one. The key insight is that merging is O(n) and the recursion depth is O(log n).",
         "realWorldUses_0": "Java's Arrays.sort for objects (uses TimSort, a merge sort hybrid)",
         "realWorldUses_1": "External sorting of files too large to fit in memory (merge chunks from disk)",
-        "realWorldUses_2": "Counting inversions in an array — a fundamental task in data analysis",
+        "realWorldUses_2": "Counting inversions in an array, a fundamental task in data analysis",
         "realWorldUses_3": "Parallel sorting in distributed systems (each node sorts a chunk, then chunks are merged)",
         "facts_0": "Merge Sort was one of the first algorithms designed specifically around the constraints of tape storage hardware.",
         "facts_1": "It is the only simple O(n log n) algorithm that is also stable (preserves the order of equal elements).",
-        "facts_2": "John von Neumann is also known for the von Neumann architecture — the design most modern computers are built on.",
+        "facts_2": "John von Neumann is also known for the von Neumann architecture, the design most modern computers are built on.",
         "facts_3": "TimSort, used by Python and Java, is a hybrid of Merge Sort and Insertion Sort optimized for real-world partially sorted data."
       },
       "insertionSort": {
@@ -234,15 +234,15 @@
         "realWorldUses_2": "Embedded systems with very limited memory where code simplicity matters",
         "facts_0": "Insertion Sort is optimal for input sizes under about 10–20 elements, which is why hybrid algorithms use it for small partitions.",
         "facts_1": "It is an online algorithm: it can sort a list as it receives items without needing all input upfront.",
-        "facts_2": "The number of swaps equals the number of inversions in the input — a useful measure in combinatorics."
+        "facts_2": "The number of swaps equals the number of inversions in the input, a useful measure in combinatorics."
       },
       "selectionSort": {
         "history": "Selection Sort is one of the most intuitive sorting algorithms, using a strategy that predates computers. It works by repeatedly finding the minimum remaining element and placing it in its correct position.",
-        "intuition": "Divide the array into a sorted region (on the left) and an unsorted region. Scan the unsorted region for the smallest element, swap it with the first unsorted element — expanding the sorted region by one. Repeat until the entire array is sorted.",
+        "intuition": "Divide the array into a sorted region (on the left) and an unsorted region. Scan the unsorted region for the smallest element, swap it with the first unsorted element, expanding the sorted region by one. Repeat until the entire array is sorted.",
         "realWorldUses_0": "Situations where the number of writes must be minimized (flash memory, EEPROM)",
         "realWorldUses_1": "Teaching environments where simplicity is valued over performance",
         "realWorldUses_2": "Small embedded systems where code size and predictable behavior are critical",
-        "facts_0": "Selection Sort always performs exactly n(n-1)/2 comparisons regardless of input order — it is not adaptive.",
+        "facts_0": "Selection Sort always performs exactly n(n-1)/2 comparisons regardless of input order. It is not adaptive.",
         "facts_1": "It makes at most n-1 swaps, giving it an advantage over Bubble Sort on write-expensive storage.",
         "facts_2": "Selection Sort is not stable in its standard form."
       },
@@ -252,7 +252,7 @@
         "realWorldUses_0": "Priority queues in operating system schedulers",
         "realWorldUses_1": "Graph algorithms like Dijkstra and Prim that require efficient minimum/maximum extraction",
         "realWorldUses_2": "Embedded real-time systems that need guaranteed worst-case O(n log n) performance",
-        "facts_0": "Heap Sort is in-place and achieves O(n log n) worst case — something Quick Sort cannot guarantee.",
+        "facts_0": "Heap Sort is in-place and achieves O(n log n) worst case, something Quick Sort cannot guarantee.",
         "facts_1": "The heap data structure invented for Heap Sort is the foundation of priority queues used everywhere in computing.",
         "facts_2": "Despite its theoretical optimality, Heap Sort is rarely the fastest in practice due to poor cache locality."
       },
@@ -277,12 +277,12 @@
         "facts_2": "The algorithm works in both LSD (least significant digit first) and MSD (most significant digit first) variants."
       },
       "countingSort": {
-        "history": "Counting Sort was described by Harold H. Seward in 1954. It works by counting occurrences of each value and using that information to place each element directly in its correct sorted position — a radically different approach from comparison-based sorting.",
-        "intuition": "Count how many times each value appears in the input. Then compute the cumulative counts to determine where each value's sorted block starts. Finally, place each element in its correct output position. There are no comparisons between elements — just arithmetic on counts.",
+        "history": "Counting Sort was described by Harold H. Seward in 1954. It works by counting occurrences of each value and using that information to place each element directly in its correct sorted position. That is a radically different approach from comparison-based sorting.",
+        "intuition": "Count how many times each value appears in the input. Then compute the cumulative counts to determine where each value's sorted block starts. Finally, place each element in its correct output position. There are no comparisons between elements, only arithmetic on counts.",
         "realWorldUses_0": "Sorting characters or small integers in text processing pipelines",
         "realWorldUses_1": "Used as a subroutine inside Radix Sort for each digit position",
         "realWorldUses_2": "Histogramming and frequency analysis in image processing",
-        "facts_0": "Counting Sort achieves linear O(n + k) time — better than any comparison-based sort for small ranges.",
+        "facts_0": "Counting Sort achieves linear O(n + k) time, better than any comparison-based sort for small ranges.",
         "facts_1": "It is a stable sort, which is essential for its use inside Radix Sort.",
         "facts_2": "The algorithm requires O(k) extra space for the counting array, making it impractical when k >> n."
       },
@@ -294,10 +294,10 @@
         "realWorldUses_2": "Efficient sorting in external memory when data can be partitioned by value range",
         "facts_0": "Bucket Sort achieves average O(n + k) time when input is uniformly distributed.",
         "facts_1": "The worst case degenerates to O(n²) if all elements fall into a single bucket.",
-        "facts_2": "It is not a comparison-based sort — elements are placed by value, not by pairwise comparison."
+        "facts_2": "It is not a comparison-based sort. Elements are placed by value, not by pairwise comparison."
       },
       "cycleSort": {
-        "history": "Cycle Sort was formalized by Brendan Kehoe around 1990. It is theoretically optimal for minimizing writes, making exactly n-1 write operations in the worst case — fewer than any other sorting algorithm.",
+        "history": "Cycle Sort was formalized by Brendan Kehoe around 1990. It is theoretically optimal for minimizing writes, making exactly n-1 write operations in the worst case, fewer than any other sorting algorithm.",
         "intuition": "Every permutation of elements can be decomposed into cycles. A cycle tells you: element A should go where B is, B should go where C is, ..., and the last element should go where A was. Cycle Sort traces each cycle and performs exactly the minimum number of writes needed to resolve it.",
         "realWorldUses_0": "Flash memory devices where writes are expensive and degrade the hardware",
         "realWorldUses_1": "EEPROM sorting where write cycles are limited",
@@ -308,7 +308,7 @@
       },
       "combSort": {
         "history": "Comb Sort was invented by Włodzimierz Dobosiewicz in 1980 and later popularized by Stephen Lacey and Richard Box in a 1991 Byte Magazine article. It improves Bubble Sort by using a shrinking gap.",
-        "intuition": "Comb Sort extends Bubble Sort with one key change: instead of comparing adjacent elements (gap = 1), start with a large gap and shrink it by a factor of 1.3 each pass. This allows small values near the end (called 'turtles') to be moved to the front quickly — Bubble Sort's key weakness. The final passes with gap = 1 finish the job.",
+        "intuition": "Comb Sort extends Bubble Sort with one key change: instead of comparing adjacent elements (gap = 1), start with a large gap and shrink it by a factor of 1.3 each pass. This allows small values near the end (called 'turtles') to be moved to the front quickly, which is Bubble Sort's key weakness. The final passes with gap = 1 finish the job.",
         "realWorldUses_0": "Simple in-place sorting where Bubble Sort's 'turtle' problem causes poor performance",
         "realWorldUses_1": "Embedded systems where a better-than-O(n²) average case is desired with minimal code",
         "realWorldUses_2": "Educational contexts to demonstrate gap-sequence-based improvements",
@@ -324,45 +324,45 @@
         "realWorldUses_2": "Android platform's sort implementation",
         "realWorldUses_3": "Any real-world dataset with naturally occurring ordered sequences",
         "facts_0": "Tim Peters designed Tim Sort specifically because real-world data is rarely fully random.",
-        "facts_1": "Tim Sort is both stable and adaptive — it is faster than O(n log n) on partially sorted input.",
+        "facts_1": "Tim Sort is both stable and adaptive. It is faster than O(n log n) on partially sorted input.",
         "facts_2": "It was formally proved correct and had its worst-case guarantees verified by academic researchers in 2015.",
         "facts_3": "The name 'Tim Sort' is informal; Tim Peters jokingly suggested it when the algorithm was being adopted in Java."
       },
       "bogoSort": {
-        "history": "Bogo Sort (also called Permutation Sort or Stupid Sort) has no serious inventor or date of origin — it is a joke algorithm from computer science folklore, used to illustrate the absurdity of non-analytical approaches to problem solving.",
+        "history": "Bogo Sort (also called Permutation Sort or Stupid Sort) has no serious inventor or date of origin. It is a joke algorithm from computer science folklore, used to illustrate the absurdity of non-analytical approaches to problem solving.",
         "intuition": "Randomly shuffle the entire array. Check if it is sorted. If not, shuffle again. Repeat indefinitely. The algorithm eventually terminates with probability 1 (theoretically), but in practice it is astronomically unlikely to sort even a small array quickly.",
         "realWorldUses_0": "Classroom demonstrations of why algorithmic analysis matters",
         "realWorldUses_1": "Humorous examples in algorithm textbooks and lectures",
         "facts_0": "The average number of shuffles needed to sort n elements is n! (factorial), which grows faster than any polynomial or exponential.",
-        "facts_1": "The worst case is technically unbounded — the algorithm might never terminate.",
+        "facts_1": "The worst case is technically unbounded. The algorithm might never terminate.",
         "facts_2": "Bogo Sort holds the distinction of being the least efficient sorting algorithm commonly discussed in academia."
       },
       "bfs": {
         "history": "Breadth-First Search was first described by Konrad Zuse in his 1945 thesis (though unpublished for years). Edward F. Moore independently rediscovered it in 1959 for finding shortest paths through mazes. C. Y. Lee later applied it to circuit routing in 1961. It has since become one of the foundational graph traversal algorithms.",
-        "intuition": "Start at a source node. Explore all of its immediate neighbors first, then all of their neighbors, then their neighbors — expanding outward in concentric 'waves'. This level-by-level exploration guarantees that the first time you reach a destination, you have taken the shortest path (in terms of the number of edges).",
+        "intuition": "Start at a source node. Explore all of its immediate neighbors first, then all of their neighbors, then their neighbors, expanding outward in concentric 'waves'. This level-by-level exploration guarantees that the first time you reach a destination, you have taken the shortest path (in terms of the number of edges).",
         "realWorldUses_0": "Finding the shortest path in unweighted networks (social graphs, routing)",
         "realWorldUses_1": "Web crawlers (crawling the web breadth-first from a starting URL)",
         "realWorldUses_2": "Level-order traversal of trees in compilers and XML parsers",
         "realWorldUses_3": "Peer-to-peer network broadcasting (Bitcoin, BitTorrent neighbor discovery)",
-        "facts_0": "BFS guarantees the shortest path in unweighted graphs — a property not shared by DFS.",
+        "facts_0": "BFS guarantees the shortest path in unweighted graphs, a property not shared by DFS.",
         "facts_1": "The algorithm was reinvented multiple times independently, showing its naturalness and utility.",
         "facts_2": "BFS is the basis for many other algorithms including Dijkstra's algorithm (a weighted generalization).",
-        "facts_3": "Its memory usage is O(V) in the worst case — it must store all nodes at the current frontier."
+        "facts_3": "Its memory usage is O(V) in the worst case. It must store all nodes at the current frontier."
       },
       "dijkstra": {
         "history": "Edsger W. Dijkstra conceived this algorithm in 1956 and published it in 1959. He designed it in roughly 20 minutes while sitting in a café in Amsterdam, later calling it one of his most elegant creations. It was originally meant to demonstrate the capabilities of the ARMAC computer.",
         "intuition": "Maintain a set of visited nodes and a priority queue of tentative distances. Always expand the unvisited node with the smallest known distance. When you expand a node, check if going through it provides a shorter path to any of its neighbors. Repeat until the destination is reached.",
         "realWorldUses_0": "GPS and mapping software (Google Maps, Apple Maps route calculation)",
-        "realWorldUses_1": "Internet routing protocols (OSPF — Open Shortest Path First)",
+        "realWorldUses_1": "Internet routing protocols (OSPF, Open Shortest Path First)",
         "realWorldUses_2": "Airline and logistics network optimization",
         "realWorldUses_3": "Robot motion planning in known environments",
         "facts_0": "Dijkstra designed the algorithm in ~20 minutes without pencil or paper.",
-        "facts_1": "The algorithm fails with negative edge weights — use Bellman-Ford in that case.",
+        "facts_1": "The algorithm fails with negative edge weights. Use Bellman-Ford in that case.",
         "facts_2": "Dijkstra received the Turing Award in 1972, one of the highest honors in computer science.",
-        "facts_3": "With a Fibonacci heap, Dijkstra runs in O(E + V log V) — optimal for dense graphs."
+        "facts_3": "With a Fibonacci heap, Dijkstra runs in O(E + V log V), optimal for dense graphs."
       },
       "aStar": {
-        "history": "A* was developed in 1968 by Peter Hart, Nils Nilsson, and Bertram Raphael at the Stanford Research Institute as part of the Shakey robotics project — one of the first AI robots. They needed a general, efficient pathfinding algorithm that could guide the robot through physical space.",
+        "history": "A* was developed in 1968 by Peter Hart, Nils Nilsson, and Bertram Raphael at the Stanford Research Institute as part of the Shakey robotics project, one of the first AI robots. They needed a general, efficient pathfinding algorithm that could guide the robot through physical space.",
         "intuition": "A* extends Dijkstra by adding a heuristic: an estimate of how far the current node is from the goal. For each node, compute f(n) = g(n) + h(n), where g(n) is the actual cost from start and h(n) is the estimated cost to the goal. Always expand the node with the smallest f(n). A good heuristic focuses the search toward the goal, skipping irrelevant areas.",
         "realWorldUses_0": "Video game pathfinding (virtually every commercial game uses A* or a variant)",
         "realWorldUses_1": "Robot navigation and autonomous vehicle path planning",
@@ -374,18 +374,18 @@
         "facts_3": "The Shakey robot project where A* was created was a landmark milestone in the history of artificial intelligence."
       },
       "bidirectionalSearch": {
-        "history": "Bidirectional search was described by Pohl in 1969 as a way to dramatically reduce search space in large graphs. By running two simultaneous BFS searches — one from the start, one from the goal — the frontiers meet in the middle, covering roughly the square root of the total nodes.",
+        "history": "Bidirectional search was described by Pohl in 1969 as a way to dramatically reduce search space in large graphs. By running two simultaneous BFS searches, one from the start and one from the goal, the frontiers meet in the middle, covering roughly the square root of the total nodes.",
         "intuition": "Run two BFS searches simultaneously: one forward from the start and one backward from the goal. The searches expand level by level, each maintaining their own visited sets. When a node is discovered by both searches (the frontiers intersect), a complete path has been found by combining the two partial paths.",
         "realWorldUses_0": "Large social network shortest-path queries (e.g., six degrees of separation)",
         "realWorldUses_1": "Transportation route planning with known start and destination",
         "realWorldUses_2": "Game AI pathfinding in very large maps where single-direction search is too slow",
-        "facts_0": "Bidirectional BFS explores O(b^(d/2)) nodes instead of O(b^d) — exponentially fewer for deep searches.",
+        "facts_0": "Bidirectional BFS explores O(b^(d/2)) nodes instead of O(b^d), exponentially fewer for deep searches.",
         "facts_1": "Guaranteeing the shortest path requires careful synchronization of when the frontiers meet.",
         "facts_2": "Bidirectional Dijkstra was used in the original Google Maps routing before being replaced by more sophisticated techniques."
       },
       "greedyBestFirstSearch": {
         "history": "Greedy Best-First Search is a simplification of A*. By ignoring the actual cost g(n) and expanding only based on the heuristic h(n), it prioritizes speed over optimality. The trade-off is that it may find a non-optimal path.",
-        "intuition": "Always expand the node that looks closest to the goal according to your heuristic. Do not worry about how far you have already traveled — just focus on the estimated distance remaining. This greediness makes it fast, but it can lead you down dead ends or suboptimal paths.",
+        "intuition": "Always expand the node that looks closest to the goal according to your heuristic. Do not worry about how far you have already traveled; just focus on the estimated distance remaining. This greediness makes it fast, but it can lead you down dead ends or suboptimal paths.",
         "realWorldUses_0": "Real-time game AI where finding any path quickly is more valuable than the optimal path",
         "realWorldUses_1": "Navigation in large open environments where heuristic guidance is reliable",
         "realWorldUses_2": "Initial pathfinding pass in multi-stage planners where optimality is refined later",
@@ -394,8 +394,8 @@
         "facts_2": "With a perfect heuristic, Greedy Best-First Search goes directly to the goal without exploring irrelevant nodes."
       },
       "jumpPointSearch": {
-        "history": "Jump Point Search was invented by Daniel Harabor and Alban Grastien and presented at AAAI 2011. It was designed specifically for uniform-cost grid maps — the standard representation in game navigation — and can be over an order of magnitude faster than A* on such maps.",
-        "intuition": "On a uniform-cost grid, many paths are symmetric (they have the same cost but different routes). Jump Point Search eliminates this symmetry by skipping straight ahead or diagonally until it reaches a 'jump point' — a node that has forced neighbors not reachable by the straight-line path. Only jump points are added to the open set, drastically reducing the number of nodes examined.",
+        "history": "Jump Point Search was invented by Daniel Harabor and Alban Grastien and presented at AAAI 2011. It was designed specifically for uniform-cost grid maps, the standard representation in game navigation, and can be over an order of magnitude faster than A* on such maps.",
+        "intuition": "On a uniform-cost grid, many paths are symmetric (they have the same cost but different routes). Jump Point Search eliminates this symmetry by skipping straight ahead or diagonally until it reaches a 'jump point', a node that has forced neighbors not reachable by the straight-line path. Only jump points are added to the open set, drastically reducing the number of nodes examined.",
         "realWorldUses_0": "Real-time strategy (RTS) game pathfinding engines",
         "realWorldUses_1": "Robotic navigation in grid-mapped environments",
         "realWorldUses_2": "Large-scale pathfinding with hundreds of simultaneous agents",
@@ -404,14 +404,14 @@
         "facts_2": "The key innovation is identifying and skipping symmetric paths, reducing the search space dramatically."
       },
       "bellmanFord": {
-        "history": "The Bellman-Ford algorithm was developed by Richard Bellman and Lester Ford Jr. independently in 1956–1958. It solves the single-source shortest path problem for graphs with negative edge weights — a case where Dijkstra's algorithm fails.",
+        "history": "The Bellman-Ford algorithm was developed by Richard Bellman and Lester Ford Jr. independently in 1956–1958. It solves the single-source shortest path problem for graphs with negative edge weights, a case where Dijkstra's algorithm fails.",
         "intuition": "Relax all edges repeatedly. In each relaxation, update the distance estimate to a node if going through its neighbor gives a shorter path. After V-1 iterations (V = number of vertices), all shortest paths are found. If distances still change in a V-th iteration, the graph contains a negative weight cycle.",
-        "realWorldUses_0": "Distance-vector routing protocols (RIP — Routing Information Protocol)",
+        "realWorldUses_0": "Distance-vector routing protocols (RIP, Routing Information Protocol)",
         "realWorldUses_1": "Currency arbitrage detection (negative cycles in exchange rate graphs)",
         "realWorldUses_2": "Network topology analysis with costs that can go negative (e.g., subsidies)",
         "facts_0": "Bellman-Ford works with negative edge weights, unlike Dijkstra.",
         "facts_1": "Its O(VE) complexity makes it slower than Dijkstra but more general.",
-        "facts_2": "Bellman-Ford can detect negative-weight cycles — no shortest path exists in their presence."
+        "facts_2": "Bellman-Ford can detect negative-weight cycles. No shortest path exists in their presence."
       },
       "idaStar": {
         "history": "IDA* (Iterative Deepening A*) was invented by Richard Korf in 1985 as a memory-efficient alternative to A*. While A* stores all generated nodes in memory, IDA* uses depth-first search with iteratively increasing cost thresholds, requiring only O(d) memory.",
@@ -419,12 +419,12 @@
         "realWorldUses_0": "Solving puzzles with large state spaces (15-puzzle, Rubik's Cube)",
         "realWorldUses_1": "AI planning problems where memory is limited",
         "realWorldUses_2": "Game tree search where breadth-first memory usage is prohibitive",
-        "facts_0": "IDA* uses O(d) memory — linear in the solution depth — versus A*'s exponential memory usage.",
+        "facts_0": "IDA* uses O(d) memory, linear in the solution depth, versus A*'s exponential memory usage.",
         "facts_1": "Like A*, IDA* is optimal and complete given an admissible heuristic.",
         "facts_2": "The trade-off is time: IDA* may re-expand nodes many times, unlike A* which caches visited states."
       },
       "dStarLite": {
-        "history": "D* Lite was developed by Sven Koenig and Maxim Likhachev in 2002 as a simplified and improved version of the original D* algorithm by Anthony Stentz (1994). It is designed for dynamic environments where the graph changes as the agent moves — exactly the challenge robots face in real-world navigation.",
+        "history": "D* Lite was developed by Sven Koenig and Maxim Likhachev in 2002 as a simplified and improved version of the original D* algorithm by Anthony Stentz (1994). It is designed for dynamic environments where the graph changes as the agent moves, exactly the challenge robots face in real-world navigation.",
         "intuition": "D* Lite plans a path from start to goal (like A*). As the robot moves and discovers new obstacles or changed costs, it efficiently updates the existing plan rather than replanning from scratch. It maintains consistency information about which parts of the plan are still valid, and only re-expands the minimum set of nodes needed after each change.",
         "realWorldUses_0": "NASA Mars rover navigation (Spirit and Opportunity used D* family algorithms)",
         "realWorldUses_1": "Autonomous ground robot navigation in dynamic environments",
