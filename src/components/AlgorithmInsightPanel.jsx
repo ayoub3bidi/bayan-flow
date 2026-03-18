@@ -6,7 +6,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lightbulb, X } from 'lucide-react';
+import { Lightbulb, X, Play } from 'lucide-react';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
 
 // ─── Animation variants (mirror PythonCodePanel style) ──────────────────────
@@ -326,6 +326,33 @@ function PanelContent({
               </section>
             )}
           </>
+        )}
+
+        {/* Related video (one per algorithm): embed or placeholder, always at bottom when meta exists */}
+        {meta && (
+          <section className="pt-2">
+            {meta.youtubeVideoId ? (
+              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10">
+                <iframe
+                  title="Video"
+                  className="absolute inset-0 w-full h-full"
+                  src={`https://www.youtube.com/embed/${meta.youtubeVideoId}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div
+                className="flex flex-col items-center justify-center w-full aspect-video rounded-xl border-2 border-dashed border-panel-border bg-panel-hover text-secondary"
+                aria-hidden="true"
+              >
+                <Play className="w-12 h-12 mb-2 opacity-60" />
+                <span className="text-sm font-medium">
+                  {t('insight_panel.videoComingSoon')}
+                </span>
+              </div>
+            )}
+          </section>
         )}
       </div>
     </>

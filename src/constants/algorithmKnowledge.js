@@ -9,8 +9,10 @@
  * The actual translated content lives in the i18n locale files under
  * insight_panel.algorithms.<key>.{history, intuition, realWorldUses_N, facts_N}
  *
- * Each entry here provides language-agnostic metadata (inventor, year) that is
- * displayed alongside the translated content.
+ * Each entry here provides language-agnostic metadata (inventor, year,
+ * optional youtubeVideoId) that is displayed alongside the translated content.
+ * Set youtubeVideoId to a YouTube video ID (e.g. "dQw4w9WgXcQ") to embed a
+ * video; leave null to show a placeholder.
  */
 export const ALGORITHM_KNOWLEDGE = {
   // ── Sorting ────────────────────────────────────────────────────────────────
@@ -19,84 +21,98 @@ export const ALGORITHM_KNOWLEDGE = {
     year: 1956,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   quickSort: {
     inventor: 'Tony Hoare',
     year: 1959,
     realWorldUsesCount: 4,
     factsCount: 4,
+    youtubeVideoId: null,
   },
   mergeSort: {
     inventor: 'John von Neumann',
     year: 1945,
     realWorldUsesCount: 4,
     factsCount: 4,
+    youtubeVideoId: null,
   },
   insertionSort: {
     inventor: 'Unknown (ancient technique)',
     year: null,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   selectionSort: {
     inventor: 'Unknown',
     year: null,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   heapSort: {
     inventor: 'J. W. J. Williams',
     year: 1964,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   shellSort: {
     inventor: 'Donald Shell',
     year: 1959,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   radixSort: {
     inventor: 'Herman Hollerith',
     year: 1887,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   countingSort: {
     inventor: 'Harold H. Seward',
     year: 1954,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   bucketSort: {
     inventor: 'Unknown',
     year: null,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   cycleSort: {
     inventor: 'Brendan Kehoe',
     year: 1990,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   combSort: {
     inventor: 'Włodzimierz Dobosiewicz',
     year: 1980,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   timSort: {
     inventor: 'Tim Peters',
     year: 2002,
     realWorldUsesCount: 4,
     factsCount: 4,
+    youtubeVideoId: null,
   },
   bogoSort: {
     inventor: 'Unknown (folklore)',
     year: null,
     realWorldUsesCount: 2,
     factsCount: 3,
+    youtubeVideoId: null,
   },
 
   // ── Pathfinding ────────────────────────────────────────────────────────────
@@ -105,53 +121,62 @@ export const ALGORITHM_KNOWLEDGE = {
     year: 1945,
     realWorldUsesCount: 4,
     factsCount: 4,
+    youtubeVideoId: null,
   },
   dijkstra: {
     inventor: 'Edsger W. Dijkstra',
     year: 1956,
     realWorldUsesCount: 4,
     factsCount: 4,
+    youtubeVideoId: null,
   },
   aStar: {
     inventor: 'Peter Hart, Nils Nilsson & Bertram Raphael',
     year: 1968,
     realWorldUsesCount: 4,
     factsCount: 4,
+    youtubeVideoId: null,
   },
   bidirectionalSearch: {
     inventor: 'Pohl (attributed)',
     year: 1969,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   greedyBestFirstSearch: {
     inventor: 'Unknown',
     year: null,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   jumpPointSearch: {
     inventor: 'Daniel Harabor & Alban Grastien',
     year: 2011,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   bellmanFord: {
     inventor: 'Richard Bellman & Lester Ford Jr.',
     year: 1958,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   idaStar: {
     inventor: 'Richard Korf',
     year: 1985,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
   dStarLite: {
     inventor: 'Sven Koenig & Maxim Likhachev',
     year: 2002,
     realWorldUsesCount: 3,
     factsCount: 3,
+    youtubeVideoId: null,
   },
 };

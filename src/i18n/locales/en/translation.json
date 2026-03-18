@@ -190,6 +190,7 @@
     "intuition": "Core Idea",
     "realWorldUses": "Real-world Applications",
     "facts": "Interesting Facts",
+    "videoComingSoon": "Video coming soon",
     "noData": "No additional insight available for this algorithm yet.",
     "algorithms": {
       "bubbleSort": {
