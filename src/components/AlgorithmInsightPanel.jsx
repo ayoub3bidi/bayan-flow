@@ -90,12 +90,12 @@ function AlgorithmInsightPanel({
             aria-hidden="true"
           />
 
-          {/* ── Desktop panel ──────────────────────────────────────────── */}
+          {/* ── Desktop panel (starts below navbar, same as code panel) ─── */}
           <motion.div
             key="insight-panel-desktop"
             className={`
               hidden md:flex flex-col
-              fixed top-0 ${isRTL ? 'left-0' : 'right-0'} h-full
+              fixed top-14 bottom-0 ${isRTL ? 'left-0' : 'right-0'}
               w-full max-w-2xl
               bg-surface border-${isRTL ? 'r' : 'l'} border-panel-border
               shadow-2xl z-50 overflow-hidden
