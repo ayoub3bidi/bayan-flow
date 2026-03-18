@@ -14,6 +14,7 @@ import GridVisualizer from '../components/GridVisualizer';
 import ControlPanel from '../components/ControlPanel';
 import SettingsPanel from '../components/SettingsPanel';
 import FloatingActionButton from '../components/FloatingActionButton';
+import ExportProgressModal from '../components/ExportProgressModal';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
 const AlgorithmInsightPanel = lazy(
@@ -22,6 +23,7 @@ const AlgorithmInsightPanel = lazy(
 import { useSortingVisualization } from '../hooks/useSortingVisualization';
 import { usePathfindingVisualization } from '../hooks/usePathfindingVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
+import { useVideoExporter } from '../video/useVideoExporter';
 import { generateRandomArray } from '../utils/arrayHelpers';
 import { createEmptyGrid } from '../utils/gridHelpers';
 import { algorithms } from '../algorithms';
@@ -64,6 +66,13 @@ function App() {
   );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
+  const {
+    exportVideo,
+    exportState,
+    exportProgress,
+    canRenderOnWeb,
+    cancelExport,
+  } = useVideoExporter();
 
   const sortingVisualization = useSortingVisualization(array, speed, mode);
   const pathfindingVisualization = usePathfindingVisualization(
@@ -103,6 +112,16 @@ function App() {
 
   const handleGridSizeChange = newSize => {
     setGridSize(newSize);
+  };
+
+  const handleExportVideo = () => {
+    exportVideo({
+      steps: visualization.steps,
+      algorithmType,
+      algorithmName: activeAlgorithmName,
+      speed,
+      gridSize,
+    });
   };
 
   const handleAlgorithmTypeChange = newType => {
@@ -221,6 +240,11 @@ function App() {
               algorithmType={algorithmType}
               isFullScreen={isFullScreen}
               onToggleFullScreen={toggleFullScreen}
+              onExportVideo={handleExportVideo}
+              onCancelExport={cancelExport}
+              exportState={exportState}
+              exportProgress={exportProgress}
+              canRenderOnWeb={canRenderOnWeb}
             />
           </motion.div>
         ) : (
@@ -320,6 +344,11 @@ function App() {
                       algorithmType={algorithmType}
                       isFullScreen={isFullScreen}
                       onToggleFullScreen={toggleFullScreen}
+                      onExportVideo={handleExportVideo}
+                      onCancelExport={cancelExport}
+                      exportState={exportState}
+                      exportProgress={exportProgress}
+                      canRenderOnWeb={canRenderOnWeb}
                     />
                   </section>
                 </div>
@@ -348,6 +377,14 @@ function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Export progress modal */}
+      <ExportProgressModal
+        open={exportState === 'checking' || exportState === 'rendering'}
+        progress={exportProgress}
+        phase={exportState === 'checking' ? 'checking' : 'rendering'}
+        onStop={cancelExport}
+      />
 
       {/* Python Code Panel - Always available */}
       <Suspense

@@ -14,6 +14,8 @@ import {
   Shuffle,
   Maximize,
   Minimize,
+  Video,
+  Square,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { soundManager } from '../utils/soundManager';
@@ -37,6 +39,11 @@ import { soundManager } from '../utils/soundManager';
  * @param {string} algorithmType - Current algorithm type ('sorting' or 'pathfinding')
  * @param {boolean} isFullScreen - Whether full-screen mode is active
  * @param {Function} onToggleFullScreen - Handler for toggling full-screen mode
+ * @param {Function} onExportVideo - Handler for export video button
+ * @param {Function} onCancelExport - Handler for stop/cancel export (shown during export)
+ * @param {string} exportState - 'idle' | 'checking' | 'rendering' | 'done' | 'error'
+ * @param {number} exportProgress - 0-1 progress when rendering
+ * @param {boolean|null} canRenderOnWeb - Whether browser supports web render (null = unknown)
  */
 function ControlPanel({
   isPlaying,
@@ -53,6 +60,11 @@ function ControlPanel({
   algorithmType,
   isFullScreen,
   onToggleFullScreen,
+  onExportVideo,
+  onCancelExport,
+  exportState = 'idle',
+  exportProgress: _exportProgress = 0,
+  canRenderOnWeb = null,
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
@@ -158,6 +170,42 @@ function ControlPanel({
             aria-label={t('controls.generateArray')}
           >
             <Shuffle size={20} aria-hidden="true" />
+          </button>
+        )}
+
+        {/* Export Video / Stop Export */}
+        {exportState === 'checking' || exportState === 'rendering' ? (
+          <button
+            onClick={() => {
+              soundManager.playUIClick();
+              onCancelExport?.();
+            }}
+            className={`${buttonBaseClasses} bg-red-500 hover:bg-red-600 text-white`}
+            title={t('controls.stopExport')}
+            aria-label={t('controls.stopExport')}
+          >
+            <Square size={20} aria-hidden="true" />
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              soundManager.playUIClick();
+              onExportVideo?.();
+            }}
+            disabled={totalSteps === 0}
+            className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed`}
+            title={
+              canRenderOnWeb === false
+                ? t('controls.browserNotSupported')
+                : exportState === 'done'
+                  ? t('controls.exportDone')
+                  : exportState === 'error'
+                    ? t('controls.exportError')
+                    : t('controls.exportVideo')
+            }
+            aria-label={t('controls.exportVideo')}
+          >
+            <Video size={20} aria-hidden="true" />
           </button>
         )}
 

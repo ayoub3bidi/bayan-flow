@@ -266,6 +266,7 @@ export function usePathfindingVisualization(
   return {
     grid,
     states,
+    steps,
     start,
     end,
     isPlaying,

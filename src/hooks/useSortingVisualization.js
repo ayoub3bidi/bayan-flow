@@ -226,6 +226,7 @@ export function useSortingVisualization(
   return {
     array,
     states,
+    steps,
     isPlaying,
     isAutoplayActive,
     currentStep,
