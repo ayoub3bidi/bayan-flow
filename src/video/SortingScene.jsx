@@ -72,12 +72,14 @@ function SortingSceneInner({ steps, framesPerStep }) {
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
 
+  const isSmallArray = n <= 20;
+
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'flex-end',
+        alignItems: isSmallArray ? 'center' : 'flex-end',
         justifyContent: 'center',
         gap: 8,
         flexWrap: 'wrap',
