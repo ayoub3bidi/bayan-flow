@@ -5,12 +5,12 @@
  */
 
 import { memo } from 'react';
-import { useCurrentFrame } from 'remotion';
-import { STATE_COLORS } from '../constants/index.js';
+import { useCurrentFrame, interpolate } from 'remotion';
+import { STATE_COLORS, ELEMENT_STATES } from '../constants/index.js';
 
 /**
- * Renders sorting visualization for a single step (frame-based).
- * No Framer Motion; uses only CSS supported by @remotion/web-renderer.
+ * Renders sorting visualization with smooth interpolated animations.
+ * Uses Remotion's interpolate for swap and compare animations.
  *
  * @param {Object} props
  * @param {Array<{ array: number[], states: string[], description: string }>} props.steps
@@ -20,8 +20,11 @@ function SortingSceneInner({ steps, framesPerStep }) {
   const frame = useCurrentFrame();
   const stepIndex = Math.min(
     Math.floor(frame / framesPerStep),
-    steps.length - 1
+    Math.max(0, steps.length - 1)
   );
+  const frameInStep = frame - stepIndex * framesPerStep;
+
+  const prevStep = stepIndex > 0 ? steps[stepIndex - 1] : null;
   const step = steps[stepIndex] ?? steps[0];
   if (!step) return null;
 
@@ -29,6 +32,45 @@ function SortingSceneInner({ steps, framesPerStep }) {
   const n = array.length;
   const barSize = n <= 20 ? 60 : n <= 35 ? 45 : 30;
   const minSize = 25;
+  const barWidth = Math.max(barSize, minSize);
+  const itemWidth = barWidth + 16;
+
+  // Detect swap: two elements exchanged between prev and current
+  const isSwapStep =
+    prevStep &&
+    states.some(s => s === ELEMENT_STATES.SWAPPING) &&
+    prevStep.array.length === array.length;
+  const swapIndices = [];
+  if (isSwapStep) {
+    for (let i = 0; i < array.length; i++) {
+      if (prevStep.array[i] !== array[i]) {
+        swapIndices.push(i);
+      }
+    }
+  }
+  const hasSwap = swapIndices.length === 2;
+
+  // prevIndexForCurrent[i] = index in prev array where element at current i came from
+  const prevIndexForCurrent = array.map((_, i) => i);
+  if (hasSwap && prevStep) {
+    const [i, j] = swapIndices;
+    prevIndexForCurrent[i] = j;
+    prevIndexForCurrent[j] = i;
+  }
+
+  // Swap progress: 0 at start of step, 1 at end
+  const swapProgress = interpolate(frameInStep, [0, framesPerStep], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // Compare progress: animate over first 30% of step
+  const compareProgress = interpolate(
+    frameInStep,
+    [0, framesPerStep * 0.3],
+    [0, 1],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+  );
 
   return (
     <div
@@ -48,6 +90,24 @@ function SortingSceneInner({ steps, framesPerStep }) {
       {array.map((value, i) => {
         const state = states[i] ?? 'default';
         const color = STATE_COLORS[state] ?? STATE_COLORS.default;
+
+        let translateX = 0;
+        let translateY = 0;
+        let scale = 1;
+
+        if (hasSwap) {
+          const prevIdx = prevIndexForCurrent[i];
+          if (prevIdx !== i) {
+            const delta = (prevIdx - i) * itemWidth;
+            translateX = delta * (1 - swapProgress);
+          }
+        }
+
+        if (state === ELEMENT_STATES.COMPARING) {
+          translateY = -10 * compareProgress;
+          scale = 1 + 0.05 * compareProgress;
+        }
+
         return (
           <div
             key={`${stepIndex}-${i}-${value}`}
@@ -59,6 +119,8 @@ function SortingSceneInner({ steps, framesPerStep }) {
               minWidth: 0,
               marginLeft: 8,
               marginRight: 8,
+              transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
+              transition: 'none',
             }}
           >
             <div
@@ -66,10 +128,10 @@ function SortingSceneInner({ steps, framesPerStep }) {
                 backgroundColor: color,
                 borderWidth: 2,
                 borderStyle: 'solid',
-                borderColor: color,
+                borderColor: '#374151',
                 borderRadius: 8,
-                width: Math.max(barSize, minSize),
-                height: Math.max(barSize, minSize),
+                width: barWidth,
+                height: barWidth,
                 minWidth: minSize,
                 minHeight: minSize,
                 display: 'flex',

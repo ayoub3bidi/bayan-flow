@@ -5,12 +5,12 @@
  */
 
 import { memo } from 'react';
-import { useCurrentFrame } from 'remotion';
+import { useCurrentFrame, interpolate, interpolateColors } from 'remotion';
 import { GRID_STATE_COLORS } from '../constants/index.js';
 
 /**
- * Renders pathfinding grid visualization for a single step (frame-based).
- * No Framer Motion; uses only CSS supported by @remotion/web-renderer.
+ * Renders pathfinding grid visualization with smooth color transitions.
+ * Interpolates cell backgroundColor when state changes between steps.
  *
  * @param {Object} props
  * @param {Array<{ grid: number[][], states: string[][], description: string }>} props.steps
@@ -23,11 +23,22 @@ function PathfindingSceneInner({ steps, framesPerStep, gridSize }) {
     Math.floor(frame / framesPerStep),
     steps.length - 1
   );
+  const frameInStep = frame - stepIndex * framesPerStep;
+
+  const prevStep = stepIndex > 0 ? steps[stepIndex - 1] : null;
   const step = steps[stepIndex] ?? steps[0];
   if (!step) return null;
 
   const { states } = step;
-  const cellPx = gridSize <= 15 ? 24 : gridSize <= 25 ? 18 : 14;
+  const cellPx = gridSize <= 15 ? 32 : gridSize <= 25 ? 24 : 18;
+
+  // Color transition progress over the step (first 40% for a snappy transition)
+  const colorProgress = Math.min(
+    1,
+    interpolate(frameInStep, [0, framesPerStep * 0.4], [0, 1], {
+      extrapolateRight: 'clamp',
+    })
+  );
 
   return (
     <div
@@ -52,7 +63,22 @@ function PathfindingSceneInner({ steps, framesPerStep, gridSize }) {
       >
         {states.map((row, rowIndex) =>
           row.map((state, colIndex) => {
-            const color = GRID_STATE_COLORS[state] ?? GRID_STATE_COLORS.default;
+            const currentColor =
+              GRID_STATE_COLORS[state] ?? GRID_STATE_COLORS.default;
+
+            const prevState = prevStep?.states?.[rowIndex]?.[colIndex] ?? state;
+            const prevColor =
+              GRID_STATE_COLORS[prevState] ?? GRID_STATE_COLORS.default;
+
+            const color =
+              prevState !== state
+                ? interpolateColors(
+                    colorProgress,
+                    [0, 1],
+                    [prevColor, currentColor]
+                  )
+                : currentColor;
+
             return (
               <div
                 key={`${stepIndex}-${rowIndex}-${colIndex}`}
@@ -62,7 +88,7 @@ function PathfindingSceneInner({ steps, framesPerStep, gridSize }) {
                   backgroundColor: color,
                   borderWidth: 1,
                   borderStyle: 'solid',
-                  borderColor: '#d1d5db',
+                  borderColor: '#6b7280',
                   borderRadius: 2,
                 }}
               />

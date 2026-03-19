@@ -8,26 +8,36 @@ import { useCurrentFrame, useVideoConfig, AbsoluteFill } from 'remotion';
 import { ALGORITHM_TYPES } from '../constants/index.js';
 import SortingScene from './SortingScene.jsx';
 import PathfindingScene from './PathfindingScene.jsx';
+import ComplexityScene from './ComplexityScene.jsx';
+import { COMPLEXITY_DURATION_FRAMES } from './constants.js';
 
 /**
  * Root Remotion composition: title bar, visualization (sorting or pathfinding), step counter, description.
- * Receives inputProps: steps, algorithmType, algorithmName, framesPerStep, gridSize.
+ * Shows complexity analysis for the last 10 seconds.
+ * Receives inputProps: steps, algorithmType, algorithmName, algorithmKey, framesPerStep, gridSize.
  */
 function AlgorithmVideo({
   steps = [],
   algorithmType = ALGORITHM_TYPES.SORTING,
   algorithmName = '',
+  algorithmKey = '',
   framesPerStep = 6,
   gridSize = 15,
 }) {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
-  const stepIndex = Math.min(
-    Math.floor(frame / framesPerStep),
-    Math.max(0, steps.length - 1)
-  );
-  const step = steps[stepIndex] ?? steps[0];
-  const description = step?.description ?? '';
+  const mainDurationInFrames = steps.length * framesPerStep;
+  const isComplexitySegment = steps.length > 0 && frame >= mainDurationInFrames;
+
+  if (isComplexitySegment) {
+    return (
+      <ComplexityScene
+        algorithmKey={algorithmKey}
+        isPathfinding={algorithmType === ALGORITHM_TYPES.PATHFINDING}
+        algorithmName={algorithmName}
+      />
+    );
+  }
 
   if (!steps.length) {
     return (
@@ -45,6 +55,12 @@ function AlgorithmVideo({
     );
   }
 
+  const stepIndex = Math.min(
+    Math.floor(frame / framesPerStep),
+    Math.max(0, steps.length - 1)
+  );
+  const step = steps[stepIndex] ?? steps[0];
+  const description = step?.description ?? '';
   const isSorting = algorithmType === ALGORITHM_TYPES.SORTING;
 
   return (

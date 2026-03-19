@@ -140,6 +140,10 @@
     "exportingRendering": "جاري إنشاء التصور. قد يستغرق ذلك لحظة.",
     "exportingProgress": "التقدم",
     "stopExport": "إيقاف",
+    "exportPreview": "الفيديو جاهز",
+    "exportPreviewDesc": "معاينة الفيديو وتنزيله عند الحاجة.",
+    "downloadVideo": "تنزيل",
+    "closePreview": "إغلاق",
     "goFullScreen": "ملء الشاشة (F)",
     "exitFullScreen": "الخروج من ملء الشاشة (Esc)"
   },

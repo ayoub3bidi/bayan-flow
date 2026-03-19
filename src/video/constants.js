@@ -7,8 +7,8 @@
 import { ANIMATION_SPEEDS } from '../constants/index.js';
 
 export const VIDEO_FPS = 30;
-export const VIDEO_WIDTH = 1280;
-export const VIDEO_HEIGHT = 720;
+export const VIDEO_WIDTH = 1920;
+export const VIDEO_HEIGHT = 1080;
 export const DEFAULT_FRAMES_PER_STEP = 6;
 
 /**
@@ -16,6 +16,11 @@ export const DEFAULT_FRAMES_PER_STEP = 6;
  * so users can read the step description and follow the animation (~1.5 s per step at 30fps).
  */
 export const VIDEO_EXPORT_FRAMES_PER_STEP = 45;
+
+/**
+ * Duration of the complexity analysis segment at the end of the video (10 seconds).
+ */
+export const COMPLEXITY_DURATION_FRAMES = 10 * VIDEO_FPS;
 
 /**
  * Map app animation speed (ms delay) to video frames per step.

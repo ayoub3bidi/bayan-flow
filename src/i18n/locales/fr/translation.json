@@ -140,6 +140,10 @@
     "exportingRendering": "Génération de la visualisation en cours.",
     "exportingProgress": "Progression",
     "stopExport": "Arrêter",
+    "exportPreview": "Vidéo prête",
+    "exportPreviewDesc": "Prévisualisez votre vidéo et téléchargez-la quand vous le souhaitez.",
+    "downloadVideo": "Télécharger",
+    "closePreview": "Fermer",
     "goFullScreen": "Plein Écran (F)",
     "exitFullScreen": "Quitter le Plein Écran (Esc)"
   },

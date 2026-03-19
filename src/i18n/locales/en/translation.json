@@ -141,6 +141,10 @@
     "exportingRendering": "Rendering your visualization. This may take a moment.",
     "exportingProgress": "Progress",
     "stopExport": "Stop",
+    "exportPreview": "Video ready",
+    "exportPreviewDesc": "Preview your video and download when ready.",
+    "downloadVideo": "Download",
+    "closePreview": "Close",
     "goFullScreen": "Go Full Screen (F)",
     "exitFullScreen": "Exit Full Screen (Esc)"
   },

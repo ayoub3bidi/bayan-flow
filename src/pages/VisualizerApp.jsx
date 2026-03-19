@@ -70,8 +70,11 @@ function App() {
     exportVideo,
     exportState,
     exportProgress,
-    canRenderOnWeb,
+    exportBlobUrl,
     cancelExport,
+    closePreview,
+    downloadVideo,
+    canRenderOnWeb,
   } = useVideoExporter();
 
   const sortingVisualization = useSortingVisualization(array, speed, mode);
@@ -119,6 +122,7 @@ function App() {
       steps: visualization.steps,
       algorithmType,
       algorithmName: activeAlgorithmName,
+      algorithmKey: activeAlgorithmKey,
       speed,
       gridSize,
     });
@@ -380,10 +384,23 @@ function App() {
 
       {/* Export progress modal */}
       <ExportProgressModal
-        open={exportState === 'checking' || exportState === 'rendering'}
+        open={
+          exportState === 'checking' ||
+          exportState === 'rendering' ||
+          exportState === 'preview'
+        }
         progress={exportProgress}
-        phase={exportState === 'checking' ? 'checking' : 'rendering'}
+        phase={
+          exportState === 'preview'
+            ? 'preview'
+            : exportState === 'checking'
+              ? 'checking'
+              : 'rendering'
+        }
+        blobUrl={exportBlobUrl}
         onStop={cancelExport}
+        onClose={closePreview}
+        onDownload={downloadVideo}
       />
 
       {/* Python Code Panel - Always available */}
