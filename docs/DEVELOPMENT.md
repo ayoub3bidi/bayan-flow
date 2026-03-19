@@ -275,6 +275,7 @@ src/
 ├── config/            # useAlgorithmConfig, useSettingsConfig
 ├── contexts/          # React contexts
 ├── hooks/             # Custom hooks
+├── video/             # Remotion video export (useVideoExporter, scenes)
 ├── algorithms/        # Algorithm implementations
 ├── utils/             # Pure utilities
 ├── data/              # Static data
@@ -297,7 +298,26 @@ Algorithm and settings configuration is centralized in `src/config/`:
 
 `SettingsPanel` uses these hooks; `AlgorithmDropdown` receives algorithms and groups as props.
 
-### 10. Testing Approach
+### 10. Video Export
+
+Video export uses **Remotion** (`@remotion/web-renderer`) to render MP4 files in-browser.
+
+**Flow:**
+1. User clicks Export → `beginExportFlow()` opens modal with orientation choice
+2. User selects Horizontal (16:9) or Vertical (9:16)
+3. `exportVideo({ ..., orientation })` runs: capability check → render → preview
+4. User previews video, then downloads or closes
+
+**Key files:**
+- `src/video/useVideoExporter.js` – Hook: `beginExportFlow`, `exportVideo`, `closePreview`, `downloadVideo`
+- `src/video/AlgorithmVideo.jsx` – Root Remotion composition
+- `src/video/SortingScene.jsx`, `PathfindingScene.jsx` – Frame-based scenes with `interpolate()` for smooth animations
+- `src/video/ComplexityScene.jsx` – 10-second complexity segment at end
+- `src/components/ExportProgressModal.jsx` – Orientation, progress, preview (RTL-aware)
+
+**Constants** (`src/video/constants.js`): `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_WIDTH_VERTICAL`, `VIDEO_HEIGHT_VERTICAL`, `COMPLEXITY_DURATION_FRAMES`
+
+### 11. Testing Approach
 
 **Test Pure Functions:**
 ```javascript

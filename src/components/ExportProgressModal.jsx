@@ -70,7 +70,7 @@ function ExportProgressModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="absolute top-4 right-4 p-1.5 rounded-full text-text-secondary hover:text-text-primary hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-1.5 rounded-full text-text-secondary hover:text-text-primary hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 aria-label={t('controls.closePreview')}
               >
                 <X size={20} aria-hidden="true" />

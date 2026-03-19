@@ -13,9 +13,10 @@ This document provides an in-depth explanation of the Bayan Flow architecture, d
 7. [Algorithm Implementation](#algorithm-implementation)
 8. [Animation System](#animation-system)
 9. [Audio System](#audio-system)
-10. [State Management](#state-management)
-11. [Testing Strategy](#testing-strategy)
-12. [Performance Optimizations](#performance-optimizations)
+10. [Video Export](#video-export)
+11. [State Management](#state-management)
+12. [Testing Strategy](#testing-strategy)
+13. [Performance Optimizations](#performance-optimizations)
 
 ## System Architecture
 
@@ -127,6 +128,7 @@ VisualizerApp
 ├── ArrayVisualizer / GridVisualizer
 ├── ControlPanel
 ├── FloatingActionButton
+├── ExportProgressModal (orientation selection, progress, preview)
 ├── PythonCodePanel (lazy)
 ├── ComplexityPanel (lazy)
 └── Footer
@@ -177,6 +179,7 @@ Roadmap
 - Progress tracking
 - Full-screen toggle
 - Generate new array/grid button
+- Export video button (triggers orientation selection flow)
 
 #### **SettingsPanel** (Configuration)
 - Algorithm type toggle (sorting/pathfinding)
@@ -196,6 +199,12 @@ Roadmap
 - Theme-aware (light/dark)
 - Side panel (desktop) / Bottom sheet (mobile)
 - Lazy loaded for performance
+
+#### **ExportProgressModal** (Video Export)
+- Orientation selection: Horizontal (16:9) or Vertical (9:16)
+- Progress bar and Stop button during render
+- Video preview with Download and Close (RTL-aware)
+- Phases: `orientation` → `checking` → `rendering` → `preview`
 
 #### **ComplexityPanel** (Analysis)
 - Algorithm complexity visualization
@@ -639,6 +648,44 @@ const executeStep = useCallback((step) => {
 - **Performance**: Early returns when disabled
 - **Contextual**: Sounds match visual operations
 
+## Video Export
+
+### Overview
+
+Video export uses **Remotion** (`@remotion/web-renderer`) to render algorithm visualizations as MP4 files directly in the browser. No server-side rendering is required.
+
+### Export Flow
+
+```
+User clicks Export → Orientation selection (Horizontal / Vertical)
+    → User selects format
+    → Browser capability check (canRenderMediaOnWeb)
+    → Render (renderMediaOnWeb) with progress
+    → Preview modal with video player
+    → User downloads or closes
+```
+
+### Architecture
+
+- **useVideoExporter** (`src/video/useVideoExporter.js`): Hook managing export state (`idle` | `orientation` | `checking` | `rendering` | `preview` | `error`), blob storage, and download.
+- **ExportProgressModal** (`src/components/ExportProgressModal.jsx`): Single modal with phases—orientation choice, progress bar, video preview. RTL-aware close button.
+- **AlgorithmVideo** (`src/video/AlgorithmVideo.jsx`): Root Remotion composition; switches between main visualization and complexity segment.
+- **SortingScene** / **PathfindingScene**: Frame-based Remotion scenes (no Framer Motion); use `interpolate()` for smooth swap/color transitions.
+- **ComplexityScene**: Remotion-compatible complexity display (time/space, performance graph) shown for 10 seconds at the end.
+
+### Orientations
+
+| Format   | Dimensions   | Use case                         |
+|----------|--------------|----------------------------------|
+| Horizontal | 1920×1080  | YouTube, presentations           |
+| Vertical   | 1080×1920  | Shorts, Reels, TikTok            |
+
+### Key Constants (`src/video/constants.js`)
+
+- `VIDEO_FPS`: 30
+- `VIDEO_EXPORT_FRAMES_PER_STEP`: 45 (~1.5 s per step)
+- `COMPLEXITY_DURATION_FRAMES`: 300 (10 seconds)
+
 ## State Management
 
 ### Custom Hooks Architecture
@@ -914,7 +961,6 @@ useEffect(() => {
 
 3. **Advanced Features**
    - Algorithm comparison mode
-   - Export visualization as video
    - Custom array/grid input
    - Collaborative mode
 
@@ -925,9 +971,10 @@ useEffect(() => {
    - Performance benchmarking
 
 5. **Recently Completed**
+   - ✅ Video export: MP4 via Remotion with orientation choice (horizontal/vertical), preview, HD quality, complexity segment
    - ✅ 14 sorting algorithms (including Counting, Bucket, Cycle, Comb, Tim, Bogo)
    - ✅ 9 pathfinding algorithms (including JPS, Bellman-Ford, IDA*, D* Lite)
-   - ✅ 922 tests across 41 files; Codecov patch threshold 70%
+   - ✅ 925 tests across 41 files; Codecov patch threshold 70%
    - ✅ Config layer (useAlgorithmConfig, useSettingsConfig)
    - ✅ DocumentTitle for SEO; AlgorithmDropdown component
 

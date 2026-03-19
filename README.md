@@ -49,6 +49,11 @@
   - Choose between Manual (default) and Autoplay control modes
   - Adjust animation speed (Slow, Medium, Fast, Very Fast)
   - Toggle sound effects on/off
+- **Video Export**: Export algorithm visualizations as MP4 videos
+  - **Orientation choice**: Horizontal (16:9) for YouTube/presentations or Vertical (9:16) for Shorts/Reels/TikTok
+  - **Preview before download**: Watch the generated video before downloading
+  - **HD quality**: 1920×1080 (horizontal) or 1080×1920 (vertical) with smooth animations
+  - **Complexity analysis**: 10-second complexity segment at the end of each video
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and D3 performance graphs
 - **Python Code Examples**: View Python implementations in Monaco editor with syntax highlighting
 - **Internationalization**: Full support for English, French, and Arabic (with RTL layout)
@@ -206,6 +211,7 @@ bayan-flow/
 │   │   ├── ComplexityPanel.jsx
 │   │   ├── ControlPanel.jsx
 │   │   ├── DocumentTitle.jsx
+│   │   ├── ExportProgressModal.jsx
 │   │   ├── FloatingActionButton.jsx
 │   │   ├── Footer.jsx
 │   │   ├── GridCell.jsx
@@ -228,6 +234,13 @@ bayan-flow/
 │   │   ├── useSortingVisualization.js
 │   │   ├── useSwipe.js
 │   │   └── useTheme.js
+│   ├── video/             # Remotion-based video export
+│   │   ├── useVideoExporter.js
+│   │   ├── AlgorithmVideo.jsx
+│   │   ├── SortingScene.jsx
+│   │   ├── PathfindingScene.jsx
+│   │   ├── ComplexityScene.jsx
+│   │   └── constants.js
 │   ├── i18n/              # Internationalization
 │   │   ├── locales/
 │   │   │   ├── en/translation.json
@@ -386,7 +399,7 @@ Translation files are located in `src/i18n/locales/[lang]/translation.json`.
 
 The project includes comprehensive tests for:
 
-- **Algorithm correctness**: Verify sorting produces correct results (922 tests passing)
+- **Algorithm correctness**: Verify sorting produces correct results (925 tests passing)
 - **Edge cases**: Empty arrays, single elements, duplicates
 - **Consistency**: All algorithms produce identical results
 - **Utility functions**: Array generation, grid helpers, sound manager
