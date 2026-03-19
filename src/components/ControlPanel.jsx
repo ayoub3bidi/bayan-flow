@@ -82,154 +82,162 @@ function ControlPanel({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      <div className="flex items-center justify-center gap-2 flex-wrap">
-        {/* Step controls and play/pause/reset container */}
-        {/* Step Backward - Always visible */}
-        <button
-          onClick={() => {
-            soundManager.playUIClick();
-            onStepBackward();
-          }}
-          disabled={isPlaying || currentStep === 0}
-          className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-          title={t('controls.stepBackward')}
-          aria-label={t('controls.stepBackward')}
-        >
-          <BackwardIcon size={20} aria-hidden="true" />
-        </button>
+      <div className="flex items-center justify-between gap-4">
+        {/* Spacer for centering */}
+        <div className="flex-1 min-w-0" />
 
-        {/* Play/Pause Button - Different behavior based on mode */}
-        {mode === 'autoplay' &&
-          (isPlaying ? (
-            <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onPause();
-              }}
-              className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
-              title={t('controls.pause')}
-              aria-label={t('controls.pause')}
-            >
-              <Pause size={20} aria-hidden="true" />
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onPlay();
-              }}
-              disabled={isComplete}
-              className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
-              title={t('controls.play')}
-              aria-label={t('controls.play')}
-            >
-              <Play size={20} aria-hidden="true" />
-            </button>
-          ))}
-
-        {/* Reset Button */}
-        <button
-          onClick={() => {
-            soundManager.playUIClick();
-            onReset();
-          }}
-          disabled={isPlaying}
-          className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-          title={t('controls.reset')}
-          aria-label={t('controls.reset')}
-        >
-          <RotateCcw size={20} aria-hidden="true" />
-        </button>
-
-        {/* Step Forward - Only visible in manual mode */}
-        {mode === 'manual' && (
+        {/* Principal controls - centered: Backward, Reset/Play|Pause, Forward */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Step Backward - Always visible */}
           <button
             onClick={() => {
               soundManager.playUIClick();
-              onStepForward();
+              onStepBackward();
             }}
-            disabled={isPlaying || isComplete}
+            disabled={isPlaying || currentStep === 0}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-            title={t('controls.stepForward')}
-            aria-label={t('controls.stepForward')}
+            title={t('controls.stepBackward')}
+            aria-label={t('controls.stepBackward')}
           >
-            <ForwardIcon size={20} aria-hidden="true" />
+            <BackwardIcon size={20} aria-hidden="true" />
           </button>
-        )}
 
-        {/* Random Start & End Points - Only visible in pathfinding mode */}
-        {algorithmType === 'pathfinding' && (
+          {/* Play/Pause Button - Different behavior based on mode */}
+          {mode === 'autoplay' &&
+            (isPlaying ? (
+              <button
+                onClick={() => {
+                  soundManager.playUIClick();
+                  onPause();
+                }}
+                className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
+                title={t('controls.pause')}
+                aria-label={t('controls.pause')}
+              >
+                <Pause size={20} aria-hidden="true" />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  soundManager.playUIClick();
+                  onPlay();
+                }}
+                disabled={isComplete}
+                className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
+                title={t('controls.play')}
+                aria-label={t('controls.play')}
+              >
+                <Play size={20} aria-hidden="true" />
+              </button>
+            ))}
+
+          {/* Reset Button */}
           <button
             onClick={() => {
-              soundManager.playArrayGenerate();
-              onGenerateArray();
+              soundManager.playUIClick();
+              onReset();
             }}
             disabled={isPlaying}
-            className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
-            title={t('controls.generateArray')}
-            aria-label={t('controls.generateArray')}
+            className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
+            title={t('controls.reset')}
+            aria-label={t('controls.reset')}
           >
-            <Shuffle size={20} aria-hidden="true" />
+            <RotateCcw size={20} aria-hidden="true" />
           </button>
-        )}
 
-        {/* Export Video / Stop Export */}
-        {exportState === 'checking' || exportState === 'rendering' ? (
-          <button
-            onClick={() => {
-              soundManager.playUIClick();
-              onCancelExport?.();
-            }}
-            className={`${buttonBaseClasses} bg-red-500 hover:bg-red-600 text-white`}
-            title={t('controls.stopExport')}
-            aria-label={t('controls.stopExport')}
-          >
-            <Square size={20} aria-hidden="true" />
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              soundManager.playUIClick();
-              onExportVideo?.();
-            }}
-            disabled={totalSteps === 0}
-            className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed`}
-            title={
-              canRenderOnWeb === false
-                ? t('controls.browserNotSupported')
-                : exportState === 'done'
-                  ? t('controls.exportDone')
-                  : exportState === 'error'
-                    ? t('controls.exportError')
-                    : t('controls.exportVideo')
-            }
-            aria-label={t('controls.exportVideo')}
-          >
-            <Video size={20} aria-hidden="true" />
-          </button>
-        )}
-
-        {/* Full Screen Toggle */}
-        <button
-          onClick={onToggleFullScreen}
-          className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white`}
-          title={
-            isFullScreen
-              ? t('controls.exitFullScreen')
-              : t('controls.goFullScreen')
-          }
-          aria-label={
-            isFullScreen
-              ? t('controls.exitFullScreen')
-              : t('controls.goFullScreen')
-          }
-        >
-          {isFullScreen ? (
-            <Minimize size={20} aria-hidden="true" />
-          ) : (
-            <Maximize size={20} aria-hidden="true" />
+          {/* Step Forward - Only visible in manual mode */}
+          {mode === 'manual' && (
+            <button
+              onClick={() => {
+                soundManager.playUIClick();
+                onStepForward();
+              }}
+              disabled={isPlaying || isComplete}
+              className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
+              title={t('controls.stepForward')}
+              aria-label={t('controls.stepForward')}
+            >
+              <ForwardIcon size={20} aria-hidden="true" />
+            </button>
           )}
-        </button>
+        </div>
+
+        {/* Feature buttons - aligned right */}
+        <div className="flex flex-1 justify-end items-center gap-2 min-w-0">
+          {/* Random Start & End Points - Only visible in pathfinding mode */}
+          {algorithmType === 'pathfinding' && (
+            <button
+              onClick={() => {
+                soundManager.playArrayGenerate();
+                onGenerateArray();
+              }}
+              disabled={isPlaying}
+              className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
+              title={t('controls.generateArray')}
+              aria-label={t('controls.generateArray')}
+            >
+              <Shuffle size={20} aria-hidden="true" />
+            </button>
+          )}
+
+          {/* Export Video / Stop Export */}
+          {exportState === 'checking' || exportState === 'rendering' ? (
+            <button
+              onClick={() => {
+                soundManager.playUIClick();
+                onCancelExport?.();
+              }}
+              className={`${buttonBaseClasses} bg-red-500 hover:bg-red-600 text-white`}
+              title={t('controls.stopExport')}
+              aria-label={t('controls.stopExport')}
+            >
+              <Square size={20} aria-hidden="true" />
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                soundManager.playUIClick();
+                onExportVideo?.();
+              }}
+              disabled={totalSteps === 0}
+              className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed`}
+              title={
+                canRenderOnWeb === false
+                  ? t('controls.browserNotSupported')
+                  : exportState === 'done'
+                    ? t('controls.exportDone')
+                    : exportState === 'error'
+                      ? t('controls.exportError')
+                      : t('controls.exportVideo')
+              }
+              aria-label={t('controls.exportVideo')}
+            >
+              <Video size={20} aria-hidden="true" />
+            </button>
+          )}
+
+          {/* Full Screen Toggle */}
+          <button
+            onClick={onToggleFullScreen}
+            className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white`}
+            title={
+              isFullScreen
+                ? t('controls.exitFullScreen')
+                : t('controls.goFullScreen')
+            }
+            aria-label={
+              isFullScreen
+                ? t('controls.exitFullScreen')
+                : t('controls.goFullScreen')
+            }
+          >
+            {isFullScreen ? (
+              <Minimize size={20} aria-hidden="true" />
+            ) : (
+              <Maximize size={20} aria-hidden="true" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Progress Bar */}
