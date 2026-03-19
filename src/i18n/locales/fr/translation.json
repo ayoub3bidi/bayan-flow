@@ -637,6 +637,14 @@
       "fullscreen": {
         "title": "Plein Écran",
         "description": "Mode plein écran immersif parfait pour les présentations et l'enseignement en classe."
+      },
+      "insight": {
+        "title": "Aperçu des Algorithmes",
+        "description": "Explorez des explications détaillées, des cas d'usage et les propriétés clés de chaque algorithme dans un panneau dédié."
+      },
+      "videoExport": {
+        "title": "Export Vidéo",
+        "description": "Exportez vos visualisations en vidéos MP4 HD. Choisissez le format horizontal (YouTube) ou vertical (Shorts, Reels) avec aperçu avant téléchargement."
       }
     },
     "roadmapCTA": {

@@ -636,6 +636,14 @@
       "fullscreen": {
         "title": "Full Screen",
         "description": "Immersive full-screen mode perfect for presentations and classroom teaching."
+      },
+      "insight": {
+        "title": "Algorithm Insight",
+        "description": "Explore detailed explanations, use cases, and key properties for each algorithm in a dedicated panel."
+      },
+      "videoExport": {
+        "title": "Video Export",
+        "description": "Export your visualizations as HD MP4 videos. Choose horizontal (YouTube) or vertical (Shorts, Reels) format with preview before download."
       }
     },
     "roadmapCTA": {
