@@ -10,6 +10,8 @@ import {
   VIDEO_FPS,
   VIDEO_WIDTH,
   VIDEO_HEIGHT,
+  VIDEO_WIDTH_VERTICAL,
+  VIDEO_HEIGHT_VERTICAL,
   VIDEO_EXPORT_FRAMES_PER_STEP,
   COMPLEXITY_DURATION_FRAMES,
 } from './constants.js';
@@ -19,10 +21,10 @@ const COMPOSITION_ID = 'AlgorithmVideo';
 
 /**
  * Hook for exporting algorithm visualization as MP4 via @remotion/web-renderer.
- * State: idle | checking | rendering | preview | done | error
+ * State: idle | orientation | checking | rendering | preview | done | error
  * Dynamically imports @remotion/web-renderer on first export.
  *
- * @returns {{ exportVideo: Function, exportState: string, exportProgress: number, exportBlobUrl: string | null, exportFileName: string, cancelExport: Function, closePreview: Function, downloadVideo: Function, canRenderOnWeb: boolean | null }}
+ * @returns {{ beginExportFlow: Function, exportVideo: Function, exportState: string, exportProgress: number, exportBlobUrl: string | null, exportFileName: string, cancelExport: Function, closePreview: Function, downloadVideo: Function, canRenderOnWeb: boolean | null }}
  */
 export function useVideoExporter() {
   const [exportState, setExportState] = useState('idle');
@@ -37,6 +39,10 @@ export function useVideoExporter() {
     if (abortRef.current) {
       abortRef.current.abort();
     }
+  }, []);
+
+  const beginExportFlow = useCallback(() => {
+    setExportState('orientation');
   }, []);
 
   const closePreview = useCallback(() => {
@@ -67,11 +73,16 @@ export function useVideoExporter() {
       algorithmKey,
       speed: _speed,
       gridSize = 15,
+      orientation = 'horizontal',
     }) => {
       if (!steps?.length) {
         setExportState('error');
         return;
       }
+
+      const isVertical = orientation === 'vertical';
+      const width = isVertical ? VIDEO_WIDTH_VERTICAL : VIDEO_WIDTH;
+      const height = isVertical ? VIDEO_HEIGHT_VERTICAL : VIDEO_HEIGHT;
 
       const framesPerStep = VIDEO_EXPORT_FRAMES_PER_STEP;
       const mainDurationInFrames = steps.length * framesPerStep;
@@ -96,8 +107,8 @@ export function useVideoExporter() {
           await import('@remotion/web-renderer');
 
         const check = await canRenderMediaOnWeb({
-          width: VIDEO_WIDTH,
-          height: VIDEO_HEIGHT,
+          width,
+          height,
           container: 'mp4',
           videoCodec: 'h264',
           muted: true,
@@ -120,8 +131,8 @@ export function useVideoExporter() {
             component: AlgorithmVideo,
             durationInFrames,
             fps: VIDEO_FPS,
-            width: VIDEO_WIDTH,
-            height: VIDEO_HEIGHT,
+            width,
+            height,
           },
           inputProps,
           muted: true,
@@ -160,6 +171,7 @@ export function useVideoExporter() {
   );
 
   return {
+    beginExportFlow,
     exportVideo,
     exportState,
     exportProgress,

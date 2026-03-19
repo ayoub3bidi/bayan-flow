@@ -67,6 +67,7 @@ function App() {
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
   const {
+    beginExportFlow,
     exportVideo,
     exportState,
     exportProgress,
@@ -118,6 +119,11 @@ function App() {
   };
 
   const handleExportVideo = () => {
+    if (visualization.totalSteps === 0) return;
+    beginExportFlow();
+  };
+
+  const handleOrientationSelected = orientation => {
     exportVideo({
       steps: visualization.steps,
       algorithmType,
@@ -125,6 +131,7 @@ function App() {
       algorithmKey: activeAlgorithmKey,
       speed,
       gridSize,
+      orientation,
     });
   };
 
@@ -382,25 +389,29 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Export progress modal */}
+      {/* Export modal: orientation selection → progress → preview */}
       <ExportProgressModal
         open={
+          exportState === 'orientation' ||
           exportState === 'checking' ||
           exportState === 'rendering' ||
           exportState === 'preview'
         }
         progress={exportProgress}
         phase={
-          exportState === 'preview'
-            ? 'preview'
-            : exportState === 'checking'
-              ? 'checking'
-              : 'rendering'
+          exportState === 'orientation'
+            ? 'orientation'
+            : exportState === 'preview'
+              ? 'preview'
+              : exportState === 'checking'
+                ? 'checking'
+                : 'rendering'
         }
         blobUrl={exportBlobUrl}
         onStop={cancelExport}
         onClose={closePreview}
         onDownload={downloadVideo}
+        onOrientationSelect={handleOrientationSelected}
       />
 
       {/* Python Code Panel - Always available */}

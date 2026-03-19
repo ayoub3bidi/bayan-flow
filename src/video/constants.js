@@ -9,6 +9,10 @@ import { ANIMATION_SPEEDS } from '../constants/index.js';
 export const VIDEO_FPS = 30;
 export const VIDEO_WIDTH = 1920;
 export const VIDEO_HEIGHT = 1080;
+
+/** Vertical (9:16) dimensions for shorts/reels */
+export const VIDEO_WIDTH_VERTICAL = 1080;
+export const VIDEO_HEIGHT_VERTICAL = 1920;
 export const DEFAULT_FRAMES_PER_STEP = 6;
 
 /**

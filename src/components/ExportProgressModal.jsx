@@ -5,20 +5,30 @@
  */
 
 import { useTranslation } from 'react-i18next';
-import { Loader2, Square, Download, X } from 'lucide-react';
+import {
+  Loader2,
+  Square,
+  Download,
+  X,
+  RectangleHorizontal,
+  RectangleVertical,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
- * Modal shown during video export with progress bar and Stop button.
- * In preview phase, shows video player with Download and Close buttons.
+ * Modal shown during video export.
+ * Phase 'orientation': two big options (Horizontal / Vertical) to choose format.
+ * Phase 'checking' | 'rendering': progress bar and Stop button.
+ * Phase 'preview': video player with Download and Close.
  *
  * @param {boolean} open - Whether the modal is visible
  * @param {number} progress - 0–1 progress
- * @param {string} phase - 'checking' | 'rendering' | 'preview'
+ * @param {string} phase - 'orientation' | 'checking' | 'rendering' | 'preview'
  * @param {string | null} blobUrl - Object URL for video preview (when phase === 'preview')
  * @param {Function} onStop - Called when user clicks Stop
- * @param {Function} onClose - Called when user closes preview
+ * @param {Function} onClose - Called when user closes preview or orientation
  * @param {Function} onDownload - Called when user clicks Download
+ * @param {Function} onOrientationSelect - Called when user selects orientation (horizontal | vertical)
  */
 function ExportProgressModal({
   open,
@@ -28,10 +38,12 @@ function ExportProgressModal({
   onStop,
   onClose,
   onDownload,
+  onOrientationSelect,
 }) {
   const { t } = useTranslation();
   const percent = Math.round(progress * 100);
   const isPreview = phase === 'preview';
+  const isOrientation = phase === 'orientation';
 
   return (
     <AnimatePresence>
@@ -48,13 +60,13 @@ function ExportProgressModal({
         >
           <motion.div
             className={`relative bg-surface rounded-xl shadow-2xl w-full p-6 ${
-              isPreview ? 'max-w-2xl' : 'max-w-md'
+              isPreview ? 'max-w-2xl' : isOrientation ? 'max-w-xl' : 'max-w-md'
             }`}
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
           >
-            {isPreview && (
+            {(isPreview || isOrientation) && (
               <button
                 type="button"
                 onClick={onClose}
@@ -70,7 +82,9 @@ function ExportProgressModal({
             >
               {isPreview
                 ? t('controls.exportPreview')
-                : t('controls.exportingTitle')}
+                : isOrientation
+                  ? t('controls.exportOrientationTitle')
+                  : t('controls.exportingTitle')}
             </h2>
             <p
               id="export-progress-desc"
@@ -78,12 +92,55 @@ function ExportProgressModal({
             >
               {isPreview
                 ? t('controls.exportPreviewDesc')
-                : phase === 'checking'
-                  ? t('controls.exportingChecking')
-                  : t('controls.exportingRendering')}
+                : isOrientation
+                  ? t('controls.exportOrientationDesc')
+                  : phase === 'checking'
+                    ? t('controls.exportingChecking')
+                    : t('controls.exportingRendering')}
             </p>
 
-            {isPreview ? (
+            {isOrientation ? (
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => onOrientationSelect?.('horizontal')}
+                  className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group"
+                  aria-label={t('controls.exportOrientationHorizontal')}
+                >
+                  <div className="w-20 h-12 rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
+                    <RectangleHorizontal
+                      size={28}
+                      className="text-text-primary group-hover:text-teal-600"
+                    />
+                  </div>
+                  <span className="font-semibold text-text-primary">
+                    {t('controls.exportOrientationHorizontal')}
+                  </span>
+                  <span className="text-xs text-text-secondary text-center">
+                    {t('controls.exportOrientationHorizontalDesc')}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onOrientationSelect?.('vertical')}
+                  className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group"
+                  aria-label={t('controls.exportOrientationVertical')}
+                >
+                  <div className="w-12 h-20 rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
+                    <RectangleVertical
+                      size={28}
+                      className="text-text-primary group-hover:text-teal-600"
+                    />
+                  </div>
+                  <span className="font-semibold text-text-primary">
+                    {t('controls.exportOrientationVertical')}
+                  </span>
+                  <span className="text-xs text-text-secondary text-center">
+                    {t('controls.exportOrientationVerticalDesc')}
+                  </span>
+                </button>
+              </div>
+            ) : isPreview ? (
               <div className="space-y-4">
                 <div className="relative w-full rounded-lg overflow-hidden bg-black aspect-video">
                   <video
@@ -106,7 +163,7 @@ function ExportProgressModal({
                   </button>
                 </div>
               </div>
-            ) : (
+            ) : phase === 'checking' || phase === 'rendering' ? (
               <>
                 <div className="mb-4">
                   <div className="flex justify-between text-sm text-text-secondary mb-2">
@@ -152,7 +209,7 @@ function ExportProgressModal({
                   </button>
                 </div>
               </>
-            )}
+            ) : null}
           </motion.div>
         </motion.div>
       )}
