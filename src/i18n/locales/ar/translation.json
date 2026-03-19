@@ -23,6 +23,7 @@
     "time": "الوقت",
     "soundOn": "الصوت مفعّل",
     "soundOff": "الصوت متوقف",
+    "experimental": "تجريبي",
     "autoplayDescription": "تشغيل الرسوم المتحركة تلقائياً بالسرعة المحددة",
     "manualDescription": "استخدم عناصر التحكم للتقدم يدوياً",
     "autoplayOnly": "فقط"

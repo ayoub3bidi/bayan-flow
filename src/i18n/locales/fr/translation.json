@@ -23,6 +23,7 @@
     "time": "Temps",
     "soundOn": "Son Activé",
     "soundOff": "Son Désactivé",
+    "experimental": "Expérimental",
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
     "autoplayOnly": "uniquement"

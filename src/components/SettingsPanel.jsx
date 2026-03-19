@@ -220,7 +220,7 @@ function SettingsPanel({
             {t('settings.sound')}
           </label>
           <span className="px-2.5 py-1 bg-amber-500/10 text-amber-500 text-xs font-semibold rounded-full border border-amber-500/20 whitespace-nowrap shadow-sm">
-            Experimental
+            {t('settings.experimental')}
           </span>
         </div>
         <button

@@ -23,6 +23,7 @@
     "time": "Time",
     "soundOn": "Sound On",
     "soundOff": "Sound Off",
+    "experimental": "Experimental",
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
     "autoplayOnly": "only"
