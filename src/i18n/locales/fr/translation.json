@@ -1,7 +1,8 @@
 {
   "common": {
     "back": "Retour",
-    "backToHome": "Retour à l'Accueil"
+    "backToHome": "Retour à l'Accueil",
+    "save": "Enregistrer"
   },
   "header": {
     "title": "Bayan Flow",
@@ -209,7 +210,21 @@
     "loading_runtime": "Chargement du runtime Python...",
     "timeout": "Délai dépassé",
     "completed": "Terminé",
-    "error": "Erreur"
+    "error": "Erreur",
+    "test_cases": "Cas de test",
+    "tests_passed": "{{passed}}/{{total}} réussis",
+    "run_tests": "Exécuter les tests",
+    "no_test_cases": "Aucun cas de test pour cet algorithme.",
+    "edit_test_case": "Modifier le cas de test",
+    "delete_test_case": "Supprimer le cas de test",
+    "test_case_name": "Nom du cas de test",
+    "test_input": "Entrée (expression Python)",
+    "test_expected": "Sortie attendue (expression Python)",
+    "add_test_case": "Ajouter un cas de test",
+    "input_label": "Entrée :",
+    "expected_label": "Attendu :",
+    "error_label": "Erreur :",
+    "actual_label": "Obtenu :"
   },
   "insight_panel": {
     "title": "Aperçu de l'Algorithme",

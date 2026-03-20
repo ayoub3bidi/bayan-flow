@@ -1,7 +1,8 @@
 {
   "common": {
     "back": "عودة",
-    "backToHome": "عودة إلى الرئيسية"
+    "backToHome": "عودة إلى الرئيسية",
+    "save": "حفظ"
   },
   "header": {
     "title": "بيان Flow",
@@ -209,7 +210,21 @@
     "loading_runtime": "جاري تحميل بيئة بايثون...",
     "timeout": "انتهت المهلة",
     "completed": "مكتمل",
-    "error": "خطأ"
+    "error": "خطأ",
+    "test_cases": "حالات الاختبار",
+    "tests_passed": "{{passed}}/{{total}} نجح",
+    "run_tests": "تشغيل الاختبارات",
+    "no_test_cases": "لا توجد حالات اختبار لهذه الخوارزمية.",
+    "edit_test_case": "تعديل حالة الاختبار",
+    "delete_test_case": "حذف حالة الاختبار",
+    "test_case_name": "اسم حالة الاختبار",
+    "test_input": "المدخل (تعبير بايثون)",
+    "test_expected": "المخرجات المتوقعة (تعبير بايثون)",
+    "add_test_case": "إضافة حالة اختبار",
+    "input_label": "المدخل:",
+    "expected_label": "المتوقع:",
+    "error_label": "الخطأ:",
+    "actual_label": "الفعلي:"
   },
   "insight_panel": {
     "title": "نظرة على الخوارزمية",

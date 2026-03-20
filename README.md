@@ -55,7 +55,7 @@
   - **HD quality**: 1920×1080 (horizontal) or 1080×1920 (vertical) with smooth animations
   - **Complexity analysis**: 10-second complexity segment at the end of each video
 - **Algorithm Analysis**: Interactive complexity panel with Big-O notation and D3 performance graphs
-- **Python Code Examples**: View Python implementations in Monaco editor with syntax highlighting
+- **Python Code Panel**: Edit and run Python implementations in-browser (Monaco editor with syntax highlighting). Execute code via Run button or Ctrl+Enter. Output tab shows stdout/stderr. Test Cases tab validates against pre-defined and custom test cases (LeetCode-style pass/fail). Resizable panels. Pyodide runs Python client-side in a Web Worker.
 - **Internationalization**: Full support for English, French, and Arabic (with RTL layout)
 - **Theme System**: Light/dark mode with system preference detection and persistence
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
@@ -172,19 +172,12 @@ bayan-flow/
 │   │   │   ├── jumpPointSearch.js, bellmanFord.js, idaStar.js, dStarLite.js
 │   │   │   ├── index.js
 │   │   │   └── pathfinding.test.js
-│   │   ├── python/        # Python code examples
+│   │   ├── python/        # Python implementations + test cases
 │   │   │   ├── bubble_sort.py
 │   │   │   ├── quick_sort.py
 │   │   │   ├── merge_sort.py
-│   │   │   ├── counting_sort.py
-│   │   │   ├── bucket_sort.py
-│   │   │   ├── cycle_sort.py
-│   │   │   ├── comb_sort.py
-│   │   │   ├── tim_sort.py
-│   │   │   ├── bogo_sort.py
-│   │   │   ├── bfs.py
-│   │   │   ├── dijkstra.py
-│   │   │   ├── astar.py
+│   │   │   ├── (… all 23 .py files)
+│   │   │   ├── testCases.js   # Pre-defined test cases per algorithm
 │   │   │   └── index.js
 │   │   └── index.js
 │   ├── components/        # React components
@@ -218,8 +211,10 @@ bayan-flow/
 │   │   ├── GridVisualizer.jsx
 │   │   ├── Header.jsx
 │   │   ├── LanguageSwitcher.jsx
+│   │   ├── OutputConsole.jsx   # Output + Test Cases tabs
 │   │   ├── PythonCodePanel.jsx
 │   │   ├── SettingsPanel.jsx
+│   │   ├── TestCasesPanel.jsx
 │   │   ├── SwipeTutorial.jsx
 │   │   └── ThemeToggle.jsx
 │   ├── config/            # useAlgorithmConfig, useSettingsConfig
@@ -231,6 +226,7 @@ bayan-flow/
 │   ├── hooks/             # Custom React hooks
 │   │   ├── useFullScreen.js
 │   │   ├── usePathfindingVisualization.js
+│   │   ├── usePythonExecution.js
 │   │   ├── useSortingVisualization.js
 │   │   ├── useSwipe.js
 │   │   └── useTheme.js
@@ -247,6 +243,8 @@ bayan-flow/
 │   │   │   ├── fr/translation.json
 │   │   │   └── ar/translation.json
 │   │   └── index.js
+│   ├── workers/           # Web Workers
+│   │   └── pyodide.worker.js  # Pyodide-based Python execution
 │   ├── pages/             # Route pages
 │   │   ├── LandingPage.jsx
 │   │   ├── VisualizerApp.jsx
@@ -324,7 +322,7 @@ The `useSortingVisualization` and `usePathfindingVisualization` custom hooks man
 2. Export in `src/algorithms/sorting/index.js` and `src/algorithms/index.js`
 3. Add to `useAlgorithmConfig` in `src/config/algorithmConfig.js` (sortingAlgorithms and sortingGroups)
 4. Add complexity data in `src/constants/index.js`
-5. Add Python implementation in `src/algorithms/python/[algorithm].py`
+5. Add Python implementation in `src/algorithms/python/[algorithm].py` and test cases in `src/algorithms/python/testCases.js`
 6. Write tests in `src/algorithms/sorting/algorithms.test.js`
 7. Add translations in all language files
 8. Add algorithm step constants in `src/utils/algorithmTranslations.js`
@@ -428,7 +426,7 @@ Bayan Flow is built with accessibility in mind:
 
 ## Performance
 
-- **Code Splitting**: Lazy loading for Python code panel and complexity panel
+- **Code Splitting**: Lazy loading for Python code panel and complexity panel; Pyodide loaded on first run
 - **Optimized Animations**: GPU-accelerated transforms
 - **Efficient Re-renders**: React.memo, useMemo, useCallback
 - **Asset Optimization**: Vite build optimization

@@ -36,10 +36,15 @@ describe('usePythonExecution', () => {
     expect(result.current.status).toBe('idle');
     expect(result.current.output).toBe('');
     expect(result.current.error).toBeNull();
+    expect(result.current.testResults).toEqual([]);
+    expect(result.current.testStatus).toBe('idle');
+    expect(result.current.testError).toBeNull();
     expect(result.current.isRuntimeLoaded).toBe(false);
     expect(typeof result.current.runCode).toBe('function');
+    expect(typeof result.current.runTests).toBe('function');
     expect(typeof result.current.cancelExecution).toBe('function');
     expect(typeof result.current.clearOutput).toBe('function');
+    expect(typeof result.current.clearTestResults).toBe('function');
   });
 
   it('should create worker and post init+run on runCode', () => {
@@ -105,5 +110,38 @@ describe('usePythonExecution', () => {
     unmount();
 
     expect(mockWorker.terminate).toHaveBeenCalled();
+  });
+
+  it('should post run-tests message when runTests is called', () => {
+    const { result } = renderHook(() => usePythonExecution());
+    const testCases = [
+      { id: 'tc1', name: 'Test', input: '[1]', expected: '[1]' },
+    ];
+
+    act(() => {
+      result.current.runTests('code', 'func', testCases);
+    });
+
+    expect(Worker).toHaveBeenCalled();
+    expect(mockWorker.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'run-tests',
+        code: 'code',
+        functionName: 'func',
+        testCases,
+      })
+    );
+  });
+
+  it('should clear test results when clearTestResults is called', () => {
+    const { result } = renderHook(() => usePythonExecution());
+
+    act(() => {
+      result.current.clearTestResults();
+    });
+
+    expect(result.current.testResults).toEqual([]);
+    expect(result.current.testStatus).toBe('idle');
+    expect(result.current.testError).toBeNull();
   });
 });

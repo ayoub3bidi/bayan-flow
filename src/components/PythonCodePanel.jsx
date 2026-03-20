@@ -4,17 +4,22 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getPythonCode, getAlgorithmDisplayName } from '../algorithms/python';
+import {
+  getPythonCode,
+  getAlgorithmDisplayName,
+  getTestCases,
+} from '../algorithms/python';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
 import { usePythonExecution } from '../hooks/usePythonExecution';
 import OutputConsole from './OutputConsole';
 
 const STORAGE_KEY_OUTPUT_PERCENT = 'python-panel-output-percent';
+const getCustomTestsStorageKey = algo => `python-test-cases-${algo}`;
 const DEFAULT_OUTPUT_PERCENT = 35;
 const MIN_OUTPUT_PERCENT = 15;
 const MAX_OUTPUT_PERCENT = 70;
@@ -171,8 +176,121 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
     };
   }, [isResizing]);
 
-  const { status, output, error, runCode, cancelExecution, clearOutput } =
-    usePythonExecution({ timeout: 10_000 });
+  const {
+    status,
+    output,
+    error,
+    runCode,
+    runTests,
+    cancelExecution,
+    clearOutput,
+    clearTestResults,
+    testResults,
+    testStatus,
+    testError,
+  } = usePythonExecution({ timeout: 10_000 });
+
+  const predefined = getTestCases(algorithm);
+  const [customTests, setCustomTests] = useState(() => {
+    try {
+      const key = getCustomTestsStorageKey(algorithm);
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    try {
+      const key = getCustomTestsStorageKey(algorithm);
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setCustomTests(Array.isArray(parsed) ? parsed : []);
+      } else {
+        setCustomTests([]);
+      }
+    } catch {
+      setCustomTests([]);
+    }
+  }, [algorithm]);
+
+  const testCases = useMemo(
+    () => [
+      ...(predefined?.testCases?.map(tc => ({ ...tc, isCustom: false })) ?? []),
+      ...customTests.map(tc => ({ ...tc, isCustom: true })),
+    ],
+    [predefined?.testCases, customTests]
+  );
+
+  const handleAddTestCase = useCallback(
+    (name, input, expected) => {
+      const id = `custom-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const newTest = { id, name, input, expected };
+      setCustomTests(prev => {
+        const next = [...prev, newTest];
+        try {
+          localStorage.setItem(
+            getCustomTestsStorageKey(algorithm),
+            JSON.stringify(next)
+          );
+        } catch {
+          // ignore
+        }
+        return next;
+      });
+    },
+    [algorithm]
+  );
+
+  const handleEditTestCase = useCallback(
+    (id, name, input, expected) => {
+      setCustomTests(prev => {
+        const next = prev.map(tc =>
+          tc.id === id ? { ...tc, name, input, expected } : tc
+        );
+        try {
+          localStorage.setItem(
+            getCustomTestsStorageKey(algorithm),
+            JSON.stringify(next)
+          );
+        } catch {
+          // ignore
+        }
+        return next;
+      });
+    },
+    [algorithm]
+  );
+
+  const handleDeleteTestCase = useCallback(
+    id => {
+      setCustomTests(prev => {
+        const next = prev.filter(tc => tc.id !== id);
+        try {
+          localStorage.setItem(
+            getCustomTestsStorageKey(algorithm),
+            JSON.stringify(next)
+          );
+        } catch {
+          // ignore
+        }
+        return next;
+      });
+    },
+    [algorithm]
+  );
+
+  const handleRunTests = useCallback(() => {
+    if (!predefined?.functionName || testCases.length === 0) return;
+    runTests(code, predefined.functionName, testCases);
+    setIsOutputExpanded(true);
+  }, [code, predefined, testCases, runTests]);
 
   useEffect(() => {
     setCode(pythonCode);
@@ -180,8 +298,9 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
 
   useEffect(() => {
     clearOutput();
+    clearTestResults();
     return () => cancelExecution();
-  }, [algorithm, cancelExecution, clearOutput]);
+  }, [algorithm, cancelExecution, clearOutput, clearTestResults]);
 
   const handleRun = useCallback(() => {
     if (status === 'running') return;
@@ -483,6 +602,15 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                     onClear={clearOutput}
                     isExpanded={isOutputExpanded}
                     onToggleExpand={() => setIsOutputExpanded(prev => !prev)}
+                    testCases={testCases}
+                    testResults={testResults}
+                    testStatus={testStatus}
+                    testError={testError}
+                    onRunTests={handleRunTests}
+                    onAddTestCase={handleAddTestCase}
+                    onEditTestCase={handleEditTestCase}
+                    onDeleteTestCase={handleDeleteTestCase}
+                    onClearTestResults={clearTestResults}
                   />
                 </div>
               </div>

@@ -17,8 +17,12 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
   const [status, setStatus] = useState('idle');
   const [output, setOutput] = useState('');
   const [error, setError] = useState(null);
+  const [testResults, setTestResults] = useState([]);
+  const [testStatus, setTestStatus] = useState('idle');
+  const [testError, setTestError] = useState(null);
   const workerRef = useRef(null);
   const timeoutRef = useRef(null);
+  const testTimeoutRef = useRef(null);
 
   const appendOutput = useCallback(text => {
     setOutput(prev => {
@@ -36,7 +40,7 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     );
 
     worker.onmessage = e => {
-      const { type, text, error: errText } = e.data || {};
+      const { type, text, error: errText, results } = e.data || {};
       switch (type) {
         case 'loading':
           setStatus('loading');
@@ -61,6 +65,15 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
           setError(errText ?? 'Unknown error');
           setStatus('error');
           break;
+        case 'test-results': {
+          clearTimeout(testTimeoutRef.current);
+          testTimeoutRef.current = null;
+          const testErr = e.data?.error ?? null;
+          setTestError(testErr);
+          setTestResults(results ?? []);
+          setTestStatus(testErr ? 'error' : 'success');
+          break;
+        }
         default:
           break;
       }
@@ -108,9 +121,14 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
+    if (testTimeoutRef.current) {
+      clearTimeout(testTimeoutRef.current);
+      testTimeoutRef.current = null;
+    }
     workerRef.current?.terminate();
     workerRef.current = null;
     setStatus('idle');
+    setTestStatus('idle');
   }, []);
 
   const clearOutput = useCallback(() => {
@@ -118,10 +136,51 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     setError(null);
   }, []);
 
+  const runTests = useCallback(
+    (code, functionName, testCases) => {
+      setTestResults([]);
+      setTestError(null);
+      setTestStatus('running');
+
+      if (!workerRef.current) {
+        workerRef.current = createWorker();
+        workerRef.current.postMessage({
+          type: 'init',
+          version: PYODIDE_VERSION,
+        });
+      }
+
+      workerRef.current.postMessage({
+        type: 'run-tests',
+        code,
+        functionName,
+        testCases,
+      });
+
+      testTimeoutRef.current = setTimeout(() => {
+        workerRef.current?.terminate();
+        workerRef.current = null;
+        setTestStatus('error');
+        setTestError(`Tests timed out after ${timeout / 1000}s`);
+        testTimeoutRef.current = null;
+      }, timeout);
+    },
+    [createWorker, timeout]
+  );
+
+  const clearTestResults = useCallback(() => {
+    setTestResults([]);
+    setTestStatus('idle');
+    setTestError(null);
+  }, []);
+
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+      }
+      if (testTimeoutRef.current) {
+        clearTimeout(testTimeoutRef.current);
       }
       workerRef.current?.terminate();
     };
@@ -131,9 +190,14 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     status,
     output,
     error,
+    testResults,
+    testStatus,
+    testError,
     isRuntimeLoaded: status !== 'idle' && status !== 'loading',
     runCode,
+    runTests,
     cancelExecution,
     clearOutput,
+    clearTestResults,
   };
 }

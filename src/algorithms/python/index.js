@@ -87,3 +87,5 @@ export function getPythonCode(algorithmName) {
 export function getAlgorithmDisplayName(algorithmName) {
   return algorithmDisplayNames[algorithmName] || algorithmName;
 }
+
+export { getTestCases } from './testCases';

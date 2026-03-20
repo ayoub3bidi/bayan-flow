@@ -499,6 +499,14 @@ export const pythonAlgorithms = {
 };
 ```
 
+Add test cases in `src/algorithms/python/testCases.js`:
+```javascript
+insertionSort: {
+  functionName: 'insertion_sort',
+  testCases: SORTING_TEST_CASES,  // or custom cases
+},
+```
+
 **Step 6: Add Translations**
 
 In all language files (`src/i18n/locales/*/translation.json`):
@@ -804,6 +812,8 @@ const PythonCodePanel = lazy(() =>
 </Suspense>
 ```
 
+Pyodide is lazy-loaded on first run; `usePythonExecution` manages execution and test validation.
+
 ### 3. Code Splitting
 ```javascript
 // Automatic code splitting with React Router
@@ -940,7 +950,7 @@ playNewSound() {
 - [ ] Tests for new features (aim for 100% coverage)
 - [ ] Documentation updated
 - [ ] Algorithm step constants added for new algorithms
-- [ ] Python implementations included
+- [ ] Python implementations and test cases included
 - [ ] Sound integration considered
 
 ## Conclusion

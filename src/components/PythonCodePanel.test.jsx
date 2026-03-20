@@ -45,9 +45,14 @@ vi.mock('../hooks/usePythonExecution', () => ({
     status: 'idle',
     output: '',
     error: null,
+    testResults: [],
+    testStatus: 'idle',
+    testError: null,
     runCode: vi.fn(),
+    runTests: vi.fn(),
     cancelExecution: vi.fn(),
     clearOutput: vi.fn(),
+    clearTestResults: vi.fn(),
   })),
 }));
 
@@ -74,6 +79,17 @@ vi.mock('../algorithms/python', () => ({
   getAlgorithmDisplayName: vi.fn(algorithm => {
     if (algorithm === 'bubbleSort') return 'Bubble Sort';
     return 'Unknown Algorithm';
+  }),
+  getTestCases: vi.fn(algorithm => {
+    if (algorithm === 'bubbleSort') {
+      return {
+        functionName: 'bubble_sort',
+        testCases: [
+          { id: 'tc1', name: 'Basic', input: '[1,2,3]', expected: '[1,2,3]' },
+        ],
+      };
+    }
+    return null;
   }),
 }));
 

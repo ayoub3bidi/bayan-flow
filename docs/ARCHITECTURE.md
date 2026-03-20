@@ -83,7 +83,7 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 - Main algorithm visualization interface
 - Sorting and pathfinding modes
 - Full control panel and settings
-- Python code viewer
+- Python code panel (edit, run, test cases)
 - Complexity analysis
 
 **Key State:**
@@ -129,7 +129,7 @@ VisualizerApp
 ├── ControlPanel
 ├── FloatingActionButton
 ├── ExportProgressModal (orientation selection, progress, preview)
-├── PythonCodePanel (lazy)
+├── PythonCodePanel (lazy; Monaco editor, Output + Test Cases tabs)
 ├── ComplexityPanel (lazy)
 └── Footer
 
@@ -193,12 +193,14 @@ Roadmap
 - **useAlgorithmConfig**: Returns sortingAlgorithms, pathfindingAlgorithms, sortingGroups, pathfindingGroups (i18n-aware)
 - **useSettingsConfig**: Returns gridSizeOptions, speedOptions from constants
 
-#### **PythonCodePanel** (Code Viewer)
-- Monaco editor integration
-- Syntax highlighting
-- Theme-aware (light/dark)
+#### **PythonCodePanel** (Interactive Code & Testing)
+- Monaco editor: editable Python code, syntax highlighting, theme-aware (light/dark)
+- Run/Rerun button; Ctrl+Enter to execute
+- Output tab: stdout/stderr from Pyodide execution
+- Test Cases tab: pre-defined + custom test cases, LeetCode-style pass/fail, add/edit/delete custom cases (persisted in localStorage)
+- Resizable editor/output split
 - Side panel (desktop) / Bottom sheet (mobile)
-- Lazy loaded for performance
+- Lazy loaded; Pyodide runs in Web Worker (`pyodide.worker.js`)
 
 #### **ExportProgressModal** (Video Export)
 - Orientation selection: Horizontal (16:9) or Vertical (9:16)
@@ -728,6 +730,16 @@ export function useSortingVisualization(initialArray, speed, mode) {
 3. **Cancellable**: Can interrupt animation mid-play
 4. **Bidirectional**: Can step forward and backward
 5. **Mode-Aware**: Different behavior for manual vs autoplay
+
+#### **usePythonExecution**
+
+Manages Python execution via Pyodide in a Web Worker:
+- `runCode(code)` – Execute Python; lazy-loads Pyodide on first run
+- `runTests(code, functionName, testCases)` – Run test harness, returns pass/fail per case
+- `status`, `output`, `error` – Execution state
+- `testResults`, `testStatus`, `testError` – Test run state
+- `clearOutput`, `clearTestResults`, `cancelExecution`
+- Timeout handling; worker cleanup on unmount
 
 #### **usePathfindingVisualization**
 
