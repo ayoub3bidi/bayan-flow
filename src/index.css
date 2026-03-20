@@ -106,7 +106,7 @@
 
 /* Monaco editor: enable touch scrolling on mobile */
 .monaco-editor .monaco-scrollable-element,
-.monaco-editor [class*="scrollable"] {
+.monaco-editor [class*='scrollable'] {
   -webkit-overflow-scrolling: touch;
 }
 .monaco-editor {
