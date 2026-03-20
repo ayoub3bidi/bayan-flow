@@ -62,7 +62,7 @@ describe('RoadmapCTA', () => {
 
     it('should render badge', () => {
       renderComponent();
-      expect(screen.getByText(/Coming Soon/i)).toBeInTheDocument();
+      expect(screen.getByText(/Updates/i)).toBeInTheDocument();
     });
 
     it('should render heading', () => {
