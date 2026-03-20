@@ -514,7 +514,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 dir="ltr"
               >
                 <div
-                  className="min-h-0 overflow-hidden"
+                  className={`min-h-0 overflow-hidden ${isMobile ? 'touch-pan-y' : ''}`}
                   style={{
                     flex:
                       isMobile || !isOutputExpanded
@@ -540,6 +540,20 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                         ],
                         run: () => runHandlerRef.current?.(),
                       });
+                      if (isMobile) {
+                        const container = editor.getContainerDomNode?.();
+                        if (container) {
+                          container.style.touchAction = 'pan-y';
+                          const scrollable =
+                            container.querySelector(
+                              '.monaco-scrollable-element'
+                            ) ??
+                            container.querySelector('[class*="scrollable"]');
+                          if (scrollable) {
+                            scrollable.style.webkitOverflowScrolling = 'touch';
+                          }
+                        }
+                      }
                     }}
                     options={{
                       readOnly: false,

@@ -104,6 +104,15 @@
   background: var(--color-scrollbar-thumb-hover);
 }
 
+/* Monaco editor: enable touch scrolling on mobile */
+.monaco-editor .monaco-scrollable-element,
+.monaco-editor [class*="scrollable"] {
+  -webkit-overflow-scrolling: touch;
+}
+.monaco-editor {
+  touch-action: pan-y pan-x;
+}
+
 /* Fade gradient hint for scrollable content */
 .algo-dropdown::after {
   content: '';
