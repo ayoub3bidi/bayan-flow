@@ -41,10 +41,10 @@ function OutputConsole({
   const isRunning = status === 'running';
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-[#1e1e1e] shrink-0">
+    <div className="flex flex-col min-h-0 flex-1 border-t border-gray-200 dark:border-gray-700 bg-[#1e1e1e] w-full overflow-hidden">
       {/* Header */}
       <div
-        className="flex items-center justify-between px-3 py-2 bg-[#252526] cursor-pointer select-none"
+        className="flex items-center justify-between px-3 py-2 bg-[#252526] cursor-pointer select-none shrink-0"
         onClick={onToggleExpand}
         onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -133,7 +133,7 @@ function OutputConsole({
       {isExpanded && (
         <div
           ref={scrollRef}
-          className="h-64 overflow-auto font-mono text-sm p-3 whitespace-pre-wrap break-words"
+          className="min-h-0 flex-1 overflow-auto font-mono text-sm p-3 whitespace-pre-wrap break-words"
         >
           {!hasContent && !isLoading && (
             <div className="text-gray-500">

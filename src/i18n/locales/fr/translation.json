@@ -204,6 +204,7 @@
     "running": "Exécution...",
     "output": "Sortie",
     "clear_output": "Effacer la sortie",
+    "resize_output": "Redimensionner le panneau de sortie",
     "output_placeholder": "Exécutez le code pour voir la sortie ici.",
     "loading_runtime": "Chargement du runtime Python...",
     "timeout": "Délai dépassé",

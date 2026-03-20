@@ -14,6 +14,27 @@ import { useTheme } from '../hooks/useTheme';
 import { usePythonExecution } from '../hooks/usePythonExecution';
 import OutputConsole from './OutputConsole';
 
+const STORAGE_KEY_OUTPUT_PERCENT = 'python-panel-output-percent';
+const DEFAULT_OUTPUT_PERCENT = 35;
+const MIN_OUTPUT_PERCENT = 15;
+const MAX_OUTPUT_PERCENT = 70;
+
+function getStoredOutputPercent() {
+  try {
+    const v = parseInt(localStorage.getItem(STORAGE_KEY_OUTPUT_PERCENT), 10);
+    if (
+      Number.isFinite(v) &&
+      v >= MIN_OUTPUT_PERCENT &&
+      v <= MAX_OUTPUT_PERCENT
+    ) {
+      return v;
+    }
+  } catch {
+    // localStorage not available
+  }
+  return DEFAULT_OUTPUT_PERCENT;
+}
+
 /**
  * @param {Object} props
  * @param {boolean} props.isOpen - Whether the panel is open
@@ -91,7 +112,64 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
 
   const [code, setCode] = useState(pythonCode);
   const [isOutputExpanded, setIsOutputExpanded] = useState(true);
+  const [outputHeightPercent, setOutputHeightPercent] = useState(
+    getStoredOutputPercent
+  );
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeContainerRef = useRef(null);
+  const lastPercentRef = useRef(outputHeightPercent);
+  lastPercentRef.current = outputHeightPercent;
   const isModified = code !== pythonCode;
+
+  const handleResizeStart = useCallback(e => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isResizing) return;
+    const container = resizeContainerRef.current;
+    if (!container) return;
+
+    const handleMove = e => {
+      const rect = container.getBoundingClientRect();
+      const totalHeight = rect.height;
+      const handleOffset = rect.top;
+      const mouseY = e.clientY;
+      const yFromTop = mouseY - handleOffset;
+      if (totalHeight <= 0) return;
+      let percent = (1 - yFromTop / totalHeight) * 100;
+      percent = Math.max(
+        MIN_OUTPUT_PERCENT,
+        Math.min(MAX_OUTPUT_PERCENT, percent)
+      );
+      lastPercentRef.current = Math.round(percent);
+      setOutputHeightPercent(lastPercentRef.current);
+    };
+
+    const handleUp = () => {
+      setIsResizing(false);
+      try {
+        localStorage.setItem(
+          STORAGE_KEY_OUTPUT_PERCENT,
+          String(lastPercentRef.current)
+        );
+      } catch {
+        // localStorage not available
+      }
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizing]);
 
   const { status, output, error, runCode, cancelExecution, clearOutput } =
     usePythonExecution({ timeout: 10_000 });
@@ -310,12 +388,22 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 )}
               </div>
 
-              {/* Code Editor + Output */}
+              {/* Code Editor + Output (resizable on desktop) */}
               <div
-                className="flex-1 min-h-0 flex flex-col overflow-hidden"
+                ref={resizeContainerRef}
+                className="flex-1 min-h-0 flex flex-col overflow-hidden relative"
                 dir="ltr"
               >
-                <div className="flex-1 min-h-0 overflow-hidden">
+                <div
+                  className="min-h-0 overflow-hidden"
+                  style={{
+                    flex:
+                      isMobile || !isOutputExpanded
+                        ? '1 1 0'
+                        : `0 0 calc(${100 - outputHeightPercent}% - 2px)`,
+                    minHeight: isMobile ? 100 : 80,
+                  }}
+                >
                   <Editor
                     height="100%"
                     defaultLanguage="python"
@@ -358,14 +446,45 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                     }
                   />
                 </div>
-                <OutputConsole
-                  status={status}
-                  output={output}
-                  error={error}
-                  onClear={clearOutput}
-                  isExpanded={isOutputExpanded}
-                  onToggleExpand={() => setIsOutputExpanded(prev => !prev)}
-                />
+                {!isMobile && isOutputExpanded && (
+                  <div
+                    role="separator"
+                    aria-orientation="horizontal"
+                    aria-valuenow={outputHeightPercent}
+                    aria-valuemin={MIN_OUTPUT_PERCENT}
+                    aria-valuemax={MAX_OUTPUT_PERCENT}
+                    aria-label={t('python_code.resize_output', {
+                      defaultValue: 'Resize output panel',
+                    })}
+                    onMouseDown={handleResizeStart}
+                    className={`shrink-0 h-1 flex items-center justify-center cursor-row-resize hover:bg-blue-500/30 active:bg-blue-500/50 transition-colors group ${
+                      isResizing
+                        ? 'bg-blue-500/50'
+                        : 'bg-gray-200 dark:bg-gray-700'
+                    }`}
+                  >
+                    <div className="w-12 h-0.5 rounded-full bg-gray-400 group-hover:bg-blue-500 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100" />
+                  </div>
+                )}
+                <div
+                  className="min-h-0 overflow-hidden flex flex-col"
+                  style={{
+                    flex:
+                      isMobile || !isOutputExpanded
+                        ? '0 0 auto'
+                        : `0 0 calc(${outputHeightPercent}% - 2px)`,
+                    minHeight: isOutputExpanded && !isMobile ? 80 : undefined,
+                  }}
+                >
+                  <OutputConsole
+                    status={status}
+                    output={output}
+                    error={error}
+                    onClear={clearOutput}
+                    isExpanded={isOutputExpanded}
+                    onToggleExpand={() => setIsOutputExpanded(prev => !prev)}
+                  />
+                </div>
               </div>
             </div>
           </motion.div>
