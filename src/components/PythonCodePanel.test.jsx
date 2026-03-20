@@ -20,13 +20,14 @@ vi.mock('framer-motion', () => ({
 // Mock Monaco Editor
 vi.mock('@monaco-editor/react', () => ({
   default: ({ onMount, theme, ...props }) => {
-    // Simulate editor mounting
     if (onMount) {
-      const mockEditor = {};
+      const mockEditor = {
+        addAction: vi.fn(),
+      };
       const mockMonaco = {
-        editor: {
-          setTheme: vi.fn(),
-        },
+        editor: { setTheme: vi.fn() },
+        KeyMod: { CtrlCmd: 2048 },
+        KeyCode: { Enter: 3 },
       };
       setTimeout(() => onMount(mockEditor, mockMonaco), 0);
     }
@@ -36,6 +37,30 @@ vi.mock('@monaco-editor/react', () => ({
       </div>
     );
   },
+}));
+
+// Mock usePythonExecution hook
+vi.mock('../hooks/usePythonExecution', () => ({
+  usePythonExecution: vi.fn(() => ({
+    status: 'idle',
+    output: '',
+    error: null,
+    runCode: vi.fn(),
+    cancelExecution: vi.fn(),
+    clearOutput: vi.fn(),
+  })),
+}));
+
+// Mock OutputConsole
+vi.mock('./OutputConsole', () => ({
+  default: ({ status, output, onClear }) => (
+    <div data-testid="output-console" data-status={status}>
+      <span data-testid="output-content">{output || 'empty'}</span>
+      <button type="button" onClick={onClear} data-testid="clear-output">
+        Clear
+      </button>
+    </div>
+  ),
 }));
 
 // Mock Python code module
@@ -168,6 +193,46 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
       expect(
         screen.getByText('No Python Implementation Available')
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('Interactive features', () => {
+    it('should render Run button when panel has Python code', async () => {
+      localStorageMock.getItem.mockReturnValue('light');
+
+      render(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /run/i })
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('should render OutputConsole when panel has Python code', async () => {
+      localStorageMock.getItem.mockReturnValue('light');
+
+      render(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('output-console')).toBeInTheDocument();
+      });
     });
   });
 });

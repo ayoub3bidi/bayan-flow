@@ -196,7 +196,19 @@
     "close": "Fermer",
     "loading": "Chargement...",
     "not_available": "Implémentation Python Non Disponible",
-    "not_available_desc": "L'implémentation Python pour {{algorithm}} arrive bientôt !"
+    "not_available_desc": "L'implémentation Python pour {{algorithm}} arrive bientôt !",
+    "run": "Exécuter",
+    "rerun": "Réexécuter",
+    "reset": "Réinitialiser",
+    "cancel": "Annuler",
+    "running": "Exécution...",
+    "output": "Sortie",
+    "clear_output": "Effacer la sortie",
+    "output_placeholder": "Exécutez le code pour voir la sortie ici.",
+    "loading_runtime": "Chargement du runtime Python...",
+    "timeout": "Délai dépassé",
+    "completed": "Terminé",
+    "error": "Erreur"
   },
   "insight_panel": {
     "title": "Aperçu de l'Algorithme",
@@ -626,8 +638,8 @@
         "description": "Ajustez la taille du tableau (5-100) ou la taille de la grille (15×15 à 35×35) pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
       },
       "pythonCode": {
-        "title": "Code Python",
-        "description": "Consultez des implémentations Python propres pour chaque algorithme. Apprenez en lisant des exemples de code réels."
+        "title": "Python Interactif",
+        "description": "Modifiez, exécutez et voyez la sortie réelle pour chaque algorithme. Tout dans votre navigateur. Apprenez en expérimentant avec du code en direct."
       },
       "sound": {
         "title": "Son Interactif",

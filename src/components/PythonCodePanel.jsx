@@ -4,13 +4,15 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Play, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getPythonCode, getAlgorithmDisplayName } from '../algorithms/python';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
+import { usePythonExecution } from '../hooks/usePythonExecution';
+import OutputConsole from './OutputConsole';
 
 /**
  * @param {Object} props
@@ -86,6 +88,31 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
 
   const pythonCode = getPythonCode(algorithm);
   const displayName = getAlgorithmDisplayName(algorithm);
+
+  const [code, setCode] = useState(pythonCode);
+  const [isOutputExpanded, setIsOutputExpanded] = useState(true);
+  const isModified = code !== pythonCode;
+
+  const { status, output, error, runCode, cancelExecution, clearOutput } =
+    usePythonExecution({ timeout: 10_000 });
+
+  useEffect(() => {
+    setCode(pythonCode);
+  }, [pythonCode]);
+
+  useEffect(() => {
+    clearOutput();
+    return () => cancelExecution();
+  }, [algorithm, cancelExecution, clearOutput]);
+
+  const handleRun = useCallback(() => {
+    if (status === 'running') return;
+    runCode(code);
+    setIsOutputExpanded(true);
+  }, [code, runCode, status]);
+
+  const runHandlerRef = useRef(handleRun);
+  runHandlerRef.current = handleRun;
 
   // Update Monaco editor theme when theme changes
   useEffect(() => {
@@ -241,39 +268,103 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 </div>
               )}
 
-              {/* Code Editor */}
-              <div className="flex-1 overflow-hidden" dir="ltr">
-                <Editor
-                  height="100%"
-                  defaultLanguage="python"
-                  value={pythonCode}
-                  theme={isDark ? 'vs-dark' : 'vs-light'}
-                  onMount={(editor, monaco) => {
-                    editorRef.current = editor;
-                    monacoRef.current = monaco;
-                  }}
-                  options={{
-                    readOnly: true,
-                    minimap: { enabled: !isMobile },
-                    scrollBeyondLastLine: false,
-                    fontSize: isMobile ? 12 : 14,
-                    lineNumbers: 'on',
-                    folding: true,
-                    wordWrap: 'on',
-                    automaticLayout: true,
-                    padding: { top: 16, bottom: 16 },
-                    scrollbar: {
-                      vertical: 'auto',
-                      horizontal: 'auto',
-                    },
-                  }}
-                  loading={
-                    <div className="flex items-center justify-center h-full bg-surface">
-                      <div className="text-text-secondary">
-                        {t('python_code.loading') || 'Loading editor...'}
-                      </div>
-                    </div>
+              {/* Toolbar */}
+              <div className="flex items-center gap-2 p-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleRun}
+                  disabled={status === 'loading' || status === 'running'}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-90 rounded-lg transition-colors min-w-[5.5rem] justify-center"
+                  aria-label={
+                    output || error
+                      ? t('python_code.rerun', { defaultValue: 'Rerun' })
+                      : t('python_code.run', { defaultValue: 'Run' })
                   }
+                >
+                  {status === 'loading' || status === 'running' ? (
+                    <span
+                      className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+                      aria-hidden
+                    />
+                  ) : (
+                    <Play size={16} />
+                  )}
+                  {status === 'loading' || status === 'running'
+                    ? t('python_code.running', { defaultValue: 'Running...' })
+                    : output || error
+                      ? t('python_code.rerun', { defaultValue: 'Rerun' })
+                      : t('python_code.run', { defaultValue: 'Run' })}
+                </button>
+                {isModified && (
+                  <button
+                    type="button"
+                    onClick={() => setCode(pythonCode)}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated rounded-lg transition-colors"
+                    aria-label={t('python_code.reset', {
+                      defaultValue: 'Reset',
+                    })}
+                  >
+                    <RotateCcw size={16} />
+                    {t('python_code.reset', { defaultValue: 'Reset' })}
+                  </button>
+                )}
+              </div>
+
+              {/* Code Editor + Output */}
+              <div
+                className="flex-1 min-h-0 flex flex-col overflow-hidden"
+                dir="ltr"
+              >
+                <div className="flex-1 min-h-0 overflow-hidden">
+                  <Editor
+                    height="100%"
+                    defaultLanguage="python"
+                    value={code}
+                    onChange={value => setCode(value ?? '')}
+                    theme={isDark ? 'vs-dark' : 'vs-light'}
+                    onMount={(editor, monaco) => {
+                      editorRef.current = editor;
+                      monacoRef.current = monaco;
+                      editor.addAction({
+                        id: 'run-python',
+                        label: 'Run Python',
+                        keybindings: [
+                          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+                        ],
+                        run: () => runHandlerRef.current?.(),
+                      });
+                    }}
+                    options={{
+                      readOnly: false,
+                      minimap: { enabled: !isMobile },
+                      scrollBeyondLastLine: false,
+                      fontSize: isMobile ? 12 : 14,
+                      lineNumbers: 'on',
+                      folding: true,
+                      wordWrap: 'on',
+                      automaticLayout: true,
+                      padding: { top: 16, bottom: 16 },
+                      scrollbar: {
+                        vertical: 'auto',
+                        horizontal: 'auto',
+                      },
+                    }}
+                    loading={
+                      <div className="flex items-center justify-center h-full bg-surface">
+                        <div className="text-text-secondary">
+                          {t('python_code.loading') || 'Loading editor...'}
+                        </div>
+                      </div>
+                    }
+                  />
+                </div>
+                <OutputConsole
+                  status={status}
+                  output={output}
+                  error={error}
+                  onClear={clearOutput}
+                  isExpanded={isOutputExpanded}
+                  onToggleExpand={() => setIsOutputExpanded(prev => !prev)}
                 />
               </div>
             </div>

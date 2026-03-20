@@ -197,7 +197,19 @@
     "close": "Close",
     "loading": "Loading...",
     "not_available": "No Python Implementation Available",
-    "not_available_desc": "Python implementation for {{algorithm}} is coming soon!"
+    "not_available_desc": "Python implementation for {{algorithm}} is coming soon!",
+    "run": "Run",
+    "rerun": "Rerun",
+    "reset": "Reset",
+    "cancel": "Cancel",
+    "running": "Running...",
+    "output": "Output",
+    "clear_output": "Clear output",
+    "output_placeholder": "Run the code to see output here.",
+    "loading_runtime": "Loading Python runtime...",
+    "timeout": "Timeout",
+    "completed": "Completed",
+    "error": "Error"
   },
   "insight_panel": {
     "title": "Algorithm Insight",
@@ -625,8 +637,8 @@
         "description": "Adjust array size (5-100) or grid size (15×15 to 35×35) to see how algorithms perform with different data sizes."
       },
       "pythonCode": {
-        "title": "Python Code",
-        "description": "View clean Python implementations for each algorithm. Learn by reading real code examples."
+        "title": "Interactive Python",
+        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code."
       },
       "sound": {
         "title": "Interactive Sound",
