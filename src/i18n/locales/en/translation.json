@@ -671,7 +671,8 @@
   "roadmap": {
     "hero": {
       "title": "Where We're Going",
-      "subtitle": "Every update, every DevLog. See what's live and what's next."
+      "subtitle": "Every update, every DevLog. See what's live and what's next.",
+      "devNote": "Want to see the latest changes and experiments? Check out our <0>dev version</0> and share your feedback by <1>creating an issue</1> on our GitHub repo."
     },
     "status": {
       "completed": "Completed",

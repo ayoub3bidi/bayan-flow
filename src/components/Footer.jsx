@@ -8,9 +8,11 @@ import { motion } from 'framer-motion';
 import { FileText, AlertCircle, Map } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 function Footer() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [version, setVersion] = useState('0.0.0');
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
@@ -65,7 +67,11 @@ function Footer() {
   };
 
   const handleLinkClick = href => {
-    window.open(href, '_blank', 'noopener,noreferrer');
+    if (href.startsWith('/')) {
+      navigate(href);
+    } else {
+      window.open(href, '_blank', 'noopener,noreferrer');
+    }
   };
 
   return (

@@ -672,7 +672,8 @@
   "roadmap": {
     "hero": {
       "title": "Notre Direction",
-      "subtitle": "Chaque mise à jour, chaque journal de développement. Voyez ce qui est en direct et ce qui est prévu."
+      "subtitle": "Chaque mise à jour, chaque journal de développement. Voyez ce qui est en direct et ce qui est prévu.",
+      "devNote": "Vous voulez voir les dernières modifications et expérimentations ? Consultez notre <0>version de développement</0> et partagez vos retours en <1>créant une issue</1> sur notre dépôt GitHub."
     },
     "status": {
       "completed": "Terminé",
