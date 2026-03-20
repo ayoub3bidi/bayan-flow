@@ -82,12 +82,12 @@ function ControlPanel({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      <div className="flex items-center justify-between gap-4">
-        {/* Spacer for centering */}
-        <div className="flex-1 min-w-0" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-center gap-3 sm:gap-4">
+        {/* Spacer for centering on desktop only */}
+        <div className="hidden sm:block flex-1 min-w-0" />
 
         {/* Principal controls - centered: Backward, Reset/Play|Pause, Forward */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center justify-center gap-2 shrink-0">
           {/* Step Backward - Always visible */}
           <button
             onClick={() => {
@@ -162,8 +162,8 @@ function ControlPanel({
           )}
         </div>
 
-        {/* Feature buttons - aligned right */}
-        <div className="flex flex-1 justify-end items-center gap-2 min-w-0">
+        {/* Feature buttons - centered on mobile, aligned right on desktop */}
+        <div className="flex flex-1 justify-center sm:justify-end items-center gap-2 min-w-0 w-full sm:w-auto">
           {/* Random Start & End Points - Only visible in pathfinding mode */}
           {algorithmType === 'pathfinding' && (
             <button
