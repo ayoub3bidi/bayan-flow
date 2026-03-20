@@ -105,8 +105,8 @@ describe('LanguageSwitcher', () => {
     // Check that at least one flag has mobile classes
     const mobileFlag = flags.find(
       flag =>
-        flag.parentElement?.classList.contains('text-base') ||
-        flag.closest('.text-base')
+        flag.parentElement?.classList.contains('text-sm') ||
+        flag.closest('.text-sm')
     );
     expect(mobileFlag).toBeDefined();
   });

@@ -250,6 +250,12 @@ body {
     min-height: 44px;
     min-width: 44px;
   }
+
+  /* Language switcher: compact proportions in navbar (override global min-size) */
+  [data-language-switcher] {
+    min-height: 32px !important;
+    min-width: 32px !important;
+  }
 }
 
 [dir='rtl'] body {

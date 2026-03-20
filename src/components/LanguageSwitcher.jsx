@@ -52,40 +52,49 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
     <div className="relative" ref={dropdownRef}>
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 my-2 sm:my-0 bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer touch-manipulation"
+        className="flex items-center justify-center gap-1.5 sm:gap-2 h-8 sm:h-9 px-2.5 sm:px-3 py-0 bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer touch-manipulation"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         aria-label={t('settings.language')}
+        data-language-switcher
       >
         {/* Desktop: Show flag + chevron */}
         <span className="text-sm font-medium text-text-primary hidden sm:inline">
           {currentLanguage.flag}
         </span>
-        <ChevronDown
-          size={12}
-          className={`hidden sm:block text-text-secondary transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-        />
-        <span className="text-base sm:hidden">{currentLanguage.flag}</span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="hidden sm:block shrink-0"
+        >
+          <ChevronDown
+            size={12}
+            className={`${
+              isOpen ? 'text-accent-primary' : 'text-text-secondary'
+            }`}
+          />
+        </motion.div>
+        <span className="text-sm sm:hidden">{currentLanguage.flag}</span>
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute top-full right-0 mt-2 w-40 sm:w-48 bg-panel-bg backdrop-blur-md rounded-lg border border-panel-border shadow-lg z-50"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full right-0 mt-2 w-40 sm:w-48 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden z-50"
           >
             <div className="p-1.5 sm:p-2">
-              {languages.map(language => (
+              {languages.map((language, index) => (
                 <motion.button
                   key={language.code}
                   onClick={() => handleLanguageChange(language.code)}
-                  className="w-full flex items-center justify-between px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-md hover:bg-interactive-hover transition-colors duration-150"
-                  whileHover={{ x: 2 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.03 }}
+                  className="w-full flex items-center justify-between px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-md hover:bg-interactive-hover transition-colors duration-150 text-left"
                 >
                   <div className="flex items-center gap-2 sm:gap-3">
                     <span className="text-base sm:text-lg">
@@ -96,7 +105,17 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
                     </span>
                   </div>
                   {i18n.language === language.code && (
-                    <Check size={14} className="text-accent-primary" />
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 500,
+                        damping: 25,
+                      }}
+                    >
+                      <Check size={14} className="text-accent-primary" />
+                    </motion.div>
                   )}
                 </motion.button>
               ))}
