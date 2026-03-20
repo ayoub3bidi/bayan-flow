@@ -72,7 +72,7 @@ function Header() {
 
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 z-50 w-full"
+      className="relative sm:fixed sm:top-0 sm:left-0 sm:right-0 sm:z-50 w-full"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}

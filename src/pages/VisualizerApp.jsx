@@ -269,7 +269,7 @@ function App() {
           >
             <Header />
             <main
-              className="flex-1 pt-20 p-6 pb-32"
+              className="flex-1 pt-0 sm:pt-20 p-6 pb-32"
               role="main"
               id="main-content"
             >
