@@ -49,13 +49,15 @@ function getBaseProps(overrides = {}) {
 describe('ControlPanel', () => {
   const shuffleLabel = () => i18n.t('controls.generateArray');
 
-  it('does not show data refresh shuffle when category has hasDataRefresh false', () => {
+  it('shows data refresh shuffle when category has hasDataRefresh true (sorting)', () => {
     renderWithI18n(<ControlPanel {...getBaseProps()} />);
 
-    expect(screen.queryByRole('button', { name: shuffleLabel() })).toBeNull();
+    expect(
+      screen.getByRole('button', { name: shuffleLabel() })
+    ).toBeInTheDocument();
   });
 
-  it('shows data refresh shuffle when category has hasDataRefresh true', () => {
+  it('shows data refresh shuffle when category has hasDataRefresh true (pathfinding)', () => {
     renderWithI18n(
       <ControlPanel
         {...getBaseProps({ algorithmType: ALGORITHM_TYPES.PATHFINDING })}

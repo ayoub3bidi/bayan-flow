@@ -77,10 +77,21 @@ export function useSortingVisualization(
    * Stable reference: recreates only when algorithmKey or initialArray changes.
    */
   const loadStepsForCurrentAlgorithm = useCallback(() => {
-    if (!algorithmKey || !initialArray?.length) return;
+    setArray(initialArray);
+    setStates(Array(initialArray.length).fill(ELEMENT_STATES.DEFAULT));
+
+    if (!algorithmKey || !initialArray?.length) {
+      engine.loadSteps([]);
+      return;
+    }
     const fn =
       CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].getAlgorithmFn(algorithmKey);
-    if (fn) engine.loadSteps(fn(initialArray));
+    if (fn) {
+      engine.loadSteps(fn(initialArray));
+      return;
+    }
+
+    engine.loadSteps([]);
     // engine.loadSteps is stable (useCallback in useVisualization)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [algorithmKey, initialArray]);
@@ -89,19 +100,12 @@ export function useSortingVisualization(
     loadStepsForCurrentAlgorithm();
   }, [loadStepsForCurrentAlgorithm]);
 
-  // ── Reset visual domain state when the input array changes (e.g. regenerate) ──
-  useEffect(() => {
-    setArray(initialArray);
-    setStates(Array(initialArray.length).fill(ELEMENT_STATES.DEFAULT));
-  }, [initialArray]);
-
   return {
     // Sorting-specific domain state
     array,
     states,
-    // refresh() — re-runs step loading for the current algorithm + array.
-    // Exposed for VisualizerApp's generic handleGenerateArray.
-    refresh: loadStepsForCurrentAlgorithm,
+    // Re-runs step loading for the current algorithm + initialArray from props (no new random data).
+    reloadSteps: loadStepsForCurrentAlgorithm,
     // Shared playback engine (steps, isPlaying, isComplete, currentStep, …)
     ...engine,
   };

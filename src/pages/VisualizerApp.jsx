@@ -30,7 +30,6 @@ import {
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
 } from '../constants';
-import { generateRandomArray } from '../utils/arrayHelpers';
 import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
@@ -70,7 +69,7 @@ function App() {
   const [arraySize, setArraySize] = useState(DEFAULT_ARRAY_SIZE);
   const [gridSize, setGridSize] = useState(DEFAULT_GRID_SIZE);
   const [array, setArray] = useState(() =>
-    generateRandomArray(DEFAULT_ARRAY_SIZE)
+    CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(DEFAULT_ARRAY_SIZE)
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
@@ -133,9 +132,15 @@ function App() {
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
-  /** Calls the active visualization's refresh() — category-specific data reset. */
+  /** New random input data for the active category (sorting: array; pathfinding: new grid). */
   const handleGenerateArray = () => {
-    visualization.refresh();
+    if (algorithmType === ALGORITHM_TYPES.SORTING) {
+      setArray(
+        CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(arraySize)
+      );
+    } else {
+      pathfindingVisualization.regenerateGrid();
+    }
     soundManager.playArrayGenerate();
   };
 
@@ -149,7 +154,7 @@ function App() {
 
   const handleArraySizeChange = newSize => {
     setArraySize(newSize);
-    setArray(generateRandomArray(newSize));
+    setArray(CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(newSize));
   };
 
   const handleGridSizeChange = newSize => {

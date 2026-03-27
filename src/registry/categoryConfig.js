@@ -26,6 +26,9 @@ import {
  *   icon              — Lucide React component for the category tab button.
  *   getAlgorithmFn    — (key: string) => function that returns steps[].
  *   generateData      — (size?: number) => the input data structure (array, grid, …).
+ *                       Sorting: random array (VisualizerApp uses this for initial data, resize, shuffle).
+ *                       Pathfinding: empty grid template only; random start/end live in
+ *                       usePathfindingVisualization.generateNewGrid / regenerateGrid.
  *   features          — per-category UI feature flags.
  *     hasDataRefresh  — whether the "shuffle / new data" button is shown in ControlPanel.
  *   complexityDataset — 'sorting' | 'pathfinding': which static complexity map Remotion uses
@@ -58,7 +61,7 @@ export const CATEGORY_CONFIG = {
     getAlgorithmFn: key => algorithms[key],
     generateData: (size = DEFAULT_ARRAY_SIZE) => generateRandomArray(size),
     features: {
-      hasDataRefresh: false,
+      hasDataRefresh: true,
     },
     complexityDataset: 'sorting',
     sizeControl: {

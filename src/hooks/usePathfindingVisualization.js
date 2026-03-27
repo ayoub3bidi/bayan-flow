@@ -125,10 +125,8 @@ export function usePathfindingVisualization(
     start,
     end,
     generateNewGrid,
-    // refresh() — generates a new grid (new start/end), which triggers step
-    // reloading automatically via the loadStepsForCurrentAlgorithm effect.
-    // Exposed for VisualizerApp's generic handleGenerateArray.
-    refresh: generateNewGrid,
+    /** New random start/end on an empty grid; step reload runs via effect. */
+    regenerateGrid: generateNewGrid,
     // Shared playback engine (steps, isPlaying, isComplete, currentStep, …)
     ...engine,
   };
