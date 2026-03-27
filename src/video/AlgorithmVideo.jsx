@@ -6,10 +6,14 @@
 
 import { useCurrentFrame, useVideoConfig, AbsoluteFill } from 'remotion';
 import { ALGORITHM_TYPES } from '../constants/index.js';
-import SortingScene from './SortingScene.jsx';
-import PathfindingScene from './PathfindingScene.jsx';
 import ComplexityScene from './ComplexityScene.jsx';
 import { COMPLEXITY_DURATION_FRAMES } from './constants.js';
+import {
+  VIDEO_SCENE_RENDERERS,
+  VIDEO_TITLE_FALLBACK,
+} from '../registry/videoSceneRegistry.jsx';
+import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
+import { DEFAULT_COMPLEXITY_DATASET } from '../registry/complexityDatasetRegistry.js';
 
 /**
  * Root Remotion composition: title bar, visualization (sorting or pathfinding), step counter, description.
@@ -29,11 +33,15 @@ function AlgorithmVideo({
   const mainDurationInFrames = steps.length * framesPerStep;
   const isComplexitySegment = steps.length > 0 && frame >= mainDurationInFrames;
 
+  const complexityDataset =
+    CATEGORY_CONFIG[algorithmType]?.complexityDataset ??
+    DEFAULT_COMPLEXITY_DATASET;
+
   if (isComplexitySegment) {
     return (
       <ComplexityScene
         algorithmKey={algorithmKey}
-        isPathfinding={algorithmType === ALGORITHM_TYPES.PATHFINDING}
+        complexityDataset={complexityDataset}
         algorithmName={algorithmName}
       />
     );
@@ -61,7 +69,8 @@ function AlgorithmVideo({
   );
   const step = steps[stepIndex] ?? steps[0];
   const description = step?.description ?? '';
-  const isSorting = algorithmType === ALGORITHM_TYPES.SORTING;
+  const renderMainScene = VIDEO_SCENE_RENDERERS[algorithmType];
+  const titleFallback = VIDEO_TITLE_FALLBACK[algorithmType] ?? 'Algorithm';
 
   return (
     <AbsoluteFill
@@ -81,7 +90,7 @@ function AlgorithmVideo({
           fontWeight: 'bold',
         }}
       >
-        {algorithmName || (isSorting ? 'Sorting' : 'Pathfinding')}
+        {algorithmName || titleFallback}
       </div>
 
       {/* Visualization area */}
@@ -96,15 +105,9 @@ function AlgorithmVideo({
           height: height - 80,
         }}
       >
-        {isSorting ? (
-          <SortingScene steps={steps} framesPerStep={framesPerStep} />
-        ) : (
-          <PathfindingScene
-            steps={steps}
-            framesPerStep={framesPerStep}
-            gridSize={gridSize}
-          />
-        )}
+        {renderMainScene
+          ? renderMainScene({ steps, framesPerStep, gridSize })
+          : null}
       </div>
 
       {/* Step counter + description */}

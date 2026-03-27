@@ -4,13 +4,11 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import ArrayVisualizer from '../components/ArrayVisualizer';
-import GridVisualizer from '../components/GridVisualizer';
 import ControlPanel from '../components/ControlPanel';
 import SettingsPanel from '../components/SettingsPanel';
 import FloatingActionButton from '../components/FloatingActionButton';
@@ -24,10 +22,6 @@ import { useSortingVisualization } from '../hooks/useSortingVisualization';
 import { usePathfindingVisualization } from '../hooks/usePathfindingVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
 import { useVideoExporter } from '../video/useVideoExporter';
-import { generateRandomArray } from '../utils/arrayHelpers';
-import { createEmptyGrid } from '../utils/gridHelpers';
-import { algorithms } from '../algorithms';
-import { pathfindingAlgorithms } from '../algorithms/pathfinding';
 import { soundManager } from '../utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
@@ -36,33 +30,73 @@ import {
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
 } from '../constants';
+import { generateRandomArray } from '../utils/arrayHelpers';
+import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
+import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
+import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Build the initial selectedAlgorithms map from CATEGORY_CONFIG.defaultAlgorithm per type.
+ */
+function buildDefaultSelectedAlgorithms() {
+  return Object.fromEntries(
+    Object.values(ALGORITHM_TYPES).map(type => [
+      type,
+      CATEGORY_CONFIG[type].defaultAlgorithm,
+    ])
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main Component
+// ---------------------------------------------------------------------------
 
 function App() {
   const { t } = useTranslation();
+
+  // ── Core State ────────────────────────────────────────────────────────────
   const [algorithmType, setAlgorithmType] = useState(ALGORITHM_TYPES.SORTING);
+
+  /** One selected-algorithm key per category — no more parallel state vars. */
+  const [selectedAlgorithms, setSelectedAlgorithms] = useState(
+    buildDefaultSelectedAlgorithms
+  );
+
   const [arraySize, setArraySize] = useState(DEFAULT_ARRAY_SIZE);
   const [gridSize, setGridSize] = useState(DEFAULT_GRID_SIZE);
   const [array, setArray] = useState(() =>
     generateRandomArray(DEFAULT_ARRAY_SIZE)
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubbleSort');
-  const [selectedPathfindingAlgorithm, setSelectedPathfindingAlgorithm] =
-    useState('bfs');
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
 
-  const activeAlgorithmKey =
-    algorithmType === ALGORITHM_TYPES.SORTING
-      ? selectedAlgorithm
-      : selectedPathfindingAlgorithm;
+  // ── Active Algorithm Key / Name ───────────────────────────────────────────
+  const activeAlgorithmKey = selectedAlgorithms[algorithmType];
 
   const activeAlgorithmName = t(
-    algorithmType === ALGORITHM_TYPES.SORTING
-      ? `algorithms.sorting.${selectedAlgorithm}`
-      : `algorithms.pathfinding.${selectedPathfindingAlgorithm}`,
+    `${CATEGORY_CONFIG[algorithmType].i18nPrefix}.${activeAlgorithmKey}`,
     { defaultValue: activeAlgorithmKey }
+  );
+
+  // ── Hooks (always called — React rules) ───────────────────────────────────────
+  const sortingVisualization = useSortingVisualization(
+    selectedAlgorithms[ALGORITHM_TYPES.SORTING],
+    array,
+    speed,
+    mode
+  );
+  const pathfindingVisualization = usePathfindingVisualization(
+    selectedAlgorithms[ALGORITHM_TYPES.PATHFINDING],
+    gridSize,
+    speed,
+    mode
   );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
@@ -78,40 +112,45 @@ function App() {
     canRenderOnWeb,
   } = useVideoExporter();
 
-  const sortingVisualization = useSortingVisualization(array, speed, mode);
-  const pathfindingVisualization = usePathfindingVisualization(
-    gridSize,
-    speed,
-    mode
-  );
+  const visualizationMap = useCategoryVisualizations({
+    sortingVisualization,
+    pathfindingVisualization,
+  });
 
-  const visualization =
-    algorithmType === ALGORITHM_TYPES.SORTING
-      ? sortingVisualization
-      : pathfindingVisualization;
+  const visualization = visualizationMap[algorithmType];
+
+  // ── Registry: visualizer component ───────────────────────────────────────
+  const VisualizerComponent = VISUALIZER_REGISTRY[algorithmType];
+
+  if (import.meta.env.DEV && !VisualizerComponent) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `[VisualizerApp] No visualizer registered for algorithmType "${algorithmType}". Check VISUALIZER_REGISTRY.`
+    );
+    throw new Error(
+      `No visualizer registered for algorithm type: ${algorithmType}`
+    );
+  }
+
+  // ── Handlers ───────────────────────────────────────────────────────────────
+
+  /** Calls the active visualization's refresh() — category-specific data reset. */
   const handleGenerateArray = () => {
-    if (algorithmType === ALGORITHM_TYPES.SORTING) {
-      const newArray = generateRandomArray(arraySize);
-      setArray(newArray);
-      soundManager.playArrayGenerate();
-    } else {
-      pathfindingVisualization.generateNewGrid();
-      soundManager.playArrayGenerate();
-    }
+    visualization.refresh();
+    soundManager.playArrayGenerate();
   };
+
   const handleAlgorithmChange = algorithmName => {
-    if (algorithmType === ALGORITHM_TYPES.SORTING) {
-      setSelectedAlgorithm(algorithmName);
-      sortingVisualization.reset();
-    } else {
-      setSelectedPathfindingAlgorithm(algorithmName);
-      pathfindingVisualization.reset();
-    }
+    setSelectedAlgorithms(prev => ({
+      ...prev,
+      [algorithmType]: algorithmName,
+    }));
+    visualization.reset();
   };
+
   const handleArraySizeChange = newSize => {
     setArraySize(newSize);
-    const newArray = generateRandomArray(newSize);
-    setArray(newArray);
+    setArray(generateRandomArray(newSize));
   };
 
   const handleGridSizeChange = newSize => {
@@ -137,55 +176,27 @@ function App() {
 
   const handleAlgorithmTypeChange = newType => {
     setAlgorithmType(newType);
-    // Reset visualizations when switching types
-    if (newType === ALGORITHM_TYPES.SORTING) {
-      sortingVisualization.reset();
-    } else {
-      pathfindingVisualization.reset();
-    }
+    visualizationMap[newType]?.reset();
   };
-  useEffect(() => {
-    if (algorithmType === ALGORITHM_TYPES.SORTING) {
-      const algorithmFunction = algorithms[selectedAlgorithm];
-      if (algorithmFunction) {
-        const steps = algorithmFunction(array);
-        sortingVisualization.loadSteps(steps);
-      }
-    }
-    // algorithms is static import; sortingVisualization.loadSteps is stable via useCallback
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAlgorithm, array, algorithmType]);
 
-  useEffect(() => {
-    if (
-      algorithmType === ALGORITHM_TYPES.PATHFINDING &&
-      pathfindingVisualization.start &&
-      pathfindingVisualization.end
-    ) {
-      const algorithmFunction =
-        pathfindingAlgorithms[selectedPathfindingAlgorithm];
-      if (algorithmFunction) {
-        const grid = createEmptyGrid(gridSize, gridSize);
-        const steps = algorithmFunction(
-          grid,
-          pathfindingVisualization.start,
-          pathfindingVisualization.end,
-          gridSize,
-          gridSize
-        );
-        pathfindingVisualization.loadSteps(steps);
-      }
-    }
-    // pathfindingAlgorithms, createEmptyGrid are static; pathfindingVisualization.loadSteps is stable
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedPathfindingAlgorithm,
-    algorithmType,
-    pathfindingVisualization.start,
-    pathfindingVisualization.end,
+  // ── Shared visualizer props ────────────────────────────────────────────────
+  /** Props common to all visualizer components. */
+  const sharedVisualizerProps = {
+    states: visualization.states,
+    description: visualization.description,
+    isComplete: visualization.isComplete,
+    algorithm: activeAlgorithmKey,
+    onStepForward: visualization.stepForward,
+    onStepBackward: visualization.stepBackward,
+    mode,
+  };
+
+  const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
+    sortingVisualization,
     gridSize,
-  ]);
+  });
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-bg flex flex-col">
       {/* Skip Navigation Link */}
@@ -208,34 +219,15 @@ function App() {
             role="main"
             id="main-content"
           >
-            {/* Full Screen Visualizer */}
+            {/* Full-screen Visualizer */}
             <div className="flex-1 mb-4">
-              {algorithmType === ALGORITHM_TYPES.SORTING ? (
-                <ArrayVisualizer
-                  array={sortingVisualization.array}
-                  states={sortingVisualization.states}
-                  description={sortingVisualization.description}
-                  isComplete={sortingVisualization.isComplete}
-                  algorithm={selectedAlgorithm}
-                  onStepForward={sortingVisualization.stepForward}
-                  onStepBackward={sortingVisualization.stepBackward}
-                  mode={mode}
-                />
-              ) : (
-                <GridVisualizer
-                  states={pathfindingVisualization.states}
-                  description={pathfindingVisualization.description}
-                  isComplete={pathfindingVisualization.isComplete}
-                  algorithm={selectedPathfindingAlgorithm}
-                  gridSize={gridSize}
-                  onStepForward={pathfindingVisualization.stepForward}
-                  onStepBackward={pathfindingVisualization.stepBackward}
-                  mode={mode}
-                />
-              )}
+              <VisualizerComponent
+                {...sharedVisualizerProps}
+                {...extraVisualizerProps}
+              />
             </div>
 
-            {/* Full Screen Control Panel */}
+            {/* Full-screen Control Panel */}
             <ControlPanel
               isPlaying={visualization.isPlaying}
               isComplete={visualization.isComplete}
@@ -284,11 +276,7 @@ function App() {
                     <SettingsPanel
                       algorithmType={algorithmType}
                       onAlgorithmTypeChange={handleAlgorithmTypeChange}
-                      selectedAlgorithm={
-                        algorithmType === ALGORITHM_TYPES.SORTING
-                          ? selectedAlgorithm
-                          : selectedPathfindingAlgorithm
-                      }
+                      selectedAlgorithm={activeAlgorithmKey}
                       onAlgorithmChange={handleAlgorithmChange}
                       speed={speed}
                       onSpeedChange={setSpeed}
@@ -308,35 +296,16 @@ function App() {
                     role="region"
                     aria-label="Algorithm visualization"
                   >
-                    {/* Visualizer */}
+                    {/* Visualizer — resolved via registry */}
                     <div
                       className="flex-1 min-h-0"
                       role="img"
-                      aria-label={`${algorithmType === ALGORITHM_TYPES.SORTING ? selectedAlgorithm : selectedPathfindingAlgorithm} algorithm visualization`}
+                      aria-label={`${activeAlgorithmKey} algorithm visualization`}
                     >
-                      {algorithmType === ALGORITHM_TYPES.SORTING ? (
-                        <ArrayVisualizer
-                          array={sortingVisualization.array}
-                          states={sortingVisualization.states}
-                          description={sortingVisualization.description}
-                          isComplete={sortingVisualization.isComplete}
-                          algorithm={selectedAlgorithm}
-                          onStepForward={sortingVisualization.stepForward}
-                          onStepBackward={sortingVisualization.stepBackward}
-                          mode={mode}
-                        />
-                      ) : (
-                        <GridVisualizer
-                          states={pathfindingVisualization.states}
-                          description={pathfindingVisualization.description}
-                          isComplete={pathfindingVisualization.isComplete}
-                          algorithm={selectedPathfindingAlgorithm}
-                          gridSize={gridSize}
-                          onStepForward={pathfindingVisualization.stepForward}
-                          onStepBackward={pathfindingVisualization.stepBackward}
-                          mode={mode}
-                        />
-                      )}
+                      <VisualizerComponent
+                        {...sharedVisualizerProps}
+                        {...extraVisualizerProps}
+                      />
                     </div>
 
                     {/* Control Panel */}
@@ -367,16 +336,12 @@ function App() {
             </main>
             <Footer />
 
-            {/* Floating Action Buttons - Only show when both panels are closed */}
+            {/* Floating Action Buttons */}
             {!isPythonPanelOpen && !isInsightPanelOpen && (
               <>
                 <FloatingActionButton
                   onClick={() => setIsPythonPanelOpen(true)}
-                  disabled={
-                    algorithmType === ALGORITHM_TYPES.SORTING
-                      ? !selectedAlgorithm
-                      : !selectedPathfindingAlgorithm
-                  }
+                  disabled={!activeAlgorithmKey}
                 />
                 <InsightFloatingActionButton
                   onClick={() => setIsInsightPanelOpen(true)}
@@ -389,7 +354,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Export modal: orientation selection → progress → preview */}
+      {/* Export modal */}
       <ExportProgressModal
         open={
           exportState === 'orientation' ||
@@ -414,7 +379,7 @@ function App() {
         onOrientationSelect={handleOrientationSelected}
       />
 
-      {/* Python Code Panel - Always available */}
+      {/* Python Code Panel */}
       <Suspense
         fallback={
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -425,15 +390,11 @@ function App() {
         <PythonCodePanel
           isOpen={isPythonPanelOpen}
           onClose={() => setIsPythonPanelOpen(false)}
-          algorithm={
-            algorithmType === ALGORITHM_TYPES.SORTING
-              ? selectedAlgorithm
-              : selectedPathfindingAlgorithm
-          }
+          algorithm={activeAlgorithmKey}
         />
       </Suspense>
 
-      {/* Algorithm Insight Panel - Always available */}
+      {/* Algorithm Insight Panel */}
       <Suspense fallback={null}>
         <AlgorithmInsightPanel
           isOpen={isInsightPanelOpen}
@@ -446,9 +407,13 @@ function App() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// InsightFloatingActionButton
+// ---------------------------------------------------------------------------
+
 /**
- * Insight FAB — similar to FloatingActionButton but in amber colour.
- * Positioned below the Code FAB (offset by 160px top offset on desktop).
+ * Insight FAB — amber colour, positioned below the Code FAB.
+ * Identical to the original; extracted here to keep App clean.
  */
 function InsightFloatingActionButton({
   onClick,
