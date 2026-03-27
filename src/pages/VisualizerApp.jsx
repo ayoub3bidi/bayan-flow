@@ -123,7 +123,6 @@ function App() {
   const VisualizerComponent = VISUALIZER_REGISTRY[algorithmType];
 
   if (import.meta.env.DEV && !VisualizerComponent) {
-    // eslint-disable-next-line no-console
     console.error(
       `[VisualizerApp] No visualizer registered for algorithmType "${algorithmType}". Check VISUALIZER_REGISTRY.`
     );

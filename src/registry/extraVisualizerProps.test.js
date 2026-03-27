@@ -13,15 +13,15 @@ describe('getExtraVisualizerProps', () => {
   const ctx = { sortingVisualization, gridSize: 25 };
 
   it('returns array prop for sorting category', () => {
-    expect(
-      getExtraVisualizerProps(ALGORITHM_TYPES.SORTING, ctx)
-    ).toEqual({ array: [3, 1, 2] });
+    expect(getExtraVisualizerProps(ALGORITHM_TYPES.SORTING, ctx)).toEqual({
+      array: [3, 1, 2],
+    });
   });
 
   it('returns gridSize for pathfinding category', () => {
-    expect(
-      getExtraVisualizerProps(ALGORITHM_TYPES.PATHFINDING, ctx)
-    ).toEqual({ gridSize: 25 });
+    expect(getExtraVisualizerProps(ALGORITHM_TYPES.PATHFINDING, ctx)).toEqual({
+      gridSize: 25,
+    });
   });
 
   it('returns empty object for unknown algorithm type', () => {

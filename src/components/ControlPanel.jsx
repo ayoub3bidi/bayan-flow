@@ -166,7 +166,8 @@ function ControlPanel({
         {/* Feature buttons - centered on mobile, aligned right on desktop */}
         <div className="flex flex-1 justify-center sm:justify-end items-center gap-2 min-w-0 w-full sm:w-auto">
           {/* New data / shuffle — when CATEGORY_CONFIG.features.hasDataRefresh */}
-          {CATEGORY_CONFIG[algorithmType]?.features?.hasDataRefresh === true && (
+          {CATEGORY_CONFIG[algorithmType]?.features?.hasDataRefresh ===
+            true && (
             <button
               onClick={() => {
                 soundManager.playArrayGenerate();
