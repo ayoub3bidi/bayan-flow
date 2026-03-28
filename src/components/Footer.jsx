@@ -5,7 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle, Map } from 'lucide-react';
+import { FileText, AlertCircle, Map, Youtube } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -88,7 +88,7 @@ function Footer() {
           {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
+              <div className="flex items-center justify-center w-8 h-8 shrink-0 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -130,6 +130,20 @@ function Footer() {
               <h3 className="text-sm font-bold text-text-primary">
                 Bayan Flow
               </h3>
+              <a
+                href="https://www.youtube.com/@bayan-flow"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ms-auto rounded-md p-1.5 text-text-secondary transition-colors hover:bg-surface-elevated hover:text-text-primary md:ms-0"
+                aria-label={t('footer.youtubeAria')}
+              >
+                <Youtube
+                  size={18}
+                  strokeWidth={2}
+                  aria-hidden
+                  className="block"
+                />
+              </a>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
               {t('footer.description')}
@@ -151,19 +165,23 @@ function Footer() {
               {t('footer.quickLinks')}
             </h3>
             <div className="flex flex-col gap-2">
-              {links.map(link => (
-                <motion.button
-                  key={link.label}
-                  onClick={() => handleLinkClick(link.href)}
-                  className="flex items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
-                  whileHover={{ scale: 1.02, x: 2 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                >
-                  <link.icon size={14} className="opacity-70" />
-                  <span>{link.label}</span>
-                </motion.button>
-              ))}
+              {links.map(link => {
+                const Icon = link.icon;
+                return (
+                  <motion.button
+                    key={link.label}
+                    type="button"
+                    onClick={() => handleLinkClick(link.href)}
+                    className="flex items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    <Icon size={14} className="opacity-70" aria-hidden />
+                    <span>{link.label}</span>
+                  </motion.button>
+                );
+              })}
             </div>
           </div>
           {/* Right: Support */}
