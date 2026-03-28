@@ -14,6 +14,7 @@ import {
   PATHFINDING_ALGORITHMS,
   SEARCHING_ALGORITHMS,
 } from '../../constants';
+import { getAlgorithmTypesGridColsClass } from './algorithmTypesGridCols.js';
 
 function AlgorithmTypes() {
   const { t } = useTranslation();
@@ -71,13 +72,7 @@ function AlgorithmTypes() {
         </motion.div>
 
         <div
-          className={`grid gap-8 ${
-            modes.length === 2
-              ? 'md:grid-cols-2'
-              : modes.length === 3
-                ? 'md:grid-cols-2 lg:grid-cols-3'
-                : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-          }`}
+          className={`grid gap-8 ${getAlgorithmTypesGridColsClass(modes.length)}`}
         >
           {modes.map((mode, index) => (
             <motion.div
