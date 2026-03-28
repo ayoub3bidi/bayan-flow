@@ -11,11 +11,13 @@ import {
 } from './complexityDatasetRegistry';
 
 describe('COMPLEXITY_DATASETS', () => {
-  it('exposes sorting and pathfinding maps', () => {
+  it('exposes sorting, pathfinding, and searching maps', () => {
     expect(COMPLEXITY_DATASETS.sorting).toBeDefined();
     expect(COMPLEXITY_DATASETS.pathfinding).toBeDefined();
+    expect(COMPLEXITY_DATASETS.searching).toBeDefined();
     expect(typeof COMPLEXITY_DATASETS.sorting).toBe('object');
     expect(typeof COMPLEXITY_DATASETS.pathfinding).toBe('object');
+    expect(typeof COMPLEXITY_DATASETS.searching).toBe('object');
   });
 });
 

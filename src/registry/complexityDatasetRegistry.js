@@ -4,7 +4,11 @@
  * See LICENSE for details.
  */
 
-import { ALGORITHM_COMPLEXITY, PATHFINDING_COMPLEXITY } from '../constants';
+import {
+  ALGORITHM_COMPLEXITY,
+  PATHFINDING_COMPLEXITY,
+  SEARCHING_COMPLEXITY,
+} from '../constants';
 
 /**
  * Maps CATEGORY_CONFIG.complexityDataset keys to the static complexity metadata
@@ -13,6 +17,7 @@ import { ALGORITHM_COMPLEXITY, PATHFINDING_COMPLEXITY } from '../constants';
 export const COMPLEXITY_DATASETS = {
   sorting: ALGORITHM_COMPLEXITY,
   pathfinding: PATHFINDING_COMPLEXITY,
+  searching: SEARCHING_COMPLEXITY,
 };
 
 export const DEFAULT_COMPLEXITY_DATASET = 'sorting';

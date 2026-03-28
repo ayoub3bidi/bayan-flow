@@ -32,11 +32,13 @@ vi.mock('./ComplexityScene.jsx', () => ({
 vi.mock('../registry/videoSceneRegistry.jsx', () => ({
   VIDEO_SCENE_RENDERERS: {
     sorting: props => sortingRenderer(props),
+    searching: props => sortingRenderer(props),
     pathfinding: props => pathfindingRenderer(props),
   },
   VIDEO_TITLE_FALLBACK: {
     sorting: 'Sorting',
     pathfinding: 'Pathfinding',
+    searching: 'Searching',
   },
 }));
 
@@ -44,6 +46,7 @@ vi.mock('../registry/categoryConfig.js', () => ({
   CATEGORY_CONFIG: {
     sorting: { complexityDataset: 'sorting' },
     pathfinding: { complexityDataset: 'pathfinding' },
+    searching: { complexityDataset: 'searching' },
   },
 }));
 
@@ -96,6 +99,25 @@ describe('AlgorithmVideo', () => {
     expect(screen.getByText('Pathfinding scene')).toBeInTheDocument();
   });
 
+  it('renders array scene for searching category', () => {
+    render(
+      <AlgorithmVideo
+        steps={[{ description: 'check', array: [1, 2], states: [] }]}
+        algorithmType="searching"
+        algorithmKey="binarySearch"
+      />
+    );
+
+    expect(sortingRenderer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: [{ description: 'check', array: [1, 2], states: [] }],
+        framesPerStep: 6,
+      })
+    );
+    expect(screen.getByText('Searching')).toBeInTheDocument();
+    expect(screen.getByText('Sorting scene')).toBeInTheDocument();
+  });
+
   it('routes to ComplexityScene with the category dataset after the main segment', () => {
     useCurrentFrame.mockReturnValue(6);
 
@@ -116,5 +138,26 @@ describe('AlgorithmVideo', () => {
       })
     );
     expect(screen.getByTestId('complexity-scene')).toBeInTheDocument();
+  });
+
+  it('routes searching exports to searching complexity dataset', () => {
+    useCurrentFrame.mockReturnValue(6);
+
+    render(
+      <AlgorithmVideo
+        steps={[{ description: 's' }]}
+        algorithmType="searching"
+        algorithmKey="binarySearch"
+        algorithmName="Binary Search"
+      />
+    );
+
+    expect(complexityScene).toHaveBeenCalledWith(
+      expect.objectContaining({
+        algorithmKey: 'binarySearch',
+        complexityDataset: 'searching',
+        algorithmName: 'Binary Search',
+      })
+    );
   });
 });

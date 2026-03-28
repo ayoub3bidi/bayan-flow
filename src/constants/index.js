@@ -7,6 +7,7 @@
 export const ALGORITHM_TYPES = {
   SORTING: 'sorting',
   PATHFINDING: 'pathfinding',
+  SEARCHING: 'searching',
 };
 
 // Ordered list for UI tab rendering and registry iteration.
@@ -42,6 +43,10 @@ export const PATHFINDING_ALGORITHMS = {
   D_STAR_LITE: 'dStarLite',
 };
 
+export const SEARCHING_ALGORITHMS = {
+  BINARY_SEARCH: 'binarySearch',
+};
+
 export const ANIMATION_SPEEDS = {
   SLOW: 8000,
   MEDIUM: 4800,
@@ -66,6 +71,10 @@ export const STATE_COLORS = {
   [ELEMENT_STATES.PIVOT]: '#8b5cf6', // purple-500
   [ELEMENT_STATES.AUXILIARY]: '#6b7280', // gray-500
 };
+
+/** Search target ring + legend (orange-600 — distinct from COMPARING amber-400). */
+export const SEARCH_TARGET_RING_COLOR = '#ea580c';
+export const SEARCH_TARGET_RING_RGB = '234, 88, 12';
 
 export const GRID_ELEMENT_STATES = {
   DEFAULT: 'default',
@@ -306,6 +315,25 @@ export const ALGORITHM_COMPLEXITY = {
       'Humor and algorithm complexity awareness',
       'Showing the importance of algorithmic thinking',
       'Never use in production',
+    ],
+  },
+};
+
+export const SEARCHING_COMPLEXITY = {
+  binarySearch: {
+    name: 'Binary Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Binary search repeatedly halves a sorted range by comparing the middle element to the target. Requires a sorted array.',
+    useCases: [
+      'Large sorted arrays or lists',
+      'Lookup tables and ordered collections',
+      'Algorithm building blocks (e.g. bounds, bisection)',
     ],
   },
 };

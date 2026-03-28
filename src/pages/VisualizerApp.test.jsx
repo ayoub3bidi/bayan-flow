@@ -70,6 +70,23 @@ const pathfindingVisualization = {
   end: { row: 1, col: 1 },
 };
 
+const searchingVisualization = {
+  array: [1, 2, 3],
+  states: ['default', 'default', 'default'],
+  targetValue: 2,
+  description: 'Search description',
+  isComplete: false,
+  stepForward: vi.fn(),
+  stepBackward: vi.fn(),
+  play: vi.fn(),
+  pause: vi.fn(),
+  reset: vi.fn(),
+  isPlaying: false,
+  currentStep: 0,
+  totalSteps: 1,
+  steps: [{ description: 'search step', array: [1, 2, 3], states: [] }],
+};
+
 vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }) => <>{children}</>,
   motion: {
@@ -188,6 +205,10 @@ vi.mock('../hooks/useSortingVisualization', () => ({
 
 vi.mock('../hooks/usePathfindingVisualization', () => ({
   usePathfindingVisualization: () => pathfindingVisualization,
+}));
+
+vi.mock('../hooks/useSearchingVisualization', () => ({
+  useSearchingVisualization: () => searchingVisualization,
 }));
 
 vi.mock('../hooks/useFullScreen', () => ({

@@ -16,6 +16,9 @@ export const VIDEO_SCENE_RENDERERS = {
   [ALGORITHM_TYPES.SORTING]: ({ steps, framesPerStep }) => (
     <SortingScene steps={steps} framesPerStep={framesPerStep} />
   ),
+  [ALGORITHM_TYPES.SEARCHING]: ({ steps, framesPerStep }) => (
+    <SortingScene steps={steps} framesPerStep={framesPerStep} />
+  ),
   [ALGORITHM_TYPES.PATHFINDING]: ({ steps, framesPerStep, gridSize }) => (
     <PathfindingScene
       steps={steps}
@@ -29,4 +32,5 @@ export const VIDEO_SCENE_RENDERERS = {
 export const VIDEO_TITLE_FALLBACK = {
   [ALGORITHM_TYPES.SORTING]: 'Sorting',
   [ALGORITHM_TYPES.PATHFINDING]: 'Pathfinding',
+  [ALGORITHM_TYPES.SEARCHING]: 'Searching',
 };

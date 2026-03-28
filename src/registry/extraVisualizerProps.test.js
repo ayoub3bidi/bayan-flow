@@ -10,17 +10,29 @@ import { ALGORITHM_TYPES } from '../constants';
 
 describe('getExtraVisualizerProps', () => {
   const sortingVisualization = { array: [3, 1, 2] };
-  const ctx = { sortingVisualization, gridSize: 25 };
+  const searchingVisualization = { array: [1, 2, 3], targetValue: 2 };
+  const ctx = { sortingVisualization, searchingVisualization, gridSize: 25 };
 
   it('returns array prop for sorting category', () => {
     expect(getExtraVisualizerProps(ALGORITHM_TYPES.SORTING, ctx)).toEqual({
       array: [3, 1, 2],
+      complexityDataset: 'sorting',
+    });
+  });
+
+  it('returns array, target, variant, and dataset for searching category', () => {
+    expect(getExtraVisualizerProps(ALGORITHM_TYPES.SEARCHING, ctx)).toEqual({
+      array: [1, 2, 3],
+      targetValue: 2,
+      visualizerVariant: 'searching',
+      complexityDataset: 'searching',
     });
   });
 
   it('returns gridSize for pathfinding category', () => {
     expect(getExtraVisualizerProps(ALGORITHM_TYPES.PATHFINDING, ctx)).toEqual({
       gridSize: 25,
+      complexityDataset: 'pathfinding',
     });
   });
 

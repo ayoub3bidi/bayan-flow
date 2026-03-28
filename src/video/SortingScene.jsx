@@ -6,7 +6,12 @@
 
 import { memo } from 'react';
 import { useCurrentFrame, interpolate } from 'remotion';
-import { STATE_COLORS, ELEMENT_STATES } from '../constants/index.js';
+import {
+  STATE_COLORS,
+  ELEMENT_STATES,
+  SEARCH_TARGET_RING_COLOR,
+  SEARCH_TARGET_RING_RGB,
+} from '../constants/index.js';
 
 /**
  * Renders sorting visualization with smooth interpolated animations.
@@ -28,7 +33,7 @@ function SortingSceneInner({ steps, framesPerStep }) {
   const step = steps[stepIndex] ?? steps[0];
   if (!step) return null;
 
-  const { array, states } = step;
+  const { array, states, targetValue } = step;
   const n = array.length;
   const barSize = n <= 20 ? 60 : n <= 35 ? 45 : 30;
   const minSize = 25;
@@ -130,7 +135,10 @@ function SortingSceneInner({ steps, framesPerStep }) {
                 backgroundColor: color,
                 borderWidth: 2,
                 borderStyle: 'solid',
-                borderColor: '#374151',
+                borderColor:
+                  targetValue != null && value === targetValue
+                    ? SEARCH_TARGET_RING_COLOR
+                    : '#374151',
                 borderRadius: 8,
                 width: barWidth,
                 height: barWidth,
@@ -142,7 +150,10 @@ function SortingSceneInner({ steps, framesPerStep }) {
                 color: '#ffffff',
                 fontSize: 14,
                 fontWeight: 'bold',
-                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.2)',
+                boxShadow:
+                  targetValue != null && value === targetValue
+                    ? `0 0 0 3px rgba(${SEARCH_TARGET_RING_RGB}, 0.95), 0 4px 6px -1px rgba(0,0,0,0.2)`
+                    : '0 4px 6px -1px rgba(0,0,0,0.2)',
               }}
             >
               {value}
