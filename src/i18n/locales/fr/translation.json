@@ -506,7 +506,7 @@
     }
   },
   "footer": {
-    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri/recherche de chemin avec clarté.",
+    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
     "madeWith": "Fait avec",
     "by": "par",
@@ -678,6 +678,11 @@
         "title": "Algorithmes de Recherche de Chemin",
         "description": "Voyez comment les algorithmes de recherche de chemin naviguent à travers les grilles pour trouver le chemin le plus court entre deux points.",
         "algorithms": "BFS, Dijkstra, Recherche A*, Recherche Bidirectionnelle, Recherche Gloutonne du Meilleur d'Abord, Recherche par Points de Saut, Bellman-Ford, IDA*, D* Lite"
+      },
+      "searching": {
+        "title": "Algorithmes de recherche",
+        "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
+        "algorithms": "Recherche dichotomique"
       }
     },
     "features": {
@@ -685,7 +690,7 @@
       "subheading": "Tout ce dont vous avez besoin pour maîtriser les algorithmes",
       "customization": {
         "title": "Personnalisable",
-        "description": "Ajustez la taille du tableau (5-100) ou la taille de la grille (15×15 à 35×35) pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
+        "description": "Ajustez la taille du tableau (5-100) pour le tri et la recherche, ou la taille de la grille (15×15 à 35×35) pour la recherche de chemin, pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
       },
       "pythonCode": {
         "title": "Python Interactif",

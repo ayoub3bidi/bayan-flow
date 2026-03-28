@@ -507,7 +507,7 @@
     }
   },
   "footer": {
-    "description": "An interactive, educational web application for visualizing sorting/pathfinding algorithms with clarity.",
+    "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
     "madeWith": "Made with",
     "by": "by",
@@ -677,6 +677,11 @@
         "title": "Pathfinding Algorithms",
         "description": "See how pathfinding algorithms navigate through grids to find the shortest path between two points.",
         "algorithms": "BFS, Dijkstra, A* Search, Bidirectional Search, Greedy Best-First Search, Jump Point Search, Bellman-Ford, IDA*, D* Lite"
+      },
+      "searching": {
+        "title": "Searching Algorithms",
+        "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
+        "algorithms": "Binary Search"
       }
     },
     "features": {
@@ -684,7 +689,7 @@
       "subheading": "Everything you need to master algorithms",
       "customization": {
         "title": "Customizable",
-        "description": "Adjust array size (5-100) or grid size (15×15 to 35×35) to see how algorithms perform with different data sizes."
+        "description": "Adjust array size (5-100) for sorting and searching, or grid size (15×15 to 35×35) for pathfinding, to see how algorithms perform with different data sizes."
       },
       "pythonCode": {
         "title": "Interactive Python",

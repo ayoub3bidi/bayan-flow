@@ -43,6 +43,9 @@ const constantsMockValue = {
     GREEDY_BEST_FIRST_SEARCH: 'greedyBestFirstSearch',
     JUMP_POINT_SEARCH: 'jumpPointSearch',
   },
+  SEARCHING_ALGORITHMS: {
+    BINARY_SEARCH: 'binarySearch',
+  },
   ELEMENT_STATES: {
     DEFAULT: 'default',
     COMPARING: 'comparing',

@@ -6,13 +6,13 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpDown, Route } from 'lucide-react';
+import { ArrowUpDown, Route, Search } from 'lucide-react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
 import {
-  ALGORITHM_TYPES,
   SORTING_ALGORITHMS,
   PATHFINDING_ALGORITHMS,
+  SEARCHING_ALGORITHMS,
 } from '../../constants';
 
 function AlgorithmTypes() {
@@ -43,6 +43,13 @@ function AlgorithmTypes() {
       algorithms: getAlgorithmList(PATHFINDING_ALGORITHMS, 'pathfinding'),
       gradient: 'from-purple-500 via-pink-500 to-purple-600',
     },
+    {
+      icon: Search,
+      title: t('landing.algorithmTypes.searching.title'),
+      description: t('landing.algorithmTypes.searching.description'),
+      algorithms: getAlgorithmList(SEARCHING_ALGORITHMS, 'searching'),
+      gradient: 'from-emerald-500 via-teal-500 to-emerald-600',
+    },
   ];
 
   return (
@@ -64,7 +71,13 @@ function AlgorithmTypes() {
         </motion.div>
 
         <div
-          className={`grid gap-8 ${modes.length === 2 ? 'md:grid-cols-2' : modes.length === 3 ? 'lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}
+          className={`grid gap-8 ${
+            modes.length === 2
+              ? 'md:grid-cols-2'
+              : modes.length === 3
+                ? 'md:grid-cols-2 lg:grid-cols-3'
+                : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+          }`}
         >
           {modes.map((mode, index) => (
             <motion.div
