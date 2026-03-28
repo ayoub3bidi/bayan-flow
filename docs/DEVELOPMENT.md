@@ -1,5 +1,12 @@
 # Development Guide
 
+## For contributors
+
+- **Pull requests** must target the **`develop`** branch, not **`main`**.
+- Read **[CONTRIBUTING.md](../CONTRIBUTING.md)** for contribution rules, CI expectations, and the PR workflow.
+- Use this guide for implementation patterns; use **[ARCHITECTURE.md](./ARCHITECTURE.md)** for how the app is structured end to end.
+- New PRs should follow **[.github/PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md)** (GitHub loads it automatically—fill it in, do not strip required sections).
+
 ## Quick Start
 
 ### Prerequisites

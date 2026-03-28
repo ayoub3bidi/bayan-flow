@@ -435,6 +435,15 @@ Bayan Flow is built with accessibility in mind:
 
 **Note**: Web Audio API support required for sound features.
 
+## Contributing
+
+We welcome contributions. Please:
+
+- **Open pull requests against `develop`, not `main`.** Production is promoted from `develop`; targeting `main` slows review and may need to be retargeted.
+- Read **[CONTRIBUTING.md](./CONTRIBUTING.md)** for the full process, coding standards, and license expectations.
+- Consult **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)** for day-to-day commands, patterns, and feature checklists, and **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** when you need system-level context.
+- When you open a PR, GitHub applies **[.github/PULL_REQUEST_TEMPLATE.md](./.github/PULL_REQUEST_TEMPLATE.md)**. Keep the template intact and complete the sections that apply to your change.
+
 ## License
 
 This project is dual-licensed:

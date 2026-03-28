@@ -2,6 +2,8 @@
 
 This document provides an in-depth explanation of the Bayan Flow architecture, design patterns, and implementation details.
 
+**Contributors:** Open PRs against **`develop`** (not `main`). Follow **[CONTRIBUTING.md](../CONTRIBUTING.md)**, **[DEVELOPMENT.md](./DEVELOPMENT.md)** for practical workflows, and complete **[.github/PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md)** when submitting changes.
+
 ## Table of Contents
 
 1. [System Architecture](#system-architecture)
