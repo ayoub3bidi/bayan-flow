@@ -7,11 +7,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ThemeToggle from './ThemeToggle';
-
-// Mock ThemeContext to test fallback behavior
-vi.mock('../contexts/ThemeContextDefinition', () => ({
-  ThemeContext: {},
-}));
+import { ThemeContext } from '../contexts/ThemeContextDefinition';
 
 describe('ThemeToggle', () => {
   describe('Rendering', () => {
@@ -186,13 +182,21 @@ describe('ThemeToggle', () => {
       expect(screen.getByText('Dark mode active')).toBeInTheDocument();
     });
 
-    it('should handle context with undefined theme property', () => {
-      // This test covers the branch where context exists but properties are undefined
-      vi.doMock('../contexts/ThemeContextDefinition', () => ({
-        ThemeContext: {},
-      }));
-
-      render(<ThemeToggle />);
+    it('should fall back when context omits theme (undefined)', () => {
+      render(
+        <ThemeContext.Provider
+          value={{
+            theme: undefined,
+            toggleTheme: undefined,
+            setTheme: vi.fn(),
+            isSystemDark: false,
+            isDark: false,
+            isLight: true,
+          }}
+        >
+          <ThemeToggle />
+        </ThemeContext.Provider>
+      );
 
       const button = screen.getByRole('switch');
       expect(button).toHaveAttribute('aria-checked', 'false');

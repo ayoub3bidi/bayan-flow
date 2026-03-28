@@ -18,6 +18,17 @@ export const generateRandomArray = (size, min = 5, max = 500) => {
 };
 
 /**
+ * Random array sorted in ascending order (for searching / binary search demos).
+ * @param {number} size
+ * @param {number} min
+ * @param {number} max
+ * @returns {number[]}
+ */
+export const generateSortedRandomArray = (size, min = 5, max = 500) => {
+  return [...generateRandomArray(size, min, max)].sort((a, b) => a - b);
+};
+
+/**
  * Generates a nearly sorted array (useful for testing)
  * @param {number} size - The size of the array
  * @param {number} swaps - Number of random swaps to perform

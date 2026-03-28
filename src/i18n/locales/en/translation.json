@@ -27,11 +27,15 @@
     "experimental": "Experimental",
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
-    "autoplayOnly": "only"
+    "autoplayOnly": "only",
+    "mysteryCategory": "Mystery",
+    "mysteryCategoryHint": "Coming soon",
+    "mysteryCategoryAria": "Upcoming algorithm category, not yet available"
   },
   "modes": {
     "sorting": "Sorting",
     "pathfinding": "Pathfinding",
+    "searching": "Searching",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },
@@ -63,6 +67,9 @@
       "idaStar": "Iterative Deepening A* (IDA*)",
       "dStarLite": "D* Lite"
     },
+    "searching": {
+      "binarySearch": "Binary Search"
+    },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
@@ -86,7 +93,8 @@
       "jumpPointSearch": "Starting Jump Point Search",
       "bellmanFord": "Starting Bellman-Ford algorithm",
       "idaStar": "IDA* Search",
-      "dStarLite": "Starting D* Lite Search"
+      "dStarLite": "Starting D* Lite Search",
+      "binarySearch": "Starting Binary Search"
     }
   },
   "complexity": {
@@ -112,7 +120,8 @@
     "jumpPointSearch": "O(E)",
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
-    "dStarLite": "O(log V)"
+    "dStarLite": "O(log V)",
+    "binarySearch": "O(log n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -482,11 +491,23 @@
         "facts_0": "D* Lite was used on NASA Mars rovers for real mission navigation.",
         "facts_1": "The 'Lite' in D* Lite means it is simpler to implement and understand than original D*.",
         "facts_2": "It is significantly more efficient than replanning from scratch on every change."
+      },
+      "binarySearch": {
+        "history": "Halving a sorted search space appears in very early computing. John Mauchly described a binary-search-style procedure for ordered tape in 1946. Once random-access memory and sorted tables were common, the iterative two-pointer form became the standard textbook algorithm.",
+        "intuition": "Maintain a window [left, right] that might still hold the target. Compare the target with the middle element. If they match, stop. If the target is larger, drop the left half; if smaller, drop the right half. Each step removes about half of the remaining indices, so you need at most about log₂(n) comparisons.",
+        "realWorldUses_0": "Lookups against sorted database indexes and ordered key ranges",
+        "realWorldUses_1": "Standard library helpers (for example Python's bisect, C++ lower_bound)",
+        "realWorldUses_2": "Finding insertion positions to keep arrays or lists sorted after updates",
+        "realWorldUses_3": "Games, simulations, and APIs that query ordered numeric thresholds",
+        "facts_0": "Binary search is O(log n) time and O(1) extra space for the classic iterative version.",
+        "facts_1": "It only works on sorted input (or any total order where “middle” comparisons are valid).",
+        "facts_2": "Integer overflow in mid = (left + right) / 2 is a famous pitfall; use left + (right - left) // 2 in languages where needed.",
+        "facts_3": "Jon Bentley noted that many programmers still struggle to write a correct binary search on the first try."
       }
     }
   },
   "footer": {
-    "description": "An interactive, educational web application for visualizing sorting/pathfinding algorithms with clarity.",
+    "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
     "madeWith": "Made with",
     "by": "by",
@@ -518,12 +539,20 @@
       "queue": "Queue",
       "visited": "Visited",
       "path": "Path"
+    },
+    "searching": {
+      "default": "In range",
+      "comparing": "Checking",
+      "outOfRange": "Out of search range",
+      "found": "Found",
+      "targetHighlight": "Target value (ring)"
     }
   },
   "visualization": {
     "description": "Interactive algorithm visualization",
     "viewPythonCode": "View Python code",
-    "codeLabel": "Code"
+    "codeLabel": "Code",
+    "searchTarget": "Target: {{value}}"
   },
   "languages": {
     "en": "English",
@@ -607,7 +636,11 @@
     "bogoChecking": "Attempt {{attempt}}: Checking if array is sorted",
     "bogoShuffling": "Attempt {{attempt}}: Randomly shuffling array",
     "bogoSuccess": "Success! Array sorted after {{attempts}} shuffle attempts",
-    "bogoFailed": "Failed to sort after {{maxAttempts}} attempts. Bogo Sort is extremely inefficient!"
+    "bogoFailed": "Failed to sort after {{maxAttempts}} attempts. Bogo Sort is extremely inefficient!",
+    "searchBinaryStart": "Searching for {{target}} using binary search on the sorted array.",
+    "searchBinaryCheck": "Middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
+    "searchBinaryFound": "Found {{target}} at index {{mid}}.",
+    "searchBinaryNotFound": "Target {{target}} is not in the array."
   },
   "landing": {
     "hero": {
@@ -644,6 +677,11 @@
         "title": "Pathfinding Algorithms",
         "description": "See how pathfinding algorithms navigate through grids to find the shortest path between two points.",
         "algorithms": "BFS, Dijkstra, A* Search, Bidirectional Search, Greedy Best-First Search, Jump Point Search, Bellman-Ford, IDA*, D* Lite"
+      },
+      "searching": {
+        "title": "Searching Algorithms",
+        "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
+        "algorithms": "Binary Search"
       }
     },
     "features": {
@@ -651,7 +689,7 @@
       "subheading": "Everything you need to master algorithms",
       "customization": {
         "title": "Customizable",
-        "description": "Adjust array size (5-100) or grid size (15×15 to 35×35) to see how algorithms perform with different data sizes."
+        "description": "Adjust array size (5-100) for sorting and searching, or grid size (15×15 to 35×35) for pathfinding, to see how algorithms perform with different data sizes."
       },
       "pythonCode": {
         "title": "Interactive Python",
@@ -695,7 +733,8 @@
     "unweighted": "Unweighted",
     "weightedOptimal": "Weighted Optimal",
     "heuristicBased": "Heuristic-Based",
-    "specialCases": "Special Cases"
+    "specialCases": "Special Cases",
+    "logarithmicSearch": "Logarithmic search"
   },
   "roadmap": {
     "hero": {

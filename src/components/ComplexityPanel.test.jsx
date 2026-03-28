@@ -31,7 +31,7 @@ vi.mock('../constants', () => ({
   },
   PATHFINDING_COMPLEXITY: {
     bfs: {
-      name: 'Breadth-First Search',
+      name: 'BFS',
       timeComplexity: {
         best: 'O(V + E)',
         average: 'O(V + E)',
@@ -40,9 +40,22 @@ vi.mock('../constants', () => ({
       spaceComplexity: 'O(V)',
     },
   },
+  SEARCHING_COMPLEXITY: {
+    binarySearch: {
+      name: 'Binary Search',
+      timeComplexity: {
+        best: 'O(1)',
+        average: 'O(log n)',
+        worst: 'O(log n)',
+      },
+      spaceComplexity: 'O(1)',
+    },
+  },
   COMPLEXITY_FUNCTIONS: {
     'O(n²)': n => n * n,
     'O(V + E)': n => n + n * 4,
+    'O(n)': n => n,
+    'O(log n)': n => Math.log2(n),
   },
 }));
 
@@ -96,7 +109,9 @@ describe('ComplexityPanel', () => {
 
   describe('Pathfinding Mode', () => {
     it('should render correctly for pathfinding algorithms', () => {
-      render(<ComplexityPanel algorithm="bfs" isPathfinding={true} />);
+      render(
+        <ComplexityPanel algorithm="bfs" complexityDataset="pathfinding" />
+      );
       expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
       expect(screen.getByText('BFS')).toBeInTheDocument();
     });

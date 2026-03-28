@@ -11,17 +11,29 @@ import { ALGORITHM_TYPES } from '../constants';
  * Keep category-specific wiring in one place when adding new visualizer types.
  *
  * @param {string} algorithmType
- * @param {{ sortingVisualization: { array: unknown }, gridSize: number }} ctx
+ * @param {{
+ *   sortingVisualization: { array: unknown },
+ *   searchingVisualization: { array: unknown, targetValue: unknown },
+ *   gridSize: number,
+ * }} ctx
  */
 export function getExtraVisualizerProps(
   algorithmType,
-  { sortingVisualization, gridSize }
+  { sortingVisualization, searchingVisualization, gridSize }
 ) {
   if (algorithmType === ALGORITHM_TYPES.SORTING) {
-    return { array: sortingVisualization.array };
+    return { array: sortingVisualization.array, complexityDataset: 'sorting' };
+  }
+  if (algorithmType === ALGORITHM_TYPES.SEARCHING) {
+    return {
+      array: searchingVisualization.array,
+      targetValue: searchingVisualization.targetValue,
+      visualizerVariant: 'searching',
+      complexityDataset: 'searching',
+    };
   }
   if (algorithmType === ALGORITHM_TYPES.PATHFINDING) {
-    return { gridSize };
+    return { gridSize, complexityDataset: 'pathfinding' };
   }
   return {};
 }

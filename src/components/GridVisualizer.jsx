@@ -103,7 +103,10 @@ function GridVisualizer({
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
       <AnimatePresence mode="wait">
         {showComplexityPanel ? (
-          <ComplexityPanel algorithm={algorithm} isPathfinding={true} />
+          <ComplexityPanel
+            algorithm={algorithm}
+            complexityDataset="pathfinding"
+          />
         ) : (
           <motion.div
             initial={{ opacity: 1 }}

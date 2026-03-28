@@ -187,8 +187,8 @@ const visualization = useSortingVisualization(array, speed, mode);
 **Optimize for Performance:**
 ```javascript
 // Use transform instead of width/height
-animate={{ scale: 1.1 }}  // GPU accelerated ✓
-animate={{ width: 200 }}   // Forces layout ✗
+animate={{ scale: 1.1 }}  // GPU-accelerated (preferred)
+animate={{ width: 200 }}   // Triggers layout (avoid when possible)
 ```
 
 **AnimatePresence for Enter/Exit:**
@@ -283,7 +283,7 @@ src/
 ├── contexts/          # React contexts
 ├── hooks/             # Custom hooks
 ├── video/             # Remotion video export (useVideoExporter, scenes)
-├── algorithms/        # Algorithm implementations
+├── algorithms/        # sorting/, pathfinding/, searching/, python/
 ├── utils/             # Pure utilities
 ├── data/              # Static data
 └── constants/         # App constants
@@ -295,7 +295,8 @@ Algorithm and settings configuration is centralized in `src/config/`:
 
 ```javascript
 // algorithmConfig.js - useAlgorithmConfig()
-// Returns: sortingAlgorithms, pathfindingAlgorithms, sortingGroups, pathfindingGroups
+// Returns (from CATEGORY_CONFIG + i18n): sortingAlgorithms, pathfindingAlgorithms,
+// searchingAlgorithms, sortingGroups, pathfindingGroups, searchingGroups
 // Uses useTranslation for i18n-aware labels
 
 // settingsConfig.js - useSettingsConfig()
@@ -303,7 +304,7 @@ Algorithm and settings configuration is centralized in `src/config/`:
 // Uses GRID_SIZES, ANIMATION_SPEEDS from constants
 ```
 
-`SettingsPanel` uses these hooks; `AlgorithmDropdown` receives algorithms and groups as props.
+`SettingsPanel` uses these hooks; `AlgorithmDropdown` receives algorithms and groups as props. Searching reuses the **array** visualizer with extra props for the **target** value (see `getExtraVisualizerProps` in `src/registry/extraVisualizerProps.js`).
 
 ### 10. Video Export
 
@@ -433,20 +434,14 @@ export const pureSortingAlgorithms = {
 };
 ```
 
-**Step 3: Add to UI**
+**Step 3: Add to category config**
 
-In `src/config/algorithmConfig.js` (useAlgorithmConfig hook):
-```javascript
-const sortingAlgorithms = [
-  // ... existing
-  {
-    value: 'insertionSort',
-    label: t('algorithms.sorting.insertionSort'),
-    complexity: t('complexity.insertionSort'),
-  },
-];
-// Also add to sortingGroups under the appropriate group
-```
+In `src/registry/categoryConfig.js`, under `ALGORITHM_TYPES.SORTING`:
+
+- Append the algorithm key to `algorithmKeys`
+- Add it to the correct entry in `groupDefs[].algorithms`
+
+`useAlgorithmConfig` builds dropdown data from this file (no manual list in `algorithmConfig.js`).
 
 **Step 4: Add Complexity Metadata**
 
@@ -586,11 +581,28 @@ The following algorithms were recently added using this pattern:
 
 ### Adding a New Pathfinding Algorithm
 
-Follow similar steps but use `src/algorithms/pathfinding/` directory. Add to `useAlgorithmConfig` in `src/config/algorithmConfig.js` (pathfindingAlgorithms and pathfindingGroups). Also:
+Follow similar steps but use `src/algorithms/pathfinding/` directory. Lists and groups come from **`src/registry/categoryConfig.js`** (via `useAlgorithmConfig`). Also:
+
 - Use 2D grid state instead of 1D array
 - Implement grid-based visualization
-- Add to `PATHFINDING_COMPLEXITY` in constants
-- Update pathfinding test suite
+- Add to `PATHFINDING_COMPLEXITY` in `src/constants/index.js`
+- Register in `src/algorithms/pathfinding/index.js` and Python / `testCases.js` / i18n as needed
+- Update pathfinding tests
+
+### Adding a Searching Algorithm
+
+Searching runs on a **sorted** 1D array (same bar UI as sorting, with a **target** value and range highlighting).
+
+1. **Implement** `src/algorithms/searching/yourSearch.js`: export a `*Pure` function for tests and a visualization function that returns steps. Each step should include `array`, `states`, `description`, and (if applicable) **`targetValue`** for the UI.
+2. **Register** in `src/algorithms/searching/index.js` (`searchingAlgorithms` map + `pureSearchingAlgorithms` or equivalent pattern used in the repo).
+3. **Category config** — `src/registry/categoryConfig.js`: add the key under `ALGORITHM_TYPES.SEARCHING` (`algorithmKeys`, `groupDefs`, `getAlgorithmFn`). `generateData` should stay **sorted** (see existing helper).
+4. **Constants** — `SEARCHING_ALGORITHMS`, `SEARCHING_COMPLEXITY` in `src/constants/index.js`; wire `searching` in `src/registry/complexityDatasetRegistry.js` if not already present.
+5. **Translations** — `algorithms.searching.*`, `complexity.*`, `algorithmSteps.*`, modes/legend strings in **en / fr / ar**.
+6. **`algorithmTranslations.js`** — add any new `ALGORITHM_STEPS` keys your algorithm uses.
+7. **Python** — `src/algorithms/python/your_search.py` (raw import), `pythonAlgorithms` + display name in `index.js`, **`testCases.js`** (tuple inputs `(arr, target)` work with the Pyodide worker).
+8. **Insight panel** — `ALGORITHM_KNOWLEDGE` in `src/constants/algorithmKnowledge.js` + `insight_panel.algorithms.<key>` in all locales (counts must match metadata).
+9. **Video** — searching uses the same Remotion **array** scene as sorting (`videoSceneRegistry`); complexity uses the `searching` dataset.
+10. **Tests** — searching unit tests, config/registry tests, and any snapshot of algorithm lists.
 
 ### Adding a New Language
 
@@ -636,10 +648,10 @@ i18n.init({
 In `src/components/LanguageSwitcher.jsx`:
 ```javascript
 const allLanguages = [
-  { code: 'en', name: t('languages.en'), flag: '🇬🇧' },
-  { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' },
-  { code: 'ar', name: t('languages.ar'), flag: '🇸🇦' },
-  { code: '[lang]', name: t('languages.[lang]'), flag: '🏳️' },
+  { code: 'en', name: t('languages.en'), flag: 'EN' },
+  { code: 'fr', name: t('languages.fr'), flag: 'FR' },
+  { code: 'ar', name: t('languages.ar'), flag: 'AR' },
+  { code: '[lang]', name: t('languages.[lang]'), flag: '?' },
 ];
 ```
 
@@ -933,7 +945,7 @@ playNewSound() {
 
 - [ ] Run `pnpm lint:fix`
 - [ ] Run `pnpm format`
-- [ ] Run `pnpm test:run` (ensure 922+ tests pass)
+- [ ] Run `pnpm test:run` (full suite green)
 - [ ] Check console for warnings/errors
 - [ ] Test in light and dark mode
 - [ ] Test in all supported languages (EN/FR/AR)

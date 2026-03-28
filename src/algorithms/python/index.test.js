@@ -68,6 +68,11 @@ vi.mock('./ida_star.py?raw', () => ({
     'def ida_star(grid, start, end):\n    """IDA* Search Algorithm"""\n    return []',
 }));
 
+vi.mock('./binary_search.py?raw', () => ({
+  default:
+    'def binary_search(arr, target):\n    """Binary Search Algorithm"""\n    return -1',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -140,6 +145,12 @@ describe('Python Algorithms Index', () => {
       const code = getPythonCode('idaStar');
       expect(code).toContain('def ida_star');
       expect(code).toContain('IDA* Search');
+    });
+
+    it('returns Python code for binary search', () => {
+      const code = getPythonCode('binarySearch');
+      expect(code).toContain('def binary_search');
+      expect(code).toContain('Binary Search Algorithm');
     });
 
     it('returns null for unknown algorithm', () => {
@@ -219,6 +230,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Iterative Deepening A* (IDA*)');
     });
 
+    it('returns correct display name for binary search', () => {
+      const name = getAlgorithmDisplayName('binarySearch');
+      expect(name).toBe('Binary Search');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -250,6 +266,7 @@ describe('Python Algorithms Index', () => {
         'jumpPointSearch',
         'bellmanFord',
         'idaStar',
+        'binarySearch',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

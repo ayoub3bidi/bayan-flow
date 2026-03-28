@@ -7,25 +7,29 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { COMPLEXITY_FUNCTIONS } from '../constants';
 import {
-  ALGORITHM_COMPLEXITY,
-  PATHFINDING_COMPLEXITY,
-  COMPLEXITY_FUNCTIONS,
-} from '../constants';
+  COMPLEXITY_DATASETS,
+  DEFAULT_COMPLEXITY_DATASET,
+} from '../registry/complexityDatasetRegistry';
 
 /**
- * @param {string} algorithm - Current algorithm name
- * @param {boolean} isPathfinding - Whether this is a pathfinding algorithm
+ * @param {string} algorithm - Current algorithm key
+ * @param {string} complexityDataset - Key into COMPLEXITY_DATASETS (sorting | pathfinding | searching)
  */
-function ComplexityPanel({ algorithm, isPathfinding = false }) {
+function ComplexityPanel({
+  algorithm,
+  complexityDataset = DEFAULT_COMPLEXITY_DATASET,
+}) {
   const { t } = useTranslation();
   const [isLogScale, setIsLogScale] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [animationProgress, setAnimationProgress] = useState(0);
   const svgRef = useRef(null);
-  const complexityData = isPathfinding
-    ? PATHFINDING_COMPLEXITY[algorithm]
-    : ALGORITHM_COMPLEXITY[algorithm];
+  const dataset =
+    COMPLEXITY_DATASETS[complexityDataset] ??
+    COMPLEXITY_DATASETS[DEFAULT_COMPLEXITY_DATASET];
+  const complexityData = dataset[algorithm];
 
   // Animate curve drawing on mount
   useEffect(() => {

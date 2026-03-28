@@ -74,6 +74,12 @@ export const ALGORITHM_STEPS = {
   TIM_RUN_SORTED: 'timRunSorted',
   TIM_MERGING_RUNS: 'timMergingRuns',
 
+  // Searching
+  SEARCH_BINARY_START: 'searchBinaryStart',
+  SEARCH_BINARY_CHECK: 'searchBinaryCheck',
+  SEARCH_BINARY_FOUND: 'searchBinaryFound',
+  SEARCH_BINARY_NOT_FOUND: 'searchBinaryNotFound',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

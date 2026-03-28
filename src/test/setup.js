@@ -27,8 +27,9 @@ const constantsMockValue = {
   ALGORITHM_TYPES: {
     SORTING: 'sorting',
     PATHFINDING: 'pathfinding',
+    SEARCHING: 'searching',
   },
-  ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding'],
+  ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding', 'searching'],
   SORTING_ALGORITHMS: {
     BUBBLE_SORT: 'bubbleSort',
     MERGE_SORT: 'mergeSort',
@@ -41,6 +42,9 @@ const constantsMockValue = {
     BIDIRECTIONAL_SEARCH: 'bidirectionalSearch',
     GREEDY_BEST_FIRST_SEARCH: 'greedyBestFirstSearch',
     JUMP_POINT_SEARCH: 'jumpPointSearch',
+  },
+  SEARCHING_ALGORITHMS: {
+    BINARY_SEARCH: 'binarySearch',
   },
   ELEMENT_STATES: {
     DEFAULT: 'default',
@@ -66,6 +70,7 @@ const constantsMockValue = {
   // Used by complexityDatasetRegistry and Remotion complexity UI
   ALGORITHM_COMPLEXITY: {},
   PATHFINDING_COMPLEXITY: {},
+  SEARCHING_COMPLEXITY: {},
   COMPLEXITY_FUNCTIONS: {},
 };
 

@@ -27,6 +27,7 @@ import cycleSortPython from './cycle_sort.py?raw';
 import combSortPython from './comb_sort.py?raw';
 import timSortPython from './timSort.py?raw';
 import bogoSortPython from './bogo_sort.py?raw';
+import binarySearchPython from './binary_search.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -52,6 +53,7 @@ export const pythonAlgorithms = {
   bellmanFord: bellmanFordPython,
   idaStar: idaStarPython,
   dStarLite: dStarLitePython,
+  binarySearch: binarySearchPython,
 };
 
 export const algorithmDisplayNames = {
@@ -78,6 +80,7 @@ export const algorithmDisplayNames = {
   bellmanFord: 'Bellman-Ford Algorithm',
   idaStar: 'Iterative Deepening A* (IDA*)',
   dStarLite: 'D* Lite',
+  binarySearch: 'Binary Search',
 };
 
 export function getPythonCode(algorithmName) {

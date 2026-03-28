@@ -4,10 +4,14 @@
  * See LICENSE for details.
  */
 
-import { BarChart3, Grid3x3 } from 'lucide-react';
+import { BarChart3, Grid3x3, Search } from 'lucide-react';
 import { algorithms } from '../algorithms';
 import { pathfindingAlgorithms } from '../algorithms/pathfinding';
-import { generateRandomArray } from '../utils/arrayHelpers';
+import { searchingAlgorithms } from '../algorithms/searching';
+import {
+  generateRandomArray,
+  generateSortedRandomArray,
+} from '../utils/arrayHelpers';
 import { createEmptyGrid } from '../utils/gridHelpers';
 import {
   ALGORITHM_TYPES,
@@ -162,6 +166,35 @@ export const CATEGORY_CONFIG = {
       {
         labelKey: 'algorithmGroups.specialCases',
         algorithms: ['bellmanFord'],
+      },
+    ],
+  },
+
+  [ALGORITHM_TYPES.SEARCHING]: {
+    defaultAlgorithm: 'binarySearch',
+    i18nPrefix: 'algorithms.searching',
+    i18nTabKey: 'modes.searching',
+    icon: Search,
+    sizeBinding: 'array',
+    getAlgorithmFn: key => searchingAlgorithms[key],
+    generateData: (size = DEFAULT_ARRAY_SIZE) =>
+      generateSortedRandomArray(size),
+    features: {
+      hasDataRefresh: true,
+    },
+    complexityDataset: 'searching',
+    sizeControl: {
+      type: 'slider',
+      i18nKey: 'settings.arraySize',
+      min: 5,
+      max: 100,
+      step: 5,
+    },
+    algorithmKeys: ['binarySearch'],
+    groupDefs: [
+      {
+        labelKey: 'algorithmGroups.logarithmicSearch',
+        algorithms: ['binarySearch'],
       },
     ],
   },

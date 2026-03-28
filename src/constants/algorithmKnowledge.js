@@ -179,4 +179,13 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 3,
     youtubeVideoId: null,
   },
+
+  // ── Searching ─────────────────────────────────────────────────────────────
+  binarySearch: {
+    inventor: 'John Mauchly (1946); divide-by-half search on sorted data',
+    year: 1946,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };

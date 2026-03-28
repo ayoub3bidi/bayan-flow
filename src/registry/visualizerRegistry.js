@@ -20,4 +20,5 @@ import { ALGORITHM_TYPES } from '../constants';
 export const VISUALIZER_REGISTRY = {
   [ALGORITHM_TYPES.SORTING]: ArrayVisualizer,
   [ALGORITHM_TYPES.PATHFINDING]: GridVisualizer,
+  [ALGORITHM_TYPES.SEARCHING]: ArrayVisualizer,
 };

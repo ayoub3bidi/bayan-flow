@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Hand, Volume2, VolumeX } from 'lucide-react';
+import { Play, Hand, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   ANIMATION_SPEEDS,
@@ -86,10 +86,17 @@ function SettingsPanel({
       transition={{ delay: 0.1 }}
     >
       <div>
-        <label className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent">
+        <label
+          id="settings-algorithm-mode-label"
+          className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent"
+        >
           {t('settings.mode')}
         </label>
-        <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
+        <div
+          className="grid grid-cols-2 gap-2 sm:gap-3"
+          role="group"
+          aria-labelledby="settings-algorithm-mode-label"
+        >
           {ALGORITHM_TYPE_LIST.map(type => {
             const cfg = CATEGORY_CONFIG[type];
             const Icon = cfg.icon;
@@ -100,17 +107,36 @@ function SettingsPanel({
                 type="button"
                 onClick={() => !isPlaying && onAlgorithmTypeChange(type)}
                 disabled={isPlaying}
-                className={`flex-1 px-3 py-3 h-touch text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation leading-tight-consistent ${
+                className={`min-h-touch flex flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-3 text-center transition-all duration-200 touch-manipulation leading-tight-consistent disabled:cursor-not-allowed ${
                   isActive
                     ? 'bg-theme-primary-consistent text-white shadow-md'
-                    : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
+                    : 'bg-surface-elevated text-text-primary shadow-sm hover:bg-bg hover:shadow'
                 } ${isPlaying ? 'opacity-50' : ''}`}
               >
-                <Icon size={16} />
-                <span className="hidden sm:inline">{t(cfg.i18nTabKey)}</span>
+                <Icon size={20} className="shrink-0" aria-hidden />
+                <span className="text-xs sm:text-sm font-semibold">
+                  {t(cfg.i18nTabKey)}
+                </span>
               </button>
             );
           })}
+          <div
+            className="flex min-h-touch flex-col items-center justify-center gap-1 rounded-xl bg-bg/50 px-2 py-3 text-center text-text-secondary shadow-sm"
+            role="note"
+            aria-label={t('settings.mysteryCategoryAria')}
+          >
+            <Sparkles
+              size={20}
+              className="shrink-0 text-amber-500/90 dark:text-amber-400/90"
+              aria-hidden
+            />
+            <span className="text-xs font-semibold text-text-primary">
+              {t('settings.mysteryCategory')}
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-text-secondary">
+              {t('settings.mysteryCategoryHint')}
+            </span>
+          </div>
         </div>
       </div>
 

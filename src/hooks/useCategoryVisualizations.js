@@ -13,17 +13,20 @@ import { ALGORITHM_TYPES } from '../constants';
  * this helper only merges their return values into a lookup table.
  *
  * When adding a category: (1) call its hook in VisualizerApp (or parent), (2) pass the result
- * into this hook’s parameters, (3) add `[ALGORITHM_TYPES.NEWTYPE]: thatHookResult` below.
+ * into this hook’s parameters, (3) add `[ALGORITHM_TYPES.NEWTYPE]: thatHookResult` below
+ * (see SEARCHING for a full example).
  */
 export function useCategoryVisualizations({
   sortingVisualization,
   pathfindingVisualization,
+  searchingVisualization,
 }) {
   return useMemo(
     () => ({
       [ALGORITHM_TYPES.SORTING]: sortingVisualization,
       [ALGORITHM_TYPES.PATHFINDING]: pathfindingVisualization,
+      [ALGORITHM_TYPES.SEARCHING]: searchingVisualization,
     }),
-    [sortingVisualization, pathfindingVisualization]
+    [sortingVisualization, pathfindingVisualization, searchingVisualization]
   );
 }

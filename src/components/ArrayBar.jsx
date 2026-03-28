@@ -6,7 +6,11 @@
 
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { STATE_COLORS } from '../constants';
+import {
+  STATE_COLORS,
+  SEARCH_TARGET_RING_COLOR,
+  SEARCH_TARGET_RING_RGB,
+} from '../constants';
 
 /**
  * ArrayBar Component
@@ -17,8 +21,15 @@ import { STATE_COLORS } from '../constants';
  * @param {string} state - The current state of the bar (comparing, swapping, etc.)
  * @param {number} index - Index of the bar in the array
  * @param {number} arrayLength - Total length of array (for label sizing)
+ * @param {boolean} highlightTarget - Emphasize bar when value equals search target
  */
-const ArrayBar = memo(function ArrayBar({ value, state, index, arrayLength }) {
+const ArrayBar = memo(function ArrayBar({
+  value,
+  state,
+  index,
+  arrayLength,
+  highlightTarget = false,
+}) {
   const color = STATE_COLORS[state];
 
   // Animation variants for swap effect
@@ -58,7 +69,10 @@ const ArrayBar = memo(function ArrayBar({ value, state, index, arrayLength }) {
         className="rounded-lg shadow-lg flex items-center justify-center font-bold border-2"
         style={{
           backgroundColor: color,
-          borderColor: color,
+          borderColor: highlightTarget ? SEARCH_TARGET_RING_COLOR : color,
+          boxShadow: highlightTarget
+            ? `0 0 0 3px rgba(${SEARCH_TARGET_RING_RGB}, 0.9), 0 4px 6px -1px rgba(0,0,0,0.2)`
+            : undefined,
           width:
             arrayLength <= 20 ? '60px' : arrayLength <= 35 ? '45px' : '30px',
           height:

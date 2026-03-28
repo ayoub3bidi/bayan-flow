@@ -11,7 +11,11 @@ import ArrayBar from './ArrayBar';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
 import AutoHidingLegend from './AutoHidingLegend';
-import { ELEMENT_STATES, STATE_COLORS } from '../constants';
+import {
+  ELEMENT_STATES,
+  STATE_COLORS,
+  SEARCH_TARGET_RING_COLOR,
+} from '../constants';
 import useSwipe from '../hooks/useSwipe';
 
 /**
@@ -23,6 +27,9 @@ import useSwipe from '../hooks/useSwipe';
  * @param {Function} onStepForward - Handler for step forward
  * @param {Function} onStepBackward - Handler for step backward
  * @param {string} mode - Control mode ('autoplay' or 'manual')
+ * @param {number|null} [targetValue] - Search target (searching category)
+ * @param {'sorting'|'searching'} [visualizerVariant]
+ * @param {string} [complexityDataset] - ComplexityPanel dataset key
  */
 function ArrayVisualizer({
   array,
@@ -33,6 +40,9 @@ function ArrayVisualizer({
   onStepForward,
   onStepBackward,
   mode,
+  targetValue = null,
+  visualizerVariant = 'sorting',
+  complexityDataset = 'sorting',
 }) {
   const { t } = useTranslation();
   const arrayLength = array.length;
@@ -82,13 +92,44 @@ function ArrayVisualizer({
     }
   }, [isComplete]);
 
-  const legendItems = [
-    { state: ELEMENT_STATES.DEFAULT, label: t('legend.sorting.default') },
-    { state: ELEMENT_STATES.COMPARING, label: t('legend.sorting.comparing') },
-    { state: ELEMENT_STATES.SWAPPING, label: t('legend.sorting.swapping') },
-    { state: ELEMENT_STATES.SORTED, label: t('legend.sorting.sorted') },
-    { state: ELEMENT_STATES.PIVOT, label: t('legend.sorting.pivot') },
-  ];
+  const legendItems =
+    visualizerVariant === 'searching'
+      ? [
+          {
+            state: ELEMENT_STATES.DEFAULT,
+            label: t('legend.searching.default'),
+          },
+          {
+            state: ELEMENT_STATES.COMPARING,
+            label: t('legend.searching.comparing'),
+          },
+          {
+            state: ELEMENT_STATES.AUXILIARY,
+            label: t('legend.searching.outOfRange'),
+          },
+          {
+            state: ELEMENT_STATES.SORTED,
+            label: t('legend.searching.found'),
+          },
+          {
+            state: '__target__',
+            label: t('legend.searching.targetHighlight'),
+            color: SEARCH_TARGET_RING_COLOR,
+          },
+        ]
+      : [
+          { state: ELEMENT_STATES.DEFAULT, label: t('legend.sorting.default') },
+          {
+            state: ELEMENT_STATES.COMPARING,
+            label: t('legend.sorting.comparing'),
+          },
+          {
+            state: ELEMENT_STATES.SWAPPING,
+            label: t('legend.sorting.swapping'),
+          },
+          { state: ELEMENT_STATES.SORTED, label: t('legend.sorting.sorted') },
+          { state: ELEMENT_STATES.PIVOT, label: t('legend.sorting.pivot') },
+        ];
 
   // Swipe gesture support for manual mode
   const swipe = useSwipe({
@@ -101,7 +142,10 @@ function ArrayVisualizer({
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
       <AnimatePresence mode="wait">
         {showComplexityPanel ? (
-          <ComplexityPanel algorithm={algorithm} />
+          <ComplexityPanel
+            algorithm={algorithm}
+            complexityDataset={complexityDataset}
+          />
         ) : (
           <motion.div
             initial={{ opacity: 1 }}
@@ -115,10 +159,21 @@ function ArrayVisualizer({
             <AutoHidingLegend
               legendItems={legendItems.map(item => ({
                 ...item,
-                color: STATE_COLORS[item.state],
+                color: item.color ?? STATE_COLORS[item.state],
               }))}
               isComplete={isComplete}
             />
+
+            {visualizerVariant === 'searching' && targetValue != null && (
+              <div className="flex justify-center mb-2 shrink-0">
+                <span
+                  className="inline-flex items-center rounded-full border border-orange-600/35 bg-orange-600/10 px-3 py-1 text-xs sm:text-sm font-semibold text-text-primary dark:border-orange-500/35 dark:bg-orange-500/10"
+                  role="status"
+                >
+                  {t('visualization.searchTarget', { value: targetValue })}
+                </span>
+              </div>
+            )}
 
             {/* Array Visualization */}
             <div className="flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 pb-10 px-2 overflow-x-auto touch-pan-y">
@@ -129,6 +184,11 @@ function ArrayVisualizer({
                   state={states[index]}
                   index={index}
                   arrayLength={arrayLength}
+                  highlightTarget={
+                    visualizerVariant === 'searching' &&
+                    targetValue != null &&
+                    value === targetValue
+                  }
                 />
               ))}
             </div>
@@ -150,7 +210,9 @@ function ArrayVisualizer({
                       role="status"
                       aria-live="polite"
                     >
-                      {t(description)}
+                      {visualizerVariant === 'searching'
+                        ? description
+                        : t(description)}
                     </p>
                   </div>
                 </motion.div>

@@ -21,6 +21,7 @@ const AlgorithmInsightPanel = lazy(
 );
 import { useSortingVisualization } from '../hooks/useSortingVisualization';
 import { usePathfindingVisualization } from '../hooks/usePathfindingVisualization';
+import { useSearchingVisualization } from '../hooks/useSearchingVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
 import { useVideoExporter } from '../video/useVideoExporter';
 import { soundManager } from '../utils/soundManager';
@@ -98,6 +99,12 @@ function App() {
     speed,
     mode
   );
+  const searchingVisualization = useSearchingVisualization(
+    selectedAlgorithms[ALGORITHM_TYPES.SEARCHING],
+    array,
+    speed,
+    mode
+  );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
   const {
@@ -115,6 +122,7 @@ function App() {
   const visualizationMap = useCategoryVisualizations({
     sortingVisualization,
     pathfindingVisualization,
+    searchingVisualization,
   });
 
   const visualization = visualizationMap[algorithmType];
@@ -182,6 +190,10 @@ function App() {
   };
 
   const handleAlgorithmTypeChange = newType => {
+    const cfg = CATEGORY_CONFIG[newType];
+    if (cfg.sizeBinding === 'array') {
+      setArray(cfg.generateData(arraySize));
+    }
     setAlgorithmType(newType);
     visualizationMap[newType]?.reset();
   };
@@ -200,6 +212,7 @@ function App() {
 
   const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
     sortingVisualization,
+    searchingVisualization,
     gridSize,
   });
 

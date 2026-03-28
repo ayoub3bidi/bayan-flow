@@ -53,13 +53,10 @@ jobs:
         continue-on-error: true
 
   # Job 2: Unit tests with coverage
+  # Node 24.x matches package.json engines and the Quality / Build jobs (tests failed on 20.x + Vitest forks).
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
       - name: Checkout code
@@ -73,7 +70,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24.11.1
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -89,7 +86,6 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        if: matrix.node-version == '20.x'
         uses: codecov/codecov-action@v5
         with:
           files: ./coverage/coverage-final.json
@@ -102,7 +98,7 @@ jobs:
         continue-on-error: true
 
       - name: Comment coverage on PR
-        if: github.event_name == 'pull_request' && matrix.node-version == '20.x'
+        if: github.event_name == 'pull_request'
         uses: romeovs/lcov-reporter-action@v0.4.0
         with:
           lcov-file: ./coverage/lcov.info

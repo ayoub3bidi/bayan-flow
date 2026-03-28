@@ -61,8 +61,8 @@ describe('CATEGORY_CONFIG', () => {
           );
         });
 
-        it('has complexityDataset sorting or pathfinding', () => {
-          expect(['sorting', 'pathfinding']).toContain(
+        it('has complexityDataset registered in COMPLEXITY_DATASETS', () => {
+          expect(['sorting', 'pathfinding', 'searching']).toContain(
             CATEGORY_CONFIG[type].complexityDataset
           );
         });

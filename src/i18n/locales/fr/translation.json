@@ -27,11 +27,15 @@
     "experimental": "Expérimental",
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
-    "autoplayOnly": "uniquement"
+    "autoplayOnly": "uniquement",
+    "mysteryCategory": "Mystère",
+    "mysteryCategoryHint": "Bientôt",
+    "mysteryCategoryAria": "Catégorie d’algorithmes à venir, pas encore disponible"
   },
   "modes": {
     "sorting": "Tri",
     "pathfinding": "Recherche de Chemin",
+    "searching": "Recherche",
     "manual": "Manuel",
     "autoplay": "Lecture Auto"
   },
@@ -63,6 +67,9 @@
       "idaStar": "Recherche IDA*",
       "dStarLite": "D* Lite"
     },
+    "searching": {
+      "binarySearch": "Recherche dichotomique"
+    },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
@@ -85,7 +92,8 @@
       "greedyBestFirstSearch": "Démarrage de la Recherche Gloutonne du Meilleur d'Abord",
       "jumpPointSearch": "Démarrage de la Recherche par Points de Saut",
       "bellmanFord": "Démarrage de l'algorithme de Bellman-Ford",
-      "dStarLite": "Démarrage de la recherche D* Lite"
+      "dStarLite": "Démarrage de la recherche D* Lite",
+      "binarySearch": "Démarrage de la recherche dichotomique"
     }
   },
   "complexity": {
@@ -111,7 +119,8 @@
     "jumpPointSearch": "O(E)",
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
-    "dStarLite": "O(log V)"
+    "dStarLite": "O(log V)",
+    "binarySearch": "O(log n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -481,11 +490,23 @@
         "facts_0": "D* Lite a été utilisé sur les rovers Mars de la NASA pour une vraie navigation de mission.",
         "facts_1": "Le 'Lite' dans D* Lite signifie qu'il est plus simple à implémenter et à comprendre que D* original.",
         "facts_2": "Il est significativement plus efficace que de replanifier depuis zéro à chaque changement."
+      },
+      "binarySearch": {
+        "history": "Réduire de moitié un intervalle trié apparaît dès les débuts de l'informatique. John Mauchly décrit en 1946 une procédure proche de la dichotomie sur bande ordonnée. Avec la mémoire à accès aléatoire et les tables triées, la forme itérative à deux indices est devenue l'algorithme de référence.",
+        "intuition": "On garde une fenêtre [gauche, droite] où la cible peut encore se trouver. On compare la cible à l'élément du milieu : égalité → terminé ; sinon on élimine la moitié gauche ou droite selon l'ordre. À chaque étape on supprime environ la moitié des indices restants, donc au plus environ log₂(n) comparaisons.",
+        "realWorldUses_0": "Recherches sur index de base de données triés et plages de clés ordonnées",
+        "realWorldUses_1": "Fonctions de bibliothèque (par ex. bisect en Python, lower_bound en C++)",
+        "realWorldUses_2": "Trouver une position d'insertion pour conserver des tableaux ou listes triés",
+        "realWorldUses_3": "Jeux, simulations et API interrogeant des seuils numériques ordonnés",
+        "facts_0": "La dichotomie est en O(log n) dans le temps et O(1) en mémoire supplémentaire (version itérative classique).",
+        "facts_1": "Elle nécessite des données triées (ou un ordre total où les comparaisons au « milieu » sont valides).",
+        "facts_2": "Le dépassement d'entier dans milieu = (gauche + droite) / 2 est un piège classique ; utiliser gauche + (droite - gauche) // 2 si besoin.",
+        "facts_3": "Jon Bentley a souligné que beaucoup de programmeurs échouent encore à écrire une dichotomie correcte du premier coup."
       }
     }
   },
   "footer": {
-    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri/recherche de chemin avec clarté.",
+    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
     "madeWith": "Fait avec",
     "by": "par",
@@ -518,12 +539,20 @@
       "queue": "File",
       "visited": "Visité",
       "path": "Chemin"
+    },
+    "searching": {
+      "default": "Dans la plage",
+      "comparing": "Vérification",
+      "outOfRange": "Hors plage de recherche",
+      "found": "Trouvé",
+      "targetHighlight": "Valeur cible (anneau)"
     }
   },
   "visualization": {
     "description": "Visualisation interactive d'algorithme",
     "viewPythonCode": "Voir le code Python",
-    "codeLabel": "Code"
+    "codeLabel": "Code",
+    "searchTarget": "Cible : {{value}}"
   },
   "languages": {
     "en": "English",
@@ -608,7 +637,11 @@
     "bogoChecking": "Tentative {{attempt}} : Vérification si le tableau est trié",
     "bogoShuffling": "Tentative {{attempt}} : Mélange aléatoire du tableau",
     "bogoSuccess": "Succès ! Tableau trié après {{attempts}} tentatives de mélange",
-    "bogoFailed": "Échec du tri après {{maxAttempts}} tentatives. Le Tri Bogo est extrêmement inefficace !"
+    "bogoFailed": "Échec du tri après {{maxAttempts}} tentatives. Le Tri Bogo est extrêmement inefficace !",
+    "searchBinaryStart": "Recherche de {{target}} par dichotomie sur le tableau trié.",
+    "searchBinaryCheck": "Milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
+    "searchBinaryFound": "{{target}} trouvé à l'index {{mid}}.",
+    "searchBinaryNotFound": "La cible {{target}} n'est pas dans le tableau."
   },
   "landing": {
     "hero": {
@@ -645,6 +678,11 @@
         "title": "Algorithmes de Recherche de Chemin",
         "description": "Voyez comment les algorithmes de recherche de chemin naviguent à travers les grilles pour trouver le chemin le plus court entre deux points.",
         "algorithms": "BFS, Dijkstra, Recherche A*, Recherche Bidirectionnelle, Recherche Gloutonne du Meilleur d'Abord, Recherche par Points de Saut, Bellman-Ford, IDA*, D* Lite"
+      },
+      "searching": {
+        "title": "Algorithmes de recherche",
+        "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
+        "algorithms": "Recherche dichotomique"
       }
     },
     "features": {
@@ -652,7 +690,7 @@
       "subheading": "Tout ce dont vous avez besoin pour maîtriser les algorithmes",
       "customization": {
         "title": "Personnalisable",
-        "description": "Ajustez la taille du tableau (5-100) ou la taille de la grille (15×15 à 35×35) pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
+        "description": "Ajustez la taille du tableau (5-100) pour le tri et la recherche, ou la taille de la grille (15×15 à 35×35) pour la recherche de chemin, pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
       },
       "pythonCode": {
         "title": "Python Interactif",
@@ -696,7 +734,8 @@
     "unweighted": "Non Pondéré",
     "weightedOptimal": "Pondéré Optimal",
     "heuristicBased": "Basé sur Heuristique",
-    "specialCases": "Cas Spéciaux"
+    "specialCases": "Cas Spéciaux",
+    "logarithmicSearch": "Recherche logarithmique"
   },
   "roadmap": {
     "hero": {

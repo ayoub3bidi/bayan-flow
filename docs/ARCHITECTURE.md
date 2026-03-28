@@ -83,17 +83,18 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 
 #### **VisualizerApp** (`/app`)
 - Main algorithm visualization interface
-- Sorting and pathfinding modes
+- **Sorting**, **pathfinding**, and **searching** modes (mode tab + shared settings)
 - Full control panel and settings
 - Python code panel (edit, run, test cases)
 - Complexity analysis
 
-**Key State:**
+**Key State (conceptual):**
 ```javascript
-- algorithmType: 'sorting' | 'pathfinding'
-- array: Current array being visualized
-- selectedAlgorithm: Current algorithm name
-- speed: Animation speed
+- algorithmType: 'sorting' | 'pathfinding' | 'searching'
+- array: 1D data for sorting/searching; searching uses sorted arrays + a target value
+- grid: 2D data for pathfinding
+- selectedAlgorithm: Current algorithm key
+- speed: Animation speed (autoplay)
 - mode: 'manual' | 'autoplay'
 - isFullScreen: Full-screen mode state
 ```
@@ -127,7 +128,7 @@ LandingPage
 VisualizerApp
 ├── Header
 ├── SettingsPanel (uses useAlgorithmConfig, useSettingsConfig, AlgorithmDropdown)
-├── ArrayVisualizer / GridVisualizer
+├── ArrayVisualizer (sorting + searching) / GridVisualizer (pathfinding)
 ├── ControlPanel
 ├── FloatingActionButton
 ├── ExportProgressModal (orientation selection, progress, preview)
@@ -156,11 +157,11 @@ Roadmap
 
 **Key State:**
 ```javascript
-- algorithmType: Current mode (sorting/pathfinding)
-- array/grid: Data being visualized
-- speed: Animation speed (10-1000ms)
-- selectedAlgorithm: Current algorithm
-- mode: Control mode (manual/autoplay)
+- algorithmType: 'sorting' | 'pathfinding' | 'searching'
+- array / grid: Data being visualized (sorted array when searching)
+- speed: Animation speed
+- selectedAlgorithm: Current algorithm key
+- mode: manual / autoplay
 - isPythonPanelOpen: Python panel visibility
 ```
 
@@ -184,15 +185,15 @@ Roadmap
 - Export video button (triggers orientation selection flow)
 
 #### **SettingsPanel** (Configuration)
-- Algorithm type toggle (sorting/pathfinding)
+- Algorithm type toggle (**sorting / pathfinding / searching**)
 - **AlgorithmDropdown**: Algorithm selection with grouped options (uses `useAlgorithmConfig`)
 - Control mode toggle (manual/autoplay)
 - Speed slider (autoplay only)
-- Array size / Grid size controls (uses `useSettingsConfig`)
+- Array size (sorting + searching) / Grid size (pathfinding) via `useSettingsConfig`
 - Sound toggle
 
 #### **Config Layer** (`src/config/`)
-- **useAlgorithmConfig**: Returns sortingAlgorithms, pathfindingAlgorithms, sortingGroups, pathfindingGroups (i18n-aware)
+- **useAlgorithmConfig**: Returns sorting, pathfinding, and **searching** algorithm lists and groups (from `CATEGORY_CONFIG`, i18n-aware)
 - **useSettingsConfig**: Returns gridSizeOptions, speedOptions from constants
 
 #### **PythonCodePanel** (Interactive Code & Testing)
@@ -271,6 +272,17 @@ For pathfinding:
   grid: [[0, 0, ...], ...],      // Grid state
   states: [['default', ...], ...], // Cell states
   description: 'Exploring cell (2, 3)'
+}
+```
+
+For searching (array bars, sorted input):
+
+```javascript
+{
+  array: [1, 3, 5, 7, 9],
+  states: ['default', 'comparing', ...], // includes auxiliary for “out of range”
+  description: '…',                       // i18n step string
+  targetValue: 5                          // UI: target chip + ring on bar
 }
 ```
 
@@ -384,7 +396,8 @@ initRTL(i18n) → {
   "controls": { "play": "...", "pause": "..." },
   "algorithms": {
     "sorting": { "bubbleSort": "..." },
-    "pathfinding": { "bfs": "..." }
+    "pathfinding": { "bfs": "..." },
+    "searching": { "binarySearch": "..." }
   }
 }
 ```
@@ -674,7 +687,7 @@ User clicks Export → Orientation selection (Horizontal / Vertical)
 - **useVideoExporter** (`src/video/useVideoExporter.js`): Hook managing export state (`idle` | `orientation` | `checking` | `rendering` | `preview` | `error`), blob storage, and download.
 - **ExportProgressModal** (`src/components/ExportProgressModal.jsx`): Single modal with phases—orientation choice, progress bar, video preview. RTL-aware close button.
 - **AlgorithmVideo** (`src/video/AlgorithmVideo.jsx`): Root Remotion composition; switches between main visualization and complexity segment.
-- **SortingScene** / **PathfindingScene**: Frame-based Remotion scenes (no Framer Motion); use `interpolate()` for smooth swap/color transitions.
+- **SortingScene** / **PathfindingScene**: Frame-based Remotion scenes (no Framer Motion); use `interpolate()` for smooth swap/color transitions. **Searching** reuses **SortingScene** (same bar layout; steps carry `targetValue` when present).
 - **ComplexityScene**: Remotion-compatible complexity display (time/space, performance graph) shown for 10 seconds at the end.
 
 ### Orientations
@@ -750,6 +763,16 @@ Similar to sorting hook but manages:
 - Start/end position generation
 - Grid size changes
 - Grid regeneration
+
+#### **useSearchingVisualization**
+
+Same control surface as sorting (steps, play, step forward/back, autoplay) but:
+
+- Loads algorithms from `CATEGORY_CONFIG[SEARCHING]`
+- Works on **sorted** arrays; each load picks a **random target** from the current array (so “found” vs “not found” varies when you regenerate)
+- Steps include **`targetValue`** when the algorithm provides it, for `ArrayVisualizer` / video (`SortingScene`)
+
+`VisualizerApp` selects this hook (with sorting and pathfinding) via `useCategoryVisualizations`.
 
 #### **useTheme**
 
@@ -890,7 +913,7 @@ describe('ThemeToggle', () => {
 
 ```bash
 pnpm test              # Watch mode
-pnpm test:run          # Single run (922 tests across 41 files)
+pnpm test:run          # Single run (full suite)
 pnpm test:ui           # Visual UI
 pnpm test:coverage     # Coverage report (Codecov patch threshold 70%)
 ```
@@ -964,9 +987,8 @@ useEffect(() => {
 ### Planned Features
 
 1. **Additional Algorithms**
-   - All 14 sorting algorithms implemented (Bubble, Quick, Merge, Selection, Insertion, Heap, Shell, Radix, Counting, Bucket, Cycle, Comb, Tim, Bogo)
-   - All 9 pathfinding algorithms implemented (BFS, Dijkstra, A*, Bidirectional, Greedy BFS, JPS, Bellman-Ford, IDA*, D* Lite)
-   - Potential: DFS, Floyd-Warshall, graph algorithms, tree traversals
+   - 14 sorting algorithms; 9 pathfinding algorithms; **searching** mode with binary search (room for more search algorithms on sorted data)
+   - Potential: more search strategies, graph algorithms, tree traversals, etc.
 
 2. **Graph Visualization Mode**
    - D3.js integration
@@ -984,24 +1006,23 @@ useEffect(() => {
    - Code playground
    - Performance benchmarking
 
-5. **Recently Completed**
-   - ✅ Video export: MP4 via Remotion with orientation choice (horizontal/vertical), preview, HD quality, complexity segment
-   - ✅ 14 sorting algorithms (including Counting, Bucket, Cycle, Comb, Tim, Bogo)
-   - ✅ 9 pathfinding algorithms (including JPS, Bellman-Ford, IDA*, D* Lite)
-   - ✅ 925 tests across 41 files; Codecov patch threshold 70%
-   - ✅ Config layer (useAlgorithmConfig, useSettingsConfig)
-   - ✅ DocumentTitle for SEO; AlgorithmDropdown component
+5. **Recently Completed** (representative; see repo for current scope)
+   - In-browser MP4 export via Remotion (orientation choice, preview, complexity segment)
+   - Broad sorting and pathfinding catalogs; **searching** mode on sorted arrays with target-aware UI
+   - Vitest-based test suite and CI aligned with `package.json` engines
+   - Centralized category config (`CATEGORY_CONFIG`) feeding `useAlgorithmConfig` and `useSettingsConfig`
+   - DocumentTitle for SEO; grouped algorithm dropdown
 
 ## Conclusion
 
 Bayan Flow is built with:
-- **Modularity**: Easy to add new algorithms and features (14 sorting, 9 pathfinding)
-- **Maintainability**: Clean separation of concerns with dual-implementation pattern
-- **Testability**: Comprehensive test coverage (922 tests across 41 files)
-- **Performance**: Optimized for smooth animations
-- **Extensibility**: Ready for future enhancements
-- **Accessibility**: WCAG 2.1 AA compliant
+- **Modularity**: Three visualization categories (sorting, pathfinding, searching), each driven by `CATEGORY_CONFIG` and shared patterns
+- **Maintainability**: Dual implementation (visualization steps + pure functions) for algorithms
+- **Testability**: Broad unit/integration coverage via Vitest
+- **Performance**: Optimized for smooth UI animations and lazy-loaded heavy panels
+- **Extensibility**: New algorithms plug into registries, constants, i18n, and Python/test harness
+- **Accessibility**: Keyboard, ARIA, skip links, reduced-motion awareness
 - **Internationalization**: Multi-language support with RTL
-- **Theming**: Flexible dark/light mode system
+- **Theming**: CSS-variable-based light/dark system
 
-The architecture supports scaling to include more algorithm types, more complex visualizations, and advanced features while maintaining code quality and performance. The recent addition of 6 new sorting algorithms demonstrates the system's robust extensibility patterns.
+The architecture is designed to add modes and algorithms without forking the core visualizer flow.

@@ -13,11 +13,13 @@ describe('useCategoryVisualizations', () => {
   it('maps every ALGORITHM_TYPES value to a visualization controller', () => {
     const sorting = { id: 'sort' };
     const pathfinding = { id: 'path' };
+    const searching = { id: 'search' };
 
     const { result } = renderHook(() =>
       useCategoryVisualizations({
         sortingVisualization: sorting,
         pathfindingVisualization: pathfinding,
+        searchingVisualization: searching,
       })
     );
 
@@ -26,5 +28,6 @@ describe('useCategoryVisualizations', () => {
     expect(keys).toEqual(expected);
     expect(result.current[ALGORITHM_TYPES.SORTING]).toBe(sorting);
     expect(result.current[ALGORITHM_TYPES.PATHFINDING]).toBe(pathfinding);
+    expect(result.current[ALGORITHM_TYPES.SEARCHING]).toBe(searching);
   });
 });
