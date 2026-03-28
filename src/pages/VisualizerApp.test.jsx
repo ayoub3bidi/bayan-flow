@@ -8,9 +8,33 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 
-const beginExportFlow = vi.fn();
-const exportVideo = vi.fn();
-const toggleFullScreen = vi.fn();
+const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
+  vi.hoisted(() => {
+    const beginExportFlowInner = vi.fn();
+    const exportVideoInner = vi.fn();
+    const toggleFullScreenInner = vi.fn();
+    const videoExporterMockInner = {
+      beginExportFlow: beginExportFlowInner,
+      exportVideo: exportVideoInner,
+      exportState: 'idle',
+      exportProgress: 0,
+      exportBlobUrl: null,
+      cancelExport: vi.fn(),
+      closePreview: vi.fn(),
+      downloadVideo: vi.fn(),
+    };
+    const fullScreenMockInner = {
+      isFullScreen: false,
+      toggleFullScreen: toggleFullScreenInner,
+    };
+    return {
+      beginExportFlow: beginExportFlowInner,
+      exportVideo: exportVideoInner,
+      toggleFullScreen: toggleFullScreenInner,
+      videoExporterMock: videoExporterMockInner,
+      fullScreenMock: fullScreenMockInner,
+    };
+  });
 
 const sortingVisualization = {
   array: [3, 1, 2],
@@ -72,7 +96,17 @@ vi.mock('../components/Footer', () => ({
 }));
 
 vi.mock('../components/ExportProgressModal', () => ({
-  default: () => <div data-testid="export-modal">ExportModal</div>,
+  default: ({ open, onOrientationSelect }) =>
+    open ? (
+      <div data-testid="export-modal">
+        <button
+          type="button"
+          onClick={() => onOrientationSelect?.('horizontal')}
+        >
+          pick-orientation
+        </button>
+      </div>
+    ) : null,
 }));
 
 vi.mock('../components/FloatingActionButton', () => ({
@@ -120,10 +154,13 @@ vi.mock('../components/SettingsPanel', () => ({
 }));
 
 vi.mock('../components/ControlPanel', () => ({
-  default: ({ totalSteps, algorithmType, onExportVideo }) => (
+  default: ({ totalSteps, algorithmType, onExportVideo, onGenerateArray }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
       <span data-testid="control-algorithm-type">{algorithmType}</span>
+      <button type="button" onClick={onGenerateArray}>
+        generate-data
+      </button>
       <button onClick={onExportVideo}>export</button>
     </div>
   ),
@@ -155,21 +192,21 @@ vi.mock('../hooks/usePathfindingVisualization', () => ({
 
 vi.mock('../hooks/useFullScreen', () => ({
   useFullScreen: () => ({
-    isFullScreen: false,
-    toggleFullScreen,
+    isFullScreen: fullScreenMock.isFullScreen,
+    toggleFullScreen: fullScreenMock.toggleFullScreen,
   }),
 }));
 
 vi.mock('../video/useVideoExporter', () => ({
   useVideoExporter: () => ({
-    beginExportFlow,
-    exportVideo,
-    exportState: 'idle',
-    exportProgress: 0,
-    exportBlobUrl: null,
-    cancelExport: vi.fn(),
-    closePreview: vi.fn(),
-    downloadVideo: vi.fn(),
+    beginExportFlow: videoExporterMock.beginExportFlow,
+    exportVideo: videoExporterMock.exportVideo,
+    exportState: videoExporterMock.exportState,
+    exportProgress: videoExporterMock.exportProgress,
+    exportBlobUrl: videoExporterMock.exportBlobUrl,
+    cancelExport: videoExporterMock.cancelExport,
+    closePreview: videoExporterMock.closePreview,
+    downloadVideo: videoExporterMock.downloadVideo,
     canRenderOnWeb: true,
   }),
 }));
@@ -177,6 +214,10 @@ vi.mock('../video/useVideoExporter', () => ({
 describe('VisualizerApp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    fullScreenMock.isFullScreen = false;
+    videoExporterMock.exportState = 'idle';
+    videoExporterMock.exportProgress = 0;
+    videoExporterMock.exportBlobUrl = null;
   });
 
   async function renderApp() {
@@ -236,5 +277,42 @@ describe('VisualizerApp', () => {
     fireEvent.click(screen.getByText('export'));
 
     expect(beginExportFlow).toHaveBeenCalledTimes(1);
+  });
+
+  it('dispatches new data by category: array config vs grid regenerateGrid', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('generate-data'));
+    expect(pathfindingVisualization.regenerateGrid).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByText('pathfinding'));
+    fireEvent.click(screen.getByText('generate-data'));
+
+    expect(pathfindingVisualization.regenerateGrid).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders fullscreen layout when useFullScreen reports true', async () => {
+    fullScreenMock.isFullScreen = true;
+    await renderApp();
+
+    expect(screen.queryByTestId('header')).not.toBeInTheDocument();
+    expect(screen.getByTestId('array-visualizer')).toBeInTheDocument();
+    expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+  });
+
+  it('calls exportVideo with algorithm metadata when orientation is chosen', async () => {
+    videoExporterMock.exportState = 'orientation';
+    await renderApp();
+
+    fireEvent.click(screen.getByText('pick-orientation'));
+
+    expect(exportVideo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        algorithmType: 'sorting',
+        algorithmKey: 'bubbleSort',
+        orientation: 'horizontal',
+        steps: sortingVisualization.steps,
+      })
+    );
   });
 });

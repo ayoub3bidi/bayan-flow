@@ -12,7 +12,8 @@ import { ALGORITHM_TYPES } from '../constants';
  * Every category hook must be invoked unconditionally at the call site (Rules of Hooks);
  * this helper only merges their return values into a lookup table.
  *
- * When adding a category: call its hook in the parent component, then add one entry here.
+ * When adding a category: (1) call its hook in VisualizerApp (or parent), (2) pass the result
+ * into this hook’s parameters, (3) add `[ALGORITHM_TYPES.NEWTYPE]: thatHookResult` below.
  */
 export function useCategoryVisualizations({
   sortingVisualization,

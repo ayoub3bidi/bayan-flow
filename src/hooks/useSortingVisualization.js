@@ -92,7 +92,8 @@ export function useSortingVisualization(
     }
 
     engine.loadSteps([]);
-    // engine.loadSteps is stable (useCallback in useVisualization)
+    // Omitted `engine` from deps: `engine.loadSteps` is stable (useCallback in
+    // useVisualization); listing `engine` would recreate this callback every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [algorithmKey, initialArray]);
 

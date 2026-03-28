@@ -1118,6 +1118,36 @@ describe('usePathfindingVisualization', () => {
       expect(mockSoundManager.playNodeVisit).toHaveBeenCalled();
       expect(mockSoundManager.playPathFound).not.toHaveBeenCalled();
     });
+
+    it('should not throw when description is missing on a step', () => {
+      const { result } = renderHook(() =>
+        usePathfindingVisualization(
+          TEST_ALGO_KEY,
+          2,
+          1000,
+          VISUALIZATION_MODES.MANUAL
+        )
+      );
+
+      const stepNoDescription = {
+        grid: [
+          [0, 0],
+          [0, 0],
+        ],
+        states: [
+          [GRID_ELEMENT_STATES.PATH, GRID_ELEMENT_STATES.DEFAULT],
+          [GRID_ELEMENT_STATES.DEFAULT, GRID_ELEMENT_STATES.DEFAULT],
+        ],
+      };
+
+      expect(() => {
+        act(() => {
+          result.current.loadSteps([stepNoDescription]);
+        });
+      }).not.toThrow();
+
+      expect(mockSoundManager.playPathFound).not.toHaveBeenCalled();
+    });
   });
 
   describe('Return values', () => {

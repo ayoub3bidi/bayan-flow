@@ -62,6 +62,18 @@ describe('AlgorithmVideo', () => {
     expect(screen.getByText('No steps to display')).toBeInTheDocument();
   });
 
+  it('uses title fallback when algorithmName is empty', () => {
+    render(
+      <AlgorithmVideo
+        steps={[{ description: 'x' }]}
+        algorithmType="sorting"
+        algorithmName=""
+        algorithmKey="bubbleSort"
+      />
+    );
+    expect(screen.getByText('Sorting')).toBeInTheDocument();
+  });
+
   it('renders the registered main scene for the active category', () => {
     render(
       <AlgorithmVideo

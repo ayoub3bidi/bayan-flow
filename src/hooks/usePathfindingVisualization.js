@@ -58,7 +58,8 @@ export function usePathfindingVisualization(
       row.includes(GRID_ELEMENT_STATES.PATH)
     );
 
-    if (hasPath && step.description.toLowerCase().includes('path found')) {
+    const desc = (step.description ?? '').toLowerCase();
+    if (hasPath && desc.includes('path found')) {
       soundManager.playPathFound();
     } else if (hasOpen) {
       soundManager.playNodeVisit();
@@ -88,6 +89,7 @@ export function usePathfindingVisualization(
     setStates(newStates);
     setStart(newStart);
     setEnd(newEnd);
+    // Omitted `engine` from deps; only `engine.loadSteps` identity matters here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gridSize, engine.loadSteps]);
 
@@ -110,7 +112,7 @@ export function usePathfindingVisualization(
       const grid = createEmptyGrid(gridSize, gridSize);
       engine.loadSteps(fn(grid, start, end, gridSize, gridSize));
     }
-    // engine.loadSteps is stable (useCallback in useVisualization)
+    // Omitted `engine` from deps; `engine.loadSteps` is stable from useVisualization.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [algorithmKey, start, end, gridSize]);
 

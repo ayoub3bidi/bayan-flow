@@ -49,7 +49,8 @@ import {
  *   3. Register VISUALIZER_REGISTRY, VIDEO_SCENE_RENDERERS / VIDEO_TITLE_FALLBACK (if video export),
  *      getExtraVisualizerProps, and complexityDatasetRegistry if you add a new dataset key.
  *   4. In VisualizerApp.jsx: call the category hook unconditionally (Rules of Hooks), merge its
- *      result into useCategoryVisualizations (or equivalent map), and wire any new top-level state.
+ *      result into useCategoryVisualizations (add one property to the object returned there), and
+ *      wire any new top-level state.
  */
 export const CATEGORY_CONFIG = {
   [ALGORITHM_TYPES.SORTING]: {

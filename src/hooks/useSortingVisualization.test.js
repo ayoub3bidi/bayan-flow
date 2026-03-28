@@ -6,9 +6,9 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { useSortingVisualization } from './useSortingVisualization';
 import { VISUALIZATION_MODES } from '../constants/index.js';
 import { algorithms } from '../algorithms';
+import { useSortingVisualization } from './useSortingVisualization';
 
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
@@ -168,5 +168,49 @@ describe('useSortingVisualization', () => {
     expect(result.current.description).toBe('');
     expect(result.current.array).toEqual([]);
     expect(result.current.states).toEqual([]);
+  });
+
+  it('stepForward advances manual playback', async () => {
+    const values = [3, 1, 2];
+    const { result } = renderHook(() =>
+      useSortingVisualization(
+        'bubbleSort',
+        values,
+        100,
+        VISUALIZATION_MODES.MANUAL
+      )
+    );
+
+    await waitFor(
+      () => {
+        expect(result.current.totalSteps).toBeGreaterThan(1);
+      },
+      { timeout: 5000 }
+    );
+
+    act(() => {
+      result.current.stepForward();
+    });
+
+    expect(result.current.currentStep).toBe(1);
+  });
+
+  it('loads no steps when algorithm key does not resolve', async () => {
+    const values = [1, 2, 3];
+    const { result } = renderHook(() =>
+      useSortingVisualization(
+        'notARealSortKey',
+        values,
+        100,
+        VISUALIZATION_MODES.MANUAL
+      )
+    );
+
+    await waitFor(
+      () => {
+        expect(result.current.totalSteps).toBe(0);
+      },
+      { timeout: 5000 }
+    );
   });
 });
