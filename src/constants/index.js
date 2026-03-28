@@ -9,6 +9,10 @@ export const ALGORITHM_TYPES = {
   PATHFINDING: 'pathfinding',
 };
 
+// Ordered list for UI tab rendering and registry iteration.
+// Add new category values to ALGORITHM_TYPES; this list auto-updates.
+export const ALGORITHM_TYPE_LIST = Object.values(ALGORITHM_TYPES);
+
 export const SORTING_ALGORITHMS = {
   BUBBLE_SORT: 'bubbleSort',
   MERGE_SORT: 'mergeSort',

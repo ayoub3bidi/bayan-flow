@@ -7,11 +7,11 @@
 import { useCurrentFrame } from 'remotion';
 import { AbsoluteFill } from 'remotion';
 import { interpolate } from 'remotion';
+import { COMPLEXITY_FUNCTIONS } from '../constants/index.js';
 import {
-  ALGORITHM_COMPLEXITY,
-  PATHFINDING_COMPLEXITY,
-  COMPLEXITY_FUNCTIONS,
-} from '../constants/index.js';
+  COMPLEXITY_DATASETS,
+  DEFAULT_COMPLEXITY_DATASET,
+} from '../registry/complexityDatasetRegistry.js';
 
 /**
  * Remotion-compatible complexity analysis display.
@@ -20,14 +20,15 @@ import {
  *
  * @param {Object} props
  * @param {string} props.algorithmKey - Algorithm key (e.g. 'bubbleSort', 'bfs')
- * @param {boolean} props.isPathfinding - Whether this is a pathfinding algorithm
+ * @param {string} props.complexityDataset - Key into COMPLEXITY_DATASETS (see CATEGORY_CONFIG.complexityDataset)
  * @param {string} props.algorithmName - Display name of the algorithm
  */
-function ComplexityScene({ algorithmKey, isPathfinding, algorithmName }) {
+function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
   const frame = useCurrentFrame();
-  const complexityData = isPathfinding
-    ? PATHFINDING_COMPLEXITY[algorithmKey]
-    : ALGORITHM_COMPLEXITY[algorithmKey];
+  const map =
+    COMPLEXITY_DATASETS[complexityDataset] ??
+    COMPLEXITY_DATASETS[DEFAULT_COMPLEXITY_DATASET];
+  const complexityData = map[algorithmKey];
 
   if (!complexityData) {
     return (

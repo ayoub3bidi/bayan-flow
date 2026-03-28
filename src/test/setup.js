@@ -28,6 +28,7 @@ const constantsMockValue = {
     SORTING: 'sorting',
     PATHFINDING: 'pathfinding',
   },
+  ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding'],
   SORTING_ALGORITHMS: {
     BUBBLE_SORT: 'bubbleSort',
     MERGE_SORT: 'mergeSort',
@@ -62,6 +63,10 @@ const constantsMockValue = {
     MEDIUM: 25,
     LARGE: 35,
   },
+  // Used by complexityDatasetRegistry and Remotion complexity UI
+  ALGORITHM_COMPLEXITY: {},
+  PATHFINDING_COMPLEXITY: {},
+  COMPLEXITY_FUNCTIONS: {},
 };
 
 vi.mock('../constants', () => constantsMockValue);

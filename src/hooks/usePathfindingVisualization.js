@@ -4,9 +4,10 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   GRID_ELEMENT_STATES,
+  ALGORITHM_TYPES,
   VISUALIZATION_MODES,
   DEFAULT_GRID_SIZE,
 } from '../constants/index.js';
@@ -15,14 +16,23 @@ import {
   createEmptyGrid,
 } from '../utils/gridHelpers.js';
 import { soundManager } from '../utils/soundManager.js';
+import { useVisualization } from './useVisualization.js';
+import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 
 /**
- * @param {number} gridSize - Size of the grid (N x N)
- * @param {number} speed - Animation speed in milliseconds
- * @param {string} mode - Visualization mode (autoplay or manual)
- * @returns {Object} - Visualization state and control methods
+ * Thin adapter around useVisualization for pathfinding algorithms.
+ * Owns grid + cell-states domain state, start/end positions, and
+ * pathfinding-specific sound effects.
+ * All playback logic (play, pause, reset, step nav, autoplay) lives in
+ * useVisualization.
+ *
+ * @param {string} algorithmKey - Key of the active pathfinding algorithm.
+ * @param {number} gridSize     - Size of the square grid (N×N)
+ * @param {number} speed        - Animation delay in ms
+ * @param {string} mode         - VISUALIZATION_MODES.AUTOPLAY | MANUAL
  */
 export function usePathfindingVisualization(
+  algorithmKey,
   gridSize = DEFAULT_GRID_SIZE,
   speed,
   mode = VISUALIZATION_MODES.MANUAL
@@ -35,40 +45,34 @@ export function usePathfindingVisualization(
   );
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [steps, setSteps] = useState([]);
-  const [description, setDescription] = useState('');
-  const [isComplete, setIsComplete] = useState(false);
-  const [isAutoplayActive, setIsAutoplayActive] = useState(false);
 
-  const animationRef = useRef(null);
-  const stepsRef = useRef([]);
-  const autoplayTimeoutRef = useRef(null);
+  // ── Category-specific step executor ────────────────────────────────────────
+  const executeStep = useCallback(step => {
+    setGrid(step.grid);
+    setStates(step.states);
 
-  // Centralized cleanup function
-  const clearAutoplayTimeout = useCallback(() => {
-    if (autoplayTimeoutRef.current) {
-      clearTimeout(autoplayTimeoutRef.current);
-      autoplayTimeoutRef.current = null;
+    const hasOpen = step.states.some(row =>
+      row.includes(GRID_ELEMENT_STATES.OPEN)
+    );
+    const hasPath = step.states.some(row =>
+      row.includes(GRID_ELEMENT_STATES.PATH)
+    );
+
+    const desc = (step.description ?? '').toLowerCase();
+    if (hasPath && desc.includes('path found')) {
+      soundManager.playPathFound();
+    } else if (hasOpen) {
+      soundManager.playNodeVisit();
     }
   }, []);
 
-  // Keep stepsRef in sync
-  useEffect(() => {
-    stepsRef.current = steps;
-  }, [steps]);
+  // ── Shared playback engine ─────────────────────────────────────────────────
+  const engine = useVisualization({ executeStep, speed, mode });
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      clearAutoplayTimeout();
-      animationRef.current = null;
-    };
-  }, [clearAutoplayTimeout]);
-
-  // Initialize grid with random start/end
+  // ── Grid management ────────────────────────────────────────────────────────
   const generateNewGrid = useCallback(() => {
+    engine.loadSteps([]);
+
     const newGrid = createEmptyGrid(gridSize, gridSize);
     const { start: newStart, end: newEnd } = generateRandomStartEnd(
       gridSize,
@@ -85,203 +89,47 @@ export function usePathfindingVisualization(
     setStates(newStates);
     setStart(newStart);
     setEnd(newEnd);
-    setCurrentStep(0);
-    setDescription('');
-    setIsComplete(false);
-    setIsPlaying(false);
-    setIsAutoplayActive(false);
-    setSteps([]);
-    clearAutoplayTimeout();
-  }, [gridSize, clearAutoplayTimeout]);
+    // Omitted `engine` from deps; only `engine.loadSteps` identity matters here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gridSize, engine.loadSteps]);
 
-  // Initialize on mount and regenerate when grid size changes
+  // Initialize on mount and regenerate when grid size changes.
   useEffect(() => {
     generateNewGrid();
   }, [generateNewGrid]);
 
-  const loadSteps = useCallback(
-    algorithmSteps => {
-      clearAutoplayTimeout();
-      setIsPlaying(false);
-      setIsAutoplayActive(false);
-      stepsRef.current = algorithmSteps; // Update ref immediately for synchronous access
-      setSteps(algorithmSteps);
-      setCurrentStep(0);
-      setIsComplete(false);
-
-      if (algorithmSteps.length > 0) {
-        const firstStep = algorithmSteps[0];
-        setGrid(firstStep.grid);
-        setStates(firstStep.states);
-        setDescription(firstStep.description);
-      }
-    },
-    [clearAutoplayTimeout]
-  );
-
-  const computeEffectiveDelay = (baseDelay, _gridSize, _totalSteps) => {
-    // Use the user's selected speed directly; gridSize and totalSteps reserved for future use
-    // The speed constants are already well-calibrated:
-    // SLOW: 8000ms, MEDIUM: 4800ms, FAST: 2400ms, VERY_FAST: 1200ms
-    return baseDelay;
-  };
-
-  const executeStep = useCallback(step => {
-    setGrid(step.grid);
-    setStates(step.states);
-    setDescription(step.description);
-
-    // Play sounds based on step states
-    const hasOpen = step.states.some(row =>
-      row.includes(GRID_ELEMENT_STATES.OPEN)
-    );
-    const hasPath = step.states.some(row =>
-      row.includes(GRID_ELEMENT_STATES.PATH)
-    );
-
-    if (hasPath && step.description.toLowerCase().includes('path found')) {
-      soundManager.playPathFound();
-    } else if (hasOpen) {
-      soundManager.playNodeVisit();
+  // ── Step loading — owned by this hook ─────────────────────────────────────
+  /**
+   * Reload steps for the current algorithmKey + grid start/end.
+   * Stable reference: recreates only when algorithmKey, start, end, or
+   * gridSize changes. Guards against missing algorithmKey or unset positions.
+   */
+  const loadStepsForCurrentAlgorithm = useCallback(() => {
+    if (!algorithmKey || !start || !end) return;
+    const fn =
+      CATEGORY_CONFIG[ALGORITHM_TYPES.PATHFINDING].getAlgorithmFn(algorithmKey);
+    if (fn) {
+      const grid = createEmptyGrid(gridSize, gridSize);
+      engine.loadSteps(fn(grid, start, end, gridSize, gridSize));
     }
-  }, []);
-
-  const play = useCallback(() => {
-    if (stepsRef.current.length === 0 || isComplete) return;
-
-    if (mode === VISUALIZATION_MODES.MANUAL) {
-      if (currentStep < stepsRef.current.length - 1) {
-        const nextStep = currentStep + 1;
-        const step = stepsRef.current[nextStep];
-        executeStep(step);
-        setCurrentStep(nextStep);
-
-        if (nextStep === stepsRef.current.length - 1) {
-          setIsComplete(true);
-        }
-      }
-      return;
-    }
-
-    // Autoplay
-    clearAutoplayTimeout();
-    setIsPlaying(true);
-    setIsAutoplayActive(true);
-    animationRef.current = true;
-
-    const runAutoplay = stepIndex => {
-      if (!animationRef.current || stepIndex >= stepsRef.current.length) {
-        setIsPlaying(false);
-        setIsAutoplayActive(false);
-        clearAutoplayTimeout();
-        if (stepIndex >= stepsRef.current.length) {
-          setIsComplete(true);
-        }
-        return;
-      }
-
-      const step = stepsRef.current[stepIndex];
-      executeStep(step);
-      setCurrentStep(stepIndex);
-
-      if (stepIndex === stepsRef.current.length - 1) {
-        setIsComplete(true);
-        setIsPlaying(false);
-        setIsAutoplayActive(false);
-        clearAutoplayTimeout();
-        return;
-      }
-
-      const totalSteps = stepsRef.current.length || 0;
-      const effectiveDelay = computeEffectiveDelay(speed, gridSize, totalSteps);
-
-      clearAutoplayTimeout();
-      autoplayTimeoutRef.current = setTimeout(() => {
-        runAutoplay(stepIndex + 1);
-      }, effectiveDelay);
-    };
-
-    runAutoplay(currentStep);
-  }, [
-    currentStep,
-    speed,
-    isComplete,
-    mode,
-    gridSize,
-    clearAutoplayTimeout,
-    executeStep,
-  ]);
-
-  const pause = useCallback(() => {
-    animationRef.current = null;
-    setIsPlaying(false);
-    setIsAutoplayActive(false);
-    clearAutoplayTimeout();
-  }, [clearAutoplayTimeout]);
-
-  const reset = useCallback(() => {
-    pause();
-    setCurrentStep(0);
-    setIsComplete(false);
-
-    if (stepsRef.current.length > 0) {
-      const firstStep = stepsRef.current[0];
-      setGrid(firstStep.grid);
-      setStates(firstStep.states);
-      setDescription(firstStep.description);
-    }
-  }, [pause]);
-
-  const stepForward = useCallback(() => {
-    if (currentStep < stepsRef.current.length - 1) {
-      const nextStep = currentStep + 1;
-      const step = stepsRef.current[nextStep];
-      executeStep(step);
-      setCurrentStep(nextStep);
-
-      if (nextStep === stepsRef.current.length - 1) {
-        setIsComplete(true);
-      }
-    }
-  }, [currentStep, executeStep]);
-
-  const stepBackward = useCallback(() => {
-    if (currentStep > 0) {
-      const prevStep = currentStep - 1;
-      const step = stepsRef.current[prevStep];
-      setGrid(step.grid);
-      setStates(step.states);
-      setDescription(step.description);
-      setCurrentStep(prevStep);
-      setIsComplete(false);
-    }
-  }, [currentStep]);
+    // Omitted `engine` from deps; `engine.loadSteps` is stable from useVisualization.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [algorithmKey, start, end, gridSize]);
 
   useEffect(() => {
-    if (isPlaying) {
-      animationRef.current = true;
-    }
-  }, [isPlaying]);
+    loadStepsForCurrentAlgorithm();
+  }, [loadStepsForCurrentAlgorithm]);
 
   return {
+    // Pathfinding-specific domain state
     grid,
     states,
-    steps,
     start,
     end,
-    isPlaying,
-    isAutoplayActive,
-    currentStep,
-    totalSteps: steps.length,
-    description,
-    isComplete,
-    mode,
-    loadSteps,
-    play,
-    pause,
-    reset,
-    stepForward,
-    stepBackward,
     generateNewGrid,
+    /** New random start/end on an empty grid; step reload runs via effect. */
+    regenerateGrid: generateNewGrid,
+    // Shared playback engine (steps, isPlaying, isComplete, currentStep, …)
+    ...engine,
   };
 }
