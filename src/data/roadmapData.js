@@ -43,7 +43,7 @@ export const roadmapData = [
     title: 'Algorithm Library Expansion (0.3.0)',
     description:
       'Expand the algorithm set for sorting and pathfinding, improve animation clarity and performance, and add tests to strengthen learning value.',
-    videoUrl: '',
+    videoUrl: 'https://www.youtube.com/embed/hqxLovhkhrU',
     status: 'completed',
   },
   {
@@ -51,7 +51,7 @@ export const roadmapData = [
     date: 'Q2 2026',
     title: 'New Algorithm Families (0.4.0)',
     description:
-      'Introduce new algorithm categories beyond sorting and pathfinding (e.g., graph operations, dynamic programming basics). Add visualization export (record and download as video), an educational panel with algorithm history and fun facts, and an interactive code panel where users can edit Python, run it, and pass test checks—LeetCode-style.',
+      'Introduce new algorithm categories beyond sorting and pathfinding (e.g., graph operations, dynamic programming basics). Add visualization export (record and download as video), an educational panel with algorithm history and fun facts, and an interactive code panel where users can edit Python, run it, and pass test checks (LeetCode-style).',
     videoUrl: '',
     status: 'planned',
   },
