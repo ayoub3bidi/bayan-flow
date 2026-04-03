@@ -171,6 +171,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Exponential Search Algorithm');
     });
 
+    it('returns Python code for fibonacci search', () => {
+      const code = getPythonCode('fibonacciSearch');
+      expect(code).toContain('def fibonacci_search');
+      expect(code).toContain('Fibonacci Search Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -263,6 +269,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Exponential Search');
     });
 
+    it('returns correct display name for fibonacci search', () => {
+      const name = getAlgorithmDisplayName('fibonacciSearch');
+      expect(name).toBe('Fibonacci Search');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -298,6 +309,7 @@ describe('Python Algorithms Index', () => {
         'jumpSearch',
         'interpolationSearch',
         'exponentialSearch',
+        'fibonacciSearch',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

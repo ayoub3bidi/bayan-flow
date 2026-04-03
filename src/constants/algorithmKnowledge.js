@@ -211,4 +211,12 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  fibonacciSearch: {
+    inventor:
+      'Fibonacci search on sorted arrays (division-free split using Fibonacci numbers)',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };

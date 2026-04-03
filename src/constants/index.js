@@ -48,6 +48,7 @@ export const SEARCHING_ALGORITHMS = {
   JUMP_SEARCH: 'jumpSearch',
   INTERPOLATION_SEARCH: 'interpolationSearch',
   EXPONENTIAL_SEARCH: 'exponentialSearch',
+  FIBONACCI_SEARCH: 'fibonacciSearch',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -385,6 +386,22 @@ export const SEARCHING_COMPLEXITY = {
       'Unbounded or very large sorted sequences where the target position is unknown',
       'Contrasting geometric bracketing with fixed-step jump search',
       'Teaching how exponential probing pairs with binary refinement',
+    ],
+  },
+  fibonacciSearch: {
+    name: 'Fibonacci Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Fibonacci search narrows a sorted range using Fibonacci-number step sizes: the next index is offset plus the second-smallest Fibonacci in the triple (no division). Each comparison shrinks the window by a golden-ratio–related factor, giving O(log n) comparisons in the worst case.',
+    useCases: [
+      'Contrasting division-free probing with binary search’s midpoint',
+      'Teaching how Fibonacci structure defines probe positions on sorted arrays',
+      'Historical contexts where avoiding division mattered for performance',
     ],
   },
 };

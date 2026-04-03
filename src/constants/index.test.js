@@ -93,8 +93,9 @@ describe('Constants', () => {
         'jumpSearch',
         'interpolationSearch',
         'exponentialSearch',
+        'fibonacciSearch',
       ]);
-      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(4);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(5);
     });
   });
 
@@ -274,6 +275,7 @@ describe('Constants', () => {
         'jumpSearch',
         'interpolationSearch',
         'exponentialSearch',
+        'fibonacciSearch',
       ]);
     });
 

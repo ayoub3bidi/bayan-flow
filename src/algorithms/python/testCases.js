@@ -187,6 +187,46 @@ const EXPONENTIAL_SEARCH_TEST_CASES = [
   },
 ];
 
+/** fibonacci_search(arr, target) -> index or -1; arr must be sorted ascending */
+const FIBONACCI_SEARCH_TEST_CASES = [
+  {
+    id: 'fs-found-middle',
+    name: 'Target in middle',
+    input: '([1, 3, 5, 7, 9], 5)',
+    expected: '2',
+  },
+  {
+    id: 'fs-found-ends',
+    name: 'Target at bounds',
+    input: '([2, 4, 6, 8], 8)',
+    expected: '3',
+  },
+  {
+    id: 'fs-not-found',
+    name: 'Target absent',
+    input: '([1, 2, 4, 8], 5)',
+    expected: '-1',
+  },
+  {
+    id: 'fs-single',
+    name: 'Single element',
+    input: '([42], 42)',
+    expected: '0',
+  },
+  {
+    id: 'fs-empty',
+    name: 'Empty array',
+    input: '([], 1)',
+    expected: '-1',
+  },
+  {
+    id: 'fs-target-first',
+    name: 'Target at index zero',
+    input: '([1, 3, 5, 7, 9], 1)',
+    expected: '0',
+  },
+];
+
 /** interpolation_search(arr, target) -> index or -1; arr must be sorted ascending */
 const INTERPOLATION_SEARCH_TEST_CASES = [
   {
@@ -412,6 +452,10 @@ export const algorithmTestCases = {
   exponentialSearch: {
     functionName: 'exponential_search',
     testCases: EXPONENTIAL_SEARCH_TEST_CASES,
+  },
+  fibonacciSearch: {
+    functionName: 'fibonacci_search',
+    testCases: FIBONACCI_SEARCH_TEST_CASES,
   },
 };
 

@@ -195,11 +195,12 @@ export const CATEGORY_CONFIG = {
       'jumpSearch',
       'interpolationSearch',
       'exponentialSearch',
+      'fibonacciSearch',
     ],
     groupDefs: [
       {
         labelKey: 'algorithmGroups.logarithmicSearch',
-        algorithms: ['binarySearch', 'exponentialSearch'],
+        algorithms: ['binarySearch', 'exponentialSearch', 'fibonacciSearch'],
       },
       {
         labelKey: 'algorithmGroups.blockJumpSearch',

@@ -11,12 +11,14 @@ import {
   interpolationSearchPure,
 } from './interpolationSearch';
 import { exponentialSearch, exponentialSearchPure } from './exponentialSearch';
+import { fibonacciSearch, fibonacciSearchPure } from './fibonacciSearch';
 
 export const searchingAlgorithms = {
   binarySearch,
   jumpSearch,
   interpolationSearch,
   exponentialSearch,
+  fibonacciSearch,
 };
 
 export const pureSearchingAlgorithms = {
@@ -24,6 +26,7 @@ export const pureSearchingAlgorithms = {
   jumpSearch: jumpSearchPure,
   interpolationSearch: interpolationSearchPure,
   exponentialSearch: exponentialSearchPure,
+  fibonacciSearch: fibonacciSearchPure,
 };
 
 export {
@@ -35,4 +38,6 @@ export {
   interpolationSearchPure,
   exponentialSearch,
   exponentialSearchPure,
+  fibonacciSearch,
+  fibonacciSearchPure,
 };

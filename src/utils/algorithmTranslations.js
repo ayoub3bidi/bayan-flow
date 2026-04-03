@@ -99,6 +99,11 @@ export const ALGORITHM_STEPS = {
   SEARCH_EXPONENTIAL_FOUND: 'searchExponentialFound',
   SEARCH_EXPONENTIAL_NOT_FOUND: 'searchExponentialNotFound',
 
+  SEARCH_FIBONACCI_START: 'searchFibonacciStart',
+  SEARCH_FIBONACCI_PROBE: 'searchFibonacciProbe',
+  SEARCH_FIBONACCI_FOUND: 'searchFibonacciFound',
+  SEARCH_FIBONACCI_NOT_FOUND: 'searchFibonacciNotFound',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

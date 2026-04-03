@@ -200,5 +200,14 @@ describe('useAlgorithmConfig', () => {
     expect(i18n.t('algorithms.searching.exponentialSearch')).toBe(
       exponential.label
     );
+
+    const fibonacci = result.current.searchingAlgorithms.find(
+      a => a.value === 'fibonacciSearch'
+    );
+    expect(fibonacci).toBeDefined();
+    expect(fibonacci.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.fibonacciSearch')).toBe(
+      fibonacci.label
+    );
   });
 });

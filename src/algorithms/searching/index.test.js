@@ -14,21 +14,25 @@ import {
   interpolationSearchPure,
   exponentialSearch,
   exponentialSearchPure,
+  fibonacciSearch,
+  fibonacciSearchPure,
   searchingAlgorithms,
 } from './index';
 
 describe('searchingAlgorithms registry', () => {
-  it('exposes binarySearch, jumpSearch, interpolationSearch, and exponentialSearch', () => {
+  it('exposes all searching algorithms', () => {
     expect(Object.keys(searchingAlgorithms)).toEqual([
       'binarySearch',
       'jumpSearch',
       'interpolationSearch',
       'exponentialSearch',
+      'fibonacciSearch',
     ]);
     expect(typeof searchingAlgorithms.binarySearch).toBe('function');
     expect(typeof searchingAlgorithms.jumpSearch).toBe('function');
     expect(typeof searchingAlgorithms.interpolationSearch).toBe('function');
     expect(typeof searchingAlgorithms.exponentialSearch).toBe('function');
+    expect(typeof searchingAlgorithms.fibonacciSearch).toBe('function');
   });
 });
 
@@ -190,6 +194,47 @@ describe('exponentialSearch', () => {
     const sorted = [2, 4, 6, 8, 10, 12];
     const target = 6;
     const steps = exponentialSearch(sorted, target);
+    steps.forEach(step => {
+      expect(step.array.length).toBe(sorted.length);
+      expect(step.states.length).toBe(sorted.length);
+      expect(step.targetValue).toBe(target);
+    });
+  });
+});
+
+describe('fibonacciSearch', () => {
+  it('finds target in sorted array', () => {
+    const sorted = [1, 3, 5, 7, 9];
+    expect(fibonacciSearchPure(sorted, 7)).toBe(3);
+    const steps = fibonacciSearch(sorted, 7);
+    const last = steps[steps.length - 1];
+    expect(last.states[3]).toBe('sorted');
+  });
+
+  it('returns not found when target absent', () => {
+    const sorted = [1, 2, 4, 8];
+    expect(fibonacciSearchPure(sorted, 5)).toBe(-1);
+    const steps = fibonacciSearch(sorted, 5);
+    expect(steps[steps.length - 1].array).toEqual(sorted);
+  });
+
+  it('returns -1 for empty array', () => {
+    expect(fibonacciSearchPure([], 1)).toBe(-1);
+    const steps = fibonacciSearch([], 1);
+    expect(steps.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('matches binarySearchPure on strictly increasing arrays', () => {
+    const sorted = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+    for (const t of [-100, 2, 10, 15, 20, 100]) {
+      expect(fibonacciSearchPure(sorted, t)).toBe(binarySearchPure(sorted, t));
+    }
+  });
+
+  it('each step keeps array length and targetValue consistent', () => {
+    const sorted = [2, 4, 6, 8, 10, 12];
+    const target = 6;
+    const steps = fibonacciSearch(sorted, target);
     steps.forEach(step => {
       expect(step.array.length).toBe(sorted.length);
       expect(step.states.length).toBe(sorted.length);

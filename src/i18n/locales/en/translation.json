@@ -71,7 +71,8 @@
       "binarySearch": "Binary Search",
       "jumpSearch": "Jump Search",
       "interpolationSearch": "Interpolation Search",
-      "exponentialSearch": "Exponential Search"
+      "exponentialSearch": "Exponential Search",
+      "fibonacciSearch": "Fibonacci Search"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -100,7 +101,8 @@
       "binarySearch": "Starting Binary Search",
       "jumpSearch": "Starting Jump Search",
       "interpolationSearch": "Starting Interpolation Search",
-      "exponentialSearch": "Starting Exponential Search"
+      "exponentialSearch": "Starting Exponential Search",
+      "fibonacciSearch": "Starting Fibonacci Search"
     }
   },
   "complexity": {
@@ -130,7 +132,8 @@
     "binarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
-    "exponentialSearch": "O(log n)"
+    "exponentialSearch": "O(log n)",
+    "fibonacciSearch": "O(log n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -548,6 +551,18 @@
         "facts_1": "On a finite array of length n, the worst-case cost is still O(log n), like binary search, with an extra doubling phase before the first halving step.",
         "facts_2": "The algorithm requires sorted (ascending) values so comparisons tell you which side of a probe to keep.",
         "facts_3": "After doubling, the search interval is [⌊bound/2⌋, min(bound, n−1)] before binary search narrows it further."
+      },
+      "fibonacciSearch": {
+        "history": "Fibonacci search uses Fibonacci numbers to choose probe positions on a sorted array, avoiding division in the inner loop. It is a classic teaching example alongside binary search when discussing golden-ratio splits and comparison-only search.",
+        "intuition": "Build the smallest Fibonacci number at least n+1 to size the first window. Each probe is at offset plus the second-smallest Fibonacci in the current triple. If the value is too small, slide the window right; if too large, shrink the Fibonacci triple so the remaining range is smaller. The split ratio follows the Fibonacci recurrence, so the window shrinks logarithmically.",
+        "realWorldUses_0": "Teaching division-free search and contrasting Fibonacci-based splits with midpoint binary search",
+        "realWorldUses_1": "Discussing historical cost models where division was expensive compared to addition and comparison",
+        "realWorldUses_2": "Reinforcing that O(log n) search does not require halving the index range",
+        "realWorldUses_3": "Pairing with number-theory topics (Fibonacci sequence, golden ratio) in CS curricula",
+        "facts_0": "Fibonacci search uses O(log n) comparisons in the worst case on a sorted array of length n, similar in class to binary search.",
+        "facts_1": "Probe index uses addition (offset + Fibonacci offset) rather than (left + right) / 2.",
+        "facts_2": "The active window length is tracked with Fibonacci triples (fibM, fibM−1, fibM−2) that shrink after each comparison.",
+        "facts_3": "Like binary search, the input must be sorted so ordering comparisons are meaningful."
       }
     }
   },
@@ -701,7 +716,11 @@
     "searchExponentialRangeLocked": "Range bracketed: if {{target}} exists, it lies between indices {{left}} and {{right}}. Binary search phase — narrow this window.",
     "searchExponentialBinaryCheck": "Binary phase — middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
     "searchExponentialFound": "Found {{target}} at index {{mid}}.",
-    "searchExponentialNotFound": "Target {{target}} is not in the array."
+    "searchExponentialNotFound": "Target {{target}} is not in the array.",
+    "searchFibonacciStart": "Searching for {{target}} using Fibonacci search on the sorted array (probe positions follow Fibonacci-sized steps — no division).",
+    "searchFibonacciProbe": "Probe index {{probe}}: value {{value}}. Active window [{{offset}}, {{windowEnd}}]. Target {{target}}.",
+    "searchFibonacciFound": "Found {{target}} at index {{probe}}.",
+    "searchFibonacciNotFound": "Target {{target}} is not in the array."
   },
   "landing": {
     "hero": {

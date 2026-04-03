@@ -71,7 +71,8 @@
       "binarySearch": "Recherche dichotomique",
       "jumpSearch": "Recherche par sauts",
       "interpolationSearch": "Recherche par interpolation",
-      "exponentialSearch": "Recherche exponentielle"
+      "exponentialSearch": "Recherche exponentielle",
+      "fibonacciSearch": "Recherche de Fibonacci"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -99,7 +100,8 @@
       "binarySearch": "Démarrage de la recherche dichotomique",
       "jumpSearch": "Démarrage de la recherche par sauts",
       "interpolationSearch": "Démarrage de la recherche par interpolation",
-      "exponentialSearch": "Démarrage de la recherche exponentielle"
+      "exponentialSearch": "Démarrage de la recherche exponentielle",
+      "fibonacciSearch": "Démarrage de la recherche de Fibonacci"
     }
   },
   "complexity": {
@@ -129,7 +131,8 @@
     "binarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
-    "exponentialSearch": "O(log n)"
+    "exponentialSearch": "O(log n)",
+    "fibonacciSearch": "O(log n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -547,6 +550,18 @@
         "facts_1": "Sur un tableau fini de taille n, le pire cas reste en O(log n), comme la dichotomie, avec une phase de doublement avant le premier partage.",
         "facts_2": "Il faut des valeurs triées (croissantes) pour que les comparaisons indiquent quel côté conserver.",
         "facts_3": "Après le doublement, l’intervalle de recherche est [⌊bound/2⌋, min(bound, n−1)] avant que la dichotomie ne le rétrécisse."
+      },
+      "fibonacciSearch": {
+        "history": "La recherche de Fibonacci utilise des nombres de Fibonacci pour choisir les positions de sonde sur un tableau trié, sans division dans la boucle principale. C’est un exemple classique en cours aux côtés de la dichotomie pour parler de partage selon le nombre d’or.",
+        "intuition": "On construit le plus petit nombre de Fibonacci au moins égal à n+1 pour dimensionner la première fenêtre. Chaque sonde est à décalage plus le plus petit des trois Fibonacci courants. Si la valeur est trop petite, on fait glisser la fenêtre vers la droite ; si trop grande, on réduit le triple Fibonacci pour restreindre la plage. Le rapport de partage suit la récurrence de Fibonacci, donc la fenêtre se réduit logarithmiquement.",
+        "realWorldUses_0": "Enseigner une recherche sans division et comparer les partages Fibonacci au milieu de la dichotomie",
+        "realWorldUses_1": "Évoquer des modèles de coût historiques où la division était plus chère que l’addition et la comparaison",
+        "realWorldUses_2": "Souligner qu’une recherche en O(log n) ne nécessite pas de couper l’indice par deux",
+        "realWorldUses_3": "Coupler avec la théorie des nombres (suite de Fibonacci, nombre d’or) en cursus d’informatique",
+        "facts_0": "La recherche de Fibonacci utilise au plus un nombre d’ordre O(log n) de comparaisons dans le pire cas sur un tableau trié de taille n, comme la dichotomie.",
+        "facts_1": "L’indice de sonde s’obtient par addition (décalage + offset Fibonacci) plutôt que par (gauche + droite) / 2.",
+        "facts_2": "La longueur de fenêtre active est suivie avec un triple Fibonacci (fibM, fibM−1, fibM−2) qui se réduit après chaque comparaison.",
+        "facts_3": "Comme la dichotomie, l’entrée doit être triée pour que les comparaisons d’ordre aient un sens."
       }
     }
   },
@@ -702,7 +717,11 @@
     "searchExponentialRangeLocked": "Plage encadrée : si {{target}} existe, il est entre les indices {{left}} et {{right}}. Phase dichotomique — rétrécir cette fenêtre.",
     "searchExponentialBinaryCheck": "Phase dichotomique — milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
     "searchExponentialFound": "{{target}} trouvé à l'index {{mid}}.",
-    "searchExponentialNotFound": "La cible {{target}} n'est pas dans le tableau."
+    "searchExponentialNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchFibonacciStart": "Recherche de {{target}} par recherche de Fibonacci sur le tableau trié (pas de division — les sondes suivent des pas de taille Fibonacci).",
+    "searchFibonacciProbe": "Sonde à l'index {{probe}} : valeur {{value}}. Fenêtre active [{{offset}}, {{windowEnd}}]. Cible {{target}}.",
+    "searchFibonacciFound": "{{target}} trouvé à l'index {{probe}}.",
+    "searchFibonacciNotFound": "La cible {{target}} n'est pas dans le tableau."
   },
   "landing": {
     "hero": {
