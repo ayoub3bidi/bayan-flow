@@ -75,6 +75,11 @@ export const ALGORITHM_STEPS = {
   TIM_MERGING_RUNS: 'timMergingRuns',
 
   // Searching
+  SEARCH_LINEAR_START: 'searchLinearStart',
+  SEARCH_LINEAR_CHECK: 'searchLinearCheck',
+  SEARCH_LINEAR_FOUND: 'searchLinearFound',
+  SEARCH_LINEAR_NOT_FOUND: 'searchLinearNotFound',
+
   SEARCH_BINARY_START: 'searchBinaryStart',
   SEARCH_BINARY_CHECK: 'searchBinaryCheck',
   SEARCH_BINARY_FOUND: 'searchBinaryFound',

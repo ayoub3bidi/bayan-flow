@@ -27,6 +27,7 @@ import cycleSortPython from './cycle_sort.py?raw';
 import combSortPython from './comb_sort.py?raw';
 import timSortPython from './timSort.py?raw';
 import bogoSortPython from './bogo_sort.py?raw';
+import linearSearchPython from './linear_search.py?raw';
 import binarySearchPython from './binary_search.py?raw';
 import jumpSearchPython from './jump_search.py?raw';
 import interpolationSearchPython from './interpolation_search.py?raw';
@@ -57,6 +58,7 @@ export const pythonAlgorithms = {
   bellmanFord: bellmanFordPython,
   idaStar: idaStarPython,
   dStarLite: dStarLitePython,
+  linearSearch: linearSearchPython,
   binarySearch: binarySearchPython,
   jumpSearch: jumpSearchPython,
   interpolationSearch: interpolationSearchPython,
@@ -88,6 +90,7 @@ export const algorithmDisplayNames = {
   bellmanFord: 'Bellman-Ford Algorithm',
   idaStar: 'Iterative Deepening A* (IDA*)',
   dStarLite: 'D* Lite',
+  linearSearch: 'Linear Search',
   binarySearch: 'Binary Search',
   jumpSearch: 'Jump Search',
   interpolationSearch: 'Interpolation Search',

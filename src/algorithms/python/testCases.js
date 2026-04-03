@@ -147,6 +147,40 @@ const BINARY_SEARCH_TEST_CASES = [
   },
 ];
 
+/** linear_search(arr, target) -> index or -1; works on any order */
+const LINEAR_SEARCH_TEST_CASES = [
+  {
+    id: 'ls-found-middle',
+    name: 'Target in middle',
+    input: '([1, 3, 5, 7, 9], 5)',
+    expected: '2',
+  },
+  {
+    id: 'ls-found-first',
+    name: 'Target at start',
+    input: '([2, 4, 6, 8], 2)',
+    expected: '0',
+  },
+  {
+    id: 'ls-not-found',
+    name: 'Target absent',
+    input: '([1, 2, 4, 8], 5)',
+    expected: '-1',
+  },
+  {
+    id: 'ls-single',
+    name: 'Single element',
+    input: '([42], 42)',
+    expected: '0',
+  },
+  {
+    id: 'ls-empty',
+    name: 'Empty array',
+    input: '([], 1)',
+    expected: '-1',
+  },
+];
+
 /** exponential_search(arr, target) -> index or -1; arr must be sorted ascending */
 const EXPONENTIAL_SEARCH_TEST_CASES = [
   {
@@ -436,6 +470,10 @@ export const algorithmTestCases = {
   dStarLite: {
     functionName: 'd_star_lite',
     testCases: PATHFINDING_TEST_CASES,
+  },
+  linearSearch: {
+    functionName: 'linear_search',
+    testCases: LINEAR_SEARCH_TEST_CASES,
   },
   binarySearch: {
     functionName: 'binary_search',

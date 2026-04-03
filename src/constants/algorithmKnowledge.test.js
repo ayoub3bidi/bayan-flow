@@ -8,6 +8,19 @@ import { describe, it, expect } from 'vitest';
 import { ALGORITHM_KNOWLEDGE } from './algorithmKnowledge.js';
 
 describe('ALGORITHM_KNOWLEDGE', () => {
+  it('includes linearSearch metadata for the insight panel', () => {
+    expect(ALGORITHM_KNOWLEDGE.linearSearch).toBeDefined();
+    const meta = ALGORITHM_KNOWLEDGE.linearSearch;
+    expect(typeof meta.inventor).toBe('string');
+    expect(meta.inventor.length).toBeGreaterThan(0);
+    expect(typeof meta.year).toBe('number');
+    expect(meta.realWorldUsesCount).toBeGreaterThanOrEqual(0);
+    expect(meta.factsCount).toBeGreaterThanOrEqual(0);
+    expect(
+      meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
+    ).toBe(true);
+  });
+
   it('includes binarySearch metadata for the insight panel', () => {
     expect(ALGORITHM_KNOWLEDGE.binarySearch).toBeDefined();
     const meta = ALGORITHM_KNOWLEDGE.binarySearch;

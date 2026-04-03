@@ -68,6 +68,7 @@
       "dStarLite": "D* Lite"
     },
     "searching": {
+      "linearSearch": "Linear Search",
       "binarySearch": "Binary Search",
       "jumpSearch": "Jump Search",
       "interpolationSearch": "Interpolation Search",
@@ -98,6 +99,7 @@
       "bellmanFord": "Starting Bellman-Ford algorithm",
       "idaStar": "IDA* Search",
       "dStarLite": "Starting D* Lite Search",
+      "linearSearch": "Starting Linear Search",
       "binarySearch": "Starting Binary Search",
       "jumpSearch": "Starting Jump Search",
       "interpolationSearch": "Starting Interpolation Search",
@@ -129,6 +131,7 @@
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
     "dStarLite": "O(log V)",
+    "linearSearch": "O(n)",
     "binarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
@@ -504,6 +507,16 @@
         "facts_1": "The 'Lite' in D* Lite means it is simpler to implement and understand than original D*.",
         "facts_2": "It is significantly more efficient than replanning from scratch on every change."
       },
+      "linearSearch": {
+        "history": "Sequential search is as old as ordered lists: scan from the beginning until you find a match or run out of elements. Every general-purpose language offers it as the baseline pattern before introducing binary search on sorted data.",
+        "intuition": "Start at index 0. If that element equals the target, stop. Otherwise move to index 1, then 2, and so on. In the worst case you inspect every position once — O(n) time and O(1) extra space. If the target is at the front, you stop immediately — best case O(1).",
+        "realWorldUses_0": "Small arrays or lists where setup cost of sorting or indexing is not justified",
+        "realWorldUses_1": "Unsorted or singly-linked structures where you only have forward traversal",
+        "realWorldUses_2": "Teaching why sorted-array tricks (binary search) buy logarithmic comparisons",
+        "facts_0": "Linear search works on any order; Bayan Flow still generates sorted arrays in Searching mode for fair comparison with other algorithms.",
+        "facts_1": "Worst-case comparisons grow linearly with n; average is still Θ(n) if the target is equally likely at any index.",
+        "facts_2": "It is the simplest way to verify whether an element exists when you cannot assume sorted order."
+      },
       "binarySearch": {
         "history": "Halving a sorted search space appears in very early computing. John Mauchly described a binary-search-style procedure for ordered tape in 1946. Once random-access memory and sorted tables were common, the iterative two-pointer form became the standard textbook algorithm.",
         "intuition": "Maintain a window [left, right] that might still hold the target. Compare the target with the middle element. If they match, stop. If the target is larger, drop the left half; if smaller, drop the right half. Each step removes about half of the remaining indices, so you need at most about log₂(n) comparisons.",
@@ -697,6 +710,10 @@
     "bogoShuffling": "Attempt {{attempt}}: Randomly shuffling array",
     "bogoSuccess": "Success! Array sorted after {{attempts}} shuffle attempts",
     "bogoFailed": "Failed to sort after {{maxAttempts}} attempts. Bogo Sort is extremely inefficient!",
+    "searchLinearStart": "Searching for {{target}} with linear search: check each index from left to right in order. This mode uses a sorted array so you can compare with binary and other searches; linear search itself does not require sorting.",
+    "searchLinearCheck": "Index {{index}}: value {{value}}. Target {{target}}.",
+    "searchLinearFound": "Found {{target}} at index {{index}}.",
+    "searchLinearNotFound": "Target {{target}} is not in the array.",
     "searchBinaryStart": "Searching for {{target}} using binary search on the sorted array.",
     "searchBinaryCheck": "Middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
     "searchBinaryFound": "Found {{target}} at index {{mid}}.",
@@ -814,6 +831,7 @@
     "weightedOptimal": "Weighted Optimal",
     "heuristicBased": "Heuristic-Based",
     "specialCases": "Special Cases",
+    "sequentialSearch": "Sequential search",
     "logarithmicSearch": "Logarithmic search",
     "blockJumpSearch": "Block / jump search",
     "distributionAwareSearch": "Distribution-aware search"

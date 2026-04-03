@@ -20,7 +20,8 @@ function pickTargetFromArray(arr) {
 }
 
 /**
- * Visualization controller for searching algorithms on a sorted array.
+ * Visualization controller for searching algorithms. The category supplies a
+ * sorted array for consistency across algorithms; linear search does not require sorting.
  *
  * @param {string} algorithmKey
  * @param {number[]} initialArray — sorted ascending (see CATEGORY_CONFIG.generateData)

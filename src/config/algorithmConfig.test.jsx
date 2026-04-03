@@ -169,6 +169,13 @@ describe('useAlgorithmConfig', () => {
   it('should use translated labels for searching algorithms', () => {
     const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
 
+    const linear = result.current.searchingAlgorithms.find(
+      a => a.value === 'linearSearch'
+    );
+    expect(linear).toBeDefined();
+    expect(linear.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.linearSearch')).toBe(linear.label);
+
     const binary = result.current.searchingAlgorithms.find(
       a => a.value === 'binarySearch'
     );

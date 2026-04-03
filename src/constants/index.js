@@ -44,6 +44,7 @@ export const PATHFINDING_ALGORITHMS = {
 };
 
 export const SEARCHING_ALGORITHMS = {
+  LINEAR_SEARCH: 'linearSearch',
   BINARY_SEARCH: 'binarySearch',
   JUMP_SEARCH: 'jumpSearch',
   INTERPOLATION_SEARCH: 'interpolationSearch',
@@ -324,6 +325,22 @@ export const ALGORITHM_COMPLEXITY = {
 };
 
 export const SEARCHING_COMPLEXITY = {
+  linearSearch: {
+    name: 'Linear Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Linear search checks each element in order until the target is found or the end is reached. It does not require a sorted array. Bayan Flow still uses sorted random arrays in Searching mode so you can compare it fairly with binary and other ordered searches.',
+    useCases: [
+      'Small or unsorted collections where sorting first is not worth the cost',
+      'Teaching baseline comparison counts before introducing binary search',
+      'Linked structures where random index access is expensive or unavailable',
+    ],
+  },
   binarySearch: {
     name: 'Binary Search',
     timeComplexity: {

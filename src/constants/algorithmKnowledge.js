@@ -181,6 +181,13 @@ export const ALGORITHM_KNOWLEDGE = {
   },
 
   // ── Searching ─────────────────────────────────────────────────────────────
+  linearSearch: {
+    inventor: 'Classic sequential scan (foundational in CS curricula)',
+    year: 1950,
+    realWorldUsesCount: 3,
+    factsCount: 3,
+    youtubeVideoId: null,
+  },
   binarySearch: {
     inventor: 'John Mauchly (1946); divide-by-half search on sorted data',
     year: 1946,

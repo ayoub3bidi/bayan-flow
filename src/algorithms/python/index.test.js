@@ -147,6 +147,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('IDA* Search');
     });
 
+    it('returns Python code for linear search', () => {
+      const code = getPythonCode('linearSearch');
+      expect(code).toContain('def linear_search');
+      expect(code).toContain('Linear Search Algorithm');
+    });
+
     it('returns Python code for binary search', () => {
       const code = getPythonCode('binarySearch');
       expect(code).toContain('def binary_search');
@@ -254,6 +260,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Iterative Deepening A* (IDA*)');
     });
 
+    it('returns correct display name for linear search', () => {
+      const name = getAlgorithmDisplayName('linearSearch');
+      expect(name).toBe('Linear Search');
+    });
+
     it('returns correct display name for binary search', () => {
       const name = getAlgorithmDisplayName('binarySearch');
       expect(name).toBe('Binary Search');
@@ -305,6 +316,7 @@ describe('Python Algorithms Index', () => {
         'jumpPointSearch',
         'bellmanFord',
         'idaStar',
+        'linearSearch',
         'binarySearch',
         'jumpSearch',
         'interpolationSearch',

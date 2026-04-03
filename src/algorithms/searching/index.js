@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { linearSearch, linearSearchPure } from './linearSearch';
 import { binarySearch, binarySearchPure } from './binarySearch';
 import { jumpSearch, jumpSearchPure } from './jumpSearch';
 import {
@@ -14,6 +15,7 @@ import { exponentialSearch, exponentialSearchPure } from './exponentialSearch';
 import { fibonacciSearch, fibonacciSearchPure } from './fibonacciSearch';
 
 export const searchingAlgorithms = {
+  linearSearch,
   binarySearch,
   jumpSearch,
   interpolationSearch,
@@ -22,6 +24,7 @@ export const searchingAlgorithms = {
 };
 
 export const pureSearchingAlgorithms = {
+  linearSearch: linearSearchPure,
   binarySearch: binarySearchPure,
   jumpSearch: jumpSearchPure,
   interpolationSearch: interpolationSearchPure,
@@ -30,6 +33,8 @@ export const pureSearchingAlgorithms = {
 };
 
 export {
+  linearSearch,
+  linearSearchPure,
   binarySearch,
   binarySearchPure,
   jumpSearch,

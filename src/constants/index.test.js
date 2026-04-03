@@ -89,13 +89,14 @@ describe('Constants', () => {
   describe('SEARCHING_ALGORITHMS', () => {
     it('should contain searching algorithm keys', () => {
       expect(Object.values(SEARCHING_ALGORITHMS)).toEqual([
+        'linearSearch',
         'binarySearch',
         'jumpSearch',
         'interpolationSearch',
         'exponentialSearch',
         'fibonacciSearch',
       ]);
-      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(5);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(6);
     });
   });
 
@@ -271,6 +272,7 @@ describe('Constants', () => {
 
     it('should have metadata for all searching algorithms', () => {
       expect(keys).toEqual([
+        'linearSearch',
         'binarySearch',
         'jumpSearch',
         'interpolationSearch',

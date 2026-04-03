@@ -68,6 +68,7 @@
       "dStarLite": "D* Lite"
     },
     "searching": {
+      "linearSearch": "Recherche linéaire",
       "binarySearch": "Recherche dichotomique",
       "jumpSearch": "Recherche par sauts",
       "interpolationSearch": "Recherche par interpolation",
@@ -97,6 +98,7 @@
       "jumpPointSearch": "Démarrage de la Recherche par Points de Saut",
       "bellmanFord": "Démarrage de l'algorithme de Bellman-Ford",
       "dStarLite": "Démarrage de la recherche D* Lite",
+      "linearSearch": "Démarrage de la recherche linéaire",
       "binarySearch": "Démarrage de la recherche dichotomique",
       "jumpSearch": "Démarrage de la recherche par sauts",
       "interpolationSearch": "Démarrage de la recherche par interpolation",
@@ -128,6 +130,7 @@
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
     "dStarLite": "O(log V)",
+    "linearSearch": "O(n)",
     "binarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
@@ -503,6 +506,16 @@
         "facts_1": "Le 'Lite' dans D* Lite signifie qu'il est plus simple à implémenter et à comprendre que D* original.",
         "facts_2": "Il est significativement plus efficace que de replanifier depuis zéro à chaque changement."
       },
+      "linearSearch": {
+        "history": "La recherche séquentielle est aussi ancienne que les listes : on parcourt du début jusqu'à trouver la cible ou épuiser les éléments. Tout langage généraliste la présente comme base avant la dichotomie sur données triées.",
+        "intuition": "Commencer à l'indice 0. Si l'élément égale la cible, arrêter. Sinon passer à 1, puis 2, etc. Au pire on inspecte chaque position une fois — temps O(n) et espace supplémentaire O(1). Si la cible est au début, arrêt immédiat — meilleur cas O(1).",
+        "realWorldUses_0": "Petits tableaux ou listes où trier ou indexer d'abord ne vaut pas le coût",
+        "realWorldUses_1": "Structures non triées ou chaînées où l'on ne peut parcourir qu'en avant",
+        "realWorldUses_2": "Expliquer pourquoi les astuces sur tableaux triés (dichotomie) réduisent les comparaisons",
+        "facts_0": "La recherche linéaire fonctionne sur tout ordre ; Bayan Flow génère toutefois des tableaux triés en mode Recherche pour comparer équitablement les algorithmes.",
+        "facts_1": "Le nombre de comparaisons au pire croît linéairement avec n ; en moyenne c'est encore Θ(n) si la cible est équiprobable à chaque indice.",
+        "facts_2": "C'est le moyen le plus simple de tester la présence d'un élément sans hypothèse de tri."
+      },
       "binarySearch": {
         "history": "Réduire de moitié un intervalle trié apparaît dès les débuts de l'informatique. John Mauchly décrit en 1946 une procédure proche de la dichotomie sur bande ordonnée. Avec la mémoire à accès aléatoire et les tables triées, la forme itérative à deux indices est devenue l'algorithme de référence.",
         "intuition": "On garde une fenêtre [gauche, droite] où la cible peut encore se trouver. On compare la cible à l'élément du milieu : égalité → terminé ; sinon on élimine la moitié gauche ou droite selon l'ordre. À chaque étape on supprime environ la moitié des indices restants, donc au plus environ log₂(n) comparaisons.",
@@ -698,6 +711,10 @@
     "bogoShuffling": "Tentative {{attempt}} : Mélange aléatoire du tableau",
     "bogoSuccess": "Succès ! Tableau trié après {{attempts}} tentatives de mélange",
     "bogoFailed": "Échec du tri après {{maxAttempts}} tentatives. Le Tri Bogo est extrêmement inefficace !",
+    "searchLinearStart": "Recherche de {{target}} par balayage linéaire : vérifier chaque indice de gauche à droite. Ce mode utilise un tableau trié pour comparer avec la dichotomie et les autres recherches ; la recherche linéaire n'exige pas le tri.",
+    "searchLinearCheck": "Indice {{index}} : valeur {{value}}. Cible {{target}}.",
+    "searchLinearFound": "{{target}} trouvé à l'index {{index}}.",
+    "searchLinearNotFound": "La cible {{target}} n'est pas dans le tableau.",
     "searchBinaryStart": "Recherche de {{target}} par dichotomie sur le tableau trié.",
     "searchBinaryCheck": "Milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
     "searchBinaryFound": "{{target}} trouvé à l'index {{mid}}.",
@@ -815,6 +832,7 @@
     "weightedOptimal": "Pondéré Optimal",
     "heuristicBased": "Basé sur Heuristique",
     "specialCases": "Cas Spéciaux",
+    "sequentialSearch": "Recherche séquentielle",
     "logarithmicSearch": "Recherche logarithmique",
     "blockJumpSearch": "Recherche par blocs / sauts",
     "distributionAwareSearch": "Recherche sensible à la distribution"

@@ -191,6 +191,7 @@ export const CATEGORY_CONFIG = {
       step: 5,
     },
     algorithmKeys: [
+      'linearSearch',
       'binarySearch',
       'jumpSearch',
       'interpolationSearch',
@@ -198,6 +199,10 @@ export const CATEGORY_CONFIG = {
       'fibonacciSearch',
     ],
     groupDefs: [
+      {
+        labelKey: 'algorithmGroups.sequentialSearch',
+        algorithms: ['linearSearch'],
+      },
       {
         labelKey: 'algorithmGroups.logarithmicSearch',
         algorithms: ['binarySearch', 'exponentialSearch', 'fibonacciSearch'],
