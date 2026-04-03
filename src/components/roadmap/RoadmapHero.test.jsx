@@ -4,9 +4,17 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import RoadmapHero from './RoadmapHero';
+
+const { mockIsProductionMainBranch } = vi.hoisted(() => ({
+  mockIsProductionMainBranch: vi.fn(() => false),
+}));
+
+vi.mock('../../utils/deployContext', () => ({
+  isProductionMainBranch: () => mockIsProductionMainBranch(),
+}));
 
 // Mock framer-motion
 vi.mock('framer-motion', async () => {
@@ -29,6 +37,31 @@ vi.mock('../ui/Container', () => ({
 }));
 
 describe('RoadmapHero', () => {
+  beforeEach(() => {
+    mockIsProductionMainBranch.mockReturnValue(false);
+  });
+
+  describe('Dev feedback note (production main only)', () => {
+    it('does not show dev / GitHub feedback note when not production main', () => {
+      mockIsProductionMainBranch.mockReturnValue(false);
+      render(<RoadmapHero />);
+      expect(
+        screen.queryByRole('link', { name: /dev version/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows dev / GitHub feedback note when production main', () => {
+      mockIsProductionMainBranch.mockReturnValue(true);
+      render(<RoadmapHero />);
+      expect(
+        screen.getByRole('link', { name: /dev version/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: /creating an issue/i })
+      ).toBeInTheDocument();
+    });
+  });
+
   describe('Rendering', () => {
     it('should render section element', () => {
       const { container } = render(<RoadmapHero />);
