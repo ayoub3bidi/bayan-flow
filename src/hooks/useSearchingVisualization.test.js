@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { VISUALIZATION_MODES } from '../constants/index.js';
 import { binarySearch } from '../algorithms/searching/binarySearch.js';
+import { jumpSearch } from '../algorithms/searching/jumpSearch.js';
 import { useSearchingVisualization } from './useSearchingVisualization.js';
 
 const { soundManager } = vi.hoisted(() => ({
@@ -28,6 +29,32 @@ describe('useSearchingVisualization', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it('loads the first step for jumpSearch on mount', async () => {
+    const values = [1, 3, 5, 7, 9];
+    const target = values[0];
+    const expectedSteps = jumpSearch(values, target);
+
+    const { result } = renderHook(
+      ({ array }) =>
+        useSearchingVisualization(
+          'jumpSearch',
+          array,
+          1000,
+          VISUALIZATION_MODES.MANUAL
+        ),
+      { initialProps: { array: values } }
+    );
+
+    await waitFor(() => {
+      expect(result.current.description).toBe(expectedSteps[0].description);
+    });
+
+    expect(result.current.array).toEqual(expectedSteps[0].array);
+    expect(result.current.states).toEqual(expectedSteps[0].states);
+    expect(result.current.targetValue).toBe(target);
+    expect(result.current.totalSteps).toBe(expectedSteps.length);
   });
 
   it('loads the first step for binarySearch on mount', async () => {

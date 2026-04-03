@@ -5,13 +5,16 @@
  */
 
 import { binarySearch, binarySearchPure } from './binarySearch';
+import { jumpSearch, jumpSearchPure } from './jumpSearch';
 
 export const searchingAlgorithms = {
   binarySearch,
+  jumpSearch,
 };
 
 export const pureSearchingAlgorithms = {
   binarySearch: binarySearchPure,
+  jumpSearch: jumpSearchPure,
 };
 
-export { binarySearch, binarySearchPure };
+export { binarySearch, binarySearchPure, jumpSearch, jumpSearchPure };

@@ -45,6 +45,7 @@ export const PATHFINDING_ALGORITHMS = {
 
 export const SEARCHING_ALGORITHMS = {
   BINARY_SEARCH: 'binarySearch',
+  JUMP_SEARCH: 'jumpSearch',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -336,12 +337,29 @@ export const SEARCHING_COMPLEXITY = {
       'Algorithm building blocks (e.g. bounds, bisection)',
     ],
   },
+  jumpSearch: {
+    name: 'Jump Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(√n)',
+      worst: 'O(√n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Jump search advances in blocks of about √n on a sorted array, then scans linearly within the last block. Requires a sorted array.',
+    useCases: [
+      'Large sorted arrays when block-style jumps are easier to reason about than halving',
+      'Teaching trade-offs between √n jumps and O(log n) binary search',
+      'Complement to binary search for ordered static data',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {
   // eslint-disable-next-line no-unused-vars
   'O(1)': n => 1,
   'O(log n)': n => Math.log2(n),
+  'O(√n)': n => Math.sqrt(n),
   'O(n)': n => n,
   'O(n log n)': n => n * Math.log2(n),
   'O(n^1.25)': n => Math.pow(n, 1.25),

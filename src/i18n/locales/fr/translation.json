@@ -68,7 +68,8 @@
       "dStarLite": "D* Lite"
     },
     "searching": {
-      "binarySearch": "Recherche dichotomique"
+      "binarySearch": "Recherche dichotomique",
+      "jumpSearch": "Recherche par sauts"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -93,7 +94,8 @@
       "jumpPointSearch": "Démarrage de la Recherche par Points de Saut",
       "bellmanFord": "Démarrage de l'algorithme de Bellman-Ford",
       "dStarLite": "Démarrage de la recherche D* Lite",
-      "binarySearch": "Démarrage de la recherche dichotomique"
+      "binarySearch": "Démarrage de la recherche dichotomique",
+      "jumpSearch": "Démarrage de la recherche par sauts"
     }
   },
   "complexity": {
@@ -120,7 +122,8 @@
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
     "dStarLite": "O(log V)",
-    "binarySearch": "O(log n)"
+    "binarySearch": "O(log n)",
+    "jumpSearch": "O(√n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -502,6 +505,18 @@
         "facts_1": "Elle nécessite des données triées (ou un ordre total où les comparaisons au « milieu » sont valides).",
         "facts_2": "Le dépassement d'entier dans milieu = (gauche + droite) / 2 est un piège classique ; utiliser gauche + (droite - gauche) // 2 si besoin.",
         "facts_3": "Jon Bentley a souligné que beaucoup de programmeurs échouent encore à écrire une dichotomie correcte du premier coup."
+      },
+      "jumpSearch": {
+        "history": "La recherche par sauts sur tableaux triés combine des avances par blocs et une fin linéaire courte. On l'enseigne souvent à côté de la dichotomie pour comparer des complexités en √n et en logarithme.",
+        "intuition": "On avance par blocs d'environ √n indices et on compare le bout de chaque bloc à la cible. Quand ce bout est au moins égal à la cible, on arrête les sauts et on parcourt vers l'avant depuis le début du bloc. Au pire il y a O(√n) sauts et au plus √n étapes dans le dernier segment.",
+        "realWorldUses_0": "Comparer en cours les approches par sauts et par dichotomie sur des données triées",
+        "realWorldUses_1": "Systèmes où l'accès séquentiel après un saut grossier coûte moins cher que des accès aléatoires",
+        "realWorldUses_2": "Donner une intuition des algorithmes en √n avant la dichotomie sur des histoires de bandes ou de blocs",
+        "realWorldUses_3": "Cours jumelant recherche par sauts et dichotomie pour illustrer les classes de complexité",
+        "facts_0": "La recherche par sauts est en O(√n) dans le temps et O(1) en mémoire supplémentaire sur un tableau trié.",
+        "facts_1": "Le pas de saut est en général ⌊√n⌋ pour équilibrer le nombre de sauts et le balayage final.",
+        "facts_2": "La dichotomie utilise souvent moins de comparaisons ; la recherche par sauts illustre un autre compromis temps–structure.",
+        "facts_3": "Comme la dichotomie, elle exige des données triées (ou indexées en ordre trié)."
       }
     }
   },
@@ -641,7 +656,12 @@
     "searchBinaryStart": "Recherche de {{target}} par dichotomie sur le tableau trié.",
     "searchBinaryCheck": "Milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
     "searchBinaryFound": "{{target}} trouvé à l'index {{mid}}.",
-    "searchBinaryNotFound": "La cible {{target}} n'est pas dans le tableau."
+    "searchBinaryNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchJumpStart": "Recherche de {{target}} par sauts sur le tableau trié. Taille de pas {{m}} (⌊√n⌋).",
+    "searchJumpBlockCheck": "Phase de sauts — début de bloc {{prev}}, fin de bloc {{jumpIdx}} : valeur {{value}}. Pas {{m}}. Cible {{target}}.",
+    "searchJumpLinearCheck": "Balayage linéaire à l'index {{prev}} : valeur {{value}}. Cible {{target}}.",
+    "searchJumpFound": "{{target}} trouvé à l'index {{prev}}.",
+    "searchJumpNotFound": "La cible {{target}} n'est pas dans le tableau."
   },
   "landing": {
     "hero": {
@@ -682,7 +702,7 @@
       "searching": {
         "title": "Algorithmes de recherche",
         "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
-        "algorithms": "Recherche dichotomique"
+        "algorithms": "Recherche dichotomique, recherche par sauts"
       }
     },
     "features": {
@@ -735,7 +755,8 @@
     "weightedOptimal": "Pondéré Optimal",
     "heuristicBased": "Basé sur Heuristique",
     "specialCases": "Cas Spéciaux",
-    "logarithmicSearch": "Recherche logarithmique"
+    "logarithmicSearch": "Recherche logarithmique",
+    "blockJumpSearch": "Recherche par blocs / sauts"
   },
   "roadmap": {
     "hero": {

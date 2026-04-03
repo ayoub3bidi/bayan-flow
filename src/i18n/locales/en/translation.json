@@ -68,7 +68,8 @@
       "dStarLite": "D* Lite"
     },
     "searching": {
-      "binarySearch": "Binary Search"
+      "binarySearch": "Binary Search",
+      "jumpSearch": "Jump Search"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -94,7 +95,8 @@
       "bellmanFord": "Starting Bellman-Ford algorithm",
       "idaStar": "IDA* Search",
       "dStarLite": "Starting D* Lite Search",
-      "binarySearch": "Starting Binary Search"
+      "binarySearch": "Starting Binary Search",
+      "jumpSearch": "Starting Jump Search"
     }
   },
   "complexity": {
@@ -121,7 +123,8 @@
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
     "dStarLite": "O(log V)",
-    "binarySearch": "O(log n)"
+    "binarySearch": "O(log n)",
+    "jumpSearch": "O(√n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -503,6 +506,18 @@
         "facts_1": "It only works on sorted input (or any total order where “middle” comparisons are valid).",
         "facts_2": "Integer overflow in mid = (left + right) / 2 is a famous pitfall; use left + (right - left) // 2 in languages where needed.",
         "facts_3": "Jon Bentley noted that many programmers still struggle to write a correct binary search on the first try."
+      },
+      "jumpSearch": {
+        "history": "Jump search is a classic block-based search on sorted arrays, combining coarse jumps with a short linear finish. It is often taught alongside binary search to compare √n versus logarithmic probe counts.",
+        "intuition": "Jump forward in blocks of about √n indices and compare the end of each block to the target. When a block’s end is at least the target, stop jumping and scan forward one index at a time from that block’s start. You make O(√n) jumps in the worst case and at most √n extra steps in the final segment.",
+        "realWorldUses_0": "Teaching trade-offs between jump-based and halving searches on sorted data",
+        "realWorldUses_1": "Systems where sequential memory access after a coarse jump is cheaper than random probes",
+        "realWorldUses_2": "Building intuition for root-n algorithms before binary search on tape-like or block-oriented storage stories",
+        "realWorldUses_3": "Paired with binary search in curricula that emphasize complexity classes",
+        "facts_0": "Jump search runs in O(√n) time and O(1) extra space on a sorted array.",
+        "facts_1": "The jump step is usually ⌊√n⌋ so the number of jumps and the final linear scan stay balanced.",
+        "facts_2": "Binary search typically needs fewer comparisons; jump search highlights a different time–structure trade-off.",
+        "facts_3": "Like binary search, jump search requires the input to be sorted (or indexed in sorted order)."
       }
     }
   },
@@ -640,7 +655,12 @@
     "searchBinaryStart": "Searching for {{target}} using binary search on the sorted array.",
     "searchBinaryCheck": "Middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
     "searchBinaryFound": "Found {{target}} at index {{mid}}.",
-    "searchBinaryNotFound": "Target {{target}} is not in the array."
+    "searchBinaryNotFound": "Target {{target}} is not in the array.",
+    "searchJumpStart": "Searching for {{target}} using jump search on the sorted array. Block step size {{m}} (⌊√n⌋).",
+    "searchJumpBlockCheck": "Jump phase — block start {{prev}}, block end index {{jumpIdx}}: value {{value}}. Step size {{m}}. Target {{target}}.",
+    "searchJumpLinearCheck": "Linear scan at index {{prev}}: value {{value}}. Target {{target}}.",
+    "searchJumpFound": "Found {{target}} at index {{prev}}.",
+    "searchJumpNotFound": "Target {{target}} is not in the array."
   },
   "landing": {
     "hero": {
@@ -681,7 +701,7 @@
       "searching": {
         "title": "Searching Algorithms",
         "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
-        "algorithms": "Binary Search"
+        "algorithms": "Binary Search, Jump Search"
       }
     },
     "features": {
@@ -734,7 +754,8 @@
     "weightedOptimal": "Weighted Optimal",
     "heuristicBased": "Heuristic-Based",
     "specialCases": "Special Cases",
-    "logarithmicSearch": "Logarithmic search"
+    "logarithmicSearch": "Logarithmic search",
+    "blockJumpSearch": "Block / jump search"
   },
   "roadmap": {
     "hero": {

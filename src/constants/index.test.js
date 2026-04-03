@@ -87,9 +87,12 @@ describe('Constants', () => {
   });
 
   describe('SEARCHING_ALGORITHMS', () => {
-    it('should contain binary search key', () => {
-      expect(Object.values(SEARCHING_ALGORITHMS)).toEqual(['binarySearch']);
-      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(1);
+    it('should contain searching algorithm keys', () => {
+      expect(Object.values(SEARCHING_ALGORITHMS)).toEqual([
+        'binarySearch',
+        'jumpSearch',
+      ]);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(2);
     });
   });
 
@@ -264,7 +267,7 @@ describe('Constants', () => {
     const keys = Object.keys(SEARCHING_COMPLEXITY);
 
     it('should have metadata for all searching algorithms', () => {
-      expect(keys).toEqual(['binarySearch']);
+      expect(keys).toEqual(['binarySearch', 'jumpSearch']);
     });
 
     it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {

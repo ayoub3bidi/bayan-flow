@@ -147,6 +147,40 @@ const BINARY_SEARCH_TEST_CASES = [
   },
 ];
 
+/** jump_search(arr, target) -> index or -1; arr must be sorted ascending */
+const JUMP_SEARCH_TEST_CASES = [
+  {
+    id: 'js-found-middle',
+    name: 'Target in middle',
+    input: '([1, 3, 5, 7, 9], 5)',
+    expected: '2',
+  },
+  {
+    id: 'js-found-ends',
+    name: 'Target at bounds',
+    input: '([2, 4, 6, 8], 8)',
+    expected: '3',
+  },
+  {
+    id: 'js-not-found',
+    name: 'Target absent',
+    input: '([1, 2, 4, 8], 5)',
+    expected: '-1',
+  },
+  {
+    id: 'js-single',
+    name: 'Single element',
+    input: '([42], 42)',
+    expected: '0',
+  },
+  {
+    id: 'js-empty',
+    name: 'Empty array',
+    input: '([], 1)',
+    expected: '-1',
+  },
+];
+
 /** Pathfinding: grid (0=walkable, 1=wall), start, end -> path or None */
 const PATH_3X3 = '([[0,0,0],[0,0,0],[0,0,0]], (0,0), (2,2))';
 const PATH_3X3_EXPECTED = '[(0, 0), (1, 0), (2, 0), (2, 1), (2, 2)]';
@@ -292,6 +326,10 @@ export const algorithmTestCases = {
   binarySearch: {
     functionName: 'binary_search',
     testCases: BINARY_SEARCH_TEST_CASES,
+  },
+  jumpSearch: {
+    functionName: 'jump_search',
+    testCases: JUMP_SEARCH_TEST_CASES,
   },
 };
 

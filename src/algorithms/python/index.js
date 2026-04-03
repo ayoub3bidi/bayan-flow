@@ -28,6 +28,7 @@ import combSortPython from './comb_sort.py?raw';
 import timSortPython from './timSort.py?raw';
 import bogoSortPython from './bogo_sort.py?raw';
 import binarySearchPython from './binary_search.py?raw';
+import jumpSearchPython from './jump_search.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -54,6 +55,7 @@ export const pythonAlgorithms = {
   idaStar: idaStarPython,
   dStarLite: dStarLitePython,
   binarySearch: binarySearchPython,
+  jumpSearch: jumpSearchPython,
 };
 
 export const algorithmDisplayNames = {
@@ -81,6 +83,7 @@ export const algorithmDisplayNames = {
   idaStar: 'Iterative Deepening A* (IDA*)',
   dStarLite: 'D* Lite',
   binarySearch: 'Binary Search',
+  jumpSearch: 'Jump Search',
 };
 
 export function getPythonCode(algorithmName) {

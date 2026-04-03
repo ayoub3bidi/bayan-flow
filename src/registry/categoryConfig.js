@@ -190,11 +190,15 @@ export const CATEGORY_CONFIG = {
       max: 100,
       step: 5,
     },
-    algorithmKeys: ['binarySearch'],
+    algorithmKeys: ['binarySearch', 'jumpSearch'],
     groupDefs: [
       {
         labelKey: 'algorithmGroups.logarithmicSearch',
         algorithms: ['binarySearch'],
+      },
+      {
+        labelKey: 'algorithmGroups.blockJumpSearch',
+        algorithms: ['jumpSearch'],
       },
     ],
   },

@@ -153,6 +153,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Binary Search Algorithm');
     });
 
+    it('returns Python code for jump search', () => {
+      const code = getPythonCode('jumpSearch');
+      expect(code).toContain('def jump_search');
+      expect(code).toContain('Jump Search Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -235,6 +241,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Binary Search');
     });
 
+    it('returns correct display name for jump search', () => {
+      const name = getAlgorithmDisplayName('jumpSearch');
+      expect(name).toBe('Jump Search');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -267,6 +278,7 @@ describe('Python Algorithms Index', () => {
         'bellmanFord',
         'idaStar',
         'binarySearch',
+        'jumpSearch',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

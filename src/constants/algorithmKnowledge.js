@@ -188,4 +188,11 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  jumpSearch: {
+    inventor: 'Classic block search on sorted arrays (teaching √n vs log n)',
+    year: 1970,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };

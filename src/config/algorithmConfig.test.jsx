@@ -175,5 +175,12 @@ describe('useAlgorithmConfig', () => {
     expect(binary).toBeDefined();
     expect(binary.label).toBeTruthy();
     expect(i18n.t('algorithms.searching.binarySearch')).toBe(binary.label);
+
+    const jump = result.current.searchingAlgorithms.find(
+      a => a.value === 'jumpSearch'
+    );
+    expect(jump).toBeDefined();
+    expect(jump.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.jumpSearch')).toBe(jump.label);
   });
 });

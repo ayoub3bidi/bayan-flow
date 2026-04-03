@@ -80,6 +80,12 @@ export const ALGORITHM_STEPS = {
   SEARCH_BINARY_FOUND: 'searchBinaryFound',
   SEARCH_BINARY_NOT_FOUND: 'searchBinaryNotFound',
 
+  SEARCH_JUMP_START: 'searchJumpStart',
+  SEARCH_JUMP_BLOCK_CHECK: 'searchJumpBlockCheck',
+  SEARCH_JUMP_LINEAR_CHECK: 'searchJumpLinearCheck',
+  SEARCH_JUMP_FOUND: 'searchJumpFound',
+  SEARCH_JUMP_NOT_FOUND: 'searchJumpNotFound',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',
