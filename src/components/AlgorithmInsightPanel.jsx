@@ -214,7 +214,7 @@ function PanelContent({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
+      <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-4 space-y-5">
         {!hasContent ? (
           <p className="text-sm text-secondary text-center py-8">
             {t('insight_panel.noData')}
