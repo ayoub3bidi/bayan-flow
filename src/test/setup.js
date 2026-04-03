@@ -47,6 +47,7 @@ const constantsMockValue = {
     BINARY_SEARCH: 'binarySearch',
     JUMP_SEARCH: 'jumpSearch',
     INTERPOLATION_SEARCH: 'interpolationSearch',
+    EXPONENTIAL_SEARCH: 'exponentialSearch',
   },
   ELEMENT_STATES: {
     DEFAULT: 'default',

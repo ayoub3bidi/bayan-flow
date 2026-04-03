@@ -191,5 +191,14 @@ describe('useAlgorithmConfig', () => {
     expect(i18n.t('algorithms.searching.interpolationSearch')).toBe(
       interpolation.label
     );
+
+    const exponential = result.current.searchingAlgorithms.find(
+      a => a.value === 'exponentialSearch'
+    );
+    expect(exponential).toBeDefined();
+    expect(exponential.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.exponentialSearch')).toBe(
+      exponential.label
+    );
   });
 });

@@ -91,6 +91,14 @@ export const ALGORITHM_STEPS = {
   SEARCH_INTERPOLATION_FOUND: 'searchInterpolationFound',
   SEARCH_INTERPOLATION_NOT_FOUND: 'searchInterpolationNotFound',
 
+  SEARCH_EXPONENTIAL_START: 'searchExponentialStart',
+  SEARCH_EXPONENTIAL_CHECK_FIRST: 'searchExponentialCheckFirst',
+  SEARCH_EXPONENTIAL_DOUBLED_PROBE: 'searchExponentialDoubledProbe',
+  SEARCH_EXPONENTIAL_RANGE_LOCKED: 'searchExponentialRangeLocked',
+  SEARCH_EXPONENTIAL_BINARY_CHECK: 'searchExponentialBinaryCheck',
+  SEARCH_EXPONENTIAL_FOUND: 'searchExponentialFound',
+  SEARCH_EXPONENTIAL_NOT_FOUND: 'searchExponentialNotFound',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

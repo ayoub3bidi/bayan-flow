@@ -203,4 +203,12 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  exponentialSearch: {
+    inventor:
+      'Doubling search on sorted data; standard in CS texts on unbounded search',
+    year: 1970,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };

@@ -10,17 +10,20 @@ import {
   interpolationSearch,
   interpolationSearchPure,
 } from './interpolationSearch';
+import { exponentialSearch, exponentialSearchPure } from './exponentialSearch';
 
 export const searchingAlgorithms = {
   binarySearch,
   jumpSearch,
   interpolationSearch,
+  exponentialSearch,
 };
 
 export const pureSearchingAlgorithms = {
   binarySearch: binarySearchPure,
   jumpSearch: jumpSearchPure,
   interpolationSearch: interpolationSearchPure,
+  exponentialSearch: exponentialSearchPure,
 };
 
 export {
@@ -30,4 +33,6 @@ export {
   jumpSearchPure,
   interpolationSearch,
   interpolationSearchPure,
+  exponentialSearch,
+  exponentialSearchPure,
 };

@@ -47,6 +47,7 @@ export const SEARCHING_ALGORITHMS = {
   BINARY_SEARCH: 'binarySearch',
   JUMP_SEARCH: 'jumpSearch',
   INTERPOLATION_SEARCH: 'interpolationSearch',
+  EXPONENTIAL_SEARCH: 'exponentialSearch',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -368,6 +369,22 @@ export const SEARCHING_COMPLEXITY = {
       'Large sorted tables with roughly uniform key spacing (e.g. indexed ranges)',
       'Contrasting value-based probes with binary search’s midpoint',
       'Teaching how input distribution affects search cost',
+    ],
+  },
+  exponentialSearch: {
+    name: 'Exponential Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Exponential search doubles an index until the target is bracketed (or the end of the array), then runs binary search on that range. On unbounded sorted data the search cost is O(log i) where i is the target’s index; on a finite array of length n the worst case is O(log n). Requires a sorted array.',
+    useCases: [
+      'Unbounded or very large sorted sequences where the target position is unknown',
+      'Contrasting geometric bracketing with fixed-step jump search',
+      'Teaching how exponential probing pairs with binary refinement',
     ],
   },
 };

@@ -165,6 +165,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Interpolation Search Algorithm');
     });
 
+    it('returns Python code for exponential search', () => {
+      const code = getPythonCode('exponentialSearch');
+      expect(code).toContain('def exponential_search');
+      expect(code).toContain('Exponential Search Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -252,6 +258,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Jump Search');
     });
 
+    it('returns correct display name for exponential search', () => {
+      const name = getAlgorithmDisplayName('exponentialSearch');
+      expect(name).toBe('Exponential Search');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -286,6 +297,7 @@ describe('Python Algorithms Index', () => {
         'binarySearch',
         'jumpSearch',
         'interpolationSearch',
+        'exponentialSearch',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

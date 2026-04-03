@@ -92,8 +92,9 @@ describe('Constants', () => {
         'binarySearch',
         'jumpSearch',
         'interpolationSearch',
+        'exponentialSearch',
       ]);
-      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(3);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(4);
     });
   });
 
@@ -272,6 +273,7 @@ describe('Constants', () => {
         'binarySearch',
         'jumpSearch',
         'interpolationSearch',
+        'exponentialSearch',
       ]);
     });
 

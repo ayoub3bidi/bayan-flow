@@ -70,7 +70,8 @@
     "searching": {
       "binarySearch": "Recherche dichotomique",
       "jumpSearch": "Recherche par sauts",
-      "interpolationSearch": "Recherche par interpolation"
+      "interpolationSearch": "Recherche par interpolation",
+      "exponentialSearch": "Recherche exponentielle"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -97,7 +98,8 @@
       "dStarLite": "Démarrage de la recherche D* Lite",
       "binarySearch": "Démarrage de la recherche dichotomique",
       "jumpSearch": "Démarrage de la recherche par sauts",
-      "interpolationSearch": "Démarrage de la recherche par interpolation"
+      "interpolationSearch": "Démarrage de la recherche par interpolation",
+      "exponentialSearch": "Démarrage de la recherche exponentielle"
     }
   },
   "complexity": {
@@ -126,7 +128,8 @@
     "dStarLite": "O(log V)",
     "binarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
-    "interpolationSearch": "O(log log n)"
+    "interpolationSearch": "O(log log n)",
+    "exponentialSearch": "O(log n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -532,6 +535,18 @@
         "facts_1": "L'indice de sonde utilise à la fois les valeurs et les indices, contrairement au simple partage d'indices de la dichotomie.",
         "facts_2": "Les doublons ou les grappes de valeurs rendent l'interpolation moins fiable ; la dichotomie reste en O(log n) quelle que soit la distribution.",
         "facts_3": "Les cas où arr[lo] === arr[hi] évitent une division par zéro avant comparaison."
+      },
+      "exponentialSearch": {
+        "history": "La recherche exponentielle (recherche par doublement) est un algorithme en deux phases classique sur données triées : encadrer la cible en testant des indices qui croissent en puissances de deux, puis terminer par une dichotomie dans cet intervalle. On la trouve dans les cours sur la recherche non bornée et comme brique lorsque la taille du tableau est inconnue ou très grande.",
+        "intuition": "On avance en doublant l’indice à chaque fois (1, 2, 4, 8, …) jusqu’à ce que la valeur à cet indice soit au moins la cible ou qu’on atteigne la fin du tableau. Cela encadre la cible en O(log i) sondes lorsque la réponse est près de l’indice i. Ensuite, on applique la dichotomie ordinaire sur l’intervalle borné — encore un nombre logarithmique d’étapes dans cette fenêtre.",
+        "realWorldUses_0": "Recherche dans des flux ou listes triées dont la longueur est inconnue ou très grande",
+        "realWorldUses_1": "Enseigner la combinaison encadrement + dichotomie",
+        "realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
+        "realWorldUses_3": "Bases pour des variantes « galloping » dans des fusions et des recherches adaptatives",
+        "facts_0": "Sur des données triées non bornées, trouver une cible à l’indice i coûte O(log i) en phase de doublement plus O(log i) pour la dichotomie sur l’intervalle — O(log i) au total.",
+        "facts_1": "Sur un tableau fini de taille n, le pire cas reste en O(log n), comme la dichotomie, avec une phase de doublement avant le premier partage.",
+        "facts_2": "Il faut des valeurs triées (croissantes) pour que les comparaisons indiquent quel côté conserver.",
+        "facts_3": "Après le doublement, l’intervalle de recherche est [⌊bound/2⌋, min(bound, n−1)] avant que la dichotomie ne le rétrécisse."
       }
     }
   },
@@ -680,7 +695,14 @@
     "searchInterpolationStart": "Recherche de {{target}} par interpolation sur le tableau trié. Les sondes estiment l'index à partir des valeurs aux bornes, pas le milieu.",
     "searchInterpolationProbe": "Sonde à l'index {{pos}} (valeurs aux bornes {{lo}}..{{hi}} : {{loVal}} .. {{hiVal}}) : valeur {{value}}. Plage active [{{lo}}, {{hi}}]. Cible {{target}}.",
     "searchInterpolationFound": "{{target}} trouvé à l'index {{pos}}.",
-    "searchInterpolationNotFound": "La cible {{target}} n'est pas dans le tableau."
+    "searchInterpolationNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchExponentialStart": "Recherche de {{target}} par recherche exponentielle sur le tableau trié.",
+    "searchExponentialCheckFirst": "Phase de doublement — comparer l'index 0 : valeur {{value}}. Cible {{target}}.",
+    "searchExponentialDoubledProbe": "Phase de doublement — comparer l'index {{bound}} : valeur {{value}}. Cible {{target}}. Prochaine borne {{nextBound}} (jusqu'à encadrer la plage).",
+    "searchExponentialRangeLocked": "Plage encadrée : si {{target}} existe, il est entre les indices {{left}} et {{right}}. Phase dichotomique — rétrécir cette fenêtre.",
+    "searchExponentialBinaryCheck": "Phase dichotomique — milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
+    "searchExponentialFound": "{{target}} trouvé à l'index {{mid}}.",
+    "searchExponentialNotFound": "La cible {{target}} n'est pas dans le tableau."
   },
   "landing": {
     "hero": {
@@ -721,7 +743,7 @@
       "searching": {
         "title": "Algorithmes de recherche",
         "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
-        "algorithms": "Recherche dichotomique, recherche par sauts, recherche par interpolation"
+        "algorithms": "Recherche dichotomique, recherche par sauts, recherche par interpolation, recherche exponentielle"
       }
     },
     "features": {

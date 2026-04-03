@@ -70,7 +70,8 @@
     "searching": {
       "binarySearch": "Binary Search",
       "jumpSearch": "Jump Search",
-      "interpolationSearch": "Interpolation Search"
+      "interpolationSearch": "Interpolation Search",
+      "exponentialSearch": "Exponential Search"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -98,7 +99,8 @@
       "dStarLite": "Starting D* Lite Search",
       "binarySearch": "Starting Binary Search",
       "jumpSearch": "Starting Jump Search",
-      "interpolationSearch": "Starting Interpolation Search"
+      "interpolationSearch": "Starting Interpolation Search",
+      "exponentialSearch": "Starting Exponential Search"
     }
   },
   "complexity": {
@@ -127,7 +129,8 @@
     "dStarLite": "O(log V)",
     "binarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
-    "interpolationSearch": "O(log log n)"
+    "interpolationSearch": "O(log log n)",
+    "exponentialSearch": "O(log n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -533,6 +536,18 @@
         "facts_1": "The probe index uses both array values and indices, unlike binary search’s pure index halving.",
         "facts_2": "Duplicate or clustered values make interpolation less reliable; binary search stays O(log n) regardless of distribution.",
         "facts_3": "Guards for equal endpoints (arr[lo] === arr[hi]) avoid dividing by zero before comparing."
+      },
+      "exponentialSearch": {
+        "history": "Exponential search (also called doubling search) is a standard two-phase algorithm for sorted data: find a bracketing range by probing indices that grow as powers of two, then finish with binary search within that range. It appears in textbooks on unbounded search and as a building block when the array length is unknown or effectively infinite.",
+        "intuition": "First, jump forward so your index doubles each time (1, 2, 4, 8, …) until the value at that index is at least the target or you reach the end of the array. That brackets the target in O(log i) probes when the answer lies near index i. Then run ordinary binary search on the bounded interval — another logarithmic number of steps in that window.",
+        "realWorldUses_0": "Searching sorted streams or lists where the length is unknown or very large",
+        "realWorldUses_1": "Teaching how bracketing plus halving combines two logarithmic ideas",
+        "realWorldUses_2": "Contrasting geometric growth with fixed-step jump search on the same sorted-array model",
+        "realWorldUses_3": "Foundations for galloping variants in merge algorithms and adaptive search contexts",
+        "facts_0": "On unbounded sorted data, finding a target at index i takes O(log i) comparisons in the doubling phase plus O(log i) for binary search on the bracket — O(log i) total.",
+        "facts_1": "On a finite array of length n, the worst-case cost is still O(log n), like binary search, with an extra doubling phase before the first halving step.",
+        "facts_2": "The algorithm requires sorted (ascending) values so comparisons tell you which side of a probe to keep.",
+        "facts_3": "After doubling, the search interval is [⌊bound/2⌋, min(bound, n−1)] before binary search narrows it further."
       }
     }
   },
@@ -679,7 +694,14 @@
     "searchInterpolationStart": "Searching for {{target}} using interpolation search. Probes estimate index from values at the bounds, not the midpoint.",
     "searchInterpolationProbe": "Probe index {{pos}} (from values at {{lo}}..{{hi}}: {{loVal}} .. {{hiVal}}): value {{value}}. Active range [{{lo}}, {{hi}}]. Target {{target}}.",
     "searchInterpolationFound": "Found {{target}} at index {{pos}}.",
-    "searchInterpolationNotFound": "Target {{target}} is not in the array."
+    "searchInterpolationNotFound": "Target {{target}} is not in the array.",
+    "searchExponentialStart": "Searching for {{target}} using exponential search on the sorted array.",
+    "searchExponentialCheckFirst": "Doubling phase — compare index 0: value {{value}}. Target {{target}}.",
+    "searchExponentialDoubledProbe": "Doubling phase — compare index {{bound}}: value {{value}}. Target {{target}}. Next bound would be {{nextBound}} (until the range is found).",
+    "searchExponentialRangeLocked": "Range bracketed: if {{target}} exists, it lies between indices {{left}} and {{right}}. Binary search phase — narrow this window.",
+    "searchExponentialBinaryCheck": "Binary phase — middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
+    "searchExponentialFound": "Found {{target}} at index {{mid}}.",
+    "searchExponentialNotFound": "Target {{target}} is not in the array."
   },
   "landing": {
     "hero": {
@@ -720,7 +742,7 @@
       "searching": {
         "title": "Searching Algorithms",
         "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
-        "algorithms": "Binary Search, Jump Search, Interpolation Search"
+        "algorithms": "Binary Search, Jump Search, Interpolation Search, Exponential Search"
       }
     },
     "features": {
