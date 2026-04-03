@@ -69,7 +69,8 @@
     },
     "searching": {
       "binarySearch": "Binary Search",
-      "jumpSearch": "Jump Search"
+      "jumpSearch": "Jump Search",
+      "interpolationSearch": "Interpolation Search"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -96,7 +97,8 @@
       "idaStar": "IDA* Search",
       "dStarLite": "Starting D* Lite Search",
       "binarySearch": "Starting Binary Search",
-      "jumpSearch": "Starting Jump Search"
+      "jumpSearch": "Starting Jump Search",
+      "interpolationSearch": "Starting Interpolation Search"
     }
   },
   "complexity": {
@@ -124,7 +126,8 @@
     "idaStar": "O(b^d)",
     "dStarLite": "O(log V)",
     "binarySearch": "O(log n)",
-    "jumpSearch": "O(√n)"
+    "jumpSearch": "O(√n)",
+    "interpolationSearch": "O(log log n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -518,6 +521,18 @@
         "facts_1": "The jump step is usually ⌊√n⌋ so the number of jumps and the final linear scan stay balanced.",
         "facts_2": "Binary search typically needs fewer comparisons; jump search highlights a different time–structure trade-off.",
         "facts_3": "Like binary search, jump search requires the input to be sorted (or indexed in sorted order)."
+      },
+      "interpolationSearch": {
+        "history": "Interpolation search was published by W. W. Peterson in 1957 as a way to exploit uniform key spacing in sorted tables. It remains a standard teaching example for how distribution assumptions change average-case cost.",
+        "intuition": "Instead of probing the middle index, estimate where the target would sit if values increased evenly between the current bounds. Map the target’s rank in value-space to an index, clamp it, compare there, then shrink the range. When keys are roughly uniform, successive probes close in very quickly; when values clump or gaps are uneven, estimates can mislead and the method may approach linear behavior.",
+        "realWorldUses_0": "Ordered numeric indexes and static tables where keys are spread somewhat evenly",
+        "realWorldUses_1": "Contrasting midpoint search with value-based probing in CS curricula",
+        "realWorldUses_2": "Building intuition for average O(log log n) versus worst-case O(n) on the same sorted-array interface",
+        "realWorldUses_3": "Precursor ideas to extrapolation and interpolation in database and index structures",
+        "facts_0": "Average-case time can be about O(log log n) when keys are uniformly distributed; worst case is O(n).",
+        "facts_1": "The probe index uses both array values and indices, unlike binary search’s pure index halving.",
+        "facts_2": "Duplicate or clustered values make interpolation less reliable; binary search stays O(log n) regardless of distribution.",
+        "facts_3": "Guards for equal endpoints (arr[lo] === arr[hi]) avoid dividing by zero before comparing."
       }
     }
   },
@@ -660,7 +675,11 @@
     "searchJumpBlockCheck": "Jump phase — block start {{prev}}, block end index {{jumpIdx}}: value {{value}}. Step size {{m}}. Target {{target}}.",
     "searchJumpLinearCheck": "Linear scan at index {{prev}}: value {{value}}. Target {{target}}.",
     "searchJumpFound": "Found {{target}} at index {{prev}}.",
-    "searchJumpNotFound": "Target {{target}} is not in the array."
+    "searchJumpNotFound": "Target {{target}} is not in the array.",
+    "searchInterpolationStart": "Searching for {{target}} using interpolation search. Probes estimate index from values at the bounds, not the midpoint.",
+    "searchInterpolationProbe": "Probe index {{pos}} (from values at {{lo}}..{{hi}}: {{loVal}} .. {{hiVal}}): value {{value}}. Active range [{{lo}}, {{hi}}]. Target {{target}}.",
+    "searchInterpolationFound": "Found {{target}} at index {{pos}}.",
+    "searchInterpolationNotFound": "Target {{target}} is not in the array."
   },
   "landing": {
     "hero": {
@@ -701,7 +720,7 @@
       "searching": {
         "title": "Searching Algorithms",
         "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
-        "algorithms": "Binary Search, Jump Search"
+        "algorithms": "Binary Search, Jump Search, Interpolation Search"
       }
     },
     "features": {
@@ -755,7 +774,8 @@
     "heuristicBased": "Heuristic-Based",
     "specialCases": "Special Cases",
     "logarithmicSearch": "Logarithmic search",
-    "blockJumpSearch": "Block / jump search"
+    "blockJumpSearch": "Block / jump search",
+    "distributionAwareSearch": "Distribution-aware search"
   },
   "roadmap": {
     "hero": {

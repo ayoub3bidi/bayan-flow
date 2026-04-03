@@ -190,7 +190,7 @@ export const CATEGORY_CONFIG = {
       max: 100,
       step: 5,
     },
-    algorithmKeys: ['binarySearch', 'jumpSearch'],
+    algorithmKeys: ['binarySearch', 'jumpSearch', 'interpolationSearch'],
     groupDefs: [
       {
         labelKey: 'algorithmGroups.logarithmicSearch',
@@ -199,6 +199,10 @@ export const CATEGORY_CONFIG = {
       {
         labelKey: 'algorithmGroups.blockJumpSearch',
         algorithms: ['jumpSearch'],
+      },
+      {
+        labelKey: 'algorithmGroups.distributionAwareSearch',
+        algorithms: ['interpolationSearch'],
       },
     ],
   },

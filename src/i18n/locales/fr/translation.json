@@ -69,7 +69,8 @@
     },
     "searching": {
       "binarySearch": "Recherche dichotomique",
-      "jumpSearch": "Recherche par sauts"
+      "jumpSearch": "Recherche par sauts",
+      "interpolationSearch": "Recherche par interpolation"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -95,7 +96,8 @@
       "bellmanFord": "Démarrage de l'algorithme de Bellman-Ford",
       "dStarLite": "Démarrage de la recherche D* Lite",
       "binarySearch": "Démarrage de la recherche dichotomique",
-      "jumpSearch": "Démarrage de la recherche par sauts"
+      "jumpSearch": "Démarrage de la recherche par sauts",
+      "interpolationSearch": "Démarrage de la recherche par interpolation"
     }
   },
   "complexity": {
@@ -123,7 +125,8 @@
     "idaStar": "O(b^d)",
     "dStarLite": "O(log V)",
     "binarySearch": "O(log n)",
-    "jumpSearch": "O(√n)"
+    "jumpSearch": "O(√n)",
+    "interpolationSearch": "O(log log n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -517,6 +520,18 @@
         "facts_1": "Le pas de saut est en général ⌊√n⌋ pour équilibrer le nombre de sauts et le balayage final.",
         "facts_2": "La dichotomie utilise souvent moins de comparaisons ; la recherche par sauts illustre un autre compromis temps–structure.",
         "facts_3": "Comme la dichotomie, elle exige des données triées (ou indexées en ordre trié)."
+      },
+      "interpolationSearch": {
+        "history": "La recherche par interpolation a été publiée par W. W. Peterson en 1957 pour exploiter un espacement de clés à peu près uniforme dans les tables triées. Elle reste un exemple classique pour montrer comment la distribution change le coût moyen.",
+        "intuition": "Au lieu de tester l'indice du milieu, on estime où se situerait la cible si les valeurs augmentaient régulièrement entre les bornes. On projette le rang de la cible dans l'espace des valeurs vers un indice, on le borne, on compare, puis on réduit l'intervalle. Quand les clés sont à peu près uniformes, les sondes convergent très vite ; si les valeurs sont groupées ou les écarts irréguliers, l'estimation peut se tromper et le comportement peut se rapprocher du linéaire.",
+        "realWorldUses_0": "Index numériques ordonnés et tables statiques dont les clés sont assez bien réparties",
+        "realWorldUses_1": "Comparer en cours la recherche au milieu et la recherche guidée par les valeurs",
+        "realWorldUses_2": "Illustrer un coût moyen en O(log log n) et un pire cas en O(n) sur la même interface de tableau trié",
+        "realWorldUses_3": "Préparer des idées d'extrapolation et d'interpolation dans les structures d'index et les bases de données",
+        "facts_0": "Le coût moyen peut être d'environ O(log log n) avec des clés uniformes ; le pire cas est en O(n).",
+        "facts_1": "L'indice de sonde utilise à la fois les valeurs et les indices, contrairement au simple partage d'indices de la dichotomie.",
+        "facts_2": "Les doublons ou les grappes de valeurs rendent l'interpolation moins fiable ; la dichotomie reste en O(log n) quelle que soit la distribution.",
+        "facts_3": "Les cas où arr[lo] === arr[hi] évitent une division par zéro avant comparaison."
       }
     }
   },
@@ -661,7 +676,11 @@
     "searchJumpBlockCheck": "Phase de sauts — début de bloc {{prev}}, fin de bloc {{jumpIdx}} : valeur {{value}}. Pas {{m}}. Cible {{target}}.",
     "searchJumpLinearCheck": "Balayage linéaire à l'index {{prev}} : valeur {{value}}. Cible {{target}}.",
     "searchJumpFound": "{{target}} trouvé à l'index {{prev}}.",
-    "searchJumpNotFound": "La cible {{target}} n'est pas dans le tableau."
+    "searchJumpNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchInterpolationStart": "Recherche de {{target}} par interpolation sur le tableau trié. Les sondes estiment l'index à partir des valeurs aux bornes, pas le milieu.",
+    "searchInterpolationProbe": "Sonde à l'index {{pos}} (valeurs aux bornes {{lo}}..{{hi}} : {{loVal}} .. {{hiVal}}) : valeur {{value}}. Plage active [{{lo}}, {{hi}}]. Cible {{target}}.",
+    "searchInterpolationFound": "{{target}} trouvé à l'index {{pos}}.",
+    "searchInterpolationNotFound": "La cible {{target}} n'est pas dans le tableau."
   },
   "landing": {
     "hero": {
@@ -702,7 +721,7 @@
       "searching": {
         "title": "Algorithmes de recherche",
         "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
-        "algorithms": "Recherche dichotomique, recherche par sauts"
+        "algorithms": "Recherche dichotomique, recherche par sauts, recherche par interpolation"
       }
     },
     "features": {
@@ -756,7 +775,8 @@
     "heuristicBased": "Basé sur Heuristique",
     "specialCases": "Cas Spéciaux",
     "logarithmicSearch": "Recherche logarithmique",
-    "blockJumpSearch": "Recherche par blocs / sauts"
+    "blockJumpSearch": "Recherche par blocs / sauts",
+    "distributionAwareSearch": "Recherche sensible à la distribution"
   },
   "roadmap": {
     "hero": {

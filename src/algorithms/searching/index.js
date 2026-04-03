@@ -6,15 +6,28 @@
 
 import { binarySearch, binarySearchPure } from './binarySearch';
 import { jumpSearch, jumpSearchPure } from './jumpSearch';
+import {
+  interpolationSearch,
+  interpolationSearchPure,
+} from './interpolationSearch';
 
 export const searchingAlgorithms = {
   binarySearch,
   jumpSearch,
+  interpolationSearch,
 };
 
 export const pureSearchingAlgorithms = {
   binarySearch: binarySearchPure,
   jumpSearch: jumpSearchPure,
+  interpolationSearch: interpolationSearchPure,
 };
 
-export { binarySearch, binarySearchPure, jumpSearch, jumpSearchPure };
+export {
+  binarySearch,
+  binarySearchPure,
+  jumpSearch,
+  jumpSearchPure,
+  interpolationSearch,
+  interpolationSearchPure,
+};

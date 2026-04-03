@@ -159,6 +159,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Jump Search Algorithm');
     });
 
+    it('returns Python code for interpolation search', () => {
+      const code = getPythonCode('interpolationSearch');
+      expect(code).toContain('def interpolation_search');
+      expect(code).toContain('Interpolation Search Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -279,6 +285,7 @@ describe('Python Algorithms Index', () => {
         'idaStar',
         'binarySearch',
         'jumpSearch',
+        'interpolationSearch',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

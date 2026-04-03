@@ -86,6 +86,11 @@ export const ALGORITHM_STEPS = {
   SEARCH_JUMP_FOUND: 'searchJumpFound',
   SEARCH_JUMP_NOT_FOUND: 'searchJumpNotFound',
 
+  SEARCH_INTERPOLATION_START: 'searchInterpolationStart',
+  SEARCH_INTERPOLATION_PROBE: 'searchInterpolationProbe',
+  SEARCH_INTERPOLATION_FOUND: 'searchInterpolationFound',
+  SEARCH_INTERPOLATION_NOT_FOUND: 'searchInterpolationNotFound',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

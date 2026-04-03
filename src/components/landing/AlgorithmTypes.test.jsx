@@ -120,6 +120,7 @@ describe('AlgorithmTypes', () => {
     it('should display searching algorithms list', () => {
       renderComponent();
       expect(screen.getByText(/Binary Search/i)).toBeInTheDocument();
+      expect(screen.getByText(/Interpolation Search/i)).toBeInTheDocument();
     });
 
     it('should display descriptions for all modes', () => {

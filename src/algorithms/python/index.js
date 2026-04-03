@@ -29,6 +29,7 @@ import timSortPython from './timSort.py?raw';
 import bogoSortPython from './bogo_sort.py?raw';
 import binarySearchPython from './binary_search.py?raw';
 import jumpSearchPython from './jump_search.py?raw';
+import interpolationSearchPython from './interpolation_search.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -56,6 +57,7 @@ export const pythonAlgorithms = {
   dStarLite: dStarLitePython,
   binarySearch: binarySearchPython,
   jumpSearch: jumpSearchPython,
+  interpolationSearch: interpolationSearchPython,
 };
 
 export const algorithmDisplayNames = {
@@ -84,6 +86,7 @@ export const algorithmDisplayNames = {
   dStarLite: 'D* Lite',
   binarySearch: 'Binary Search',
   jumpSearch: 'Jump Search',
+  interpolationSearch: 'Interpolation Search',
 };
 
 export function getPythonCode(algorithmName) {

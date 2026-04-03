@@ -182,5 +182,14 @@ describe('useAlgorithmConfig', () => {
     expect(jump).toBeDefined();
     expect(jump.label).toBeTruthy();
     expect(i18n.t('algorithms.searching.jumpSearch')).toBe(jump.label);
+
+    const interpolation = result.current.searchingAlgorithms.find(
+      a => a.value === 'interpolationSearch'
+    );
+    expect(interpolation).toBeDefined();
+    expect(interpolation.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.interpolationSearch')).toBe(
+      interpolation.label
+    );
   });
 });

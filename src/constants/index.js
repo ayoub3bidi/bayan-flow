@@ -46,6 +46,7 @@ export const PATHFINDING_ALGORITHMS = {
 export const SEARCHING_ALGORITHMS = {
   BINARY_SEARCH: 'binarySearch',
   JUMP_SEARCH: 'jumpSearch',
+  INTERPOLATION_SEARCH: 'interpolationSearch',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -353,12 +354,29 @@ export const SEARCHING_COMPLEXITY = {
       'Complement to binary search for ordered static data',
     ],
   },
+  interpolationSearch: {
+    name: 'Interpolation Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log log n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Interpolation search estimates the next index from the target and the values at the current bounds (not the midpoint). Average time is very good on uniformly distributed keys; worst case can be linear on skewed or duplicate-heavy data. Requires a sorted array.',
+    useCases: [
+      'Large sorted tables with roughly uniform key spacing (e.g. indexed ranges)',
+      'Contrasting value-based probes with binary search’s midpoint',
+      'Teaching how input distribution affects search cost',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {
   // eslint-disable-next-line no-unused-vars
   'O(1)': n => 1,
   'O(log n)': n => Math.log2(n),
+  'O(log log n)': n => Math.max(0, Math.log2(Math.max(2, Math.log2(n)))),
   'O(√n)': n => Math.sqrt(n),
   'O(n)': n => n,
   'O(n log n)': n => n * Math.log2(n),

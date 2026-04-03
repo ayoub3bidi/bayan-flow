@@ -195,4 +195,12 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  interpolationSearch: {
+    inventor:
+      'W. W. Peterson (1957); refined by many texts on sorted-table search',
+    year: 1957,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };
