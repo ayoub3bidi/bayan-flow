@@ -91,8 +91,9 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 **Key State (conceptual):**
 ```javascript
 - algorithmType: 'sorting' | 'pathfinding' | 'searching'
-- array: 1D data for sorting/searching; searching uses sorted arrays + a target value
-- grid: 2D data for pathfinding
+- array: 1D data for sorting and for array-substrate searching (sorted + target)
+- searchGraphNodeCount: node count for node–link searching (e.g. DFS); independent of pathfinding gridSize
+- gridSize / grid: pathfinding only
 - selectedAlgorithm: Current algorithm key
 - speed: Animation speed (autoplay)
 - mode: 'manual' | 'autoplay'
@@ -128,7 +129,7 @@ LandingPage
 VisualizerApp
 ├── Header
 ├── SettingsPanel (uses useAlgorithmConfig, useSettingsConfig, AlgorithmDropdown)
-├── ArrayVisualizer (sorting + searching) / GridVisualizer (pathfinding)
+├── VISUALIZER_REGISTRY[mode]: ArrayVisualizer (sorting) | GridVisualizer (pathfinding) | SearchingCategoryVisualizer (searching → ArrayVisualizer or GraphVisualizer by substrate)
 ├── ControlPanel
 ├── FloatingActionButton
 ├── ExportProgressModal (orientation selection, progress, preview)
@@ -158,19 +159,19 @@ Roadmap
 **Key State:**
 ```javascript
 - algorithmType: 'sorting' | 'pathfinding' | 'searching'
-- array / grid: Data being visualized (sorted array when searching)
+- array / grid / graph snapshot: Depends on mode; searching may be sorted array **or** explicit nodes+edges (see `searchingSubstrate.js`)
 - speed: Animation speed
 - selectedAlgorithm: Current algorithm key
 - mode: manual / autoplay
 - isPythonPanelOpen: Python panel visibility
 ```
 
-#### **ArrayVisualizer/GridVisualizer** (Presentation)
-- Renders visualization based on mode
-- Purely presentational, receives data as props
-- Handles swipe gestures for mobile
-- Shows auto-hiding legend
-- Displays step descriptions
+#### **ArrayVisualizer / GridVisualizer / GraphVisualizer** (Presentation)
+- **ArrayVisualizer**: sorting and array-substrate searching (bars, target ring when applicable)
+- **GridVisualizer**: pathfinding only (cells, start/end, queue/path semantics)
+- **GraphVisualizer**: node–link searching (SVG nodes and edges, `GRAPH_NODE_STATES`, optional stack hint)
+- **SearchingCategoryVisualizer** routes by `getSearchingSubstrate(algorithm)` → `ARRAY` vs `NODE_LINK`
+- Presentational: swipe, auto-hiding legend, step descriptions, Framer Motion where used
 
 #### **ArrayBar/GridCell** (Atomic Components)
 - Individual visualization elements
@@ -189,7 +190,7 @@ Roadmap
 - **AlgorithmDropdown**: Algorithm selection with grouped options (uses `useAlgorithmConfig`)
 - Control mode toggle (manual/autoplay)
 - Speed slider (autoplay only)
-- Array size (sorting + searching) / Grid size (pathfinding) via `useSettingsConfig`
+- Size control is **effective** per mode: array size (sorting + array searching), graph node count (node–link searching), grid size (pathfinding)—see `SettingsPanel` + `searchingSubstrate.js`
 - Sound toggle
 
 #### **Config Layer** (`src/config/`)
@@ -275,7 +276,7 @@ For pathfinding:
 }
 ```
 
-For searching (array bars, sorted input):
+For searching — **array** substrate (sorted bars):
 
 ```javascript
 {
@@ -285,6 +286,21 @@ For searching (array bars, sorted input):
   targetValue: 5                          // UI: target chip + ring on bar
 }
 ```
+
+For searching — **node–link graph** substrate (e.g. DFS):
+
+```javascript
+{
+  nodes: [{ id: '0', x: 0.5, y: 0.2, label: '0' }, ...], // layout: normalized 0–1
+  edges: [{ from: '0', to: '1' }, ...],
+  nodeStates: { '0': 'root', '1': 'frontier', ... },     // GRAPH_NODE_STATES
+  stackOrder: ['0', '1'],                                 // optional; top = last element
+  description: '…',
+  goalNodeId: '3'                                         // optional metadata
+}
+```
+
+Registry helpers: `src/registry/searchingSubstrate.js` (`getSearchingSubstrate`, `isNodeLinkSearchingAlgorithm`). Extra visualizer props: `src/registry/extraVisualizerProps.js`.
 
 ## Theme System
 
@@ -687,7 +703,7 @@ User clicks Export → Orientation selection (Horizontal / Vertical)
 - **useVideoExporter** (`src/video/useVideoExporter.js`): Hook managing export state (`idle` | `orientation` | `checking` | `rendering` | `preview` | `error`), blob storage, and download.
 - **ExportProgressModal** (`src/components/ExportProgressModal.jsx`): Single modal with phases—orientation choice, progress bar, video preview. RTL-aware close button.
 - **AlgorithmVideo** (`src/video/AlgorithmVideo.jsx`): Root Remotion composition; switches between main visualization and complexity segment.
-- **SortingScene** / **PathfindingScene**: Frame-based Remotion scenes (no Framer Motion); use `interpolate()` for smooth swap/color transitions. **Searching** reuses **SortingScene** (same bar layout; steps carry `targetValue` when present).
+- **SortingScene** / **PathfindingScene** / **GraphSearchingScene**: Frame-based Remotion scenes; use `interpolate()` / `interpolateColors()` for smooth transitions. **Searching** uses **`SearchingVideoScene`**: array-shaped steps → **SortingScene**; graph-shaped steps (`nodes` + `edges` + `nodeStates`) → **GraphSearchingScene** (not the pathfinding grid).
 - **ComplexityScene**: Remotion-compatible complexity display (time/space, performance graph) shown for 10 seconds at the end.
 
 ### Orientations
@@ -766,13 +782,12 @@ Similar to sorting hook but manages:
 
 #### **useSearchingVisualization**
 
-Same control surface as sorting (steps, play, step forward/back, autoplay) but:
+Same control surface as sorting (steps, play, step forward/back, autoplay) but **two internal paths**:
 
-- Loads algorithms from `CATEGORY_CONFIG[SEARCHING]`
-- Works on **sorted** arrays; each load picks a **random target** from the current array (so “found” vs “not found” varies when you regenerate)
-- Steps include **`targetValue`** when the algorithm provides it, for `ArrayVisualizer` / video (`SortingScene`)
+- **Array substrate**: sorted arrays; random **target** per load; steps with `array`, `states`, optional **`targetValue`** → `ArrayVisualizer` / **`SortingScene`**
+- **Node–link substrate**: `generateRandomSearchTree`-style graph context; **`regenerateGraphStructure`** for new data; steps with **`nodes`**, **`edges`**, **`nodeStates`**, **`stackOrder`** → `GraphVisualizer` / **`GraphSearchingScene`** via `getExtraVisualizerProps`
 
-`VisualizerApp` selects this hook (with sorting and pathfinding) via `useCategoryVisualizations`.
+`VisualizerApp` passes **`searchGraphNodeCount`** (not `gridSize`) for graph searching. `VisualizerApp` selects this hook (with sorting and pathfinding) via `useCategoryVisualizations`.
 
 #### **useTheme**
 
@@ -987,13 +1002,10 @@ useEffect(() => {
 ### Planned Features
 
 1. **Additional Algorithms**
-   - 14 sorting algorithms; 9 pathfinding algorithms; **searching** mode with binary search (room for more search algorithms on sorted data)
-   - Potential: more search strategies, graph algorithms, tree traversals, etc.
+   - 14 sorting algorithms; 9 pathfinding algorithms; **searching** with array algorithms (linear, binary, …) and **node–link** graph traversal (DFS today; room for BFS-on-graph, tree walks, etc. without reusing the pathfinding grid UI)
 
-2. **Graph Visualization Mode**
-   - D3.js integration
-   - Force-directed layouts
-   - Interactive graph editing
+2. **Richer graph searching**
+   - DAG / non-tree generators, directed edges, optional force-directed or editable layouts while keeping the same step schema
 
 3. **Advanced Features**
    - Algorithm comparison mode
@@ -1008,7 +1020,7 @@ useEffect(() => {
 
 5. **Recently Completed** (representative; see repo for current scope)
    - In-browser MP4 export via Remotion (orientation choice, preview, complexity segment)
-   - Broad sorting and pathfinding catalogs; **searching** mode on sorted arrays with target-aware UI
+   - Broad sorting and pathfinding catalogs; **searching** with sorted-array UI and **node–link graph** DFS (`GraphVisualizer`, `GraphSearchingScene`, `searchingSubstrate`)
    - Vitest-based test suite and CI aligned with `package.json` engines
    - Centralized category config (`CATEGORY_CONFIG`) feeding `useAlgorithmConfig` and `useSettingsConfig`
    - DocumentTitle for SEO; grouped algorithm dropdown
@@ -1020,7 +1032,7 @@ Bayan Flow is built with:
 - **Maintainability**: Dual implementation (visualization steps + pure functions) for algorithms
 - **Testability**: Broad unit/integration coverage via Vitest
 - **Performance**: Optimized for smooth UI animations and lazy-loaded heavy panels
-- **Extensibility**: New algorithms plug into registries, constants, i18n, and Python/test harness
+- **Extensibility**: New algorithms plug into registries (`searchingSubstrate` for searching substrate), constants, i18n, and Python/test harness
 - **Accessibility**: Keyboard, ARIA, skip links, reduced-motion awareness
 - **Internationalization**: Multi-language support with RTL
 - **Theming**: CSS-variable-based light/dark system

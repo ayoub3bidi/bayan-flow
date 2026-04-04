@@ -30,7 +30,7 @@ Bayan Flow is a client-side SPA: pick a **mode** (sorting, pathfinding, or searc
 |------|----------------|
 | **Sorting** | A broad set of sorting algorithms on a configurable random array, color-coded bars, manual or autoplay |
 | **Pathfinding** | Multiple grid-based algorithms, configurable grid sizes, start/end positions, step-by-step exploration |
-| **Searching** | Algorithms on **sorted** arrays (such as binary search), with target highlighting and range feedback |
+| **Searching** | **Array** algorithms on sorted data (e.g. binary search) with bar visualization and target highlighting; **graph** algorithms (e.g. depth-first search) on a generated node–link tree with explicit vertices and edges—separate from the pathfinding grid |
 
 **Shared**
 

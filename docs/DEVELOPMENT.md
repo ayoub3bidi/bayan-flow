@@ -284,7 +284,7 @@ src/
 ├── hooks/             # Custom hooks
 ├── video/             # Remotion video export (useVideoExporter, scenes)
 ├── algorithms/        # sorting/, pathfinding/, searching/, python/
-├── utils/             # Pure utilities
+├── utils/             # Pure utilities (e.g. `graphSearchGenerators.js` for searching graph demos)
 ├── data/              # Static data
 └── constants/         # App constants
 ```
@@ -304,7 +304,7 @@ Algorithm and settings configuration is centralized in `src/config/`:
 // Uses GRID_SIZES, ANIMATION_SPEEDS from constants
 ```
 
-`SettingsPanel` uses these hooks; `AlgorithmDropdown` receives algorithms and groups as props. Searching reuses the **array** visualizer with extra props for the **target** value (see `getExtraVisualizerProps` in `src/registry/extraVisualizerProps.js`).
+`SettingsPanel` uses these hooks; `AlgorithmDropdown` receives algorithms and groups as props. **Searching** has two substrates (see `src/registry/searchingSubstrate.js`): **array** algorithms use `ArrayVisualizer` plus extras such as **`targetValue`**; **node–link graph** algorithms (e.g. DFS) use `GraphVisualizer` with **`graphNodes`**, **`graphEdges`**, **`graphNodeStates`**, **`graphStackOrder`** from `getExtraVisualizerProps` (`src/registry/extraVisualizerProps.js`). The category router is `SearchingCategoryVisualizer`.
 
 ### 10. Video Export
 
@@ -319,7 +319,7 @@ Video export uses **Remotion** (`@remotion/web-renderer`) to render MP4 files in
 **Key files:**
 - `src/video/useVideoExporter.js` – Hook: `beginExportFlow`, `exportVideo`, `closePreview`, `downloadVideo`
 - `src/video/AlgorithmVideo.jsx` – Root Remotion composition
-- `src/video/SortingScene.jsx`, `PathfindingScene.jsx` – Frame-based scenes with `interpolate()` for smooth animations
+- `src/video/SortingScene.jsx`, `PathfindingScene.jsx`, `GraphSearchingScene.jsx` – Frame-based scenes with `interpolate()` / `interpolateColors()` for smooth transitions; **searching** routes via `SearchingVideoScene` (array steps → `SortingScene`, graph steps → `GraphSearchingScene`)
 - `src/video/ComplexityScene.jsx` – 10-second complexity segment at end
 - `src/components/ExportProgressModal.jsx` – Orientation, progress, preview (RTL-aware)
 
@@ -591,18 +591,36 @@ Follow similar steps but use `src/algorithms/pathfinding/` directory. Lists and 
 
 ### Adding a Searching Algorithm
 
-Searching runs on a **sorted** 1D array (same bar UI as sorting, with a **target** value and range highlighting).
+Searching is **one category** with two **substrates** (`SEARCHING_SUBSTRATES` in `src/registry/searchingSubstrate.js`):
 
-1. **Implement** `src/algorithms/searching/yourSearch.js`: export a `*Pure` function for tests and a visualization function that returns steps. Each step should include `array`, `states`, `description`, and (if applicable) **`targetValue`** for the UI.
-2. **Register** in `src/algorithms/searching/index.js` (`searchingAlgorithms` map + `pureSearchingAlgorithms` or equivalent pattern used in the repo).
-3. **Category config** — `src/registry/categoryConfig.js`: add the key under `ALGORITHM_TYPES.SEARCHING` (`algorithmKeys`, `groupDefs`, `getAlgorithmFn`). `generateData` should stay **sorted** (see existing helper).
-4. **Constants** — `SEARCHING_ALGORITHMS`, `SEARCHING_COMPLEXITY` in `src/constants/index.js`; wire `searching` in `src/registry/complexityDatasetRegistry.js` if not already present.
-5. **Translations** — `algorithms.searching.*`, `complexity.*`, `algorithmSteps.*`, modes/legend strings in **en / fr / ar**.
-6. **`algorithmTranslations.js`** — add any new `ALGORITHM_STEPS` keys your algorithm uses.
-7. **Python** — `src/algorithms/python/your_search.py` (raw import), `pythonAlgorithms` + display name in `index.js`, **`testCases.js`** (tuple inputs `(arr, target)` work with the Pyodide worker).
-8. **Insight panel** — `ALGORITHM_KNOWLEDGE` in `src/constants/algorithmKnowledge.js` + `insight_panel.algorithms.<key>` in all locales (counts must match metadata).
-9. **Video** — searching uses the same Remotion **array** scene as sorting (`videoSceneRegistry`); complexity uses the `searching` dataset.
-10. **Tests** — searching unit tests, config/registry tests, and any snapshot of algorithm lists.
+| Substrate | Visualizer | Typical step shape | Settings size |
+|-----------|------------|--------------------|----------------|
+| **Array** (`ARRAY`) | `ArrayVisualizer` | `array`, `states`, `description`, optional `targetValue` | Array size slider |
+| **Node–link graph** (`NODE_LINK`) | `GraphVisualizer` | `nodes`, `edges`, `nodeStates`, `stackOrder?`, `description`, optional `goalNodeId` | Graph node count (`searchGraphNodeCount`; not pathfinding grid size) |
+
+#### Array-based searching (sorted bars)
+
+1. **Implement** `src/algorithms/searching/yourSearch.js`: export a `*Pure` function for tests and a visualization function that returns steps with `array`, `states`, `description`, and (if applicable) **`targetValue`**.
+2. **Register** in `src/algorithms/searching/index.js` (`searchingAlgorithms` + `pureSearchingAlgorithms`).
+3. **Category config** — `src/registry/categoryConfig.js`: add the key under `ALGORITHM_TYPES.SEARCHING`. `generateData` stays **sorted** (existing helper).
+4. **Substrate** — ensure `getSearchingSubstrate(key)` returns **`ARRAY`** (default for keys not listed in the node–link set inside `searchingSubstrate.js`).
+5. **Constants** — `SEARCHING_ALGORITHMS`, `SEARCHING_COMPLEXITY` in `src/constants/index.js`.
+6. **Translations**, **`algorithmTranslations.js`**, **Python** + **`testCases.js`** (e.g. `(arr, target)`), **insight panel** metadata — same spirit as other searching algos.
+7. **Video** — steps go through **`SearchingVideoScene`** → **`SortingScene`** (same bar layout as sorting).
+8. **Tests** — unit + hook tests for 1D `states` / `targetValue` behavior.
+
+#### Node–link graph searching (e.g. DFS)
+
+1. **Implement** steps as full snapshots: cloned **`nodes`**, **`edges`**, **`nodeStates`** (`GRAPH_NODE_STATES` in `src/constants/index.js`), optional **`stackOrder`** (stack top = last element). Reuse or extend **`generateRandomSearchTree`** in `src/utils/graphSearchGenerators.js` for reproducible graphs.
+2. **Register** in `searching/index.js` and add the key to the **node–link** set in **`searchingSubstrate.js`** so `isNodeLinkSearchingAlgorithm` is true.
+3. **`useSearchingVisualization`** — graph branch: `regenerateGraphStructure`, load steps from `fn({ adjacency, rootId, goalId, nodes, edges })` (or the agreed signature). **`VisualizerApp`** passes **`searchGraphNodeCount`**, not **`gridSize`**.
+4. **`getExtraVisualizerProps`** — for node–link keys, pass **`graphNodes`**, **`graphEdges`**, **`graphNodeStates`**, **`graphStackOrder`** (see existing DFS wiring).
+5. **`SearchingCategoryVisualizer`** — branch to **`GraphVisualizer`**; do not use **`GridVisualizer`** for searching graphs.
+6. **Video** — **`SearchingVideoScene`** detects graph steps and renders **`GraphSearchingScene`**.
+7. **Python** — adjacency-dict style inputs if applicable; align **`testCases.js`** with the harness.
+8. **Tests** — pure graph DFS, substrate registry, hook graph payload, Remotion routing if you add coverage.
+
+**Shared for any searching algorithm:** `complexityDataset: 'searching'`, **`videoSceneRegistry`** still points at the searching entry (internal router handles array vs graph). Run **`pnpm lint`**, **`format:check`**, **`test:run`**, **`build`** before merge.
 
 ### Adding a New Language
 
