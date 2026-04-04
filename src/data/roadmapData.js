@@ -60,7 +60,7 @@ export const roadmapData = [
     date: 'Q3 2026',
     title: 'Tree Traversals & Graph Algorithms (0.5.0)',
     description:
-      'Expand into two new algorithm families built on dedicated renderers. Tree Traversals: Inorder, Preorder, Postorder, Level-order, Morris Traversal, and Zigzag Level-order. Graph Algorithms: Topological Sort, Kahn\'s Algorithm, Kruskal\'s and Prim\'s (MST), Tarjan\'s and Kosaraju\'s (SCC), and Floyd-Warshall. Also introduces user accounts with saved favorite algorithms and per-algorithm explanation videos embedded in the insight panel.',
+      "Expand into two new algorithm families built on dedicated renderers. Tree Traversals: Inorder, Preorder, Postorder, Level-order, Morris Traversal, and Zigzag Level-order. Graph Algorithms: Topological Sort, Kahn's Algorithm, Kruskal's and Prim's (MST), Tarjan's and Kosaraju's (SCC), and Floyd-Warshall. Also introduces user accounts with saved favorite algorithms and per-algorithm explanation videos embedded in the insight panel.",
     videoUrl: '',
     status: 'planned',
   },
