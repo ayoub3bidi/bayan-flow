@@ -95,8 +95,9 @@ describe('Constants', () => {
         'interpolationSearch',
         'exponentialSearch',
         'fibonacciSearch',
+        'depthFirstSearch',
       ]);
-      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(6);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(7);
     });
   });
 
@@ -278,6 +279,7 @@ describe('Constants', () => {
         'interpolationSearch',
         'exponentialSearch',
         'fibonacciSearch',
+        'depthFirstSearch',
       ]);
     });
 

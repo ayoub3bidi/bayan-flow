@@ -13,6 +13,7 @@ import {
 } from './interpolationSearch';
 import { exponentialSearch, exponentialSearchPure } from './exponentialSearch';
 import { fibonacciSearch, fibonacciSearchPure } from './fibonacciSearch';
+import { depthFirstSearch, depthFirstSearchPure } from './dfs';
 
 export const searchingAlgorithms = {
   linearSearch,
@@ -21,6 +22,7 @@ export const searchingAlgorithms = {
   interpolationSearch,
   exponentialSearch,
   fibonacciSearch,
+  depthFirstSearch,
 };
 
 export const pureSearchingAlgorithms = {
@@ -30,6 +32,7 @@ export const pureSearchingAlgorithms = {
   interpolationSearch: interpolationSearchPure,
   exponentialSearch: exponentialSearchPure,
   fibonacciSearch: fibonacciSearchPure,
+  depthFirstSearch: depthFirstSearchPure,
 };
 
 export {
@@ -45,4 +48,6 @@ export {
   exponentialSearchPure,
   fibonacciSearch,
   fibonacciSearchPure,
+  depthFirstSearch,
+  depthFirstSearchPure,
 };

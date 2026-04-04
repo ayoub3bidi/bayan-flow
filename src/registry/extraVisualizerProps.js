@@ -5,6 +5,7 @@
  */
 
 import { ALGORITHM_TYPES } from '../constants';
+import { isNodeLinkSearchingAlgorithm } from './searchingSubstrate';
 
 /**
  * Props passed to the active visualizer beyond the shared playback contract.
@@ -13,18 +14,28 @@ import { ALGORITHM_TYPES } from '../constants';
  * @param {string} algorithmType
  * @param {{
  *   sortingVisualization: { array: unknown },
- *   searchingVisualization: { array: unknown, targetValue: unknown },
+ *   searchingVisualization: Record<string, unknown>,
  *   gridSize: number,
+ *   activeAlgorithmKey: string,
  * }} ctx
  */
 export function getExtraVisualizerProps(
   algorithmType,
-  { sortingVisualization, searchingVisualization, gridSize }
+  { sortingVisualization, searchingVisualization, gridSize, activeAlgorithmKey }
 ) {
   if (algorithmType === ALGORITHM_TYPES.SORTING) {
     return { array: sortingVisualization.array, complexityDataset: 'sorting' };
   }
   if (algorithmType === ALGORITHM_TYPES.SEARCHING) {
+    if (isNodeLinkSearchingAlgorithm(activeAlgorithmKey)) {
+      return {
+        graphNodes: searchingVisualization.graphNodes,
+        graphEdges: searchingVisualization.graphEdges,
+        graphNodeStates: searchingVisualization.graphNodeStates,
+        graphStackOrder: searchingVisualization.graphStackOrder,
+        complexityDataset: 'searching',
+      };
+    }
     return {
       array: searchingVisualization.array,
       targetValue: searchingVisualization.targetValue,

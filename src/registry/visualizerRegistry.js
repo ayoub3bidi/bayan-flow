@@ -6,6 +6,7 @@
 
 import ArrayVisualizer from '../components/ArrayVisualizer';
 import GridVisualizer from '../components/GridVisualizer';
+import SearchingCategoryVisualizer from '../components/SearchingCategoryVisualizer';
 import { ALGORITHM_TYPES } from '../constants';
 
 /**
@@ -20,5 +21,5 @@ import { ALGORITHM_TYPES } from '../constants';
 export const VISUALIZER_REGISTRY = {
   [ALGORITHM_TYPES.SORTING]: ArrayVisualizer,
   [ALGORITHM_TYPES.PATHFINDING]: GridVisualizer,
-  [ALGORITHM_TYPES.SEARCHING]: ArrayVisualizer,
+  [ALGORITHM_TYPES.SEARCHING]: SearchingCategoryVisualizer,
 };

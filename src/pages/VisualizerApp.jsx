@@ -28,6 +28,7 @@ import { soundManager } from '../utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
   DEFAULT_GRID_SIZE,
+  DEFAULT_SEARCH_GRAPH_NODE_COUNT,
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
@@ -36,6 +37,7 @@ import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
+import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -70,6 +72,9 @@ function App() {
 
   const [arraySize, setArraySize] = useState(DEFAULT_ARRAY_SIZE);
   const [gridSize, setGridSize] = useState(DEFAULT_GRID_SIZE);
+  const [searchGraphNodeCount, setSearchGraphNodeCount] = useState(
+    DEFAULT_SEARCH_GRAPH_NODE_COUNT
+  );
   const [array, setArray] = useState(() =>
     CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(DEFAULT_ARRAY_SIZE)
   );
@@ -103,7 +108,8 @@ function App() {
     selectedAlgorithms[ALGORITHM_TYPES.SEARCHING],
     array,
     speed,
-    mode
+    mode,
+    searchGraphNodeCount
   );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
@@ -144,7 +150,14 @@ function App() {
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
   const handleGenerateArray = () => {
     const cfg = CATEGORY_CONFIG[algorithmType];
-    if (cfg.sizeBinding === 'array') {
+    if (
+      algorithmType === ALGORITHM_TYPES.SEARCHING &&
+      isNodeLinkSearchingAlgorithm(
+        selectedAlgorithms[ALGORITHM_TYPES.SEARCHING]
+      )
+    ) {
+      searchingVisualization.regenerateGraphStructure();
+    } else if (cfg.sizeBinding === 'array') {
       setArray(cfg.generateData(arraySize));
     } else {
       pathfindingVisualization.regenerateGrid();
@@ -172,6 +185,10 @@ function App() {
     setGridSize(newSize);
   };
 
+  const handleSearchGraphNodeCountChange = newCount => {
+    setSearchGraphNodeCount(newCount);
+  };
+
   const handleExportVideo = () => {
     if (visualization.totalSteps === 0) return;
     beginExportFlow();
@@ -192,7 +209,13 @@ function App() {
   const handleAlgorithmTypeChange = newType => {
     const cfg = CATEGORY_CONFIG[newType];
     if (cfg.sizeBinding === 'array') {
-      setArray(cfg.generateData(arraySize));
+      const searchingKey = selectedAlgorithms[ALGORITHM_TYPES.SEARCHING];
+      if (
+        newType !== ALGORITHM_TYPES.SEARCHING ||
+        !isNodeLinkSearchingAlgorithm(searchingKey)
+      ) {
+        setArray(cfg.generateData(arraySize));
+      }
     }
     setAlgorithmType(newType);
     visualizationMap[newType]?.reset();
@@ -214,6 +237,7 @@ function App() {
     sortingVisualization,
     searchingVisualization,
     gridSize,
+    activeAlgorithmKey,
   });
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -304,6 +328,10 @@ function App() {
                       onArraySizeChange={handleArraySizeChange}
                       gridSize={gridSize}
                       onGridSizeChange={handleGridSizeChange}
+                      searchGraphNodeCount={searchGraphNodeCount}
+                      onSearchGraphNodeCountChange={
+                        handleSearchGraphNodeCountChange
+                      }
                       isPlaying={visualization.isPlaying}
                       mode={mode}
                       onModeChange={setMode}

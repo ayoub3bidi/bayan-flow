@@ -285,6 +285,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Fibonacci Search');
     });
 
+    it('returns correct display name for depth-first search (grid)', () => {
+      const name = getAlgorithmDisplayName('depthFirstSearch');
+      expect(name).toBe('Depth-First Search (graph)');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -322,6 +327,7 @@ describe('Python Algorithms Index', () => {
         'interpolationSearch',
         'exponentialSearch',
         'fibonacciSearch',
+        'depthFirstSearch',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

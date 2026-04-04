@@ -7,6 +7,7 @@
 import { ALGORITHM_TYPES } from '../constants';
 import SortingScene from '../video/SortingScene.jsx';
 import PathfindingScene from '../video/PathfindingScene.jsx';
+import SearchingVideoScene from '../video/SearchingVideoScene.jsx';
 
 /**
  * Remotion main-scene renderers. Add an entry when a new category exports video.
@@ -16,8 +17,12 @@ export const VIDEO_SCENE_RENDERERS = {
   [ALGORITHM_TYPES.SORTING]: ({ steps, framesPerStep }) => (
     <SortingScene steps={steps} framesPerStep={framesPerStep} />
   ),
-  [ALGORITHM_TYPES.SEARCHING]: ({ steps, framesPerStep }) => (
-    <SortingScene steps={steps} framesPerStep={framesPerStep} />
+  [ALGORITHM_TYPES.SEARCHING]: ({ steps, framesPerStep, gridSize }) => (
+    <SearchingVideoScene
+      steps={steps}
+      framesPerStep={framesPerStep}
+      gridSize={gridSize}
+    />
   ),
   [ALGORITHM_TYPES.PATHFINDING]: ({ steps, framesPerStep, gridSize }) => (
     <PathfindingScene

@@ -30,6 +30,7 @@ describe('searchingAlgorithms registry', () => {
       'interpolationSearch',
       'exponentialSearch',
       'fibonacciSearch',
+      'depthFirstSearch',
     ]);
     expect(typeof searchingAlgorithms.linearSearch).toBe('function');
     expect(typeof searchingAlgorithms.binarySearch).toBe('function');
@@ -37,6 +38,7 @@ describe('searchingAlgorithms registry', () => {
     expect(typeof searchingAlgorithms.interpolationSearch).toBe('function');
     expect(typeof searchingAlgorithms.exponentialSearch).toBe('function');
     expect(typeof searchingAlgorithms.fibonacciSearch).toBe('function');
+    expect(typeof searchingAlgorithms.depthFirstSearch).toBe('function');
   });
 });
 

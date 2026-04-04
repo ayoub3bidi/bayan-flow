@@ -17,6 +17,7 @@
     "speed": "Vitesse",
     "arraySize": "Taille du Tableau",
     "gridSize": "Taille de la Grille",
+    "searchGraphNodeCount": "Nœuds du graphe",
     "sound": "Son",
     "language": "Langue",
     "controlMode": "Mode de Contrôle",
@@ -73,7 +74,8 @@
       "jumpSearch": "Recherche par sauts",
       "interpolationSearch": "Recherche par interpolation",
       "exponentialSearch": "Recherche exponentielle",
-      "fibonacciSearch": "Recherche de Fibonacci"
+      "fibonacciSearch": "Recherche de Fibonacci",
+      "depthFirstSearch": "Parcours en profondeur (graphe)"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -103,7 +105,8 @@
       "jumpSearch": "Démarrage de la recherche par sauts",
       "interpolationSearch": "Démarrage de la recherche par interpolation",
       "exponentialSearch": "Démarrage de la recherche exponentielle",
-      "fibonacciSearch": "Démarrage de la recherche de Fibonacci"
+      "fibonacciSearch": "Démarrage de la recherche de Fibonacci",
+      "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes"
     }
   },
   "complexity": {
@@ -135,7 +138,8 @@
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
     "exponentialSearch": "O(log n)",
-    "fibonacciSearch": "O(log n)"
+    "fibonacciSearch": "O(log n)",
+    "depthFirstSearch": "O(V + E)"
   },
   "speeds": {
     "slow": "Lent",
@@ -575,6 +579,18 @@
         "facts_1": "L’indice de sonde s’obtient par addition (décalage + offset Fibonacci) plutôt que par (gauche + droite) / 2.",
         "facts_2": "La longueur de fenêtre active est suivie avec un triple Fibonacci (fibM, fibM−1, fibM−2) qui se réduit après chaque comparaison.",
         "facts_3": "Comme la dichotomie, l’entrée doit être triée pour que les comparaisons d’ordre aient un sens."
+      },
+      "depthFirstSearch": {
+        "history": "Le parcours en profondeur est une stratégie fondamentale sur graphes : on s’enfonce le plus loin possible sur une branche avant de revenir en arrière. Avec une pile explicite sur un graphe nœuds–arêtes, il contraste clairement avec le parcours en largeur en Pathfinding.",
+        "intuition": "On part de la racine. Tant que la pile n’est pas vide, on dépile, on visite, puis on empile les voisins non découverts en ordre inverse de la liste d’adjacence pour que le premier voisin listé soit exploré ensuite. Quand l’objectif est dépilé, on reconstruit un chemin via les parents. Le chemin est valide mais pas forcément le plus court.",
+        "realWorldUses_0": "Enseigner la pile sur des sommets et arêtes explicites",
+        "realWorldUses_1": "Arbres et graphes généraux avant poids ou heuristiques",
+        "realWorldUses_2": "Contraster l’ordre de visite avec les plus courts chemins",
+        "realWorldUses_3": "Bases pour le raisonnement topologique et les algorithmes récursifs en version itérative",
+        "facts_0": "Temps O(V + E) et espace auxiliaire O(V) pour la pile et le marquage sur V sommets et E arêtes.",
+        "facts_1": "Contrairement au BFS sur graphe non pondéré, le DFS ne garantit pas un plus court chemin.",
+        "facts_2": "Les démos génèrent des arbres aléatoires avec listes d’adjacence triées pour un ordre reproductible.",
+        "facts_3": "Les positions servent uniquement à l’affichage ; l’algorithme n’utilise que la structure d’adjacence."
       }
     }
   },
@@ -619,13 +635,24 @@
       "outOfRange": "Hors plage de recherche",
       "found": "Trouvé",
       "targetHighlight": "Valeur cible (anneau)"
+    },
+    "searchingGraph": {
+      "root": "Racine",
+      "start": "Racine",
+      "goal": "Objectif",
+      "stackFrontier": "Pile / frontière",
+      "visited": "Visité",
+      "discoveryPath": "Chemin de découverte"
     }
   },
   "visualization": {
     "description": "Visualisation interactive d'algorithme",
     "viewPythonCode": "Voir le code Python",
     "codeLabel": "Code",
-    "searchTarget": "Cible : {{value}}"
+    "searchTarget": "Cible : {{value}}",
+    "graphAria": "Graphe à {{count}} nœuds",
+    "graphAriaEmpty": "Graphe vide",
+    "stackTop": "Sommet de pile : {{top}}"
   },
   "languages": {
     "en": "English",
@@ -646,6 +673,9 @@
     "placed": "{{value}} placé à la position {{position}}",
     "placedRemaining": "{{value}} restant placé à la position {{position}}",
     "mergedSection": "Section fusionnée [{{start}}...{{end}}]",
+    "dfsStackPush": "Voisins empilés ; taille de la pile : {{count}} (prochain sommet dépilé en profondeur)",
+    "dfsGraphVisiting": "Exploration du nœud {{node}}",
+    "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
     "exploringBackward": "Recherche arrière explorant la cellule ({{row}}, {{col}})",
@@ -835,7 +865,8 @@
     "sequentialSearch": "Recherche séquentielle",
     "logarithmicSearch": "Recherche logarithmique",
     "blockJumpSearch": "Recherche par blocs / sauts",
-    "distributionAwareSearch": "Recherche sensible à la distribution"
+    "distributionAwareSearch": "Recherche sensible à la distribution",
+    "graphTraversalSearch": "Parcours de graphe (grille)"
   },
   "roadmap": {
     "hero": {

@@ -9,14 +9,17 @@ import { motion } from 'framer-motion';
 import { Play, Hand, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
+  ALGORITHM_TYPES,
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPE_LIST,
+  SEARCH_GRAPH_NODE_COUNT,
 } from '../constants';
 import { soundManager } from '../utils/soundManager';
 import { useAlgorithmConfig } from '../config/algorithmConfig';
 import { useSettingsConfig } from '../config/settingsConfig';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import AlgorithmDropdown from './AlgorithmDropdown';
 
 function SettingsPanel({
@@ -30,6 +33,8 @@ function SettingsPanel({
   onArraySizeChange,
   gridSize,
   onGridSizeChange,
+  searchGraphNodeCount,
+  onSearchGraphNodeCountChange,
   isPlaying,
   mode,
   onModeChange,
@@ -45,11 +50,35 @@ function SettingsPanel({
   const { algorithms, groups } = byType[algorithmType];
 
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
-  const { sizeControl, sizeBinding } = categoryConfig;
+  const effectiveSizeBinding =
+    algorithmType === ALGORITHM_TYPES.SEARCHING &&
+    isNodeLinkSearchingAlgorithm(selectedAlgorithm)
+      ? 'searchGraph'
+      : categoryConfig.sizeBinding;
 
-  const sizeValue = sizeBinding === 'array' ? arraySize : gridSize;
+  const sizeControl =
+    effectiveSizeBinding === 'searchGraph'
+      ? {
+          type: 'slider',
+          i18nKey: 'settings.searchGraphNodeCount',
+          min: SEARCH_GRAPH_NODE_COUNT.min,
+          max: SEARCH_GRAPH_NODE_COUNT.max,
+          step: SEARCH_GRAPH_NODE_COUNT.step,
+        }
+      : categoryConfig.sizeControl;
+
+  const sizeValue =
+    effectiveSizeBinding === 'array'
+      ? arraySize
+      : effectiveSizeBinding === 'searchGraph'
+        ? searchGraphNodeCount
+        : gridSize;
   const onSizeChange =
-    sizeBinding === 'array' ? onArraySizeChange : onGridSizeChange;
+    effectiveSizeBinding === 'array'
+      ? onArraySizeChange
+      : effectiveSizeBinding === 'searchGraph'
+        ? onSearchGraphNodeCountChange
+        : onGridSizeChange;
 
   const currentSpeedIndex = Math.max(
     0,

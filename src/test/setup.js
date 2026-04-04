@@ -14,6 +14,26 @@ import '../i18n';
 const constantsMockValue = {
   DEFAULT_GRID_SIZE: 15,
   DEFAULT_ARRAY_SIZE: 20,
+  DEFAULT_SEARCH_GRAPH_NODE_COUNT: 12,
+  SEARCH_GRAPH_NODE_COUNT: { min: 5, max: 24, step: 1 },
+  GRAPH_NODE_STATES: {
+    DEFAULT: 'default',
+    ROOT: 'root',
+    GOAL: 'goal',
+    FRONTIER: 'frontier',
+    CURRENT: 'current',
+    VISITED: 'visited',
+    PATH: 'path',
+  },
+  GRAPH_NODE_STATE_COLORS: {
+    default: '#e5e7eb',
+    root: '#8b5cf6',
+    goal: '#ef4444',
+    frontier: '#fbbf24',
+    current: '#f97316',
+    visited: '#60a5fa',
+    path: '#10b981',
+  },
   ANIMATION_SPEEDS: {
     SLOW: 2000,
     MEDIUM: 1000,

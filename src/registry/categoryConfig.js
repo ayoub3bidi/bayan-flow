@@ -197,6 +197,7 @@ export const CATEGORY_CONFIG = {
       'interpolationSearch',
       'exponentialSearch',
       'fibonacciSearch',
+      'depthFirstSearch',
     ],
     groupDefs: [
       {
@@ -214,6 +215,10 @@ export const CATEGORY_CONFIG = {
       {
         labelKey: 'algorithmGroups.distributionAwareSearch',
         algorithms: ['interpolationSearch'],
+      },
+      {
+        labelKey: 'algorithmGroups.graphTraversalSearch',
+        algorithms: ['depthFirstSearch'],
       },
     ],
   },

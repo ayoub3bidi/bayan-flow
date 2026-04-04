@@ -17,6 +17,7 @@
     "speed": "السرعة",
     "arraySize": "حجم المصفوفة",
     "gridSize": "حجم الشبكة",
+    "searchGraphNodeCount": "عُقد الرسم",
     "sound": "الصوت",
     "language": "اللغة",
     "controlMode": "وضع التحكم",
@@ -73,7 +74,8 @@
       "jumpSearch": "البحث بالقفز",
       "interpolationSearch": "البحث بالاستيفاء",
       "exponentialSearch": "البحث الأسي",
-      "fibonacciSearch": "بحث فيبوناتشي"
+      "fibonacciSearch": "بحث فيبوناتشي",
+      "depthFirstSearch": "البحث عمق-أولاً (رسم بياني)"
     },
     "descriptions": {
       "bubbleSort": "بدء الترتيب الفقاعي",
@@ -103,7 +105,8 @@
       "jumpSearch": "بدء البحث بالقفز",
       "interpolationSearch": "بدء البحث بالاستيفاء",
       "exponentialSearch": "بدء البحث الأسي",
-      "fibonacciSearch": "بدء بحث فيبوناتشي"
+      "fibonacciSearch": "بدء بحث فيبوناتشي",
+      "depthFirstSearch": "بدء البحث عمق-أولاً على رسم العقد والأضلاع"
     }
   },
   "complexity": {
@@ -135,7 +138,8 @@
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
     "exponentialSearch": "O(log n)",
-    "fibonacciSearch": "O(log n)"
+    "fibonacciSearch": "O(log n)",
+    "depthFirstSearch": "O(V + E)"
   },
   "speeds": {
     "slow": "بطيء",
@@ -575,6 +579,18 @@
         "facts_1": "يُحسب مؤشر الفحص بالجمع (إزاحة + إزاحة فيبوناتشي) لا بـ(يسار + يمين) / 2.",
         "facts_2": "يُتتبع طول النافذة النشطة بثلاثي فيبوناتشي (fibM، fibM−1، fibM−2) يتقلص بعد كل مقارنة.",
         "facts_3": "مثل البحث الثنائي، يجب أن تكون المدخلات مرتبة لتكون مقارنات الترتيب معنى."
+      },
+      "depthFirstSearch": {
+        "history": "البحث عمق-أولاً استراتيجية أساسية على الرسوم: التعمق قدر الإمكان على فرع قبل التراجع. مع مكدس صريح على رسم عقد وأضلاع، يتباين بوضوح مع البحث بالعرض أولاً في فئة إيجاد المسار.",
+        "intuition": "نبدأ من الجذر. نفرغ المكدس ونزور، ثم ندفع الجيران غير المكتشفين بترتيب عكسي لقائمة المجاورة ليكون أول جار في القائمة هو التالي. عند فراغ الهدف نعيد بناء مسار عبر الآباء. المسار صالح لكن ليس بالضرورة الأقصر.",
+        "realWorldUses_0": "تدريس المكدس على رؤوس وأضلاع صريحة",
+        "realWorldUses_1": "أشجار ورسوم عامة قبل الأوزان أو الاستدلال",
+        "realWorldUses_2": "تباين ترتيب الزيارة مع أقصر المسارات",
+        "realWorldUses_3": "أساس للتفكير الطوبولوجي والخوارزميات العودية بصيغة تكرارية",
+        "facts_0": "الزمن O(V + E) والذاكرة الإضافية O(V) للمكدس والتمييز على V عقدة وE ضلعاً.",
+        "facts_1": "على عكس BFS في رسم غير موزون، لا يضمن DFS أقصر مسار.",
+        "facts_2": "العروض التجريبية تولّد أشجاراً عشوائية بقوائم مجاورة مرتبة لترتيب قابل للتكرار.",
+        "facts_3": "المواضع للعرض فقط؛ الخوارزمية تعتمد على بنية المجاورة فقط."
       }
     }
   },
@@ -619,13 +635,24 @@
       "outOfRange": "خارج نطاق البحث",
       "found": "وُجد",
       "targetHighlight": "القيمة المستهدفة (حلقة)"
+    },
+    "searchingGraph": {
+      "root": "الجذر",
+      "start": "الجذر",
+      "goal": "الهدف",
+      "stackFrontier": "المكدس / الجبهة",
+      "visited": "تمت الزيارة",
+      "discoveryPath": "مسار الاكتشاف"
     }
   },
   "visualization": {
     "description": "تصور تفاعلي للخوارزمية",
     "viewPythonCode": "عرض كود بايثون",
     "codeLabel": "كود",
-    "searchTarget": "الهدف: {{value}}"
+    "searchTarget": "الهدف: {{value}}",
+    "graphAria": "رسم بياني بعدد {{count}} عقد",
+    "graphAriaEmpty": "رسم فارغ",
+    "stackTop": "قمة المكدس: {{top}}"
   },
   "languages": {
     "en": "English",
@@ -646,6 +673,9 @@
     "placed": "وضع {{value}} في الموضع {{position}}",
     "placedRemaining": "وضع {{value}} المتبقي في الموضع {{position}}",
     "mergedSection": "تم دمج القسم [{{start}}...{{end}}]",
+    "dfsStackPush": "دُفع الجيران إلى المكدس؛ حجم المكدس {{count}} (العقدة التالية تُفرَغ عمق-أولاً)",
+    "dfsGraphVisiting": "استكشاف العقدة {{node}}",
+    "pathFoundGraph": "وُجد مسار! {{length}} عقد على مسار الاكتشاف",
     "exploring": "استكشاف الخلية ({{row}}, {{col}})",
     "exploringForward": "البحث الأمامي يستكشف الخلية ({{row}}, {{col}})",
     "exploringBackward": "البحث الخلفي يستكشف الخلية ({{row}}, {{col}})",
@@ -835,7 +865,8 @@
     "sequentialSearch": "بحث تسلسلي",
     "logarithmicSearch": "بحث لوغاريتمي",
     "blockJumpSearch": "بحث كتلي / بالقفز",
-    "distributionAwareSearch": "بحث يعتمد على التوزيع"
+    "distributionAwareSearch": "بحث يعتمد على التوزيع",
+    "graphTraversalSearch": "جولة على الرسم (شبكة)"
   },
   "roadmap": {
     "hero": {

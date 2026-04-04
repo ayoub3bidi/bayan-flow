@@ -226,4 +226,12 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  depthFirstSearch: {
+    inventor:
+      'Classic graph traversal; stack-based explicit graph formulation standard in CS curricula',
+    year: 1950,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };

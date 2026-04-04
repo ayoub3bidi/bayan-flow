@@ -50,6 +50,7 @@ export const SEARCHING_ALGORITHMS = {
   INTERPOLATION_SEARCH: 'interpolationSearch',
   EXPONENTIAL_SEARCH: 'exponentialSearch',
   FIBONACCI_SEARCH: 'fibonacciSearch',
+  DEPTH_FIRST_SEARCH: 'depthFirstSearch',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -99,6 +100,36 @@ export const GRID_STATE_COLORS = {
   [GRID_ELEMENT_STATES.START]: '#8b5cf6', // purple-500
   [GRID_ELEMENT_STATES.END]: '#ef4444', // red-500
   [GRID_ELEMENT_STATES.WALL]: '#374151', // gray-700
+};
+
+/** Node–link graph searching (DFS / future BFS on explicit graphs). */
+export const GRAPH_NODE_STATES = {
+  DEFAULT: 'default',
+  ROOT: 'root',
+  GOAL: 'goal',
+  FRONTIER: 'frontier',
+  CURRENT: 'current',
+  VISITED: 'visited',
+  PATH: 'path',
+};
+
+export const GRAPH_NODE_STATE_COLORS = {
+  [GRAPH_NODE_STATES.DEFAULT]: '#e5e7eb',
+  [GRAPH_NODE_STATES.ROOT]: '#8b5cf6',
+  [GRAPH_NODE_STATES.GOAL]: '#ef4444',
+  [GRAPH_NODE_STATES.FRONTIER]: '#fbbf24',
+  [GRAPH_NODE_STATES.CURRENT]: '#f97316',
+  [GRAPH_NODE_STATES.VISITED]: '#60a5fa',
+  [GRAPH_NODE_STATES.PATH]: '#10b981',
+};
+
+/** Default node count for searching graph algorithms (SettingsPanel slider). */
+export const DEFAULT_SEARCH_GRAPH_NODE_COUNT = 12;
+
+export const SEARCH_GRAPH_NODE_COUNT = {
+  min: 5,
+  max: 24,
+  step: 1,
 };
 
 export const VISUALIZATION_MODES = {
@@ -419,6 +450,22 @@ export const SEARCHING_COMPLEXITY = {
       'Contrasting division-free probing with binary search’s midpoint',
       'Teaching how Fibonacci structure defines probe positions on sorted arrays',
       'Historical contexts where avoiding division mattered for performance',
+    ],
+  },
+  depthFirstSearch: {
+    name: 'Depth-First Search (graph)',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      'Depth-first search explores as far as possible along one branch before backtracking, using an explicit stack on a node–link graph (V nodes, E edges). It finds a path to a goal if one exists but does not guarantee the shortest path — contrast with breadth-first search in Pathfinding. Neighbor order follows the adjacency lists (stable numeric order on generated trees).',
+    useCases: [
+      'Teaching stack-based graph traversal before queue-based BFS',
+      'Trees and general graphs as explicit vertices and edges',
+      'Backtracking patterns before introducing weighted graphs',
     ],
   },
 };

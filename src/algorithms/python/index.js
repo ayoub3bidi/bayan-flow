@@ -33,6 +33,7 @@ import jumpSearchPython from './jump_search.py?raw';
 import interpolationSearchPython from './interpolation_search.py?raw';
 import exponentialSearchPython from './exponential_search.py?raw';
 import fibonacciSearchPython from './fibonacci_search.py?raw';
+import dfsSearchPython from './dfs_search.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -64,6 +65,7 @@ export const pythonAlgorithms = {
   interpolationSearch: interpolationSearchPython,
   exponentialSearch: exponentialSearchPython,
   fibonacciSearch: fibonacciSearchPython,
+  depthFirstSearch: dfsSearchPython,
 };
 
 export const algorithmDisplayNames = {
@@ -96,6 +98,7 @@ export const algorithmDisplayNames = {
   interpolationSearch: 'Interpolation Search',
   exponentialSearch: 'Exponential Search',
   fibonacciSearch: 'Fibonacci Search',
+  depthFirstSearch: 'Depth-First Search (graph)',
 };
 
 export function getPythonCode(algorithmName) {

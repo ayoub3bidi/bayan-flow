@@ -339,6 +339,26 @@ const PATH_5X5_EXPECTED =
 const PATH_BLOCKED = '([[0,0,0],[1,1,1],[0,0,0]], (0,0), (2,2))';
 const PATH_BLOCKED_EXPECTED = 'None';
 
+/** depth_first_search(adjacency, start, goal) — string node ids */
+const DFS_GRAPH_LINE = "({'0': ['1'], '1': ['0', '2'], '2': ['1']}, '0', '2')";
+const DFS_GRAPH_LINE_EXPECTED = "['0', '1', '2']";
+const DFS_GRAPH_DISCONNECTED = "({'0': ['1'], '1': ['0'], '2': []}, '0', '2')";
+
+const DEPTH_FIRST_SEARCH_TEST_CASES = [
+  {
+    id: 'dfs-graph-line',
+    name: 'Path on a 3-node line graph',
+    input: DFS_GRAPH_LINE,
+    expected: DFS_GRAPH_LINE_EXPECTED,
+  },
+  {
+    id: 'dfs-graph-disconnected',
+    name: 'No path (disconnected goal)',
+    input: DFS_GRAPH_DISCONNECTED,
+    expected: PATH_BLOCKED_EXPECTED,
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -494,6 +514,10 @@ export const algorithmTestCases = {
   fibonacciSearch: {
     functionName: 'fibonacci_search',
     testCases: FIBONACCI_SEARCH_TEST_CASES,
+  },
+  depthFirstSearch: {
+    functionName: 'depth_first_search',
+    testCases: DEPTH_FIRST_SEARCH_TEST_CASES,
   },
 };
 

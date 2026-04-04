@@ -17,6 +17,7 @@
     "speed": "Speed",
     "arraySize": "Array Size",
     "gridSize": "Grid Size",
+    "searchGraphNodeCount": "Graph nodes",
     "sound": "Sound",
     "language": "Language",
     "controlMode": "Control Mode",
@@ -73,7 +74,8 @@
       "jumpSearch": "Jump Search",
       "interpolationSearch": "Interpolation Search",
       "exponentialSearch": "Exponential Search",
-      "fibonacciSearch": "Fibonacci Search"
+      "fibonacciSearch": "Fibonacci Search",
+      "depthFirstSearch": "Depth-First Search (graph)"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -104,7 +106,8 @@
       "jumpSearch": "Starting Jump Search",
       "interpolationSearch": "Starting Interpolation Search",
       "exponentialSearch": "Starting Exponential Search",
-      "fibonacciSearch": "Starting Fibonacci Search"
+      "fibonacciSearch": "Starting Fibonacci Search",
+      "depthFirstSearch": "Starting depth-first search on the node–link graph"
     }
   },
   "complexity": {
@@ -136,7 +139,8 @@
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
     "exponentialSearch": "O(log n)",
-    "fibonacciSearch": "O(log n)"
+    "fibonacciSearch": "O(log n)",
+    "depthFirstSearch": "O(V + E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -576,6 +580,18 @@
         "facts_1": "Probe index uses addition (offset + Fibonacci offset) rather than (left + right) / 2.",
         "facts_2": "The active window length is tracked with Fibonacci triples (fibM, fibM−1, fibM−2) that shrink after each comparison.",
         "facts_3": "Like binary search, the input must be sorted so ordering comparisons are meaningful."
+      },
+      "depthFirstSearch": {
+        "history": "Depth-first search is a fundamental graph traversal strategy: explore as far as possible along one branch before backtracking. With an explicit stack on a node–link graph, it contrasts cleanly with breadth-first search in the Pathfinding category.",
+        "intuition": "Start at the root. Repeatedly pop the stack, visit that vertex, then push undiscovered neighbors in reverse adjacency order so the first listed neighbor is explored next. When the goal is popped, reconstruct one path using parent pointers. The path is valid but not necessarily shortest.",
+        "realWorldUses_0": "Teaching stack-based traversal on explicit vertices and edges",
+        "realWorldUses_1": "Trees and general graphs before introducing weights or heuristics",
+        "realWorldUses_2": "Contrasting traversal order with shortest-path algorithms in the Pathfinding category",
+        "realWorldUses_3": "Foundations for topological reasoning and recursive algorithms expressed iteratively",
+        "facts_0": "Time is O(V + E) and extra space is O(V) for the stack and bookkeeping on V vertices and E edges.",
+        "facts_1": "Unlike BFS on an unweighted graph, DFS does not guarantee a shortest path to the goal.",
+        "facts_2": "Generated demos use random trees with sorted adjacency lists for reproducible DFS order.",
+        "facts_3": "Positions are layout-only; the algorithm uses the adjacency structure only."
       }
     }
   },
@@ -619,13 +635,24 @@
       "outOfRange": "Out of search range",
       "found": "Found",
       "targetHighlight": "Target value (ring)"
+    },
+    "searchingGraph": {
+      "root": "Root",
+      "start": "Root",
+      "goal": "Goal",
+      "stackFrontier": "Stack / frontier",
+      "visited": "Visited",
+      "discoveryPath": "Discovery path"
     }
   },
   "visualization": {
     "description": "Interactive algorithm visualization",
     "viewPythonCode": "View Python code",
     "codeLabel": "Code",
-    "searchTarget": "Target: {{value}}"
+    "searchTarget": "Target: {{value}}",
+    "graphAria": "Graph with {{count}} nodes",
+    "graphAriaEmpty": "Empty graph",
+    "stackTop": "Stack top: {{top}}"
   },
   "languages": {
     "en": "English",
@@ -646,6 +673,9 @@
     "placed": "Placed {{value}} at position {{position}}",
     "placedRemaining": "Placed remaining {{value}} at position {{position}}",
     "mergedSection": "Merged section [{{start}}...{{end}}]",
+    "dfsStackPush": "Pushed neighbors onto the stack; stack size is {{count}} (next vertex is popped depth-first)",
+    "dfsGraphVisiting": "Exploring node {{node}}",
+    "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
     "exploringBackward": "Backward search exploring cell ({{row}}, {{col}})",
@@ -834,7 +864,8 @@
     "sequentialSearch": "Sequential search",
     "logarithmicSearch": "Logarithmic search",
     "blockJumpSearch": "Block / jump search",
-    "distributionAwareSearch": "Distribution-aware search"
+    "distributionAwareSearch": "Distribution-aware search",
+    "graphTraversalSearch": "Graph traversal (grid)"
   },
   "roadmap": {
     "hero": {

@@ -14,6 +14,8 @@ import { useSearchingVisualization } from './useSearchingVisualization.js';
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
     playCompare: vi.fn(),
+    playNodeVisit: vi.fn(),
+    playPathFound: vi.fn(),
   },
 }));
 
@@ -303,5 +305,36 @@ describe('useSearchingVisualization', () => {
       });
       expect(result.current.targetValue).toBe(steps[i].targetValue);
     }
+  });
+
+  it('loads node–link depthFirstSearch with graph props and empty array slot', async () => {
+    vi.spyOn(Math, 'random').mockRestore();
+    let n = 0;
+    vi.spyOn(Math, 'random').mockImplementation(
+      () => [0.1, 0.1, 0.9, 0.9][n++ % 4]
+    );
+
+    const { result } = renderHook(() =>
+      useSearchingVisualization(
+        'depthFirstSearch',
+        [1, 2, 3, 5, 7],
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        6
+      )
+    );
+
+    await waitFor(
+      () => {
+        expect(result.current.totalSteps).toBeGreaterThan(0);
+      },
+      { timeout: 5000 }
+    );
+
+    expect(result.current.array).toEqual([]);
+    expect(result.current.states).toEqual([]);
+    expect(Array.isArray(result.current.graphNodes)).toBe(true);
+    expect(result.current.graphNodes.length).toBeGreaterThan(1);
+    expect(result.current.graphEdges.length).toBeGreaterThan(0);
   });
 });

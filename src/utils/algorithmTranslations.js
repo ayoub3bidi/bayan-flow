@@ -109,6 +109,10 @@ export const ALGORITHM_STEPS = {
   SEARCH_FIBONACCI_FOUND: 'searchFibonacciFound',
   SEARCH_FIBONACCI_NOT_FOUND: 'searchFibonacciNotFound',
 
+  // Graph-based searching (DFS stack)
+  DFS_STACK_PUSH: 'dfsStackPush',
+  DFS_GRAPH_VISITING: 'dfsGraphVisiting',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',
@@ -118,6 +122,7 @@ export const ALGORITHM_STEPS = {
   BIDIRECTIONAL_MEETING: 'bidirectionalMeeting',
   PATH_FOUND: 'pathFound',
   PATH_FOUND_WITH_COST: 'pathFoundWithCost',
+  PATH_FOUND_GRAPH: 'pathFoundGraph',
   NO_PATH: 'noPath',
   GREEDY_EXPLORING: 'greedyExploring',
   DIJKSTRA_EXPLORING: 'dijkstraExploring',

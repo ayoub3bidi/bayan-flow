@@ -23,6 +23,8 @@ import useSwipe from '../hooks/useSwipe';
  * @param {Function} onStepForward - Handler for step forward
  * @param {Function} onStepBackward - Handler for step backward
  * @param {string} mode - Control mode ('autoplay' or 'manual')
+ * @param {'pathfinding'|'searching'} [complexityDataset] - ComplexityPanel dataset key
+ * @param {'pathfinding'|'searchingGraph'} [legendScope] - Legend copy for pathfinding vs graph search
  */
 function GridVisualizer({
   states,
@@ -33,6 +35,8 @@ function GridVisualizer({
   onStepForward,
   onStepBackward,
   mode,
+  complexityDataset = 'pathfinding',
+  legendScope = 'pathfinding',
 }) {
   const { t } = useTranslation();
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
@@ -81,16 +85,52 @@ function GridVisualizer({
     }
   }, [isComplete]);
 
-  const legendItems = [
-    { state: GRID_ELEMENT_STATES.START, label: t('legend.pathfinding.start') },
-    { state: GRID_ELEMENT_STATES.END, label: t('legend.pathfinding.end') },
-    { state: GRID_ELEMENT_STATES.OPEN, label: t('legend.pathfinding.queue') },
-    {
-      state: GRID_ELEMENT_STATES.CLOSED,
-      label: t('legend.pathfinding.visited'),
-    },
-    { state: GRID_ELEMENT_STATES.PATH, label: t('legend.pathfinding.path') },
-  ];
+  const legendItems =
+    legendScope === 'searchingGraph'
+      ? [
+          {
+            state: GRID_ELEMENT_STATES.START,
+            label: t('legend.searchingGraph.start'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.END,
+            label: t('legend.searchingGraph.goal'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.OPEN,
+            label: t('legend.searchingGraph.stackFrontier'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.CLOSED,
+            label: t('legend.searchingGraph.visited'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.PATH,
+            label: t('legend.searchingGraph.discoveryPath'),
+          },
+        ]
+      : [
+          {
+            state: GRID_ELEMENT_STATES.START,
+            label: t('legend.pathfinding.start'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.END,
+            label: t('legend.pathfinding.end'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.OPEN,
+            label: t('legend.pathfinding.queue'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.CLOSED,
+            label: t('legend.pathfinding.visited'),
+          },
+          {
+            state: GRID_ELEMENT_STATES.PATH,
+            label: t('legend.pathfinding.path'),
+          },
+        ];
 
   // Swipe gesture support for manual mode
   const swipe = useSwipe({
@@ -105,7 +145,7 @@ function GridVisualizer({
         {showComplexityPanel ? (
           <ComplexityPanel
             algorithm={algorithm}
-            complexityDataset="pathfinding"
+            complexityDataset={complexityDataset}
           />
         ) : (
           <motion.div
