@@ -29,6 +29,7 @@ import timSortPython from './timSort.py?raw';
 import bogoSortPython from './bogo_sort.py?raw';
 import linearSearchPython from './linear_search.py?raw';
 import binarySearchPython from './binary_search.py?raw';
+import ternarySearchPython from './ternary_search.py?raw';
 import jumpSearchPython from './jump_search.py?raw';
 import interpolationSearchPython from './interpolation_search.py?raw';
 import exponentialSearchPython from './exponential_search.py?raw';
@@ -61,6 +62,7 @@ export const pythonAlgorithms = {
   dStarLite: dStarLitePython,
   linearSearch: linearSearchPython,
   binarySearch: binarySearchPython,
+  ternarySearch: ternarySearchPython,
   jumpSearch: jumpSearchPython,
   interpolationSearch: interpolationSearchPython,
   exponentialSearch: exponentialSearchPython,
@@ -94,6 +96,7 @@ export const algorithmDisplayNames = {
   dStarLite: 'D* Lite',
   linearSearch: 'Linear Search',
   binarySearch: 'Binary Search',
+  ternarySearch: 'Ternary Search',
   jumpSearch: 'Jump Search',
   interpolationSearch: 'Interpolation Search',
   exponentialSearch: 'Exponential Search',

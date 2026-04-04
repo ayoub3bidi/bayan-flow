@@ -114,6 +114,40 @@ const BOGO_SORT_TEST_CASES = [
 ];
 
 /** binary_search(arr, target) -> index or -1; arr must be sorted ascending */
+/** ternary_search(arr, target) -> index or -1; arr must be sorted ascending */
+const TERNARY_SEARCH_TEST_CASES = [
+  {
+    id: 'ts-found-middle',
+    name: 'Target in middle',
+    input: '([1, 3, 5, 7, 9], 5)',
+    expected: '2',
+  },
+  {
+    id: 'ts-found-ends',
+    name: 'Target at bounds',
+    input: '([2, 4, 6, 8], 8)',
+    expected: '3',
+  },
+  {
+    id: 'ts-not-found',
+    name: 'Target absent',
+    input: '([1, 2, 4, 8], 5)',
+    expected: '-1',
+  },
+  {
+    id: 'ts-single',
+    name: 'Single element',
+    input: '([42], 42)',
+    expected: '0',
+  },
+  {
+    id: 'ts-empty',
+    name: 'Empty array',
+    input: '([], 1)',
+    expected: '-1',
+  },
+];
+
 const BINARY_SEARCH_TEST_CASES = [
   {
     id: 'bs-found-middle',
@@ -498,6 +532,10 @@ export const algorithmTestCases = {
   binarySearch: {
     functionName: 'binary_search',
     testCases: BINARY_SEARCH_TEST_CASES,
+  },
+  ternarySearch: {
+    functionName: 'ternary_search',
+    testCases: TERNARY_SEARCH_TEST_CASES,
   },
   jumpSearch: {
     functionName: 'jump_search',

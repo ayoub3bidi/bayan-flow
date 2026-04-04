@@ -226,9 +226,9 @@ function PanelContent({
               <div
                 dir={isRTL ? 'rtl' : 'ltr'}
                 className={`
-                flex flex-wrap justify-center items-center gap-4 py-3 px-4 rounded-xl
+                grid grid-cols-1 min-[400px]:grid-cols-2 gap-x-6 gap-y-3 py-3 px-4 rounded-xl
                 bg-amber-500/10 border border-amber-500/20
-                ${isRTL ? 'flex-row-reverse' : ''}
+                items-start
               `}
               >
                 <MetaItem
@@ -361,11 +361,15 @@ function PanelContent({
 
 function MetaItem({ label, value, isRTL }) {
   return (
-    <div className={`flex flex-col ${isRTL ? 'items-end' : ''}`}>
+    <div
+      className={`flex min-w-0 flex-col ${isRTL ? 'items-end text-end' : 'items-start text-start'}`}
+    >
       <span className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wide">
         {label}
       </span>
-      <span className="text-sm font-semibold text-primary">{value}</span>
+      <span className="text-sm font-semibold text-primary break-words">
+        {value}
+      </span>
     </div>
   );
 }

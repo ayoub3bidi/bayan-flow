@@ -34,6 +34,19 @@ describe('ALGORITHM_KNOWLEDGE', () => {
     ).toBe(true);
   });
 
+  it('includes ternarySearch metadata for the insight panel', () => {
+    expect(ALGORITHM_KNOWLEDGE.ternarySearch).toBeDefined();
+    const meta = ALGORITHM_KNOWLEDGE.ternarySearch;
+    expect(typeof meta.inventor).toBe('string');
+    expect(meta.inventor.length).toBeGreaterThan(0);
+    expect(typeof meta.year).toBe('number');
+    expect(meta.realWorldUsesCount).toBeGreaterThanOrEqual(0);
+    expect(meta.factsCount).toBeGreaterThanOrEqual(0);
+    expect(
+      meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
+    ).toBe(true);
+  });
+
   it('includes jumpSearch metadata for the insight panel', () => {
     expect(ALGORITHM_KNOWLEDGE.jumpSearch).toBeDefined();
     const meta = ALGORITHM_KNOWLEDGE.jumpSearch;

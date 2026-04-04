@@ -10,6 +10,8 @@ import {
   linearSearchPure,
   binarySearch,
   binarySearchPure,
+  ternarySearch,
+  ternarySearchPure,
   jumpSearch,
   jumpSearchPure,
   interpolationSearch,
@@ -26,6 +28,7 @@ describe('searchingAlgorithms registry', () => {
     expect(Object.keys(searchingAlgorithms)).toEqual([
       'linearSearch',
       'binarySearch',
+      'ternarySearch',
       'jumpSearch',
       'interpolationSearch',
       'exponentialSearch',
@@ -34,6 +37,7 @@ describe('searchingAlgorithms registry', () => {
     ]);
     expect(typeof searchingAlgorithms.linearSearch).toBe('function');
     expect(typeof searchingAlgorithms.binarySearch).toBe('function');
+    expect(typeof searchingAlgorithms.ternarySearch).toBe('function');
     expect(typeof searchingAlgorithms.jumpSearch).toBe('function');
     expect(typeof searchingAlgorithms.interpolationSearch).toBe('function');
     expect(typeof searchingAlgorithms.exponentialSearch).toBe('function');
@@ -120,6 +124,55 @@ describe('binarySearch', () => {
       expect(step.states.length).toBe(sorted.length);
       expect(step.targetValue).toBe(6);
     });
+  });
+});
+
+describe('ternarySearch', () => {
+  it('finds target in sorted array', () => {
+    const sorted = [1, 3, 5, 7, 9];
+    const steps = ternarySearch(sorted, 7);
+    expect(steps.length).toBeGreaterThan(1);
+    const last = steps[steps.length - 1];
+    expect(last.states[3]).toBe('sorted');
+    expect(ternarySearchPure(sorted, 7)).toBe(3);
+  });
+
+  it('returns not found when target absent', () => {
+    const sorted = [1, 2, 4, 8];
+    expect(ternarySearchPure(sorted, 5)).toBe(-1);
+    const steps = ternarySearch(sorted, 5);
+    expect(steps[steps.length - 1].array).toEqual(sorted);
+  });
+
+  it('returns -1 for empty array', () => {
+    expect(ternarySearchPure([], 1)).toBe(-1);
+    const steps = ternarySearch([], 1);
+    expect(steps.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('handles single element found and not found', () => {
+    expect(ternarySearchPure([42], 42)).toBe(0);
+    expect(ternarySearchPure([42], 7)).toBe(-1);
+    const foundSteps = ternarySearch([42], 42);
+    expect(foundSteps[foundSteps.length - 1].states[0]).toBe('sorted');
+  });
+
+  it('each step keeps array length and targetValue consistent', () => {
+    const sorted = [2, 4, 6, 8, 10, 12];
+    const target = 6;
+    const steps = ternarySearch(sorted, target);
+    steps.forEach(step => {
+      expect(step.array.length).toBe(sorted.length);
+      expect(step.states.length).toBe(sorted.length);
+      expect(step.targetValue).toBe(target);
+    });
+  });
+
+  it('matches binarySearchPure on strictly increasing arrays', () => {
+    const sorted = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+    for (const t of [-100, 2, 10, 15, 20, 100]) {
+      expect(ternarySearchPure(sorted, t)).toBe(binarySearchPure(sorted, t));
+    }
   });
 });
 

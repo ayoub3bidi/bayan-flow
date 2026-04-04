@@ -85,6 +85,11 @@ export const ALGORITHM_STEPS = {
   SEARCH_BINARY_FOUND: 'searchBinaryFound',
   SEARCH_BINARY_NOT_FOUND: 'searchBinaryNotFound',
 
+  SEARCH_TERNARY_START: 'searchTernaryStart',
+  SEARCH_TERNARY_CHECK: 'searchTernaryCheck',
+  SEARCH_TERNARY_FOUND: 'searchTernaryFound',
+  SEARCH_TERNARY_NOT_FOUND: 'searchTernaryNotFound',
+
   SEARCH_JUMP_START: 'searchJumpStart',
   SEARCH_JUMP_BLOCK_CHECK: 'searchJumpBlockCheck',
   SEARCH_JUMP_LINEAR_CHECK: 'searchJumpLinearCheck',

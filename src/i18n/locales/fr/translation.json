@@ -71,6 +71,7 @@
     "searching": {
       "linearSearch": "Recherche linéaire",
       "binarySearch": "Recherche dichotomique",
+      "ternarySearch": "Recherche ternaire",
       "jumpSearch": "Recherche par sauts",
       "interpolationSearch": "Recherche par interpolation",
       "exponentialSearch": "Recherche exponentielle",
@@ -102,6 +103,7 @@
       "dStarLite": "Démarrage de la recherche D* Lite",
       "linearSearch": "Démarrage de la recherche linéaire",
       "binarySearch": "Démarrage de la recherche dichotomique",
+      "ternarySearch": "Démarrage de la recherche ternaire",
       "jumpSearch": "Démarrage de la recherche par sauts",
       "interpolationSearch": "Démarrage de la recherche par interpolation",
       "exponentialSearch": "Démarrage de la recherche exponentielle",
@@ -135,6 +137,7 @@
     "dStarLite": "O(log V)",
     "linearSearch": "O(n)",
     "binarySearch": "O(log n)",
+    "ternarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
     "exponentialSearch": "O(log n)",
@@ -532,6 +535,18 @@
         "facts_2": "Le dépassement d'entier dans milieu = (gauche + droite) / 2 est un piège classique ; utiliser gauche + (droite - gauche) // 2 si besoin.",
         "facts_3": "Jon Bentley a souligné que beaucoup de programmeurs échouent encore à écrire une dichotomie correcte du premier coup."
       },
+      "ternarySearch": {
+        "history": "Partager un intervalle trié avec plus d'une sonde par itération est une étape pédagogique classique entre le balayage linéaire et la dichotomie. La partition en trois parties avec deux sondes sur tableaux figure dans de nombreux manuels sous le nom de « recherche ternaire », aux côtés de la version sur fonctions unimodales continues.",
+        "intuition": "On conserve une fenêtre [gauche, droite] où la cible peut encore se trouver. On place deux indices vers le premier et le deuxième tiers de la fenêtre, on compare la cible aux deux valeurs, puis on élimine au moins le tiers de l'intervalle qui ne peut pas la contenir (ou le tiers central si la cible se situe entre les deux sondes). Chaque itération fait deux comparaisons ; la fenêtre rétrécit toutefois de façon logarithmique, donc l'algorithme reste en O(log n) au pire.",
+        "realWorldUses_0": "Montrer comment deux pivots découpent visuellement l'intervalle de recherche en trois segments",
+        "realWorldUses_1": "Contraster avec la dichotomie et son unique indice médian sur le même modèle de tableau trié",
+        "realWorldUses_2": "Préparer la recherche ternaire sur domaine continu pour fonctions unimodales (problème différent, idée de partage identique)",
+        "realWorldUses_3": "Discuter du nombre de comparaisons par rapport à la classe asymptotique (deux comparaisons par étape contre une en dichotomie)",
+        "facts_0": "La recherche ternaire sur tableau trié est en O(log n) dans le temps et O(1) en mémoire supplémentaire, comme la dichotomie au sens asymptotique.",
+        "facts_1": "Elle exige des données triées (ordre croissant) pour que les comparaisons aux deux sondes aient un sens.",
+        "facts_2": "À chaque itération on compare la cible à deux éléments (indices décalés d'environ ⌊(droite−gauche)/3⌋), pas à un seul milieu.",
+        "facts_3": "La dichotomie gagne en général en nombre de comparaisons ; la recherche ternaire met en avant une autre façon de partitionner le même espace ordonné."
+      },
       "jumpSearch": {
         "history": "La recherche par sauts sur tableaux triés combine des avances par blocs et une fin linéaire courte. On l'enseigne souvent à côté de la dichotomie pour comparer des complexités en √n et en logarithme.",
         "intuition": "On avance par blocs d'environ √n indices et on compare le bout de chaque bloc à la cible. Quand ce bout est au moins égal à la cible, on arrête les sauts et on parcourt vers l'avant depuis le début du bloc. Au pire il y a O(√n) sauts et au plus √n étapes dans le dernier segment.",
@@ -749,6 +764,10 @@
     "searchBinaryCheck": "Milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
     "searchBinaryFound": "{{target}} trouvé à l'index {{mid}}.",
     "searchBinaryNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchTernaryStart": "Recherche de {{target}} par recherche ternaire sur le tableau trié (deux sondes divisent la plage active en trois parties).",
+    "searchTernaryCheck": "Premier tiers, indice {{leftMid}} : valeur {{leftValue}}. Deuxième tiers, indice {{rightMid}} : valeur {{rightValue}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
+    "searchTernaryFound": "{{target}} trouvé à l'index {{mid}}.",
+    "searchTernaryNotFound": "La cible {{target}} n'est pas dans le tableau.",
     "searchJumpStart": "Recherche de {{target}} par sauts sur le tableau trié. Taille de pas {{m}} (⌊√n⌋).",
     "searchJumpBlockCheck": "Phase de sauts — début de bloc {{prev}}, fin de bloc {{jumpIdx}} : valeur {{value}}. Pas {{m}}. Cible {{target}}.",
     "searchJumpLinearCheck": "Balayage linéaire à l'index {{prev}} : valeur {{value}}. Cible {{target}}.",

@@ -91,13 +91,14 @@ describe('Constants', () => {
       expect(Object.values(SEARCHING_ALGORITHMS)).toEqual([
         'linearSearch',
         'binarySearch',
+        'ternarySearch',
         'jumpSearch',
         'interpolationSearch',
         'exponentialSearch',
         'fibonacciSearch',
         'depthFirstSearch',
       ]);
-      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(7);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(8);
     });
   });
 
@@ -275,6 +276,7 @@ describe('Constants', () => {
       expect(keys).toEqual([
         'linearSearch',
         'binarySearch',
+        'ternarySearch',
         'jumpSearch',
         'interpolationSearch',
         'exponentialSearch',

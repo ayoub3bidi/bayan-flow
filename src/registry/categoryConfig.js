@@ -193,6 +193,7 @@ export const CATEGORY_CONFIG = {
     algorithmKeys: [
       'linearSearch',
       'binarySearch',
+      'ternarySearch',
       'jumpSearch',
       'interpolationSearch',
       'exponentialSearch',
@@ -206,7 +207,12 @@ export const CATEGORY_CONFIG = {
       },
       {
         labelKey: 'algorithmGroups.logarithmicSearch',
-        algorithms: ['binarySearch', 'exponentialSearch', 'fibonacciSearch'],
+        algorithms: [
+          'binarySearch',
+          'ternarySearch',
+          'exponentialSearch',
+          'fibonacciSearch',
+        ],
       },
       {
         labelKey: 'algorithmGroups.blockJumpSearch',

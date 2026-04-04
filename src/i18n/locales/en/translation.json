@@ -71,6 +71,7 @@
     "searching": {
       "linearSearch": "Linear Search",
       "binarySearch": "Binary Search",
+      "ternarySearch": "Ternary Search",
       "jumpSearch": "Jump Search",
       "interpolationSearch": "Interpolation Search",
       "exponentialSearch": "Exponential Search",
@@ -103,6 +104,7 @@
       "dStarLite": "Starting D* Lite Search",
       "linearSearch": "Starting Linear Search",
       "binarySearch": "Starting Binary Search",
+      "ternarySearch": "Starting Ternary Search",
       "jumpSearch": "Starting Jump Search",
       "interpolationSearch": "Starting Interpolation Search",
       "exponentialSearch": "Starting Exponential Search",
@@ -136,6 +138,7 @@
     "dStarLite": "O(log V)",
     "linearSearch": "O(n)",
     "binarySearch": "O(log n)",
+    "ternarySearch": "O(log n)",
     "jumpSearch": "O(√n)",
     "interpolationSearch": "O(log log n)",
     "exponentialSearch": "O(log n)",
@@ -533,6 +536,18 @@
         "facts_2": "Integer overflow in mid = (left + right) / 2 is a famous pitfall; use left + (right - left) // 2 in languages where needed.",
         "facts_3": "Jon Bentley noted that many programmers still struggle to write a correct binary search on the first try."
       },
+      "ternarySearch": {
+        "history": "Partitioning a sorted range with more than one probe per iteration is a standard teaching step between linear scan and binary search. The two-probe, three-way split on arrays appears in many textbooks as “ternary search” alongside the classic unimodal optimization version on continuous domains.",
+        "intuition": "Keep a window [left, right] that may still contain the target. Place two indices near one-third and two-thirds of that window, compare the target with both values, then discard the third of the range that cannot contain the target (or the middle third when the target lies between the two probes). Each iteration uses two comparisons; the window still shrinks logarithmically, so the algorithm remains O(log n) in the worst case.",
+        "realWorldUses_0": "Teaching how two pivots divide the search interval into three visible segments",
+        "realWorldUses_1": "Visual contrast with binary search’s single midpoint on the same sorted-array model",
+        "realWorldUses_2": "Preparing for continuous-domain ternary search on unimodal functions (different problem, same split idea)",
+        "realWorldUses_3": "Discussions of comparison counts versus asymptotic class (two comparisons per step vs one in binary)",
+        "facts_0": "Ternary search on a sorted array is O(log n) time and O(1) extra space, same asymptotic class as binary search.",
+        "facts_1": "It requires sorted (ascending) input so ordering comparisons at the two probes are meaningful.",
+        "facts_2": "Each iteration compares the target with elements at two indices (roughly at ⌊(right−left)/3⌋ offsets), not one middle index.",
+        "facts_3": "Binary search usually wins on comparison count; ternary search highlights a different partition of the same ordered search space."
+      },
       "jumpSearch": {
         "history": "Jump search is a classic block-based search on sorted arrays, combining coarse jumps with a short linear finish. It is often taught alongside binary search to compare √n versus logarithmic probe counts.",
         "intuition": "Jump forward in blocks of about √n indices and compare the end of each block to the target. When a block’s end is at least the target, stop jumping and scan forward one index at a time from that block’s start. You make O(√n) jumps in the worst case and at most √n extra steps in the final segment.",
@@ -748,6 +763,10 @@
     "searchBinaryCheck": "Middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
     "searchBinaryFound": "Found {{target}} at index {{mid}}.",
     "searchBinaryNotFound": "Target {{target}} is not in the array.",
+    "searchTernaryStart": "Searching for {{target}} using ternary search on the sorted array (two probes split the active range into three parts).",
+    "searchTernaryCheck": "Left third index {{leftMid}}: value {{leftValue}}. Right third index {{rightMid}}: value {{rightValue}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
+    "searchTernaryFound": "Found {{target}} at index {{mid}}.",
+    "searchTernaryNotFound": "Target {{target}} is not in the array.",
     "searchJumpStart": "Searching for {{target}} using jump search on the sorted array. Block step size {{m}} (⌊√n⌋).",
     "searchJumpBlockCheck": "Jump phase — block start {{prev}}, block end index {{jumpIdx}}: value {{value}}. Step size {{m}}. Target {{target}}.",
     "searchJumpLinearCheck": "Linear scan at index {{prev}}: value {{value}}. Target {{target}}.",

@@ -46,6 +46,7 @@ export const PATHFINDING_ALGORITHMS = {
 export const SEARCHING_ALGORITHMS = {
   LINEAR_SEARCH: 'linearSearch',
   BINARY_SEARCH: 'binarySearch',
+  TERNARY_SEARCH: 'ternarySearch',
   JUMP_SEARCH: 'jumpSearch',
   INTERPOLATION_SEARCH: 'interpolationSearch',
   EXPONENTIAL_SEARCH: 'exponentialSearch',
@@ -386,6 +387,22 @@ export const SEARCHING_COMPLEXITY = {
       'Large sorted arrays or lists',
       'Lookup tables and ordered collections',
       'Algorithm building blocks (e.g. bounds, bisection)',
+    ],
+  },
+  ternarySearch: {
+    name: 'Ternary Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Ternary search splits the current sorted range into three parts using two probe indices (roughly at one-third and two-thirds). It compares the target with both probes each iteration, then discards at least one third of the range. Asymptotic time is still O(log n) like binary search, but each step performs two comparisons.',
+    useCases: [
+      'Teaching how multiple probes partition the search space',
+      'Contrasting two-pivot splits with binary search’s single midpoint',
+      'Building intuition before unimodal optimization variants of ternary search',
     ],
   },
   jumpSearch: {

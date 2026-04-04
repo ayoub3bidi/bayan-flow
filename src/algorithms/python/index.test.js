@@ -323,6 +323,7 @@ describe('Python Algorithms Index', () => {
         'idaStar',
         'linearSearch',
         'binarySearch',
+        'ternarySearch',
         'jumpSearch',
         'interpolationSearch',
         'exponentialSearch',

@@ -6,6 +6,7 @@
 
 import { linearSearch, linearSearchPure } from './linearSearch';
 import { binarySearch, binarySearchPure } from './binarySearch';
+import { ternarySearch, ternarySearchPure } from './ternarySearch';
 import { jumpSearch, jumpSearchPure } from './jumpSearch';
 import {
   interpolationSearch,
@@ -18,6 +19,7 @@ import { depthFirstSearch, depthFirstSearchPure } from './dfs';
 export const searchingAlgorithms = {
   linearSearch,
   binarySearch,
+  ternarySearch,
   jumpSearch,
   interpolationSearch,
   exponentialSearch,
@@ -28,6 +30,7 @@ export const searchingAlgorithms = {
 export const pureSearchingAlgorithms = {
   linearSearch: linearSearchPure,
   binarySearch: binarySearchPure,
+  ternarySearch: ternarySearchPure,
   jumpSearch: jumpSearchPure,
   interpolationSearch: interpolationSearchPure,
   exponentialSearch: exponentialSearchPure,
@@ -40,6 +43,8 @@ export {
   linearSearchPure,
   binarySearch,
   binarySearchPure,
+  ternarySearch,
+  ternarySearchPure,
   jumpSearch,
   jumpSearchPure,
   interpolationSearch,
