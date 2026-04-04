@@ -18,7 +18,6 @@ function Footer() {
   const repoOwner = 'ayoub3bidi';
   const repoName = 'bayan-flow';
   const authorName = 'Ayoub Abidi';
-  const bmcUsername = 'ayoub3bidi';
 
   useEffect(() => {
     const fetchLatestVersion = async () => {
@@ -57,14 +56,6 @@ function Footer() {
       href: `/roadmap`,
     },
   ];
-
-  const handleBMCClick = () => {
-    window.open(
-      `https://www.buymeacoffee.com/${bmcUsername}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
-  };
 
   const handleLinkClick = href => {
     if (href.startsWith('/')) {
@@ -193,35 +184,22 @@ function Footer() {
               <p className="text-xs text-text-secondary mb-3">
                 {t('footer.enjoying')}
               </p>
-              <div className="flex flex-col gap-3">
-                <motion.button
-                  onClick={handleBMCClick}
-                  className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors touch-manipulation min-h-11"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                  aria-label="Buy me a coffee - Support this project"
-                >
-                  <span className="text-lg">☕</span>
-                  <span>{t('footer.buyMeCoffee')}</span>
-                </motion.button>
-                <motion.a
-                  href="https://www.producthunt.com/products/bayan-flow?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-bayan-flow"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                >
-                  <img
-                    src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
-                    alt="Bayan Flow - Interactive algorithm visualizer | Product Hunt"
-                    width="250"
-                    height="54"
-                    className="w-[250px] h-[54px]"
-                  />
-                </motion.a>
-              </div>
+              <motion.a
+                href="https://www.producthunt.com/products/bayan-flow?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-bayan-flow"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              >
+                <img
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
+                  alt="Bayan Flow - Interactive algorithm visualizer | Product Hunt"
+                  width="250"
+                  height="54"
+                  className="w-[250px] h-[54px]"
+                />
+              </motion.a>
             </div>
           </div>
         </div>
