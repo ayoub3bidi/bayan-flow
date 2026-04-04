@@ -12,6 +12,7 @@ import {
   COMPLEXITY_DATASETS,
   DEFAULT_COMPLEXITY_DATASET,
 } from '../registry/complexityDatasetRegistry.js';
+import { getVideoExportTheme } from './videoExportTheme.js';
 
 /**
  * Remotion-compatible complexity analysis display.
@@ -22,9 +23,16 @@ import {
  * @param {string} props.algorithmKey - Algorithm key (e.g. 'bubbleSort', 'bfs')
  * @param {string} props.complexityDataset - Key into COMPLEXITY_DATASETS (see CATEGORY_CONFIG.complexityDataset)
  * @param {string} props.algorithmName - Display name of the algorithm
+ * @param {'light'|'dark'} [props.exportTheme] - Matches app theme for export
  */
-function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
+function ComplexityScene({
+  algorithmKey,
+  complexityDataset,
+  algorithmName,
+  exportTheme = 'dark',
+}) {
   const frame = useCurrentFrame();
+  const c = getVideoExportTheme(exportTheme).complexity;
   const map =
     COMPLEXITY_DATASETS[complexityDataset] ??
     COMPLEXITY_DATASETS[DEFAULT_COMPLEXITY_DATASET];
@@ -34,10 +42,10 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
     return (
       <AbsoluteFill
         style={{
-          backgroundColor: '#111827',
+          backgroundColor: c.pageBg,
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#9ca3af',
+          color: c.fallbackText,
           fontSize: 18,
         }}
       >
@@ -83,7 +91,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: '#111827',
+        backgroundColor: c.pageBg,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -99,7 +107,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
       >
         <h2
           style={{
-            color: '#f9fafb',
+            color: c.heading,
             fontSize: 28,
             fontWeight: 'bold',
             margin: 0,
@@ -109,7 +117,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
         </h2>
         <p
           style={{
-            color: '#9ca3af',
+            color: c.subheading,
             fontSize: 18,
             margin: '8px 0 0 0',
           }}
@@ -139,7 +147,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
           <div>
             <h3
               style={{
-                color: '#9ca3af',
+                color: c.sectionLabel,
                 fontSize: 12,
                 fontWeight: 600,
                 textTransform: 'uppercase',
@@ -151,7 +159,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: '#6b7280', fontSize: 14, width: 48 }}>
+                <span style={{ color: c.labelMuted, fontSize: 14, width: 48 }}>
                   Best:
                 </span>
                 <code
@@ -169,7 +177,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
                 </code>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: '#6b7280', fontSize: 14, width: 48 }}>
+                <span style={{ color: c.labelMuted, fontSize: 14, width: 48 }}>
                   Avg:
                 </span>
                 <code
@@ -187,7 +195,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
                 </code>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: '#6b7280', fontSize: 14, width: 48 }}>
+                <span style={{ color: c.labelMuted, fontSize: 14, width: 48 }}>
                   Worst:
                 </span>
                 <code
@@ -209,7 +217,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
           <div>
             <h3
               style={{
-                color: '#9ca3af',
+                color: c.sectionLabel,
                 fontSize: 12,
                 fontWeight: 600,
                 textTransform: 'uppercase',
@@ -244,7 +252,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
         >
           <h3
             style={{
-              color: '#9ca3af',
+              color: c.sectionLabel,
               fontSize: 12,
               fontWeight: 600,
               textTransform: 'uppercase',
@@ -258,9 +266,9 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
             width={width}
             height={height}
             style={{
-              border: '1px solid #374151',
+              border: `1px solid ${c.chartBorder}`,
               borderRadius: 8,
-              backgroundColor: '#1f2937',
+              backgroundColor: c.chartBg,
             }}
           >
             <g transform={`translate(${margin.left}, ${margin.top})`}>
@@ -282,7 +290,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
                 y1={chartHeight}
                 x2={chartWidth}
                 y2={chartHeight}
-                stroke="#6b7280"
+                stroke={c.axisStroke}
                 strokeWidth={1}
               />
               <line
@@ -290,14 +298,14 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
                 y1={0}
                 x2={0}
                 y2={chartHeight}
-                stroke="#6b7280"
+                stroke={c.axisStroke}
                 strokeWidth={1}
               />
               <text
                 x={chartWidth / 2}
                 y={chartHeight + 30}
                 textAnchor="middle"
-                fill="#9ca3af"
+                fill={c.axisText}
                 fontSize={12}
               >
                 Input size (n)
@@ -307,7 +315,7 @@ function ComplexityScene({ algorithmKey, complexityDataset, algorithmName }) {
                 y={-35}
                 textAnchor="middle"
                 transform={`rotate(-90, -35, ${chartHeight / 2})`}
-                fill="#9ca3af"
+                fill={c.axisText}
                 fontSize={12}
               >
                 Operations

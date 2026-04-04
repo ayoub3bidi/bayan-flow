@@ -195,6 +195,9 @@
     "pathFound": "Path found!",
     "noPath": "No path exists"
   },
+  "videoExport": {
+    "noSteps": "No steps to display"
+  },
   "complexity_panel": {
     "title": "Complexity Analysis",
     "timeComplexity": "Time Complexity",

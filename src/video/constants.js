@@ -36,3 +36,32 @@ export const SPEED_TO_FRAMES_MAP = {
   [ANIMATION_SPEEDS.FAST]: 5,
   [ANIMATION_SPEEDS.VERY_FAST]: 3,
 };
+
+/** Default Remotion inputProps.watermark — overridden per export from UI. */
+export const DEFAULT_VIDEO_WATERMARK = {
+  enabled: true,
+  text: 'Bayan Flow',
+  imageUrl: null,
+  /** Small corner label */
+  cornerOpacity: 0.9,
+  /** Large centered watermark (still translucent) */
+  diagonalOpacity: 0.24,
+  showDiagonal: true,
+  /** Duplicate label in corner — off by default when large watermark is shown */
+  showCornerBadge: false,
+  position: 'br',
+};
+
+/**
+ * Frames per export SFX clip — must cover Tone-rendered WAV length (see scripts/render-tone-export-sfx.mjs).
+ */
+export const EXPORT_SFX_DURATION_FRAMES_BY_KIND = {
+  compare: 14,
+  swap: 14,
+  pivot: 20,
+  sorted: 80,
+  nodeVisit: 10,
+  pathFound: 100,
+};
+
+export const DEFAULT_EXPORT_AUDIO_VOLUME = 0.85;

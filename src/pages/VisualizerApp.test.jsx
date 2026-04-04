@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
+import { ThemeProvider } from '../contexts/ThemeContext.jsx';
 
 const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
   vi.hoisted(() => {
@@ -247,7 +248,11 @@ describe('VisualizerApp', () => {
   });
 
   async function renderApp() {
-    renderWithI18n(<VisualizerApp />);
+    renderWithI18n(
+      <ThemeProvider>
+        <VisualizerApp />
+      </ThemeProvider>
+    );
     await screen.findByTestId('python-panel');
     await screen.findByTestId('insight-panel');
   }
@@ -338,6 +343,8 @@ describe('VisualizerApp', () => {
         algorithmKey: 'bubbleSort',
         orientation: 'horizontal',
         steps: sortingVisualization.steps,
+        exportTheme: expect.stringMatching(/^(light|dark)$/),
+        exportLanguage: expect.any(String),
       })
     );
   });

@@ -14,8 +14,11 @@ import {
   VIDEO_HEIGHT_VERTICAL,
   VIDEO_EXPORT_FRAMES_PER_STEP,
   COMPLEXITY_DURATION_FRAMES,
+  DEFAULT_VIDEO_WATERMARK,
+  DEFAULT_EXPORT_AUDIO_VOLUME,
 } from './constants.js';
 import { ALGORITHM_TYPES } from '../constants/index.js';
+import { normalizeExportLanguage } from './exportLanguage.js';
 
 const COMPOSITION_ID = 'AlgorithmVideo';
 
@@ -74,6 +77,11 @@ export function useVideoExporter() {
       speed: _speed,
       gridSize = 15,
       orientation = 'horizontal',
+      watermark: watermarkPartial,
+      includeExportAudio = true,
+      exportAudioVolume = DEFAULT_EXPORT_AUDIO_VOLUME,
+      exportTheme = 'dark',
+      exportLanguage,
     }) => {
       if (!steps?.length) {
         setExportState('error');
@@ -89,6 +97,11 @@ export function useVideoExporter() {
       const durationInFrames =
         mainDurationInFrames + COMPLEXITY_DURATION_FRAMES;
 
+      const watermark = {
+        ...DEFAULT_VIDEO_WATERMARK,
+        ...watermarkPartial,
+      };
+
       const inputProps = {
         steps,
         algorithmType: algorithmType ?? ALGORITHM_TYPES.SORTING,
@@ -96,7 +109,17 @@ export function useVideoExporter() {
         algorithmKey: algorithmKey ?? '',
         framesPerStep,
         gridSize,
+        watermark,
+        includeExportAudio,
+        exportAudioVolume,
+        exportTheme:
+          exportTheme === 'light' || exportTheme === 'dark'
+            ? exportTheme
+            : 'dark',
+        exportLanguage: normalizeExportLanguage(exportLanguage),
       };
+
+      const renderMuted = !includeExportAudio;
 
       setExportState('checking');
       setExportProgress(0);
@@ -111,7 +134,7 @@ export function useVideoExporter() {
           height,
           container: 'mp4',
           videoCodec: 'h264',
-          muted: true,
+          muted: renderMuted,
         });
 
         setCanRenderOnWeb(check.canRender);
@@ -135,7 +158,7 @@ export function useVideoExporter() {
             height,
           },
           inputProps,
-          muted: true,
+          muted: renderMuted,
           videoBitrate: 'very-high',
           hardwareAcceleration: 'prefer-software',
           licenseKey: 'free-license',

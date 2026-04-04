@@ -70,7 +70,7 @@ function ExportProgressModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-1.5 rounded-full text-text-secondary hover:text-text-primary hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-1.5 rounded-full text-text-secondary"
                 aria-label={t('controls.closePreview')}
               >
                 <X size={20} aria-hidden="true" />
@@ -107,10 +107,10 @@ function ExportProgressModal({
                   className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group"
                   aria-label={t('controls.exportOrientationHorizontal')}
                 >
-                  <div className="w-20 h-12 rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
+                  <div className="w-20 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
                     <RectangleHorizontal
                       size={28}
-                      className="text-text-primary group-hover:text-teal-600"
+                      className="text-teal-600 dark:text-teal-400 group-hover:text-teal-600 dark:group-hover:text-teal-300 shrink-0"
                     />
                   </div>
                   <span className="font-semibold text-text-primary">
@@ -126,10 +126,10 @@ function ExportProgressModal({
                   className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group"
                   aria-label={t('controls.exportOrientationVertical')}
                 >
-                  <div className="w-12 h-20 rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
+                  <div className="w-12 h-20 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
                     <RectangleVertical
                       size={28}
-                      className="text-text-primary group-hover:text-teal-600"
+                      className="text-teal-600 dark:text-teal-400 group-hover:text-teal-600 dark:group-hover:text-teal-300 shrink-0"
                     />
                   </div>
                   <span className="font-semibold text-text-primary">

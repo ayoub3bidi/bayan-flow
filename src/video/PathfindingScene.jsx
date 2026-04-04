@@ -5,7 +5,12 @@
  */
 
 import { memo } from 'react';
-import { useCurrentFrame, interpolate, interpolateColors } from 'remotion';
+import {
+  useCurrentFrame,
+  useVideoConfig,
+  interpolate,
+  interpolateColors,
+} from 'remotion';
 import { GRID_STATE_COLORS } from '../constants/index.js';
 
 /**
@@ -19,6 +24,7 @@ import { GRID_STATE_COLORS } from '../constants/index.js';
  */
 function PathfindingSceneInner({ steps, framesPerStep, gridSize }) {
   const frame = useCurrentFrame();
+  const { width: frameW, height: frameH } = useVideoConfig();
   const stepIndex = Math.min(
     Math.floor(frame / framesPerStep),
     steps.length - 1
@@ -30,7 +36,18 @@ function PathfindingSceneInner({ steps, framesPerStep, gridSize }) {
   if (!step) return null;
 
   const { states } = step;
-  const cellPx = gridSize <= 15 ? 32 : gridSize <= 25 ? 24 : 18;
+  const outerPad = 48;
+  const maxGridW = frameW * 0.94 - outerPad;
+  const maxGridH = frameH * 0.78 - outerPad;
+  const baseCellPx = gridSize <= 15 ? 32 : gridSize <= 25 ? 24 : 18;
+  const cellPx = Math.max(
+    6,
+    Math.min(
+      baseCellPx,
+      Math.floor(maxGridW / gridSize),
+      Math.floor(maxGridH / gridSize)
+    )
+  );
 
   // Color transition progress over the step (first 40% for a snappy transition)
   const colorProgress = Math.min(

@@ -37,6 +37,7 @@ import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
+import { useTheme } from '../hooks/useTheme';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 
 // ---------------------------------------------------------------------------
@@ -60,7 +61,7 @@ function buildDefaultSelectedAlgorithms() {
 // ---------------------------------------------------------------------------
 
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // ── Core State ────────────────────────────────────────────────────────────
   const [algorithmType, setAlgorithmType] = useState(ALGORITHM_TYPES.SORTING);
@@ -124,6 +125,8 @@ function App() {
     downloadVideo,
     canRenderOnWeb,
   } = useVideoExporter();
+
+  const { theme } = useTheme();
 
   const visualizationMap = useCategoryVisualizations({
     sortingVisualization,
@@ -203,6 +206,8 @@ function App() {
       speed,
       gridSize,
       orientation,
+      exportTheme: theme,
+      exportLanguage: i18n.resolvedLanguage ?? i18n.language,
     });
   };
 

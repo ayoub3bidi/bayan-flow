@@ -17,11 +17,17 @@ export const VIDEO_SCENE_RENDERERS = {
   [ALGORITHM_TYPES.SORTING]: ({ steps, framesPerStep }) => (
     <SortingScene steps={steps} framesPerStep={framesPerStep} />
   ),
-  [ALGORITHM_TYPES.SEARCHING]: ({ steps, framesPerStep, gridSize }) => (
+  [ALGORITHM_TYPES.SEARCHING]: ({
+    steps,
+    framesPerStep,
+    gridSize,
+    exportTheme,
+  }) => (
     <SearchingVideoScene
       steps={steps}
       framesPerStep={framesPerStep}
       gridSize={gridSize}
+      exportTheme={exportTheme}
     />
   ),
   [ALGORITHM_TYPES.PATHFINDING]: ({ steps, framesPerStep, gridSize }) => (

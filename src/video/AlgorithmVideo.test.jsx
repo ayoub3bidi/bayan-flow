@@ -19,10 +19,16 @@ const complexityScene = vi.fn(() => (
   <div data-testid="complexity-scene">Complexity</div>
 ));
 
+vi.mock('@remotion/media', () => ({
+  Audio: () => null,
+}));
+
 vi.mock('remotion', () => ({
   AbsoluteFill: ({ children }) => <div>{children}</div>,
   useCurrentFrame: () => useCurrentFrame(),
   useVideoConfig: () => ({ width: 1280, height: 720 }),
+  staticFile: p => p,
+  Sequence: ({ children }) => <>{children}</>,
 }));
 
 vi.mock('./ComplexityScene.jsx', () => ({
@@ -92,6 +98,7 @@ describe('AlgorithmVideo', () => {
         steps: [{ description: 'visit' }],
         framesPerStep: 6,
         gridSize: 25,
+        exportTheme: 'dark',
       })
     );
     expect(screen.getByTestId('pathfinding-scene')).toBeInTheDocument();
@@ -112,6 +119,7 @@ describe('AlgorithmVideo', () => {
       expect.objectContaining({
         steps: [{ description: 'check', array: [1, 2], states: [] }],
         framesPerStep: 6,
+        exportTheme: 'dark',
       })
     );
     expect(screen.getByText('Searching')).toBeInTheDocument();
@@ -135,6 +143,7 @@ describe('AlgorithmVideo', () => {
         algorithmKey: 'bfs',
         complexityDataset: 'pathfinding',
         algorithmName: 'Breadth First Search',
+        exportTheme: 'dark',
       })
     );
     expect(screen.getByTestId('complexity-scene')).toBeInTheDocument();
@@ -157,6 +166,7 @@ describe('AlgorithmVideo', () => {
         algorithmKey: 'binarySearch',
         complexityDataset: 'searching',
         algorithmName: 'Binary Search',
+        exportTheme: 'dark',
       })
     );
   });

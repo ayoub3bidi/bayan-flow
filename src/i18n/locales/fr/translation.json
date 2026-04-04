@@ -194,6 +194,9 @@
     "pathFound": "Chemin trouvé !",
     "noPath": "Aucun chemin n'existe"
   },
+  "videoExport": {
+    "noSteps": "Aucune étape à afficher"
+  },
   "complexity_panel": {
     "title": "Analyse de Complexité",
     "timeComplexity": "Complexité Temporelle",

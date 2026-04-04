@@ -5,7 +5,7 @@
  */
 
 import { memo } from 'react';
-import { useCurrentFrame, interpolate } from 'remotion';
+import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
 import {
   STATE_COLORS,
   ELEMENT_STATES,
@@ -23,6 +23,7 @@ import {
  */
 function SortingSceneInner({ steps, framesPerStep }) {
   const frame = useCurrentFrame();
+  const { width: frameW, height: frameH } = useVideoConfig();
   const stepIndex = Math.min(
     Math.floor(frame / framesPerStep),
     Math.max(0, steps.length - 1)
@@ -37,8 +38,22 @@ function SortingSceneInner({ steps, framesPerStep }) {
   const n = array.length;
   const barSize = n <= 20 ? 60 : n <= 35 ? 45 : 30;
   const minSize = 25;
-  const barWidth = Math.max(barSize, minSize);
-  const itemWidth = barWidth + 16;
+  const outerPad = 48;
+  const maxW = frameW * 0.92 - outerPad;
+  const maxH = frameH * 0.78 - outerPad;
+  let barWidth = Math.max(barSize, minSize);
+  const marginX = 16;
+  const gapY = 12;
+  for (let guard = 0; guard < 80; guard += 1) {
+    const itemWidth = barWidth + marginX * 2;
+    const cols = Math.max(1, Math.floor(maxW / Math.max(itemWidth, 1)));
+    const rows = Math.ceil(n / cols);
+    const rowHeight = barWidth + gapY;
+    if (rows * rowHeight <= maxH || barWidth <= 12) break;
+    barWidth -= 2;
+  }
+  barWidth = Math.max(12, barWidth);
+  const itemWidth = barWidth + marginX * 2;
 
   // Detect swap: two elements exchanged between prev and current
   const isSwapStep =
@@ -92,6 +107,8 @@ function SortingSceneInner({ steps, framesPerStep }) {
         width: '100%',
         height: '100%',
         boxSizing: 'border-box',
+        overflow: 'hidden',
+        alignContent: 'center',
       }}
     >
       {array.map((value, i) => {
@@ -142,13 +159,13 @@ function SortingSceneInner({ steps, framesPerStep }) {
                 borderRadius: 8,
                 width: barWidth,
                 height: barWidth,
-                minWidth: minSize,
-                minHeight: minSize,
+                minWidth: barWidth,
+                minHeight: barWidth,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#ffffff',
-                fontSize: 14,
+                fontSize: Math.max(9, Math.round(barWidth * 0.24)),
                 fontWeight: 'bold',
                 boxShadow:
                   targetValue != null && value === targetValue

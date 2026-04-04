@@ -8,10 +8,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import AlgorithmVideo from './AlgorithmVideo.jsx';
 
+vi.mock('@remotion/media', () => ({
+  Audio: () => null,
+}));
+
 vi.mock('remotion', () => ({
   AbsoluteFill: ({ children }) => <div>{children}</div>,
   useCurrentFrame: () => 0,
   useVideoConfig: () => ({ width: 1280, height: 720 }),
+  staticFile: p => p,
+  Sequence: ({ children }) => <>{children}</>,
 }));
 
 vi.mock('./ComplexityScene.jsx', () => ({
@@ -56,6 +62,6 @@ describe('AlgorithmVideo registry edge cases', () => {
     );
 
     expect(screen.getByText('My Title')).toBeInTheDocument();
-    expect(screen.getByText('Step 1 / 1')).toBeInTheDocument();
+    expect(screen.getByText('Step 1 of 1')).toBeInTheDocument();
   });
 });

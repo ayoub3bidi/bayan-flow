@@ -194,6 +194,9 @@
     "pathFound": "تم العثور على المسار!",
     "noPath": "لا يوجد مسار"
   },
+  "videoExport": {
+    "noSteps": "لا توجد خطوات لعرضها"
+  },
   "complexity_panel": {
     "title": "تحليل التعقيد",
     "timeComplexity": "التعقيد الزمني",

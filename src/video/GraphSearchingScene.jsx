@@ -10,6 +10,7 @@ import {
   GRAPH_NODE_STATES,
   GRAPH_NODE_STATE_COLORS,
 } from '../constants/index.js';
+import { getVideoExportTheme } from './videoExportTheme.js';
 
 const VIEW_PAD = 8;
 const VIEW_INNER = 100 - 2 * VIEW_PAD;
@@ -18,9 +19,15 @@ const VIEW_INNER = 100 - 2 * VIEW_PAD;
  * @param {Object} props
  * @param {Array<{ nodes: Array, edges: Array, nodeStates: Record<string,string>, description?: string }>} props.steps
  * @param {number} props.framesPerStep
+ * @param {'light'|'dark'} [props.exportTheme]
  */
-function GraphSearchingSceneInner({ steps, framesPerStep }) {
+function GraphSearchingSceneInner({
+  steps,
+  framesPerStep,
+  exportTheme = 'dark',
+}) {
   const frame = useCurrentFrame();
+  const { graphEdgeStroke, graphNodeRing } = getVideoExportTheme(exportTheme);
   const stepIndex = Math.min(
     Math.floor(frame / framesPerStep),
     Math.max(0, steps.length - 1)
@@ -66,7 +73,13 @@ function GraphSearchingSceneInner({ steps, framesPerStep }) {
     >
       <svg
         viewBox="0 0 100 100"
-        style={{ width: 'min(90vw, 720px)', height: 'min(90vw, 720px)' }}
+        preserveAspectRatio="xMidYMid meet"
+        style={{
+          width: '100%',
+          height: '100%',
+          maxWidth: '100%',
+          maxHeight: '100%',
+        }}
         role="img"
       >
         {edges.map((e, i) => {
@@ -80,7 +93,7 @@ function GraphSearchingSceneInner({ steps, framesPerStep }) {
               y1={a.cy}
               x2={b.cx}
               y2={b.cy}
-              stroke="#9ca3af"
+              stroke={graphEdgeStroke}
               strokeWidth={0.45}
               strokeLinecap="round"
             />
@@ -116,7 +129,7 @@ function GraphSearchingSceneInner({ steps, framesPerStep }) {
                 cy={p.cy}
                 r={nodeRadius}
                 fill={fill}
-                stroke="#374151"
+                stroke={graphNodeRing}
                 strokeWidth={0.35}
               />
               <text

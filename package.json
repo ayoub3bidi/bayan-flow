@@ -45,11 +45,13 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "generate:export-sfx": "node scripts/render-tone-export-sfx.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@octokit/rest": "^22.0.1",
+    "@remotion/media": "4.0.436",
     "@remotion/web-renderer": "^4.0.436",
     "i18next": "^25.7.1",
     "i18next-browser-languagedetector": "^8.2.0",
@@ -81,6 +83,7 @@
     "framer-motion": "^12.23.24",
     "globals": "^16.5.0",
     "jsdom": "^27.2.0",
+    "playwright": "1.52.0",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
     "tailwindcss": "^4.1.17",
