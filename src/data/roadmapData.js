@@ -53,7 +53,7 @@ export const roadmapData = [
     description:
       'Introduced a Searching category with 8 algorithms across sorted-array and graph substrates (Linear Search, Binary Search, Jump Search, Interpolation, Exponential, Fibonacci, Ternary Search, and DFS). Added an insight panel with algorithm history and complexity facts, an interactive Python code panel with LeetCode-style test cases, and in-browser video export (horizontal and vertical) powered by Remotion.',
     videoUrl: '',
-    status: 'in-progress',
+    status: 'completed',
   },
   {
     id: 5,
@@ -62,7 +62,7 @@ export const roadmapData = [
     description:
       "Expand into two new algorithm families built on dedicated renderers. Tree Traversals: Inorder, Preorder, Postorder, Level-order, Morris Traversal, and Zigzag Level-order. Graph Algorithms: Topological Sort, Kahn's Algorithm, Kruskal's and Prim's (MST), Tarjan's and Kosaraju's (SCC), and Floyd-Warshall. Also introduces user accounts with saved favorite algorithms and per-algorithm explanation videos embedded in the insight panel.",
     videoUrl: '',
-    status: 'planned',
+    status: 'in-progress',
   },
   {
     id: 6,
