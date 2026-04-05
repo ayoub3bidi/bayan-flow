@@ -147,7 +147,7 @@ function Header() {
                 <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-none truncate">
                   {t('header.title')}
                 </h1>
-                <p className="text-[9px] sm:text-[10px] text-text-secondary hidden sm:block leading-none mt-0.5 truncate">
+                <p className="text-[9px] sm:text-[10px] text-text-secondary hidden sm:block leading-tight mt-0.5 truncate">
                   {t('header.subtitle')}
                 </p>
               </div>
