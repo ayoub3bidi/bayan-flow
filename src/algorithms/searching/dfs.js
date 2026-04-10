@@ -165,23 +165,46 @@ export function depthFirstSearch({ adjacency, rootId, goalId, nodes, edges }) {
   while (stack.length > 0 && !found) {
     const current = stack.pop();
 
+    // Compute the edge from parent → current for activeEdge highlighting.
+    const parentOfCurrent = parent[current] ?? null;
+    const traversalEdge =
+      parentOfCurrent != null
+        ? { from: parentOfCurrent, to: current }
+        : undefined;
+
+    // ── CURRENT-state frame: briefly highlight the popped node in orange
+    //    before marking it visited, so users can see "which node now?" ───
+    {
+      const currentStates = paintSearchStates(
+        closed,
+        stack,
+        rootId,
+        goalId,
+        allIds
+      );
+      // Apply CURRENT highlight (overrides DEFAULT/FRONTIER but not ROOT/GOAL).
+      if (current !== rootId && current !== goalId) {
+        currentStates[current] = GRAPH_NODE_STATES.CURRENT;
+      }
+      steps.push(
+        pushStep(
+          nodes,
+          edges,
+          currentStates,
+          [...stack],
+          getAlgorithmDescription(ALGORITHM_STEPS.DFS_GRAPH_VISITING, {
+            node: current,
+          }),
+          goalId,
+          traversalEdge
+        )
+      );
+    }
+
+    // Now mark as visited (closed).
     if (current !== rootId && current !== goalId) {
       closed.add(current);
     }
-
-    steps.push(
-      pushStep(
-        nodes,
-        edges,
-        paintSearchStates(closed, stack, rootId, goalId, allIds),
-        [...stack],
-        getAlgorithmDescription(ALGORITHM_STEPS.DFS_GRAPH_VISITING, {
-          node: current,
-        }),
-        goalId,
-        undefined
-      )
-    );
 
     if (current === goalId) {
       found = true;

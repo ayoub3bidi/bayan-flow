@@ -78,26 +78,66 @@ export function generateRandomSearchTree({
   }
 
   const maxDepth = Math.max(...Object.values(depth));
-  /** @type {Record<number, string[]>} */
-  const byLevel = {};
-  for (const id of ids) {
-    const d = depth[id];
-    if (!byLevel[d]) {
-      byLevel[d] = [];
-    }
-    byLevel[d].push(id);
-  }
 
-  const nodes = [];
-  for (let d = 0; d <= maxDepth; d++) {
-    const row = byLevel[d] ?? [];
-    const w = row.length;
-    row.forEach((id, j) => {
-      const x = w === 1 ? 0.5 : (j + 1) / (w + 1);
-      const y = maxDepth === 0 ? 0.5 : (d + 1) / (maxDepth + 2);
-      nodes.push({ id, x, y, label: id });
-    });
+  // ── Subtree-width tree layout (two-pass, zero edge crossings) ──────────
+  // Pass 1 — bottom-up: compute subtree width for every node.
+  // A leaf occupies 1 unit; a parent occupies the sum of its children's
+  // widths plus inter-child spacing.
+  const SIBLING_GAP = 0.4;
+  /** @type {Record<string, number>} */
+  const subtreeWidth = {};
+
+  function computeWidth(nodeId) {
+    const ch = treeChildren[nodeId];
+    if (ch.length === 0) {
+      subtreeWidth[nodeId] = 1;
+      return 1;
+    }
+    let total = 0;
+    for (const child of ch) {
+      total += computeWidth(child);
+    }
+    total += (ch.length - 1) * SIBLING_GAP;
+    subtreeWidth[nodeId] = total;
+    return total;
   }
+  computeWidth(rootId);
+
+  // Pass 2 — top-down: assign x-coordinate so every parent is centered
+  // above its children, and siblings never overlap.
+  /** @type {Record<string, number>} */
+  const xPos = {};
+
+  function assignX(nodeId, leftBound, rightBound) {
+    xPos[nodeId] = (leftBound + rightBound) / 2;
+    const ch = treeChildren[nodeId];
+    if (ch.length === 0) return;
+
+    const totalChildWidth =
+      ch.reduce((sum, c) => sum + subtreeWidth[c], 0) +
+      (ch.length - 1) * SIBLING_GAP;
+
+    let cursor = (leftBound + rightBound) / 2 - totalChildWidth / 2;
+    for (const child of ch) {
+      const w = subtreeWidth[child];
+      assignX(child, cursor, cursor + w);
+      cursor += w + SIBLING_GAP;
+    }
+  }
+  assignX(rootId, 0, subtreeWidth[rootId]);
+
+  // Normalize x-coordinates to [0, 1].
+  const allX = Object.values(xPos);
+  const minX = Math.min(...allX);
+  const maxX = Math.max(...allX);
+  const xRange = maxX - minX || 1;
+
+  const nodes = ids.map(id => ({
+    id,
+    x: (xPos[id] - minX) / xRange,
+    y: maxDepth === 0 ? 0.5 : (depth[id] + 1) / (maxDepth + 2),
+    label: id,
+  }));
 
   const leaves = ids.filter(id => treeChildren[id].length === 0);
   const goalCandidates = leaves.filter(id => id !== rootId);

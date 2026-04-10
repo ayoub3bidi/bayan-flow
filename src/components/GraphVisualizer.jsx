@@ -172,6 +172,30 @@ function GraphVisualizer({
               isComplete={isComplete}
             />
 
+            {/* Stack top badge — container is ALWAYS mounted so height is reserved.
+                Opacity-only animation prevents the SVG from resizing when the stack
+                momentarily empties (e.g. root popped before first push). */}
+            <div
+              className="flex justify-center mt-1 mb-1 shrink-0 h-7"
+              aria-label={t('legend.searchingGraph.stackFrontier')}
+              aria-live="polite"
+            >
+              <motion.span
+                animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
+                transition={{ duration: 0.15 }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+              >
+                <span className="font-semibold text-text-primary">
+                  {stackOrder.length > 0
+                    ? t('visualization.stackTop', {
+                        top: stackOrder[stackOrder.length - 1],
+                        defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
+                      })
+                    : '\u00a0'}
+                </span>
+              </motion.span>
+            </div>
+
             <div className="flex-1 flex flex-col items-center justify-center overflow-auto touch-pan-y pb-12 sm:pb-14 min-h-0">
               <svg
                 viewBox="0 0 100 100"
@@ -237,17 +261,6 @@ function GraphVisualizer({
                 })}
               </svg>
 
-              {stackOrder.length > 0 && (
-                <p
-                  className="mt-1 text-[10px] sm:text-xs font-mono text-text-secondary text-center max-w-lg px-2"
-                  aria-label={t('legend.searchingGraph.stackFrontier')}
-                >
-                  {t('visualization.stackTop', {
-                    top: stackOrder[stackOrder.length - 1],
-                    defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
-                  })}
-                </p>
-              )}
             </div>
 
             <AnimatePresence mode="wait">
