@@ -113,7 +113,7 @@ describe('ComplexityPanel', () => {
         <ComplexityPanel algorithm="bfs" complexityDataset="pathfinding" />
       );
       expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
-      expect(screen.getByText('BFS')).toBeInTheDocument();
+      expect(screen.getByText(/BFS|Breadth-First Search/i)).toBeInTheDocument();
     });
   });
 

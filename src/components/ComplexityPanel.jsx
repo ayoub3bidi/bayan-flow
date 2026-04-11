@@ -118,7 +118,9 @@ function ComplexityPanel({
               {t('complexity_panel.title')}
             </h2>
             <p className="text-xs sm:text-sm text-text-secondary">
-              {algorithm.toUpperCase()}
+              {t(`algorithms.${complexityDataset}.${algorithm}`, {
+                defaultValue: complexityData.name || algorithm,
+              })}
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">

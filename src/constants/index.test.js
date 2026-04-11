@@ -97,8 +97,9 @@ describe('Constants', () => {
         'exponentialSearch',
         'fibonacciSearch',
         'depthFirstSearch',
+        'breadthFirstSearchGraph',
       ]);
-      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(8);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(9);
     });
   });
 
@@ -282,6 +283,7 @@ describe('Constants', () => {
         'exponentialSearch',
         'fibonacciSearch',
         'depthFirstSearch',
+        'breadthFirstSearchGraph',
       ]);
     });
 
