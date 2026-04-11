@@ -76,7 +76,8 @@
       "interpolationSearch": "Recherche par interpolation",
       "exponentialSearch": "Recherche exponentielle",
       "fibonacciSearch": "Recherche de Fibonacci",
-      "depthFirstSearch": "Parcours en profondeur (graphe)"
+      "depthFirstSearch": "Parcours en profondeur (graphe)",
+      "breadthFirstSearchGraph": "Parcours en largeur (graphe)"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -108,7 +109,8 @@
       "interpolationSearch": "Démarrage de la recherche par interpolation",
       "exponentialSearch": "Démarrage de la recherche exponentielle",
       "fibonacciSearch": "Démarrage de la recherche de Fibonacci",
-      "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes"
+      "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes",
+      "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes"
     }
   },
   "complexity": {
@@ -142,7 +144,8 @@
     "interpolationSearch": "O(log log n)",
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
-    "depthFirstSearch": "O(V + E)"
+    "depthFirstSearch": "O(V + E)",
+    "breadthFirstSearchGraph": "O(V + E)"
   },
   "speeds": {
     "slow": "Lent",
@@ -579,36 +582,48 @@
         "intuition": "On avance en doublant l’indice à chaque fois (1, 2, 4, 8, …) jusqu’à ce que la valeur à cet indice soit au moins la cible ou qu’on atteigne la fin du tableau. Cela encadre la cible en O(log i) sondes lorsque la réponse est près de l’indice i. Ensuite, on applique la dichotomie ordinaire sur l’intervalle borné — encore un nombre logarithmique d’étapes dans cette fenêtre.",
         "realWorldUses_0": "Recherche dans des flux ou listes triées dont la longueur est inconnue ou très grande",
         "realWorldUses_1": "Enseigner la combinaison encadrement + dichotomie",
-        "realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
+"realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
         "realWorldUses_3": "Bases pour des variantes « galloping » dans des fusions et des recherches adaptatives",
         "facts_0": "Sur des données triées non bornées, trouver une cible à l’indice i coûte O(log i) en phase de doublement plus O(log i) pour la dichotomie sur l’intervalle — O(log i) au total.",
         "facts_1": "Sur un tableau fini de taille n, le pire cas reste en O(log n), comme la dichotomie, avec une phase de doublement avant le premier partage.",
         "facts_2": "Il faut des valeurs triées (croissantes) pour que les comparaisons indiquent quel côté conserver.",
-        "facts_3": "Après le doublement, l’intervalle de recherche est [⌊bound/2⌋, min(bound, n−1)] avant que la dichotomie ne le rétrécisse."
+        "facts_3": "Après le doublement, l'intervalle de recherche est [⌊bound/2⌋, min(bound, n−1)] avant que la dichotomie ne le rétrécisse."
       },
       "fibonacciSearch": {
-        "history": "La recherche de Fibonacci utilise des nombres de Fibonacci pour choisir les positions de sonde sur un tableau trié, sans division dans la boucle principale. C’est un exemple classique en cours aux côtés de la dichotomie pour parler de partage selon le nombre d’or.",
+        "history": "La recherche de Fibonacci utilise des nombres de Fibonacci pour choisir les positions de sonde sur un tableau trié, sans division dans la boucle principale. C'est un exemple classique en cours aux côtés de la dichotomie pour parler de partage selon le nombre d'or.",
         "intuition": "On construit le plus petit nombre de Fibonacci au moins égal à n+1 pour dimensionner la première fenêtre. Chaque sonde est à décalage plus le plus petit des trois Fibonacci courants. Si la valeur est trop petite, on fait glisser la fenêtre vers la droite ; si trop grande, on réduit le triple Fibonacci pour restreindre la plage. Le rapport de partage suit la récurrence de Fibonacci, donc la fenêtre se réduit logarithmiquement.",
         "realWorldUses_0": "Enseigner une recherche sans division et comparer les partages Fibonacci au milieu de la dichotomie",
-        "realWorldUses_1": "Évoquer des modèles de coût historiques où la division était plus chère que l’addition et la comparaison",
-        "realWorldUses_2": "Souligner qu’une recherche en O(log n) ne nécessite pas de couper l’indice par deux",
-        "realWorldUses_3": "Coupler avec la théorie des nombres (suite de Fibonacci, nombre d’or) en cursus d’informatique",
-        "facts_0": "La recherche de Fibonacci utilise au plus un nombre d’ordre O(log n) de comparaisons dans le pire cas sur un tableau trié de taille n, comme la dichotomie.",
-        "facts_1": "L’indice de sonde s’obtient par addition (décalage + offset Fibonacci) plutôt que par (gauche + droite) / 2.",
+        "realWorldUses_1": "Évoquer des modèles de coût historiques où la division était plus chère que l'addition et la comparaison",
+        "realWorldUses_2": "Souligner qu'une recherche en O(log n) ne nécessite pas de couper l'indice par deux",
+        "realWorldUses_3": "Coupler avec la théorie des nombres (suite de Fibonacci, nombre d'or) en cursus d'informatique",
+        "facts_0": "La recherche de Fibonacci utilise au plus un nombre d'ordre O(log n) de comparaisons dans le pire cas sur un tableau trié de taille n, comme la dichotomie.",
+        "facts_1": "L'indice de sonde s'obtient par addition (décalage + offset Fibonacci) plutôt que par (gauche + droite) / 2.",
         "facts_2": "La longueur de fenêtre active est suivie avec un triple Fibonacci (fibM, fibM−1, fibM−2) qui se réduit après chaque comparaison.",
-        "facts_3": "Comme la dichotomie, l’entrée doit être triée pour que les comparaisons d’ordre aient un sens."
+        "facts_3": "Comme la dichotomie, l'entrée doit être triée pour que les comparaisons d'ordre aient un sens."
       },
       "depthFirstSearch": {
-        "history": "Le parcours en profondeur est une stratégie fondamentale sur graphes : on s’enfonce le plus loin possible sur une branche avant de revenir en arrière. Avec une pile explicite sur un graphe nœuds–arêtes, il contraste clairement avec le parcours en largeur en Pathfinding.",
-        "intuition": "On part de la racine. Tant que la pile n’est pas vide, on dépile, on visite, puis on empile les voisins non découverts en ordre inverse de la liste d’adjacence pour que le premier voisin listé soit exploré ensuite. Quand l’objectif est dépilé, on reconstruit un chemin via les parents. Le chemin est valide mais pas forcément le plus court.",
-        "realWorldUses_0": "Enseigner la pile sur des sommets et arêtes explicites",
-        "realWorldUses_1": "Arbres et graphes généraux avant poids ou heuristiques",
-        "realWorldUses_2": "Contraster l’ordre de visite avec les plus courts chemins",
-        "realWorldUses_3": "Bases pour le raisonnement topologique et les algorithmes récursifs en version itérative",
-        "facts_0": "Temps O(V + E) et espace auxiliaire O(V) pour la pile et le marquage sur V sommets et E arêtes.",
-        "facts_1": "Contrairement au BFS sur graphe non pondéré, le DFS ne garantit pas un plus court chemin.",
-        "facts_2": "Les démos génèrent des arbres aléatoires avec listes d’adjacence triées pour un ordre reproductible.",
-        "facts_3": "Les positions servent uniquement à l’affichage ; l’algorithme n’utilise que la structure d’adjacence."
+        "history": "Le parcours en profondeur est une stratégie fondamentale de parcours de graphe : explorer aussi loin que possible sur une branche avant de revenir en arrière. Avec une pile explicite sur un graphe nœuds–arêtes, il contraste clairement avec le parcours en largeur dans la même catégorie Recherche.",
+        "intuition": "Démarrez à la racine. Dépillez répétitivement, visitez ce sommet, puis empilez les voisins non découverts en ordre inverse pour explorer le premier voisin listé ensuite. Quand l'objectif est dépilé, reconstruisez un chemin via les pointeurs parents.",
+        "realWorldUses_0": "Enseignement du parcours basé sur une pile sur des sommets et arêtes explicites",
+        "realWorldUses_1": "Arbres et graphes généraux avant d'introduire poids ou heuristiques",
+        "realWorldUses_2": "Contraster l'ordre de parcours avec BFS — même graphe, structure différente, chemin différent",
+        "realWorldUses_3": "Fondements du raisonnement topologique et des algorithmes récursifs exprimés itérativement",
+        "facts_0": "Temps O(V + E) et espace supplémentaire O(V) pour la pile et la mémorisation sur V sommets et E arêtes.",
+        "facts_1": "Contrairement à BFS sur un graphe non pondéré, DFS ne garantit pas le chemin le plus court.",
+        "facts_2": "Les démos générées utilisent des arbres aléatoires avec des listes d'adjacence triées.",
+        "facts_3": "Les positions sont uniquement pour la mise en page ; l'algorithme utilise uniquement la structure d'adjacence."
+      },
+      "breadthFirstSearchGraph": {
+        "history": "Le parcours en largeur explore un graphe niveau par niveau, découvert par Konrad Zuse en 1945. Sur des graphes non pondérés, il garantit le chemin le plus court — la distinction clé avec DFS dans la même catégorie Recherche.",
+        "intuition": "Démarrez à la racine et enfilez-la. Défilez répétitivement le nœud de tête, marquez-le visité, puis enfilez tous les voisins non découverts. BFS visite tout l'anneau de profondeur 1 avant tout nœud de profondeur 2.",
+        "realWorldUses_0": "Chemin le plus court sur des graphes non pondérés",
+        "realWorldUses_1": "Parcours d'arbre en ordre de niveau et analyse couche par couche",
+        "realWorldUses_2": "Contraster avec DFS : même graphe, file vs pile, chemin le plus court vs quelconque",
+        "realWorldUses_3": "Fondement de l'algorithme de Dijkstra lorsque les poids deviennent non uniformes",
+        "facts_0": "Temps O(V + E) ; espace O(V) pour la file et l'ensemble des visités.",
+        "facts_1": "BFS garantit le chemin le plus court (sauts minimaux) sur les graphes non pondérés ; DFS ne le garantit pas.",
+        "facts_2": "La tête de file est affichée en haut du canevas — le prochain nœud à défiler.",
+        "facts_3": "La même mise en page d'arbre utilisée pour DFS est réutilisée ici, afin de comparer les deux algorithmes."
       }
     }
   },
@@ -669,7 +684,9 @@
     "searchTarget": "Cible : {{value}}",
     "graphAria": "Graphe à {{count}} nœuds",
     "graphAriaEmpty": "Graphe vide",
-    "stackTop": "Sommet de pile : {{top}}"
+    "stackTop": "Sommet de pile : {{top}}",
+    "queueFront": "Tête de file : {{front}}",
+    "graphSubstrate": "Visualisation de graphe"
   },
   "languages": {
     "en": "English",
@@ -692,6 +709,8 @@
     "mergedSection": "Section fusionnée [{{start}}...{{end}}]",
     "dfsStackPush": "Voisins empilés ; taille de la pile : {{count}} (prochain sommet dépilé en profondeur)",
     "dfsGraphVisiting": "Exploration du nœud {{node}}",
+    "bfsGraphDequeue": "Nœud {{node}} sorti de la file — examen des voisins niveau par niveau",
+    "bfsGraphEnqueue": "{{count}} voisin(s) ajouté(s) à la file ; le suivant est en tête",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -887,7 +906,7 @@
     "logarithmicSearch": "Recherche logarithmique",
     "blockJumpSearch": "Recherche par blocs / sauts",
     "distributionAwareSearch": "Recherche sensible à la distribution",
-    "graphTraversalSearch": "Parcours de graphe (grille)"
+    "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)"
   },
   "roadmap": {
     "hero": {

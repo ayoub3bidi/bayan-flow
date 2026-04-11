@@ -76,7 +76,8 @@
       "interpolationSearch": "Interpolation Search",
       "exponentialSearch": "Exponential Search",
       "fibonacciSearch": "Fibonacci Search",
-      "depthFirstSearch": "Depth-First Search (graph)"
+      "depthFirstSearch": "Depth-First Search (graph)",
+      "breadthFirstSearchGraph": "Breadth-First Search (graph)"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -109,7 +110,8 @@
       "interpolationSearch": "Starting Interpolation Search",
       "exponentialSearch": "Starting Exponential Search",
       "fibonacciSearch": "Starting Fibonacci Search",
-      "depthFirstSearch": "Starting depth-first search on the node–link graph"
+      "depthFirstSearch": "Starting depth-first search on the node–link graph",
+      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph"
     }
   },
   "complexity": {
@@ -143,7 +145,8 @@
     "interpolationSearch": "O(log log n)",
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
-    "depthFirstSearch": "O(V + E)"
+    "depthFirstSearch": "O(V + E)",
+    "breadthFirstSearchGraph": "O(V + E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -600,16 +603,28 @@
         "facts_3": "Like binary search, the input must be sorted so ordering comparisons are meaningful."
       },
       "depthFirstSearch": {
-        "history": "Depth-first search is a fundamental graph traversal strategy: explore as far as possible along one branch before backtracking. With an explicit stack on a node–link graph, it contrasts cleanly with breadth-first search in the Pathfinding category.",
+        "history": "Depth-first search is a fundamental graph traversal strategy: explore as far as possible along one branch before backtracking. With an explicit stack on a node–link graph, it contrasts cleanly with breadth-first search in the same Searching category.",
         "intuition": "Start at the root. Repeatedly pop the stack, visit that vertex, then push undiscovered neighbors in reverse adjacency order so the first listed neighbor is explored next. When the goal is popped, reconstruct one path using parent pointers. The path is valid but not necessarily shortest.",
         "realWorldUses_0": "Teaching stack-based traversal on explicit vertices and edges",
         "realWorldUses_1": "Trees and general graphs before introducing weights or heuristics",
-        "realWorldUses_2": "Contrasting traversal order with shortest-path algorithms in the Pathfinding category",
+        "realWorldUses_2": "Contrasting traversal order with BFS — same graph, different data structure, different path",
         "realWorldUses_3": "Foundations for topological reasoning and recursive algorithms expressed iteratively",
         "facts_0": "Time is O(V + E) and extra space is O(V) for the stack and bookkeeping on V vertices and E edges.",
         "facts_1": "Unlike BFS on an unweighted graph, DFS does not guarantee a shortest path to the goal.",
         "facts_2": "Generated demos use random trees with sorted adjacency lists for reproducible DFS order.",
         "facts_3": "Positions are layout-only; the algorithm uses the adjacency structure only."
+      },
+      "breadthFirstSearchGraph": {
+        "history": "Breadth-first search explores a graph level by level, discovered by Konrad Zuse in 1945 and reinvented by Edward F. Moore in 1959. On unweighted graphs it guarantees the shortest path — the key distinction from DFS in this same Searching category.",
+        "intuition": "Start at the root and enqueue it. Repeatedly dequeue the front node, mark it visited, then enqueue all undiscovered neighbors. Because nodes are processed in the order they were discovered, BFS visits the entire depth-1 ring before any depth-2 node — guaranteeing a minimum-hop path to the goal.",
+        "realWorldUses_0": "Shortest-path on unweighted graphs (social networks, peer connections)",
+        "realWorldUses_1": "Level-order tree traversal and layer-by-layer graph analysis",
+        "realWorldUses_2": "Contrasting with DFS: same graph, queue vs. stack, shortest vs. any path",
+        "realWorldUses_3": "Foundation for Dijkstra's algorithm when edge weights become non-uniform",
+        "facts_0": "Time is O(V + E); space is O(V) for the queue and visited set.",
+        "facts_1": "BFS guarantees a shortest (minimum-hop) path on unweighted graphs; DFS does not.",
+        "facts_2": "The queue front is shown at the top of the canvas — the next node to be dequeued.",
+        "facts_3": "The same tree layout used for DFS is reused here, so you can compare both algorithms side by side on re-generation."
       }
     }
   },
@@ -669,7 +684,9 @@
     "searchTarget": "Target: {{value}}",
     "graphAria": "Graph with {{count}} nodes",
     "graphAriaEmpty": "Empty graph",
-    "stackTop": "Stack top: {{top}}"
+    "stackTop": "Stack top: {{top}}",
+    "queueFront": "Queue front: {{front}}",
+    "graphSubstrate": "Graph visualization"
   },
   "languages": {
     "en": "English",
@@ -692,6 +709,8 @@
     "mergedSection": "Merged section [{{start}}...{{end}}]",
     "dfsStackPush": "Pushed neighbors onto the stack; stack size is {{count}} (next vertex is popped depth-first)",
     "dfsGraphVisiting": "Exploring node {{node}}",
+    "bfsGraphDequeue": "Dequeued node {{node}} — examining neighbors level by level",
+    "bfsGraphEnqueue": "Enqueued {{count}} neighbor(s); queue front is next",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -886,7 +905,7 @@
     "logarithmicSearch": "Logarithmic search",
     "blockJumpSearch": "Block / jump search",
     "distributionAwareSearch": "Distribution-aware search",
-    "graphTraversalSearch": "Graph traversal (grid)"
+    "graphTraversalSearch": "Graph traversal (node–link)"
   },
   "roadmap": {
     "hero": {

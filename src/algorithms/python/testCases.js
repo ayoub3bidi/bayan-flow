@@ -393,6 +393,21 @@ const DEPTH_FIRST_SEARCH_TEST_CASES = [
   },
 ];
 
+const BREADTH_FIRST_SEARCH_TEST_CASES = [
+  {
+    id: 'bfs-graph-line',
+    name: 'Path on a 3-node line graph',
+    input: DFS_GRAPH_LINE,
+    expected: DFS_GRAPH_LINE_EXPECTED,
+  },
+  {
+    id: 'bfs-graph-disconnected',
+    name: 'No path (disconnected goal)',
+    input: DFS_GRAPH_DISCONNECTED,
+    expected: PATH_BLOCKED_EXPECTED,
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -556,6 +571,10 @@ export const algorithmTestCases = {
   depthFirstSearch: {
     functionName: 'depth_first_search',
     testCases: DEPTH_FIRST_SEARCH_TEST_CASES,
+  },
+  breadthFirstSearchGraph: {
+    functionName: 'breadth_first_search_graph',
+    testCases: BREADTH_FIRST_SEARCH_TEST_CASES,
   },
 };
 

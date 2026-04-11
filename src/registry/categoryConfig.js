@@ -199,6 +199,7 @@ export const CATEGORY_CONFIG = {
       'exponentialSearch',
       'fibonacciSearch',
       'depthFirstSearch',
+      'breadthFirstSearchGraph',
     ],
     groupDefs: [
       {
@@ -224,7 +225,7 @@ export const CATEGORY_CONFIG = {
       },
       {
         labelKey: 'algorithmGroups.graphTraversalSearch',
-        algorithms: ['depthFirstSearch'],
+        algorithms: ['depthFirstSearch', 'breadthFirstSearchGraph'],
       },
     ],
   },

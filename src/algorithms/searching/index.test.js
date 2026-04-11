@@ -22,6 +22,10 @@ import {
   fibonacciSearchPure,
   searchingAlgorithms,
 } from './index';
+import {
+  breadthFirstSearchGraph,
+  breadthFirstSearchGraphPure,
+} from './bfsGraph';
 
 describe('searchingAlgorithms registry', () => {
   it('exposes all searching algorithms', () => {
@@ -34,6 +38,7 @@ describe('searchingAlgorithms registry', () => {
       'exponentialSearch',
       'fibonacciSearch',
       'depthFirstSearch',
+      'breadthFirstSearchGraph',
     ]);
     expect(typeof searchingAlgorithms.linearSearch).toBe('function');
     expect(typeof searchingAlgorithms.binarySearch).toBe('function');
@@ -43,6 +48,7 @@ describe('searchingAlgorithms registry', () => {
     expect(typeof searchingAlgorithms.exponentialSearch).toBe('function');
     expect(typeof searchingAlgorithms.fibonacciSearch).toBe('function');
     expect(typeof searchingAlgorithms.depthFirstSearch).toBe('function');
+    expect(typeof searchingAlgorithms.breadthFirstSearchGraph).toBe('function');
   });
 });
 
@@ -352,5 +358,65 @@ describe('fibonacciSearch', () => {
       expect(step.states.length).toBe(sorted.length);
       expect(step.targetValue).toBe(target);
     });
+  });
+});
+describe('breadthFirstSearchGraph (graph) visualization', () => {
+  const nodes = [
+    { id: '0', x: 0.5, y: 0.1 },
+    { id: '1', x: 0.25, y: 0.5 },
+    { id: '2', x: 0.75, y: 0.5 },
+    { id: '3', x: 0.25, y: 0.9 },
+  ];
+  const edges = [
+    { from: '0', to: '1' },
+    { from: '0', to: '2' },
+    { from: '1', to: '3' },
+  ];
+  const adjacency = {
+    0: ['1', '2'],
+    1: ['0', '3'],
+    2: ['0'],
+    3: ['1'],
+  };
+
+  it('produces graph-shaped steps ending with path or no-path description', () => {
+    const steps = breadthFirstSearchGraph({
+      adjacency,
+      rootId: '0',
+      goalId: '3',
+      nodes,
+      edges,
+    });
+    expect(steps.length).toBeGreaterThan(1);
+    const last = steps[steps.length - 1];
+    expect(last.nodes).toHaveLength(4);
+    expect(last.nodeStates).toBeDefined();
+    expect(typeof last.stackOrder).toBe('object'); // queue stored here
+  });
+
+  it('breadthFirstSearchGraphPure returns a path on a line graph', () => {
+    const lineAdj = { 0: ['1'], 1: ['0', '2'], 2: ['1', '3'], 3: ['2'] };
+    const path = breadthFirstSearchGraphPure(lineAdj, '0', '3');
+    expect(path).toEqual(['0', '1', '2', '3']);
+  });
+
+  it('returns null when goal is disconnected', () => {
+    const adj = { 0: [], 1: [] };
+    expect(breadthFirstSearchGraphPure(adj, '0', '1')).toBeNull();
+  });
+
+  it('returns single node when root equals goal', () => {
+    const adj = { 0: ['1'], 1: ['0'] };
+    const path = breadthFirstSearchGraphPure(adj, '0', '0');
+    expect(path).toEqual(['0']);
+  });
+
+  it('guarantees shortest path (fewer hops than DFS on a wide tree)', () => {
+    // Root 0 -> children 1,2; 1 -> child 3; 2 -> child 3
+    // BFS should find 0->2->3 OR 0->1->3 (both length 3)
+    const adj = { 0: ['1', '2'], 1: ['0', '3'], 2: ['0', '3'], 3: ['1', '2'] };
+    const path = breadthFirstSearchGraphPure(adj, '0', '3');
+    expect(path).not.toBeNull();
+    expect(path.length).toBe(3); // shortest: 0 -> 1|2 -> 3
   });
 });

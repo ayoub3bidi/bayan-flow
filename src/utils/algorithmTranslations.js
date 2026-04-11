@@ -114,9 +114,11 @@ export const ALGORITHM_STEPS = {
   SEARCH_FIBONACCI_FOUND: 'searchFibonacciFound',
   SEARCH_FIBONACCI_NOT_FOUND: 'searchFibonacciNotFound',
 
-  // Graph-based searching (DFS stack)
+  // Graph-based searching (DFS stack / BFS queue)
   DFS_STACK_PUSH: 'dfsStackPush',
   DFS_GRAPH_VISITING: 'dfsGraphVisiting',
+  BFS_GRAPH_DEQUEUE: 'bfsGraphDequeue',
+  BFS_GRAPH_ENQUEUE: 'bfsGraphEnqueue',
 
   // Pathfinding
   EXPLORING: 'exploring',

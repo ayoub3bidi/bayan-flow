@@ -52,6 +52,7 @@ export const SEARCHING_ALGORITHMS = {
   EXPONENTIAL_SEARCH: 'exponentialSearch',
   FIBONACCI_SEARCH: 'fibonacciSearch',
   DEPTH_FIRST_SEARCH: 'depthFirstSearch',
+  BREADTH_FIRST_SEARCH_GRAPH: 'breadthFirstSearchGraph',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -483,6 +484,22 @@ export const SEARCHING_COMPLEXITY = {
       'Teaching stack-based graph traversal before queue-based BFS',
       'Trees and general graphs as explicit vertices and edges',
       'Backtracking patterns before introducing weighted graphs',
+    ],
+  },
+  breadthFirstSearchGraph: {
+    name: 'Breadth-First Search (graph)',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      'Breadth-first search explores a graph level by level. On unweighted graphs it guarantees the shortest path — the key distinction from DFS in this same Searching category.',
+    useCases: [
+      'Shortest-path on unweighted graphs',
+      'Level-order tree traversal and layer-by-layer graph analysis',
+      'Contrasting with DFS: same graph, queue vs. stack, shortest vs. any path',
     ],
   },
 };

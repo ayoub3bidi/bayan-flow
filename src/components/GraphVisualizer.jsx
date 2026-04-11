@@ -45,6 +45,9 @@ function GraphVisualizer({
   activeEdge,
 }) {
   const { t } = useTranslation();
+
+  // BFS uses a queue (FIFO); DFS uses a stack (LIFO) — label the badge accordingly.
+  const isBfsGraph = algorithm === 'breadthFirstSearchGraph';
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
 
@@ -172,9 +175,7 @@ function GraphVisualizer({
               isComplete={isComplete}
             />
 
-            {/* Stack top badge — container is ALWAYS mounted so height is reserved.
-                Opacity-only animation prevents the SVG from resizing when the stack
-                momentarily empties (e.g. root popped before first push). */}
+            {/* Stack / Queue badge — container is ALWAYS mounted so height is reserved. */}
             <div
               className="flex justify-center mt-1 mb-1 shrink-0 h-7"
               aria-label={t('legend.searchingGraph.stackFrontier')}
@@ -187,10 +188,15 @@ function GraphVisualizer({
               >
                 <span className="font-semibold text-text-primary">
                   {stackOrder.length > 0
-                    ? t('visualization.stackTop', {
-                        top: stackOrder[stackOrder.length - 1],
-                        defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
-                      })
+                    ? isBfsGraph
+                      ? t('visualization.queueFront', {
+                          front: stackOrder[0],
+                          defaultValue: `Queue front: ${stackOrder[0]}`,
+                        })
+                      : t('visualization.stackTop', {
+                          top: stackOrder[stackOrder.length - 1],
+                          defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
+                        })
                     : '\u00a0'}
                 </span>
               </motion.span>
@@ -260,7 +266,6 @@ function GraphVisualizer({
                   );
                 })}
               </svg>
-
             </div>
 
             <AnimatePresence mode="wait">

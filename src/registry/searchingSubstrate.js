@@ -14,7 +14,10 @@ export const SEARCHING_SUBSTRATES = {
 };
 
 /** @type {ReadonlySet<string>} */
-const NODE_LINK_ALGORITHM_KEYS = new Set(['depthFirstSearch']);
+const NODE_LINK_ALGORITHM_KEYS = new Set([
+  'depthFirstSearch',
+  'breadthFirstSearchGraph',
+]);
 
 /**
  * @param {string | undefined | null} algorithmKey

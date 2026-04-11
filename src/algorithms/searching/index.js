@@ -15,6 +15,10 @@ import {
 import { exponentialSearch, exponentialSearchPure } from './exponentialSearch';
 import { fibonacciSearch, fibonacciSearchPure } from './fibonacciSearch';
 import { depthFirstSearch, depthFirstSearchPure } from './dfs';
+import {
+  breadthFirstSearchGraph,
+  breadthFirstSearchGraphPure,
+} from './bfsGraph';
 
 export const searchingAlgorithms = {
   linearSearch,
@@ -25,6 +29,7 @@ export const searchingAlgorithms = {
   exponentialSearch,
   fibonacciSearch,
   depthFirstSearch,
+  breadthFirstSearchGraph,
 };
 
 export const pureSearchingAlgorithms = {
@@ -36,6 +41,7 @@ export const pureSearchingAlgorithms = {
   exponentialSearch: exponentialSearchPure,
   fibonacciSearch: fibonacciSearchPure,
   depthFirstSearch: depthFirstSearchPure,
+  breadthFirstSearchGraph: breadthFirstSearchGraphPure,
 };
 
 export {
@@ -55,4 +61,6 @@ export {
   fibonacciSearchPure,
   depthFirstSearch,
   depthFirstSearchPure,
+  breadthFirstSearchGraph,
+  breadthFirstSearchGraphPure,
 };
