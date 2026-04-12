@@ -6,6 +6,12 @@
   NODE_VERSION = "20"
   PNPM_VERSION = "9"
 
+# SPA routing: rewrite all non-file requests to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 # Production branch (main)
 [context.production]
   command = "pnpm build"
