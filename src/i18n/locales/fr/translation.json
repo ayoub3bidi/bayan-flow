@@ -1,7 +1,8 @@
 {
   "common": {
     "back": "Retour",
-    "backToHome": "Retour à l'Accueil"
+    "backToHome": "Retour à l'Accueil",
+    "save": "Enregistrer"
   },
   "header": {
     "title": "Bayan Flow",
@@ -16,6 +17,7 @@
     "speed": "Vitesse",
     "arraySize": "Taille du Tableau",
     "gridSize": "Taille de la Grille",
+    "searchGraphNodeCount": "Nœuds du graphe",
     "sound": "Son",
     "language": "Langue",
     "controlMode": "Mode de Contrôle",
@@ -23,13 +25,18 @@
     "time": "Temps",
     "soundOn": "Son Activé",
     "soundOff": "Son Désactivé",
+    "experimental": "Expérimental",
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
-    "autoplayOnly": "uniquement"
+    "autoplayOnly": "uniquement",
+    "mysteryCategory": "Mystère",
+    "mysteryCategoryHint": "Bientôt",
+    "mysteryCategoryAria": "Catégorie d’algorithmes à venir, pas encore disponible"
   },
   "modes": {
     "sorting": "Tri",
     "pathfinding": "Recherche de Chemin",
+    "searching": "Recherche",
     "manual": "Manuel",
     "autoplay": "Lecture Auto"
   },
@@ -61,6 +68,17 @@
       "idaStar": "Recherche IDA*",
       "dStarLite": "D* Lite"
     },
+    "searching": {
+      "linearSearch": "Recherche linéaire",
+      "binarySearch": "Recherche dichotomique",
+      "ternarySearch": "Recherche ternaire",
+      "jumpSearch": "Recherche par sauts",
+      "interpolationSearch": "Recherche par interpolation",
+      "exponentialSearch": "Recherche exponentielle",
+      "fibonacciSearch": "Recherche de Fibonacci",
+      "depthFirstSearch": "Parcours en profondeur (graphe)",
+      "breadthFirstSearchGraph": "Parcours en largeur (graphe)"
+    },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
@@ -83,7 +101,16 @@
       "greedyBestFirstSearch": "Démarrage de la Recherche Gloutonne du Meilleur d'Abord",
       "jumpPointSearch": "Démarrage de la Recherche par Points de Saut",
       "bellmanFord": "Démarrage de l'algorithme de Bellman-Ford",
-      "dStarLite": "Démarrage de la recherche D* Lite"
+      "dStarLite": "Démarrage de la recherche D* Lite",
+      "linearSearch": "Démarrage de la recherche linéaire",
+      "binarySearch": "Démarrage de la recherche dichotomique",
+      "ternarySearch": "Démarrage de la recherche ternaire",
+      "jumpSearch": "Démarrage de la recherche par sauts",
+      "interpolationSearch": "Démarrage de la recherche par interpolation",
+      "exponentialSearch": "Démarrage de la recherche exponentielle",
+      "fibonacciSearch": "Démarrage de la recherche de Fibonacci",
+      "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes",
+      "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes"
     }
   },
   "complexity": {
@@ -109,7 +136,16 @@
     "jumpPointSearch": "O(E)",
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
-    "dStarLite": "O(log V)"
+    "dStarLite": "O(log V)",
+    "linearSearch": "O(n)",
+    "binarySearch": "O(log n)",
+    "ternarySearch": "O(log n)",
+    "jumpSearch": "O(√n)",
+    "interpolationSearch": "O(log log n)",
+    "exponentialSearch": "O(log n)",
+    "fibonacciSearch": "O(log n)",
+    "depthFirstSearch": "O(V + E)",
+    "breadthFirstSearchGraph": "O(V + E)"
   },
   "speeds": {
     "slow": "Lent",
@@ -130,6 +166,26 @@
     "stepBackward": "Étape Précédente",
     "reset": "Réinitialiser",
     "generateArray": "Générer Nouveau Tableau",
+    "exportVideo": "Exporter en vidéo",
+    "rendering": "Génération de la vidéo…",
+    "exportDone": "Vidéo téléchargée",
+    "exportError": "Échec de l'export",
+    "browserNotSupported": "L'export vidéo n'est pas pris en charge dans ce navigateur. Utilisez Chrome 94+, Firefox 130+ ou Safari 26+.",
+    "exportingTitle": "Export en vidéo",
+    "exportingChecking": "Vérification du navigateur…",
+    "exportingRendering": "Génération de la visualisation en cours.",
+    "exportingProgress": "Progression",
+    "stopExport": "Arrêter",
+    "exportOrientationTitle": "Choisir le format vidéo",
+    "exportOrientationDesc": "Sélectionnez l'orientation pour l'export de votre vidéo.",
+    "exportOrientationHorizontal": "Horizontal",
+    "exportOrientationHorizontalDesc": "16:9 • YouTube, présentations",
+    "exportOrientationVertical": "Vertical",
+    "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
+    "exportPreview": "Vidéo prête",
+    "exportPreviewDesc": "Prévisualisez votre vidéo et téléchargez-la quand vous le souhaitez.",
+    "downloadVideo": "Télécharger",
+    "closePreview": "Fermer",
     "goFullScreen": "Plein Écran (F)",
     "exitFullScreen": "Quitter le Plein Écran (Esc)"
   },
@@ -140,6 +196,9 @@
     "ready": "Prêt à commencer",
     "pathFound": "Chemin trouvé !",
     "noPath": "Aucun chemin n'existe"
+  },
+  "videoExport": {
+    "noSteps": "Aucune étape à afficher"
   },
   "complexity_panel": {
     "title": "Analyse de Complexité",
@@ -175,10 +234,401 @@
     "close": "Fermer",
     "loading": "Chargement...",
     "not_available": "Implémentation Python Non Disponible",
-    "not_available_desc": "L'implémentation Python pour {{algorithm}} arrive bientôt !"
+    "not_available_desc": "L'implémentation Python pour {{algorithm}} arrive bientôt !",
+    "run": "Exécuter",
+    "rerun": "Réexécuter",
+    "reset": "Réinitialiser",
+    "cancel": "Annuler",
+    "running": "Exécution...",
+    "output": "Sortie",
+    "clear_output": "Effacer la sortie",
+    "resize_output": "Redimensionner le panneau de sortie",
+    "output_placeholder": "Exécutez le code pour voir la sortie ici.",
+    "loading_runtime": "Chargement du runtime Python...",
+    "timeout": "Délai dépassé",
+    "completed": "Terminé",
+    "error": "Erreur",
+    "test_cases": "Cas de test",
+    "tests_passed": "{{passed}}/{{total}} réussis",
+    "run_tests": "Exécuter les tests",
+    "no_test_cases": "Aucun cas de test pour cet algorithme.",
+    "edit_test_case": "Modifier le cas de test",
+    "delete_test_case": "Supprimer le cas de test",
+    "test_case_name": "Nom du cas de test",
+    "test_input": "Entrée (expression Python)",
+    "test_expected": "Sortie attendue (expression Python)",
+    "add_test_case": "Ajouter un cas de test",
+    "input_label": "Entrée :",
+    "expected_label": "Attendu :",
+    "error_label": "Erreur :",
+    "actual_label": "Obtenu :"
+  },
+  "insight_panel": {
+    "title": "Aperçu de l'Algorithme",
+    "close": "Fermer",
+    "viewInsight": "Voir l'Aperçu de l'Algorithme",
+    "insightLabel": "Aperçu",
+    "inventor": "Inventeur",
+    "year": "Année",
+    "unknown": "Inconnu",
+    "history": "Histoire",
+    "intuition": "Idée Principale",
+    "realWorldUses": "Applications Réelles",
+    "facts": "Faits Intéressants",
+    "videoComingSoon": "Vidéo bientôt disponible",
+    "noData": "Aucun aperçu supplémentaire disponible pour cet algorithme pour le moment.",
+    "algorithms": {
+      "bubbleSort": {
+        "history": "Le tri à bulles est l'un des premiers algorithmes de tri. Le terme a été popularisé par Iverson en 1962, bien que des algorithmes similaires soient apparus dans les années 1950. Malgré sa simplicité, il a servi de référence pendant des décennies de recherche sur le tri.",
+        "intuition": "Imaginez que vous parcourez répétitivement une liste de nombres. Chaque fois que vous trouvez deux nombres adjacents dans le mauvais ordre, vous les échangez. Après chaque passage complet, le plus grand nombre non trié 'remonte' à sa position correcte. Répétez jusqu'à ce qu'aucun échange ne soit nécessaire.",
+        "realWorldUses_0": "Enseignement et démonstrations académiques des concepts de tri",
+        "realWorldUses_1": "Détection d'une liste presque triée (variante avec arrêt anticipé)",
+        "realWorldUses_2": "Pipelines graphiques pour trier un très petit nombre d'éléments (ordre de profondeur des polygones)",
+        "facts_0": "Le nom 'Tri à Bulles' a été formellement inventé par Kenneth Iverson dans son livre de 1962 A Programming Language.",
+        "facts_1": "Malgré sa complexité moyenne O(n²), il effectue un optimal O(n) sur une entrée déjà triée avec la variante d'arrêt anticipé.",
+        "facts_2": "Donald Knuth l'a décrit comme 'non recommandé pour la plupart des usages' dans The Art of Computer Programming, mais il reste l'un des algorithmes les plus enseignés."
+      },
+      "quickSort": {
+        "history": "Inventé par Tony Hoare en 1959 alors qu'il était étudiant visiteur à l'Université d'État de Moscou, travaillant sur la traduction automatique. Il avait besoin de trier des mots pour un projet de dictionnaire russe-anglais. L'algorithme a été publié en 1961 et est resté l'un des algorithmes de tri pratiques les plus rapides pendant des décennies.",
+        "intuition": "Choisissez un élément comme 'pivot'. Réarrangez les autres éléments de sorte que tout ce qui est plus petit que le pivot aille à gauche et tout ce qui est plus grand aille à droite. Le pivot est maintenant à sa position correcte finale. Appliquez récursivement la même idée aux sous-tableaux gauche et droit. Diviser pour régner !",
+        "realWorldUses_0": "Tri par défaut dans de nombreuses bibliothèques standard (qsort en C, Arrays.sort en Java)",
+        "realWorldUses_1": "Moteurs de bases de données pour le tri en mémoire des résultats de requêtes",
+        "realWorldUses_2": "Noyaux de systèmes d'exploitation pour l'ordonnancement et les structures de gestion mémoire",
+        "realWorldUses_3": "Programmation compétitive comme tri polyvalent de référence",
+        "facts_0": "Tony Hoare a inventé le Tri Rapide à 25 ans. Il a remporté le Prix Turing en 1980.",
+        "facts_1": "La performance moyenne O(n log n) vient du pivot qui divise le tableau à peu près en deux à chaque fois.",
+        "facts_2": "Le pire cas O(n²) survient quand le pivot est toujours le plus petit ou le plus grand élément. En pratique, une sélection aléatoire du pivot résout le problème.",
+        "facts_3": "Le Tri Rapide n'est pas stable : les éléments égaux peuvent apparaître dans un ordre relatif différent après le tri."
+      },
+      "mergeSort": {
+        "history": "Le tri par fusion a été conçu par John von Neumann en 1945, ce qui en fait l'un des plus anciens algorithmes diviser-pour-régner. Il a été initialement conçu pour une utilisation efficace sur les premières bandes magnétiques, où l'accès séquentiel était la seule opération efficace.",
+        "intuition": "Divisez le tableau en deux moitiés, triez indépendamment chaque moitié (récursivement), puis fusionnez les deux moitiés triées en un seul résultat. Fusionner deux listes déjà triées est simple : comparez le début de chaque liste et choisissez le plus petit. La fusion est O(n) et la profondeur de récursion est O(log n).",
+        "realWorldUses_0": "Arrays.sort de Java pour les objets (utilise TimSort, un hybride du tri par fusion)",
+        "realWorldUses_1": "Tri externe de fichiers trop volumineux pour tenir en mémoire",
+        "realWorldUses_2": "Comptage des inversions dans un tableau, tâche fondamentale en analyse de données",
+        "realWorldUses_3": "Tri parallèle dans les systèmes distribués (chaque nœud trie un bloc, puis les blocs sont fusionnés)",
+        "facts_0": "Le tri par fusion a été l'un des premiers algorithmes conçus spécifiquement autour des contraintes du matériel de stockage sur bande.",
+        "facts_1": "C'est le seul algorithme simple O(n log n) qui est également stable (préserve l'ordre des éléments égaux).",
+        "facts_2": "John von Neumann est aussi connu pour l'architecture von Neumann, la conception sur laquelle sont construits la plupart des ordinateurs modernes.",
+        "facts_3": "TimSort, utilisé par Python et Java, est un hybride du tri par fusion et du tri par insertion optimisé pour les données du monde réel."
+      },
+      "insertionSort": {
+        "history": "Le tri par insertion est une technique de tri ancienne qui reflète la façon dont les gens trient naturellement les cartes à jouer dans leurs mains. Il a été utilisé de manière informelle pendant des siècles et formalisé en informatique dans les années 1950.",
+        "intuition": "Pensez à la façon dont vous trieriez une main de cartes. Vous ramassez les cartes une par une et insérez chaque nouvelle carte à sa position correcte parmi les cartes déjà triées. Dans la version informatique, vous scannez vers la gauche jusqu'à trouver le bon emplacement, en décalant les éléments au passage.",
+        "realWorldUses_0": "Utilisé comme cas de base pour les petits sous-tableaux dans TimSort et IntroSort",
+        "realWorldUses_1": "Tri des flux de données entrants en temps réel où les éléments arrivent un par un",
+        "realWorldUses_2": "Systèmes embarqués avec mémoire très limitée où la simplicité du code importe",
+        "facts_0": "Le tri par insertion est optimal pour des tailles d'entrée inférieures à environ 10–20 éléments, c'est pourquoi les algorithmes hybrides l'utilisent pour les petites partitions.",
+        "facts_1": "C'est un algorithme en ligne : il peut trier une liste au fur et à mesure de la réception des éléments sans avoir besoin de toute l'entrée au préalable.",
+        "facts_2": "Le nombre d'échanges est égal au nombre d'inversions dans l'entrée, une mesure utile en combinatoire."
+      },
+      "selectionSort": {
+        "history": "Le tri par sélection est l'un des algorithmes de tri les plus intuitifs, utilisant une stratégie qui précède les ordinateurs. Il fonctionne en trouvant répétitivement l'élément minimum restant et en le plaçant à sa position correcte.",
+        "intuition": "Divisez le tableau en une région triée (à gauche) et une région non triée. Scannez la région non triée pour trouver le plus petit élément, échangez-le avec le premier élément non trié, agrandissant ainsi la région triée d'un élément. Répétez jusqu'à ce que tout le tableau soit trié.",
+        "realWorldUses_0": "Situations où le nombre d'écritures doit être minimisé (mémoire flash, EEPROM)",
+        "realWorldUses_1": "Environnements d'enseignement où la simplicité est privilégiée sur les performances",
+        "realWorldUses_2": "Petits systèmes embarqués où la taille du code et le comportement prévisible sont critiques",
+        "facts_0": "Le tri par sélection effectue toujours exactement n(n-1)/2 comparaisons quel que soit l'ordre d'entrée. Il n'est pas adaptatif.",
+        "facts_1": "Il effectue au maximum n-1 échanges, ce qui lui donne un avantage sur le tri à bulles sur les supports où les écritures sont coûteuses.",
+        "facts_2": "Le tri par sélection n'est pas stable dans sa forme standard."
+      },
+      "heapSort": {
+        "history": "Le tri par tas a été inventé par J. W. J. Williams en 1964, qui a également introduit la structure de données tas dans le même article. Robert Floyd a ensuite amélioré la phase de construction du tas, réduisant son temps à O(n).",
+        "intuition": "Un tas-max est un arbre où chaque parent est plus grand que ses enfants. Réarrangez d'abord le tableau en un tas-max. Ensuite, extrayez répétitivement le plus grand élément (la racine), placez-le à la fin du tableau et restaurez la propriété du tas. Le résultat est un tableau trié.",
+        "realWorldUses_0": "Files de priorité dans les ordonnanceurs de systèmes d'exploitation",
+        "realWorldUses_1": "Algorithmes de graphes comme Dijkstra et Prim nécessitant une extraction efficace du minimum/maximum",
+        "realWorldUses_2": "Systèmes temps réel embarqués nécessitant une performance garantie O(n log n) dans le pire des cas",
+        "facts_0": "Le tri par tas est en place et atteint O(n log n) dans le pire cas, ce que le tri rapide ne peut garantir.",
+        "facts_1": "La structure de données tas inventée pour le tri par tas est le fondement des files de priorité utilisées partout en informatique.",
+        "facts_2": "Malgré son optimalité théorique, le tri par tas est rarement le plus rapide en pratique en raison d'une mauvaise localité de cache."
+      },
+      "shellSort": {
+        "history": "Le tri de Shell a été inventé par Donald Shell en 1959 et publié dans Communications of the ACM. C'était l'un des premiers algorithmes à franchir la barrière O(n²) pour le tri à usage général, même sans preuve formelle à l'époque.",
+        "intuition": "Le tri de Shell est une généralisation du tri par insertion. Au lieu de comparer des éléments adjacents, il compare des éléments séparés par un écart. L'écart commence grand (triant des éléments éloignés) et rétrécit progressivement jusqu'à 1 (un passage final de tri par insertion). Les éléments étant déplacés sur de grandes distances tôt, les passages finaux sont très efficaces.",
+        "realWorldUses_0": "Systèmes embarqués où la taille du code importe mais O(n²) est trop lent",
+        "realWorldUses_1": "Tri de jeux de données de taille moyenne où une implémentation simple est préférée",
+        "realWorldUses_2": "La bibliothèque uClibc du noyau Linux utilise le tri de Shell pour sa simplicité et ses performances raisonnables",
+        "facts_0": "La séquence d'écarts optimale pour le tri de Shell est encore un problème de recherche ouvert en informatique.",
+        "facts_1": "Avec la séquence d'écarts de Knuth (1, 4, 13, 40, ...) le cas moyen est approximativement O(n^1.5).",
+        "facts_2": "Donald Shell a publié l'algorithme à 29 ans ; c'était l'un des articles algorithmiques marquants de l'époque."
+      },
+      "radixSort": {
+        "history": "Le tri radix remonte à 1887 quand Herman Hollerith l'utilisait sur des machines à cartes perforées. Il a été formalisé pour les ordinateurs dans les années 1950. Sa nature non comparative le rend théoriquement plus rapide que les tris par comparaison pour les données entières.",
+        "intuition": "Triez les nombres chiffre par chiffre, du chiffre le moins significatif au plus significatif. Utilisez un tri stable (comme le tri par comptage) à chaque position de chiffre. Après traitement de toutes les positions, les nombres sont complètement triés. L'idée clé : trier chiffre par chiffre de manière stable rend l'ensemble correct.",
+        "realWorldUses_0": "Tri de grands tableaux d'entiers ou de chaînes de longueur fixe dans les bases de données",
+        "realWorldUses_1": "Routage de paquets réseau et tri d'adresses IP",
+        "realWorldUses_2": "Construction de tableaux de suffixes en bioinformatique et traitement de texte",
+        "facts_0": "Le tri radix est l'un des plus anciens algorithmes de tri, antérieur aux ordinateurs programmables.",
+        "facts_1": "Son temps linéaire O(nk) est atteint sans jamais comparer deux éléments directement.",
+        "facts_2": "L'algorithme fonctionne en variantes LSD (chiffre le moins significatif d'abord) et MSD (chiffre le plus significatif d'abord)."
+      },
+      "countingSort": {
+        "history": "Le tri par comptage a été décrit par Harold H. Seward en 1954. Il fonctionne en comptant les occurrences de chaque valeur et en utilisant cette information pour placer chaque élément directement à sa position triée correcte.",
+        "intuition": "Comptez combien de fois chaque valeur apparaît dans l'entrée. Calculez ensuite les comptes cumulatifs pour déterminer où commence le bloc trié de chaque valeur. Placez finalement chaque élément à sa position de sortie correcte. Il n'y a pas de comparaisons entre éléments, seulement de l'arithmétique sur les comptes.",
+        "realWorldUses_0": "Tri de caractères ou de petits entiers dans des pipelines de traitement de texte",
+        "realWorldUses_1": "Utilisé comme sous-routine dans le tri radix pour chaque position de chiffre",
+        "realWorldUses_2": "Calcul d'histogrammes et analyse de fréquences en traitement d'images",
+        "facts_0": "Le tri par comptage atteint un temps linéaire O(n + k), mieux que tout tri par comparaison pour les petites plages.",
+        "facts_1": "C'est un tri stable, ce qui est essentiel pour son utilisation dans le tri radix.",
+        "facts_2": "L'algorithme nécessite O(k) espace supplémentaire pour le tableau de comptage, le rendant impraticable quand k >> n."
+      },
+      "bucketSort": {
+        "history": "Le tri par seaux est un algorithme de tri par distribution dont les origines conceptuelles remontent aux débuts de l'informatique. Il distribue les éléments dans des seaux, trie chaque seau et concatène les résultats.",
+        "intuition": "Imaginez distribuer du courrier dans des bacs étiquetés par région. Chaque bac contient le courrier pour une plage spécifique d'adresses. Vous triez chaque bac indépendamment, puis collectez les bacs dans l'ordre. Le tri par seaux applique la même idée aux nombres distribués sur une plage connue.",
+        "realWorldUses_0": "Tri des nombres à virgule flottante uniformément distribués dans [0, 1)",
+        "realWorldUses_1": "Organisation des données dans les systèmes d'information géographique par plages de coordonnées",
+        "realWorldUses_2": "Tri efficace en mémoire externe quand les données peuvent être partitionnées par plage de valeurs",
+        "facts_0": "Le tri par seaux atteint en moyenne O(n + k) quand l'entrée est uniformément distribuée.",
+        "facts_1": "Le pire cas dégénère en O(n²) si tous les éléments tombent dans un seul seau.",
+        "facts_2": "Ce n'est pas un tri par comparaison. Les éléments sont placés par valeur, pas par comparaison par paires."
+      },
+      "cycleSort": {
+        "history": "Le tri par cycle a été formalisé par Brendan Kehoe vers 1990. Il est théoriquement optimal pour minimiser les écritures, effectuant exactement n-1 opérations d'écriture dans le pire des cas, moins que tout autre algorithme de tri.",
+        "intuition": "Toute permutation d'éléments peut être décomposée en cycles. Un cycle indique : l'élément A doit aller là où B est, B doit aller là où C est, ..., et le dernier élément doit aller là où A était. Le tri par cycle trace chaque cycle et effectue exactement le nombre minimum d'écritures nécessaires pour le résoudre.",
+        "realWorldUses_0": "Dispositifs de mémoire flash où les écritures sont coûteuses et dégradent le matériel",
+        "realWorldUses_1": "Tri EEPROM où les cycles d'écriture sont limités",
+        "realWorldUses_2": "Démonstrations éducatives de l'optimisation de la complexité des écritures",
+        "facts_0": "Le tri par cycle est le seul algorithme de tri prouvé optimal en nombre d'écritures.",
+        "facts_1": "Le nombre d'écritures est n moins le nombre de cycles dans la permutation.",
+        "facts_2": "Malgré sa propriété unique, le tri par cycle est rarement utilisé en pratique en raison de sa complexité temporelle O(n²)."
+      },
+      "combSort": {
+        "history": "Le tri à peigne a été inventé par Włodzimierz Dobosiewicz en 1980 et popularisé par Stephen Lacey et Richard Box dans un article de Byte Magazine de 1991. Il améliore le tri à bulles en utilisant un écart rétrécissant.",
+        "intuition": "Le tri à peigne étend le tri à bulles avec un changement clé : au lieu de comparer des éléments adjacents (écart = 1), commencez par un grand écart et réduisez-le d'un facteur 1,3 à chaque passage. Cela permet de déplacer rapidement les petites valeurs proches de la fin (appelées 'tortues') vers le début, ce qui est la faiblesse clé du tri à bulles.",
+        "realWorldUses_0": "Tri en place simple où le problème des 'tortues' du tri à bulles cause de mauvaises performances",
+        "realWorldUses_1": "Systèmes embarqués où un cas moyen meilleur que O(n²) est souhaité avec un code minimal",
+        "realWorldUses_2": "Contextes éducatifs pour démontrer les améliorations basées sur les séquences d'écarts",
+        "facts_0": "Le facteur de réduction de ~1,3 a été déterminé empiriquement comme étant quasi-optimal.",
+        "facts_1": "Le tri à peigne élimine le 'problème des tortues' qui ralentit le tri à bulles sur certaines entrées.",
+        "facts_2": "Le pire cas reste O(n²), mais les performances du cas moyen sont significativement meilleures."
+      },
+      "timSort": {
+        "history": "TimSort a été conçu et implémenté par Tim Peters en 2002 pour le langage de programmation Python. Il a été conçu pour les données du monde réel, qui sont souvent partiellement triées. Aujourd'hui, c'est le tri par défaut dans Python, Java (pour les objets), Swift, Android et plusieurs autres plateformes.",
+        "intuition": "TimSort recherche des sous-séquences naturellement ordonnées ('runs') dans l'entrée. Si un run est trop court, il l'étend avec le tri par insertion. Ensuite, il fusionne ces runs en utilisant une stratégie empruntée au tri par fusion, avec une comptabilité soigneuse pour éviter le travail redondant sur les données déjà ordonnées.",
+        "realWorldUses_0": "Les fonctions sort() et sorted() intégrées de Python",
+        "realWorldUses_1": "Arrays.sort() de Java pour les objets et Collections.sort()",
+        "realWorldUses_2": "Implémentation de tri de la plateforme Android",
+        "realWorldUses_3": "Tout jeu de données du monde réel avec des séquences ordonnées naturellement",
+        "facts_0": "Tim Peters a conçu TimSort spécifiquement parce que les données du monde réel sont rarement totalement aléatoires.",
+        "facts_1": "TimSort est à la fois stable et adaptatif. Il est plus rapide que O(n log n) sur les entrées partiellement triées.",
+        "facts_2": "Il a été formellement prouvé correct et ses garanties de pire cas ont été vérifiées par des chercheurs académiques en 2015.",
+        "facts_3": "Le nom 'TimSort' est informel ; Tim Peters l'a suggéré en plaisantant quand l'algorithme a été adopté dans Java."
+      },
+      "bogoSort": {
+        "history": "Le tri Bogo (aussi appelé tri par permutation ou tri stupide) n'a pas d'inventeur sérieux ni de date d'origine. C'est un algorithme de plaisanterie du folklore informatique, utilisé pour illustrer l'absurdité des approches non analytiques.",
+        "intuition": "Mélangez aléatoirement tout le tableau. Vérifiez s'il est trié. Sinon, mélangez à nouveau. Répétez indéfiniment. L'algorithme se termine finalement avec une probabilité 1 (théoriquement), mais en pratique il est astronomiquement improbable de trier même un petit tableau rapidement.",
+        "realWorldUses_0": "Démonstrations en classe sur l'importance de l'analyse algorithmique",
+        "realWorldUses_1": "Exemples humoristiques dans les manuels et cours d'algorithmique",
+        "facts_0": "Le nombre moyen de mélanges nécessaires pour trier n éléments est n! (factoriel), qui croît plus vite que tout polynôme ou exponentielle.",
+        "facts_1": "Le pire cas est techniquement non borné. L'algorithme pourrait ne jamais se terminer.",
+        "facts_2": "Le tri Bogo a la distinction d'être l'algorithme de tri le moins efficace communément discuté en académie."
+      },
+      "bfs": {
+        "history": "La recherche en largeur (BFS) a été décrite pour la première fois par Konrad Zuse dans sa thèse de 1945. Edward F. Moore l'a redécouverte indépendamment en 1959 pour trouver les chemins les plus courts dans des labyrinthes. C. Y. Lee l'a ensuite appliquée au routage de circuits en 1961.",
+        "intuition": "Commencez à un nœud source. Explorez d'abord tous ses voisins immédiats, puis tous leurs voisins, puis les leurs, en s'étendant vers l'extérieur par 'vagues' concentriques. Cette exploration niveau par niveau garantit que la première fois que vous atteignez une destination, vous avez pris le chemin le plus court.",
+        "realWorldUses_0": "Trouver le chemin le plus court dans des réseaux non pondérés (graphes sociaux, routage)",
+        "realWorldUses_1": "Robots d'exploration web (parcours du web en largeur depuis une URL de départ)",
+        "realWorldUses_2": "Parcours en ordre de niveau des arbres dans les compilateurs et parseurs XML",
+        "realWorldUses_3": "Diffusion dans les réseaux pair-à-pair (Bitcoin, découverte de voisins BitTorrent)",
+        "facts_0": "BFS garantit le chemin le plus court dans les graphes non pondérés, une propriété non partagée par DFS.",
+        "facts_1": "L'algorithme a été réinventé plusieurs fois indépendamment, montrant sa naturalité et son utilité.",
+        "facts_2": "BFS est la base de nombreux autres algorithmes dont l'algorithme de Dijkstra (une généralisation pondérée).",
+        "facts_3": "Son utilisation mémoire est O(V) dans le pire cas. Il doit stocker tous les nœuds de la frontière actuelle."
+      },
+      "dijkstra": {
+        "history": "Edsger W. Dijkstra a conçu cet algorithme en 1956 et l'a publié en 1959. Il l'a conçu en environ 20 minutes dans un café d'Amsterdam, le qualifiant plus tard d'une de ses créations les plus élégantes. Il était initialement destiné à démontrer les capacités de l'ordinateur ARMAC.",
+        "intuition": "Maintenez un ensemble de nœuds visités et une file de priorité de distances provisoires. Développez toujours le nœud non visité avec la plus petite distance connue. Quand vous développez un nœud, vérifiez si passer par lui offre un chemin plus court vers ses voisins. Répétez jusqu'à atteindre la destination.",
+        "realWorldUses_0": "Logiciels GPS et cartographie (calcul d'itinéraire Google Maps, Apple Maps)",
+        "realWorldUses_1": "Protocoles de routage Internet (OSPF, Open Shortest Path First)",
+        "realWorldUses_2": "Optimisation des réseaux aériens et logistiques",
+        "realWorldUses_3": "Planification de mouvement de robots dans des environnements connus",
+        "facts_0": "Dijkstra a conçu l'algorithme en ~20 minutes sans crayon ni papier.",
+        "facts_1": "L'algorithme échoue avec des poids négatifs. Utilisez Bellman-Ford dans ce cas.",
+        "facts_2": "Dijkstra a reçu le Prix Turing en 1972, l'une des plus hautes distinctions en informatique.",
+        "facts_3": "Avec un tas de Fibonacci, Dijkstra s'exécute en O(E + V log V), optimal pour les graphes denses."
+      },
+      "aStar": {
+        "history": "A* a été développé en 1968 par Peter Hart, Nils Nilsson et Bertram Raphael au Stanford Research Institute dans le cadre du projet robotique Shakey, l'un des premiers robots IA. Ils avaient besoin d'un algorithme de recherche de chemin général et efficace pour guider le robot dans l'espace physique.",
+        "intuition": "A* étend Dijkstra en ajoutant une heuristique : une estimation de la distance du nœud actuel à l'objectif. Pour chaque nœud, calculez f(n) = g(n) + h(n), où g(n) est le coût réel depuis le départ et h(n) est le coût estimé jusqu'à l'objectif. Développez toujours le nœud avec le plus petit f(n). Une bonne heuristique focalise la recherche vers l'objectif.",
+        "realWorldUses_0": "Recherche de chemin dans les jeux vidéo (pratiquement tous les jeux commerciaux utilisent A* ou une variante)",
+        "realWorldUses_1": "Navigation robotique et planification de chemin pour véhicules autonomes",
+        "realWorldUses_2": "Routage cartographique dans les applications de navigation avec pénalités de virage et trafic",
+        "realWorldUses_3": "Résolution de puzzles (8-puzzle, 15-puzzle, problèmes de planification en IA)",
+        "facts_0": "A* est optimal et complet : il trouvera toujours le chemin le plus court s'il en existe un, avec une heuristique admissible.",
+        "facts_1": "L'heuristique de distance de Manhattan est admissible pour la recherche de chemin sur grille sans diagonales.",
+        "facts_2": "A* dégénère en Dijkstra quand h(n) = 0 et en Recherche Gloutonne quand g(n) = 0.",
+        "facts_3": "Le projet robot Shakey où A* a été créé était une étape marquante dans l'histoire de l'intelligence artificielle."
+      },
+      "bidirectionalSearch": {
+        "history": "La recherche bidirectionnelle a été décrite par Pohl en 1969 comme moyen de réduire drastiquement l'espace de recherche dans les grands graphes. En exécutant deux recherches BFS simultanées, une depuis le départ et une depuis l'objectif, les frontières se rejoignent au milieu, couvrant environ la racine carrée du total des nœuds.",
+        "intuition": "Exécutez deux recherches BFS simultanément : une en avant depuis le départ et une en arrière depuis l'objectif. Les recherches s'étendent niveau par niveau, chacune maintenant ses propres ensembles visités. Quand un nœud est découvert par les deux recherches (les frontières se croisent), un chemin complet est trouvé en combinant les deux chemins partiels.",
+        "realWorldUses_0": "Requêtes de chemin le plus court dans les grands réseaux sociaux (ex: six degrés de séparation)",
+        "realWorldUses_1": "Planification d'itinéraires avec départ et destination connus",
+        "realWorldUses_2": "IA de jeux pour la recherche de chemin dans de très grandes cartes",
+        "facts_0": "BFS bidirectionnel explore O(b^(d/2)) nœuds au lieu de O(b^d), exponentiellement moins pour les recherches profondes.",
+        "facts_1": "Garantir le chemin le plus court nécessite une synchronisation soigneuse du moment où les frontières se rejoignent.",
+        "facts_2": "Dijkstra bidirectionnel était utilisé dans le routage original de Google Maps avant d'être remplacé par des techniques plus sophistiquées."
+      },
+      "greedyBestFirstSearch": {
+        "history": "La recherche gloutonne du meilleur d'abord est une simplification de A*. En ignorant le coût réel g(n) et en s'étendant uniquement sur la base de l'heuristique h(n), elle privilégie la vitesse sur l'optimalité. Le compromis est qu'elle peut trouver un chemin non optimal.",
+        "intuition": "Développez toujours le nœud qui semble le plus proche de l'objectif selon votre heuristique. Ne vous préoccupez pas de la distance déjà parcourue ; concentrez-vous simplement sur la distance estimée restante. Cette avidité la rend rapide, mais peut mener vers des impasses ou des chemins sous-optimaux.",
+        "realWorldUses_0": "IA de jeux en temps réel où trouver n'importe quel chemin rapidement est plus précieux que le chemin optimal",
+        "realWorldUses_1": "Navigation dans les grands environnements ouverts où les guidances heuristiques sont fiables",
+        "realWorldUses_2": "Passe initiale de recherche de chemin dans les planificateurs multi-étapes où l'optimalité est affinée ensuite",
+        "facts_0": "La recherche gloutonne n'est pas garantie de trouver le chemin le plus court.",
+        "facts_1": "Elle peut étendre beaucoup moins de nœuds que A* ou Dijkstra quand l'heuristique est très précise.",
+        "facts_2": "Avec une heuristique parfaite, la recherche gloutonne va directement à l'objectif sans explorer les nœuds non pertinents."
+      },
+      "jumpPointSearch": {
+        "history": "La recherche par points de saut a été inventée par Daniel Harabor et Alban Grastien et présentée à AAAI 2011. Elle a été conçue spécifiquement pour les cartes de grille à coût uniforme, la représentation standard dans la navigation de jeux, et peut être plus d'un ordre de grandeur plus rapide que A* sur ces cartes.",
+        "intuition": "Sur une grille à coût uniforme, de nombreux chemins sont symétriques (même coût mais routes différentes). JPS élimine cette symétrie en avançant tout droit ou en diagonale jusqu'à atteindre un 'point de saut', un nœud avec des voisins forcés non accessibles par le chemin en ligne droite. Seuls les points de saut sont ajoutés à l'ensemble ouvert.",
+        "realWorldUses_0": "Moteurs de recherche de chemin dans les jeux de stratégie en temps réel (RTS)",
+        "realWorldUses_1": "Navigation robotique dans les environnements cartographiés en grille",
+        "realWorldUses_2": "Recherche de chemin à grande échelle avec des centaines d'agents simultanés",
+        "facts_0": "JPS peut être 10 à 100 fois plus rapide que A* standard sur les cartes de grille ouvertes.",
+        "facts_1": "Il ne fonctionne correctement que sur les grilles à coût uniforme (tous les coûts de déplacement égaux).",
+        "facts_2": "L'innovation clé est d'identifier et de sauter les chemins symétriques, réduisant drastiquement l'espace de recherche."
+      },
+      "bellmanFord": {
+        "history": "L'algorithme de Bellman-Ford a été développé indépendamment par Richard Bellman et Lester Ford Jr. en 1956–1958. Il résout le problème du plus court chemin à source unique pour les graphes avec des poids d'arêtes négatifs, un cas où l'algorithme de Dijkstra échoue.",
+        "intuition": "Relâchez toutes les arêtes à plusieurs reprises. À chaque relaxation, mettez à jour l'estimation de distance vers un nœud si passer par son voisin donne un chemin plus court. Après V-1 itérations (V = nombre de sommets), tous les plus courts chemins sont trouvés. Si les distances changent encore lors d'une V-ème itération, le graphe contient un cycle de poids négatif.",
+        "realWorldUses_0": "Protocoles de routage à vecteur de distance (RIP, Routing Information Protocol)",
+        "realWorldUses_1": "Détection d'arbitrage de devises (cycles négatifs dans les graphes de taux de change)",
+        "realWorldUses_2": "Analyse de topologie réseau avec des coûts pouvant être négatifs (ex: subventions)",
+        "facts_0": "Bellman-Ford fonctionne avec des poids d'arêtes négatifs, contrairement à Dijkstra.",
+        "facts_1": "Sa complexité O(VE) le rend plus lent que Dijkstra mais plus général.",
+        "facts_2": "Bellman-Ford peut détecter les cycles de poids négatifs. Aucun chemin le plus court n'existe en leur présence."
+      },
+      "idaStar": {
+        "history": "IDA* (A* à approfondissement itératif) a été inventé par Richard Korf en 1985 comme alternative économe en mémoire à A*. Alors que A* stocke tous les nœuds générés en mémoire, IDA* utilise la recherche en profondeur avec des seuils de coût croissants de manière itérative, nécessitant seulement O(d) de mémoire.",
+        "intuition": "Effectuez une recherche en profondeur avec un seuil de coût. Commencez avec la valeur heuristique de la racine comme seuil. Explorez les chemins dont le coût total f(n) = g(n) + h(n) ne dépasse pas le seuil. Si l'objectif n'est pas trouvé, augmentez le seuil au coût minimum qui l'a dépassé lors de la dernière itération. Répétez.",
+        "realWorldUses_0": "Résolution de puzzles avec de grands espaces d'états (15-puzzle, Rubik's Cube)",
+        "realWorldUses_1": "Problèmes de planification IA où la mémoire est limitée",
+        "realWorldUses_2": "Recherche dans les arbres de jeux où l'utilisation mémoire en largeur est prohibitive",
+        "facts_0": "IDA* utilise O(d) de mémoire, linéaire en la profondeur de la solution, contre l'usage mémoire exponentiel de A*.",
+        "facts_1": "Comme A*, IDA* est optimal et complet avec une heuristique admissible.",
+        "facts_2": "Le compromis est le temps : IDA* peut ré-étendre des nœuds plusieurs fois, contrairement à A* qui met en cache les états visités."
+      },
+      "dStarLite": {
+        "history": "D* Lite a été développé par Sven Koenig et Maxim Likhachev en 2002 comme version simplifiée et améliorée de l'algorithme D* original d'Anthony Stentz (1994). Il est conçu pour les environnements dynamiques où le graphe change au fur et à mesure que l'agent se déplace.",
+        "intuition": "D* Lite planifie un chemin du départ à l'objectif (comme A*). Lorsque le robot se déplace et découvre de nouveaux obstacles ou des coûts modifiés, il met à jour efficacement le plan existant plutôt que de replanifier depuis zéro. Il maintient des informations de cohérence sur quelles parties du plan sont encore valides.",
+        "realWorldUses_0": "Navigation des rovers Mars de la NASA (Spirit et Opportunity utilisaient des algorithmes de la famille D*)",
+        "realWorldUses_1": "Navigation de robots terrestres autonomes dans des environnements dynamiques",
+        "realWorldUses_2": "Exploration de terrains inconnus avec construction incrémentale de carte",
+        "facts_0": "D* Lite a été utilisé sur les rovers Mars de la NASA pour une vraie navigation de mission.",
+        "facts_1": "Le 'Lite' dans D* Lite signifie qu'il est plus simple à implémenter et à comprendre que D* original.",
+        "facts_2": "Il est significativement plus efficace que de replanifier depuis zéro à chaque changement."
+      },
+      "linearSearch": {
+        "history": "La recherche séquentielle est aussi ancienne que les listes : on parcourt du début jusqu'à trouver la cible ou épuiser les éléments. Tout langage généraliste la présente comme base avant la dichotomie sur données triées.",
+        "intuition": "Commencer à l'indice 0. Si l'élément égale la cible, arrêter. Sinon passer à 1, puis 2, etc. Au pire on inspecte chaque position une fois — temps O(n) et espace supplémentaire O(1). Si la cible est au début, arrêt immédiat — meilleur cas O(1).",
+        "realWorldUses_0": "Petits tableaux ou listes où trier ou indexer d'abord ne vaut pas le coût",
+        "realWorldUses_1": "Structures non triées ou chaînées où l'on ne peut parcourir qu'en avant",
+        "realWorldUses_2": "Expliquer pourquoi les astuces sur tableaux triés (dichotomie) réduisent les comparaisons",
+        "facts_0": "La recherche linéaire fonctionne sur tout ordre ; Bayan Flow génère toutefois des tableaux triés en mode Recherche pour comparer équitablement les algorithmes.",
+        "facts_1": "Le nombre de comparaisons au pire croît linéairement avec n ; en moyenne c'est encore Θ(n) si la cible est équiprobable à chaque indice.",
+        "facts_2": "C'est le moyen le plus simple de tester la présence d'un élément sans hypothèse de tri."
+      },
+      "binarySearch": {
+        "history": "Réduire de moitié un intervalle trié apparaît dès les débuts de l'informatique. John Mauchly décrit en 1946 une procédure proche de la dichotomie sur bande ordonnée. Avec la mémoire à accès aléatoire et les tables triées, la forme itérative à deux indices est devenue l'algorithme de référence.",
+        "intuition": "On garde une fenêtre [gauche, droite] où la cible peut encore se trouver. On compare la cible à l'élément du milieu : égalité → terminé ; sinon on élimine la moitié gauche ou droite selon l'ordre. À chaque étape on supprime environ la moitié des indices restants, donc au plus environ log₂(n) comparaisons.",
+        "realWorldUses_0": "Recherches sur index de base de données triés et plages de clés ordonnées",
+        "realWorldUses_1": "Fonctions de bibliothèque (par ex. bisect en Python, lower_bound en C++)",
+        "realWorldUses_2": "Trouver une position d'insertion pour conserver des tableaux ou listes triés",
+        "realWorldUses_3": "Jeux, simulations et API interrogeant des seuils numériques ordonnés",
+        "facts_0": "La dichotomie est en O(log n) dans le temps et O(1) en mémoire supplémentaire (version itérative classique).",
+        "facts_1": "Elle nécessite des données triées (ou un ordre total où les comparaisons au « milieu » sont valides).",
+        "facts_2": "Le dépassement d'entier dans milieu = (gauche + droite) / 2 est un piège classique ; utiliser gauche + (droite - gauche) // 2 si besoin.",
+        "facts_3": "Jon Bentley a souligné que beaucoup de programmeurs échouent encore à écrire une dichotomie correcte du premier coup."
+      },
+      "ternarySearch": {
+        "history": "Partager un intervalle trié avec plus d'une sonde par itération est une étape pédagogique classique entre le balayage linéaire et la dichotomie. La partition en trois parties avec deux sondes sur tableaux figure dans de nombreux manuels sous le nom de « recherche ternaire », aux côtés de la version sur fonctions unimodales continues.",
+        "intuition": "On conserve une fenêtre [gauche, droite] où la cible peut encore se trouver. On place deux indices vers le premier et le deuxième tiers de la fenêtre, on compare la cible aux deux valeurs, puis on élimine au moins le tiers de l'intervalle qui ne peut pas la contenir (ou le tiers central si la cible se situe entre les deux sondes). Chaque itération fait deux comparaisons ; la fenêtre rétrécit toutefois de façon logarithmique, donc l'algorithme reste en O(log n) au pire.",
+        "realWorldUses_0": "Montrer comment deux pivots découpent visuellement l'intervalle de recherche en trois segments",
+        "realWorldUses_1": "Contraster avec la dichotomie et son unique indice médian sur le même modèle de tableau trié",
+        "realWorldUses_2": "Préparer la recherche ternaire sur domaine continu pour fonctions unimodales (problème différent, idée de partage identique)",
+        "realWorldUses_3": "Discuter du nombre de comparaisons par rapport à la classe asymptotique (deux comparaisons par étape contre une en dichotomie)",
+        "facts_0": "La recherche ternaire sur tableau trié est en O(log n) dans le temps et O(1) en mémoire supplémentaire, comme la dichotomie au sens asymptotique.",
+        "facts_1": "Elle exige des données triées (ordre croissant) pour que les comparaisons aux deux sondes aient un sens.",
+        "facts_2": "À chaque itération on compare la cible à deux éléments (indices décalés d'environ ⌊(droite−gauche)/3⌋), pas à un seul milieu.",
+        "facts_3": "La dichotomie gagne en général en nombre de comparaisons ; la recherche ternaire met en avant une autre façon de partitionner le même espace ordonné."
+      },
+      "jumpSearch": {
+        "history": "La recherche par sauts sur tableaux triés combine des avances par blocs et une fin linéaire courte. On l'enseigne souvent à côté de la dichotomie pour comparer des complexités en √n et en logarithme.",
+        "intuition": "On avance par blocs d'environ √n indices et on compare le bout de chaque bloc à la cible. Quand ce bout est au moins égal à la cible, on arrête les sauts et on parcourt vers l'avant depuis le début du bloc. Au pire il y a O(√n) sauts et au plus √n étapes dans le dernier segment.",
+        "realWorldUses_0": "Comparer en cours les approches par sauts et par dichotomie sur des données triées",
+        "realWorldUses_1": "Systèmes où l'accès séquentiel après un saut grossier coûte moins cher que des accès aléatoires",
+        "realWorldUses_2": "Donner une intuition des algorithmes en √n avant la dichotomie sur des histoires de bandes ou de blocs",
+        "realWorldUses_3": "Cours jumelant recherche par sauts et dichotomie pour illustrer les classes de complexité",
+        "facts_0": "La recherche par sauts est en O(√n) dans le temps et O(1) en mémoire supplémentaire sur un tableau trié.",
+        "facts_1": "Le pas de saut est en général ⌊√n⌋ pour équilibrer le nombre de sauts et le balayage final.",
+        "facts_2": "La dichotomie utilise souvent moins de comparaisons ; la recherche par sauts illustre un autre compromis temps–structure.",
+        "facts_3": "Comme la dichotomie, elle exige des données triées (ou indexées en ordre trié)."
+      },
+      "interpolationSearch": {
+        "history": "La recherche par interpolation a été publiée par W. W. Peterson en 1957 pour exploiter un espacement de clés à peu près uniforme dans les tables triées. Elle reste un exemple classique pour montrer comment la distribution change le coût moyen.",
+        "intuition": "Au lieu de tester l'indice du milieu, on estime où se situerait la cible si les valeurs augmentaient régulièrement entre les bornes. On projette le rang de la cible dans l'espace des valeurs vers un indice, on le borne, on compare, puis on réduit l'intervalle. Quand les clés sont à peu près uniformes, les sondes convergent très vite ; si les valeurs sont groupées ou les écarts irréguliers, l'estimation peut se tromper et le comportement peut se rapprocher du linéaire.",
+        "realWorldUses_0": "Index numériques ordonnés et tables statiques dont les clés sont assez bien réparties",
+        "realWorldUses_1": "Comparer en cours la recherche au milieu et la recherche guidée par les valeurs",
+        "realWorldUses_2": "Illustrer un coût moyen en O(log log n) et un pire cas en O(n) sur la même interface de tableau trié",
+        "realWorldUses_3": "Préparer des idées d'extrapolation et d'interpolation dans les structures d'index et les bases de données",
+        "facts_0": "Le coût moyen peut être d'environ O(log log n) avec des clés uniformes ; le pire cas est en O(n).",
+        "facts_1": "L'indice de sonde utilise à la fois les valeurs et les indices, contrairement au simple partage d'indices de la dichotomie.",
+        "facts_2": "Les doublons ou les grappes de valeurs rendent l'interpolation moins fiable ; la dichotomie reste en O(log n) quelle que soit la distribution.",
+        "facts_3": "Les cas où arr[lo] === arr[hi] évitent une division par zéro avant comparaison."
+      },
+      "exponentialSearch": {
+        "history": "La recherche exponentielle (recherche par doublement) est un algorithme en deux phases classique sur données triées : encadrer la cible en testant des indices qui croissent en puissances de deux, puis terminer par une dichotomie dans cet intervalle. On la trouve dans les cours sur la recherche non bornée et comme brique lorsque la taille du tableau est inconnue ou très grande.",
+        "intuition": "On avance en doublant l’indice à chaque fois (1, 2, 4, 8, …) jusqu’à ce que la valeur à cet indice soit au moins la cible ou qu’on atteigne la fin du tableau. Cela encadre la cible en O(log i) sondes lorsque la réponse est près de l’indice i. Ensuite, on applique la dichotomie ordinaire sur l’intervalle borné — encore un nombre logarithmique d’étapes dans cette fenêtre.",
+        "realWorldUses_0": "Recherche dans des flux ou listes triées dont la longueur est inconnue ou très grande",
+        "realWorldUses_1": "Enseigner la combinaison encadrement + dichotomie",
+"realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
+        "realWorldUses_3": "Bases pour des variantes « galloping » dans des fusions et des recherches adaptatives",
+        "facts_0": "Sur des données triées non bornées, trouver une cible à l’indice i coûte O(log i) en phase de doublement plus O(log i) pour la dichotomie sur l’intervalle — O(log i) au total.",
+        "facts_1": "Sur un tableau fini de taille n, le pire cas reste en O(log n), comme la dichotomie, avec une phase de doublement avant le premier partage.",
+        "facts_2": "Il faut des valeurs triées (croissantes) pour que les comparaisons indiquent quel côté conserver.",
+        "facts_3": "Après le doublement, l'intervalle de recherche est [⌊bound/2⌋, min(bound, n−1)] avant que la dichotomie ne le rétrécisse."
+      },
+      "fibonacciSearch": {
+        "history": "La recherche de Fibonacci utilise des nombres de Fibonacci pour choisir les positions de sonde sur un tableau trié, sans division dans la boucle principale. C'est un exemple classique en cours aux côtés de la dichotomie pour parler de partage selon le nombre d'or.",
+        "intuition": "On construit le plus petit nombre de Fibonacci au moins égal à n+1 pour dimensionner la première fenêtre. Chaque sonde est à décalage plus le plus petit des trois Fibonacci courants. Si la valeur est trop petite, on fait glisser la fenêtre vers la droite ; si trop grande, on réduit le triple Fibonacci pour restreindre la plage. Le rapport de partage suit la récurrence de Fibonacci, donc la fenêtre se réduit logarithmiquement.",
+        "realWorldUses_0": "Enseigner une recherche sans division et comparer les partages Fibonacci au milieu de la dichotomie",
+        "realWorldUses_1": "Évoquer des modèles de coût historiques où la division était plus chère que l'addition et la comparaison",
+        "realWorldUses_2": "Souligner qu'une recherche en O(log n) ne nécessite pas de couper l'indice par deux",
+        "realWorldUses_3": "Coupler avec la théorie des nombres (suite de Fibonacci, nombre d'or) en cursus d'informatique",
+        "facts_0": "La recherche de Fibonacci utilise au plus un nombre d'ordre O(log n) de comparaisons dans le pire cas sur un tableau trié de taille n, comme la dichotomie.",
+        "facts_1": "L'indice de sonde s'obtient par addition (décalage + offset Fibonacci) plutôt que par (gauche + droite) / 2.",
+        "facts_2": "La longueur de fenêtre active est suivie avec un triple Fibonacci (fibM, fibM−1, fibM−2) qui se réduit après chaque comparaison.",
+        "facts_3": "Comme la dichotomie, l'entrée doit être triée pour que les comparaisons d'ordre aient un sens."
+      },
+      "depthFirstSearch": {
+        "history": "Le parcours en profondeur est une stratégie fondamentale de parcours de graphe : explorer aussi loin que possible sur une branche avant de revenir en arrière. Avec une pile explicite sur un graphe nœuds–arêtes, il contraste clairement avec le parcours en largeur dans la même catégorie Recherche.",
+        "intuition": "Démarrez à la racine. Dépillez répétitivement, visitez ce sommet, puis empilez les voisins non découverts en ordre inverse pour explorer le premier voisin listé ensuite. Quand l'objectif est dépilé, reconstruisez un chemin via les pointeurs parents.",
+        "realWorldUses_0": "Enseignement du parcours basé sur une pile sur des sommets et arêtes explicites",
+        "realWorldUses_1": "Arbres et graphes généraux avant d'introduire poids ou heuristiques",
+        "realWorldUses_2": "Contraster l'ordre de parcours avec BFS — même graphe, structure différente, chemin différent",
+        "realWorldUses_3": "Fondements du raisonnement topologique et des algorithmes récursifs exprimés itérativement",
+        "facts_0": "Temps O(V + E) et espace supplémentaire O(V) pour la pile et la mémorisation sur V sommets et E arêtes.",
+        "facts_1": "Contrairement à BFS sur un graphe non pondéré, DFS ne garantit pas le chemin le plus court.",
+        "facts_2": "Les démos générées utilisent des arbres aléatoires avec des listes d'adjacence triées.",
+        "facts_3": "Les positions sont uniquement pour la mise en page ; l'algorithme utilise uniquement la structure d'adjacence."
+      },
+      "breadthFirstSearchGraph": {
+        "history": "Le parcours en largeur explore un graphe niveau par niveau, découvert par Konrad Zuse en 1945. Sur des graphes non pondérés, il garantit le chemin le plus court — la distinction clé avec DFS dans la même catégorie Recherche.",
+        "intuition": "Démarrez à la racine et enfilez-la. Défilez répétitivement le nœud de tête, marquez-le visité, puis enfilez tous les voisins non découverts. BFS visite tout l'anneau de profondeur 1 avant tout nœud de profondeur 2.",
+        "realWorldUses_0": "Chemin le plus court sur des graphes non pondérés",
+        "realWorldUses_1": "Parcours d'arbre en ordre de niveau et analyse couche par couche",
+        "realWorldUses_2": "Contraster avec DFS : même graphe, file vs pile, chemin le plus court vs quelconque",
+        "realWorldUses_3": "Fondement de l'algorithme de Dijkstra lorsque les poids deviennent non uniformes",
+        "facts_0": "Temps O(V + E) ; espace O(V) pour la file et l'ensemble des visités.",
+        "facts_1": "BFS garantit le chemin le plus court (sauts minimaux) sur les graphes non pondérés ; DFS ne le garantit pas.",
+        "facts_2": "La tête de file est affichée en haut du canevas — le prochain nœud à défiler.",
+        "facts_3": "La même mise en page d'arbre utilisée pour DFS est réutilisée ici, afin de comparer les deux algorithmes."
+      }
+    }
   },
   "footer": {
-    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri/recherche de chemin avec clarté.",
+    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
     "madeWith": "Fait avec",
     "by": "par",
@@ -189,8 +639,8 @@
     "quickLinks": "Liens Rapides",
     "support": "Soutien",
     "enjoying": "Vous appréciez ce projet ? Soutenez mon travail !",
-    "buyMeCoffee": "Offrez-moi un café",
-    "allRightsReserved": "Tous droits réservés"
+    "allRightsReserved": "Tous droits réservés",
+    "youtubeAria": "Bayan Flow sur YouTube — ouvrir la chaîne dans un nouvel onglet"
   },
   "legend": {
     "title": "Légende",
@@ -210,11 +660,33 @@
       "queue": "File",
       "visited": "Visité",
       "path": "Chemin"
+    },
+    "searching": {
+      "default": "Dans la plage",
+      "comparing": "Vérification",
+      "outOfRange": "Hors plage de recherche",
+      "found": "Trouvé",
+      "targetHighlight": "Valeur cible (anneau)"
+    },
+    "searchingGraph": {
+      "root": "Racine",
+      "start": "Racine",
+      "goal": "Objectif",
+      "stackFrontier": "Pile / frontière",
+      "visited": "Visité",
+      "discoveryPath": "Chemin de découverte"
     }
   },
   "visualization": {
     "description": "Visualisation interactive d'algorithme",
-    "viewPythonCode": "Voir le code Python"
+    "viewPythonCode": "Voir le code Python",
+    "codeLabel": "Code",
+    "searchTarget": "Cible : {{value}}",
+    "graphAria": "Graphe à {{count}} nœuds",
+    "graphAriaEmpty": "Graphe vide",
+    "stackTop": "Sommet de pile : {{top}}",
+    "queueFront": "Tête de file : {{front}}",
+    "graphSubstrate": "Visualisation de graphe"
   },
   "languages": {
     "en": "English",
@@ -235,6 +707,11 @@
     "placed": "{{value}} placé à la position {{position}}",
     "placedRemaining": "{{value}} restant placé à la position {{position}}",
     "mergedSection": "Section fusionnée [{{start}}...{{end}}]",
+    "dfsStackPush": "Voisins empilés ; taille de la pile : {{count}} (prochain sommet dépilé en profondeur)",
+    "dfsGraphVisiting": "Exploration du nœud {{node}}",
+    "bfsGraphDequeue": "Nœud {{node}} sorti de la file — examen des voisins niveau par niveau",
+    "bfsGraphEnqueue": "{{count}} voisin(s) ajouté(s) à la file ; le suivant est en tête",
+    "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
     "exploringBackward": "Recherche arrière explorant la cellule ({{row}}, {{col}})",
@@ -299,7 +776,39 @@
     "bogoChecking": "Tentative {{attempt}} : Vérification si le tableau est trié",
     "bogoShuffling": "Tentative {{attempt}} : Mélange aléatoire du tableau",
     "bogoSuccess": "Succès ! Tableau trié après {{attempts}} tentatives de mélange",
-    "bogoFailed": "Échec du tri après {{maxAttempts}} tentatives. Le Tri Bogo est extrêmement inefficace !"
+    "bogoFailed": "Échec du tri après {{maxAttempts}} tentatives. Le Tri Bogo est extrêmement inefficace !",
+    "searchLinearStart": "Recherche de {{target}} par balayage linéaire : vérifier chaque indice de gauche à droite. Ce mode utilise un tableau trié pour comparer avec la dichotomie et les autres recherches ; la recherche linéaire n'exige pas le tri.",
+    "searchLinearCheck": "Indice {{index}} : valeur {{value}}. Cible {{target}}.",
+    "searchLinearFound": "{{target}} trouvé à l'index {{index}}.",
+    "searchLinearNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchBinaryStart": "Recherche de {{target}} par dichotomie sur le tableau trié.",
+    "searchBinaryCheck": "Milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
+    "searchBinaryFound": "{{target}} trouvé à l'index {{mid}}.",
+    "searchBinaryNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchTernaryStart": "Recherche de {{target}} par recherche ternaire sur le tableau trié (deux sondes divisent la plage active en trois parties).",
+    "searchTernaryCheck": "Premier tiers, indice {{leftMid}} : valeur {{leftValue}}. Deuxième tiers, indice {{rightMid}} : valeur {{rightValue}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
+    "searchTernaryFound": "{{target}} trouvé à l'index {{mid}}.",
+    "searchTernaryNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchJumpStart": "Recherche de {{target}} par sauts sur le tableau trié. Taille de pas {{m}} (⌊√n⌋).",
+    "searchJumpBlockCheck": "Phase de sauts — début de bloc {{prev}}, fin de bloc {{jumpIdx}} : valeur {{value}}. Pas {{m}}. Cible {{target}}.",
+    "searchJumpLinearCheck": "Balayage linéaire à l'index {{prev}} : valeur {{value}}. Cible {{target}}.",
+    "searchJumpFound": "{{target}} trouvé à l'index {{prev}}.",
+    "searchJumpNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchInterpolationStart": "Recherche de {{target}} par interpolation sur le tableau trié. Les sondes estiment l'index à partir des valeurs aux bornes, pas le milieu.",
+    "searchInterpolationProbe": "Sonde à l'index {{pos}} (valeurs aux bornes {{lo}}..{{hi}} : {{loVal}} .. {{hiVal}}) : valeur {{value}}. Plage active [{{lo}}, {{hi}}]. Cible {{target}}.",
+    "searchInterpolationFound": "{{target}} trouvé à l'index {{pos}}.",
+    "searchInterpolationNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchExponentialStart": "Recherche de {{target}} par recherche exponentielle sur le tableau trié.",
+    "searchExponentialCheckFirst": "Phase de doublement — comparer l'index 0 : valeur {{value}}. Cible {{target}}.",
+    "searchExponentialDoubledProbe": "Phase de doublement — comparer l'index {{bound}} : valeur {{value}}. Cible {{target}}. Prochaine borne {{nextBound}} (jusqu'à encadrer la plage).",
+    "searchExponentialRangeLocked": "Plage encadrée : si {{target}} existe, il est entre les indices {{left}} et {{right}}. Phase dichotomique — rétrécir cette fenêtre.",
+    "searchExponentialBinaryCheck": "Phase dichotomique — milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
+    "searchExponentialFound": "{{target}} trouvé à l'index {{mid}}.",
+    "searchExponentialNotFound": "La cible {{target}} n'est pas dans le tableau.",
+    "searchFibonacciStart": "Recherche de {{target}} par recherche de Fibonacci sur le tableau trié (pas de division — les sondes suivent des pas de taille Fibonacci).",
+    "searchFibonacciProbe": "Sonde à l'index {{probe}} : valeur {{value}}. Fenêtre active [{{offset}}, {{windowEnd}}]. Cible {{target}}.",
+    "searchFibonacciFound": "{{target}} trouvé à l'index {{probe}}.",
+    "searchFibonacciNotFound": "La cible {{target}} n'est pas dans le tableau."
   },
   "landing": {
     "hero": {
@@ -336,6 +845,11 @@
         "title": "Algorithmes de Recherche de Chemin",
         "description": "Voyez comment les algorithmes de recherche de chemin naviguent à travers les grilles pour trouver le chemin le plus court entre deux points.",
         "algorithms": "BFS, Dijkstra, Recherche A*, Recherche Bidirectionnelle, Recherche Gloutonne du Meilleur d'Abord, Recherche par Points de Saut, Bellman-Ford, IDA*, D* Lite"
+      },
+      "searching": {
+        "title": "Algorithmes de recherche",
+        "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
+        "algorithms": "Recherche dichotomique, recherche par sauts, recherche par interpolation, recherche exponentielle"
       }
     },
     "features": {
@@ -343,11 +857,11 @@
       "subheading": "Tout ce dont vous avez besoin pour maîtriser les algorithmes",
       "customization": {
         "title": "Personnalisable",
-        "description": "Ajustez la taille du tableau (5-100) ou la taille de la grille (15×15 à 35×35) pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
+        "description": "Ajustez la taille du tableau (5-100) pour le tri et la recherche, ou la taille de la grille (15×15 à 35×35) pour la recherche de chemin, pour voir comment les algorithmes fonctionnent avec différentes tailles de données."
       },
       "pythonCode": {
-        "title": "Code Python",
-        "description": "Consultez des implémentations Python propres pour chaque algorithme. Apprenez en lisant des exemples de code réels."
+        "title": "Python Interactif",
+        "description": "Modifiez, exécutez et voyez la sortie réelle pour chaque algorithme. Tout dans votre navigateur. Apprenez en expérimentant avec du code en direct."
       },
       "sound": {
         "title": "Son Interactif",
@@ -357,10 +871,18 @@
       "fullscreen": {
         "title": "Plein Écran",
         "description": "Mode plein écran immersif parfait pour les présentations et l'enseignement en classe."
+      },
+      "insight": {
+        "title": "Aperçu des Algorithmes",
+        "description": "Explorez des explications détaillées, des cas d'usage et les propriétés clés de chaque algorithme dans un panneau dédié."
+      },
+      "videoExport": {
+        "title": "Export Vidéo",
+        "description": "Exportez vos visualisations en vidéos MP4 HD. Choisissez le format horizontal (YouTube) ou vertical (Shorts, Reels) avec aperçu avant téléchargement."
       }
     },
     "roadmapCTA": {
-      "badge": "Bientôt Disponible",
+      "badge": "Mises à jour",
       "heading": "Découvrez ce qui Arrive",
       "description": "Nous améliorons constamment Bayan Flow avec de nouveaux algorithmes, fonctionnalités et outils d'apprentissage. Consultez notre feuille de route pour voir ce qui arrive et sur quoi nous travaillons actuellement.",
       "button": "Voir la Feuille de Route"
@@ -379,12 +901,18 @@
     "unweighted": "Non Pondéré",
     "weightedOptimal": "Pondéré Optimal",
     "heuristicBased": "Basé sur Heuristique",
-    "specialCases": "Cas Spéciaux"
+    "specialCases": "Cas Spéciaux",
+    "sequentialSearch": "Recherche séquentielle",
+    "logarithmicSearch": "Recherche logarithmique",
+    "blockJumpSearch": "Recherche par blocs / sauts",
+    "distributionAwareSearch": "Recherche sensible à la distribution",
+    "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)"
   },
   "roadmap": {
     "hero": {
       "title": "Notre Direction",
-      "subtitle": "Chaque mise à jour, chaque journal de développement. Voyez ce qui est en direct et ce qui est prévu."
+      "subtitle": "Chaque mise à jour, chaque journal de développement. Voyez ce qui est en direct et ce qui est prévu.",
+      "devNote": "Vous voulez voir les dernières modifications et expérimentations ? Consultez notre <0>version de développement</0> et partagez vos retours en <1>créant une issue</1> sur notre dépôt GitHub."
     },
     "status": {
       "completed": "Terminé",

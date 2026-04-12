@@ -2,9 +2,12 @@
 
 Thank you for your interest in contributing to Bayan Flow! This document provides guidelines and information for contributors.
 
-> Notes:
-> - Create a PR that **ALWAYS** targets `develop` not `main`.
-> - All PRs must pass CI (lint, tests, build) before merge.
+> **Before you open a pull request**
+>
+> - **Base branch:** Every PR must target **`develop`**, not `main`. The `main` branch tracks production releases; day-to-day work merges into `develop` first.
+> - **Read the docs:** Review this file, [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md) (workflows and patterns), and [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) (system design) as they apply to your change.
+> - **PR template:** GitHub loads [.github/PULL_REQUEST_TEMPLATE.md](./.github/PULL_REQUEST_TEMPLATE.md) for new PRs. Keep its structure and fill in every section that applies so reviewers have full context.
+> - **CI:** All PRs must pass CI (lint, tests, build) before merge.
 
 ## Table of Contents
 
@@ -91,10 +94,14 @@ We welcome the following types of contributions:
 
 ## Pull Request Process
 
-1. **Create a feature branch** from `main`:
+1. **Sync `develop` and create a feature branch** from **`develop`** (not `main`):
    ```bash
+   git fetch upstream
+   git checkout develop
+   git pull upstream develop
    git checkout -b feature/your-feature-name
    ```
+   If you do not have `upstream` yet, add it under [Getting Started](#getting-started), then run the commands above.
 
 2. **Make your changes** following the coding standards
 
@@ -117,11 +124,10 @@ We welcome the following types of contributions:
    git push origin feature/your-feature-name
    ```
 
-7. **Create a pull request** on GitHub with:
-   - Clear title and description
-   - Reference to related issues
-   - Screenshots/GIFs for UI changes
-   - Test results if applicable
+7. **Create a pull request** on GitHub:
+   - Set the **base branch** to **`develop`** (double-check this; GitHub may default to `main`).
+   - Complete the pull request template (sections, checkboxes, and details the template asks for).
+   - Use a clear title and description, reference related issues, and add screenshots or GIFs for UI changes when helpful.
 
 ### Commit Message Format
 

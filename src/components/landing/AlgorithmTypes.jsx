@@ -6,14 +6,15 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpDown, Route } from 'lucide-react';
+import { ArrowUpDown, Route, Search } from 'lucide-react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
 import {
-  ALGORITHM_TYPES,
   SORTING_ALGORITHMS,
   PATHFINDING_ALGORITHMS,
+  SEARCHING_ALGORITHMS,
 } from '../../constants';
+import { getAlgorithmTypesGridColsClass } from './algorithmTypesGridCols.js';
 
 function AlgorithmTypes() {
   const { t } = useTranslation();
@@ -43,6 +44,13 @@ function AlgorithmTypes() {
       algorithms: getAlgorithmList(PATHFINDING_ALGORITHMS, 'pathfinding'),
       gradient: 'from-purple-500 via-pink-500 to-purple-600',
     },
+    {
+      icon: Search,
+      title: t('landing.algorithmTypes.searching.title'),
+      description: t('landing.algorithmTypes.searching.description'),
+      algorithms: getAlgorithmList(SEARCHING_ALGORITHMS, 'searching'),
+      gradient: 'from-emerald-500 via-teal-500 to-emerald-600',
+    },
   ];
 
   return (
@@ -64,7 +72,7 @@ function AlgorithmTypes() {
         </motion.div>
 
         <div
-          className={`grid gap-8 ${modes.length === 2 ? 'md:grid-cols-2' : modes.length === 3 ? 'lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}
+          className={`grid gap-8 items-stretch ${getAlgorithmTypesGridColsClass(modes.length)}`}
         >
           {modes.map((mode, index) => (
             <motion.div
@@ -82,11 +90,11 @@ function AlgorithmTypes() {
                 scale: 1.02,
                 transition: { type: 'spring', stiffness: 300 },
               }}
-              className="group relative"
+              className="group relative h-full min-h-0 self-stretch"
               style={{ perspective: '1000px' }}
             >
-              {/* Glass morphism card */}
-              <div className="relative bg-(--color-glass-bg) backdrop-blur-xl p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/10 dark:border-white/5 h-full overflow-hidden">
+              {/* Glass morphism card — parent must fill grid row so inner 1fr + footer align across columns */}
+              <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-3xl border border-white/10 bg-(--color-glass-bg) p-8 shadow-lg backdrop-blur-xl transition-all duration-300 hover:shadow-2xl dark:border-white/5">
                 {/* Gradient glow on hover */}
                 <div
                   className={`absolute inset-0 bg-linear-to-br ${mode.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
@@ -97,34 +105,35 @@ function AlgorithmTypes() {
                   className={`absolute inset-0 rounded-3xl bg-linear-to-br ${mode.gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 -z-10`}
                 />
 
-                <div className="relative">
-                  {/* Gradient Icon Background with rotation */}
-                  <motion.div
-                    className={`inline-flex p-4 rounded-2xl bg-linear-to-br ${mode.gradient} mb-6 shadow-lg`}
-                    whileHover={{
-                      rotate: [0, -10, 10, -5, 5, 0],
-                      scale: 1.1,
-                      transition: { duration: 0.5 },
-                    }}
-                  >
-                    <mode.icon className="w-8 h-8 text-white" />
-                  </motion.div>
+                <div className="relative grid h-full min-h-0 grid-rows-[minmax(0,1fr)_14rem]">
+                  {/* Row 1: absorbs extra row height so divider lines up when descriptions differ */}
+                  <div className="flex min-h-0 flex-col">
+                    <motion.div
+                      className={`mb-6 inline-flex self-start rounded-2xl bg-linear-to-br ${mode.gradient} p-4 shadow-lg`}
+                      whileHover={{
+                        rotate: [0, -10, 10, -5, 5, 0],
+                        scale: 1.1,
+                        transition: { duration: 0.5 },
+                      }}
+                    >
+                      <mode.icon className="h-8 w-8 text-white" />
+                    </motion.div>
 
-                  {/* Content */}
-                  <h3 className="text-2xl font-bold text-text-primary mb-3">
-                    {mode.title}
-                  </h3>
-                  <p className="text-text-secondary mb-4 leading-relaxed">
-                    {mode.description}
-                  </p>
+                    <h3 className="mb-3 text-2xl font-bold text-text-primary">
+                      {mode.title}
+                    </h3>
+                    <p className="mb-4 leading-relaxed text-text-secondary">
+                      {mode.description}
+                    </p>
+                  </div>
 
-                  {/* Algorithms */}
-                  <div className="pt-4 border-t border-white/10 dark:border-white/5">
-                    <p className="text-sm font-semibold text-text-secondary mb-3">
+                  {/* Row 2: fixed 11rem (= h-44); border-t aligns across all cards in the row */}
+                  <div className="flex min-h-0 flex-col border-t border-white/10 pt-4 dark:border-white/5">
+                    <p className="mb-3 shrink-0 text-sm font-semibold text-text-secondary">
                       {t('landing.algorithmTypes.available')}
                     </p>
-                    <div className="max-h-32 overflow-y-auto scrollbar-thin pr-2">
-                      <p className="text-sm text-text-primary leading-relaxed">
+                    <div className="min-h-0 flex-1 overflow-y-auto pr-2 scrollbar-thin">
+                      <p className="text-sm leading-relaxed text-text-primary">
                         {mode.algorithms}
                       </p>
                     </div>

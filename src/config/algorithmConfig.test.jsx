@@ -9,18 +9,36 @@ import { renderHook } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n';
 import { useAlgorithmConfig } from './algorithmConfig';
+import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { ALGORITHM_TYPES, ALGORITHM_TYPE_LIST } from '../constants';
 
 const wrapper = ({ children }) => (
   <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
 );
 
 describe('useAlgorithmConfig', () => {
-  it('should return sortingAlgorithms array with 14 items', () => {
+  it('byType has algorithms and groups for every ALGORITHM_TYPE', () => {
     const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
 
-    expect(result.current.sortingAlgorithms).toBeDefined();
-    expect(Array.isArray(result.current.sortingAlgorithms)).toBe(true);
-    expect(result.current.sortingAlgorithms).toHaveLength(14);
+    ALGORITHM_TYPE_LIST.forEach(type => {
+      expect(result.current.byType[type]).toBeDefined();
+      expect(result.current.byType[type].algorithms).toBeDefined();
+      expect(result.current.byType[type].groups).toBeDefined();
+      expect(result.current.byType[type].algorithms).toHaveLength(
+        CATEGORY_CONFIG[type].algorithmKeys.length
+      );
+      expect(result.current.byType[type].groups).toHaveLength(
+        CATEGORY_CONFIG[type].groupDefs.length
+      );
+    });
+  });
+
+  it('sortingAlgorithms length matches CATEGORY_CONFIG', () => {
+    const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
+
+    expect(result.current.sortingAlgorithms).toHaveLength(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].algorithmKeys.length
+    );
   });
 
   it('each sorting algorithm should have value, label, complexity', () => {
@@ -36,12 +54,20 @@ describe('useAlgorithmConfig', () => {
     });
   });
 
-  it('should return pathfindingAlgorithms array with 9 items', () => {
+  it('pathfindingAlgorithms length matches CATEGORY_CONFIG', () => {
     const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
 
-    expect(result.current.pathfindingAlgorithms).toBeDefined();
-    expect(Array.isArray(result.current.pathfindingAlgorithms)).toBe(true);
-    expect(result.current.pathfindingAlgorithms).toHaveLength(9);
+    expect(result.current.pathfindingAlgorithms).toHaveLength(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.PATHFINDING].algorithmKeys.length
+    );
+  });
+
+  it('searchingAlgorithms length matches CATEGORY_CONFIG', () => {
+    const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
+
+    expect(result.current.searchingAlgorithms).toHaveLength(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.SEARCHING].algorithmKeys.length
+    );
   });
 
   it('each pathfinding algorithm should have value, label, complexity', () => {
@@ -54,12 +80,22 @@ describe('useAlgorithmConfig', () => {
     });
   });
 
-  it('should return sortingGroups array with 4 groups', () => {
+  it('each searching algorithm should have value, label, complexity', () => {
     const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
 
-    expect(result.current.sortingGroups).toBeDefined();
-    expect(Array.isArray(result.current.sortingGroups)).toBe(true);
-    expect(result.current.sortingGroups).toHaveLength(4);
+    result.current.searchingAlgorithms.forEach(algo => {
+      expect(algo).toHaveProperty('value');
+      expect(algo).toHaveProperty('label');
+      expect(algo).toHaveProperty('complexity');
+    });
+  });
+
+  it('sortingGroups length matches CATEGORY_CONFIG groupDefs', () => {
+    const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
+
+    expect(result.current.sortingGroups).toHaveLength(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].groupDefs.length
+    );
   });
 
   it('each sorting group should have label and algorithms', () => {
@@ -72,18 +108,36 @@ describe('useAlgorithmConfig', () => {
     });
   });
 
-  it('should return pathfindingGroups array with 4 groups', () => {
+  it('pathfindingGroups length matches CATEGORY_CONFIG groupDefs', () => {
     const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
 
-    expect(result.current.pathfindingGroups).toBeDefined();
-    expect(Array.isArray(result.current.pathfindingGroups)).toBe(true);
-    expect(result.current.pathfindingGroups).toHaveLength(4);
+    expect(result.current.pathfindingGroups).toHaveLength(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.PATHFINDING].groupDefs.length
+    );
+  });
+
+  it('searchingGroups length matches CATEGORY_CONFIG groupDefs', () => {
+    const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
+
+    expect(result.current.searchingGroups).toHaveLength(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.SEARCHING].groupDefs.length
+    );
   });
 
   it('each pathfinding group should have label and algorithms', () => {
     const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
 
     result.current.pathfindingGroups.forEach(group => {
+      expect(group).toHaveProperty('label');
+      expect(group).toHaveProperty('algorithms');
+      expect(Array.isArray(group.algorithms)).toBe(true);
+    });
+  });
+
+  it('each searching group should have label and algorithms', () => {
+    const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
+
+    result.current.searchingGroups.forEach(group => {
       expect(group).toHaveProperty('label');
       expect(group).toHaveProperty('algorithms');
       expect(Array.isArray(group.algorithms)).toBe(true);
@@ -110,5 +164,57 @@ describe('useAlgorithmConfig', () => {
     expect(bfs).toBeDefined();
     expect(bfs.label).toBeTruthy();
     expect(i18n.t('algorithms.pathfinding.bfs')).toBe(bfs.label);
+  });
+
+  it('should use translated labels for searching algorithms', () => {
+    const { result } = renderHook(() => useAlgorithmConfig(), { wrapper });
+
+    const linear = result.current.searchingAlgorithms.find(
+      a => a.value === 'linearSearch'
+    );
+    expect(linear).toBeDefined();
+    expect(linear.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.linearSearch')).toBe(linear.label);
+
+    const binary = result.current.searchingAlgorithms.find(
+      a => a.value === 'binarySearch'
+    );
+    expect(binary).toBeDefined();
+    expect(binary.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.binarySearch')).toBe(binary.label);
+
+    const jump = result.current.searchingAlgorithms.find(
+      a => a.value === 'jumpSearch'
+    );
+    expect(jump).toBeDefined();
+    expect(jump.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.jumpSearch')).toBe(jump.label);
+
+    const interpolation = result.current.searchingAlgorithms.find(
+      a => a.value === 'interpolationSearch'
+    );
+    expect(interpolation).toBeDefined();
+    expect(interpolation.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.interpolationSearch')).toBe(
+      interpolation.label
+    );
+
+    const exponential = result.current.searchingAlgorithms.find(
+      a => a.value === 'exponentialSearch'
+    );
+    expect(exponential).toBeDefined();
+    expect(exponential.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.exponentialSearch')).toBe(
+      exponential.label
+    );
+
+    const fibonacci = result.current.searchingAlgorithms.find(
+      a => a.value === 'fibonacciSearch'
+    );
+    expect(fibonacci).toBeDefined();
+    expect(fibonacci.label).toBeTruthy();
+    expect(i18n.t('algorithms.searching.fibonacciSearch')).toBe(
+      fibonacci.label
+    );
   });
 });

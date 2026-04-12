@@ -14,6 +14,7 @@ import {
   ALGORITHM_TYPES,
   SORTING_ALGORITHMS,
   PATHFINDING_ALGORITHMS,
+  SEARCHING_ALGORITHMS,
   ANIMATION_SPEEDS,
   ELEMENT_STATES,
   STATE_COLORS,
@@ -26,6 +27,7 @@ import {
   GRID_SIZES,
   DEFAULT_GRID_SIZE,
   PATHFINDING_COMPLEXITY,
+  SEARCHING_COMPLEXITY,
 } from './index.js';
 
 describe('Constants', () => {
@@ -34,6 +36,7 @@ describe('Constants', () => {
       expect(ALGORITHM_TYPES).toEqual({
         SORTING: 'sorting',
         PATHFINDING: 'pathfinding',
+        SEARCHING: 'searching',
       });
     });
   });
@@ -80,6 +83,23 @@ describe('Constants', () => {
         expect.arrayContaining(expected)
       );
       expect(Object.keys(PATHFINDING_ALGORITHMS)).toHaveLength(9);
+    });
+  });
+
+  describe('SEARCHING_ALGORITHMS', () => {
+    it('should contain searching algorithm keys', () => {
+      expect(Object.values(SEARCHING_ALGORITHMS)).toEqual([
+        'linearSearch',
+        'binarySearch',
+        'ternarySearch',
+        'jumpSearch',
+        'interpolationSearch',
+        'exponentialSearch',
+        'fibonacciSearch',
+        'depthFirstSearch',
+        'breadthFirstSearchGraph',
+      ]);
+      expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(9);
     });
   });
 
@@ -240,6 +260,36 @@ describe('Constants', () => {
     it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
       pathfindingAlgorithms.forEach(algoKey => {
         const meta = PATHFINDING_COMPLEXITY[algoKey];
+        expect(meta).toHaveProperty('name');
+        expect(meta).toHaveProperty('timeComplexity');
+        expect(meta).toHaveProperty('spaceComplexity');
+        expect(meta).toHaveProperty('description');
+        expect(meta).toHaveProperty('useCases');
+        expect(Array.isArray(meta.useCases)).toBe(true);
+      });
+    });
+  });
+
+  describe('SEARCHING_COMPLEXITY', () => {
+    const keys = Object.keys(SEARCHING_COMPLEXITY);
+
+    it('should have metadata for all searching algorithms', () => {
+      expect(keys).toEqual([
+        'linearSearch',
+        'binarySearch',
+        'ternarySearch',
+        'jumpSearch',
+        'interpolationSearch',
+        'exponentialSearch',
+        'fibonacciSearch',
+        'depthFirstSearch',
+        'breadthFirstSearchGraph',
+      ]);
+    });
+
+    it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
+      keys.forEach(algoKey => {
+        const meta = SEARCHING_COMPLEXITY[algoKey];
         expect(meta).toHaveProperty('name');
         expect(meta).toHaveProperty('timeComplexity');
         expect(meta).toHaveProperty('spaceComplexity');

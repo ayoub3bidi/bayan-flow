@@ -5,11 +5,13 @@
  */
 
 import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import Container from '../ui/Container';
+import { isProductionMainBranch } from '../../utils/deployContext';
 
 function RoadmapHero() {
   const { t } = useTranslation();
+  const showDevFeedbackNote = isProductionMainBranch();
 
   return (
     <section
@@ -61,6 +63,41 @@ function RoadmapHero() {
           >
             {t('roadmap.hero.subtitle')}
           </motion.p>
+
+          {/* Dev version and feedback note — production (main) only */}
+          {showDevFeedbackNote && (
+            <motion.p
+              className="landing-body text-text-secondary text-sm mt-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.8,
+                delay: 0.5,
+                type: 'spring',
+                stiffness: 100,
+              }}
+            >
+              <Trans
+                i18nKey="roadmap.hero.devNote"
+                components={[
+                  <a
+                    key="dev"
+                    href="https://dev-bayanflow.netlify.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#3b82f6] dark:text-[#60a5fa] hover:underline font-medium"
+                  />,
+                  <a
+                    key="github"
+                    href="https://github.com/ayoub3bidi/bayan-flow/issues"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#3b82f6] dark:text-[#60a5fa] hover:underline font-medium"
+                  />,
+                ]}
+              />
+            </motion.p>
+          )}
         </motion.div>
       </Container>
     </section>

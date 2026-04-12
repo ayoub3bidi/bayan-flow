@@ -1,5 +1,12 @@
 # Development Guide
 
+## For contributors
+
+- **Pull requests** must target the **`develop`** branch, not **`main`**.
+- Read **[CONTRIBUTING.md](../CONTRIBUTING.md)** for contribution rules, CI expectations, and the PR workflow.
+- Use this guide for implementation patterns; use **[ARCHITECTURE.md](./ARCHITECTURE.md)** for how the app is structured end to end.
+- New PRs should follow **[.github/PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md)** (GitHub loads it automatically—fill it in, do not strip required sections).
+
 ## Quick Start
 
 ### Prerequisites
@@ -180,8 +187,8 @@ const visualization = useSortingVisualization(array, speed, mode);
 **Optimize for Performance:**
 ```javascript
 // Use transform instead of width/height
-animate={{ scale: 1.1 }}  // GPU accelerated ✓
-animate={{ width: 200 }}   // Forces layout ✗
+animate={{ scale: 1.1 }}  // GPU-accelerated (preferred)
+animate={{ width: 200 }}   // Triggers layout (avoid when possible)
 ```
 
 **AnimatePresence for Enter/Exit:**
@@ -275,8 +282,9 @@ src/
 ├── config/            # useAlgorithmConfig, useSettingsConfig
 ├── contexts/          # React contexts
 ├── hooks/             # Custom hooks
-├── algorithms/        # Algorithm implementations
-├── utils/             # Pure utilities
+├── video/             # Remotion video export (useVideoExporter, scenes)
+├── algorithms/        # sorting/, pathfinding/, searching/, python/
+├── utils/             # Pure utilities (e.g. `graphSearchGenerators.js` for searching graph demos)
 ├── data/              # Static data
 └── constants/         # App constants
 ```
@@ -287,7 +295,8 @@ Algorithm and settings configuration is centralized in `src/config/`:
 
 ```javascript
 // algorithmConfig.js - useAlgorithmConfig()
-// Returns: sortingAlgorithms, pathfindingAlgorithms, sortingGroups, pathfindingGroups
+// Returns (from CATEGORY_CONFIG + i18n): sortingAlgorithms, pathfindingAlgorithms,
+// searchingAlgorithms, sortingGroups, pathfindingGroups, searchingGroups
 // Uses useTranslation for i18n-aware labels
 
 // settingsConfig.js - useSettingsConfig()
@@ -295,9 +304,28 @@ Algorithm and settings configuration is centralized in `src/config/`:
 // Uses GRID_SIZES, ANIMATION_SPEEDS from constants
 ```
 
-`SettingsPanel` uses these hooks; `AlgorithmDropdown` receives algorithms and groups as props.
+`SettingsPanel` uses these hooks; `AlgorithmDropdown` receives algorithms and groups as props. **Searching** has two substrates (see `src/registry/searchingSubstrate.js`): **array** algorithms use `ArrayVisualizer` plus extras such as **`targetValue`**; **node–link graph** algorithms (e.g. DFS) use `GraphVisualizer` with **`graphNodes`**, **`graphEdges`**, **`graphNodeStates`**, **`graphStackOrder`** from `getExtraVisualizerProps` (`src/registry/extraVisualizerProps.js`). The category router is `SearchingCategoryVisualizer`.
 
-### 10. Testing Approach
+### 10. Video Export
+
+Video export uses **Remotion** (`@remotion/web-renderer`) to render MP4 files in-browser.
+
+**Flow:**
+1. User clicks Export → `beginExportFlow()` opens modal with orientation choice
+2. User selects Horizontal (16:9) or Vertical (9:16)
+3. `exportVideo({ ..., orientation })` runs: capability check → render → preview
+4. User previews video, then downloads or closes
+
+**Key files:**
+- `src/video/useVideoExporter.js` – Hook: `beginExportFlow`, `exportVideo`, `closePreview`, `downloadVideo`
+- `src/video/AlgorithmVideo.jsx` – Root Remotion composition
+- `src/video/SortingScene.jsx`, `PathfindingScene.jsx`, `GraphSearchingScene.jsx` – Frame-based scenes with `interpolate()` / `interpolateColors()` for smooth transitions; **searching** routes via `SearchingVideoScene` (array steps → `SortingScene`, graph steps → `GraphSearchingScene`)
+- `src/video/ComplexityScene.jsx` – 10-second complexity segment at end
+- `src/components/ExportProgressModal.jsx` – Orientation, progress, preview (RTL-aware)
+
+**Constants** (`src/video/constants.js`): `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_WIDTH_VERTICAL`, `VIDEO_HEIGHT_VERTICAL`, `COMPLEXITY_DURATION_FRAMES`
+
+### 11. Testing Approach
 
 **Test Pure Functions:**
 ```javascript
@@ -406,20 +434,14 @@ export const pureSortingAlgorithms = {
 };
 ```
 
-**Step 3: Add to UI**
+**Step 3: Add to category config**
 
-In `src/config/algorithmConfig.js` (useAlgorithmConfig hook):
-```javascript
-const sortingAlgorithms = [
-  // ... existing
-  {
-    value: 'insertionSort',
-    label: t('algorithms.sorting.insertionSort'),
-    complexity: t('complexity.insertionSort'),
-  },
-];
-// Also add to sortingGroups under the appropriate group
-```
+In `src/registry/categoryConfig.js`, under `ALGORITHM_TYPES.SORTING`:
+
+- Append the algorithm key to `algorithmKeys`
+- Add it to the correct entry in `groupDefs[].algorithms`
+
+`useAlgorithmConfig` builds dropdown data from this file (no manual list in `algorithmConfig.js`).
 
 **Step 4: Add Complexity Metadata**
 
@@ -477,6 +499,14 @@ export const pythonAlgorithms = {
   // ... existing
   insertionSort: insertionSortPython,
 };
+```
+
+Add test cases in `src/algorithms/python/testCases.js`:
+```javascript
+insertionSort: {
+  functionName: 'insertion_sort',
+  testCases: SORTING_TEST_CASES,  // or custom cases
+},
 ```
 
 **Step 6: Add Translations**
@@ -551,11 +581,46 @@ The following algorithms were recently added using this pattern:
 
 ### Adding a New Pathfinding Algorithm
 
-Follow similar steps but use `src/algorithms/pathfinding/` directory. Add to `useAlgorithmConfig` in `src/config/algorithmConfig.js` (pathfindingAlgorithms and pathfindingGroups). Also:
+Follow similar steps but use `src/algorithms/pathfinding/` directory. Lists and groups come from **`src/registry/categoryConfig.js`** (via `useAlgorithmConfig`). Also:
+
 - Use 2D grid state instead of 1D array
 - Implement grid-based visualization
-- Add to `PATHFINDING_COMPLEXITY` in constants
-- Update pathfinding test suite
+- Add to `PATHFINDING_COMPLEXITY` in `src/constants/index.js`
+- Register in `src/algorithms/pathfinding/index.js` and Python / `testCases.js` / i18n as needed
+- Update pathfinding tests
+
+### Adding a Searching Algorithm
+
+Searching is **one category** with two **substrates** (`SEARCHING_SUBSTRATES` in `src/registry/searchingSubstrate.js`):
+
+| Substrate | Visualizer | Typical step shape | Settings size |
+|-----------|------------|--------------------|----------------|
+| **Array** (`ARRAY`) | `ArrayVisualizer` | `array`, `states`, `description`, optional `targetValue` | Array size slider |
+| **Node–link graph** (`NODE_LINK`) | `GraphVisualizer` | `nodes`, `edges`, `nodeStates`, `stackOrder?`, `description`, optional `goalNodeId` | Graph node count (`searchGraphNodeCount`; not pathfinding grid size) |
+
+#### Array-based searching (sorted bars)
+
+1. **Implement** `src/algorithms/searching/yourSearch.js`: export a `*Pure` function for tests and a visualization function that returns steps with `array`, `states`, `description`, and (if applicable) **`targetValue`**.
+2. **Register** in `src/algorithms/searching/index.js` (`searchingAlgorithms` + `pureSearchingAlgorithms`).
+3. **Category config** — `src/registry/categoryConfig.js`: add the key under `ALGORITHM_TYPES.SEARCHING`. `generateData` stays **sorted** (existing helper).
+4. **Substrate** — ensure `getSearchingSubstrate(key)` returns **`ARRAY`** (default for keys not listed in the node–link set inside `searchingSubstrate.js`).
+5. **Constants** — `SEARCHING_ALGORITHMS`, `SEARCHING_COMPLEXITY` in `src/constants/index.js`.
+6. **Translations**, **`algorithmTranslations.js`**, **Python** + **`testCases.js`** (e.g. `(arr, target)`), **insight panel** metadata — same spirit as other searching algos.
+7. **Video** — steps go through **`SearchingVideoScene`** → **`SortingScene`** (same bar layout as sorting).
+8. **Tests** — unit + hook tests for 1D `states` / `targetValue` behavior.
+
+#### Node–link graph searching (e.g. DFS)
+
+1. **Implement** steps as full snapshots: cloned **`nodes`**, **`edges`**, **`nodeStates`** (`GRAPH_NODE_STATES` in `src/constants/index.js`), optional **`stackOrder`** (stack top = last element). Reuse or extend **`generateRandomSearchTree`** in `src/utils/graphSearchGenerators.js` for reproducible graphs.
+2. **Register** in `searching/index.js` and add the key to the **node–link** set in **`searchingSubstrate.js`** so `isNodeLinkSearchingAlgorithm` is true.
+3. **`useSearchingVisualization`** — graph branch: `regenerateGraphStructure`, load steps from `fn({ adjacency, rootId, goalId, nodes, edges })` (or the agreed signature). **`VisualizerApp`** passes **`searchGraphNodeCount`**, not **`gridSize`**.
+4. **`getExtraVisualizerProps`** — for node–link keys, pass **`graphNodes`**, **`graphEdges`**, **`graphNodeStates`**, **`graphStackOrder`** (see existing DFS wiring).
+5. **`SearchingCategoryVisualizer`** — branch to **`GraphVisualizer`**; do not use **`GridVisualizer`** for searching graphs.
+6. **Video** — **`SearchingVideoScene`** detects graph steps and renders **`GraphSearchingScene`**.
+7. **Python** — adjacency-dict style inputs if applicable; align **`testCases.js`** with the harness.
+8. **Tests** — pure graph DFS, substrate registry, hook graph payload, Remotion routing if you add coverage.
+
+**Shared for any searching algorithm:** `complexityDataset: 'searching'`, **`videoSceneRegistry`** still points at the searching entry (internal router handles array vs graph). Run **`pnpm lint`**, **`format:check`**, **`test:run`**, **`build`** before merge.
 
 ### Adding a New Language
 
@@ -601,10 +666,10 @@ i18n.init({
 In `src/components/LanguageSwitcher.jsx`:
 ```javascript
 const allLanguages = [
-  { code: 'en', name: t('languages.en'), flag: '🇬🇧' },
-  { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' },
-  { code: 'ar', name: t('languages.ar'), flag: '🇸🇦' },
-  { code: '[lang]', name: t('languages.[lang]'), flag: '🏳️' },
+  { code: 'en', name: t('languages.en'), flag: 'EN' },
+  { code: 'fr', name: t('languages.fr'), flag: 'FR' },
+  { code: 'ar', name: t('languages.ar'), flag: 'AR' },
+  { code: '[lang]', name: t('languages.[lang]'), flag: '?' },
 ];
 ```
 
@@ -784,6 +849,8 @@ const PythonCodePanel = lazy(() =>
 </Suspense>
 ```
 
+Pyodide is lazy-loaded on first run; `usePythonExecution` manages execution and test validation.
+
 ### 3. Code Splitting
 ```javascript
 // Automatic code splitting with React Router
@@ -896,7 +963,7 @@ playNewSound() {
 
 - [ ] Run `pnpm lint:fix`
 - [ ] Run `pnpm format`
-- [ ] Run `pnpm test:run` (ensure 922+ tests pass)
+- [ ] Run `pnpm test:run` (full suite green)
 - [ ] Check console for warnings/errors
 - [ ] Test in light and dark mode
 - [ ] Test in all supported languages (EN/FR/AR)
@@ -920,7 +987,7 @@ playNewSound() {
 - [ ] Tests for new features (aim for 100% coverage)
 - [ ] Documentation updated
 - [ ] Algorithm step constants added for new algorithms
-- [ ] Python implementations included
+- [ ] Python implementations and test cases included
 - [ ] Sound integration considered
 
 ## Conclusion

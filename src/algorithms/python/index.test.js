@@ -68,6 +68,11 @@ vi.mock('./ida_star.py?raw', () => ({
     'def ida_star(grid, start, end):\n    """IDA* Search Algorithm"""\n    return []',
 }));
 
+vi.mock('./binary_search.py?raw', () => ({
+  default:
+    'def binary_search(arr, target):\n    """Binary Search Algorithm"""\n    return -1',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -140,6 +145,42 @@ describe('Python Algorithms Index', () => {
       const code = getPythonCode('idaStar');
       expect(code).toContain('def ida_star');
       expect(code).toContain('IDA* Search');
+    });
+
+    it('returns Python code for linear search', () => {
+      const code = getPythonCode('linearSearch');
+      expect(code).toContain('def linear_search');
+      expect(code).toContain('Linear Search Algorithm');
+    });
+
+    it('returns Python code for binary search', () => {
+      const code = getPythonCode('binarySearch');
+      expect(code).toContain('def binary_search');
+      expect(code).toContain('Binary Search Algorithm');
+    });
+
+    it('returns Python code for jump search', () => {
+      const code = getPythonCode('jumpSearch');
+      expect(code).toContain('def jump_search');
+      expect(code).toContain('Jump Search Algorithm');
+    });
+
+    it('returns Python code for interpolation search', () => {
+      const code = getPythonCode('interpolationSearch');
+      expect(code).toContain('def interpolation_search');
+      expect(code).toContain('Interpolation Search Algorithm');
+    });
+
+    it('returns Python code for exponential search', () => {
+      const code = getPythonCode('exponentialSearch');
+      expect(code).toContain('def exponential_search');
+      expect(code).toContain('Exponential Search Algorithm');
+    });
+
+    it('returns Python code for fibonacci search', () => {
+      const code = getPythonCode('fibonacciSearch');
+      expect(code).toContain('def fibonacci_search');
+      expect(code).toContain('Fibonacci Search Algorithm');
     });
 
     it('returns null for unknown algorithm', () => {
@@ -219,6 +260,36 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Iterative Deepening A* (IDA*)');
     });
 
+    it('returns correct display name for linear search', () => {
+      const name = getAlgorithmDisplayName('linearSearch');
+      expect(name).toBe('Linear Search');
+    });
+
+    it('returns correct display name for binary search', () => {
+      const name = getAlgorithmDisplayName('binarySearch');
+      expect(name).toBe('Binary Search');
+    });
+
+    it('returns correct display name for jump search', () => {
+      const name = getAlgorithmDisplayName('jumpSearch');
+      expect(name).toBe('Jump Search');
+    });
+
+    it('returns correct display name for exponential search', () => {
+      const name = getAlgorithmDisplayName('exponentialSearch');
+      expect(name).toBe('Exponential Search');
+    });
+
+    it('returns correct display name for fibonacci search', () => {
+      const name = getAlgorithmDisplayName('fibonacciSearch');
+      expect(name).toBe('Fibonacci Search');
+    });
+
+    it('returns correct display name for depth-first search (grid)', () => {
+      const name = getAlgorithmDisplayName('depthFirstSearch');
+      expect(name).toBe('Depth-First Search (graph)');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -250,6 +321,14 @@ describe('Python Algorithms Index', () => {
         'jumpPointSearch',
         'bellmanFord',
         'idaStar',
+        'linearSearch',
+        'binarySearch',
+        'ternarySearch',
+        'jumpSearch',
+        'interpolationSearch',
+        'exponentialSearch',
+        'fibonacciSearch',
+        'depthFirstSearch',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

@@ -36,6 +36,8 @@ vi.mock('lucide-react', () => ({
   Code: () => <svg data-testid="code-icon" />,
   Volume2: () => <svg data-testid="volume-icon" />,
   Maximize: () => <svg data-testid="maximize-icon" />,
+  Lightbulb: () => <svg data-testid="lightbulb-icon" />,
+  Video: () => <svg data-testid="video-icon" />,
 }));
 
 describe('Features', () => {
@@ -85,10 +87,20 @@ describe('Features', () => {
       expect(screen.getByTestId('maximize-icon')).toBeInTheDocument();
     });
 
-    it('should include all four features from array', () => {
+    it('should display algorithm insight feature', () => {
+      renderWithI18n(<Features />);
+      expect(screen.getByTestId('lightbulb-icon')).toBeInTheDocument();
+    });
+
+    it('should display video export feature', () => {
+      renderWithI18n(<Features />);
+      expect(screen.getByTestId('video-icon')).toBeInTheDocument();
+    });
+
+    it('should include all six features from array', () => {
       const { container } = renderWithI18n(<Features />);
       const icons = container.querySelectorAll('[data-testid$="-icon"]');
-      expect(icons.length).toBe(4);
+      expect(icons.length).toBe(6);
     });
   });
 
@@ -119,7 +131,7 @@ describe('Features', () => {
       const { container } = renderWithI18n(<Features />);
       const grid = container.querySelector('div[class*="grid"]');
       expect(grid).toBeInTheDocument();
-      expect(grid).toHaveClass('sm:grid-cols-2', 'lg:grid-cols-4');
+      expect(grid).toHaveClass('sm:grid-cols-2', 'lg:grid-cols-3');
     });
 
     it('should apply hover effects to cards', () => {
@@ -205,7 +217,7 @@ describe('Features', () => {
 
     it('should adapt grid for large screens', () => {
       const { container } = renderWithI18n(<Features />);
-      const grid = container.querySelector('div[class*="lg:grid-cols-4"]');
+      const grid = container.querySelector('div[class*="lg:grid-cols-3"]');
       expect(grid).toBeInTheDocument();
     });
 

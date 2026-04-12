@@ -1,3 +1,11 @@
+## Contribution workflow
+
+<!-- Required for every PR -->
+
+- [ ] **Base branch is `develop`:** This PR targets **`develop`**, not `main`. (If the base is wrong, edit the PR on GitHub and change the base branch.)
+- [ ] **Guidelines and docs:** I have read [CONTRIBUTING.md](../CONTRIBUTING.md) and the docs relevant to my change ([DEVELOPMENT.md](../docs/DEVELOPMENT.md), [ARCHITECTURE.md](../docs/ARCHITECTURE.md) as needed).
+- [ ] **This template:** I kept the PR template structure and filled in the sections below that apply to this change.
+
 ## Description
 
 <!-- Provide a brief description of the changes in this PR -->
@@ -103,7 +111,7 @@ Fixes #
 
 <!-- Confirm the following before submitting -->
 
-- [ ] I have read the [CONTRIBUTING.md](../CONTRIBUTING.md) guidelines
+- [ ] I have completed the **Contribution workflow** checklist at the top of this template
 - [ ] My code follows the project's style guidelines
 - [ ] I have performed a self-review of my code
 - [ ] I have commented my code, particularly in hard-to-understand areas

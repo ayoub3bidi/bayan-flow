@@ -7,7 +7,12 @@
 export const ALGORITHM_TYPES = {
   SORTING: 'sorting',
   PATHFINDING: 'pathfinding',
+  SEARCHING: 'searching',
 };
+
+// Ordered list for UI tab rendering and registry iteration.
+// Add new category values to ALGORITHM_TYPES; this list auto-updates.
+export const ALGORITHM_TYPE_LIST = Object.values(ALGORITHM_TYPES);
 
 export const SORTING_ALGORITHMS = {
   BUBBLE_SORT: 'bubbleSort',
@@ -38,6 +43,18 @@ export const PATHFINDING_ALGORITHMS = {
   D_STAR_LITE: 'dStarLite',
 };
 
+export const SEARCHING_ALGORITHMS = {
+  LINEAR_SEARCH: 'linearSearch',
+  BINARY_SEARCH: 'binarySearch',
+  TERNARY_SEARCH: 'ternarySearch',
+  JUMP_SEARCH: 'jumpSearch',
+  INTERPOLATION_SEARCH: 'interpolationSearch',
+  EXPONENTIAL_SEARCH: 'exponentialSearch',
+  FIBONACCI_SEARCH: 'fibonacciSearch',
+  DEPTH_FIRST_SEARCH: 'depthFirstSearch',
+  BREADTH_FIRST_SEARCH_GRAPH: 'breadthFirstSearchGraph',
+};
+
 export const ANIMATION_SPEEDS = {
   SLOW: 8000,
   MEDIUM: 4800,
@@ -63,6 +80,10 @@ export const STATE_COLORS = {
   [ELEMENT_STATES.AUXILIARY]: '#6b7280', // gray-500
 };
 
+/** Search target ring + legend (orange-600 — distinct from COMPARING amber-400). */
+export const SEARCH_TARGET_RING_COLOR = '#ea580c';
+export const SEARCH_TARGET_RING_RGB = '234, 88, 12';
+
 export const GRID_ELEMENT_STATES = {
   DEFAULT: 'default',
   OPEN: 'open',
@@ -81,6 +102,36 @@ export const GRID_STATE_COLORS = {
   [GRID_ELEMENT_STATES.START]: '#8b5cf6', // purple-500
   [GRID_ELEMENT_STATES.END]: '#ef4444', // red-500
   [GRID_ELEMENT_STATES.WALL]: '#374151', // gray-700
+};
+
+/** Node–link graph searching (DFS / future BFS on explicit graphs). */
+export const GRAPH_NODE_STATES = {
+  DEFAULT: 'default',
+  ROOT: 'root',
+  GOAL: 'goal',
+  FRONTIER: 'frontier',
+  CURRENT: 'current',
+  VISITED: 'visited',
+  PATH: 'path',
+};
+
+export const GRAPH_NODE_STATE_COLORS = {
+  [GRAPH_NODE_STATES.DEFAULT]: '#e5e7eb',
+  [GRAPH_NODE_STATES.ROOT]: '#8b5cf6',
+  [GRAPH_NODE_STATES.GOAL]: '#ef4444',
+  [GRAPH_NODE_STATES.FRONTIER]: '#fbbf24',
+  [GRAPH_NODE_STATES.CURRENT]: '#f97316',
+  [GRAPH_NODE_STATES.VISITED]: '#60a5fa',
+  [GRAPH_NODE_STATES.PATH]: '#10b981',
+};
+
+/** Default node count for searching graph algorithms (SettingsPanel slider). */
+export const DEFAULT_SEARCH_GRAPH_NODE_COUNT = 12;
+
+export const SEARCH_GRAPH_NODE_COUNT = {
+  min: 5,
+  max: 24,
+  step: 1,
 };
 
 export const VISUALIZATION_MODES = {
@@ -306,10 +357,159 @@ export const ALGORITHM_COMPLEXITY = {
   },
 };
 
+export const SEARCHING_COMPLEXITY = {
+  linearSearch: {
+    name: 'Linear Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Linear search checks each element in order until the target is found or the end is reached. It does not require a sorted array. Bayan Flow still uses sorted random arrays in Searching mode so you can compare it fairly with binary and other ordered searches.',
+    useCases: [
+      'Small or unsorted collections where sorting first is not worth the cost',
+      'Teaching baseline comparison counts before introducing binary search',
+      'Linked structures where random index access is expensive or unavailable',
+    ],
+  },
+  binarySearch: {
+    name: 'Binary Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Binary search repeatedly halves a sorted range by comparing the middle element to the target. Requires a sorted array.',
+    useCases: [
+      'Large sorted arrays or lists',
+      'Lookup tables and ordered collections',
+      'Algorithm building blocks (e.g. bounds, bisection)',
+    ],
+  },
+  ternarySearch: {
+    name: 'Ternary Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Ternary search splits the current sorted range into three parts using two probe indices (roughly at one-third and two-thirds). It compares the target with both probes each iteration, then discards at least one third of the range. Asymptotic time is still O(log n) like binary search, but each step performs two comparisons.',
+    useCases: [
+      'Teaching how multiple probes partition the search space',
+      'Contrasting two-pivot splits with binary search’s single midpoint',
+      'Building intuition before unimodal optimization variants of ternary search',
+    ],
+  },
+  jumpSearch: {
+    name: 'Jump Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(√n)',
+      worst: 'O(√n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Jump search advances in blocks of about √n on a sorted array, then scans linearly within the last block. Requires a sorted array.',
+    useCases: [
+      'Large sorted arrays when block-style jumps are easier to reason about than halving',
+      'Teaching trade-offs between √n jumps and O(log n) binary search',
+      'Complement to binary search for ordered static data',
+    ],
+  },
+  interpolationSearch: {
+    name: 'Interpolation Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log log n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Interpolation search estimates the next index from the target and the values at the current bounds (not the midpoint). Average time is very good on uniformly distributed keys; worst case can be linear on skewed or duplicate-heavy data. Requires a sorted array.',
+    useCases: [
+      'Large sorted tables with roughly uniform key spacing (e.g. indexed ranges)',
+      'Contrasting value-based probes with binary search’s midpoint',
+      'Teaching how input distribution affects search cost',
+    ],
+  },
+  exponentialSearch: {
+    name: 'Exponential Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Exponential search doubles an index until the target is bracketed (or the end of the array), then runs binary search on that range. On unbounded sorted data the search cost is O(log i) where i is the target’s index; on a finite array of length n the worst case is O(log n). Requires a sorted array.',
+    useCases: [
+      'Unbounded or very large sorted sequences where the target position is unknown',
+      'Contrasting geometric bracketing with fixed-step jump search',
+      'Teaching how exponential probing pairs with binary refinement',
+    ],
+  },
+  fibonacciSearch: {
+    name: 'Fibonacci Search',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      'Fibonacci search narrows a sorted range using Fibonacci-number step sizes: the next index is offset plus the second-smallest Fibonacci in the triple (no division). Each comparison shrinks the window by a golden-ratio–related factor, giving O(log n) comparisons in the worst case.',
+    useCases: [
+      'Contrasting division-free probing with binary search’s midpoint',
+      'Teaching how Fibonacci structure defines probe positions on sorted arrays',
+      'Historical contexts where avoiding division mattered for performance',
+    ],
+  },
+  depthFirstSearch: {
+    name: 'Depth-First Search (graph)',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      'Depth-first search explores as far as possible along one branch before backtracking, using an explicit stack on a node–link graph (V nodes, E edges). It finds a path to a goal if one exists but does not guarantee the shortest path — contrast with breadth-first search in Pathfinding. Neighbor order follows the adjacency lists (stable numeric order on generated trees).',
+    useCases: [
+      'Teaching stack-based graph traversal before queue-based BFS',
+      'Trees and general graphs as explicit vertices and edges',
+      'Backtracking patterns before introducing weighted graphs',
+    ],
+  },
+  breadthFirstSearchGraph: {
+    name: 'Breadth-First Search (graph)',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      'Breadth-first search explores a graph level by level. On unweighted graphs it guarantees the shortest path — the key distinction from DFS in this same Searching category.',
+    useCases: [
+      'Shortest-path on unweighted graphs',
+      'Level-order tree traversal and layer-by-layer graph analysis',
+      'Contrasting with DFS: same graph, queue vs. stack, shortest vs. any path',
+    ],
+  },
+};
+
 export const COMPLEXITY_FUNCTIONS = {
   // eslint-disable-next-line no-unused-vars
   'O(1)': n => 1,
   'O(log n)': n => Math.log2(n),
+  'O(log log n)': n => Math.max(0, Math.log2(Math.max(2, Math.log2(n)))),
+  'O(√n)': n => Math.sqrt(n),
   'O(n)': n => n,
   'O(n log n)': n => n * Math.log2(n),
   'O(n^1.25)': n => Math.pow(n, 1.25),

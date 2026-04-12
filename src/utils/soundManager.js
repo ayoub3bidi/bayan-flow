@@ -5,33 +5,24 @@
  */
 
 import * as Tone from 'tone';
+import { getCompareFrequency, getPivotFrequency } from './soundFrequencies.js';
+import { TONE_INSTRUMENT_PRESETS } from './toneInstrumentPresets.js';
 
 class SoundManager {
   constructor() {
     this.isEnabled = false;
 
-    // Soft synth for gentle sounds
-    this.softSynth = new Tone.Synth({
-      oscillator: { type: 'triangle' },
-      envelope: { attack: 0.05, decay: 0.2, sustain: 0.1, release: 0.3 },
-    }).toDestination();
+    this.softSynth = new Tone.Synth(
+      TONE_INSTRUMENT_PRESETS.softSynth
+    ).toDestination();
 
-    // Pluck synth for pleasant compare sounds
-    this.pluckSynth = new Tone.PluckSynth({
-      attackNoise: 0.5,
-      dampening: 4000,
-      resonance: 0.9,
-    }).toDestination();
+    this.pluckSynth = new Tone.PluckSynth(
+      TONE_INSTRUMENT_PRESETS.pluckSynth
+    ).toDestination();
 
-    // Metallic synth for swap sounds
-    this.metallicSynth = new Tone.MetalSynth({
-      frequency: 200,
-      envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
-      harmonicity: 5.1,
-      modulationIndex: 32,
-      resonance: 4000,
-      octaves: 1.5,
-    }).toDestination();
+    this.metallicSynth = new Tone.MetalSynth(
+      TONE_INSTRUMENT_PRESETS.metallicSynth
+    ).toDestination();
 
     this.polySynth = new Tone.PolySynth().toDestination();
     this.membrane = new Tone.MembraneSynth().toDestination();
@@ -50,7 +41,7 @@ class SoundManager {
 
   playCompare(value) {
     if (!this.isEnabled) return;
-    const freq = 150 + ((value - 5) / 95) * 200; // Softer range: 150-350Hz
+    const freq = getCompareFrequency(value);
     this.pluckSynth.triggerAttackRelease(freq, '16n');
   }
 
@@ -61,7 +52,7 @@ class SoundManager {
 
   playPivot(value) {
     if (!this.isEnabled) return;
-    const freq = 100 + ((value - 5) / 95) * 100; // Low range: 100-200Hz
+    const freq = getPivotFrequency(value);
     this.softSynth.triggerAttackRelease(freq, '8n');
   }
 

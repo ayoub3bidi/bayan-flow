@@ -72,7 +72,7 @@ function Header() {
 
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 z-50 w-full"
+      className="relative sm:fixed sm:top-0 sm:left-0 sm:right-0 sm:z-50 w-full"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}
@@ -147,7 +147,7 @@ function Header() {
                 <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-none truncate">
                   {t('header.title')}
                 </h1>
-                <p className="text-[9px] sm:text-[10px] text-text-secondary hidden sm:block leading-none mt-0.5 truncate">
+                <p className="text-[9px] sm:text-[10px] text-text-secondary hidden sm:block leading-tight mt-0.5 truncate">
                   {t('header.subtitle')}
                 </p>
               </div>

@@ -74,6 +74,52 @@ export const ALGORITHM_STEPS = {
   TIM_RUN_SORTED: 'timRunSorted',
   TIM_MERGING_RUNS: 'timMergingRuns',
 
+  // Searching
+  SEARCH_LINEAR_START: 'searchLinearStart',
+  SEARCH_LINEAR_CHECK: 'searchLinearCheck',
+  SEARCH_LINEAR_FOUND: 'searchLinearFound',
+  SEARCH_LINEAR_NOT_FOUND: 'searchLinearNotFound',
+
+  SEARCH_BINARY_START: 'searchBinaryStart',
+  SEARCH_BINARY_CHECK: 'searchBinaryCheck',
+  SEARCH_BINARY_FOUND: 'searchBinaryFound',
+  SEARCH_BINARY_NOT_FOUND: 'searchBinaryNotFound',
+
+  SEARCH_TERNARY_START: 'searchTernaryStart',
+  SEARCH_TERNARY_CHECK: 'searchTernaryCheck',
+  SEARCH_TERNARY_FOUND: 'searchTernaryFound',
+  SEARCH_TERNARY_NOT_FOUND: 'searchTernaryNotFound',
+
+  SEARCH_JUMP_START: 'searchJumpStart',
+  SEARCH_JUMP_BLOCK_CHECK: 'searchJumpBlockCheck',
+  SEARCH_JUMP_LINEAR_CHECK: 'searchJumpLinearCheck',
+  SEARCH_JUMP_FOUND: 'searchJumpFound',
+  SEARCH_JUMP_NOT_FOUND: 'searchJumpNotFound',
+
+  SEARCH_INTERPOLATION_START: 'searchInterpolationStart',
+  SEARCH_INTERPOLATION_PROBE: 'searchInterpolationProbe',
+  SEARCH_INTERPOLATION_FOUND: 'searchInterpolationFound',
+  SEARCH_INTERPOLATION_NOT_FOUND: 'searchInterpolationNotFound',
+
+  SEARCH_EXPONENTIAL_START: 'searchExponentialStart',
+  SEARCH_EXPONENTIAL_CHECK_FIRST: 'searchExponentialCheckFirst',
+  SEARCH_EXPONENTIAL_DOUBLED_PROBE: 'searchExponentialDoubledProbe',
+  SEARCH_EXPONENTIAL_RANGE_LOCKED: 'searchExponentialRangeLocked',
+  SEARCH_EXPONENTIAL_BINARY_CHECK: 'searchExponentialBinaryCheck',
+  SEARCH_EXPONENTIAL_FOUND: 'searchExponentialFound',
+  SEARCH_EXPONENTIAL_NOT_FOUND: 'searchExponentialNotFound',
+
+  SEARCH_FIBONACCI_START: 'searchFibonacciStart',
+  SEARCH_FIBONACCI_PROBE: 'searchFibonacciProbe',
+  SEARCH_FIBONACCI_FOUND: 'searchFibonacciFound',
+  SEARCH_FIBONACCI_NOT_FOUND: 'searchFibonacciNotFound',
+
+  // Graph-based searching (DFS stack / BFS queue)
+  DFS_STACK_PUSH: 'dfsStackPush',
+  DFS_GRAPH_VISITING: 'dfsGraphVisiting',
+  BFS_GRAPH_DEQUEUE: 'bfsGraphDequeue',
+  BFS_GRAPH_ENQUEUE: 'bfsGraphEnqueue',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',
@@ -83,6 +129,7 @@ export const ALGORITHM_STEPS = {
   BIDIRECTIONAL_MEETING: 'bidirectionalMeeting',
   PATH_FOUND: 'pathFound',
   PATH_FOUND_WITH_COST: 'pathFoundWithCost',
+  PATH_FOUND_GRAPH: 'pathFoundGraph',
   NO_PATH: 'noPath',
   GREEDY_EXPLORING: 'greedyExploring',
   DIJKSTRA_EXPLORING: 'dijkstraExploring',

@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   generateRandomArray,
+  generateSortedRandomArray,
   generateNearlySortedArray,
   generateReversedArray,
   isSorted,
@@ -33,6 +34,14 @@ describe('Array Helper Functions', () => {
       const arr1 = generateRandomArray(20);
       const arr2 = generateRandomArray(20);
       expect(arr1).not.toEqual(arr2);
+    });
+  });
+
+  describe('generateSortedRandomArray', () => {
+    it('should return a sorted ascending array of correct size', () => {
+      const arr = generateSortedRandomArray(12, 1, 100);
+      expect(arr).toHaveLength(12);
+      expect(isSorted(arr)).toBe(true);
     });
   });
 

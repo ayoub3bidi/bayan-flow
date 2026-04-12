@@ -27,6 +27,15 @@ import cycleSortPython from './cycle_sort.py?raw';
 import combSortPython from './comb_sort.py?raw';
 import timSortPython from './timSort.py?raw';
 import bogoSortPython from './bogo_sort.py?raw';
+import linearSearchPython from './linear_search.py?raw';
+import binarySearchPython from './binary_search.py?raw';
+import ternarySearchPython from './ternary_search.py?raw';
+import jumpSearchPython from './jump_search.py?raw';
+import interpolationSearchPython from './interpolation_search.py?raw';
+import exponentialSearchPython from './exponential_search.py?raw';
+import fibonacciSearchPython from './fibonacci_search.py?raw';
+import dfsSearchPython from './dfs_search.py?raw';
+import bfsGraphPython from './bfs_graph.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -52,6 +61,15 @@ export const pythonAlgorithms = {
   bellmanFord: bellmanFordPython,
   idaStar: idaStarPython,
   dStarLite: dStarLitePython,
+  linearSearch: linearSearchPython,
+  binarySearch: binarySearchPython,
+  ternarySearch: ternarySearchPython,
+  jumpSearch: jumpSearchPython,
+  interpolationSearch: interpolationSearchPython,
+  exponentialSearch: exponentialSearchPython,
+  fibonacciSearch: fibonacciSearchPython,
+  depthFirstSearch: dfsSearchPython,
+  breadthFirstSearchGraph: bfsGraphPython,
 };
 
 export const algorithmDisplayNames = {
@@ -78,6 +96,15 @@ export const algorithmDisplayNames = {
   bellmanFord: 'Bellman-Ford Algorithm',
   idaStar: 'Iterative Deepening A* (IDA*)',
   dStarLite: 'D* Lite',
+  linearSearch: 'Linear Search',
+  binarySearch: 'Binary Search',
+  ternarySearch: 'Ternary Search',
+  jumpSearch: 'Jump Search',
+  interpolationSearch: 'Interpolation Search',
+  exponentialSearch: 'Exponential Search',
+  fibonacciSearch: 'Fibonacci Search',
+  depthFirstSearch: 'Depth-First Search (graph)',
+  breadthFirstSearchGraph: 'Breadth-First Search (graph)',
 };
 
 export function getPythonCode(algorithmName) {
@@ -87,3 +114,5 @@ export function getPythonCode(algorithmName) {
 export function getAlgorithmDisplayName(algorithmName) {
   return algorithmDisplayNames[algorithmName] || algorithmName;
 }
+
+export { getTestCases } from './testCases';

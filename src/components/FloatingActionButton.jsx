@@ -26,7 +26,7 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
         className={`
           hidden md:flex
           fixed ${isRTL ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 z-50
-          h-32 w-12 bg-blue-600 hover:bg-blue-700 
+          h-32 w-14 bg-blue-600 hover:bg-blue-700 
           disabled:bg-disabled-bg disabled:cursor-not-allowed
           text-white ${isRTL ? 'rounded-r-xl' : 'rounded-l-xl'} shadow-lg hover:shadow-xl
           flex-col items-center justify-center gap-2
@@ -48,7 +48,7 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
         title={t('visualization.viewPythonCode')}
       >
         <span className="font-medium writing-mode-vertical transform rotate-360">
-          Code
+          {t('visualization.codeLabel')}
         </span>
       </motion.button>
 

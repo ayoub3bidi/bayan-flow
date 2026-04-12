@@ -14,6 +14,26 @@ import '../i18n';
 const constantsMockValue = {
   DEFAULT_GRID_SIZE: 15,
   DEFAULT_ARRAY_SIZE: 20,
+  DEFAULT_SEARCH_GRAPH_NODE_COUNT: 12,
+  SEARCH_GRAPH_NODE_COUNT: { min: 5, max: 24, step: 1 },
+  GRAPH_NODE_STATES: {
+    DEFAULT: 'default',
+    ROOT: 'root',
+    GOAL: 'goal',
+    FRONTIER: 'frontier',
+    CURRENT: 'current',
+    VISITED: 'visited',
+    PATH: 'path',
+  },
+  GRAPH_NODE_STATE_COLORS: {
+    default: '#e5e7eb',
+    root: '#8b5cf6',
+    goal: '#ef4444',
+    frontier: '#fbbf24',
+    current: '#f97316',
+    visited: '#60a5fa',
+    path: '#10b981',
+  },
   ANIMATION_SPEEDS: {
     SLOW: 2000,
     MEDIUM: 1000,
@@ -27,7 +47,9 @@ const constantsMockValue = {
   ALGORITHM_TYPES: {
     SORTING: 'sorting',
     PATHFINDING: 'pathfinding',
+    SEARCHING: 'searching',
   },
+  ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding', 'searching'],
   SORTING_ALGORITHMS: {
     BUBBLE_SORT: 'bubbleSort',
     MERGE_SORT: 'mergeSort',
@@ -40,6 +62,12 @@ const constantsMockValue = {
     BIDIRECTIONAL_SEARCH: 'bidirectionalSearch',
     GREEDY_BEST_FIRST_SEARCH: 'greedyBestFirstSearch',
     JUMP_POINT_SEARCH: 'jumpPointSearch',
+  },
+  SEARCHING_ALGORITHMS: {
+    BINARY_SEARCH: 'binarySearch',
+    JUMP_SEARCH: 'jumpSearch',
+    INTERPOLATION_SEARCH: 'interpolationSearch',
+    EXPONENTIAL_SEARCH: 'exponentialSearch',
   },
   ELEMENT_STATES: {
     DEFAULT: 'default',
@@ -62,6 +90,11 @@ const constantsMockValue = {
     MEDIUM: 25,
     LARGE: 35,
   },
+  // Used by complexityDatasetRegistry and Remotion complexity UI
+  ALGORITHM_COMPLEXITY: {},
+  PATHFINDING_COMPLEXITY: {},
+  SEARCHING_COMPLEXITY: {},
+  COMPLEXITY_FUNCTIONS: {},
 };
 
 vi.mock('../constants', () => constantsMockValue);

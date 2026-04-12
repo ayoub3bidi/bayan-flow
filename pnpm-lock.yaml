@@ -17,6 +17,12 @@ importers:
       '@octokit/rest':
         specifier: ^22.0.1
         version: 22.0.1
+      '@remotion/media':
+        specifier: 4.0.436
+        version: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@remotion/web-renderer':
+        specifier: ^4.0.436
+        version: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       i18next:
         specifier: ^25.7.1
         version: 25.7.1
@@ -38,6 +44,9 @@ importers:
       react-router-dom:
         specifier: ^7.10.1
         version: 7.10.1(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      remotion:
+        specifier: ^4.0.436
+        version: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       tone:
         specifier: ^15.1.22
         version: 15.1.22
@@ -99,6 +108,9 @@ importers:
       jsdom:
         specifier: ^27.2.0
         version: 27.2.0
+      playwright:
+        specifier: 1.52.0
+        version: 1.52.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -350,6 +362,21 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
+  '@mediabunny/aac-encoder@1.37.0':
+    resolution: {integrity: sha512-mYnF1sObnPE+7+QWn9H7c0rbl5Dwu50JejUD/GJefRl8ozYp0sz3tt+zBLCeif5GXBkPhABIX3JVg1eGfqx6tg==}
+    peerDependencies:
+      mediabunny: ^1.0.0
+
+  '@mediabunny/flac-encoder@1.37.0':
+    resolution: {integrity: sha512-VwKIL5p1WZE4dSwZ1SVv/bd2ksul8a4run4S1eEbPRysnG87nmCXddO5ajD3b2k2478XWitKnVDXl/kxdIIWBw==}
+    peerDependencies:
+      mediabunny: ^1.0.0
+
+  '@mediabunny/mp3-encoder@1.37.0':
+    resolution: {integrity: sha512-6tXBO3iHDA55WiMhOoaOmeCCOQ51U38mdXRxYNS9/hUCpR0ScRo+NtWu2YUa/jp2q99JNPrA4yYjahE5xHDxpg==}
+    peerDependencies:
+      mediabunny: ^1.0.0
+
   '@monaco-editor/loader@1.7.0':
     resolution: {integrity: sha512-gIwR1HrJrrx+vfyOhYmCZ0/JcWqG5kbfG7+d3f/C1LXk2EvzAbHSg3MQ5lO2sMlo9izoAZ04shohfKLVT6crVA==}
 
@@ -432,6 +459,21 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
+  '@remotion/licensing@4.0.436':
+    resolution: {integrity: sha512-spELYcuv9n/7GdF7yjaip3YDDLg/mJ0SSOUoPP0iPHZRp+Zd7W7OkOeDBw2KkbyI0wOZiOMQtoXD+oxN8BAbuA==}
+
+  '@remotion/media@4.0.436':
+    resolution: {integrity: sha512-v2BCOaHiNXU2Ad2N3bJJMHVR+JsfRqV9+k/R8ijL3wXntlcR47XEMdjKuW4iiWZSKjrXN0pO2EqiuBbwOqZcVg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@remotion/web-renderer@4.0.436':
+    resolution: {integrity: sha512-DJk7e+hNf4BX18nHo5iK742iyULBdV59gYVoIvJSqe9H/pTsdFTKPkudpL2Ougt4EHxVX82BsZ7r6wH8Y98tCA==}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
 
   '@rolldown/binding-android-arm64@1.0.0-beta.53':
     resolution: {integrity: sha512-Ok9V8o7o6YfSdTTYA/uHH30r3YtOxLD6G3wih/U9DO0ucBBFq8WPt/DslU53OgfteLRHITZny9N/qCUxMf9kjQ==}
@@ -650,6 +692,12 @@ packages:
 
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
+
+  '@types/dom-mediacapture-transform@0.1.11':
+    resolution: {integrity: sha512-Y2p+nGf1bF2XMttBnsVPHUWzRRZzqUoJAKmiP10b5umnO6DDrWI0BrGDJy1pOHoOULVmGSfFNkQrAlC5dcj6nQ==}
+
+  '@types/dom-webcodecs@0.1.13':
+    resolution: {integrity: sha512-O5hkiFIcjjszPIYyUSyvScyvrBoV3NOEEZx/pMlsu44TKzWNkLVBBxnxJz42in5n3QIolYOcBYFCPZZ0h8SkwQ==}
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -1212,6 +1260,11 @@ packages:
       react-dom:
         optional: true
 
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -1500,6 +1553,9 @@ packages:
   mdn-data@2.12.2:
     resolution: {integrity: sha512-IEn+pegP1aManZuckezWCO+XZQDplx1366JoVhTpMpBB1sPey/SbveZQUosKiKiGYjg1wH4pMlNgXbCiYgihQA==}
 
+  mediabunny@1.37.0:
+    resolution: {integrity: sha512-eV7M9IJ29pr/8RNL1sYtIxNbdMfDMN1hMwMaOFfNLhwuKKGSC+eKwiJFpdVjEJ3zrMA4LGerF4Hps0SENFSAlg==}
+
   min-indent@1.0.1:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
     engines: {node: '>=4'}
@@ -1594,6 +1650,16 @@ packages:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
 
+  playwright-core@1.52.0:
+    resolution: {integrity: sha512-l2osTgLXSMeuLZOML9qYODUQoPPnUsKsb5/P6LJ2e6uPKXUdPK5WYhN4z03G+YNbWmGDY4YENauNu4ZKczreHg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.52.0:
+    resolution: {integrity: sha512-JAwMNMBlxJ2oD1kce4KPtMkDeKGHQstdpFPcPH3maElAXon/QZeTvtsfXmTMRyO9TslfoYOXkSsvao2nE1ilTw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
@@ -1674,6 +1740,12 @@ packages:
   redent@3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
+
+  remotion@4.0.436:
+    resolution: {integrity: sha512-VCENxMQLXNqK0bh/2tm2avOeWM1s2nNXOU5XG/d5oC0vBmaKna27x8NP1+0t7zjjr5v9olqD3G9qYdpjy/o/WQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -2008,6 +2080,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
+  zod@4.3.6:
+    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
+
 snapshots:
 
   '@acemir/cssom@0.9.25': {}
@@ -2280,6 +2355,18 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@mediabunny/aac-encoder@1.37.0(mediabunny@1.37.0)':
+    dependencies:
+      mediabunny: 1.37.0
+
+  '@mediabunny/flac-encoder@1.37.0(mediabunny@1.37.0)':
+    dependencies:
+      mediabunny: 1.37.0
+
+  '@mediabunny/mp3-encoder@1.37.0(mediabunny@1.37.0)':
+    dependencies:
+      mediabunny: 1.37.0
+
   '@monaco-editor/loader@1.7.0':
     dependencies:
       state-local: 1.0.7
@@ -2370,6 +2457,27 @@ snapshots:
   '@pkgr/core@0.2.9': {}
 
   '@polka/url@1.0.0-next.29': {}
+
+  '@remotion/licensing@4.0.436': {}
+
+  '@remotion/media@4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+    dependencies:
+      mediabunny: 1.37.0
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+      remotion: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      zod: 4.3.6
+
+  '@remotion/web-renderer@4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+    dependencies:
+      '@mediabunny/aac-encoder': 1.37.0(mediabunny@1.37.0)
+      '@mediabunny/flac-encoder': 1.37.0(mediabunny@1.37.0)
+      '@mediabunny/mp3-encoder': 1.37.0(mediabunny@1.37.0)
+      '@remotion/licensing': 4.0.436
+      mediabunny: 1.37.0
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+      remotion: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
 
   '@rolldown/binding-android-arm64@1.0.0-beta.53':
     optional: true
@@ -2549,6 +2657,12 @@ snapshots:
       assertion-error: 2.0.1
 
   '@types/deep-eql@4.0.2': {}
+
+  '@types/dom-mediacapture-transform@0.1.11':
+    dependencies:
+      '@types/dom-webcodecs': 0.1.13
+
+  '@types/dom-webcodecs@0.1.13': {}
 
   '@types/estree@1.0.8': {}
 
@@ -3137,6 +3251,9 @@ snapshots:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
 
+  fsevents@2.3.2:
+    optional: true
+
   fsevents@2.3.3:
     optional: true
 
@@ -3396,6 +3513,11 @@ snapshots:
 
   mdn-data@2.12.2: {}
 
+  mediabunny@1.37.0:
+    dependencies:
+      '@types/dom-mediacapture-transform': 0.1.11
+      '@types/dom-webcodecs': 0.1.13
+
   min-indent@1.0.1: {}
 
   minimatch@3.1.2:
@@ -3475,6 +3597,14 @@ snapshots:
 
   picomatch@4.0.3: {}
 
+  playwright-core@1.52.0: {}
+
+  playwright@1.52.0:
+    dependencies:
+      playwright-core: 1.52.0
+    optionalDependencies:
+      fsevents: 2.3.2
+
   postcss-value-parser@4.2.0: {}
 
   postcss@8.5.6:
@@ -3537,6 +3667,11 @@ snapshots:
     dependencies:
       indent-string: 4.0.0
       strip-indent: 3.0.0
+
+  remotion@4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
+    dependencies:
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
 
   require-from-string@2.0.2: {}
 
@@ -3840,3 +3975,5 @@ snapshots:
   yallist@3.1.1: {}
 
   yocto-queue@0.1.0: {}
+
+  zod@4.3.6: {}

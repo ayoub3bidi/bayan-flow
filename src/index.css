@@ -104,6 +104,15 @@
   background: var(--color-scrollbar-thumb-hover);
 }
 
+/* Monaco editor: enable touch scrolling on mobile */
+.monaco-editor .monaco-scrollable-element,
+.monaco-editor [class*='scrollable'] {
+  -webkit-overflow-scrolling: touch;
+}
+.monaco-editor {
+  touch-action: pan-y pan-x;
+}
+
 /* Fade gradient hint for scrollable content */
 .algo-dropdown::after {
   content: '';
@@ -250,12 +259,23 @@ body {
     min-height: 44px;
     min-width: 44px;
   }
+
+  /* Language switcher: compact proportions in navbar (override global min-size) */
+  [data-language-switcher] {
+    min-height: 32px !important;
+    min-width: 32px !important;
+  }
 }
 
 [dir='rtl'] body {
   font-family:
     'Segoe UI', 'Tahoma', 'Arial', sans-serif, 'Noto Sans Arabic',
     'Arabic UI Text';
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
 }
 
 .scrollbar-thin::-webkit-scrollbar {

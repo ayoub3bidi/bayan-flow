@@ -5,18 +5,19 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle, Map } from 'lucide-react';
+import { FileText, AlertCircle, Map, Youtube } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 function Footer() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [version, setVersion] = useState('0.0.0');
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
   const repoName = 'bayan-flow';
   const authorName = 'Ayoub Abidi';
-  const bmcUsername = 'ayoub3bidi';
 
   useEffect(() => {
     const fetchLatestVersion = async () => {
@@ -56,16 +57,12 @@ function Footer() {
     },
   ];
 
-  const handleBMCClick = () => {
-    window.open(
-      `https://www.buymeacoffee.com/${bmcUsername}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
-  };
-
   const handleLinkClick = href => {
-    window.open(href, '_blank', 'noopener,noreferrer');
+    if (href.startsWith('/')) {
+      navigate(href);
+    } else {
+      window.open(href, '_blank', 'noopener,noreferrer');
+    }
   };
 
   return (
@@ -82,7 +79,7 @@ function Footer() {
           {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
+              <div className="flex items-center justify-center w-8 h-8 shrink-0 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -124,6 +121,20 @@ function Footer() {
               <h3 className="text-sm font-bold text-text-primary">
                 Bayan Flow
               </h3>
+              <a
+                href="https://www.youtube.com/@bayan-flow"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ms-auto rounded-md p-1.5 text-text-secondary transition-colors hover:bg-surface-elevated hover:text-text-primary md:ms-0"
+                aria-label={t('footer.youtubeAria')}
+              >
+                <Youtube
+                  size={18}
+                  strokeWidth={2}
+                  aria-hidden
+                  className="block"
+                />
+              </a>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
               {t('footer.description')}
@@ -145,19 +156,23 @@ function Footer() {
               {t('footer.quickLinks')}
             </h3>
             <div className="flex flex-col gap-2">
-              {links.map(link => (
-                <motion.button
-                  key={link.label}
-                  onClick={() => handleLinkClick(link.href)}
-                  className="flex items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
-                  whileHover={{ scale: 1.02, x: 2 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                >
-                  <link.icon size={14} className="opacity-70" />
-                  <span>{link.label}</span>
-                </motion.button>
-              ))}
+              {links.map(link => {
+                const Icon = link.icon;
+                return (
+                  <motion.button
+                    key={link.label}
+                    type="button"
+                    onClick={() => handleLinkClick(link.href)}
+                    className="flex items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    <Icon size={14} className="opacity-70" aria-hidden />
+                    <span>{link.label}</span>
+                  </motion.button>
+                );
+              })}
             </div>
           </div>
           {/* Right: Support */}
@@ -169,35 +184,22 @@ function Footer() {
               <p className="text-xs text-text-secondary mb-3">
                 {t('footer.enjoying')}
               </p>
-              <div className="flex flex-col gap-3">
-                <motion.button
-                  onClick={handleBMCClick}
-                  className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-[#FFDD00] hover:bg-[#FFED4E] border-2 border-black rounded-lg font-semibold text-sm text-black shadow-md transition-colors touch-manipulation min-h-11"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                  aria-label="Buy me a coffee - Support this project"
-                >
-                  <span className="text-lg">☕</span>
-                  <span>{t('footer.buyMeCoffee')}</span>
-                </motion.button>
-                <motion.a
-                  href="https://www.producthunt.com/products/bayan-flow?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-bayan-flow"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                >
-                  <img
-                    src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
-                    alt="Bayan Flow - Interactive algorithm visualizer | Product Hunt"
-                    width="250"
-                    height="54"
-                    className="w-[250px] h-[54px]"
-                  />
-                </motion.a>
-              </div>
+              <motion.a
+                href="https://www.producthunt.com/products/bayan-flow?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-bayan-flow"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              >
+                <img
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
+                  alt="Bayan Flow - Interactive algorithm visualizer | Product Hunt"
+                  width="250"
+                  height="54"
+                  className="w-[250px] h-[54px]"
+                />
+              </motion.a>
             </div>
           </div>
         </div>

@@ -35,6 +35,7 @@ vi.mock('../ui/Section', () => ({
 vi.mock('lucide-react', () => ({
   ArrowUpDown: () => <svg data-testid="arrow-icon" />,
   Route: () => <svg data-testid="route-icon" />,
+  Search: () => <svg data-testid="search-icon" />,
 }));
 
 const renderComponent = () => {
@@ -80,18 +81,26 @@ describe('AlgorithmTypes', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render both icons', () => {
+    it('should render searching mode card', () => {
+      renderComponent();
+      expect(
+        screen.getByRole('heading', { name: /Searching Algorithms/i })
+      ).toBeInTheDocument();
+    });
+
+    it('should render category icons', () => {
       renderComponent();
       expect(screen.getByTestId('arrow-icon')).toBeInTheDocument();
       expect(screen.getByTestId('route-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('search-icon')).toBeInTheDocument();
     });
   });
 
   describe('Content Structure', () => {
-    it('should have two algorithm type cards', () => {
+    it('should have three algorithm type cards', () => {
       const { container } = renderComponent();
       const cards = container.querySelectorAll('div[class*="group"]');
-      expect(cards.length).toBeGreaterThanOrEqual(2);
+      expect(cards.length).toBeGreaterThanOrEqual(3);
     });
 
     it('should display sorting algorithms list', () => {
@@ -108,10 +117,17 @@ describe('AlgorithmTypes', () => {
       ).toBeInTheDocument();
     });
 
-    it('should display descriptions for both modes', () => {
+    it('should display searching algorithms list', () => {
+      renderComponent();
+      expect(screen.getByText(/Binary Search/i)).toBeInTheDocument();
+      expect(screen.getByText(/Interpolation Search/i)).toBeInTheDocument();
+    });
+
+    it('should display descriptions for all modes', () => {
       renderComponent();
       expect(screen.getByText(/comparison-based sorting/i)).toBeInTheDocument();
       expect(screen.getByText(/navigate through grids/i)).toBeInTheDocument();
+      expect(screen.getByText(/sorted data/i)).toBeInTheDocument();
     });
   });
 
@@ -127,6 +143,7 @@ describe('AlgorithmTypes', () => {
       const grid = container.querySelector('div[class*="grid"]');
       expect(grid).toBeInTheDocument();
       expect(grid).toHaveClass('md:grid-cols-2');
+      expect(grid).toHaveClass('lg:grid-cols-3');
     });
 
     it('should apply glass morphism styling', () => {
@@ -189,7 +206,7 @@ describe('AlgorithmTypes', () => {
     it('should have card animation', () => {
       const { container } = renderComponent();
       const cards = container.querySelectorAll('div[class*="group"]');
-      expect(cards.length).toBeGreaterThanOrEqual(2);
+      expect(cards.length).toBeGreaterThanOrEqual(3);
     });
 
     it('should have shimmer effect on cards', () => {
@@ -211,6 +228,12 @@ describe('AlgorithmTypes', () => {
     it('should display route icon for pathfinding', () => {
       renderComponent();
       const icons = screen.getAllByTestId('route-icon');
+      expect(icons.length).toBeGreaterThan(0);
+    });
+
+    it('should display search icon for searching', () => {
+      renderComponent();
+      const icons = screen.getAllByTestId('search-icon');
       expect(icons.length).toBeGreaterThan(0);
     });
 
@@ -239,7 +262,7 @@ describe('AlgorithmTypes', () => {
     it('should have proper card title styling', () => {
       const { container } = renderComponent();
       const titles = container.querySelectorAll('h3');
-      expect(titles.length).toBeGreaterThanOrEqual(2);
+      expect(titles.length).toBeGreaterThanOrEqual(3);
     });
 
     it('should have proper description styling', () => {
@@ -254,6 +277,7 @@ describe('AlgorithmTypes', () => {
       const { container } = renderComponent();
       const grid = container.querySelector('div[class*="grid"]');
       expect(grid).toHaveClass('md:grid-cols-2');
+      expect(grid).toHaveClass('lg:grid-cols-3');
     });
 
     it('should have centered text on mobile', () => {

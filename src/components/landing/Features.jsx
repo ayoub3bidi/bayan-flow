@@ -6,7 +6,14 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Sliders, Code, Volume2, Maximize } from 'lucide-react';
+import {
+  Sliders,
+  Code,
+  Volume2,
+  Maximize,
+  Lightbulb,
+  Video,
+} from 'lucide-react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
 
@@ -39,6 +46,18 @@ function Features() {
       description: t('landing.features.fullscreen.description'),
       gradient: 'from-indigo-500 to-purple-500',
     },
+    {
+      icon: Lightbulb,
+      title: t('landing.features.insight.title'),
+      description: t('landing.features.insight.description'),
+      gradient: 'from-amber-500 to-yellow-500',
+    },
+    {
+      icon: Video,
+      title: t('landing.features.videoExport.title'),
+      description: t('landing.features.videoExport.description'),
+      gradient: 'from-teal-500 to-cyan-500',
+    },
   ];
 
   return (
@@ -59,7 +78,7 @@ function Features() {
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}

@@ -2,6 +2,8 @@
 
 This document provides an in-depth explanation of the Bayan Flow architecture, design patterns, and implementation details.
 
+**Contributors:** Open PRs against **`develop`** (not `main`). Follow **[CONTRIBUTING.md](../CONTRIBUTING.md)**, **[DEVELOPMENT.md](./DEVELOPMENT.md)** for practical workflows, and complete **[.github/PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md)** when submitting changes.
+
 ## Table of Contents
 
 1. [System Architecture](#system-architecture)
@@ -13,9 +15,10 @@ This document provides an in-depth explanation of the Bayan Flow architecture, d
 7. [Algorithm Implementation](#algorithm-implementation)
 8. [Animation System](#animation-system)
 9. [Audio System](#audio-system)
-10. [State Management](#state-management)
-11. [Testing Strategy](#testing-strategy)
-12. [Performance Optimizations](#performance-optimizations)
+10. [Video Export](#video-export)
+11. [State Management](#state-management)
+12. [Testing Strategy](#testing-strategy)
+13. [Performance Optimizations](#performance-optimizations)
 
 ## System Architecture
 
@@ -80,17 +83,19 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 
 #### **VisualizerApp** (`/app`)
 - Main algorithm visualization interface
-- Sorting and pathfinding modes
+- **Sorting**, **pathfinding**, and **searching** modes (mode tab + shared settings)
 - Full control panel and settings
-- Python code viewer
+- Python code panel (edit, run, test cases)
 - Complexity analysis
 
-**Key State:**
+**Key State (conceptual):**
 ```javascript
-- algorithmType: 'sorting' | 'pathfinding'
-- array: Current array being visualized
-- selectedAlgorithm: Current algorithm name
-- speed: Animation speed
+- algorithmType: 'sorting' | 'pathfinding' | 'searching'
+- array: 1D data for sorting and for array-substrate searching (sorted + target)
+- searchGraphNodeCount: node count for node–link searching (e.g. DFS); independent of pathfinding gridSize
+- gridSize / grid: pathfinding only
+- selectedAlgorithm: Current algorithm key
+- speed: Animation speed (autoplay)
 - mode: 'manual' | 'autoplay'
 - isFullScreen: Full-screen mode state
 ```
@@ -124,10 +129,11 @@ LandingPage
 VisualizerApp
 ├── Header
 ├── SettingsPanel (uses useAlgorithmConfig, useSettingsConfig, AlgorithmDropdown)
-├── ArrayVisualizer / GridVisualizer
+├── VISUALIZER_REGISTRY[mode]: ArrayVisualizer (sorting) | GridVisualizer (pathfinding) | SearchingCategoryVisualizer (searching → ArrayVisualizer or GraphVisualizer by substrate)
 ├── ControlPanel
 ├── FloatingActionButton
-├── PythonCodePanel (lazy)
+├── ExportProgressModal (orientation selection, progress, preview)
+├── PythonCodePanel (lazy; Monaco editor, Output + Test Cases tabs)
 ├── ComplexityPanel (lazy)
 └── Footer
 
@@ -152,20 +158,20 @@ Roadmap
 
 **Key State:**
 ```javascript
-- algorithmType: Current mode (sorting/pathfinding)
-- array/grid: Data being visualized
-- speed: Animation speed (10-1000ms)
-- selectedAlgorithm: Current algorithm
-- mode: Control mode (manual/autoplay)
+- algorithmType: 'sorting' | 'pathfinding' | 'searching'
+- array / grid / graph snapshot: Depends on mode; searching may be sorted array **or** explicit nodes+edges (see `searchingSubstrate.js`)
+- speed: Animation speed
+- selectedAlgorithm: Current algorithm key
+- mode: manual / autoplay
 - isPythonPanelOpen: Python panel visibility
 ```
 
-#### **ArrayVisualizer/GridVisualizer** (Presentation)
-- Renders visualization based on mode
-- Purely presentational, receives data as props
-- Handles swipe gestures for mobile
-- Shows auto-hiding legend
-- Displays step descriptions
+#### **ArrayVisualizer / GridVisualizer / GraphVisualizer** (Presentation)
+- **ArrayVisualizer**: sorting and array-substrate searching (bars, target ring when applicable)
+- **GridVisualizer**: pathfinding only (cells, start/end, queue/path semantics)
+- **GraphVisualizer**: node–link searching (SVG nodes and edges, `GRAPH_NODE_STATES`, optional stack hint)
+- **SearchingCategoryVisualizer** routes by `getSearchingSubstrate(algorithm)` → `ARRAY` vs `NODE_LINK`
+- Presentational: swipe, auto-hiding legend, step descriptions, Framer Motion where used
 
 #### **ArrayBar/GridCell** (Atomic Components)
 - Individual visualization elements
@@ -177,25 +183,34 @@ Roadmap
 - Progress tracking
 - Full-screen toggle
 - Generate new array/grid button
+- Export video button (triggers orientation selection flow)
 
 #### **SettingsPanel** (Configuration)
-- Algorithm type toggle (sorting/pathfinding)
+- Algorithm type toggle (**sorting / pathfinding / searching**)
 - **AlgorithmDropdown**: Algorithm selection with grouped options (uses `useAlgorithmConfig`)
 - Control mode toggle (manual/autoplay)
 - Speed slider (autoplay only)
-- Array size / Grid size controls (uses `useSettingsConfig`)
+- Size control is **effective** per mode: array size (sorting + array searching), graph node count (node–link searching), grid size (pathfinding)—see `SettingsPanel` + `searchingSubstrate.js`
 - Sound toggle
 
 #### **Config Layer** (`src/config/`)
-- **useAlgorithmConfig**: Returns sortingAlgorithms, pathfindingAlgorithms, sortingGroups, pathfindingGroups (i18n-aware)
+- **useAlgorithmConfig**: Returns sorting, pathfinding, and **searching** algorithm lists and groups (from `CATEGORY_CONFIG`, i18n-aware)
 - **useSettingsConfig**: Returns gridSizeOptions, speedOptions from constants
 
-#### **PythonCodePanel** (Code Viewer)
-- Monaco editor integration
-- Syntax highlighting
-- Theme-aware (light/dark)
+#### **PythonCodePanel** (Interactive Code & Testing)
+- Monaco editor: editable Python code, syntax highlighting, theme-aware (light/dark)
+- Run/Rerun button; Ctrl+Enter to execute
+- Output tab: stdout/stderr from Pyodide execution
+- Test Cases tab: pre-defined + custom test cases, LeetCode-style pass/fail, add/edit/delete custom cases (persisted in localStorage)
+- Resizable editor/output split
 - Side panel (desktop) / Bottom sheet (mobile)
-- Lazy loaded for performance
+- Lazy loaded; Pyodide runs in Web Worker (`pyodide.worker.js`)
+
+#### **ExportProgressModal** (Video Export)
+- Orientation selection: Horizontal (16:9) or Vertical (9:16)
+- Progress bar and Stop button during render
+- Video preview with Download and Close (RTL-aware)
+- Phases: `orientation` → `checking` → `rendering` → `preview`
 
 #### **ComplexityPanel** (Analysis)
 - Algorithm complexity visualization
@@ -260,6 +275,32 @@ For pathfinding:
   description: 'Exploring cell (2, 3)'
 }
 ```
+
+For searching — **array** substrate (sorted bars):
+
+```javascript
+{
+  array: [1, 3, 5, 7, 9],
+  states: ['default', 'comparing', ...], // includes auxiliary for “out of range”
+  description: '…',                       // i18n step string
+  targetValue: 5                          // UI: target chip + ring on bar
+}
+```
+
+For searching — **node–link graph** substrate (e.g. DFS):
+
+```javascript
+{
+  nodes: [{ id: '0', x: 0.5, y: 0.2, label: '0' }, ...], // layout: normalized 0–1
+  edges: [{ from: '0', to: '1' }, ...],
+  nodeStates: { '0': 'root', '1': 'frontier', ... },     // GRAPH_NODE_STATES
+  stackOrder: ['0', '1'],                                 // optional; top = last element
+  description: '…',
+  goalNodeId: '3'                                         // optional metadata
+}
+```
+
+Registry helpers: `src/registry/searchingSubstrate.js` (`getSearchingSubstrate`, `isNodeLinkSearchingAlgorithm`). Extra visualizer props: `src/registry/extraVisualizerProps.js`.
 
 ## Theme System
 
@@ -371,7 +412,8 @@ initRTL(i18n) → {
   "controls": { "play": "...", "pause": "..." },
   "algorithms": {
     "sorting": { "bubbleSort": "..." },
-    "pathfinding": { "bfs": "..." }
+    "pathfinding": { "bfs": "..." },
+    "searching": { "binarySearch": "..." }
   }
 }
 ```
@@ -639,6 +681,44 @@ const executeStep = useCallback((step) => {
 - **Performance**: Early returns when disabled
 - **Contextual**: Sounds match visual operations
 
+## Video Export
+
+### Overview
+
+Video export uses **Remotion** (`@remotion/web-renderer`) to render algorithm visualizations as MP4 files directly in the browser. No server-side rendering is required.
+
+### Export Flow
+
+```
+User clicks Export → Orientation selection (Horizontal / Vertical)
+    → User selects format
+    → Browser capability check (canRenderMediaOnWeb)
+    → Render (renderMediaOnWeb) with progress
+    → Preview modal with video player
+    → User downloads or closes
+```
+
+### Architecture
+
+- **useVideoExporter** (`src/video/useVideoExporter.js`): Hook managing export state (`idle` | `orientation` | `checking` | `rendering` | `preview` | `error`), blob storage, and download.
+- **ExportProgressModal** (`src/components/ExportProgressModal.jsx`): Single modal with phases—orientation choice, progress bar, video preview. RTL-aware close button.
+- **AlgorithmVideo** (`src/video/AlgorithmVideo.jsx`): Root Remotion composition; switches between main visualization and complexity segment.
+- **SortingScene** / **PathfindingScene** / **GraphSearchingScene**: Frame-based Remotion scenes; use `interpolate()` / `interpolateColors()` for smooth transitions. **Searching** uses **`SearchingVideoScene`**: array-shaped steps → **SortingScene**; graph-shaped steps (`nodes` + `edges` + `nodeStates`) → **GraphSearchingScene** (not the pathfinding grid).
+- **ComplexityScene**: Remotion-compatible complexity display (time/space, performance graph) shown for 10 seconds at the end.
+
+### Orientations
+
+| Format   | Dimensions   | Use case                         |
+|----------|--------------|----------------------------------|
+| Horizontal | 1920×1080  | YouTube, presentations           |
+| Vertical   | 1080×1920  | Shorts, Reels, TikTok            |
+
+### Key Constants (`src/video/constants.js`)
+
+- `VIDEO_FPS`: 30
+- `VIDEO_EXPORT_FRAMES_PER_STEP`: 45 (~1.5 s per step)
+- `COMPLEXITY_DURATION_FRAMES`: 300 (10 seconds)
+
 ## State Management
 
 ### Custom Hooks Architecture
@@ -682,6 +762,16 @@ export function useSortingVisualization(initialArray, speed, mode) {
 4. **Bidirectional**: Can step forward and backward
 5. **Mode-Aware**: Different behavior for manual vs autoplay
 
+#### **usePythonExecution**
+
+Manages Python execution via Pyodide in a Web Worker:
+- `runCode(code)` – Execute Python; lazy-loads Pyodide on first run
+- `runTests(code, functionName, testCases)` – Run test harness, returns pass/fail per case
+- `status`, `output`, `error` – Execution state
+- `testResults`, `testStatus`, `testError` – Test run state
+- `clearOutput`, `clearTestResults`, `cancelExecution`
+- Timeout handling; worker cleanup on unmount
+
 #### **usePathfindingVisualization**
 
 Similar to sorting hook but manages:
@@ -689,6 +779,15 @@ Similar to sorting hook but manages:
 - Start/end position generation
 - Grid size changes
 - Grid regeneration
+
+#### **useSearchingVisualization**
+
+Same control surface as sorting (steps, play, step forward/back, autoplay) but **two internal paths**:
+
+- **Array substrate**: sorted arrays; random **target** per load; steps with `array`, `states`, optional **`targetValue`** → `ArrayVisualizer` / **`SortingScene`**
+- **Node–link substrate**: `generateRandomSearchTree`-style graph context; **`regenerateGraphStructure`** for new data; steps with **`nodes`**, **`edges`**, **`nodeStates`**, **`stackOrder`** → `GraphVisualizer` / **`GraphSearchingScene`** via `getExtraVisualizerProps`
+
+`VisualizerApp` passes **`searchGraphNodeCount`** (not `gridSize`) for graph searching. `VisualizerApp` selects this hook (with sorting and pathfinding) via `useCategoryVisualizations`.
 
 #### **useTheme**
 
@@ -829,7 +928,7 @@ describe('ThemeToggle', () => {
 
 ```bash
 pnpm test              # Watch mode
-pnpm test:run          # Single run (922 tests across 41 files)
+pnpm test:run          # Single run (full suite)
 pnpm test:ui           # Visual UI
 pnpm test:coverage     # Coverage report (Codecov patch threshold 70%)
 ```
@@ -903,18 +1002,13 @@ useEffect(() => {
 ### Planned Features
 
 1. **Additional Algorithms**
-   - All 14 sorting algorithms implemented (Bubble, Quick, Merge, Selection, Insertion, Heap, Shell, Radix, Counting, Bucket, Cycle, Comb, Tim, Bogo)
-   - All 9 pathfinding algorithms implemented (BFS, Dijkstra, A*, Bidirectional, Greedy BFS, JPS, Bellman-Ford, IDA*, D* Lite)
-   - Potential: DFS, Floyd-Warshall, graph algorithms, tree traversals
+   - 14 sorting algorithms; 9 pathfinding algorithms; **searching** with array algorithms (linear, binary, …) and **node–link** graph traversal (DFS today; room for BFS-on-graph, tree walks, etc. without reusing the pathfinding grid UI)
 
-2. **Graph Visualization Mode**
-   - D3.js integration
-   - Force-directed layouts
-   - Interactive graph editing
+2. **Richer graph searching**
+   - DAG / non-tree generators, directed edges, optional force-directed or editable layouts while keeping the same step schema
 
 3. **Advanced Features**
    - Algorithm comparison mode
-   - Export visualization as video
    - Custom array/grid input
    - Collaborative mode
 
@@ -924,23 +1018,23 @@ useEffect(() => {
    - Code playground
    - Performance benchmarking
 
-5. **Recently Completed**
-   - ✅ 14 sorting algorithms (including Counting, Bucket, Cycle, Comb, Tim, Bogo)
-   - ✅ 9 pathfinding algorithms (including JPS, Bellman-Ford, IDA*, D* Lite)
-   - ✅ 922 tests across 41 files; Codecov patch threshold 70%
-   - ✅ Config layer (useAlgorithmConfig, useSettingsConfig)
-   - ✅ DocumentTitle for SEO; AlgorithmDropdown component
+5. **Recently Completed** (representative; see repo for current scope)
+   - In-browser MP4 export via Remotion (orientation choice, preview, complexity segment)
+   - Broad sorting and pathfinding catalogs; **searching** with sorted-array UI and **node–link graph** DFS (`GraphVisualizer`, `GraphSearchingScene`, `searchingSubstrate`)
+   - Vitest-based test suite and CI aligned with `package.json` engines
+   - Centralized category config (`CATEGORY_CONFIG`) feeding `useAlgorithmConfig` and `useSettingsConfig`
+   - DocumentTitle for SEO; grouped algorithm dropdown
 
 ## Conclusion
 
 Bayan Flow is built with:
-- **Modularity**: Easy to add new algorithms and features (14 sorting, 9 pathfinding)
-- **Maintainability**: Clean separation of concerns with dual-implementation pattern
-- **Testability**: Comprehensive test coverage (922 tests across 41 files)
-- **Performance**: Optimized for smooth animations
-- **Extensibility**: Ready for future enhancements
-- **Accessibility**: WCAG 2.1 AA compliant
+- **Modularity**: Three visualization categories (sorting, pathfinding, searching), each driven by `CATEGORY_CONFIG` and shared patterns
+- **Maintainability**: Dual implementation (visualization steps + pure functions) for algorithms
+- **Testability**: Broad unit/integration coverage via Vitest
+- **Performance**: Optimized for smooth UI animations and lazy-loaded heavy panels
+- **Extensibility**: New algorithms plug into registries (`searchingSubstrate` for searching substrate), constants, i18n, and Python/test harness
+- **Accessibility**: Keyboard, ARIA, skip links, reduced-motion awareness
 - **Internationalization**: Multi-language support with RTL
-- **Theming**: Flexible dark/light mode system
+- **Theming**: CSS-variable-based light/dark system
 
-The architecture supports scaling to include more algorithm types, more complex visualizations, and advanced features while maintaining code quality and performance. The recent addition of 6 new sorting algorithms demonstrates the system's robust extensibility patterns.
+The architecture is designed to add modes and algorithms without forking the core visualizer flow.

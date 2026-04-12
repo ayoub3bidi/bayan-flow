@@ -1,7 +1,8 @@
 {
   "common": {
     "back": "Back",
-    "backToHome": "Back to Home"
+    "backToHome": "Back to Home",
+    "save": "Save"
   },
   "header": {
     "title": "Bayan Flow",
@@ -16,6 +17,7 @@
     "speed": "Speed",
     "arraySize": "Array Size",
     "gridSize": "Grid Size",
+    "searchGraphNodeCount": "Graph nodes",
     "sound": "Sound",
     "language": "Language",
     "controlMode": "Control Mode",
@@ -23,13 +25,18 @@
     "time": "Time",
     "soundOn": "Sound On",
     "soundOff": "Sound Off",
+    "experimental": "Experimental",
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
-    "autoplayOnly": "only"
+    "autoplayOnly": "only",
+    "mysteryCategory": "Mystery",
+    "mysteryCategoryHint": "Coming soon",
+    "mysteryCategoryAria": "Upcoming algorithm category, not yet available"
   },
   "modes": {
     "sorting": "Sorting",
     "pathfinding": "Pathfinding",
+    "searching": "Searching",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },
@@ -61,6 +68,17 @@
       "idaStar": "Iterative Deepening A* (IDA*)",
       "dStarLite": "D* Lite"
     },
+    "searching": {
+      "linearSearch": "Linear Search",
+      "binarySearch": "Binary Search",
+      "ternarySearch": "Ternary Search",
+      "jumpSearch": "Jump Search",
+      "interpolationSearch": "Interpolation Search",
+      "exponentialSearch": "Exponential Search",
+      "fibonacciSearch": "Fibonacci Search",
+      "depthFirstSearch": "Depth-First Search (graph)",
+      "breadthFirstSearchGraph": "Breadth-First Search (graph)"
+    },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
@@ -84,7 +102,16 @@
       "jumpPointSearch": "Starting Jump Point Search",
       "bellmanFord": "Starting Bellman-Ford algorithm",
       "idaStar": "IDA* Search",
-      "dStarLite": "Starting D* Lite Search"
+      "dStarLite": "Starting D* Lite Search",
+      "linearSearch": "Starting Linear Search",
+      "binarySearch": "Starting Binary Search",
+      "ternarySearch": "Starting Ternary Search",
+      "jumpSearch": "Starting Jump Search",
+      "interpolationSearch": "Starting Interpolation Search",
+      "exponentialSearch": "Starting Exponential Search",
+      "fibonacciSearch": "Starting Fibonacci Search",
+      "depthFirstSearch": "Starting depth-first search on the node–link graph",
+      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph"
     }
   },
   "complexity": {
@@ -110,7 +137,16 @@
     "jumpPointSearch": "O(E)",
     "bellmanFord": "O(VE)",
     "idaStar": "O(b^d)",
-    "dStarLite": "O(log V)"
+    "dStarLite": "O(log V)",
+    "linearSearch": "O(n)",
+    "binarySearch": "O(log n)",
+    "ternarySearch": "O(log n)",
+    "jumpSearch": "O(√n)",
+    "interpolationSearch": "O(log log n)",
+    "exponentialSearch": "O(log n)",
+    "fibonacciSearch": "O(log n)",
+    "depthFirstSearch": "O(V + E)",
+    "breadthFirstSearchGraph": "O(V + E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -131,6 +167,26 @@
     "stepBackward": "Step Backward",
     "reset": "Reset",
     "generateArray": "Generate New Array",
+    "exportVideo": "Export Video",
+    "rendering": "Rendering video…",
+    "exportDone": "Video downloaded",
+    "exportError": "Export failed",
+    "browserNotSupported": "Video export is not supported in this browser. Use Chrome 94+, Firefox 130+, or Safari 26+.",
+    "exportingTitle": "Exporting video",
+    "exportingChecking": "Checking browser support…",
+    "exportingRendering": "Rendering your visualization. This may take a moment.",
+    "exportingProgress": "Progress",
+    "stopExport": "Stop",
+    "exportOrientationTitle": "Choose video format",
+    "exportOrientationDesc": "Select the orientation for your video export.",
+    "exportOrientationHorizontal": "Horizontal",
+    "exportOrientationHorizontalDesc": "16:9 • YouTube, presentations",
+    "exportOrientationVertical": "Vertical",
+    "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
+    "exportPreview": "Video ready",
+    "exportPreviewDesc": "Preview your video and download when ready.",
+    "downloadVideo": "Download",
+    "closePreview": "Close",
     "goFullScreen": "Go Full Screen (F)",
     "exitFullScreen": "Exit Full Screen (Esc)"
   },
@@ -141,6 +197,9 @@
     "ready": "Ready to start",
     "pathFound": "Path found!",
     "noPath": "No path exists"
+  },
+  "videoExport": {
+    "noSteps": "No steps to display"
   },
   "complexity_panel": {
     "title": "Complexity Analysis",
@@ -176,10 +235,401 @@
     "close": "Close",
     "loading": "Loading...",
     "not_available": "No Python Implementation Available",
-    "not_available_desc": "Python implementation for {{algorithm}} is coming soon!"
+    "not_available_desc": "Python implementation for {{algorithm}} is coming soon!",
+    "run": "Run",
+    "rerun": "Rerun",
+    "reset": "Reset",
+    "cancel": "Cancel",
+    "running": "Running...",
+    "output": "Output",
+    "clear_output": "Clear output",
+    "resize_output": "Resize output panel",
+    "output_placeholder": "Run the code to see output here.",
+    "loading_runtime": "Loading Python runtime...",
+    "timeout": "Timeout",
+    "completed": "Completed",
+    "error": "Error",
+    "test_cases": "Test Cases",
+    "tests_passed": "{{passed}}/{{total}} passed",
+    "run_tests": "Run tests",
+    "no_test_cases": "No test cases for this algorithm.",
+    "edit_test_case": "Edit test case",
+    "delete_test_case": "Delete test case",
+    "test_case_name": "Test case name",
+    "test_input": "Input (Python expression)",
+    "test_expected": "Expected output (Python expression)",
+    "add_test_case": "Add test case",
+    "input_label": "Input:",
+    "expected_label": "Expected:",
+    "error_label": "Error:",
+    "actual_label": "Actual:"
+  },
+  "insight_panel": {
+    "title": "Algorithm Insight",
+    "close": "Close",
+    "viewInsight": "View Algorithm Insight",
+    "insightLabel": "Insight",
+    "inventor": "Inventor",
+    "year": "Year",
+    "unknown": "Unknown",
+    "history": "History",
+    "intuition": "Core Idea",
+    "realWorldUses": "Real-world Applications",
+    "facts": "Interesting Facts",
+    "videoComingSoon": "Video coming soon",
+    "noData": "No additional insight available for this algorithm yet.",
+    "algorithms": {
+      "bubbleSort": {
+        "history": "Bubble Sort is one of the earliest and most elementary sorting algorithms. The term was popularized by Iverson in 1962, though similar algorithms appeared in the 1950s. Despite its simplicity, it served as the baseline comparison for decades of sorting research.",
+        "intuition": "Imagine repeatedly walking through a list of numbers. Whenever you find two adjacent numbers that are in the wrong order, you swap them. After each full pass, the largest unsorted number 'bubbles up' to its correct position at the end. Repeat until no more swaps are needed.",
+        "realWorldUses_0": "Teaching and academic demonstrations of sorting concepts",
+        "realWorldUses_1": "Detecting when a nearly-sorted list is already in order (early termination variant)",
+        "realWorldUses_2": "Graphics pipelines for sorting a very small number of elements (polygon depth ordering)",
+        "facts_0": "The name 'Bubble Sort' was formally coined by Kenneth Iverson in his 1962 book A Programming Language.",
+        "facts_1": "Despite its O(n²) average case, it performs optimally O(n) on already-sorted input with the early-exit variant.",
+        "facts_2": "Donald Knuth described it as 'not recommended for most purposes' in The Art of Computer Programming, yet it remains one of the most widely taught algorithms."
+      },
+      "quickSort": {
+        "history": "Invented by Tony Hoare in 1959 while he was a visiting student at Moscow State University working on machine translation. He needed to sort words for a Russian-English dictionary project. The algorithm was published in 1961 and remained one of the fastest practical sorting algorithms for decades.",
+        "intuition": "Pick one element as a 'pivot'. Rearrange the other elements so that everything smaller than the pivot goes to the left, and everything larger goes to the right. Now the pivot is in its final correct position. Recursively apply the same idea to the left and right sub-arrays. Divide and conquer!",
+        "realWorldUses_0": "Default sort in many standard libraries (C's qsort, early Java Arrays.sort)",
+        "realWorldUses_1": "Database engines for in-memory sorting of query result sets",
+        "realWorldUses_2": "Operating system kernels for scheduling and memory management structures",
+        "realWorldUses_3": "Competitive programming as a go-to general-purpose sort",
+        "facts_0": "Tony Hoare invented Quick Sort at age 25. He later won the Turing Award in 1980.",
+        "facts_1": "The average case O(n log n) performance comes from the pivot splitting the array roughly in half each time.",
+        "facts_2": "The worst case O(n²) occurs when the pivot is always the smallest or largest element. In practice this is solved with random pivot selection.",
+        "facts_3": "Quick Sort is not stable: equal elements may appear in a different relative order after sorting."
+      },
+      "mergeSort": {
+        "history": "Merge Sort was conceived by John von Neumann in 1945, making it one of the oldest divide-and-conquer algorithms. It was originally designed for efficient use on early magnetic tape storage systems, where sequential access was the only efficient operation. Its formal description was published by John von Neumann and Herman Goldstine.",
+        "intuition": "Split the array in half, sort each half independently (recursively), then merge the two sorted halves into one sorted result. Merging two already-sorted lists is easy: just compare the front of each list and pick the smaller one. The key insight is that merging is O(n) and the recursion depth is O(log n).",
+        "realWorldUses_0": "Java's Arrays.sort for objects (uses TimSort, a merge sort hybrid)",
+        "realWorldUses_1": "External sorting of files too large to fit in memory (merge chunks from disk)",
+        "realWorldUses_2": "Counting inversions in an array, a fundamental task in data analysis",
+        "realWorldUses_3": "Parallel sorting in distributed systems (each node sorts a chunk, then chunks are merged)",
+        "facts_0": "Merge Sort was one of the first algorithms designed specifically around the constraints of tape storage hardware.",
+        "facts_1": "It is the only simple O(n log n) algorithm that is also stable (preserves the order of equal elements).",
+        "facts_2": "John von Neumann is also known for the von Neumann architecture, the design most modern computers are built on.",
+        "facts_3": "TimSort, used by Python and Java, is a hybrid of Merge Sort and Insertion Sort optimized for real-world partially sorted data."
+      },
+      "insertionSort": {
+        "history": "Insertion Sort is an ancient sorting technique that mirrors how people naturally sort playing cards in their hands. It has been used informally for centuries and formalized in computer science in the 1950s. Its simplicity and efficiency on small or nearly sorted input makes it a cornerstone of hybrid algorithms.",
+        "intuition": "Think of how you would sort a hand of playing cards. You pick up cards one at a time and insert each new card into its correct position among the cards already sorted in your hand. In the computer version, you scan left until you find the right spot, shifting elements along the way.",
+        "realWorldUses_0": "Used as the base case for small sub-arrays inside Tim Sort and Intro Sort",
+        "realWorldUses_1": "Sorting real-time incoming data streams where elements arrive one at a time",
+        "realWorldUses_2": "Embedded systems with very limited memory where code simplicity matters",
+        "facts_0": "Insertion Sort is optimal for input sizes under about 10–20 elements, which is why hybrid algorithms use it for small partitions.",
+        "facts_1": "It is an online algorithm: it can sort a list as it receives items without needing all input upfront.",
+        "facts_2": "The number of swaps equals the number of inversions in the input, a useful measure in combinatorics."
+      },
+      "selectionSort": {
+        "history": "Selection Sort is one of the most intuitive sorting algorithms, using a strategy that predates computers. It works by repeatedly finding the minimum remaining element and placing it in its correct position.",
+        "intuition": "Divide the array into a sorted region (on the left) and an unsorted region. Scan the unsorted region for the smallest element, swap it with the first unsorted element, expanding the sorted region by one. Repeat until the entire array is sorted.",
+        "realWorldUses_0": "Situations where the number of writes must be minimized (flash memory, EEPROM)",
+        "realWorldUses_1": "Teaching environments where simplicity is valued over performance",
+        "realWorldUses_2": "Small embedded systems where code size and predictable behavior are critical",
+        "facts_0": "Selection Sort always performs exactly n(n-1)/2 comparisons regardless of input order. It is not adaptive.",
+        "facts_1": "It makes at most n-1 swaps, giving it an advantage over Bubble Sort on write-expensive storage.",
+        "facts_2": "Selection Sort is not stable in its standard form."
+      },
+      "heapSort": {
+        "history": "Heap Sort was invented by J. W. J. Williams in 1964, who also introduced the heap data structure in the same paper. Robert Floyd later improved it with a more efficient heap-building phase, reducing build time to O(n).",
+        "intuition": "A max-heap is a tree where every parent is larger than its children. First, rearrange the array into a max-heap. Then repeatedly extract the largest element (the root), place it at the end of the array, and restore the heap property. The result is a sorted array.",
+        "realWorldUses_0": "Priority queues in operating system schedulers",
+        "realWorldUses_1": "Graph algorithms like Dijkstra and Prim that require efficient minimum/maximum extraction",
+        "realWorldUses_2": "Embedded real-time systems that need guaranteed worst-case O(n log n) performance",
+        "facts_0": "Heap Sort is in-place and achieves O(n log n) worst case, something Quick Sort cannot guarantee.",
+        "facts_1": "The heap data structure invented for Heap Sort is the foundation of priority queues used everywhere in computing.",
+        "facts_2": "Despite its theoretical optimality, Heap Sort is rarely the fastest in practice due to poor cache locality."
+      },
+      "shellSort": {
+        "history": "Shell Sort was invented by Donald Shell in 1959 and published in Communications of the ACM. It was one of the first algorithms to break the O(n²) barrier for general-purpose sorting, even without a formal proof at the time.",
+        "intuition": "Shell Sort is a generalization of Insertion Sort. Instead of comparing adjacent elements, it compares elements separated by a gap. The gap starts large (sorting elements far apart) and gradually shrinks to 1 (a final Insertion Sort pass). Because elements are moved over large distances early on, the final passes are very efficient.",
+        "realWorldUses_0": "Embedded systems where small code size matters but O(n²) is too slow",
+        "realWorldUses_1": "Sorting medium-sized datasets where a simple implementation is preferred",
+        "realWorldUses_2": "Linux kernel's uClibc library uses Shell Sort for its simplicity and reasonable performance",
+        "facts_0": "The optimal gap sequence for Shell Sort is still an open research problem in computer science.",
+        "facts_1": "With Knuth's gap sequence (1, 4, 13, 40, ...) the average case is approximately O(n^1.5).",
+        "facts_2": "Donald Shell published the algorithm at age 29; it was one of the landmark algorithm papers of the era."
+      },
+      "radixSort": {
+        "history": "Radix Sort can be traced back to 1887 when Herman Hollerith used it on punched card tabulating machines. It was later formalized for computers in the 1950s. The non-comparative nature makes it theoretically faster than comparison-based sorts for integer data.",
+        "intuition": "Sort numbers digit by digit, starting from the least significant digit to the most significant. Use a stable sort (like Counting Sort) at each digit position. After processing all digit positions, the numbers are fully sorted. The key insight: sorting digit-by-digit in a stable way makes the whole sequence correct.",
+        "realWorldUses_0": "Sorting large arrays of integers or fixed-length strings in database systems",
+        "realWorldUses_1": "Network packet routing and IP address sorting",
+        "realWorldUses_2": "Suffix array construction in bioinformatics and text processing",
+        "facts_0": "Radix Sort is one of the oldest sorting algorithms, predating programmable computers.",
+        "facts_1": "Its linear time O(nk) is achieved without ever comparing two elements directly.",
+        "facts_2": "The algorithm works in both LSD (least significant digit first) and MSD (most significant digit first) variants."
+      },
+      "countingSort": {
+        "history": "Counting Sort was described by Harold H. Seward in 1954. It works by counting occurrences of each value and using that information to place each element directly in its correct sorted position. That is a radically different approach from comparison-based sorting.",
+        "intuition": "Count how many times each value appears in the input. Then compute the cumulative counts to determine where each value's sorted block starts. Finally, place each element in its correct output position. There are no comparisons between elements, only arithmetic on counts.",
+        "realWorldUses_0": "Sorting characters or small integers in text processing pipelines",
+        "realWorldUses_1": "Used as a subroutine inside Radix Sort for each digit position",
+        "realWorldUses_2": "Histogramming and frequency analysis in image processing",
+        "facts_0": "Counting Sort achieves linear O(n + k) time, better than any comparison-based sort for small ranges.",
+        "facts_1": "It is a stable sort, which is essential for its use inside Radix Sort.",
+        "facts_2": "The algorithm requires O(k) extra space for the counting array, making it impractical when k >> n."
+      },
+      "bucketSort": {
+        "history": "Bucket Sort is a distribution-based sorting algorithm whose conceptual origins trace back to the early days of computing. It distributes elements into buckets, sorts each bucket, and concatenates the results.",
+        "intuition": "Imagine distributing mail into labeled bins by region. Each bin (bucket) contains mail for a specific range of addresses. You sort each bin independently (with a simple algorithm), then collect the bins in order. Bucket Sort applies the same idea to numbers distributed across a known range.",
+        "realWorldUses_0": "Sorting floating-point numbers uniformly distributed in [0, 1)",
+        "realWorldUses_1": "Organizing data in geographic information systems by coordinate ranges",
+        "realWorldUses_2": "Efficient sorting in external memory when data can be partitioned by value range",
+        "facts_0": "Bucket Sort achieves average O(n + k) time when input is uniformly distributed.",
+        "facts_1": "The worst case degenerates to O(n²) if all elements fall into a single bucket.",
+        "facts_2": "It is not a comparison-based sort. Elements are placed by value, not by pairwise comparison."
+      },
+      "cycleSort": {
+        "history": "Cycle Sort was formalized by Brendan Kehoe around 1990. It is theoretically optimal for minimizing writes, making exactly n-1 write operations in the worst case, fewer than any other sorting algorithm.",
+        "intuition": "Every permutation of elements can be decomposed into cycles. A cycle tells you: element A should go where B is, B should go where C is, ..., and the last element should go where A was. Cycle Sort traces each cycle and performs exactly the minimum number of writes needed to resolve it.",
+        "realWorldUses_0": "Flash memory devices where writes are expensive and degrade the hardware",
+        "realWorldUses_1": "EEPROM sorting where write cycles are limited",
+        "realWorldUses_2": "Educational demonstrations of write-complexity optimization",
+        "facts_0": "Cycle Sort is the only sorting algorithm that is provably optimal in the number of writes.",
+        "facts_1": "The number of writes is n minus the number of cycles in the permutation.",
+        "facts_2": "Despite its unique property, Cycle Sort is rarely used in practice due to its O(n²) time complexity."
+      },
+      "combSort": {
+        "history": "Comb Sort was invented by Włodzimierz Dobosiewicz in 1980 and later popularized by Stephen Lacey and Richard Box in a 1991 Byte Magazine article. It improves Bubble Sort by using a shrinking gap.",
+        "intuition": "Comb Sort extends Bubble Sort with one key change: instead of comparing adjacent elements (gap = 1), start with a large gap and shrink it by a factor of 1.3 each pass. This allows small values near the end (called 'turtles') to be moved to the front quickly, which is Bubble Sort's key weakness. The final passes with gap = 1 finish the job.",
+        "realWorldUses_0": "Simple in-place sorting where Bubble Sort's 'turtle' problem causes poor performance",
+        "realWorldUses_1": "Embedded systems where a better-than-O(n²) average case is desired with minimal code",
+        "realWorldUses_2": "Educational contexts to demonstrate gap-sequence-based improvements",
+        "facts_0": "The shrink factor of ~1.3 was empirically determined to be near-optimal.",
+        "facts_1": "Comb Sort eliminates the 'turtle problem' that makes Bubble Sort slow on certain inputs.",
+        "facts_2": "The worst case remains O(n²), but average case performance is significantly better."
+      },
+      "timSort": {
+        "history": "Tim Sort was designed and implemented by Tim Peters in 2002 for the Python programming language. It was engineered for real-world data, which is often partially sorted. Today it is the default sort in Python, Java (for objects), Swift, Android, and several other platforms.",
+        "intuition": "Tim Sort looks for naturally ordered sub-sequences ('runs') in the input. If a run is too short, it extends it using Insertion Sort. Then it merges these runs using a merge strategy borrowed from Merge Sort, with careful bookkeeping to avoid redundant work on already-ordered data.",
+        "realWorldUses_0": "Python's built-in sort() and sorted() functions",
+        "realWorldUses_1": "Java's Arrays.sort() for objects and Collections.sort()",
+        "realWorldUses_2": "Android platform's sort implementation",
+        "realWorldUses_3": "Any real-world dataset with naturally occurring ordered sequences",
+        "facts_0": "Tim Peters designed Tim Sort specifically because real-world data is rarely fully random.",
+        "facts_1": "Tim Sort is both stable and adaptive. It is faster than O(n log n) on partially sorted input.",
+        "facts_2": "It was formally proved correct and had its worst-case guarantees verified by academic researchers in 2015.",
+        "facts_3": "The name 'Tim Sort' is informal; Tim Peters jokingly suggested it when the algorithm was being adopted in Java."
+      },
+      "bogoSort": {
+        "history": "Bogo Sort (also called Permutation Sort or Stupid Sort) has no serious inventor or date of origin. It is a joke algorithm from computer science folklore, used to illustrate the absurdity of non-analytical approaches to problem solving.",
+        "intuition": "Randomly shuffle the entire array. Check if it is sorted. If not, shuffle again. Repeat indefinitely. The algorithm eventually terminates with probability 1 (theoretically), but in practice it is astronomically unlikely to sort even a small array quickly.",
+        "realWorldUses_0": "Classroom demonstrations of why algorithmic analysis matters",
+        "realWorldUses_1": "Humorous examples in algorithm textbooks and lectures",
+        "facts_0": "The average number of shuffles needed to sort n elements is n! (factorial), which grows faster than any polynomial or exponential.",
+        "facts_1": "The worst case is technically unbounded. The algorithm might never terminate.",
+        "facts_2": "Bogo Sort holds the distinction of being the least efficient sorting algorithm commonly discussed in academia."
+      },
+      "bfs": {
+        "history": "Breadth-First Search was first described by Konrad Zuse in his 1945 thesis (though unpublished for years). Edward F. Moore independently rediscovered it in 1959 for finding shortest paths through mazes. C. Y. Lee later applied it to circuit routing in 1961. It has since become one of the foundational graph traversal algorithms.",
+        "intuition": "Start at a source node. Explore all of its immediate neighbors first, then all of their neighbors, then their neighbors, expanding outward in concentric 'waves'. This level-by-level exploration guarantees that the first time you reach a destination, you have taken the shortest path (in terms of the number of edges).",
+        "realWorldUses_0": "Finding the shortest path in unweighted networks (social graphs, routing)",
+        "realWorldUses_1": "Web crawlers (crawling the web breadth-first from a starting URL)",
+        "realWorldUses_2": "Level-order traversal of trees in compilers and XML parsers",
+        "realWorldUses_3": "Peer-to-peer network broadcasting (Bitcoin, BitTorrent neighbor discovery)",
+        "facts_0": "BFS guarantees the shortest path in unweighted graphs, a property not shared by DFS.",
+        "facts_1": "The algorithm was reinvented multiple times independently, showing its naturalness and utility.",
+        "facts_2": "BFS is the basis for many other algorithms including Dijkstra's algorithm (a weighted generalization).",
+        "facts_3": "Its memory usage is O(V) in the worst case. It must store all nodes at the current frontier."
+      },
+      "dijkstra": {
+        "history": "Edsger W. Dijkstra conceived this algorithm in 1956 and published it in 1959. He designed it in roughly 20 minutes while sitting in a café in Amsterdam, later calling it one of his most elegant creations. It was originally meant to demonstrate the capabilities of the ARMAC computer.",
+        "intuition": "Maintain a set of visited nodes and a priority queue of tentative distances. Always expand the unvisited node with the smallest known distance. When you expand a node, check if going through it provides a shorter path to any of its neighbors. Repeat until the destination is reached.",
+        "realWorldUses_0": "GPS and mapping software (Google Maps, Apple Maps route calculation)",
+        "realWorldUses_1": "Internet routing protocols (OSPF, Open Shortest Path First)",
+        "realWorldUses_2": "Airline and logistics network optimization",
+        "realWorldUses_3": "Robot motion planning in known environments",
+        "facts_0": "Dijkstra designed the algorithm in ~20 minutes without pencil or paper.",
+        "facts_1": "The algorithm fails with negative edge weights. Use Bellman-Ford in that case.",
+        "facts_2": "Dijkstra received the Turing Award in 1972, one of the highest honors in computer science.",
+        "facts_3": "With a Fibonacci heap, Dijkstra runs in O(E + V log V), optimal for dense graphs."
+      },
+      "aStar": {
+        "history": "A* was developed in 1968 by Peter Hart, Nils Nilsson, and Bertram Raphael at the Stanford Research Institute as part of the Shakey robotics project, one of the first AI robots. They needed a general, efficient pathfinding algorithm that could guide the robot through physical space.",
+        "intuition": "A* extends Dijkstra by adding a heuristic: an estimate of how far the current node is from the goal. For each node, compute f(n) = g(n) + h(n), where g(n) is the actual cost from start and h(n) is the estimated cost to the goal. Always expand the node with the smallest f(n). A good heuristic focuses the search toward the goal, skipping irrelevant areas.",
+        "realWorldUses_0": "Video game pathfinding (virtually every commercial game uses A* or a variant)",
+        "realWorldUses_1": "Robot navigation and autonomous vehicle path planning",
+        "realWorldUses_2": "Map routing in navigation apps with turn penalties and traffic",
+        "realWorldUses_3": "Puzzle solving (8-puzzle, 15-puzzle, planning problems in AI)",
+        "facts_0": "A* is optimal and complete: it will always find the shortest path if one exists, given an admissible heuristic.",
+        "facts_1": "The Manhattan distance heuristic is admissible for grid-based pathfinding without diagonals.",
+        "facts_2": "A* degenerates to Dijkstra when h(n) = 0 and to Greedy Best-First Search when g(n) = 0.",
+        "facts_3": "The Shakey robot project where A* was created was a landmark milestone in the history of artificial intelligence."
+      },
+      "bidirectionalSearch": {
+        "history": "Bidirectional search was described by Pohl in 1969 as a way to dramatically reduce search space in large graphs. By running two simultaneous BFS searches, one from the start and one from the goal, the frontiers meet in the middle, covering roughly the square root of the total nodes.",
+        "intuition": "Run two BFS searches simultaneously: one forward from the start and one backward from the goal. The searches expand level by level, each maintaining their own visited sets. When a node is discovered by both searches (the frontiers intersect), a complete path has been found by combining the two partial paths.",
+        "realWorldUses_0": "Large social network shortest-path queries (e.g., six degrees of separation)",
+        "realWorldUses_1": "Transportation route planning with known start and destination",
+        "realWorldUses_2": "Game AI pathfinding in very large maps where single-direction search is too slow",
+        "facts_0": "Bidirectional BFS explores O(b^(d/2)) nodes instead of O(b^d), exponentially fewer for deep searches.",
+        "facts_1": "Guaranteeing the shortest path requires careful synchronization of when the frontiers meet.",
+        "facts_2": "Bidirectional Dijkstra was used in the original Google Maps routing before being replaced by more sophisticated techniques."
+      },
+      "greedyBestFirstSearch": {
+        "history": "Greedy Best-First Search is a simplification of A*. By ignoring the actual cost g(n) and expanding only based on the heuristic h(n), it prioritizes speed over optimality. The trade-off is that it may find a non-optimal path.",
+        "intuition": "Always expand the node that looks closest to the goal according to your heuristic. Do not worry about how far you have already traveled; just focus on the estimated distance remaining. This greediness makes it fast, but it can lead you down dead ends or suboptimal paths.",
+        "realWorldUses_0": "Real-time game AI where finding any path quickly is more valuable than the optimal path",
+        "realWorldUses_1": "Navigation in large open environments where heuristic guidance is reliable",
+        "realWorldUses_2": "Initial pathfinding pass in multi-stage planners where optimality is refined later",
+        "facts_0": "Greedy Best-First Search is not guaranteed to find the shortest path.",
+        "facts_1": "It can expand far fewer nodes than A* or Dijkstra when the heuristic is very accurate.",
+        "facts_2": "With a perfect heuristic, Greedy Best-First Search goes directly to the goal without exploring irrelevant nodes."
+      },
+      "jumpPointSearch": {
+        "history": "Jump Point Search was invented by Daniel Harabor and Alban Grastien and presented at AAAI 2011. It was designed specifically for uniform-cost grid maps, the standard representation in game navigation, and can be over an order of magnitude faster than A* on such maps.",
+        "intuition": "On a uniform-cost grid, many paths are symmetric (they have the same cost but different routes). Jump Point Search eliminates this symmetry by skipping straight ahead or diagonally until it reaches a 'jump point', a node that has forced neighbors not reachable by the straight-line path. Only jump points are added to the open set, drastically reducing the number of nodes examined.",
+        "realWorldUses_0": "Real-time strategy (RTS) game pathfinding engines",
+        "realWorldUses_1": "Robotic navigation in grid-mapped environments",
+        "realWorldUses_2": "Large-scale pathfinding with hundreds of simultaneous agents",
+        "facts_0": "JPS can be 10–100× faster than standard A* on open grid maps.",
+        "facts_1": "It only works correctly on uniform-cost grids (all move costs equal).",
+        "facts_2": "The key innovation is identifying and skipping symmetric paths, reducing the search space dramatically."
+      },
+      "bellmanFord": {
+        "history": "The Bellman-Ford algorithm was developed by Richard Bellman and Lester Ford Jr. independently in 1956–1958. It solves the single-source shortest path problem for graphs with negative edge weights, a case where Dijkstra's algorithm fails.",
+        "intuition": "Relax all edges repeatedly. In each relaxation, update the distance estimate to a node if going through its neighbor gives a shorter path. After V-1 iterations (V = number of vertices), all shortest paths are found. If distances still change in a V-th iteration, the graph contains a negative weight cycle.",
+        "realWorldUses_0": "Distance-vector routing protocols (RIP, Routing Information Protocol)",
+        "realWorldUses_1": "Currency arbitrage detection (negative cycles in exchange rate graphs)",
+        "realWorldUses_2": "Network topology analysis with costs that can go negative (e.g., subsidies)",
+        "facts_0": "Bellman-Ford works with negative edge weights, unlike Dijkstra.",
+        "facts_1": "Its O(VE) complexity makes it slower than Dijkstra but more general.",
+        "facts_2": "Bellman-Ford can detect negative-weight cycles. No shortest path exists in their presence."
+      },
+      "idaStar": {
+        "history": "IDA* (Iterative Deepening A*) was invented by Richard Korf in 1985 as a memory-efficient alternative to A*. While A* stores all generated nodes in memory, IDA* uses depth-first search with iteratively increasing cost thresholds, requiring only O(d) memory.",
+        "intuition": "Perform a depth-first search but with a cost threshold. Start with the heuristic value of the root as the threshold. Explore paths whose total cost f(n) = g(n) + h(n) does not exceed the threshold. If the goal is not found, increase the threshold to the minimum cost that exceeded it in the last iteration. Repeat.",
+        "realWorldUses_0": "Solving puzzles with large state spaces (15-puzzle, Rubik's Cube)",
+        "realWorldUses_1": "AI planning problems where memory is limited",
+        "realWorldUses_2": "Game tree search where breadth-first memory usage is prohibitive",
+        "facts_0": "IDA* uses O(d) memory, linear in the solution depth, versus A*'s exponential memory usage.",
+        "facts_1": "Like A*, IDA* is optimal and complete given an admissible heuristic.",
+        "facts_2": "The trade-off is time: IDA* may re-expand nodes many times, unlike A* which caches visited states."
+      },
+      "dStarLite": {
+        "history": "D* Lite was developed by Sven Koenig and Maxim Likhachev in 2002 as a simplified and improved version of the original D* algorithm by Anthony Stentz (1994). It is designed for dynamic environments where the graph changes as the agent moves, exactly the challenge robots face in real-world navigation.",
+        "intuition": "D* Lite plans a path from start to goal (like A*). As the robot moves and discovers new obstacles or changed costs, it efficiently updates the existing plan rather than replanning from scratch. It maintains consistency information about which parts of the plan are still valid, and only re-expands the minimum set of nodes needed after each change.",
+        "realWorldUses_0": "NASA Mars rover navigation (Spirit and Opportunity used D* family algorithms)",
+        "realWorldUses_1": "Autonomous ground robot navigation in dynamic environments",
+        "realWorldUses_2": "Unknown terrain exploration with incremental map building",
+        "facts_0": "D* Lite was used on NASA Mars rovers for real mission navigation.",
+        "facts_1": "The 'Lite' in D* Lite means it is simpler to implement and understand than original D*.",
+        "facts_2": "It is significantly more efficient than replanning from scratch on every change."
+      },
+      "linearSearch": {
+        "history": "Sequential search is as old as ordered lists: scan from the beginning until you find a match or run out of elements. Every general-purpose language offers it as the baseline pattern before introducing binary search on sorted data.",
+        "intuition": "Start at index 0. If that element equals the target, stop. Otherwise move to index 1, then 2, and so on. In the worst case you inspect every position once — O(n) time and O(1) extra space. If the target is at the front, you stop immediately — best case O(1).",
+        "realWorldUses_0": "Small arrays or lists where setup cost of sorting or indexing is not justified",
+        "realWorldUses_1": "Unsorted or singly-linked structures where you only have forward traversal",
+        "realWorldUses_2": "Teaching why sorted-array tricks (binary search) buy logarithmic comparisons",
+        "facts_0": "Linear search works on any order; Bayan Flow still generates sorted arrays in Searching mode for fair comparison with other algorithms.",
+        "facts_1": "Worst-case comparisons grow linearly with n; average is still Θ(n) if the target is equally likely at any index.",
+        "facts_2": "It is the simplest way to verify whether an element exists when you cannot assume sorted order."
+      },
+      "binarySearch": {
+        "history": "Halving a sorted search space appears in very early computing. John Mauchly described a binary-search-style procedure for ordered tape in 1946. Once random-access memory and sorted tables were common, the iterative two-pointer form became the standard textbook algorithm.",
+        "intuition": "Maintain a window [left, right] that might still hold the target. Compare the target with the middle element. If they match, stop. If the target is larger, drop the left half; if smaller, drop the right half. Each step removes about half of the remaining indices, so you need at most about log₂(n) comparisons.",
+        "realWorldUses_0": "Lookups against sorted database indexes and ordered key ranges",
+        "realWorldUses_1": "Standard library helpers (for example Python's bisect, C++ lower_bound)",
+        "realWorldUses_2": "Finding insertion positions to keep arrays or lists sorted after updates",
+        "realWorldUses_3": "Games, simulations, and APIs that query ordered numeric thresholds",
+        "facts_0": "Binary search is O(log n) time and O(1) extra space for the classic iterative version.",
+        "facts_1": "It only works on sorted input (or any total order where “middle” comparisons are valid).",
+        "facts_2": "Integer overflow in mid = (left + right) / 2 is a famous pitfall; use left + (right - left) // 2 in languages where needed.",
+        "facts_3": "Jon Bentley noted that many programmers still struggle to write a correct binary search on the first try."
+      },
+      "ternarySearch": {
+        "history": "Partitioning a sorted range with more than one probe per iteration is a standard teaching step between linear scan and binary search. The two-probe, three-way split on arrays appears in many textbooks as “ternary search” alongside the classic unimodal optimization version on continuous domains.",
+        "intuition": "Keep a window [left, right] that may still contain the target. Place two indices near one-third and two-thirds of that window, compare the target with both values, then discard the third of the range that cannot contain the target (or the middle third when the target lies between the two probes). Each iteration uses two comparisons; the window still shrinks logarithmically, so the algorithm remains O(log n) in the worst case.",
+        "realWorldUses_0": "Teaching how two pivots divide the search interval into three visible segments",
+        "realWorldUses_1": "Visual contrast with binary search’s single midpoint on the same sorted-array model",
+        "realWorldUses_2": "Preparing for continuous-domain ternary search on unimodal functions (different problem, same split idea)",
+        "realWorldUses_3": "Discussions of comparison counts versus asymptotic class (two comparisons per step vs one in binary)",
+        "facts_0": "Ternary search on a sorted array is O(log n) time and O(1) extra space, same asymptotic class as binary search.",
+        "facts_1": "It requires sorted (ascending) input so ordering comparisons at the two probes are meaningful.",
+        "facts_2": "Each iteration compares the target with elements at two indices (roughly at ⌊(right−left)/3⌋ offsets), not one middle index.",
+        "facts_3": "Binary search usually wins on comparison count; ternary search highlights a different partition of the same ordered search space."
+      },
+      "jumpSearch": {
+        "history": "Jump search is a classic block-based search on sorted arrays, combining coarse jumps with a short linear finish. It is often taught alongside binary search to compare √n versus logarithmic probe counts.",
+        "intuition": "Jump forward in blocks of about √n indices and compare the end of each block to the target. When a block’s end is at least the target, stop jumping and scan forward one index at a time from that block’s start. You make O(√n) jumps in the worst case and at most √n extra steps in the final segment.",
+        "realWorldUses_0": "Teaching trade-offs between jump-based and halving searches on sorted data",
+        "realWorldUses_1": "Systems where sequential memory access after a coarse jump is cheaper than random probes",
+        "realWorldUses_2": "Building intuition for root-n algorithms before binary search on tape-like or block-oriented storage stories",
+        "realWorldUses_3": "Paired with binary search in curricula that emphasize complexity classes",
+        "facts_0": "Jump search runs in O(√n) time and O(1) extra space on a sorted array.",
+        "facts_1": "The jump step is usually ⌊√n⌋ so the number of jumps and the final linear scan stay balanced.",
+        "facts_2": "Binary search typically needs fewer comparisons; jump search highlights a different time–structure trade-off.",
+        "facts_3": "Like binary search, jump search requires the input to be sorted (or indexed in sorted order)."
+      },
+      "interpolationSearch": {
+        "history": "Interpolation search was published by W. W. Peterson in 1957 as a way to exploit uniform key spacing in sorted tables. It remains a standard teaching example for how distribution assumptions change average-case cost.",
+        "intuition": "Instead of probing the middle index, estimate where the target would sit if values increased evenly between the current bounds. Map the target’s rank in value-space to an index, clamp it, compare there, then shrink the range. When keys are roughly uniform, successive probes close in very quickly; when values clump or gaps are uneven, estimates can mislead and the method may approach linear behavior.",
+        "realWorldUses_0": "Ordered numeric indexes and static tables where keys are spread somewhat evenly",
+        "realWorldUses_1": "Contrasting midpoint search with value-based probing in CS curricula",
+        "realWorldUses_2": "Building intuition for average O(log log n) versus worst-case O(n) on the same sorted-array interface",
+        "realWorldUses_3": "Precursor ideas to extrapolation and interpolation in database and index structures",
+        "facts_0": "Average-case time can be about O(log log n) when keys are uniformly distributed; worst case is O(n).",
+        "facts_1": "The probe index uses both array values and indices, unlike binary search’s pure index halving.",
+        "facts_2": "Duplicate or clustered values make interpolation less reliable; binary search stays O(log n) regardless of distribution.",
+        "facts_3": "Guards for equal endpoints (arr[lo] === arr[hi]) avoid dividing by zero before comparing."
+      },
+      "exponentialSearch": {
+        "history": "Exponential search (also called doubling search) is a standard two-phase algorithm for sorted data: find a bracketing range by probing indices that grow as powers of two, then finish with binary search within that range. It appears in textbooks on unbounded search and as a building block when the array length is unknown or effectively infinite.",
+        "intuition": "First, jump forward so your index doubles each time (1, 2, 4, 8, …) until the value at that index is at least the target or you reach the end of the array. That brackets the target in O(log i) probes when the answer lies near index i. Then run ordinary binary search on the bounded interval — another logarithmic number of steps in that window.",
+        "realWorldUses_0": "Searching sorted streams or lists where the length is unknown or very large",
+        "realWorldUses_1": "Teaching how bracketing plus halving combines two logarithmic ideas",
+        "realWorldUses_2": "Contrasting geometric growth with fixed-step jump search on the same sorted-array model",
+        "realWorldUses_3": "Foundations for galloping variants in merge algorithms and adaptive search contexts",
+        "facts_0": "On unbounded sorted data, finding a target at index i takes O(log i) comparisons in the doubling phase plus O(log i) for binary search on the bracket — O(log i) total.",
+        "facts_1": "On a finite array of length n, the worst-case cost is still O(log n), like binary search, with an extra doubling phase before the first halving step.",
+        "facts_2": "The algorithm requires sorted (ascending) values so comparisons tell you which side of a probe to keep.",
+        "facts_3": "After doubling, the search interval is [⌊bound/2⌋, min(bound, n−1)] before binary search narrows it further."
+      },
+      "fibonacciSearch": {
+        "history": "Fibonacci search uses Fibonacci numbers to choose probe positions on a sorted array, avoiding division in the inner loop. It is a classic teaching example alongside binary search when discussing golden-ratio splits and comparison-only search.",
+        "intuition": "Build the smallest Fibonacci number at least n+1 to size the first window. Each probe is at offset plus the second-smallest Fibonacci in the current triple. If the value is too small, slide the window right; if too large, shrink the Fibonacci triple so the remaining range is smaller. The split ratio follows the Fibonacci recurrence, so the window shrinks logarithmically.",
+        "realWorldUses_0": "Teaching division-free search and contrasting Fibonacci-based splits with midpoint binary search",
+        "realWorldUses_1": "Discussing historical cost models where division was expensive compared to addition and comparison",
+        "realWorldUses_2": "Reinforcing that O(log n) search does not require halving the index range",
+        "realWorldUses_3": "Pairing with number-theory topics (Fibonacci sequence, golden ratio) in CS curricula",
+        "facts_0": "Fibonacci search uses O(log n) comparisons in the worst case on a sorted array of length n, similar in class to binary search.",
+        "facts_1": "Probe index uses addition (offset + Fibonacci offset) rather than (left + right) / 2.",
+        "facts_2": "The active window length is tracked with Fibonacci triples (fibM, fibM−1, fibM−2) that shrink after each comparison.",
+        "facts_3": "Like binary search, the input must be sorted so ordering comparisons are meaningful."
+      },
+      "depthFirstSearch": {
+        "history": "Depth-first search is a fundamental graph traversal strategy: explore as far as possible along one branch before backtracking. With an explicit stack on a node–link graph, it contrasts cleanly with breadth-first search in the same Searching category.",
+        "intuition": "Start at the root. Repeatedly pop the stack, visit that vertex, then push undiscovered neighbors in reverse adjacency order so the first listed neighbor is explored next. When the goal is popped, reconstruct one path using parent pointers. The path is valid but not necessarily shortest.",
+        "realWorldUses_0": "Teaching stack-based traversal on explicit vertices and edges",
+        "realWorldUses_1": "Trees and general graphs before introducing weights or heuristics",
+        "realWorldUses_2": "Contrasting traversal order with BFS — same graph, different data structure, different path",
+        "realWorldUses_3": "Foundations for topological reasoning and recursive algorithms expressed iteratively",
+        "facts_0": "Time is O(V + E) and extra space is O(V) for the stack and bookkeeping on V vertices and E edges.",
+        "facts_1": "Unlike BFS on an unweighted graph, DFS does not guarantee a shortest path to the goal.",
+        "facts_2": "Generated demos use random trees with sorted adjacency lists for reproducible DFS order.",
+        "facts_3": "Positions are layout-only; the algorithm uses the adjacency structure only."
+      },
+      "breadthFirstSearchGraph": {
+        "history": "Breadth-first search explores a graph level by level, discovered by Konrad Zuse in 1945 and reinvented by Edward F. Moore in 1959. On unweighted graphs it guarantees the shortest path — the key distinction from DFS in this same Searching category.",
+        "intuition": "Start at the root and enqueue it. Repeatedly dequeue the front node, mark it visited, then enqueue all undiscovered neighbors. Because nodes are processed in the order they were discovered, BFS visits the entire depth-1 ring before any depth-2 node — guaranteeing a minimum-hop path to the goal.",
+        "realWorldUses_0": "Shortest-path on unweighted graphs (social networks, peer connections)",
+        "realWorldUses_1": "Level-order tree traversal and layer-by-layer graph analysis",
+        "realWorldUses_2": "Contrasting with DFS: same graph, queue vs. stack, shortest vs. any path",
+        "realWorldUses_3": "Foundation for Dijkstra's algorithm when edge weights become non-uniform",
+        "facts_0": "Time is O(V + E); space is O(V) for the queue and visited set.",
+        "facts_1": "BFS guarantees a shortest (minimum-hop) path on unweighted graphs; DFS does not.",
+        "facts_2": "The queue front is shown at the top of the canvas — the next node to be dequeued.",
+        "facts_3": "The same tree layout used for DFS is reused here, so you can compare both algorithms side by side on re-generation."
+      }
+    }
   },
   "footer": {
-    "description": "An interactive, educational web application for visualizing sorting/pathfinding algorithms with clarity.",
+    "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
     "madeWith": "Made with",
     "by": "by",
@@ -190,8 +640,8 @@
     "quickLinks": "Quick Links",
     "support": "Support",
     "enjoying": "Enjoying this project? Support my work!",
-    "buyMeCoffee": "Buy me a coffee",
-    "allRightsReserved": "All rights reserved"
+    "allRightsReserved": "All rights reserved",
+    "youtubeAria": "Bayan Flow on YouTube — open channel in a new tab"
   },
   "legend": {
     "title": "Legend",
@@ -210,11 +660,33 @@
       "queue": "Queue",
       "visited": "Visited",
       "path": "Path"
+    },
+    "searching": {
+      "default": "In range",
+      "comparing": "Checking",
+      "outOfRange": "Out of search range",
+      "found": "Found",
+      "targetHighlight": "Target value (ring)"
+    },
+    "searchingGraph": {
+      "root": "Root",
+      "start": "Root",
+      "goal": "Goal",
+      "stackFrontier": "Stack / frontier",
+      "visited": "Visited",
+      "discoveryPath": "Discovery path"
     }
   },
   "visualization": {
     "description": "Interactive algorithm visualization",
-    "viewPythonCode": "View Python code"
+    "viewPythonCode": "View Python code",
+    "codeLabel": "Code",
+    "searchTarget": "Target: {{value}}",
+    "graphAria": "Graph with {{count}} nodes",
+    "graphAriaEmpty": "Empty graph",
+    "stackTop": "Stack top: {{top}}",
+    "queueFront": "Queue front: {{front}}",
+    "graphSubstrate": "Graph visualization"
   },
   "languages": {
     "en": "English",
@@ -235,6 +707,11 @@
     "placed": "Placed {{value}} at position {{position}}",
     "placedRemaining": "Placed remaining {{value}} at position {{position}}",
     "mergedSection": "Merged section [{{start}}...{{end}}]",
+    "dfsStackPush": "Pushed neighbors onto the stack; stack size is {{count}} (next vertex is popped depth-first)",
+    "dfsGraphVisiting": "Exploring node {{node}}",
+    "bfsGraphDequeue": "Dequeued node {{node}} — examining neighbors level by level",
+    "bfsGraphEnqueue": "Enqueued {{count}} neighbor(s); queue front is next",
+    "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
     "exploringBackward": "Backward search exploring cell ({{row}}, {{col}})",
@@ -298,7 +775,39 @@
     "bogoChecking": "Attempt {{attempt}}: Checking if array is sorted",
     "bogoShuffling": "Attempt {{attempt}}: Randomly shuffling array",
     "bogoSuccess": "Success! Array sorted after {{attempts}} shuffle attempts",
-    "bogoFailed": "Failed to sort after {{maxAttempts}} attempts. Bogo Sort is extremely inefficient!"
+    "bogoFailed": "Failed to sort after {{maxAttempts}} attempts. Bogo Sort is extremely inefficient!",
+    "searchLinearStart": "Searching for {{target}} with linear search: check each index from left to right in order. This mode uses a sorted array so you can compare with binary and other searches; linear search itself does not require sorting.",
+    "searchLinearCheck": "Index {{index}}: value {{value}}. Target {{target}}.",
+    "searchLinearFound": "Found {{target}} at index {{index}}.",
+    "searchLinearNotFound": "Target {{target}} is not in the array.",
+    "searchBinaryStart": "Searching for {{target}} using binary search on the sorted array.",
+    "searchBinaryCheck": "Middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
+    "searchBinaryFound": "Found {{target}} at index {{mid}}.",
+    "searchBinaryNotFound": "Target {{target}} is not in the array.",
+    "searchTernaryStart": "Searching for {{target}} using ternary search on the sorted array (two probes split the active range into three parts).",
+    "searchTernaryCheck": "Left third index {{leftMid}}: value {{leftValue}}. Right third index {{rightMid}}: value {{rightValue}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
+    "searchTernaryFound": "Found {{target}} at index {{mid}}.",
+    "searchTernaryNotFound": "Target {{target}} is not in the array.",
+    "searchJumpStart": "Searching for {{target}} using jump search on the sorted array. Block step size {{m}} (⌊√n⌋).",
+    "searchJumpBlockCheck": "Jump phase — block start {{prev}}, block end index {{jumpIdx}}: value {{value}}. Step size {{m}}. Target {{target}}.",
+    "searchJumpLinearCheck": "Linear scan at index {{prev}}: value {{value}}. Target {{target}}.",
+    "searchJumpFound": "Found {{target}} at index {{prev}}.",
+    "searchJumpNotFound": "Target {{target}} is not in the array.",
+    "searchInterpolationStart": "Searching for {{target}} using interpolation search. Probes estimate index from values at the bounds, not the midpoint.",
+    "searchInterpolationProbe": "Probe index {{pos}} (from values at {{lo}}..{{hi}}: {{loVal}} .. {{hiVal}}): value {{value}}. Active range [{{lo}}, {{hi}}]. Target {{target}}.",
+    "searchInterpolationFound": "Found {{target}} at index {{pos}}.",
+    "searchInterpolationNotFound": "Target {{target}} is not in the array.",
+    "searchExponentialStart": "Searching for {{target}} using exponential search on the sorted array.",
+    "searchExponentialCheckFirst": "Doubling phase — compare index 0: value {{value}}. Target {{target}}.",
+    "searchExponentialDoubledProbe": "Doubling phase — compare index {{bound}}: value {{value}}. Target {{target}}. Next bound would be {{nextBound}} (until the range is found).",
+    "searchExponentialRangeLocked": "Range bracketed: if {{target}} exists, it lies between indices {{left}} and {{right}}. Binary search phase — narrow this window.",
+    "searchExponentialBinaryCheck": "Binary phase — middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
+    "searchExponentialFound": "Found {{target}} at index {{mid}}.",
+    "searchExponentialNotFound": "Target {{target}} is not in the array.",
+    "searchFibonacciStart": "Searching for {{target}} using Fibonacci search on the sorted array (probe positions follow Fibonacci-sized steps — no division).",
+    "searchFibonacciProbe": "Probe index {{probe}}: value {{value}}. Active window [{{offset}}, {{windowEnd}}]. Target {{target}}.",
+    "searchFibonacciFound": "Found {{target}} at index {{probe}}.",
+    "searchFibonacciNotFound": "Target {{target}} is not in the array."
   },
   "landing": {
     "hero": {
@@ -335,6 +844,11 @@
         "title": "Pathfinding Algorithms",
         "description": "See how pathfinding algorithms navigate through grids to find the shortest path between two points.",
         "algorithms": "BFS, Dijkstra, A* Search, Bidirectional Search, Greedy Best-First Search, Jump Point Search, Bellman-Ford, IDA*, D* Lite"
+      },
+      "searching": {
+        "title": "Searching Algorithms",
+        "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
+        "algorithms": "Binary Search, Jump Search, Interpolation Search, Exponential Search"
       }
     },
     "features": {
@@ -342,11 +856,11 @@
       "subheading": "Everything you need to master algorithms",
       "customization": {
         "title": "Customizable",
-        "description": "Adjust array size (5-100) or grid size (15×15 to 35×35) to see how algorithms perform with different data sizes."
+        "description": "Adjust array size (5-100) for sorting and searching, or grid size (15×15 to 35×35) for pathfinding, to see how algorithms perform with different data sizes."
       },
       "pythonCode": {
-        "title": "Python Code",
-        "description": "View clean Python implementations for each algorithm. Learn by reading real code examples."
+        "title": "Interactive Python",
+        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code."
       },
       "sound": {
         "title": "Interactive Sound",
@@ -356,10 +870,18 @@
       "fullscreen": {
         "title": "Full Screen",
         "description": "Immersive full-screen mode perfect for presentations and classroom teaching."
+      },
+      "insight": {
+        "title": "Algorithm Insight",
+        "description": "Explore detailed explanations, use cases, and key properties for each algorithm in a dedicated panel."
+      },
+      "videoExport": {
+        "title": "Video Export",
+        "description": "Export your visualizations as HD MP4 videos. Choose horizontal (YouTube) or vertical (Shorts, Reels) format with preview before download."
       }
     },
     "roadmapCTA": {
-      "badge": "Coming Soon",
+      "badge": "Updates",
       "heading": "See What's Next",
       "description": "We're constantly improving Bayan Flow with new algorithms, features, and learning tools. Check out our roadmap to see what's coming and what we're working on right now.",
       "button": "View Roadmap"
@@ -378,12 +900,18 @@
     "unweighted": "Unweighted",
     "weightedOptimal": "Weighted Optimal",
     "heuristicBased": "Heuristic-Based",
-    "specialCases": "Special Cases"
+    "specialCases": "Special Cases",
+    "sequentialSearch": "Sequential search",
+    "logarithmicSearch": "Logarithmic search",
+    "blockJumpSearch": "Block / jump search",
+    "distributionAwareSearch": "Distribution-aware search",
+    "graphTraversalSearch": "Graph traversal (node–link)"
   },
   "roadmap": {
     "hero": {
       "title": "Where We're Going",
-      "subtitle": "Every update, every DevLog. See what's live and what's next."
+      "subtitle": "Every update, every DevLog. See what's live and what's next.",
+      "devNote": "Want to see the latest changes and experiments? Check out our <0>dev version</0> and share your feedback by <1>creating an issue</1> on our GitHub repo."
     },
     "status": {
       "completed": "Completed",

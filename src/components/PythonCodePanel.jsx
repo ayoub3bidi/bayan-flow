@@ -4,13 +4,41 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Play, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getPythonCode, getAlgorithmDisplayName } from '../algorithms/python';
+import {
+  getPythonCode,
+  getAlgorithmDisplayName,
+  getTestCases,
+} from '../algorithms/python';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
+import { usePythonExecution } from '../hooks/usePythonExecution';
+import OutputConsole from './OutputConsole';
+
+const STORAGE_KEY_OUTPUT_PERCENT = 'python-panel-output-percent';
+const getCustomTestsStorageKey = algo => `python-test-cases-${algo}`;
+const DEFAULT_OUTPUT_PERCENT = 35;
+const MIN_OUTPUT_PERCENT = 15;
+const MAX_OUTPUT_PERCENT = 70;
+
+function getStoredOutputPercent() {
+  try {
+    const v = parseInt(localStorage.getItem(STORAGE_KEY_OUTPUT_PERCENT), 10);
+    if (
+      Number.isFinite(v) &&
+      v >= MIN_OUTPUT_PERCENT &&
+      v <= MAX_OUTPUT_PERCENT
+    ) {
+      return v;
+    }
+  } catch {
+    // localStorage not available
+  }
+  return DEFAULT_OUTPUT_PERCENT;
+}
 
 /**
  * @param {Object} props
@@ -86,6 +114,202 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
 
   const pythonCode = getPythonCode(algorithm);
   const displayName = getAlgorithmDisplayName(algorithm);
+
+  const [code, setCode] = useState(pythonCode);
+  const [isOutputExpanded, setIsOutputExpanded] = useState(true);
+  const [outputHeightPercent, setOutputHeightPercent] = useState(
+    getStoredOutputPercent
+  );
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeContainerRef = useRef(null);
+  const lastPercentRef = useRef(outputHeightPercent);
+  lastPercentRef.current = outputHeightPercent;
+  const isModified = code !== pythonCode;
+
+  const handleResizeStart = useCallback(e => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isResizing) return;
+    const container = resizeContainerRef.current;
+    if (!container) return;
+
+    const handleMove = e => {
+      const rect = container.getBoundingClientRect();
+      const totalHeight = rect.height;
+      const handleOffset = rect.top;
+      const mouseY = e.clientY;
+      const yFromTop = mouseY - handleOffset;
+      if (totalHeight <= 0) return;
+      let percent = (1 - yFromTop / totalHeight) * 100;
+      percent = Math.max(
+        MIN_OUTPUT_PERCENT,
+        Math.min(MAX_OUTPUT_PERCENT, percent)
+      );
+      lastPercentRef.current = Math.round(percent);
+      setOutputHeightPercent(lastPercentRef.current);
+    };
+
+    const handleUp = () => {
+      setIsResizing(false);
+      try {
+        localStorage.setItem(
+          STORAGE_KEY_OUTPUT_PERCENT,
+          String(lastPercentRef.current)
+        );
+      } catch {
+        // localStorage not available
+      }
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizing]);
+
+  const {
+    status,
+    output,
+    error,
+    runCode,
+    runTests,
+    cancelExecution,
+    clearOutput,
+    clearTestResults,
+    testResults,
+    testStatus,
+    testError,
+  } = usePythonExecution({ timeout: 10_000 });
+
+  const predefined = getTestCases(algorithm);
+  const [customTests, setCustomTests] = useState(() => {
+    try {
+      const key = getCustomTestsStorageKey(algorithm);
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    try {
+      const key = getCustomTestsStorageKey(algorithm);
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setCustomTests(Array.isArray(parsed) ? parsed : []);
+      } else {
+        setCustomTests([]);
+      }
+    } catch {
+      setCustomTests([]);
+    }
+  }, [algorithm]);
+
+  const testCases = useMemo(
+    () => [
+      ...(predefined?.testCases?.map(tc => ({ ...tc, isCustom: false })) ?? []),
+      ...customTests.map(tc => ({ ...tc, isCustom: true })),
+    ],
+    [predefined?.testCases, customTests]
+  );
+
+  const handleAddTestCase = useCallback(
+    (name, input, expected) => {
+      const id = `custom-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const newTest = { id, name, input, expected };
+      setCustomTests(prev => {
+        const next = [...prev, newTest];
+        try {
+          localStorage.setItem(
+            getCustomTestsStorageKey(algorithm),
+            JSON.stringify(next)
+          );
+        } catch {
+          // ignore
+        }
+        return next;
+      });
+    },
+    [algorithm]
+  );
+
+  const handleEditTestCase = useCallback(
+    (id, name, input, expected) => {
+      setCustomTests(prev => {
+        const next = prev.map(tc =>
+          tc.id === id ? { ...tc, name, input, expected } : tc
+        );
+        try {
+          localStorage.setItem(
+            getCustomTestsStorageKey(algorithm),
+            JSON.stringify(next)
+          );
+        } catch {
+          // ignore
+        }
+        return next;
+      });
+    },
+    [algorithm]
+  );
+
+  const handleDeleteTestCase = useCallback(
+    id => {
+      setCustomTests(prev => {
+        const next = prev.filter(tc => tc.id !== id);
+        try {
+          localStorage.setItem(
+            getCustomTestsStorageKey(algorithm),
+            JSON.stringify(next)
+          );
+        } catch {
+          // ignore
+        }
+        return next;
+      });
+    },
+    [algorithm]
+  );
+
+  const handleRunTests = useCallback(() => {
+    if (!predefined?.functionName || testCases.length === 0) return;
+    runTests(code, predefined.functionName, testCases);
+    setIsOutputExpanded(true);
+  }, [code, predefined, testCases, runTests]);
+
+  useEffect(() => {
+    setCode(pythonCode);
+  }, [pythonCode]);
+
+  useEffect(() => {
+    clearOutput();
+    clearTestResults();
+    return () => cancelExecution();
+  }, [algorithm, cancelExecution, clearOutput, clearTestResults]);
+
+  const handleRun = useCallback(() => {
+    if (status === 'running') return;
+    runCode(code);
+    setIsOutputExpanded(true);
+  }, [code, runCode, status]);
+
+  const runHandlerRef = useRef(handleRun);
+  runHandlerRef.current = handleRun;
 
   // Update Monaco editor theme when theme changes
   useEffect(() => {
@@ -241,40 +465,168 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 </div>
               )}
 
-              {/* Code Editor */}
-              <div className="flex-1 overflow-hidden" dir="ltr">
-                <Editor
-                  height="100%"
-                  defaultLanguage="python"
-                  value={pythonCode}
-                  theme={isDark ? 'vs-dark' : 'vs-light'}
-                  onMount={(editor, monaco) => {
-                    editorRef.current = editor;
-                    monacoRef.current = monaco;
-                  }}
-                  options={{
-                    readOnly: true,
-                    minimap: { enabled: !isMobile },
-                    scrollBeyondLastLine: false,
-                    fontSize: isMobile ? 12 : 14,
-                    lineNumbers: 'on',
-                    folding: true,
-                    wordWrap: 'on',
-                    automaticLayout: true,
-                    padding: { top: 16, bottom: 16 },
-                    scrollbar: {
-                      vertical: 'auto',
-                      horizontal: 'auto',
-                    },
-                  }}
-                  loading={
-                    <div className="flex items-center justify-center h-full bg-surface">
-                      <div className="text-text-secondary">
-                        {t('python_code.loading') || 'Loading editor...'}
-                      </div>
-                    </div>
+              {/* Toolbar */}
+              <div className="flex items-center gap-2 p-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleRun}
+                  disabled={status === 'loading' || status === 'running'}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-90 rounded-lg transition-colors min-w-[5.5rem] justify-center"
+                  aria-label={
+                    output || error
+                      ? t('python_code.rerun', { defaultValue: 'Rerun' })
+                      : t('python_code.run', { defaultValue: 'Run' })
                   }
-                />
+                >
+                  {status === 'loading' || status === 'running' ? (
+                    <span
+                      className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+                      aria-hidden
+                    />
+                  ) : (
+                    <Play size={16} />
+                  )}
+                  {status === 'loading' || status === 'running'
+                    ? t('python_code.running', { defaultValue: 'Running...' })
+                    : output || error
+                      ? t('python_code.rerun', { defaultValue: 'Rerun' })
+                      : t('python_code.run', { defaultValue: 'Run' })}
+                </button>
+                {isModified && (
+                  <button
+                    type="button"
+                    onClick={() => setCode(pythonCode)}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated rounded-lg transition-colors"
+                    aria-label={t('python_code.reset', {
+                      defaultValue: 'Reset',
+                    })}
+                  >
+                    <RotateCcw size={16} />
+                    {t('python_code.reset', { defaultValue: 'Reset' })}
+                  </button>
+                )}
+              </div>
+
+              {/* Code Editor + Output (resizable on desktop) */}
+              <div
+                ref={resizeContainerRef}
+                className="flex-1 min-h-0 flex flex-col overflow-hidden relative"
+                dir="ltr"
+              >
+                <div
+                  className={`min-h-0 overflow-hidden ${isMobile ? 'touch-pan-y' : ''}`}
+                  style={{
+                    flex:
+                      isMobile || !isOutputExpanded
+                        ? '1 1 0'
+                        : `0 0 calc(${100 - outputHeightPercent}% - 2px)`,
+                    minHeight: isMobile ? 100 : 80,
+                  }}
+                >
+                  <Editor
+                    height="100%"
+                    defaultLanguage="python"
+                    value={code}
+                    onChange={value => setCode(value ?? '')}
+                    theme={isDark ? 'vs-dark' : 'vs-light'}
+                    onMount={(editor, monaco) => {
+                      editorRef.current = editor;
+                      monacoRef.current = monaco;
+                      editor.addAction({
+                        id: 'run-python',
+                        label: 'Run Python',
+                        keybindings: [
+                          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+                        ],
+                        run: () => runHandlerRef.current?.(),
+                      });
+                      if (isMobile) {
+                        const container = editor.getContainerDomNode?.();
+                        if (container) {
+                          container.style.touchAction = 'pan-y';
+                          const scrollable =
+                            container.querySelector(
+                              '.monaco-scrollable-element'
+                            ) ??
+                            container.querySelector('[class*="scrollable"]');
+                          if (scrollable) {
+                            scrollable.style.webkitOverflowScrolling = 'touch';
+                          }
+                        }
+                      }
+                    }}
+                    options={{
+                      readOnly: false,
+                      minimap: { enabled: !isMobile },
+                      scrollBeyondLastLine: false,
+                      fontSize: isMobile ? 12 : 14,
+                      lineNumbers: 'on',
+                      folding: true,
+                      wordWrap: 'on',
+                      automaticLayout: true,
+                      padding: { top: 16, bottom: 16 },
+                      scrollbar: {
+                        vertical: 'auto',
+                        horizontal: 'auto',
+                      },
+                    }}
+                    loading={
+                      <div className="flex items-center justify-center h-full bg-surface">
+                        <div className="text-text-secondary">
+                          {t('python_code.loading') || 'Loading editor...'}
+                        </div>
+                      </div>
+                    }
+                  />
+                </div>
+                {!isMobile && isOutputExpanded && (
+                  <div
+                    role="separator"
+                    aria-orientation="horizontal"
+                    aria-valuenow={outputHeightPercent}
+                    aria-valuemin={MIN_OUTPUT_PERCENT}
+                    aria-valuemax={MAX_OUTPUT_PERCENT}
+                    aria-label={t('python_code.resize_output', {
+                      defaultValue: 'Resize output panel',
+                    })}
+                    onMouseDown={handleResizeStart}
+                    className={`shrink-0 h-1 flex items-center justify-center cursor-row-resize hover:bg-blue-500/30 active:bg-blue-500/50 transition-colors group ${
+                      isResizing
+                        ? 'bg-blue-500/50'
+                        : 'bg-gray-200 dark:bg-gray-700'
+                    }`}
+                  >
+                    <div className="w-12 h-0.5 rounded-full bg-gray-400 group-hover:bg-blue-500 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100" />
+                  </div>
+                )}
+                <div
+                  className="min-h-0 overflow-hidden flex flex-col"
+                  style={{
+                    flex:
+                      isMobile || !isOutputExpanded
+                        ? '0 0 auto'
+                        : `0 0 calc(${outputHeightPercent}% - 2px)`,
+                    minHeight: isOutputExpanded && !isMobile ? 80 : undefined,
+                  }}
+                >
+                  <OutputConsole
+                    status={status}
+                    output={output}
+                    error={error}
+                    onClear={clearOutput}
+                    isExpanded={isOutputExpanded}
+                    onToggleExpand={() => setIsOutputExpanded(prev => !prev)}
+                    testCases={testCases}
+                    testResults={testResults}
+                    testStatus={testStatus}
+                    testError={testError}
+                    onRunTests={handleRunTests}
+                    onAddTestCase={handleAddTestCase}
+                    onEditTestCase={handleEditTestCase}
+                    onDeleteTestCase={handleDeleteTestCase}
+                    onClearTestResults={clearTestResults}
+                  />
+                </div>
               </div>
             </div>
           </motion.div>
