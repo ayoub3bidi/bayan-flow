@@ -241,4 +241,11 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  breadthFirstSearchGraph: {
+    inventor: 'Konrad Zuse',
+    year: 1945,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };
