@@ -5,7 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle, Map, Youtube } from 'lucide-react';
+import { FileText, AlertCircle, Map } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -60,6 +60,14 @@ function Footer() {
     },
   ];
 
+  const socialLinks = [
+    {
+      label: t('footer.youtube'),
+      href: 'https://www.youtube.com/@bayan-flow',
+      ariaLabel: t('footer.youtubeAria'),
+    },
+  ];
+
   const handleLinkClick = href => {
     if (href.startsWith('/')) {
       navigate(href);
@@ -78,7 +86,7 @@ function Footer() {
     >
       <div className="absolute inset-0 bg-(--color-glass-bg) backdrop-blur-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -124,20 +132,6 @@ function Footer() {
               <h3 className="text-sm font-bold text-text-primary">
                 Bayan Flow
               </h3>
-              <a
-                href="https://www.youtube.com/@bayan-flow"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ms-auto rounded-md p-1.5 text-text-secondary transition-colors hover:bg-surface-elevated hover:text-text-primary md:ms-0"
-                aria-label={t('footer.youtubeAria')}
-              >
-                <Youtube
-                  size={18}
-                  strokeWidth={2}
-                  aria-hidden
-                  className="block"
-                />
-              </a>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
               {t('footer.description')}
@@ -180,7 +174,30 @@ function Footer() {
               })}
             </div>
           </div>
-          {/* Right: Support */}
+          {/* Social & community links */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold text-text-primary">
+              {t('footer.followUs')}
+            </h3>
+            <div className="flex flex-col gap-2">
+              {socialLinks.map(item => (
+                <motion.a
+                  key={item.href}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={item.ariaLabel}
+                  className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                  whileHover={{ scale: 1.02, x: 2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                >
+                  {item.label}
+                </motion.a>
+              ))}
+            </div>
+          </div>
+          {/* Support */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-text-primary">
               {t('footer.support')}
