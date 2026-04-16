@@ -69,7 +69,3 @@ Pull requests should target **`develop`**, not `main`. Read **[CONTRIBUTING.md](
 ## License
 
 Dual-licensed under **[Elastic License 2.0](./LICENSE)** (see file for terms) and a **commercial** option for hosted or OEM use — **[COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md)**. The Bayan Flow name and logo are covered in **[TRADEMARK.md](./TRADEMARK.md)**.
-
----
-
-**By [Ayoub Abidi](https://github.com/ayoub3bidi)**

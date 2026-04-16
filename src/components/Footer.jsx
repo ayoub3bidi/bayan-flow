@@ -17,7 +17,6 @@ function Footer() {
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
   const repoName = 'bayan-flow';
-  const authorName = 'Ayoub Abidi';
 
   useEffect(() => {
     const fetchLatestVersion = async () => {
@@ -153,7 +152,7 @@ function Footer() {
           {/* Center: Quick Links */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-text-primary">
-              {t('footer.quickLinks')}
+              {t('footer.forDevelopers')}
             </h3>
             <div className="flex flex-col gap-2">
               {links.map(link => {
@@ -207,16 +206,7 @@ function Footer() {
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
           <div className="flex justify-center">
             <p className="text-xs text-text-secondary text-center">
-              © {currentYear}{' '}
-              <motion.button
-                onClick={() => handleLinkClick('https://ayoub3bidi.me')}
-                className="font-semibold text-text-primary hover:text-[#3b82f6] transition-colors underline decoration-dotted underline-offset-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {authorName}
-              </motion.button>
-              . {t('footer.allRightsReserved')}
+              © {currentYear} Bayan Flow. {t('footer.allRightsReserved')}
             </p>
           </div>
         </div>
