@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 function Footer() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [version, setVersion] = useState('0.0.0');
+  const [version, setVersion] = useState(null);
   const currentYear = new Date().getFullYear();
   const repoOwner = 'ayoub3bidi';
   const repoName = 'bayan-flow';
@@ -28,7 +28,11 @@ function Footer() {
           throw new Error('Failed to fetch release data');
         }
         const data = await response.json();
-        const versionTag = data.tag_name.replace(/^v/, '');
+        const rawTag = data.tag_name;
+        if (typeof rawTag !== 'string' || !rawTag.trim()) {
+          throw new Error('Missing release tag');
+        }
+        const versionTag = rawTag.replace(/^v/, '');
         setVersion(versionTag);
       } catch (error) {
         console.error('Failed to fetch latest version:', error);
@@ -144,9 +148,11 @@ function Footer() {
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
                 Elastic-2.0 License
               </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                v{version}
-              </span>
+              {version ? (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                  v{version}
+                </span>
+              ) : null}
             </div>
           </div>
           {/* Center: Quick Links */}
@@ -194,8 +200,9 @@ function Footer() {
                 <img
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
                   alt="Bayan Flow - Interactive algorithm visualizer | Product Hunt"
-                  width="250"
-                  height="54"
+                  width={250}
+                  height={54}
+                  loading="lazy"
                   className="w-[250px] h-[54px]"
                 />
               </motion.a>
