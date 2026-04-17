@@ -92,6 +92,9 @@
   --color-pc-fn: #0369a1;
   --color-pc-arrow: #047857;
   --color-pc-op: #be123c;
+  --color-pc-num: #b45309;
+  --color-pc-punc: #94a3b8;
+  --color-pc-lineno: #64748b;
 }
 
 /* Pseudocode syntax — classes used inside dangerouslySetInnerHTML (must not rely on Tailwind JIT) */
@@ -122,6 +125,41 @@
 
 .pc-op {
   color: var(--color-pc-op);
+}
+
+.pc-num {
+  color: var(--color-pc-num);
+  font-weight: 500;
+}
+
+.pc-punc {
+  color: var(--color-pc-punc);
+}
+
+/* Line gutter — spans inside pre.pseudocode-view for valid HTML */
+pre.pseudocode-view .pc-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  min-height: 1.35em;
+}
+
+.pc-lineno {
+  flex: 0 0 auto;
+  display: inline-block;
+  min-width: 2.25em;
+  padding-right: 1rem;
+  text-align: right;
+  color: var(--color-pc-lineno);
+  font-weight: 400;
+  user-select: none;
+  opacity: 0.65;
+}
+
+.pc-line-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: pre;
 }
 
 /* Custom scrollbar for algorithm dropdown */
@@ -241,6 +279,9 @@
   --color-pc-fn: #7dd3fc;
   --color-pc-arrow: #6ee7b7;
   --color-pc-op: #fda4af;
+  --color-pc-num: #fcd34d;
+  --color-pc-punc: #64748b;
+  --color-pc-lineno: #94a3b8;
 
   /* Scrollbar */
   --color-scrollbar-track: #1f2937;

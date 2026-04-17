@@ -459,7 +459,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                     className="pseudocode-view flex-1 min-h-0 overflow-auto rounded-lg p-4 leading-relaxed shadow-inner"
                   >
                     <code
-                      className="block font-mono text-sm whitespace-pre [word-spacing:normal]"
+                      className="block w-full font-mono text-sm [word-spacing:normal]"
                       dangerouslySetInnerHTML={{ __html: pseudocodeHtml }}
                     />
                   </pre>

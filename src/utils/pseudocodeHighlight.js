@@ -4,6 +4,16 @@
  * See LICENSE for details.
  */
 
+/** Semantic classes — colors from index.css (--color-pc-*) for light/dark */
+const C = {
+  kw: 'pc-kw',
+  fn: 'pc-fn',
+  num: 'pc-num',
+  arrow: 'pc-arrow',
+  op: 'pc-op',
+  punc: 'pc-punc',
+};
+
 /**
  * Escape text for safe insertion into HTML.
  * @param {string} s
@@ -12,15 +22,10 @@ function escapeHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-/** Semantic classes — colors from index.css (--color-pc-*) for light/dark */
-const C = {
-  kw: 'pc-kw',
-  fn: 'pc-fn',
-  arrow: 'pc-arrow',
-  op: 'pc-op',
-};
-
-const span = (cls, inner) => `<span class="${cls}">${inner}</span>`;
+/** @param {string} cls @param {string} innerEscaped */
+function spanEscaped(cls, innerEscaped) {
+  return `<span class="${cls}">${innerEscaped}</span>`;
+}
 
 /** @param {string} s */
 function reEscape(s) {
@@ -29,7 +34,6 @@ function reEscape(s) {
 
 /**
  * Multi-word phrases first (including Arabic with spaces), then single tokens.
- * Unicode flag so letters like É, أ are word characters for \\b.
  */
 const KEYWORD_PHRASES = [
   'ELSE IF',
@@ -123,59 +127,170 @@ const FN_NAMES = [
   'IDAStar',
   'DStarLite',
   'AStar',
+  'floor',
+  'min',
+  'max',
 ];
 
 /**
- * Highlight pseudocode for display inside <pre><code> (trusted app strings only).
+ * Regex body for a single-token keyword (no surrounding parens).
+ * ASCII uses \\b; Arabic script uses whitespace/start/end delimiters;
+ * other Unicode (e.g. RÉPÉTER, À) uses Unicode-aware "word" boundaries.
+ * @param {string} kw
+ */
+function keywordPatternBody(kw) {
+  if (/^[A-Za-z_]+$/.test(kw)) {
+    return `\\b${reEscape(kw)}\\b`;
+  }
+  if (/[\u0600-\u06FF]/.test(kw)) {
+    return `(?<=(?:^|\\s))${reEscape(kw)}(?=(?:\\s|$|[,:;\\)\\]]))`;
+  }
+  return `(?<![\\p{L}\\p{N}_])${reEscape(kw)}(?![\\p{L}\\p{N}_])`;
+}
+
+function dedupeSortedByLength(strings) {
+  const seen = new Set();
+  return [...strings]
+    .filter(s => {
+      if (!s || seen.has(s)) return false;
+      seen.add(s);
+      return true;
+    })
+    .sort((a, b) => b.length - a.length);
+}
+
+/** Single regex: alternation order = longest / most specific first */
+let tokenRegex = null;
+/** @type {string[]} */
+let groupTypes = [];
+
+function buildTokenRegex() {
+  const multiWord = dedupeSortedByLength(
+    KEYWORD_PHRASES.filter(k => /\s/.test(k))
+  );
+  const singleWord = dedupeSortedByLength(
+    KEYWORD_PHRASES.filter(k => !/\s/.test(k))
+  );
+  const fnNames = dedupeSortedByLength(FN_NAMES);
+
+  const parts = [];
+  /** @type {string[]} */
+  const types = [];
+
+  const addGroup = (type, body) => {
+    parts.push(`(${body})`);
+    types.push(type);
+  };
+
+  for (const phrase of multiWord) {
+    addGroup('kw', reEscape(phrase));
+  }
+
+  for (const kw of singleWord) {
+    addGroup('kw', keywordPatternBody(kw));
+  }
+
+  for (const name of fnNames) {
+    addGroup('fn', `\\b${reEscape(name)}\\b`);
+  }
+
+  addGroup('num', '\\b(?:infinity|true|false)\\b');
+  addGroup('num', '\\d+(?:\\.\\d+)?');
+  addGroup('arrow', '\u2190');
+  addGroup('op', '[\u2264\u2265\u2260\u2212\u00d7\u00f7]');
+  addGroup('op', '\\bmod\\b');
+  addGroup('op', '[<>=+]');
+  addGroup('punc', '[\\[\\]():,]');
+
+  groupTypes = types;
+
+  tokenRegex = new RegExp(parts.join('|'), 'gu');
+}
+
+buildTokenRegex();
+
+/**
+ * Highlight one line of pseudocode (raw text).
+ * @param {string} line
+ * @returns {string} HTML fragment (no outer wrapper)
+ */
+function highlightLine(line) {
+  if (!line && line !== '') return '';
+  const re = tokenRegex;
+  if (!re) return escapeHtml(line);
+
+  let out = '';
+  let lastIndex = 0;
+  re.lastIndex = 0;
+  let m = re.exec(line);
+
+  while (m !== null) {
+    const start = m.index;
+    if (start > lastIndex) {
+      out += escapeHtml(line.slice(lastIndex, start));
+    }
+
+    let tokenType = 'kw';
+    for (let i = 1; i < m.length; i += 1) {
+      if (m[i] !== undefined) {
+        tokenType = groupTypes[i - 1];
+        break;
+      }
+    }
+
+    const inner = escapeHtml(m[0]);
+    switch (tokenType) {
+      case 'kw':
+        out += spanEscaped(C.kw, inner);
+        break;
+      case 'fn':
+        out += spanEscaped(C.fn, inner);
+        break;
+      case 'num':
+        out += spanEscaped(C.num, inner);
+        break;
+      case 'arrow':
+        out += spanEscaped(C.arrow, inner);
+        break;
+      case 'op':
+        out += spanEscaped(C.op, inner);
+        break;
+      case 'punc':
+        out += spanEscaped(C.punc, inner);
+        break;
+      default:
+        out += inner;
+    }
+
+    lastIndex = m.index + m[0].length;
+    m = re.exec(line);
+  }
+
+  if (lastIndex < line.length) {
+    out += escapeHtml(line.slice(lastIndex));
+  }
+
+  return out;
+}
+
+/**
+ * Highlight pseudocode for display inside {@code <pre>} (trusted app strings only).
  * @param {string} source
  * @returns {string} HTML
  */
 export function highlightPseudocodeToHtml(source) {
   if (!source) return '';
 
-  let text = escapeHtml(source);
+  const rawLines = source.replace(/\r\n/g, '\n').split('\n');
+  const blocks = [];
 
-  text = text.replace(/←/g, span(C.arrow, '←'));
-  text = text.replace(/≤/g, span(C.op, '≤'));
-  text = text.replace(/≥/g, span(C.op, '≥'));
-  text = text.replace(/≠/g, span(C.op, '≠'));
-  text = text.replace(/−/g, span(C.op, '−'));
-  text = text.replace(/×/g, span(C.op, '×'));
-  text = text.replace(/÷/g, span(C.op, '÷'));
-
-  const seen = new Set();
-  const kwSorted = [...KEYWORD_PHRASES]
-    .filter(k => {
-      if (!k || seen.has(k)) return false;
-      seen.add(k);
-      return true;
-    })
-    .sort((a, b) => b.length - a.length);
-
-  for (const kw of kwSorted) {
-    const hasSpace = /\s/.test(kw);
-    if (hasSpace) {
-      const re = new RegExp(reEscape(kw), 'gu');
-      text = text.replace(re, m => span(C.kw, m));
-    } else {
-      const re = new RegExp(`\\b${reEscape(kw)}\\b`, 'giu');
-      text = text.replace(re, m => span(C.kw, m));
-    }
+  for (let i = 0; i < rawLines.length; i += 1) {
+    const lineNo = i + 1;
+    const bodyHtml = highlightLine(rawLines[i]);
+    blocks.push(
+      `<span class="pc-line"><span class="pc-lineno" dir="ltr" aria-hidden="true">${lineNo}</span><span class="pc-line-body">${bodyHtml}</span></span>`
+    );
   }
 
-  const fnSeen = new Set();
-  const fnSorted = [...FN_NAMES]
-    .filter(n => {
-      if (fnSeen.has(n)) return false;
-      fnSeen.add(n);
-      return true;
-    })
-    .sort((a, b) => b.length - a.length);
-
-  for (const name of fnSorted) {
-    const re = new RegExp(`\\b${reEscape(name)}\\b`, 'gu');
-    text = text.replace(re, m => span(C.fn, m));
-  }
-
-  return text;
+  return blocks.join('\n');
 }
