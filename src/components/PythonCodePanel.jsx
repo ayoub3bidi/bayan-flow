@@ -13,7 +13,7 @@ import {
   getAlgorithmDisplayName,
   getTestCases,
 } from '../algorithms/python';
-import { getPseudocode } from '../algorithms/pseudocode';
+import { getPseudocodeForLocale } from '../algorithms/pseudocode';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
 import { usePythonExecution } from '../hooks/usePythonExecution';
@@ -115,8 +115,14 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
 
   const pythonCode = getPythonCode(algorithm);
   const displayName = getAlgorithmDisplayName(algorithm);
-  const pseudocodeText =
-    getPseudocode(algorithm) ?? t('python_code.noPseudocode');
+  const pseudocodeText = useMemo(
+    () =>
+      getPseudocodeForLocale(
+        algorithm,
+        i18n.resolvedLanguage ?? i18n.language
+      ) ?? t('python_code.noPseudocode'),
+    [algorithm, i18n.resolvedLanguage, i18n.language, t]
+  );
 
   const [activeCodeTab, setActiveCodeTab] = useState(
     /** @type {'python' | 'pseudocode'} */ ('python')
@@ -406,25 +412,12 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 </div>
               )}
 
-              {/* Python vs Pseudocode */}
+              {/* Pseudocode vs Python (pseudocode first) */}
               <div
                 className="mx-2 shrink-0 flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated"
                 role="tablist"
                 aria-label={t('python_code.title')}
               >
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCodeTab === 'python'}
-                  onClick={() => setActiveCodeTab('python')}
-                  className={`flex-1 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 touch-manipulation ${
-                    activeCodeTab === 'python'
-                      ? 'bg-theme-primary-consistent text-white shadow-md'
-                      : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
-                  }`}
-                >
-                  {t('python_code.tabPython')}
-                </button>
                 <button
                   type="button"
                   role="tab"
@@ -438,12 +431,25 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 >
                   {t('python_code.tabPseudocode')}
                 </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCodeTab === 'python'}
+                  onClick={() => setActiveCodeTab('python')}
+                  className={`flex-1 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 touch-manipulation ${
+                    activeCodeTab === 'python'
+                      ? 'bg-theme-primary-consistent text-white shadow-md'
+                      : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
+                  }`}
+                >
+                  {t('python_code.tabPython')}
+                </button>
               </div>
 
               {activeCodeTab === 'pseudocode' ? (
                 <div className="flex-1 min-h-0 flex flex-col p-2">
                   <pre
-                    dir="ltr"
+                    dir={isRTL ? 'rtl' : 'ltr'}
                     className="flex-1 min-h-0 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-surface-elevated p-4 font-mono text-sm text-text-primary whitespace-pre leading-relaxed"
                   >
                     {pseudocodeText}
