@@ -83,6 +83,45 @@
   --color-scrollbar-track: #e5e7eb;
   --color-scrollbar-thumb: #9ca3af;
   --color-scrollbar-thumb-hover: #6b7280;
+
+  /* Pseudocode panel — light: strong contrast on pale slate panel */
+  --color-pc-bg: #f1f5f9;
+  --color-pc-border: #cbd5e1;
+  --color-pc-base: #0f172a;
+  --color-pc-kw: #6d28d9;
+  --color-pc-fn: #0369a1;
+  --color-pc-arrow: #047857;
+  --color-pc-op: #be123c;
+}
+
+/* Pseudocode syntax — classes used inside dangerouslySetInnerHTML (must not rely on Tailwind JIT) */
+.pseudocode-view {
+  background-color: var(--color-pc-bg);
+  border: 1px solid var(--color-pc-border);
+  color: var(--color-pc-base);
+}
+
+.pseudocode-view code {
+  color: inherit;
+}
+
+.pc-kw {
+  color: var(--color-pc-kw);
+  font-weight: 600;
+}
+
+.pc-fn {
+  color: var(--color-pc-fn);
+  font-weight: 500;
+}
+
+.pc-arrow {
+  color: var(--color-pc-arrow);
+  font-weight: 600;
+}
+
+.pc-op {
+  color: var(--color-pc-op);
 }
 
 /* Custom scrollbar for algorithm dropdown */
@@ -193,6 +232,15 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+
+  /* Pseudocode panel — dark */
+  --color-pc-bg: rgb(15 23 42 / 0.55);
+  --color-pc-border: #334155;
+  --color-pc-base: #e2e8f0;
+  --color-pc-kw: #c4b5fd;
+  --color-pc-fn: #7dd3fc;
+  --color-pc-arrow: #6ee7b7;
+  --color-pc-op: #fda4af;
 
   /* Scrollbar */
   --color-scrollbar-track: #1f2937;

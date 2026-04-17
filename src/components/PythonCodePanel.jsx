@@ -14,6 +14,7 @@ import {
   getTestCases,
 } from '../algorithms/python';
 import { getPseudocodeForLocale } from '../algorithms/pseudocode';
+import { highlightPseudocodeToHtml } from '../utils/pseudocodeHighlight';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
 import { usePythonExecution } from '../hooks/usePythonExecution';
@@ -122,6 +123,11 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
         i18n.resolvedLanguage ?? i18n.language
       ) ?? t('python_code.noPseudocode'),
     [algorithm, i18n.resolvedLanguage, i18n.language, t]
+  );
+
+  const pseudocodeHtml = useMemo(
+    () => highlightPseudocodeToHtml(pseudocodeText),
+    [pseudocodeText]
   );
 
   const [activeCodeTab, setActiveCodeTab] = useState(
@@ -450,9 +456,12 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 <div className="flex-1 min-h-0 flex flex-col p-2">
                   <pre
                     dir={isRTL ? 'rtl' : 'ltr'}
-                    className="flex-1 min-h-0 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-surface-elevated p-4 font-mono text-sm text-text-primary whitespace-pre leading-relaxed"
+                    className="pseudocode-view flex-1 min-h-0 overflow-auto rounded-lg p-4 leading-relaxed shadow-inner"
                   >
-                    {pseudocodeText}
+                    <code
+                      className="block font-mono text-sm whitespace-pre [word-spacing:normal]"
+                      dangerouslySetInnerHTML={{ __html: pseudocodeHtml }}
+                    />
                   </pre>
                 </div>
               ) : !pythonCode ? (
@@ -483,8 +492,24 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 </div>
               ) : (
                 <>
-                  {/* Toolbar */}
-                  <div className="flex items-center gap-2 p-2 shrink-0">
+                  {/* Toolbar — LTR so Run stays visually right in RTL app */}
+                  <div
+                    className="flex items-center justify-end gap-2 p-2 shrink-0"
+                    dir="ltr"
+                  >
+                    {isModified && (
+                      <button
+                        type="button"
+                        onClick={() => setCode(pythonCode)}
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated rounded-lg transition-colors"
+                        aria-label={t('python_code.reset', {
+                          defaultValue: 'Reset',
+                        })}
+                      >
+                        <RotateCcw size={16} />
+                        {t('python_code.reset', { defaultValue: 'Reset' })}
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={handleRun}
@@ -512,19 +537,6 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                           ? t('python_code.rerun', { defaultValue: 'Rerun' })
                           : t('python_code.run', { defaultValue: 'Run' })}
                     </button>
-                    {isModified && (
-                      <button
-                        type="button"
-                        onClick={() => setCode(pythonCode)}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated rounded-lg transition-colors"
-                        aria-label={t('python_code.reset', {
-                          defaultValue: 'Reset',
-                        })}
-                      >
-                        <RotateCcw size={16} />
-                        {t('python_code.reset', { defaultValue: 'Reset' })}
-                      </button>
-                    )}
                   </div>
 
                   {/* Code Editor + Output (resizable on desktop) */}
