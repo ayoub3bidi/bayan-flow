@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
@@ -32,6 +32,7 @@ import {
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
+  SORT_ORDERS,
 } from '../constants';
 import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
@@ -39,6 +40,10 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
+import {
+  finalizeSortingInputArray,
+  reorderArrayForSortOrder,
+} from '../utils/arrayHelpers';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -76,8 +81,13 @@ function App() {
   const [searchGraphNodeCount, setSearchGraphNodeCount] = useState(
     DEFAULT_SEARCH_GRAPH_NODE_COUNT
   );
+  const [sortOrder, setSortOrder] = useState(SORT_ORDERS.ASCENDING);
+  const prevSortOrderRef = useRef(sortOrder);
   const [array, setArray] = useState(() =>
-    CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(DEFAULT_ARRAY_SIZE)
+    finalizeSortingInputArray(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(DEFAULT_ARRAY_SIZE),
+      SORT_ORDERS.ASCENDING
+    )
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
@@ -136,6 +146,17 @@ function App() {
 
   const visualization = visualizationMap[algorithmType];
 
+  useEffect(() => {
+    if (algorithmType !== ALGORITHM_TYPES.SORTING) {
+      prevSortOrderRef.current = sortOrder;
+      return;
+    }
+    if (prevSortOrderRef.current !== sortOrder) {
+      setArray(prev => reorderArrayForSortOrder(prev, sortOrder));
+      prevSortOrderRef.current = sortOrder;
+    }
+  }, [sortOrder, algorithmType]);
+
   // ── Registry: visualizer component ───────────────────────────────────────
   const VisualizerComponent = VISUALIZER_REGISTRY[algorithmType];
 
@@ -161,7 +182,12 @@ function App() {
     ) {
       searchingVisualization.regenerateGraphStructure();
     } else if (cfg.sizeBinding === 'array') {
-      setArray(cfg.generateData(arraySize));
+      const raw = cfg.generateData(arraySize);
+      setArray(
+        algorithmType === ALGORITHM_TYPES.SORTING
+          ? finalizeSortingInputArray(raw, sortOrder)
+          : raw
+      );
     } else {
       pathfindingVisualization.regenerateGrid();
     }
@@ -180,7 +206,12 @@ function App() {
     setArraySize(newSize);
     const cfg = CATEGORY_CONFIG[algorithmType];
     if (cfg.sizeBinding === 'array') {
-      setArray(cfg.generateData(newSize));
+      const raw = cfg.generateData(newSize);
+      setArray(
+        algorithmType === ALGORITHM_TYPES.SORTING
+          ? finalizeSortingInputArray(raw, sortOrder)
+          : raw
+      );
     }
   };
 
@@ -219,7 +250,12 @@ function App() {
         newType !== ALGORITHM_TYPES.SEARCHING ||
         !isNodeLinkSearchingAlgorithm(searchingKey)
       ) {
-        setArray(cfg.generateData(arraySize));
+        const raw = cfg.generateData(arraySize);
+        setArray(
+          newType === ALGORITHM_TYPES.SORTING
+            ? finalizeSortingInputArray(raw, sortOrder)
+            : raw
+        );
       }
     }
     setAlgorithmType(newType);
@@ -290,6 +326,8 @@ function App() {
               totalSteps={visualization.totalSteps}
               onGenerateArray={handleGenerateArray}
               algorithmType={algorithmType}
+              sortOrder={sortOrder}
+              onSortOrderChange={setSortOrder}
               isFullScreen={isFullScreen}
               onToggleFullScreen={toggleFullScreen}
               onExportVideo={handleExportVideo}
@@ -375,6 +413,8 @@ function App() {
                       totalSteps={visualization.totalSteps}
                       onGenerateArray={handleGenerateArray}
                       algorithmType={algorithmType}
+                      sortOrder={sortOrder}
+                      onSortOrderChange={setSortOrder}
                       isFullScreen={isFullScreen}
                       onToggleFullScreen={toggleFullScreen}
                       onExportVideo={handleExportVideo}

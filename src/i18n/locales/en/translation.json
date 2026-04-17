@@ -188,7 +188,10 @@
     "downloadVideo": "Download",
     "closePreview": "Close",
     "goFullScreen": "Go Full Screen (F)",
-    "exitFullScreen": "Exit Full Screen (Esc)"
+    "exitFullScreen": "Exit Full Screen (Esc)",
+    "ascending": "Random input order (tap for descending input)",
+    "descending": "Descending input order (tap for random input)",
+    "sortOrder": "Toggle initial array order for sorting"
   },
   "info": {
     "step": "Step {{current}} of {{total}}",
@@ -232,6 +235,9 @@
   },
   "python_code": {
     "title": "Python Implementation",
+    "tabPython": "Python",
+    "tabPseudocode": "Pseudocode",
+    "noPseudocode": "Pseudocode is not available for this algorithm.",
     "close": "Close",
     "loading": "Loading...",
     "not_available": "No Python Implementation Available",

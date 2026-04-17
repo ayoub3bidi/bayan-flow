@@ -187,7 +187,10 @@
     "downloadVideo": "تنزيل",
     "closePreview": "إغلاق",
     "goFullScreen": "ملء الشاشة (F)",
-    "exitFullScreen": "الخروج من ملء الشاشة (Esc)"
+    "exitFullScreen": "الخروج من ملء الشاشة (Esc)",
+    "ascending": "ترتيب إدخال عشوائي (اضغط لترتيب تنازلي)",
+    "descending": "ترتيب إدخال تنازلي (اضغط للعشوائي)",
+    "sortOrder": "تبديل ترتيب المصفوفة الأولي للفرز"
   },
   "info": {
     "step": "الخطوة {{current}} من {{total}}",
@@ -231,6 +234,9 @@
   },
   "python_code": {
     "title": "تطبيق بايثون",
+    "tabPython": "بايثون",
+    "tabPseudocode": "شبه الشيفرة",
+    "noPseudocode": "شبه الشيفرة غير متاحة لهذه الخوارزمية.",
     "close": "إغلاق",
     "loading": "جارٍ التحميل...",
     "not_available": "تطبيق بايثون غير متوفر",

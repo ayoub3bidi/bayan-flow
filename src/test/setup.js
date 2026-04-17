@@ -50,6 +50,10 @@ const constantsMockValue = {
     SEARCHING: 'searching',
   },
   ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding', 'searching'],
+  SORT_ORDERS: {
+    ASCENDING: 'ascending',
+    DESCENDING: 'descending',
+  },
   SORTING_ALGORITHMS: {
     BUBBLE_SORT: 'bubbleSort',
     MERGE_SORT: 'mergeSort',
