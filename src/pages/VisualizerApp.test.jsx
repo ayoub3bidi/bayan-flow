@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
+import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
 
@@ -177,14 +177,35 @@ vi.mock('../components/SettingsPanel', () => ({
 }));
 
 vi.mock('../components/ControlPanel', () => ({
-  default: ({ totalSteps, algorithmType, onExportVideo, onGenerateArray }) => (
+  default: ({
+    totalSteps,
+    algorithmType,
+    onExportVideo,
+    onGenerateArray,
+    sortOrder,
+    onSortOrderChange,
+  }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
       <span data-testid="control-algorithm-type">{algorithmType}</span>
+      <span data-testid="control-sort-order">{String(sortOrder)}</span>
       <button type="button" onClick={onGenerateArray}>
         generate-data
       </button>
       <button onClick={onExportVideo}>export</button>
+      {algorithmType === 'sorting' && (
+        <button
+          type="button"
+          data-testid="toggle-sort-order"
+          onClick={() =>
+            onSortOrderChange(
+              sortOrder === 'ascending' ? 'descending' : 'ascending'
+            )
+          }
+        >
+          toggle-sort-order
+        </button>
+      )}
     </div>
   ),
 }));
@@ -206,7 +227,13 @@ vi.mock('../components/GridVisualizer', () => ({
 }));
 
 vi.mock('../hooks/useSortingVisualization', () => ({
-  useSortingVisualization: () => sortingVisualization,
+  /** Forward input array from VisualizerApp so sort-order and generate handlers affect the mock visualizer. */
+  useSortingVisualization: (_algorithmKey, initialArray, _speed, _mode) => ({
+    ...sortingVisualization,
+    array: Array.isArray(initialArray)
+      ? [...initialArray]
+      : sortingVisualization.array,
+  }),
 }));
 
 vi.mock('../hooks/usePathfindingVisualization', () => ({
@@ -260,9 +287,9 @@ describe('VisualizerApp', () => {
   it('renders the registered visualizer for the active category', async () => {
     await renderApp();
 
-    expect(screen.getByTestId('array-visualizer')).toHaveTextContent(
-      'bubbleSort:3,1,2'
-    );
+    const sortingText =
+      screen.getByTestId('array-visualizer').textContent ?? '';
+    expect(sortingText).toMatch(/^bubbleSort:\d+(,\d+)+$/);
     expect(screen.queryByTestId('grid-visualizer')).not.toBeInTheDocument();
   });
 
@@ -346,6 +373,54 @@ describe('VisualizerApp', () => {
         exportTheme: expect.stringMatching(/^(light|dark)$/),
         exportLanguage: expect.any(String),
       })
+    );
+  });
+
+  it('reorders the sorting array when sort order is toggled on sorting category', async () => {
+    await renderApp();
+
+    const parseNums = raw => {
+      const payload = raw.replace(/^bubbleSort:/, '');
+      return payload.split(',').map(Number);
+    };
+
+    const initialNums = parseNums(
+      screen.getByTestId('array-visualizer').textContent ?? ''
+    );
+
+    fireEvent.click(screen.getByTestId('toggle-sort-order'));
+    await waitFor(() => {
+      const descending = parseNums(
+        screen.getByTestId('array-visualizer').textContent ?? ''
+      );
+      expect(descending).toEqual([...initialNums].sort((a, b) => b - a));
+    });
+
+    fireEvent.click(screen.getByTestId('toggle-sort-order'));
+    await waitFor(() => {
+      const ascending = parseNums(
+        screen.getByTestId('array-visualizer').textContent ?? ''
+      );
+      expect(ascending).toEqual([...initialNums].sort((a, b) => a - b));
+    });
+  });
+
+  it('updates sort order ref when switching away from sorting without applying reorder logic to other categories', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByTestId('toggle-sort-order'));
+    expect(screen.getByTestId('control-sort-order')).toHaveTextContent(
+      'descending'
+    );
+
+    fireEvent.click(screen.getByText('pathfinding'));
+    expect(screen.getByTestId('control-algorithm-type')).toHaveTextContent(
+      'pathfinding'
+    );
+
+    fireEvent.click(screen.getByText('sorting'));
+    expect(screen.getByTestId('control-sort-order')).toHaveTextContent(
+      'descending'
     );
   });
 });

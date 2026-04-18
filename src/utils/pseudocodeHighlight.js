@@ -14,6 +14,16 @@ const C = {
   punc: 'pc-punc',
 };
 
+/** Maps regex branch type → span class (matches {@link groupTypes} entries). */
+const TOKEN_CLASS = {
+  kw: C.kw,
+  fn: C.fn,
+  num: C.num,
+  arrow: C.arrow,
+  op: C.op,
+  punc: C.punc,
+};
+
 /**
  * Escape text for safe insertion into HTML.
  * @param {string} s
@@ -214,10 +224,9 @@ buildTokenRegex();
  * @param {string} line
  * @returns {string} HTML fragment (no outer wrapper)
  */
-function highlightLine(line) {
+export function highlightLine(line) {
   if (!line && line !== '') return '';
   const re = tokenRegex;
-  if (!re) return escapeHtml(line);
 
   let out = '';
   let lastIndex = 0;
@@ -239,28 +248,8 @@ function highlightLine(line) {
     }
 
     const inner = escapeHtml(m[0]);
-    switch (tokenType) {
-      case 'kw':
-        out += spanEscaped(C.kw, inner);
-        break;
-      case 'fn':
-        out += spanEscaped(C.fn, inner);
-        break;
-      case 'num':
-        out += spanEscaped(C.num, inner);
-        break;
-      case 'arrow':
-        out += spanEscaped(C.arrow, inner);
-        break;
-      case 'op':
-        out += spanEscaped(C.op, inner);
-        break;
-      case 'punc':
-        out += spanEscaped(C.punc, inner);
-        break;
-      default:
-        out += inner;
-    }
+    const spanClass = TOKEN_CLASS[tokenType];
+    out += spanEscaped(spanClass, inner);
 
     lastIndex = m.index + m[0].length;
     m = re.exec(line);

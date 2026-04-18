@@ -5,7 +5,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { highlightPseudocodeToHtml } from './pseudocodeHighlight';
+import {
+  highlightPseudocodeToHtml,
+  highlightLine,
+} from './pseudocodeHighlight';
 
 describe('highlightPseudocodeToHtml', () => {
   it('escapes HTML in source', () => {
@@ -53,5 +56,14 @@ describe('highlightPseudocodeToHtml', () => {
     expect(html).toMatch(/pc-lineno[^>]*>1</);
     expect(html).toMatch(/pc-lineno[^>]*>2</);
     expect(html).toMatch(/pc-lineno[^>]*>3</);
+  });
+
+  it('highlightLine returns empty string for null or undefined input', () => {
+    expect(highlightLine(null)).toBe('');
+    expect(highlightLine(undefined)).toBe('');
+  });
+
+  it('highlightPseudocodeToHtml("") returns empty string', () => {
+    expect(highlightPseudocodeToHtml('')).toBe('');
   });
 });
