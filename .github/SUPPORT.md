@@ -76,7 +76,6 @@ We provide several issue templates to help you provide the right information:
 - **✨ Feature Request** - For suggesting new features
 - **🔍 Algorithm Request** - For requesting new algorithms
 - **❓ Question** - For asking questions
-- **📚 Documentation** - For documentation improvements
 
 ## ⏱️ Response Times
 
