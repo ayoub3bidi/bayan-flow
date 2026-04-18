@@ -16,10 +16,13 @@ import {
   Minimize,
   Video,
   Square,
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { soundManager } from '../utils/soundManager';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
 
 /**
  * ControlPanel Component
@@ -37,7 +40,9 @@ import { CATEGORY_CONFIG } from '../registry/categoryConfig';
  * @param {number} currentStep - Current step in the animation
  * @param {number} totalSteps - Total number of steps
  * @param {Function} onGenerateArray - Handler for generating new random start/end points
- * @param {string} algorithmType - Current algorithm type ('sorting' or 'pathfinding')
+ * @param {string} algorithmType - Current algorithm type ('sorting' | 'pathfinding' | 'searching')
+ * @param {string} [sortOrder] - SORT_ORDERS (sorting only)
+ * @param {Function} [onSortOrderChange] - Toggle sort input order (sorting only)
  * @param {boolean} isFullScreen - Whether full-screen mode is active
  * @param {Function} onToggleFullScreen - Handler for toggling full-screen mode
  * @param {Function} onExportVideo - Handler for export video button
@@ -59,6 +64,8 @@ function ControlPanel({
   totalSteps,
   onGenerateArray,
   algorithmType,
+  sortOrder = SORT_ORDERS.ASCENDING,
+  onSortOrderChange,
   isFullScreen,
   onToggleFullScreen,
   onExportVideo,
@@ -179,6 +186,34 @@ function ControlPanel({
               aria-label={t('controls.generateArray')}
             >
               <Shuffle size={20} aria-hidden="true" />
+            </button>
+          )}
+
+          {algorithmType === ALGORITHM_TYPES.SORTING && (
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playUIClick();
+                onSortOrderChange?.(
+                  sortOrder === SORT_ORDERS.ASCENDING
+                    ? SORT_ORDERS.DESCENDING
+                    : SORT_ORDERS.ASCENDING
+                );
+              }}
+              disabled={isPlaying}
+              className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white`}
+              title={
+                sortOrder === SORT_ORDERS.DESCENDING
+                  ? t('controls.descending')
+                  : t('controls.ascending')
+              }
+              aria-label={t('controls.sortOrder')}
+            >
+              {sortOrder === SORT_ORDERS.DESCENDING ? (
+                <ArrowDownWideNarrow size={20} aria-hidden="true" />
+              ) : (
+                <ArrowUpNarrowWide size={20} aria-hidden="true" />
+              )}
             </button>
           )}
 

@@ -14,6 +14,12 @@ export const ALGORITHM_TYPES = {
 // Add new category values to ALGORITHM_TYPES; this list auto-updates.
 export const ALGORITHM_TYPE_LIST = Object.values(ALGORITHM_TYPES);
 
+/** Initial array ordering for sorting visualizations (ControlPanel toggle). */
+export const SORT_ORDERS = {
+  ASCENDING: 'ascending',
+  DESCENDING: 'descending',
+};
+
 export const SORTING_ALGORITHMS = {
   BUBBLE_SORT: 'bubbleSort',
   MERGE_SORT: 'mergeSort',

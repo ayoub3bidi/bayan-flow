@@ -187,7 +187,10 @@
     "downloadVideo": "Télécharger",
     "closePreview": "Fermer",
     "goFullScreen": "Plein Écran (F)",
-    "exitFullScreen": "Quitter le Plein Écran (Esc)"
+    "exitFullScreen": "Quitter le Plein Écran (Esc)",
+    "ascending": "Ordre d'entrée aléatoire (appuyez pour ordre décroissant)",
+    "descending": "Ordre d'entrée décroissant (appuyez pour aléatoire)",
+    "sortOrder": "Basculer l'ordre initial du tableau pour le tri"
   },
   "info": {
     "step": "Étape {{current}} sur {{total}}",
@@ -231,6 +234,9 @@
   },
   "python_code": {
     "title": "Implémentation Python",
+    "tabPython": "Python",
+    "tabPseudocode": "Pseudo-code",
+    "noPseudocode": "Le pseudo-code n'est pas disponible pour cet algorithme.",
     "close": "Fermer",
     "loading": "Chargement...",
     "not_available": "Implémentation Python Non Disponible",
