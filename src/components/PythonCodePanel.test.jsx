@@ -11,14 +11,40 @@ import { ThemeProvider } from '../contexts/ThemeContext';
 import { renderWithI18n } from '../test/testUtils';
 import i18n from '../i18n';
 
-const { getPseudocodeForLocaleMock } = vi.hoisted(() => ({
-  getPseudocodeForLocaleMock: vi.fn((algo, _locale) => {
-    if (algo === 'bubbleSort') {
-      return 'FUNCTION BubbleSort(array):\n  RETURN array';
+const { getPseudocodeForLocaleMock, usePythonExecutionMock, buildPythonExec } =
+  vi.hoisted(() => {
+    const getPseudocodeForLocaleMock = vi.fn((algo, _locale) => {
+      if (algo === 'bubbleSort') {
+        return 'FUNCTION BubbleSort(array):\n  RETURN array';
+      }
+      return null;
+    });
+
+    function buildPythonExec(overrides = {}) {
+      return {
+        status: 'idle',
+        output: '',
+        error: null,
+        testResults: [],
+        testStatus: 'idle',
+        testError: null,
+        runCode: vi.fn(),
+        runTests: vi.fn(),
+        cancelExecution: vi.fn(),
+        clearOutput: vi.fn(),
+        clearTestResults: vi.fn(),
+        ...overrides,
+      };
     }
-    return null;
-  }),
-}));
+
+    const usePythonExecutionMock = vi.fn(() => buildPythonExec());
+
+    return {
+      getPseudocodeForLocaleMock,
+      usePythonExecutionMock,
+      buildPythonExec,
+    };
+  });
 
 vi.mock('../algorithms/pseudocode', () => ({
   getPseudocodeForLocale: (...args) => getPseudocodeForLocaleMock(...args),
@@ -66,21 +92,9 @@ vi.mock('@monaco-editor/react', () => ({
   },
 }));
 
-// Mock usePythonExecution hook
+// Mock usePythonExecution hook (mutable via usePythonExecutionMock)
 vi.mock('../hooks/usePythonExecution', () => ({
-  usePythonExecution: vi.fn(() => ({
-    status: 'idle',
-    output: '',
-    error: null,
-    testResults: [],
-    testStatus: 'idle',
-    testError: null,
-    runCode: vi.fn(),
-    runTests: vi.fn(),
-    cancelExecution: vi.fn(),
-    clearOutput: vi.fn(),
-    clearTestResults: vi.fn(),
-  })),
+  usePythonExecution: (...args) => usePythonExecutionMock(...args),
 }));
 
 // Mock OutputConsole
@@ -125,6 +139,7 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    usePythonExecutionMock.mockImplementation(() => buildPythonExec());
     getPseudocodeForLocaleMock.mockImplementation((algo, _locale) => {
       if (algo === 'bubbleSort') {
         return 'FUNCTION BubbleSort(array):\n  RETURN array';
@@ -482,6 +497,50 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
       await waitFor(() => {
         expect(
           screen.getByText(/Pseudocode is not available/i)
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('shows Running label and spinner when execution status is running', async () => {
+      usePythonExecutionMock.mockImplementation(() =>
+        buildPythonExec({ status: 'running' })
+      );
+      localStorageMock.getItem.mockReturnValue('light');
+
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(/running/i)).toBeInTheDocument();
+      });
+    });
+
+    it('uses Rerun aria-label when output is present', async () => {
+      usePythonExecutionMock.mockImplementation(() =>
+        buildPythonExec({ output: 'stdout line' })
+      );
+      localStorageMock.getItem.mockReturnValue('light');
+
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /rerun/i })
         ).toBeInTheDocument();
       });
     });
