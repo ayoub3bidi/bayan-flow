@@ -8,6 +8,7 @@ export const ALGORITHM_TYPES = {
   SORTING: 'sorting',
   PATHFINDING: 'pathfinding',
   SEARCHING: 'searching',
+  TREE_TRAVERSAL: 'treeTraversal',
 };
 
 // Ordered list for UI tab rendering and registry iteration.
@@ -59,6 +60,10 @@ export const SEARCHING_ALGORITHMS = {
   FIBONACCI_SEARCH: 'fibonacciSearch',
   DEPTH_FIRST_SEARCH: 'depthFirstSearch',
   BREADTH_FIRST_SEARCH_GRAPH: 'breadthFirstSearchGraph',
+};
+
+export const TREE_TRAVERSAL_ALGORITHMS = {
+  INORDER_TRAVERSAL: 'inorderTraversal',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -129,6 +134,28 @@ export const GRAPH_NODE_STATE_COLORS = {
   [GRAPH_NODE_STATES.CURRENT]: '#f97316',
   [GRAPH_NODE_STATES.VISITED]: '#60a5fa',
   [GRAPH_NODE_STATES.PATH]: '#10b981',
+};
+
+/** Tree traversal visualization (inorder / future traversals). */
+export const TREE_NODE_STATES = {
+  DEFAULT: 'default',
+  VISITING: 'visiting',
+  VISITED: 'visited',
+};
+
+export const TREE_NODE_STATE_COLORS = {
+  [TREE_NODE_STATES.DEFAULT]: '#e5e7eb',
+  [TREE_NODE_STATES.VISITING]: '#f97316',
+  [TREE_NODE_STATES.VISITED]: '#10b981',
+};
+
+/** Default node count for tree traversal (SettingsPanel slider). */
+export const DEFAULT_TREE_NODE_COUNT = 15;
+
+export const TREE_NODE_COUNT = {
+  min: 3,
+  max: 31,
+  step: 1,
 };
 
 /** Default node count for searching graph algorithms (SettingsPanel slider). */
@@ -506,6 +533,25 @@ export const SEARCHING_COMPLEXITY = {
       'Shortest-path on unweighted graphs',
       'Level-order tree traversal and layer-by-layer graph analysis',
       'Contrasting with DFS: same graph, queue vs. stack, shortest vs. any path',
+    ],
+  },
+};
+
+export const TREE_TRAVERSAL_COMPLEXITY = {
+  inorderTraversal: {
+    name: 'Inorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Inorder traversal visits the left subtree, then the node, then the right subtree (LNR). On a binary search tree this visits keys in sorted order. This implementation uses an explicit stack—space is proportional to tree height.',
+    useCases: [
+      'BST in-sorted-order output',
+      'Expression trees (recreate infix notation)',
+      'Teaching left–root–right before preorder and postorder',
     ],
   },
 };

@@ -14,12 +14,14 @@ describe('useCategoryVisualizations', () => {
     const sorting = { id: 'sort' };
     const pathfinding = { id: 'path' };
     const searching = { id: 'search' };
+    const treeTraversal = { id: 'tree' };
 
     const { result } = renderHook(() =>
       useCategoryVisualizations({
         sortingVisualization: sorting,
         pathfindingVisualization: pathfinding,
         searchingVisualization: searching,
+        treeTraversalVisualization: treeTraversal,
       })
     );
 
@@ -29,5 +31,6 @@ describe('useCategoryVisualizations', () => {
     expect(result.current[ALGORITHM_TYPES.SORTING]).toBe(sorting);
     expect(result.current[ALGORITHM_TYPES.PATHFINDING]).toBe(pathfinding);
     expect(result.current[ALGORITHM_TYPES.SEARCHING]).toBe(searching);
+    expect(result.current[ALGORITHM_TYPES.TREE_TRAVERSAL]).toBe(treeTraversal);
   });
 });

@@ -453,4 +453,13 @@ FUNCTION DepthLimitedSearch(node, goal, g, threshold, heuristic):
         parent[neighbor] ← current
         enqueue neighbor
   RETURN not found`,
+
+  inorderTraversal: `FUNCTION InorderTraversal(node):
+  IF node is null:
+    RETURN
+  InorderTraversal(left child of node)
+  visit node
+  InorderTraversal(right child of node)
+
+To traverse the whole binary tree, call InorderTraversal(root)`,
 };

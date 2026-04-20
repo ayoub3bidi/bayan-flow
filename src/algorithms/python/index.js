@@ -36,6 +36,7 @@ import exponentialSearchPython from './exponential_search.py?raw';
 import fibonacciSearchPython from './fibonacci_search.py?raw';
 import dfsSearchPython from './dfs_search.py?raw';
 import bfsGraphPython from './bfs_graph.py?raw';
+import inorderTraversalPython from './inorder_traversal.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -70,6 +71,7 @@ export const pythonAlgorithms = {
   fibonacciSearch: fibonacciSearchPython,
   depthFirstSearch: dfsSearchPython,
   breadthFirstSearchGraph: bfsGraphPython,
+  inorderTraversal: inorderTraversalPython,
 };
 
 export const algorithmDisplayNames = {
@@ -105,6 +107,7 @@ export const algorithmDisplayNames = {
   fibonacciSearch: 'Fibonacci Search',
   depthFirstSearch: 'Depth-First Search (graph)',
   breadthFirstSearchGraph: 'Breadth-First Search (graph)',
+  inorderTraversal: 'Inorder Traversal',
 };
 
 export function getPythonCode(algorithmName) {

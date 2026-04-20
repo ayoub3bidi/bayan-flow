@@ -15,6 +15,8 @@ const constantsMockValue = {
   DEFAULT_GRID_SIZE: 15,
   DEFAULT_ARRAY_SIZE: 20,
   DEFAULT_SEARCH_GRAPH_NODE_COUNT: 12,
+  DEFAULT_TREE_NODE_COUNT: 15,
+  TREE_NODE_COUNT: { min: 3, max: 31, step: 1 },
   SEARCH_GRAPH_NODE_COUNT: { min: 5, max: 24, step: 1 },
   GRAPH_NODE_STATES: {
     DEFAULT: 'default',
@@ -24,6 +26,16 @@ const constantsMockValue = {
     CURRENT: 'current',
     VISITED: 'visited',
     PATH: 'path',
+  },
+  TREE_NODE_STATES: {
+    DEFAULT: 'default',
+    VISITING: 'visiting',
+    VISITED: 'visited',
+  },
+  TREE_NODE_STATE_COLORS: {
+    default: '#e5e7eb',
+    visiting: '#f97316',
+    visited: '#10b981',
   },
   GRAPH_NODE_STATE_COLORS: {
     default: '#e5e7eb',
@@ -48,8 +60,9 @@ const constantsMockValue = {
     SORTING: 'sorting',
     PATHFINDING: 'pathfinding',
     SEARCHING: 'searching',
+    TREE_TRAVERSAL: 'treeTraversal',
   },
-  ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding', 'searching'],
+  ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding', 'searching', 'treeTraversal'],
   SORT_ORDERS: {
     ASCENDING: 'ascending',
     DESCENDING: 'descending',
@@ -98,6 +111,17 @@ const constantsMockValue = {
   ALGORITHM_COMPLEXITY: {},
   PATHFINDING_COMPLEXITY: {},
   SEARCHING_COMPLEXITY: {},
+  TREE_TRAVERSAL_COMPLEXITY: {
+    inorderTraversal: {
+      name: 'Inorder Traversal',
+      timeComplexity: {
+        best: 'O(n)',
+        average: 'O(n)',
+        worst: 'O(n)',
+      },
+      spaceComplexity: 'O(h)',
+    },
+  },
   COMPLEXITY_FUNCTIONS: {},
 };
 

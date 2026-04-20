@@ -11,9 +11,17 @@ import { ALGORITHM_TYPES } from '../constants';
 describe('getExtraVisualizerProps', () => {
   const sortingVisualization = { array: [3, 1, 2] };
   const searchingVisualization = { array: [1, 2, 3], targetValue: 2 };
+  const treeTraversalVisualization = {
+    treeNodes: [{ id: '0', x: 0.5, y: 0.5, label: '1' }],
+    treeEdges: [],
+    treeNodeStates: {},
+    visitOrder: [],
+  };
+
   const ctxBase = {
     sortingVisualization,
     searchingVisualization,
+    treeTraversalVisualization,
     gridSize: 25,
   };
 
@@ -74,6 +82,21 @@ describe('getExtraVisualizerProps', () => {
     ).toEqual({
       gridSize: 25,
       complexityDataset: 'pathfinding',
+    });
+  });
+
+  it('returns tree props for tree traversal category', () => {
+    expect(
+      getExtraVisualizerProps(ALGORITHM_TYPES.TREE_TRAVERSAL, {
+        ...ctxBase,
+        activeAlgorithmKey: 'inorderTraversal',
+      })
+    ).toEqual({
+      nodes: [{ id: '0', x: 0.5, y: 0.5, label: '1' }],
+      edges: [],
+      nodeStates: {},
+      visitOrder: [],
+      complexityDataset: 'treeTraversal',
     });
   });
 

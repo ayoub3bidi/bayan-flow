@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { BarChart3, Grid3x3, Search } from 'lucide-react';
+import { BarChart3, Grid3x3, GitBranch, Search } from 'lucide-react';
 import { algorithms } from '../algorithms';
 import { pathfindingAlgorithms } from '../algorithms/pathfinding';
 import { searchingAlgorithms } from '../algorithms/searching';
@@ -17,8 +17,11 @@ import {
   ALGORITHM_TYPES,
   DEFAULT_ARRAY_SIZE,
   DEFAULT_GRID_SIZE,
+  DEFAULT_TREE_NODE_COUNT,
   GRID_SIZES,
 } from '../constants';
+import { treeTraversalAlgorithms } from '../algorithms/treeTraversal';
+import { generateTreeForTraversal } from '../utils/treeGenerators';
 
 /**
  * Per-category configuration registry.
@@ -226,6 +229,35 @@ export const CATEGORY_CONFIG = {
       {
         labelKey: 'algorithmGroups.graphTraversalSearch',
         algorithms: ['depthFirstSearch', 'breadthFirstSearchGraph'],
+      },
+    ],
+  },
+
+  [ALGORITHM_TYPES.TREE_TRAVERSAL]: {
+    defaultAlgorithm: 'inorderTraversal',
+    i18nPrefix: 'algorithms.treeTraversal',
+    i18nTabKey: 'modes.treeTraversal',
+    icon: GitBranch,
+    sizeBinding: 'tree',
+    getAlgorithmFn: key => treeTraversalAlgorithms[key],
+    generateData: (size = DEFAULT_TREE_NODE_COUNT) =>
+      generateTreeForTraversal({ nodeCount: size }),
+    features: {
+      hasDataRefresh: true,
+    },
+    complexityDataset: 'treeTraversal',
+    sizeControl: {
+      type: 'slider',
+      i18nKey: 'settings.treeNodeCount',
+      min: 3,
+      max: 31,
+      step: 1,
+    },
+    algorithmKeys: ['inorderTraversal'],
+    groupDefs: [
+      {
+        labelKey: 'algorithmGroups.depthFirstTraversal',
+        algorithms: ['inorderTraversal'],
       },
     ],
   },

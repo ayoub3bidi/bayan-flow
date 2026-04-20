@@ -29,14 +29,13 @@
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
     "autoplayOnly": "uniquement",
-    "mysteryCategory": "Mystère",
-    "mysteryCategoryHint": "Bientôt",
-    "mysteryCategoryAria": "Catégorie d’algorithmes à venir, pas encore disponible"
+    "treeNodeCount": "Nœuds de l'arbre"
   },
   "modes": {
     "sorting": "Tri",
     "pathfinding": "Recherche de Chemin",
     "searching": "Recherche",
+    "treeTraversal": "Parcours d'arbres",
     "manual": "Manuel",
     "autoplay": "Lecture Auto"
   },
@@ -79,6 +78,9 @@
       "depthFirstSearch": "Parcours en profondeur (graphe)",
       "breadthFirstSearchGraph": "Parcours en largeur (graphe)"
     },
+    "treeTraversal": {
+      "inorderTraversal": "Parcours infixe"
+    },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
@@ -110,7 +112,8 @@
       "exponentialSearch": "Démarrage de la recherche exponentielle",
       "fibonacciSearch": "Démarrage de la recherche de Fibonacci",
       "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes",
-      "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes"
+      "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes",
+      "inorderTraversal": "Démarrage du parcours infixe"
     }
   },
   "complexity": {
@@ -145,7 +148,8 @@
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
-    "breadthFirstSearchGraph": "O(V + E)"
+    "breadthFirstSearchGraph": "O(V + E)",
+    "inorderTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -630,6 +634,18 @@
         "facts_1": "BFS garantit le chemin le plus court (sauts minimaux) sur les graphes non pondérés ; DFS ne le garantit pas.",
         "facts_2": "La tête de file est affichée en haut du canevas — le prochain nœud à défiler.",
         "facts_3": "La même mise en page d'arbre utilisée pour DFS est réutilisée ici, afin de comparer les deux algorithmes."
+      },
+      "inorderTraversal": {
+        "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
+        "intuition": "Depuis la racine, empiler le long des fils gauches jusqu'à l'absence de fils gauche ; visiter (enregistrer) le nœud, puis passer au fils droit et répéter. Chaque nœud est traité après tout son sous-arbre gauche.",
+        "realWorldUses_0": "Énumération triée d'un ABR sans tableau séparé",
+        "realWorldUses_1": "Retrouver la notation infixe depuis un arbre d'expression",
+        "realWorldUses_2": "Introduire les parcours profondeur avant préfixe et suffixe",
+        "realWorldUses_3": "Base des itérateurs d'arbres dans les bibliothèques",
+        "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour une pile explicite avec hauteur h.",
+        "facts_1": "Les arbres aléatoires assignent les valeurs par indexation infixe pour produire 1…n — un ABR valide.",
+        "facts_2": "La version récursive correspond au comportement itératif montré pas à pas.",
+        "facts_3": "Contrairement au DFS dans un graphe avec but, le parcours visite chaque nœud une fois."
       }
     }
   },
@@ -683,6 +699,12 @@
       "stackFrontier": "Pile / frontière",
       "visited": "Visité",
       "discoveryPath": "Chemin de découverte"
+    },
+    "treeTraversal": {
+      "pending": "Non visité",
+      "visiting": "En cours",
+      "visited": "Visité",
+      "visitOrder": "Ordre de visite"
     }
   },
   "visualization": {
@@ -694,7 +716,10 @@
     "graphAriaEmpty": "Graphe vide",
     "stackTop": "Sommet de pile : {{top}}",
     "queueFront": "Tête de file : {{front}}",
-    "graphSubstrate": "Visualisation de graphe"
+    "graphSubstrate": "Visualisation de graphe",
+    "treeAria": "Arbre à {{count}} nœuds",
+    "treeAriaEmpty": "Arbre vide",
+    "visitOrderBadge": "Visités : {{order}}"
   },
   "languages": {
     "en": "English",
@@ -719,6 +744,11 @@
     "dfsGraphVisiting": "Exploration du nœud {{node}}",
     "bfsGraphDequeue": "Nœud {{node}} sorti de la file — examen des voisins niveau par niveau",
     "bfsGraphEnqueue": "{{count}} voisin(s) ajouté(s) à la file ; le suivant est en tête",
+    "inorderStart": "Parcours infixe : sous-arbre gauche, nœud, sous-arbre droit (LNR).",
+    "inorderVisiting": "Visite du nœud {{node}}",
+    "inorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "inorderComplete": "Parcours infixe terminé. Ordre final : {{order}}",
+    "inorderEmpty": "Arbre vide — rien à parcourir.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -914,7 +944,8 @@
     "logarithmicSearch": "Recherche logarithmique",
     "blockJumpSearch": "Recherche par blocs / sauts",
     "distributionAwareSearch": "Recherche sensible à la distribution",
-    "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)"
+    "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)",
+    "depthFirstTraversal": "Parcours en profondeur"
   },
   "roadmap": {
     "hero": {

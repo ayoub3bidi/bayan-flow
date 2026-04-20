@@ -41,6 +41,12 @@ describe('getPseudocodeForLocale', () => {
   it('returns null for unknown algorithm keys', () => {
     expect(getPseudocodeForLocale('notARealAlgorithmKey123', 'en')).toBeNull();
   });
+
+  it('returns pseudocode for inorderTraversal', () => {
+    const text = getPseudocodeForLocale('inorderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('InorderTraversal');
+  });
 });
 
 describe('getPseudocode', () => {

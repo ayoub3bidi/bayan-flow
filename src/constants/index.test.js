@@ -37,6 +37,7 @@ describe('Constants', () => {
         SORTING: 'sorting',
         PATHFINDING: 'pathfinding',
         SEARCHING: 'searching',
+        TREE_TRAVERSAL: 'treeTraversal',
       });
     });
   });

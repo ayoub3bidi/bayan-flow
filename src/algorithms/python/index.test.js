@@ -73,6 +73,16 @@ vi.mock('./binary_search.py?raw', () => ({
     'def binary_search(arr, target):\n    """Binary Search Algorithm"""\n    return -1',
 }));
 
+vi.mock('./inorder_traversal.py?raw', () => ({
+  default:
+    'def inorder_traversal(root):\n    """Inorder Traversal"""\n    return []',
+}));
+
+vi.mock('./bfs_graph.py?raw', () => ({
+  default:
+    'def bfs_graph(adj, root, goal):\n    """BFS on graph"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -329,6 +339,8 @@ describe('Python Algorithms Index', () => {
         'exponentialSearch',
         'fibonacciSearch',
         'depthFirstSearch',
+        'breadthFirstSearchGraph',
+        'inorderTraversal',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

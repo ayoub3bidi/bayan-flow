@@ -1,6 +1,6 @@
 {
   "name": "bayan-flow",
-  "description": "Bayan Flow - Interactive algorithm visualizer with step-by-step animations for sorting and pathfinding algorithms. Bayan (بيان) means clarity in Arabic.",
+  "description": "Bayan Flow - Interactive algorithm visualizer with step-by-step animations for sorting, searching, pathfinding, and tree traversal algorithms. Bayan (بيان) means clarity in Arabic.",
   "keywords": [
     "algorithms",
     "visualization",
@@ -28,7 +28,7 @@
   },
   "homepage": "https://bayanflow.netlify.app",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": ">=24.11.1",

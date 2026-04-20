@@ -55,16 +55,19 @@ describe('CATEGORY_CONFIG', () => {
           expect(data).toBeDefined();
         });
 
-        it('has sizeBinding "array" or "grid"', () => {
-          expect(['array', 'grid']).toContain(
+        it('has sizeBinding "array", "grid", or "tree"', () => {
+          expect(['array', 'grid', 'tree']).toContain(
             CATEGORY_CONFIG[type].sizeBinding
           );
         });
 
         it('has complexityDataset registered in COMPLEXITY_DATASETS', () => {
-          expect(['sorting', 'pathfinding', 'searching']).toContain(
-            CATEGORY_CONFIG[type].complexityDataset
-          );
+          expect([
+            'sorting',
+            'pathfinding',
+            'searching',
+            'treeTraversal',
+          ]).toContain(CATEGORY_CONFIG[type].complexityDataset);
         });
       });
     });

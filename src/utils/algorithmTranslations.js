@@ -120,6 +120,13 @@ export const ALGORITHM_STEPS = {
   BFS_GRAPH_DEQUEUE: 'bfsGraphDequeue',
   BFS_GRAPH_ENQUEUE: 'bfsGraphEnqueue',
 
+  // Tree traversals (inorder)
+  INORDER_START: 'inorderStart',
+  INORDER_VISITING: 'inorderVisiting',
+  INORDER_VISITED: 'inorderVisited',
+  INORDER_COMPLETE: 'inorderComplete',
+  INORDER_EMPTY: 'inorderEmpty',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

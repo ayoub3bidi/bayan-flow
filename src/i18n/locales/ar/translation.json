@@ -29,14 +29,13 @@
     "autoplayDescription": "تشغيل الرسوم المتحركة تلقائياً بالسرعة المحددة",
     "manualDescription": "استخدم عناصر التحكم للتقدم يدوياً",
     "autoplayOnly": "فقط",
-    "mysteryCategory": "غامض",
-    "mysteryCategoryHint": "قريبًا",
-    "mysteryCategoryAria": "فئة خوارزميات قادمة، غير متاحة بعد"
+    "treeNodeCount": "عقد الشجرة"
   },
   "modes": {
     "sorting": "الترتيب",
     "pathfinding": "إيجاد المسار",
     "searching": "البحث",
+    "treeTraversal": "اجتياز الشجرة",
     "manual": "يدوي",
     "autoplay": "تشغيل تلقائي"
   },
@@ -79,6 +78,9 @@
       "depthFirstSearch": "البحث عمق-أولاً (رسم بياني)",
       "breadthFirstSearchGraph": "البحث عرضاً-أولاً (رسم بياني)"
     },
+    "treeTraversal": {
+      "inorderTraversal": "الاجتياز بيني (Inorder)"
+    },
     "descriptions": {
       "bubbleSort": "بدء الترتيب الفقاعي",
       "quickSort": "بدء الترتيب السريع",
@@ -110,7 +112,8 @@
       "exponentialSearch": "بدء البحث الأسي",
       "fibonacciSearch": "بدء بحث فيبوناتشي",
       "depthFirstSearch": "بدء البحث عمق-أولاً على رسم العقد والأضلاع",
-      "breadthFirstSearchGraph": "بدء البحث عرضاً-أولاً على رسم العقد والأضلاع"
+      "breadthFirstSearchGraph": "بدء البحث عرضاً-أولاً على رسم العقد والأضلاع",
+      "inorderTraversal": "بدء الاجتياز بيني للشجرة"
     }
   },
   "complexity": {
@@ -145,7 +148,8 @@
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
-    "breadthFirstSearchGraph": "O(V + E)"
+    "breadthFirstSearchGraph": "O(V + E)",
+    "inorderTraversal": "O(n)"
   },
   "speeds": {
     "slow": "بطيء",
@@ -630,6 +634,18 @@
         "facts_1": "يضمن BFS أقصر مسار (أقل خطوات) على الرسوم غير الموزونة؛ DFS لا يضمن.",
         "facts_2": "مقدمة الطابور تظهر أعلى اللوحة — العقدة التالية للإخراج.",
         "facts_3": "نفس تخطيط الشجرة المستخدم في DFS يُعاد استخدامه هنا، للمقارنة بين الخوارزميتين."
+      },
+      "inorderTraversal": {
+        "history": "اجتياز الشجرة الثنائية بترتيب بيني (يسار، جذر، يمين) معيار في المترجمات والمنهجيات. على شجرة بحث ثنائية يعطي المفاتيح مرتبة تصاعدياً.",
+        "intuition": "من الجذر ندفع على طول الأبناء الأيسر حتى لا يبقى أيسر؛ نزور العقدة، ثم ننتقل لليمين ونكرر. كل عقدة تُزار بعد اكتمال الشجرة اليسرى بالكامل.",
+        "realWorldUses_0": "إخراج مرتب من شجرة بحث دون مصفوفة منفصلة",
+        "realWorldUses_1": "استعادة الصيغة البينية من شجرة تعبير",
+        "realWorldUses_2": "مدخل لاجتيازات العمق الأخرى (قبلي، لاحق)",
+        "realWorldUses_3": "أساس مكررات الأشجار في المكتبات",
+        "facts_0": "الزمن Θ(n) على n عقد؛ الذاكرة O(h) لمكدس صريح وارتفاع h.",
+        "facts_1": "الأشجار العشوائية هنا تعيّن القيم بالترتيب بيني لتصبح 1…n شجرة بحث صالحة.",
+        "facts_2": "الصيغة العودية تطابق السلوك التكراري المعروض خطوة بخطوة.",
+        "facts_3": "على عكس DFS على رسم له هدف، الاجتياز يزور كل عقدة مرة واحدة."
       }
     }
   },
@@ -683,6 +699,12 @@
       "stackFrontier": "المكدس / الجبهة",
       "visited": "تمت الزيارة",
       "discoveryPath": "مسار الاكتشاف"
+    },
+    "treeTraversal": {
+      "pending": "لم تُزرَ",
+      "visiting": "جارٍ الزيارة",
+      "visited": "تمت الزيارة",
+      "visitOrder": "ترتيب الزيارة"
     }
   },
   "visualization": {
@@ -694,7 +716,10 @@
     "graphAriaEmpty": "رسم فارغ",
     "stackTop": "قمة المكدس: {{top}}",
     "queueFront": "مقدمة الطابور: {{front}}",
-    "graphSubstrate": "تصور الرسم البياني"
+    "graphSubstrate": "تصور الرسم البياني",
+    "treeAria": "شجرة بعدد {{count}} عقد",
+    "treeAriaEmpty": "شجرة فارغة",
+    "visitOrderBadge": "تمت الزيارة: {{order}}"
   },
   "languages": {
     "en": "English",
@@ -719,6 +744,11 @@
     "dfsGraphVisiting": "استكشاف العقدة {{node}}",
     "bfsGraphDequeue": "أُخرجت العقدة {{node}} من الطابور — فحص الجيران مستوى بمستوى",
     "bfsGraphEnqueue": "أُضيف {{count}} جار(جيران) إلى الطابور؛ مقدمة الطابور هي التالية",
+    "inorderStart": "الاجتياز بيني: الشجرة اليسرى، العقدة، الشجرة اليمنى (يسار–جذر–يمين).",
+    "inorderVisiting": "زيارة العقدة {{node}}",
+    "inorderVisited": "سُجّلت {{node}}. الترتيب حتى الآن: {{order}}",
+    "inorderComplete": "اكتمل الاجتياز بيني. الترتيب النهائي: {{order}}",
+    "inorderEmpty": "الشجرة فارغة — لا شيء لاجتيازه.",
     "pathFoundGraph": "وُجد مسار! {{length}} عقد على مسار الاكتشاف",
     "exploring": "استكشاف الخلية ({{row}}, {{col}})",
     "exploringForward": "البحث الأمامي يستكشف الخلية ({{row}}, {{col}})",
@@ -914,7 +944,8 @@
     "logarithmicSearch": "بحث لوغاريتمي",
     "blockJumpSearch": "بحث كتلي / بالقفز",
     "distributionAwareSearch": "بحث يعتمد على التوزيع",
-    "graphTraversalSearch": "جولة على الرسم (عقد وأضلاع)"
+    "graphTraversalSearch": "جولة على الرسم (عقد وأضلاع)",
+    "depthFirstTraversal": "اجتيازات عمق-أولاً"
   },
   "roadmap": {
     "hero": {

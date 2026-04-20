@@ -29,14 +29,13 @@
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
     "autoplayOnly": "only",
-    "mysteryCategory": "Mystery",
-    "mysteryCategoryHint": "Coming soon",
-    "mysteryCategoryAria": "Upcoming algorithm category, not yet available"
+    "treeNodeCount": "Tree nodes"
   },
   "modes": {
     "sorting": "Sorting",
     "pathfinding": "Pathfinding",
     "searching": "Searching",
+    "treeTraversal": "Tree Traversals",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },
@@ -79,6 +78,9 @@
       "depthFirstSearch": "Depth-First Search (graph)",
       "breadthFirstSearchGraph": "Breadth-First Search (graph)"
     },
+    "treeTraversal": {
+      "inorderTraversal": "Inorder Traversal"
+    },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
@@ -111,7 +113,8 @@
       "exponentialSearch": "Starting Exponential Search",
       "fibonacciSearch": "Starting Fibonacci Search",
       "depthFirstSearch": "Starting depth-first search on the node–link graph",
-      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph"
+      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph",
+      "inorderTraversal": "Starting inorder traversal"
     }
   },
   "complexity": {
@@ -146,7 +149,8 @@
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
-    "breadthFirstSearchGraph": "O(V + E)"
+    "breadthFirstSearchGraph": "O(V + E)",
+    "inorderTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -631,6 +635,18 @@
         "facts_1": "BFS guarantees a shortest (minimum-hop) path on unweighted graphs; DFS does not.",
         "facts_2": "The queue front is shown at the top of the canvas — the next node to be dequeued.",
         "facts_3": "The same tree layout used for DFS is reused here, so you can compare both algorithms side by side on re-generation."
+      },
+      "inorderTraversal": {
+        "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
+        "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
+        "realWorldUses_0": "BST range queries and sorted enumeration without maintaining a separate sorted array",
+        "realWorldUses_1": "Recovering infix notation from expression trees",
+        "realWorldUses_2": "Teaching depth-first patterns before preorder and postorder",
+        "realWorldUses_3": "Foundation for Euler tours and tree iterators in standard libraries",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for an explicit stack with tree height h.",
+        "facts_1": "Random trees here assign values by inorder indexing so inorder produces 1…n — a valid BST.",
+        "facts_2": "Recursive formulation matches the iterative stack behavior shown step by step.",
+        "facts_3": "Unlike graph DFS with a goal, traversal visits every node exactly once."
       }
     }
   },
@@ -683,6 +699,12 @@
       "stackFrontier": "Stack / frontier",
       "visited": "Visited",
       "discoveryPath": "Discovery path"
+    },
+    "treeTraversal": {
+      "pending": "Not visited",
+      "visiting": "Visiting",
+      "visited": "Visited",
+      "visitOrder": "Visit order"
     }
   },
   "visualization": {
@@ -694,7 +716,10 @@
     "graphAriaEmpty": "Empty graph",
     "stackTop": "Stack top: {{top}}",
     "queueFront": "Queue front: {{front}}",
-    "graphSubstrate": "Graph visualization"
+    "graphSubstrate": "Graph visualization",
+    "treeAria": "Tree with {{count}} nodes",
+    "treeAriaEmpty": "Empty tree",
+    "visitOrderBadge": "Visited: {{order}}"
   },
   "languages": {
     "en": "English",
@@ -719,6 +744,11 @@
     "dfsGraphVisiting": "Exploring node {{node}}",
     "bfsGraphDequeue": "Dequeued node {{node}} — examining neighbors level by level",
     "bfsGraphEnqueue": "Enqueued {{count}} neighbor(s); queue front is next",
+    "inorderStart": "Inorder traversal: left subtree, node, right subtree (LNR).",
+    "inorderVisiting": "Visiting node {{node}}",
+    "inorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "inorderComplete": "Inorder complete. Final order: {{order}}",
+    "inorderEmpty": "Tree is empty — nothing to traverse.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -913,7 +943,8 @@
     "logarithmicSearch": "Logarithmic search",
     "blockJumpSearch": "Block / jump search",
     "distributionAwareSearch": "Distribution-aware search",
-    "graphTraversalSearch": "Graph traversal (node–link)"
+    "graphTraversalSearch": "Graph traversal (node–link)",
+    "depthFirstTraversal": "Depth-first traversals"
   },
   "roadmap": {
     "hero": {

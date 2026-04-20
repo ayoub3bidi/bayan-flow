@@ -11,6 +11,7 @@ import {
   ELEMENT_STATES,
   GRID_ELEMENT_STATES,
   GRAPH_NODE_STATES,
+  TREE_NODE_STATES,
 } from '../../constants/index.js';
 
 const FPS_STEP = 45;
@@ -143,5 +144,22 @@ describe('buildExportSoundCues', () => {
       framesPerStep: FPS_STEP,
     });
     expect(cues).toEqual([{ fromFrame: 0, kind: 'pathFound' }]);
+  });
+
+  it('tree traversal: VISITING yields nodeVisit', () => {
+    const cues = buildExportSoundCues({
+      algorithmType: ALGORITHM_TYPES.TREE_TRAVERSAL,
+      algorithmKey: 'inorderTraversal',
+      steps: [
+        {
+          nodes: [{ id: '0' }],
+          edges: [],
+          nodeStates: { '0': TREE_NODE_STATES.VISITING },
+          description: '',
+        },
+      ],
+      framesPerStep: FPS_STEP,
+    });
+    expect(cues).toEqual([{ fromFrame: 0, kind: 'nodeVisit' }]);
   });
 });

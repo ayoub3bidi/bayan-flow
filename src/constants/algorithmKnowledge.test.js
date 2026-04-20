@@ -98,4 +98,17 @@ describe('ALGORITHM_KNOWLEDGE', () => {
       meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
     ).toBe(true);
   });
+
+  it('includes inorderTraversal metadata for the insight panel', () => {
+    expect(ALGORITHM_KNOWLEDGE.inorderTraversal).toBeDefined();
+    const meta = ALGORITHM_KNOWLEDGE.inorderTraversal;
+    expect(typeof meta.inventor).toBe('string');
+    expect(meta.inventor.length).toBeGreaterThan(0);
+    expect(typeof meta.year).toBe('number');
+    expect(meta.realWorldUsesCount).toBeGreaterThanOrEqual(0);
+    expect(meta.factsCount).toBeGreaterThanOrEqual(0);
+    expect(
+      meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
+    ).toBe(true);
+  });
 });

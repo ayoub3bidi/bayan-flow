@@ -27,6 +27,13 @@ const minimalGridStep = {
   description: '',
 };
 
+const minimalTreeStep = {
+  nodes: [{ id: '0', x: 0.5, y: 0.5, label: '1' }],
+  edges: [],
+  nodeStates: {},
+  description: '',
+};
+
 describe('VIDEO_SCENE_RENDERERS', () => {
   it('has a renderer for every ALGORITHM_TYPE', () => {
     Object.values(ALGORITHM_TYPES).forEach(type => {
@@ -48,10 +55,16 @@ describe('VIDEO_SCENE_RENDERERS', () => {
               framesPerStep: 1,
               gridSize: 1,
             }
-          : {
-              steps: [minimalArrayStep],
-              framesPerStep: 1,
-            };
+          : type === ALGORITHM_TYPES.TREE_TRAVERSAL
+            ? {
+                steps: [minimalTreeStep],
+                framesPerStep: 1,
+                exportTheme: 'dark',
+              }
+            : {
+                steps: [minimalArrayStep],
+                framesPerStep: 1,
+              };
       const node = renderer(props);
       expect(node).toBeDefined();
       expect(node.type).toBeDefined();
