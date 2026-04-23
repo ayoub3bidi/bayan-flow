@@ -64,6 +64,7 @@ export const SEARCHING_ALGORITHMS = {
 
 export const TREE_TRAVERSAL_ALGORITHMS = {
   INORDER_TRAVERSAL: 'inorderTraversal',
+  PREORDER_TRAVERSAL: 'preorderTraversal',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -552,6 +553,23 @@ export const TREE_TRAVERSAL_COMPLEXITY = {
       'BST in-sorted-order output',
       'Expression trees (recreate infix notation)',
       'Teaching left–root–right before preorder and postorder',
+    ],
+  },
+  preorderTraversal: {
+    name: 'Preorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Preorder traversal visits the node, then the left subtree, then the right subtree (NLR). Useful for copying a tree, prefix (Polish) expression evaluation, and serialization. This visualization uses an explicit stack—space is proportional to tree height.',
+    useCases: [
+      'Tree duplication and serialization',
+      'Prefix (Polish) notation from expression trees',
+      'Reconstruction with inorder when both traversals are known',
+      'Teaching parent-before-children depth-first order',
     ],
   },
 };

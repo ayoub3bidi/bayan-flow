@@ -127,6 +127,12 @@ export const ALGORITHM_STEPS = {
   INORDER_COMPLETE: 'inorderComplete',
   INORDER_EMPTY: 'inorderEmpty',
 
+  PREORDER_START: 'preorderStart',
+  PREORDER_VISITING: 'preorderVisiting',
+  PREORDER_VISITED: 'preorderVisited',
+  PREORDER_COMPLETE: 'preorderComplete',
+  PREORDER_EMPTY: 'preorderEmpty',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

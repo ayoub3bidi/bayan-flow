@@ -341,6 +341,7 @@ describe('Python Algorithms Index', () => {
         'depthFirstSearch',
         'breadthFirstSearchGraph',
         'inorderTraversal',
+        'preorderTraversal',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

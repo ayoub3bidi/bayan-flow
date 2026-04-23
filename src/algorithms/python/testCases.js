@@ -430,6 +430,36 @@ const PATHFINDING_TEST_CASES = [
   },
 ];
 
+/** preorder_traversal(root) -> list of values in NLR order; root is dict or None */
+const PREORDER_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'pre-bst-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[4, 2, 1, 3, 6, 5, 7]',
+  },
+  {
+    id: 'pre-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'pre-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'pre-left-skew',
+    name: 'Left-skewed chain',
+    input:
+      "{'value': 3, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': None}, 'right': None}",
+    expected: '[3, 2, 1]',
+  },
+];
+
 /** ida_star(grid, start, end, rows, cols) */
 const IDA_STAR_TEST_CASES = [
   {
@@ -575,6 +605,10 @@ export const algorithmTestCases = {
   breadthFirstSearchGraph: {
     functionName: 'breadth_first_search_graph',
     testCases: BREADTH_FIRST_SEARCH_TEST_CASES,
+  },
+  preorderTraversal: {
+    functionName: 'preorder_traversal',
+    testCases: PREORDER_TRAVERSAL_TEST_CASES,
   },
 };
 

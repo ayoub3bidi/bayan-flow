@@ -61,6 +61,15 @@ vi.mock('../constants', () => ({
       },
       spaceComplexity: 'O(h)',
     },
+    preorderTraversal: {
+      name: 'Preorder Traversal',
+      timeComplexity: {
+        best: 'O(n)',
+        average: 'O(n)',
+        worst: 'O(n)',
+      },
+      spaceComplexity: 'O(h)',
+    },
   },
   COMPLEXITY_FUNCTIONS: {
     'O(n²)': n => n * n,

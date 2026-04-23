@@ -30,7 +30,9 @@ describe('generateTreeForTraversal', () => {
       rng: () => 0.42,
     });
     const vals = Object.values(t.nodeValues).sort((a, b) => a - b);
-    expect(vals).toEqual(Array.from({ length: t.nodes.length }, (_, i) => i + 1));
+    expect(vals).toEqual(
+      Array.from({ length: t.nodes.length }, (_, i) => i + 1)
+    );
   });
 
   it('respects binary child links only', () => {

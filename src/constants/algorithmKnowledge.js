@@ -251,7 +251,15 @@ export const ALGORITHM_KNOWLEDGE = {
 
   // ── Tree traversals ───────────────────────────────────────────────────────
   inorderTraversal: {
-    inventor: 'Foundational tree-walk pattern in CS curricula and compiler design',
+    inventor:
+      'Foundational tree-walk pattern in CS curricula and compiler design',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  preorderTraversal: {
+    inventor: 'Foundational tree-walk pattern in CS curricula',
     year: 1960,
     realWorldUsesCount: 4,
     factsCount: 4,

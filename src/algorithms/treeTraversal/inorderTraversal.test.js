@@ -5,10 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  inorderTraversal,
-  inorderTraversalPure,
-} from './inorderTraversal.js';
+import { inorderTraversal, inorderTraversalPure } from './inorderTraversal.js';
 import { TREE_NODE_STATES } from '../../constants/index.js';
 import { generateTreeForTraversal } from '../../utils/treeGenerators.js';
 

@@ -111,4 +111,17 @@ describe('ALGORITHM_KNOWLEDGE', () => {
       meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
     ).toBe(true);
   });
+
+  it('includes preorderTraversal metadata for the insight panel', () => {
+    expect(ALGORITHM_KNOWLEDGE.preorderTraversal).toBeDefined();
+    const meta = ALGORITHM_KNOWLEDGE.preorderTraversal;
+    expect(typeof meta.inventor).toBe('string');
+    expect(meta.inventor.length).toBeGreaterThan(0);
+    expect(typeof meta.year).toBe('number');
+    expect(meta.realWorldUsesCount).toBeGreaterThanOrEqual(0);
+    expect(meta.factsCount).toBeGreaterThanOrEqual(0);
+    expect(
+      meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
+    ).toBe(true);
+  });
 });

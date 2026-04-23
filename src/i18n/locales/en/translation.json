@@ -79,7 +79,8 @@
       "breadthFirstSearchGraph": "Breadth-First Search (graph)"
     },
     "treeTraversal": {
-      "inorderTraversal": "Inorder Traversal"
+      "inorderTraversal": "Inorder Traversal",
+      "preorderTraversal": "Preorder Traversal"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -114,7 +115,8 @@
       "fibonacciSearch": "Starting Fibonacci Search",
       "depthFirstSearch": "Starting depth-first search on the node–link graph",
       "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph",
-      "inorderTraversal": "Starting inorder traversal"
+      "inorderTraversal": "Starting inorder traversal",
+      "preorderTraversal": "Starting preorder traversal"
     }
   },
   "complexity": {
@@ -150,7 +152,8 @@
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
     "breadthFirstSearchGraph": "O(V + E)",
-    "inorderTraversal": "O(n)"
+    "inorderTraversal": "O(n)",
+    "preorderTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -647,6 +650,18 @@
         "facts_1": "Random trees here assign values by inorder indexing so inorder produces 1…n — a valid BST.",
         "facts_2": "Recursive formulation matches the iterative stack behavior shown step by step.",
         "facts_3": "Unlike graph DFS with a goal, traversal visits every node exactly once."
+      },
+      "preorderTraversal": {
+        "history": "Preorder (prefix) order—node, then left subtree, then right subtree—is standard in textbooks on trees and expression evaluation. Together with inorder it is one half of the classic pair used to reconstruct a binary tree when node values are unique.",
+        "intuition": "Always record the current node before going deeper: visit the node, then explore the entire left branch, then the entire right branch. The visualization uses an explicit stack (push right before left so left is processed first), mirroring recursive calls without unbounded recursion depth in the UI runner.",
+        "realWorldUses_0": "Copying or serializing a tree structure (save node, then children)",
+        "realWorldUses_1": "Prefix (Polish) notation from expression trees",
+        "realWorldUses_2": "Tree reconstruction when combined with inorder traversal",
+        "realWorldUses_3": "Teaching parent-first depth-first thinking before postorder",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for the explicit stack with tree height h.",
+        "facts_1": "The same random binary trees as inorder use BST-shaped labels (inorder yields 1…n); preorder order depends on shape, not sorted labels.",
+        "facts_2": "The Python panel includes both recursive and iterative implementations with identical visit order.",
+        "facts_3": "Preorder alone does not yield sorted keys on a BST—inorder does."
       }
     }
   },
@@ -749,6 +764,11 @@
     "inorderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "inorderComplete": "Inorder complete. Final order: {{order}}",
     "inorderEmpty": "Tree is empty — nothing to traverse.",
+    "preorderStart": "Preorder traversal: node, then left subtree, then right subtree (NLR).",
+    "preorderVisiting": "Visiting node {{node}}",
+    "preorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "preorderComplete": "Preorder complete. Final order: {{order}}",
+    "preorderEmpty": "Tree is empty — nothing to traverse.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",

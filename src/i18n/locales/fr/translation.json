@@ -79,7 +79,8 @@
       "breadthFirstSearchGraph": "Parcours en largeur (graphe)"
     },
     "treeTraversal": {
-      "inorderTraversal": "Parcours infixe"
+      "inorderTraversal": "Parcours infixe",
+      "preorderTraversal": "Parcours préfixe"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -113,7 +114,8 @@
       "fibonacciSearch": "Démarrage de la recherche de Fibonacci",
       "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes",
       "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes",
-      "inorderTraversal": "Démarrage du parcours infixe"
+      "inorderTraversal": "Démarrage du parcours infixe",
+      "preorderTraversal": "Démarrage du parcours préfixe"
     }
   },
   "complexity": {
@@ -149,7 +151,8 @@
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
     "breadthFirstSearchGraph": "O(V + E)",
-    "inorderTraversal": "O(n)"
+    "inorderTraversal": "O(n)",
+    "preorderTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -646,6 +649,18 @@
         "facts_1": "Les arbres aléatoires assignent les valeurs par indexation infixe pour produire 1…n — un ABR valide.",
         "facts_2": "La version récursive correspond au comportement itératif montré pas à pas.",
         "facts_3": "Contrairement au DFS dans un graphe avec but, le parcours visite chaque nœud une fois."
+      },
+      "preorderTraversal": {
+        "history": "Le parcours préfixe (nœud, sous-arbre gauche, sous-arbre droit) est classique pour l'évaluation d'expressions et la sérialisation. Avec l'infixe, il forme la paire utilisée pour reconstruire un arbre binaire lorsque les valeurs sont uniques.",
+        "intuition": "Enregistrer le nœud courant avant d'aller plus profond : visiter le nœud, puis tout le sous-arbre gauche, puis le droit. La visualisation utilise une pile explicite (empiler le droit avant le gauche pour traiter le gauche en premier), comme les appels récursifs sans récursion illimitée dans le navigateur.",
+        "realWorldUses_0": "Copie ou sérialisation d'un arbre (nœud puis enfants)",
+        "realWorldUses_1": "Notation polonaise préfixe depuis un arbre d'expression",
+        "realWorldUses_2": "Reconstruction d'arbre combinée avec le parcours infixe",
+        "realWorldUses_3": "Enseigner le parcours profondeur « parent d'abord » avant le suffixe",
+        "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour la pile explicite avec hauteur h.",
+        "facts_1": "Les mêmes arbres aléatoires qu'en infixe portent des étiquettes en ABR (infixe → 1…n) ; l'ordre préfixe dépend de la forme, pas du tri des étiquettes.",
+        "facts_2": "Le panneau Python propose versions récursive et itérative avec le même ordre de visite.",
+        "facts_3": "Le préfixe seul ne trie pas les clés d'un ABR — l'infixe oui."
       }
     }
   },
@@ -749,6 +764,11 @@
     "inorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "inorderComplete": "Parcours infixe terminé. Ordre final : {{order}}",
     "inorderEmpty": "Arbre vide — rien à parcourir.",
+    "preorderStart": "Parcours préfixe : nœud, puis sous-arbre gauche, puis sous-arbre droit (NLR).",
+    "preorderVisiting": "Visite du nœud {{node}}",
+    "preorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "preorderComplete": "Parcours préfixe terminé. Ordre final : {{order}}",
+    "preorderEmpty": "Arbre vide — rien à parcourir.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",

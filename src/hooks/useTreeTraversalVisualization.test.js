@@ -47,6 +47,24 @@ describe('useTreeTraversalVisualization', () => {
     expect(result.current.description.length).toBeGreaterThan(0);
   });
 
+  it('loads steps for preorderTraversal on mount', async () => {
+    const { result } = renderHook(() =>
+      useTreeTraversalVisualization(
+        'preorderTraversal',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        7
+      )
+    );
+
+    await waitFor(() => {
+      expect(result.current.totalSteps).toBeGreaterThan(0);
+    });
+
+    expect(result.current.treeNodes.length).toBeGreaterThan(0);
+    expect(result.current.description.length).toBeGreaterThan(0);
+  });
+
   it('regenerateTree clears and reloads steps', async () => {
     const { result } = renderHook(() =>
       useTreeTraversalVisualization(

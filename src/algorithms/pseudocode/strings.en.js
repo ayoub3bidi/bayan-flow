@@ -462,4 +462,13 @@ FUNCTION DepthLimitedSearch(node, goal, g, threshold, heuristic):
   InorderTraversal(right child of node)
 
 To traverse the whole binary tree, call InorderTraversal(root)`,
+
+  preorderTraversal: `FUNCTION PreorderTraversal(node):
+  IF node is null:
+    RETURN
+  visit node
+  PreorderTraversal(left child of node)
+  PreorderTraversal(right child of node)
+
+To traverse the whole binary tree, call PreorderTraversal(root)`,
 };

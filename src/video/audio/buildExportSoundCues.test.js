@@ -154,7 +154,7 @@ describe('buildExportSoundCues', () => {
         {
           nodes: [{ id: '0' }],
           edges: [],
-          nodeStates: { '0': TREE_NODE_STATES.VISITING },
+          nodeStates: { 0: TREE_NODE_STATES.VISITING },
           description: '',
         },
       ],

@@ -104,8 +104,7 @@ function TreeTraversalSceneInner({
         {nodes.map(n => {
           const p = posById.get(n.id);
           if (!p) return null;
-          const state =
-            nodeStates[n.id] ?? TREE_NODE_STATES.DEFAULT;
+          const state = nodeStates[n.id] ?? TREE_NODE_STATES.DEFAULT;
           const currentColor =
             TREE_NODE_STATE_COLORS[state] ??
             TREE_NODE_STATE_COLORS[TREE_NODE_STATES.DEFAULT];

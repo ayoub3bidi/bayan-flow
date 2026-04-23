@@ -4,20 +4,22 @@
  * See LICENSE for details.
  */
 
-import {
-  inorderTraversal,
-  inorderTraversalPure,
-} from './inorderTraversal';
+import { inorderTraversal, inorderTraversalPure } from './inorderTraversal';
+import { preorderTraversal, preorderTraversalPure } from './preorderTraversal';
 
 export const treeTraversalAlgorithms = {
   inorderTraversal,
+  preorderTraversal,
 };
 
 export const pureTreeTraversalAlgorithms = {
   inorderTraversal: inorderTraversalPure,
+  preorderTraversal: preorderTraversalPure,
 };
 
 export {
   inorderTraversal,
   inorderTraversalPure,
+  preorderTraversal,
+  preorderTraversalPure,
 };
