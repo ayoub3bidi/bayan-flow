@@ -253,11 +253,19 @@ export const CATEGORY_CONFIG = {
       max: 31,
       step: 1,
     },
-    algorithmKeys: ['inorderTraversal', 'preorderTraversal'],
+    algorithmKeys: [
+      'inorderTraversal',
+      'preorderTraversal',
+      'postorderTraversal',
+    ],
     groupDefs: [
       {
         labelKey: 'algorithmGroups.depthFirstTraversal',
-        algorithms: ['inorderTraversal', 'preorderTraversal'],
+        algorithms: [
+          'inorderTraversal',
+          'preorderTraversal',
+          'postorderTraversal',
+        ],
       },
     ],
   },

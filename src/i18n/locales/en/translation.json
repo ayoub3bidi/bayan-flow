@@ -80,7 +80,8 @@
     },
     "treeTraversal": {
       "inorderTraversal": "Inorder Traversal",
-      "preorderTraversal": "Preorder Traversal"
+      "preorderTraversal": "Preorder Traversal",
+      "postorderTraversal": "Postorder Traversal"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -116,7 +117,8 @@
       "depthFirstSearch": "Starting depth-first search on the node–link graph",
       "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph",
       "inorderTraversal": "Starting inorder traversal",
-      "preorderTraversal": "Starting preorder traversal"
+      "preorderTraversal": "Starting preorder traversal",
+      "postorderTraversal": "Starting postorder traversal"
     }
   },
   "complexity": {
@@ -153,7 +155,8 @@
     "depthFirstSearch": "O(V + E)",
     "breadthFirstSearchGraph": "O(V + E)",
     "inorderTraversal": "O(n)",
-    "preorderTraversal": "O(n)"
+    "preorderTraversal": "O(n)",
+    "postorderTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -662,6 +665,18 @@
         "facts_1": "The same random binary trees as inorder use BST-shaped labels (inorder yields 1…n); preorder order depends on shape, not sorted labels.",
         "facts_2": "The Python panel includes both recursive and iterative implementations with identical visit order.",
         "facts_3": "Preorder alone does not yield sorted keys on a BST—inorder does."
+      },
+      "postorderTraversal": {
+        "history": "Postorder (suffix/postfix) order—left subtree, right subtree, then node—is the third member of the classic traversal trio. It is the natural order for recursive tree deletion and dependency resolution, where you must finish children before handling the parent.",
+        "intuition": "Process both children entirely before handling the current node: descend left, then right, then visit. Unlike preorder's 'node-first' approach, postorder processes leaf nodes before their ancestors. This matches deletion logic (delete subtrees before deleting the node) and topological sorting of DAGs.",
+        "realWorldUses_0": "Deleting or destroying a tree structure (delete children before parent, avoiding dangling pointers)",
+        "realWorldUses_1": "Computing tree height, size, or aggregate values bottom-up",
+        "realWorldUses_2": "Postfix (Reverse Polish) notation and expression evaluation",
+        "realWorldUses_3": "Dependency resolution in build systems and task scheduling (tasks done before their dependents)",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for the explicit stack with tree height h.",
+        "facts_1": "Two-stack iterative approach: first stack processes nodes; second stack collects result in reverse postorder.",
+        "facts_2": "Recursively matches the iterative version: recurse left, recurse right, then visit.",
+        "facts_3": "Postorder + inorder uniquely determine a tree (assuming unique node values); postorder alone does not."
       }
     }
   },
@@ -769,6 +784,11 @@
     "preorderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "preorderComplete": "Preorder complete. Final order: {{order}}",
     "preorderEmpty": "Tree is empty — nothing to traverse.",
+    "postorderStart": "Postorder traversal: left subtree, then right subtree, then node (LRN).",
+    "postorderVisiting": "Visiting node {{node}}",
+    "postorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "postorderComplete": "Postorder complete. Final order: {{order}}",
+    "postorderEmpty": "Tree is empty — nothing to traverse.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",

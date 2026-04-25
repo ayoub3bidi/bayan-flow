@@ -38,6 +38,7 @@ import dfsSearchPython from './dfs_search.py?raw';
 import bfsGraphPython from './bfs_graph.py?raw';
 import inorderTraversalPython from './inorder_traversal.py?raw';
 import preorderTraversalPython from './preorder_traversal.py?raw';
+import postorderTraversalPython from './postorder_traversal.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -74,6 +75,7 @@ export const pythonAlgorithms = {
   breadthFirstSearchGraph: bfsGraphPython,
   inorderTraversal: inorderTraversalPython,
   preorderTraversal: preorderTraversalPython,
+  postorderTraversal: postorderTraversalPython,
 };
 
 export const algorithmDisplayNames = {
@@ -111,6 +113,7 @@ export const algorithmDisplayNames = {
   breadthFirstSearchGraph: 'Breadth-First Search (graph)',
   inorderTraversal: 'Inorder Traversal',
   preorderTraversal: 'Preorder Traversal',
+  postorderTraversal: 'Postorder Traversal',
 };
 
 export function getPythonCode(algorithmName) {

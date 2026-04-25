@@ -133,6 +133,12 @@ export const ALGORITHM_STEPS = {
   PREORDER_COMPLETE: 'preorderComplete',
   PREORDER_EMPTY: 'preorderEmpty',
 
+  POSTORDER_START: 'postorderStart',
+  POSTORDER_VISITING: 'postorderVisiting',
+  POSTORDER_VISITED: 'postorderVisited',
+  POSTORDER_COMPLETE: 'postorderComplete',
+  POSTORDER_EMPTY: 'postorderEmpty',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

@@ -78,6 +78,11 @@ vi.mock('./inorder_traversal.py?raw', () => ({
     'def inorder_traversal(root):\n    """Inorder Traversal"""\n    return []',
 }));
 
+vi.mock('./postorder_traversal.py?raw', () => ({
+  default:
+    'def postorder_traversal(root):\n    """Postorder Traversal"""\n    return []',
+}));
+
 vi.mock('./bfs_graph.py?raw', () => ({
   default:
     'def bfs_graph(adj, root, goal):\n    """BFS on graph"""\n    return []',
@@ -193,6 +198,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Fibonacci Search Algorithm');
     });
 
+    it('returns Python code for postorder traversal', () => {
+      const code = getPythonCode('postorderTraversal');
+      expect(code).toContain('def postorder_traversal');
+      expect(code).toContain('Postorder Traversal');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -300,6 +311,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Depth-First Search (graph)');
     });
 
+    it('returns correct display name for postorder traversal', () => {
+      const name = getAlgorithmDisplayName('postorderTraversal');
+      expect(name).toBe('Postorder Traversal');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -342,6 +358,7 @@ describe('Python Algorithms Index', () => {
         'breadthFirstSearchGraph',
         'inorderTraversal',
         'preorderTraversal',
+        'postorderTraversal',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

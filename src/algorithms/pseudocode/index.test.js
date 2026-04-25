@@ -53,6 +53,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('PreorderTraversal');
   });
+
+  it('returns pseudocode for postorderTraversal', () => {
+    const text = getPseudocodeForLocale('postorderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('PostorderTraversal');
+  });
 });
 
 describe('getPseudocode', () => {

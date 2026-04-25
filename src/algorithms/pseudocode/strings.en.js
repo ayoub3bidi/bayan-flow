@@ -471,4 +471,13 @@ To traverse the whole binary tree, call InorderTraversal(root)`,
   PreorderTraversal(right child of node)
 
 To traverse the whole binary tree, call PreorderTraversal(root)`,
+
+  postorderTraversal: `FUNCTION PostorderTraversal(node):
+  IF node is null:
+    RETURN
+  PostorderTraversal(left child of node)
+  PostorderTraversal(right child of node)
+  visit node
+
+To traverse the whole binary tree, call PostorderTraversal(root)`,
 };

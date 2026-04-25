@@ -80,7 +80,8 @@
     },
     "treeTraversal": {
       "inorderTraversal": "Parcours infixe",
-      "preorderTraversal": "Parcours préfixe"
+      "preorderTraversal": "Parcours préfixe",
+      "postorderTraversal": "Parcours suffixe"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -115,7 +116,8 @@
       "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes",
       "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes",
       "inorderTraversal": "Démarrage du parcours infixe",
-      "preorderTraversal": "Démarrage du parcours préfixe"
+      "preorderTraversal": "Démarrage du parcours préfixe",
+      "postorderTraversal": "Démarrage du parcours suffixe"
     }
   },
   "complexity": {
@@ -152,7 +154,8 @@
     "depthFirstSearch": "O(V + E)",
     "breadthFirstSearchGraph": "O(V + E)",
     "inorderTraversal": "O(n)",
-    "preorderTraversal": "O(n)"
+    "preorderTraversal": "O(n)",
+    "postorderTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -661,6 +664,18 @@
         "facts_1": "Les mêmes arbres aléatoires qu'en infixe portent des étiquettes en ABR (infixe → 1…n) ; l'ordre préfixe dépend de la forme, pas du tri des étiquettes.",
         "facts_2": "Le panneau Python propose versions récursive et itérative avec le même ordre de visite.",
         "facts_3": "Le préfixe seul ne trie pas les clés d'un ABR — l'infixe oui."
+      },
+      "postorderTraversal": {
+        "history": "Le parcours suffixe (sous-arbre gauche, sous-arbre droit, nœud) est le troisième membre du trio classique. C'est l'ordre naturel pour la suppression récursive d'arbres et la résolution de dépendances, où les enfants doivent être traités avant le parent.",
+        "intuition": "Traiter complètement les deux enfants avant le nœud courant : descendre gauche, puis droit, puis visiter. Contrairement au préfixe « nœud d'abord », le suffixe traite les feuilles avant leurs ancêtres. Cela correspond à la logique de suppression (détruire les sous-arbres avant le nœud) et au tri topologique.",
+        "realWorldUses_0": "Destruction d'un arbre (supprimer les enfants avant le parent, éviter les pointeurs dangling)",
+        "realWorldUses_1": "Calculer la hauteur, la taille ou les agrégats d'arbre de bas en haut",
+        "realWorldUses_2": "Notation polonaise inverse (postfixe) et évaluation d'expressions",
+        "realWorldUses_3": "Résolution de dépendances dans les systèmes de construction et l'ordonnancement (tâches avant leurs dépendants)",
+        "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour la pile explicite avec hauteur h.",
+        "facts_1": "Deux piles itératives : première pile traite les nœuds ; seconde collecte le résultat en suffixe inverse.",
+        "facts_2": "Récursivement : récurser gauche, récurser droit, puis visiter. Correspond à la version itérative.",
+        "facts_3": "Suffixe + infixe détermine uniquement un arbre (valeurs uniques supposées) ; suffixe seul ne le fait pas."
       }
     }
   },
@@ -769,6 +784,11 @@
     "preorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "preorderComplete": "Parcours préfixe terminé. Ordre final : {{order}}",
     "preorderEmpty": "Arbre vide — rien à parcourir.",
+    "postorderStart": "Parcours suffixe : sous-arbre gauche, puis sous-arbre droit, puis nœud (LRN).",
+    "postorderVisiting": "Visite du nœud {{node}}",
+    "postorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "postorderComplete": "Parcours suffixe terminé. Ordre final : {{order}}",
+    "postorderEmpty": "Arbre vide — rien à parcourir.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",

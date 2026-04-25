@@ -65,6 +65,7 @@ export const SEARCHING_ALGORITHMS = {
 export const TREE_TRAVERSAL_ALGORITHMS = {
   INORDER_TRAVERSAL: 'inorderTraversal',
   PREORDER_TRAVERSAL: 'preorderTraversal',
+  POSTORDER_TRAVERSAL: 'postorderTraversal',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -570,6 +571,23 @@ export const TREE_TRAVERSAL_COMPLEXITY = {
       'Prefix (Polish) notation from expression trees',
       'Reconstruction with inorder when both traversals are known',
       'Teaching parent-before-children depth-first order',
+    ],
+  },
+  postorderTraversal: {
+    name: 'Postorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Postorder traversal visits the left subtree, then the right subtree, then the node (LRN). It is ideal for bottom-up operations such as tree deletion, dependency resolution, and postfix expression evaluation.',
+    useCases: [
+      'Deleting a tree safely (children before parent)',
+      'Evaluating postfix (Reverse Polish) expression trees',
+      'Computing tree aggregates bottom-up (height, size, checksums)',
+      'Dependency-style processing where prerequisites must finish first',
     ],
   },
 };
