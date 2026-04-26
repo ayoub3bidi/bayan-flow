@@ -948,6 +948,11 @@
         "title": "Searching Algorithms",
         "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
         "algorithms": "Binary Search, Jump Search, Interpolation Search, Exponential Search"
+      },
+      "treeTraversal": {
+        "title": "Tree Traversals",
+        "description": "Explore classic tree traversal orders and learn how each visit order explores a tree structure.",
+        "algorithms": "Inorder Traversal, Level-order Traversal, Preorder Traversal, Postorder Traversal"
       }
     },
     "features": {

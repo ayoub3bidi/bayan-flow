@@ -6,13 +6,14 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpDown, Route, Search } from 'lucide-react';
+import { ArrowUpDown, Route, Search, GitBranch } from 'lucide-react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
 import {
   SORTING_ALGORITHMS,
   PATHFINDING_ALGORITHMS,
   SEARCHING_ALGORITHMS,
+  TREE_TRAVERSAL_ALGORITHMS,
 } from '../../constants';
 import { getAlgorithmTypesGridColsClass } from './algorithmTypesGridCols.js';
 
@@ -27,6 +28,10 @@ function AlgorithmTypes() {
         return t(`algorithms.${algorithmType}.${algoKey}`);
       })
       .join(', ');
+  };
+
+  const getCardSpanClass = (index, count) => {
+    return count === 4 && index === count - 1 ? 'lg:col-span-3' : '';
   };
 
   const modes = [
@@ -50,6 +55,13 @@ function AlgorithmTypes() {
       description: t('landing.algorithmTypes.searching.description'),
       algorithms: getAlgorithmList(SEARCHING_ALGORITHMS, 'searching'),
       gradient: 'from-emerald-500 via-teal-500 to-emerald-600',
+    },
+    {
+      icon: GitBranch,
+      title: t('landing.algorithmTypes.treeTraversal.title'),
+      description: t('landing.algorithmTypes.treeTraversal.description'),
+      algorithms: getAlgorithmList(TREE_TRAVERSAL_ALGORITHMS, 'treeTraversal'),
+      gradient: 'from-orange-500 via-amber-500 to-orange-600',
     },
   ];
 
@@ -90,7 +102,7 @@ function AlgorithmTypes() {
                 scale: 1.02,
                 transition: { type: 'spring', stiffness: 300 },
               }}
-              className="group relative h-full min-h-0 self-stretch"
+              className={`group relative h-full min-h-0 self-stretch ${getCardSpanClass(index, modes.length)}`}
               style={{ perspective: '1000px' }}
             >
               {/* Glass morphism card — parent must fill grid row so inner 1fr + footer align across columns */}

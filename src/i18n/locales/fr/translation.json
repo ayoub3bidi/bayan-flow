@@ -949,6 +949,11 @@
         "title": "Algorithmes de recherche",
         "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
         "algorithms": "Recherche dichotomique, recherche par sauts, recherche par interpolation, recherche exponentielle"
+      },
+      "treeTraversal": {
+        "title": "Parcours d'arbres",
+        "description": "Explorez les ordres classiques de parcours d'arbres et comprenez comment chaque ordre visite les nœuds.",
+        "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours préfixe, Parcours postfixe"
       }
     },
     "features": {
