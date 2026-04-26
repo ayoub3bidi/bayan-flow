@@ -127,6 +127,12 @@ export const ALGORITHM_STEPS = {
   INORDER_COMPLETE: 'inorderComplete',
   INORDER_EMPTY: 'inorderEmpty',
 
+  LEVEL_ORDER_START: 'levelOrderStart',
+  LEVEL_ORDER_VISITING: 'levelOrderVisiting',
+  LEVEL_ORDER_VISITED: 'levelOrderVisited',
+  LEVEL_ORDER_COMPLETE: 'levelOrderComplete',
+  LEVEL_ORDER_EMPTY: 'levelOrderEmpty',
+
   PREORDER_START: 'preorderStart',
   PREORDER_VISITING: 'preorderVisiting',
   PREORDER_VISITED: 'preorderVisited',

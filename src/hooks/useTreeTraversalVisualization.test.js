@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { VISUALIZATION_MODES } from '../constants/index.js';
 import { useTreeTraversalVisualization } from './useTreeTraversalVisualization.js';
 
@@ -65,6 +65,25 @@ describe('useTreeTraversalVisualization', () => {
     expect(result.current.description.length).toBeGreaterThan(0);
   });
 
+  it('loads steps for levelOrderTraversal on mount', async () => {
+    const { result } = renderHook(() =>
+      useTreeTraversalVisualization(
+        'levelOrderTraversal',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        7
+      )
+    );
+
+    await waitFor(() => {
+      expect(result.current.totalSteps).toBeGreaterThan(0);
+    });
+
+    expect(result.current.treeNodes.length).toBeGreaterThan(0);
+    expect(result.current.description.length).toBeGreaterThan(0);
+    expect(Array.isArray(result.current.queueOrder)).toBe(true);
+  });
+
   it('loads steps for preorderTraversal on mount', async () => {
     const { result } = renderHook(() =>
       useTreeTraversalVisualization(
@@ -96,7 +115,9 @@ describe('useTreeTraversalVisualization', () => {
     await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
 
     const before = result.current.steps.length;
-    result.current.regenerateTree();
+    act(() => {
+      result.current.regenerateTree();
+    });
 
     await waitFor(() => {
       expect(result.current.steps.length).toBe(before);

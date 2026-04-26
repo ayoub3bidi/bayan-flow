@@ -77,6 +77,36 @@ const POSTORDER_TRAVERSAL_TEST_CASES = [
   },
 ];
 
+/** level_order_traversal(root) -> list of values in breadth-first order; root is dict or None */
+const LEVEL_ORDER_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'level-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[4, 2, 6, 1, 3, 5, 7]',
+  },
+  {
+    id: 'level-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'level-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'level-right-skew',
+    name: 'Right-skewed chain',
+    input:
+      "{'value': 1, 'left': None, 'right': {'value': 2, 'left': None, 'right': {'value': 3, 'left': None, 'right': None}}}",
+    expected: '[1, 2, 3]',
+  },
+];
+
 /** Counting sort only works with non-negative integers */
 const COUNTING_SORT_TEST_CASES = [
   {
@@ -635,6 +665,10 @@ export const algorithmTestCases = {
   breadthFirstSearchGraph: {
     functionName: 'breadth_first_search_graph',
     testCases: BREADTH_FIRST_SEARCH_TEST_CASES,
+  },
+  levelOrderTraversal: {
+    functionName: 'level_order_traversal',
+    testCases: LEVEL_ORDER_TRAVERSAL_TEST_CASES,
   },
   preorderTraversal: {
     functionName: 'preorder_traversal',

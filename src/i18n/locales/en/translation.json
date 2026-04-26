@@ -80,6 +80,7 @@
     },
     "treeTraversal": {
       "inorderTraversal": "Inorder Traversal",
+      "levelOrderTraversal": "Level-order Traversal",
       "preorderTraversal": "Preorder Traversal",
       "postorderTraversal": "Postorder Traversal"
     },
@@ -117,6 +118,7 @@
       "depthFirstSearch": "Starting depth-first search on the node–link graph",
       "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph",
       "inorderTraversal": "Starting inorder traversal",
+      "levelOrderTraversal": "Starting level-order traversal",
       "preorderTraversal": "Starting preorder traversal",
       "postorderTraversal": "Starting postorder traversal"
     }
@@ -155,6 +157,7 @@
     "depthFirstSearch": "O(V + E)",
     "breadthFirstSearchGraph": "O(V + E)",
     "inorderTraversal": "O(n)",
+    "levelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)"
   },
@@ -654,6 +657,18 @@
         "facts_2": "Recursive formulation matches the iterative stack behavior shown step by step.",
         "facts_3": "Unlike graph DFS with a goal, traversal visits every node exactly once."
       },
+      "levelOrderTraversal": {
+        "history": "Level-order traversal is breadth-first search specialized to trees: process the root, then every node one edge away, then every node two edges away, and so on. As a tree algorithm it is the queue-based counterpoint to the stack/recursion style used by inorder, preorder, and postorder.",
+        "intuition": "Start by enqueuing the root. Repeatedly dequeue the front node, visit it, then enqueue its children from left to right. Because the queue preserves discovery order, all nodes at depth d are processed before any node at depth d + 1.",
+        "realWorldUses_0": "Tree serialization formats that need level-by-level output",
+        "realWorldUses_1": "Finding the nearest node that matches a condition",
+        "realWorldUses_2": "Printing or analyzing trees by layers instead of by branches",
+        "realWorldUses_3": "Teaching queue-based breadth-first thinking before moving to graph BFS",
+        "facts_0": "Time is Θ(n) on n nodes; auxiliary space is O(w), where w is the maximum width of the tree.",
+        "facts_1": "Unlike the depth-first traversals, level-order depends on a queue rather than a stack or recursion.",
+        "facts_2": "On the same tree shape, level-order highlights horizontal layers rather than root-to-leaf depth.",
+        "facts_3": "This traversal is also the standard BFS pattern on trees because each edge has equal weight."
+      },
       "preorderTraversal": {
         "history": "Preorder (prefix) order—node, then left subtree, then right subtree—is standard in textbooks on trees and expression evaluation. Together with inorder it is one half of the classic pair used to reconstruct a binary tree when node values are unique.",
         "intuition": "Always record the current node before going deeper: visit the node, then explore the entire left branch, then the entire right branch. The visualization uses an explicit stack (push right before left so left is processed first), mirroring recursive calls without unbounded recursion depth in the UI runner.",
@@ -749,6 +764,7 @@
     "graphSubstrate": "Graph visualization",
     "treeAria": "Tree with {{count}} nodes",
     "treeAriaEmpty": "Empty tree",
+    "queueBadge": "Queue: {{order}}",
     "visitOrderBadge": "Visited: {{order}}"
   },
   "languages": {
@@ -779,6 +795,11 @@
     "inorderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "inorderComplete": "Inorder complete. Final order: {{order}}",
     "inorderEmpty": "Tree is empty — nothing to traverse.",
+    "levelOrderStart": "Level-order traversal: visit the tree one layer at a time using a queue.",
+    "levelOrderVisiting": "Visiting node {{node}}",
+    "levelOrderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "levelOrderComplete": "Level-order complete. Final order: {{order}}",
+    "levelOrderEmpty": "Tree is empty — nothing to traverse.",
     "preorderStart": "Preorder traversal: node, then left subtree, then right subtree (NLR).",
     "preorderVisiting": "Visiting node {{node}}",
     "preorderVisited": "Recorded {{node}}. Order so far: {{order}}",
@@ -984,7 +1005,8 @@
     "blockJumpSearch": "Block / jump search",
     "distributionAwareSearch": "Distribution-aware search",
     "graphTraversalSearch": "Graph traversal (node–link)",
-    "depthFirstTraversal": "Depth-first traversals"
+    "depthFirstTraversal": "Depth-first traversals",
+    "breadthFirstTraversal": "Breadth-first traversals"
   },
   "roadmap": {
     "hero": {

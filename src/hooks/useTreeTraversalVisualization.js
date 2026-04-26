@@ -48,6 +48,7 @@ export function useTreeTraversalVisualization(
   const [treeEdges, setTreeEdges] = useState([]);
   const [treeNodeStates, setTreeNodeStates] = useState({});
   const [visitOrder, setVisitOrder] = useState([]);
+  const [queueOrder, setQueueOrder] = useState([]);
   const [treeContext, setTreeContext] = useState(null);
 
   const executeStep = useCallback(step => {
@@ -55,6 +56,7 @@ export function useTreeTraversalVisualization(
     setTreeEdges(step.edges ?? []);
     setTreeNodeStates(step.nodeStates ?? {});
     setVisitOrder(step.visitOrder ?? []);
+    setQueueOrder(step.queueOrder ?? []);
 
     const states = step.nodeStates ?? {};
     const hasVisiting = Object.values(states).includes(
@@ -78,6 +80,7 @@ export function useTreeTraversalVisualization(
     setTreeEdges(tree.edges);
     setTreeNodeStates(initialTreeNodeStates(tree.nodes));
     setVisitOrder([]);
+    setQueueOrder([]);
     setTreeContext(tree);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeNodeCount, engine.loadSteps]);
@@ -122,6 +125,7 @@ export function useTreeTraversalVisualization(
     treeEdges,
     treeNodeStates,
     visitOrder,
+    queueOrder,
     regenerateTree: regenerateTreeOuter,
     reloadSteps,
     ...engine,

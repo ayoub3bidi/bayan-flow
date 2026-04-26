@@ -5,6 +5,10 @@
  */
 
 import { inorderTraversal, inorderTraversalPure } from './inorderTraversal';
+import {
+  levelOrderTraversal,
+  levelOrderTraversalPure,
+} from './levelOrderTraversal';
 import { preorderTraversal, preorderTraversalPure } from './preorderTraversal';
 import {
   postorderTraversal,
@@ -13,12 +17,14 @@ import {
 
 export const treeTraversalAlgorithms = {
   inorderTraversal,
+  levelOrderTraversal,
   preorderTraversal,
   postorderTraversal,
 };
 
 export const pureTreeTraversalAlgorithms = {
   inorderTraversal: inorderTraversalPure,
+  levelOrderTraversal: levelOrderTraversalPure,
   preorderTraversal: preorderTraversalPure,
   postorderTraversal: postorderTraversalPure,
 };
@@ -26,6 +32,8 @@ export const pureTreeTraversalAlgorithms = {
 export {
   inorderTraversal,
   inorderTraversalPure,
+  levelOrderTraversal,
+  levelOrderTraversalPure,
   preorderTraversal,
   preorderTraversalPure,
   postorderTraversal,

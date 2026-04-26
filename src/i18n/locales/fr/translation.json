@@ -80,6 +80,7 @@
     },
     "treeTraversal": {
       "inorderTraversal": "Parcours infixe",
+      "levelOrderTraversal": "Parcours en largeur de l'arbre",
       "preorderTraversal": "Parcours préfixe",
       "postorderTraversal": "Parcours suffixe"
     },
@@ -116,6 +117,7 @@
       "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes",
       "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes",
       "inorderTraversal": "Démarrage du parcours infixe",
+      "levelOrderTraversal": "Démarrage du parcours en largeur de l'arbre",
       "preorderTraversal": "Démarrage du parcours préfixe",
       "postorderTraversal": "Démarrage du parcours suffixe"
     }
@@ -154,6 +156,7 @@
     "depthFirstSearch": "O(V + E)",
     "breadthFirstSearchGraph": "O(V + E)",
     "inorderTraversal": "O(n)",
+    "levelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)"
   },
@@ -653,6 +656,18 @@
         "facts_2": "La version récursive correspond au comportement itératif montré pas à pas.",
         "facts_3": "Contrairement au DFS dans un graphe avec but, le parcours visite chaque nœud une fois."
       },
+      "levelOrderTraversal": {
+        "history": "Le parcours en largeur d'un arbre est la version arborescente du breadth-first search : traiter la racine, puis tous les nœuds à distance 1, puis à distance 2, etc. C'est le contrepoint fondé sur une file aux parcours en profondeur basés sur pile ou récursion.",
+        "intuition": "On commence par enfiler la racine. À chaque étape, on retire le nœud en tête, on le visite, puis on enfile ses enfants de gauche à droite. Comme la file conserve l'ordre de découverte, tous les nœuds de profondeur d sont traités avant ceux de profondeur d + 1.",
+        "realWorldUses_0": "Formats de sérialisation d'arbres niveau par niveau",
+        "realWorldUses_1": "Trouver le nœud le plus proche vérifiant une propriété",
+        "realWorldUses_2": "Afficher ou analyser un arbre couche par couche",
+        "realWorldUses_3": "Enseigner l'approche par file avant le BFS sur graphe",
+        "facts_0": "Le temps est Θ(n) ; l'espace auxiliaire est O(w), où w est la largeur maximale de l'arbre.",
+        "facts_1": "Contrairement aux parcours en profondeur, ce parcours dépend d'une file et non d'une pile.",
+        "facts_2": "Sur le même arbre, ce parcours met en évidence les niveaux horizontaux plutôt que la profondeur branche par branche.",
+        "facts_3": "Il s'agit du motif BFS standard sur les arbres, car toutes les arêtes ont le même poids."
+      },
       "preorderTraversal": {
         "history": "Le parcours préfixe (nœud, sous-arbre gauche, sous-arbre droit) est classique pour l'évaluation d'expressions et la sérialisation. Avec l'infixe, il forme la paire utilisée pour reconstruire un arbre binaire lorsque les valeurs sont uniques.",
         "intuition": "Enregistrer le nœud courant avant d'aller plus profond : visiter le nœud, puis tout le sous-arbre gauche, puis le droit. La visualisation utilise une pile explicite (empiler le droit avant le gauche pour traiter le gauche en premier), comme les appels récursifs sans récursion illimitée dans le navigateur.",
@@ -749,6 +764,7 @@
     "graphSubstrate": "Visualisation de graphe",
     "treeAria": "Arbre à {{count}} nœuds",
     "treeAriaEmpty": "Arbre vide",
+    "queueBadge": "File : {{order}}",
     "visitOrderBadge": "Visités : {{order}}"
   },
   "languages": {
@@ -779,6 +795,11 @@
     "inorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "inorderComplete": "Parcours infixe terminé. Ordre final : {{order}}",
     "inorderEmpty": "Arbre vide — rien à parcourir.",
+    "levelOrderStart": "Parcours en largeur de l'arbre : visiter chaque niveau à l'aide d'une file.",
+    "levelOrderVisiting": "Visite du nœud {{node}}",
+    "levelOrderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "levelOrderComplete": "Parcours en largeur terminé. Ordre final : {{order}}",
+    "levelOrderEmpty": "Arbre vide — rien à parcourir.",
     "preorderStart": "Parcours préfixe : nœud, puis sous-arbre gauche, puis sous-arbre droit (NLR).",
     "preorderVisiting": "Visite du nœud {{node}}",
     "preorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
@@ -985,7 +1006,8 @@
     "blockJumpSearch": "Recherche par blocs / sauts",
     "distributionAwareSearch": "Recherche sensible à la distribution",
     "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)",
-    "depthFirstTraversal": "Parcours en profondeur"
+    "depthFirstTraversal": "Parcours en profondeur",
+    "breadthFirstTraversal": "Parcours en largeur"
   },
   "roadmap": {
     "hero": {

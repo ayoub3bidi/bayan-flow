@@ -78,6 +78,11 @@ vi.mock('./inorder_traversal.py?raw', () => ({
     'def inorder_traversal(root):\n    """Inorder Traversal"""\n    return []',
 }));
 
+vi.mock('./level_order_traversal.py?raw', () => ({
+  default:
+    'def level_order_traversal(root):\n    """Level-order Traversal"""\n    return []',
+}));
+
 vi.mock('./postorder_traversal.py?raw', () => ({
   default:
     'def postorder_traversal(root):\n    """Postorder Traversal"""\n    return []',
@@ -204,6 +209,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Postorder Traversal');
     });
 
+    it('returns Python code for level-order traversal', () => {
+      const code = getPythonCode('levelOrderTraversal');
+      expect(code).toContain('def level_order_traversal');
+      expect(code).toContain('Level-order Traversal');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -249,6 +260,11 @@ describe('Python Algorithms Index', () => {
     it('returns correct display name for Dijkstra', () => {
       const name = getAlgorithmDisplayName('dijkstra');
       expect(name).toBe("Dijkstra's Algorithm");
+    });
+
+    it('returns correct display name for level-order traversal', () => {
+      const name = getAlgorithmDisplayName('levelOrderTraversal');
+      expect(name).toBe('Level-order Traversal');
     });
 
     it('returns correct display name for A*', () => {
@@ -357,6 +373,7 @@ describe('Python Algorithms Index', () => {
         'depthFirstSearch',
         'breadthFirstSearchGraph',
         'inorderTraversal',
+        'levelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
       ];

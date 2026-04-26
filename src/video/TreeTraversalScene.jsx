@@ -19,7 +19,7 @@ const VIEW_INNER = 100 - 2 * VIEW_PAD;
  * Remotion SVG tree traversal scene (normalized coordinates on nodes).
  *
  * @param {Object} props
- * @param {Array<{ nodes: Array, edges: Array, nodeStates: Record<string,string> }>} props.steps
+ * @param {Array<{ nodes: Array, edges: Array, nodeStates: Record<string,string>, queueOrder?: string[] }>} props.steps
  * @param {number} props.framesPerStep
  * @param {'light'|'dark'} [props.exportTheme]
  */
@@ -29,7 +29,14 @@ function TreeTraversalSceneInner({
   exportTheme = 'dark',
 }) {
   const frame = useCurrentFrame();
-  const { graphEdgeStroke, graphNodeRing } = getVideoExportTheme(exportTheme);
+  const {
+    graphEdgeStroke,
+    graphNodeRing,
+    captionBg,
+    captionBorder,
+    captionShadow,
+    descText,
+  } = getVideoExportTheme(exportTheme);
   const stepIndex = Math.min(
     Math.floor(frame / framesPerStep),
     Math.max(0, steps.length - 1)
@@ -40,7 +47,7 @@ function TreeTraversalSceneInner({
   const step = steps[stepIndex] ?? steps[0];
   if (!step?.nodes?.length) return null;
 
-  const { nodes, edges, nodeStates } = step;
+  const { nodes, edges, nodeStates, queueOrder = [] } = step;
   const nodeCount = nodes.length;
   const nodeRadius = Math.max(2.8, Math.min(5.5, 6.2 - nodeCount * 0.12));
 
@@ -60,6 +67,8 @@ function TreeTraversalSceneInner({
       },
     ])
   );
+  const labelById = Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id]));
+  const queueLabels = queueOrder.map(id => labelById[id] ?? id);
 
   return (
     <div
@@ -71,8 +80,34 @@ function TreeTraversalSceneInner({
         height: '100%',
         padding: 24,
         boxSizing: 'border-box',
+        position: 'relative',
       }}
     >
+      {queueLabels.length > 0 ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 28,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            maxWidth: '82%',
+            padding: '10px 16px',
+            borderRadius: 9999,
+            background: captionBg,
+            border: `2px solid ${captionBorder}`,
+            boxShadow: captionShadow,
+            color: descText,
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontSize: 22,
+            fontWeight: 700,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {`Queue: ${queueLabels.join(', ')}`}
+        </div>
+      ) : null}
       <svg
         viewBox="0 0 100 100"
         preserveAspectRatio="xMidYMid meet"

@@ -110,10 +110,11 @@ describe('Constants', () => {
     it('should contain tree traversal algorithm keys', () => {
       expect(Object.values(TREE_TRAVERSAL_ALGORITHMS)).toEqual([
         'inorderTraversal',
+        'levelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
       ]);
-      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(3);
+      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(4);
     });
   });
 
@@ -320,6 +321,7 @@ describe('Constants', () => {
     it('should have metadata for all tree traversal algorithms', () => {
       expect(keys).toEqual([
         'inorderTraversal',
+        'levelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
       ]);

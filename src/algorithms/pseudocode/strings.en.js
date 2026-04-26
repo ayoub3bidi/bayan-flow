@@ -463,6 +463,21 @@ FUNCTION DepthLimitedSearch(node, goal, g, threshold, heuristic):
 
 To traverse the whole binary tree, call InorderTraversal(root)`,
 
+  levelOrderTraversal: `FUNCTION LevelOrderTraversal(root):
+  IF root is null:
+    RETURN empty list
+  queue ← empty queue
+  enqueue root
+  WHILE queue is not empty:
+    current ← dequeue front
+    visit current
+    IF current has left child:
+      enqueue left child
+    IF current has right child:
+      enqueue right child
+
+To traverse the whole binary tree, call LevelOrderTraversal(root)`,
+
   preorderTraversal: `FUNCTION PreorderTraversal(node):
   IF node is null:
     RETURN

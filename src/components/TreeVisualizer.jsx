@@ -23,6 +23,7 @@ const VIEW_INNER = 100 - 2 * VIEW_PAD;
  * @param {Array<{ from: string, to: string }>} edges
  * @param {Record<string, string>} nodeStates — values from `TREE_NODE_STATES`
  * @param {string[]} visitOrder — visited node ids in playback order (completed visits)
+ * @param {string[]} [queueOrder] — queue contents front-to-back for BFS-style traversals
  * @param {Array<string>} [_states] — unused; accepted for shared ControlPanel contract
  * @param {string} description
  * @param {boolean} isComplete
@@ -37,6 +38,7 @@ function TreeVisualizer({
   edges = [],
   nodeStates = {},
   visitOrder = [],
+  queueOrder = [],
   states: _states = [],
   description,
   isComplete,
@@ -114,6 +116,7 @@ function TreeVisualizer({
   );
 
   const visitOrderLabels = visitOrder.map(id => labelById[id] ?? id);
+  const queueOrderLabels = queueOrder.map(id => labelById[id] ?? id);
 
   const legendItems = [
     {
@@ -170,16 +173,37 @@ function TreeVisualizer({
             />
 
             <div
-              className="flex justify-center mt-1 mb-1 shrink-0 min-h-7 px-2"
-              aria-label={t('legend.treeTraversal.visitOrder')}
+              className="flex flex-wrap justify-center gap-2 mt-1 mb-1 shrink-0 min-h-14 px-2"
               aria-live="polite"
             >
+              <motion.span
+                animate={{
+                  opacity: queueOrderLabels.length > 0 ? 1 : 0,
+                }}
+                transition={{ duration: 0.15 }}
+                className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm truncate"
+                aria-label={t('visualization.queueBadge', {
+                  order: queueOrderLabels.join(', '),
+                  defaultValue: `Queue: ${queueOrderLabels.join(', ')}`,
+                })}
+              >
+                <span className="font-semibold text-text-primary shrink-0">
+                  {queueOrderLabels.length > 0
+                    ? t('visualization.queueBadge', {
+                        order: queueOrderLabels.join(', '),
+                        defaultValue: `Queue: ${queueOrderLabels.join(', ')}`,
+                      })
+                    : '\u00a0'}
+                </span>
+              </motion.span>
+
               <motion.span
                 animate={{
                   opacity: visitOrderLabels.length > 0 ? 1 : 0,
                 }}
                 transition={{ duration: 0.15 }}
                 className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm truncate"
+                aria-label={t('legend.treeTraversal.visitOrder')}
               >
                 <span className="font-semibold text-text-primary shrink-0">
                   {visitOrderLabels.length > 0

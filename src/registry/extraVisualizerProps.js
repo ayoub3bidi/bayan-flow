@@ -59,6 +59,7 @@ export function getExtraVisualizerProps(
       edges: treeTraversalVisualization.treeEdges,
       nodeStates: treeTraversalVisualization.treeNodeStates,
       visitOrder: treeTraversalVisualization.visitOrder,
+      queueOrder: treeTraversalVisualization.queueOrder,
       complexityDataset: 'treeTraversal',
     };
   }

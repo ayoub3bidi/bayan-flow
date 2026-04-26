@@ -258,6 +258,14 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  levelOrderTraversal: {
+    inventor:
+      'Konrad Zuse / classic breadth-first traversal formulation applied to trees',
+    year: 1945,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
   preorderTraversal: {
     inventor: 'Foundational tree-walk pattern in CS curricula',
     year: 1960,

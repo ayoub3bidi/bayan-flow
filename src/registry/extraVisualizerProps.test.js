@@ -16,6 +16,7 @@ describe('getExtraVisualizerProps', () => {
     treeEdges: [],
     treeNodeStates: {},
     visitOrder: [],
+    queueOrder: [],
   };
 
   const ctxBase = {
@@ -96,6 +97,7 @@ describe('getExtraVisualizerProps', () => {
       edges: [],
       nodeStates: {},
       visitOrder: [],
+      queueOrder: [],
       complexityDataset: 'treeTraversal',
     });
   });

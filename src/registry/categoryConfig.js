@@ -255,6 +255,7 @@ export const CATEGORY_CONFIG = {
     },
     algorithmKeys: [
       'inorderTraversal',
+      'levelOrderTraversal',
       'preorderTraversal',
       'postorderTraversal',
     ],
@@ -266,6 +267,10 @@ export const CATEGORY_CONFIG = {
           'preorderTraversal',
           'postorderTraversal',
         ],
+      },
+      {
+        labelKey: 'algorithmGroups.breadthFirstTraversal',
+        algorithms: ['levelOrderTraversal'],
       },
     ],
   },
