@@ -255,10 +255,10 @@ export const CATEGORY_CONFIG = {
     },
     algorithmKeys: [
       'inorderTraversal',
-      'levelOrderTraversal',
-      'zigzagLevelOrderTraversal',
       'preorderTraversal',
       'postorderTraversal',
+      'levelOrderTraversal',
+      'zigzagLevelOrderTraversal',
       'morrisTraversal',
     ],
     groupDefs: [

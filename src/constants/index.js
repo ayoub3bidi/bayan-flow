@@ -64,10 +64,10 @@ export const SEARCHING_ALGORITHMS = {
 
 export const TREE_TRAVERSAL_ALGORITHMS = {
   INORDER_TRAVERSAL: 'inorderTraversal',
-  LEVEL_ORDER_TRAVERSAL: 'levelOrderTraversal',
-  ZIGZAG_LEVEL_ORDER_TRAVERSAL: 'zigzagLevelOrderTraversal',
   PREORDER_TRAVERSAL: 'preorderTraversal',
   POSTORDER_TRAVERSAL: 'postorderTraversal',
+  LEVEL_ORDER_TRAVERSAL: 'levelOrderTraversal',
+  ZIGZAG_LEVEL_ORDER_TRAVERSAL: 'zigzagLevelOrderTraversal',
   MORRIS_TRAVERSAL: 'morrisTraversal',
 };
 
@@ -559,40 +559,6 @@ export const TREE_TRAVERSAL_COMPLEXITY = {
       'Teaching left–root–right before preorder and postorder',
     ],
   },
-  levelOrderTraversal: {
-    name: 'Level-order Traversal',
-    timeComplexity: {
-      best: 'O(n)',
-      average: 'O(n)',
-      worst: 'O(n)',
-    },
-    spaceComplexity: 'O(w)',
-    description:
-      'Level-order traversal visits the tree breadth-first: root first, then every node on depth 1, then depth 2, and so on. It uses a queue, so its auxiliary space depends on the maximum number of nodes stored from one level at a time.',
-    useCases: [
-      'Tree serialization and reconstruction formats',
-      'Printing or analyzing a tree level by level',
-      'Finding the nearest node that satisfies a property',
-      'Teaching queue-based breadth-first traversal vs. stack-based DFS',
-    ],
-  },
-  zigzagLevelOrderTraversal: {
-    name: 'Zigzag Level-order Traversal',
-    timeComplexity: {
-      best: 'O(n)',
-      average: 'O(n)',
-      worst: 'O(n)',
-    },
-    spaceComplexity: 'O(w)',
-    description:
-      'Zigzag (spiral) level-order traversal visits the tree breadth-first like level-order, but alternates scanning direction each depth: typically left-to-right on even levels and right-to-left on odd levels. Auxiliary space grows with the maximum width of one level.',
-    useCases: [
-      'Interview-style breadth-first variants and serialization puzzles',
-      'Pretty-printing or exporting trees with alternating row direction',
-      'Contrasting plain level-order with a simple directional state machine',
-      'Teaching BFS level batching with reversed visit order on every other level',
-    ],
-  },
   preorderTraversal: {
     name: 'Preorder Traversal',
     timeComplexity: {
@@ -625,6 +591,40 @@ export const TREE_TRAVERSAL_COMPLEXITY = {
       'Evaluating postfix (Reverse Polish) expression trees',
       'Computing tree aggregates bottom-up (height, size, checksums)',
       'Dependency-style processing where prerequisites must finish first',
+    ],
+  },
+  levelOrderTraversal: {
+    name: 'Level-order Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(w)',
+    description:
+      'Level-order traversal visits the tree breadth-first: root first, then every node on depth 1, then depth 2, and so on. It uses a queue, so its auxiliary space depends on the maximum number of nodes stored from one level at a time.',
+    useCases: [
+      'Tree serialization and reconstruction formats',
+      'Printing or analyzing a tree level by level',
+      'Finding the nearest node that satisfies a property',
+      'Teaching queue-based breadth-first traversal vs. stack-based DFS',
+    ],
+  },
+  zigzagLevelOrderTraversal: {
+    name: 'Zigzag Level-order Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(w)',
+    description:
+      'Zigzag (spiral) level-order traversal visits the tree breadth-first like level-order, but alternates scanning direction each depth: typically left-to-right on even levels and right-to-left on odd levels. Auxiliary space grows with the maximum width of one level.',
+    useCases: [
+      'Interview-style breadth-first variants and serialization puzzles',
+      'Pretty-printing or exporting trees with alternating row direction',
+      'Contrasting plain level-order with a simple directional state machine',
+      'Teaching BFS level batching with reversed visit order on every other level',
     ],
   },
   morrisTraversal: {

@@ -17,9 +17,10 @@ describe('i18n Configuration', () => {
     expect(i18n.language).toBe('en');
   });
 
-  it('should support English and French languages', () => {
+  it('should support English, French, and Arabic languages', () => {
     expect(i18n.options.supportedLngs).toContain('en');
     expect(i18n.options.supportedLngs).toContain('fr');
+    expect(i18n.options.supportedLngs).toContain('ar');
   });
 
   it('should translate basic keys in English', () => {
@@ -48,6 +49,20 @@ describe('i18n Configuration', () => {
     await i18n.changeLanguage('fr');
     expect(i18n.t('info.step', { current: 5, total: 10 })).toBe(
       'Étape 5 sur 10'
+    );
+  });
+
+  it('should translate basic keys in Arabic', async () => {
+    await i18n.changeLanguage('ar');
+    expect(i18n.t('header.title')).toBe('بيان Flow');
+    expect(i18n.t('settings.algorithm')).toBe('الخوارزمية');
+    expect(i18n.t('controls.play')).toBe('تشغيل');
+  });
+
+  it('should handle interpolation in Arabic', async () => {
+    await i18n.changeLanguage('ar');
+    expect(i18n.t('info.step', { current: 5, total: 10 })).toBe(
+      'الخطوة 5 من 10'
     );
   });
 });
