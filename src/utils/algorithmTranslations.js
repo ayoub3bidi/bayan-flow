@@ -145,6 +145,14 @@ export const ALGORITHM_STEPS = {
   POSTORDER_COMPLETE: 'postorderComplete',
   POSTORDER_EMPTY: 'postorderEmpty',
 
+  MORRIS_START: 'morrisStart',
+  MORRIS_THREADING: 'morrisThreading',
+  MORRIS_UNTHREADING: 'morrisUnthreading',
+  MORRIS_VISITING: 'morrisVisiting',
+  MORRIS_VISITED: 'morrisVisited',
+  MORRIS_COMPLETE: 'morrisComplete',
+  MORRIS_EMPTY: 'morrisEmpty',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

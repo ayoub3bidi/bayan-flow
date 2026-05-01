@@ -47,6 +47,36 @@ const SORTING_TEST_CASES = [
   },
 ];
 
+/** morris_traversal(root) -> inorder list of values with O(1) extra space */
+const MORRIS_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'morris-bst-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[1, 2, 3, 4, 5, 6, 7]',
+  },
+  {
+    id: 'morris-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'morris-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'morris-left-skew',
+    name: 'Left-skewed chain',
+    input:
+      "{'value': 3, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': None}, 'right': None}",
+    expected: '[1, 2, 3]',
+  },
+];
+
 /** postorder_traversal(root) -> list of values in LRN order; root is dict or None */
 const POSTORDER_TRAVERSAL_TEST_CASES = [
   {
@@ -677,6 +707,10 @@ export const algorithmTestCases = {
   postorderTraversal: {
     functionName: 'postorder_traversal',
     testCases: POSTORDER_TRAVERSAL_TEST_CASES,
+  },
+  morrisTraversal: {
+    functionName: 'morris_traversal',
+    testCases: MORRIS_TRAVERSAL_TEST_CASES,
   },
 };
 

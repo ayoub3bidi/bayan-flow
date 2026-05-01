@@ -18,12 +18,12 @@ describe('getAlgorithmTypesGridColsClass', () => {
     );
   });
 
-  it('returns layout with xl four-column for four or more modes', () => {
+  it('returns two- and three-column layout for four or more modes', () => {
     expect(getAlgorithmTypesGridColsClass(4)).toBe(
-      'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+      'md:grid-cols-2 lg:grid-cols-3'
     );
     expect(getAlgorithmTypesGridColsClass(10)).toBe(
-      'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+      'md:grid-cols-2 lg:grid-cols-3'
     );
   });
 });

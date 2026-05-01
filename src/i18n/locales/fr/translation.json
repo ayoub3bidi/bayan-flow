@@ -82,7 +82,8 @@
       "inorderTraversal": "Parcours infixe",
       "levelOrderTraversal": "Parcours en largeur de l'arbre",
       "preorderTraversal": "Parcours préfixe",
-      "postorderTraversal": "Parcours suffixe"
+      "postorderTraversal": "Parcours suffixe",
+      "morrisTraversal": "Parcours de Morris"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -119,7 +120,8 @@
       "inorderTraversal": "Démarrage du parcours infixe",
       "levelOrderTraversal": "Démarrage du parcours en largeur de l'arbre",
       "preorderTraversal": "Démarrage du parcours préfixe",
-      "postorderTraversal": "Démarrage du parcours suffixe"
+      "postorderTraversal": "Démarrage du parcours suffixe",
+      "morrisTraversal": "Démarrage du parcours de Morris"
     }
   },
   "complexity": {
@@ -158,7 +160,8 @@
     "inorderTraversal": "O(n)",
     "levelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
-    "postorderTraversal": "O(n)"
+    "postorderTraversal": "O(n)",
+    "morrisTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -691,6 +694,18 @@
         "facts_1": "Deux piles itératives : première pile traite les nœuds ; seconde collecte le résultat en suffixe inverse.",
         "facts_2": "Récursivement : récurser gauche, récurser droit, puis visiter. Correspond à la version itérative.",
         "facts_3": "Suffixe + infixe détermine uniquement un arbre (valeurs uniques supposées) ; suffixe seul ne le fait pas."
+      },
+      "morrisTraversal": {
+        "history": "Joseph M. Morris a publié en 1979 le parcours infixe avec fils vers le prédécesseur—une réponse élégante au défi « infixe sans pile ni récursion ». Les liens temporaires sur le fils droit encodent les mêmes informations qu’une pile puis l’arbre est rétabli sur place.",
+        "intuition": "Pour un nœud avec un fils gauche, trouver le prédécesseur en infixe (le plus à droite dans le sous-arbre gauche). Si son fils droit est nul, connecter ce prédécesseur au nœud courant (retour après le gauche) puis aller à gauche. Si le fils droit pointe déjà vers le courant, le sous-arbre gauche est fini : on rompt le fil, on visite le nœud, on va à droite. Aucune structure auxiliaire.",
+        "realWorldUses_0": "Concours et entretiens sur les limites d’espace des parcours",
+        "realWorldUses_1": "Très petits systèmes embarqués où la profondeur de pile risquée ou absente",
+        "realWorldUses_2": "Illustrer comment la structure du nœud peut servir d’état de navigation",
+        "realWorldUses_3": "Comparer avec un infixe itératif à pile explicite en O(h)",
+        "facts_0": "Temps Θ(n) : chaque arête réelle est traversée un nombre borné de fois ; même ordre qu’un infixe classique.",
+        "facts_1": "Espace auxiliaire en O(1) : pas de pile explicite ni de file.",
+        "facts_2": "Les fils sont retirés avant la fin du parcours ; la forme finale de l’arbre est inchangée.",
+        "facts_3": "La visualisation représente chaque fil temporaire par une arête supplémentaire sur l’étape concernée."
       }
     }
   },
@@ -810,6 +825,13 @@
     "postorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "postorderComplete": "Parcours suffixe terminé. Ordre final : {{order}}",
     "postorderEmpty": "Arbre vide — rien à parcourir.",
+    "morrisStart": "Parcours de Morris : ordre infixe (LNR) avec un espace auxiliaire en O(1) — des fils temporaires remplacent la pile.",
+    "morrisThreading": "Fil : lier le prédécesseur {{from}} → {{to}} pour revenir après le sous-arbre gauche.",
+    "morrisUnthreading": "Défil : restaurer le pointeur droit de {{from}} ; le sous-arbre gauche de {{to}} est fini — visiter {{to}}.",
+    "morrisVisiting": "Visite du nœud {{node}}",
+    "morrisVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "morrisComplete": "Parcours de Morris terminé. Ordre final : {{order}}",
+    "morrisEmpty": "Arbre vide — rien à parcourir.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -953,7 +975,7 @@
       "treeTraversal": {
         "title": "Parcours d'arbres",
         "description": "Explorez les ordres classiques de parcours d'arbres et comprenez comment chaque ordre visite les nœuds.",
-        "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours préfixe, Parcours postfixe"
+        "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours préfixe, Parcours postfixe, Parcours de Morris"
       }
     },
     "features": {
@@ -1012,7 +1034,8 @@
     "distributionAwareSearch": "Recherche sensible à la distribution",
     "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)",
     "depthFirstTraversal": "Parcours en profondeur",
-    "breadthFirstTraversal": "Parcours en largeur"
+    "breadthFirstTraversal": "Parcours en largeur",
+    "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire"
   },
   "roadmap": {
     "hero": {

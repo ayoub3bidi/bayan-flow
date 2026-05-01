@@ -209,6 +209,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Postorder Traversal');
     });
 
+    it('returns Python code for Morris traversal', () => {
+      const code = getPythonCode('morrisTraversal');
+      expect(code).toContain('def morris_traversal');
+      expect(code).toContain('Morris');
+    });
+
     it('returns Python code for level-order traversal', () => {
       const code = getPythonCode('levelOrderTraversal');
       expect(code).toContain('def level_order_traversal');
@@ -332,6 +338,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Postorder Traversal');
     });
 
+    it('returns correct display name for Morris traversal', () => {
+      const name = getAlgorithmDisplayName('morrisTraversal');
+      expect(name).toBe('Morris Traversal');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -376,6 +387,7 @@ describe('Python Algorithms Index', () => {
         'levelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
+        'morrisTraversal',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

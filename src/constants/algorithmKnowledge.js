@@ -281,4 +281,11 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  morrisTraversal: {
+    inventor: 'Joseph M. Morris',
+    year: 1979,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };

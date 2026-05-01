@@ -65,6 +65,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('PostorderTraversal');
   });
+
+  it('returns pseudocode for morrisTraversal', () => {
+    const text = getPseudocodeForLocale('morrisTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('MorrisInorder');
+  });
 });
 
 describe('getPseudocode', () => {

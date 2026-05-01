@@ -495,4 +495,24 @@ To traverse the whole binary tree, call PreorderTraversal(root)`,
   visit node
 
 To traverse the whole binary tree, call PostorderTraversal(root)`,
+
+  morrisTraversal: `FUNCTION MorrisInorder(root):
+  current ← root
+  WHILE current is not null:
+    IF left child of current is null:
+      visit current
+      current ← right child of current
+    ELSE:
+      pred ← left child of current
+      WHILE pred has right child AND right child of pred ≠ current:
+        pred ← right child of pred
+      IF right child of pred is null:
+        temporarily set right child of pred ← current  // thread
+        current ← left child of current
+      ELSE:
+        restore right child of pred ← null  // unthread
+        visit current
+        current ← right child of current
+
+Uses only O(1) extra space; restores original tree links after the walk.`,
 };

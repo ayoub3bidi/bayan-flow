@@ -45,7 +45,9 @@ function AlgorithmTypes() {
       }),
       description: t(`landing.algorithmTypes.${type}.description`),
       algorithms: getAlgorithmList(cfg),
-      gradient: ALGORITHM_TYPE_GRADIENTS[type] ?? 'from-slate-500 via-slate-600 to-slate-700',
+      gradient:
+        ALGORITHM_TYPE_GRADIENTS[type] ??
+        'from-slate-500 via-slate-600 to-slate-700',
     };
   }).filter(Boolean);
 

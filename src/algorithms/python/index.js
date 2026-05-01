@@ -40,6 +40,7 @@ import inorderTraversalPython from './inorder_traversal.py?raw';
 import levelOrderTraversalPython from './level_order_traversal.py?raw';
 import preorderTraversalPython from './preorder_traversal.py?raw';
 import postorderTraversalPython from './postorder_traversal.py?raw';
+import morrisTraversalPython from './morris_traversal.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -78,6 +79,7 @@ export const pythonAlgorithms = {
   levelOrderTraversal: levelOrderTraversalPython,
   preorderTraversal: preorderTraversalPython,
   postorderTraversal: postorderTraversalPython,
+  morrisTraversal: morrisTraversalPython,
 };
 
 export const algorithmDisplayNames = {
@@ -117,6 +119,7 @@ export const algorithmDisplayNames = {
   levelOrderTraversal: 'Level-order Traversal',
   preorderTraversal: 'Preorder Traversal',
   postorderTraversal: 'Postorder Traversal',
+  morrisTraversal: 'Morris Traversal',
 };
 
 export function getPythonCode(algorithmName) {

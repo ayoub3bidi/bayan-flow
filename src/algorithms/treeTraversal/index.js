@@ -14,12 +14,14 @@ import {
   postorderTraversal,
   postorderTraversalPure,
 } from './postorderTraversal';
+import { morrisTraversal, morrisTraversalPure } from './morrisTraversal';
 
 export const treeTraversalAlgorithms = {
   inorderTraversal,
   levelOrderTraversal,
   preorderTraversal,
   postorderTraversal,
+  morrisTraversal,
 };
 
 export const pureTreeTraversalAlgorithms = {
@@ -27,6 +29,7 @@ export const pureTreeTraversalAlgorithms = {
   levelOrderTraversal: levelOrderTraversalPure,
   preorderTraversal: preorderTraversalPure,
   postorderTraversal: postorderTraversalPure,
+  morrisTraversal: morrisTraversalPure,
 };
 
 export {
@@ -38,4 +41,6 @@ export {
   preorderTraversalPure,
   postorderTraversal,
   postorderTraversalPure,
+  morrisTraversal,
+  morrisTraversalPure,
 };

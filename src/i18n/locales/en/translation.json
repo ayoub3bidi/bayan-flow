@@ -82,7 +82,8 @@
       "inorderTraversal": "Inorder Traversal",
       "levelOrderTraversal": "Level-order Traversal",
       "preorderTraversal": "Preorder Traversal",
-      "postorderTraversal": "Postorder Traversal"
+      "postorderTraversal": "Postorder Traversal",
+      "morrisTraversal": "Morris Traversal"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -120,7 +121,8 @@
       "inorderTraversal": "Starting inorder traversal",
       "levelOrderTraversal": "Starting level-order traversal",
       "preorderTraversal": "Starting preorder traversal",
-      "postorderTraversal": "Starting postorder traversal"
+      "postorderTraversal": "Starting postorder traversal",
+      "morrisTraversal": "Starting Morris traversal"
     }
   },
   "complexity": {
@@ -159,7 +161,8 @@
     "inorderTraversal": "O(n)",
     "levelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
-    "postorderTraversal": "O(n)"
+    "postorderTraversal": "O(n)",
+    "morrisTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -692,6 +695,18 @@
         "facts_1": "Two-stack iterative approach: first stack processes nodes; second stack collects result in reverse postorder.",
         "facts_2": "Recursively matches the iterative version: recurse left, recurse right, then visit.",
         "facts_3": "Postorder + inorder uniquely determine a tree (assuming unique node values); postorder alone does not."
+      },
+      "morrisTraversal": {
+        "history": "Joseph M. Morris published the threaded inorder walk in 1979—an elegant answer to “inorder without recursion or a stack.” Temporary right-child links (threads) encode the same push/pop information a stack would hold, then the tree is repaired in place.",
+        "intuition": "For each node with a left child, find its inorder predecessor (rightmost in the left subtree). If that predecessor’s right is null, wire it to the current node as a return link and go left. If the right already points back to the current node, you’ve finished the left subtree—remove the wire, visit the node, go right. No extra structures—only clever pointer surgery.",
+        "realWorldUses_0": "Interview and exam questions on space-bounded tree algorithms",
+        "realWorldUses_1": "Very small embedded systems where stack depth is risky or unavailable",
+        "realWorldUses_2": "Teaching how tree structure can double as navigation state",
+        "realWorldUses_3": "Contrasting with iterative inorder that needs O(h) stack space",
+        "facts_0": "Time Θ(n): each real edge is crossed a constant number of times; same visit order as classic inorder.",
+        "facts_1": "Extra space is O(1) pointers only—no recursion stack, no explicit stack, no queue.",
+        "facts_2": "Threads are removed before the walk ends; the tree ends with the same shape it started with.",
+        "facts_3": "The visualization draws each temporary thread as an extra edge for that step."
       }
     }
   },
@@ -810,6 +825,13 @@
     "postorderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "postorderComplete": "Postorder complete. Final order: {{order}}",
     "postorderEmpty": "Tree is empty — nothing to traverse.",
+    "morrisStart": "Morris traversal: inorder (LNR) with O(1) extra space — temporary threads replace a stack.",
+    "morrisThreading": "Thread: link predecessor {{from}} → {{to}} so we can return after the left subtree.",
+    "morrisUnthreading": "Unthread: restore {{from}}'s right pointer; left subtree of {{to}} is done — visit {{to}}.",
+    "morrisVisiting": "Visiting node {{node}}",
+    "morrisVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "morrisComplete": "Morris traversal complete. Final order: {{order}}",
+    "morrisEmpty": "Tree is empty — nothing to traverse.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -952,7 +974,7 @@
       "treeTraversal": {
         "title": "Tree Traversals",
         "description": "Explore classic tree traversal orders and learn how each visit order explores a tree structure.",
-        "algorithms": "Inorder Traversal, Level-order Traversal, Preorder Traversal, Postorder Traversal"
+        "algorithms": "Inorder Traversal, Level-order Traversal, Preorder Traversal, Postorder Traversal, Morris Traversal"
       }
     },
     "features": {
@@ -1011,7 +1033,8 @@
     "distributionAwareSearch": "Distribution-aware search",
     "graphTraversalSearch": "Graph traversal (node–link)",
     "depthFirstTraversal": "Depth-first traversals",
-    "breadthFirstTraversal": "Breadth-first traversals"
+    "breadthFirstTraversal": "Breadth-first traversals",
+    "spaceOptimizedTraversal": "Space-optimized traversals"
   },
   "roadmap": {
     "hero": {

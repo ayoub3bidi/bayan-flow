@@ -75,7 +75,14 @@ function paintStates(nodes, visitOrderIds, visitingId) {
  * @param {string} description
  * @returns {LevelOrderTraversalStep}
  */
-function pushStep(nodes, edges, nodeStates, visitOrder, queueOrder, description) {
+function pushStep(
+  nodes,
+  edges,
+  nodeStates,
+  visitOrder,
+  queueOrder,
+  description
+) {
   return {
     nodes: cloneNodes(nodes),
     edges: cloneEdges(edges),

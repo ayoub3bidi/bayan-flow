@@ -67,6 +67,7 @@ export const TREE_TRAVERSAL_ALGORITHMS = {
   LEVEL_ORDER_TRAVERSAL: 'levelOrderTraversal',
   PREORDER_TRAVERSAL: 'preorderTraversal',
   POSTORDER_TRAVERSAL: 'postorderTraversal',
+  MORRIS_TRAVERSAL: 'morrisTraversal',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -606,6 +607,23 @@ export const TREE_TRAVERSAL_COMPLEXITY = {
       'Evaluating postfix (Reverse Polish) expression trees',
       'Computing tree aggregates bottom-up (height, size, checksums)',
       'Dependency-style processing where prerequisites must finish first',
+    ],
+  },
+  morrisTraversal: {
+    name: 'Morris Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      "Morris traversal produces the same visit order as inorder (LNR) but uses only O(1) extra space. It temporarily redirects a predecessor's null right child into a back-link (a thread) to the current node, then restores the tree—no explicit stack or recursion.",
+    useCases: [
+      'Interview problems on space-bounded tree walks',
+      'Memory-constrained embedded or stream processing over trees',
+      'Teaching pointer threading and in-place tree tricks',
+      'Contrasting O(h) stack inorder with constant auxiliary space',
     ],
   },
 };

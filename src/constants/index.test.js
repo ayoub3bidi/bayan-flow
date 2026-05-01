@@ -113,8 +113,9 @@ describe('Constants', () => {
         'levelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
+        'morrisTraversal',
       ]);
-      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(4);
+      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(5);
     });
   });
 
@@ -324,6 +325,7 @@ describe('Constants', () => {
         'levelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
+        'morrisTraversal',
       ]);
     });
 

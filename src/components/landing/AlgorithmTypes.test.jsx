@@ -34,6 +34,8 @@ vi.mock('../ui/Section', () => ({
 // Mock icons
 vi.mock('lucide-react', () => ({
   ArrowUpDown: () => <svg data-testid="arrow-icon" />,
+  BarChart3: () => <svg data-testid="bar-chart-icon" />,
+  Grid3x3: () => <svg data-testid="grid-icon" />,
   Route: () => <svg data-testid="route-icon" />,
   Search: () => <svg data-testid="search-icon" />,
   GitBranch: () => <svg data-testid="git-branch-icon" />,
@@ -98,8 +100,8 @@ describe('AlgorithmTypes', () => {
 
     it('should render category icons', () => {
       renderComponent();
-      expect(screen.getByTestId('arrow-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('route-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('bar-chart-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('grid-icon')).toBeInTheDocument();
       expect(screen.getByTestId('search-icon')).toBeInTheDocument();
       expect(screen.getByTestId('git-branch-icon')).toBeInTheDocument();
     });
@@ -143,7 +145,7 @@ describe('AlgorithmTypes', () => {
       expect(screen.getByText(/comparison-based sorting/i)).toBeInTheDocument();
       expect(screen.getByText(/navigate through grids/i)).toBeInTheDocument();
       expect(screen.getByText(/sorted data/i)).toBeInTheDocument();
-      expect(screen.getByText(/tree traversal/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/tree traversal/i).length).toBeGreaterThan(0);
     });
   });
 
@@ -235,15 +237,15 @@ describe('AlgorithmTypes', () => {
   });
 
   describe('Icon Display', () => {
-    it('should display arrow icon for sorting', () => {
+    it('should display bar chart icon for sorting', () => {
       renderComponent();
-      const icons = screen.getAllByTestId('arrow-icon');
+      const icons = screen.getAllByTestId('bar-chart-icon');
       expect(icons.length).toBeGreaterThan(0);
     });
 
-    it('should display route icon for pathfinding', () => {
+    it('should display grid icon for pathfinding', () => {
       renderComponent();
-      const icons = screen.getAllByTestId('route-icon');
+      const icons = screen.getAllByTestId('grid-icon');
       expect(icons.length).toBeGreaterThan(0);
     });
 
@@ -298,7 +300,10 @@ describe('AlgorithmTypes', () => {
 
     it('should make the fourth card span the full row on large screens', () => {
       const { container } = renderComponent();
-      const cards = container.querySelectorAll('div[class*="group"]');
+      const cards = container.querySelectorAll(
+        'div.group.relative.h-full.min-h-0.self-stretch'
+      );
+      expect(cards.length).toBe(4);
       const fourthCard = cards[3];
       expect(fourthCard).toHaveClass('lg:col-span-3');
     });
