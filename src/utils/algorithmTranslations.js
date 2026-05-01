@@ -133,6 +133,12 @@ export const ALGORITHM_STEPS = {
   LEVEL_ORDER_COMPLETE: 'levelOrderComplete',
   LEVEL_ORDER_EMPTY: 'levelOrderEmpty',
 
+  ZIGZAG_LEVEL_START: 'zigzagLevelStart',
+  ZIGZAG_LEVEL_VISITING: 'zigzagLevelVisiting',
+  ZIGZAG_LEVEL_VISITED: 'zigzagLevelVisited',
+  ZIGZAG_LEVEL_COMPLETE: 'zigzagLevelComplete',
+  ZIGZAG_LEVEL_EMPTY: 'zigzagLevelEmpty',
+
   PREORDER_START: 'preorderStart',
   PREORDER_VISITING: 'preorderVisiting',
   PREORDER_VISITED: 'preorderVisited',

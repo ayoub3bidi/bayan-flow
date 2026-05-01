@@ -82,6 +82,25 @@ describe('useTreeTraversalVisualization', () => {
     expect(result.current.treeNodes.length).toBeGreaterThan(0);
     expect(result.current.description.length).toBeGreaterThan(0);
     expect(Array.isArray(result.current.queueOrder)).toBe(true);
+    expect(result.current.treeLevelScanDirection).toBeNull();
+  });
+
+  it('loads steps for zigzagLevelOrderTraversal and exposes scan direction', async () => {
+    const { result } = renderHook(() =>
+      useTreeTraversalVisualization(
+        'zigzagLevelOrderTraversal',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        7
+      )
+    );
+
+    await waitFor(() => {
+      expect(result.current.totalSteps).toBeGreaterThan(0);
+    });
+
+    expect(result.current.treeLevelScanDirection).toBe('ltr');
+    expect(Array.isArray(result.current.queueOrder)).toBe(true);
   });
 
   it('loads steps for preorderTraversal on mount', async () => {

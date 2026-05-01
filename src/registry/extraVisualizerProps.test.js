@@ -98,6 +98,7 @@ describe('getExtraVisualizerProps', () => {
       nodeStates: {},
       visitOrder: [],
       queueOrder: [],
+      levelScanDirection: undefined,
       complexityDataset: 'treeTraversal',
     });
   });

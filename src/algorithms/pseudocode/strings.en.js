@@ -478,6 +478,31 @@ To traverse the whole binary tree, call InorderTraversal(root)`,
 
 To traverse the whole binary tree, call LevelOrderTraversal(root)`,
 
+  zigzagLevelOrderTraversal: `FUNCTION ZigzagLevelOrderTraversal(root):
+  IF root is null:
+    RETURN empty list
+  queue ← deque with root
+  leftToRight ← true
+  WHILE queue is not empty:
+    count ← length of queue
+    level ← empty list
+    REPEAT count times:
+      append dequeue-left(queue) to level          // spatial left → right order
+    IF NOT leftToRight:
+      reverse level                               // scan right → left this depth
+    FOR each node in level:
+      visit node
+    FOR each node in spatialOrder(level):       // rebuild next frontier left → right
+      IF node has left child:
+        enqueue-right(queue, left child)
+      IF node has right child:
+        enqueue-right(queue, right child)
+    leftToRight ← NOT leftToRight                 // alternate next depth
+
+Uses two scans per depth: zigzag visitation order, then spatial enqueue so the next level stays correct.
+
+To traverse the whole binary tree, call ZigzagLevelOrderTraversal(root)`,
+
   preorderTraversal: `FUNCTION PreorderTraversal(node):
   IF node is null:
     RETURN

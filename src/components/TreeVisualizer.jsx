@@ -24,6 +24,7 @@ const VIEW_INNER = 100 - 2 * VIEW_PAD;
  * @param {Record<string, string>} nodeStates — values from `TREE_NODE_STATES`
  * @param {string[]} visitOrder — visited node ids in playback order (completed visits)
  * @param {string[]} [queueOrder] — queue contents front-to-back for BFS-style traversals
+ * @param {'ltr'|'rtl'|null|undefined} [levelScanDirection] — zigzag scan direction for the current level (optional)
  * @param {Array<string>} [_states] — unused; accepted for shared ControlPanel contract
  * @param {string} description
  * @param {boolean} isComplete
@@ -39,6 +40,7 @@ function TreeVisualizer({
   nodeStates = {},
   visitOrder = [],
   queueOrder = [],
+  levelScanDirection,
   states: _states = [],
   description,
   isComplete,
@@ -118,6 +120,17 @@ function TreeVisualizer({
   const visitOrderLabels = visitOrder.map(id => labelById[id] ?? id);
   const queueOrderLabels = queueOrder.map(id => labelById[id] ?? id);
 
+  const levelScanLabel =
+    levelScanDirection === 'ltr'
+      ? t('visualization.levelScanLtr', {
+          defaultValue: 'This level: left to right',
+        })
+      : levelScanDirection === 'rtl'
+        ? t('visualization.levelScanRtl', {
+            defaultValue: 'This level: right to left',
+          })
+        : null;
+
   const legendItems = [
     {
       state: TREE_NODE_STATES.DEFAULT,
@@ -194,6 +207,19 @@ function TreeVisualizer({
                         defaultValue: `Queue: ${queueOrderLabels.join(', ')}`,
                       })
                     : '\u00a0'}
+                </span>
+              </motion.span>
+
+              <motion.span
+                animate={{
+                  opacity: levelScanLabel ? 1 : 0,
+                }}
+                transition={{ duration: 0.15 }}
+                className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-violet-300 dark:border-violet-700 bg-violet-50 dark:bg-violet-950/50 px-3 py-1 text-xs font-medium text-violet-800 dark:text-violet-200 shadow-sm truncate"
+                aria-label={levelScanLabel ?? undefined}
+              >
+                <span className="font-semibold shrink-0">
+                  {levelScanLabel ?? '\u00a0'}
                 </span>
               </motion.span>
 

@@ -81,6 +81,7 @@
     "treeTraversal": {
       "inorderTraversal": "Inorder Traversal",
       "levelOrderTraversal": "Level-order Traversal",
+      "zigzagLevelOrderTraversal": "Zigzag Level-order Traversal",
       "preorderTraversal": "Preorder Traversal",
       "postorderTraversal": "Postorder Traversal",
       "morrisTraversal": "Morris Traversal"
@@ -120,6 +121,7 @@
       "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph",
       "inorderTraversal": "Starting inorder traversal",
       "levelOrderTraversal": "Starting level-order traversal",
+      "zigzagLevelOrderTraversal": "Starting zigzag level-order traversal",
       "preorderTraversal": "Starting preorder traversal",
       "postorderTraversal": "Starting postorder traversal",
       "morrisTraversal": "Starting Morris traversal"
@@ -160,6 +162,7 @@
     "breadthFirstSearchGraph": "O(V + E)",
     "inorderTraversal": "O(n)",
     "levelOrderTraversal": "O(n)",
+    "zigzagLevelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)",
     "morrisTraversal": "O(n)"
@@ -672,6 +675,18 @@
         "facts_2": "On the same tree shape, level-order highlights horizontal layers rather than root-to-leaf depth.",
         "facts_3": "This traversal is also the standard BFS pattern on trees because each edge has equal weight."
       },
+      "zigzagLevelOrderTraversal": {
+        "history": "Zigzag (spiral) level-order is breadth-first layering with an interview-favorite twist: within each depth, the visit direction alternates. It appears in textbooks and contests as “binary tree zigzag traversal” layered on ordinary BFS batching.",
+        "intuition": "Like level-order, gather all nodes of the next depth together. Snapshot them in spatial left-to-right order for building the queue, but visit odd depths in reverse to create the zigzag effect. Toggle a single Boolean (or parity) instead of rewriting the breadth-first scaffold.",
+        "realWorldUses_0": "LeetCode-style tree traversal exercises and directional pretty-print layouts",
+        "realWorldUses_1": "Contrasting vanilla level-order with a tiny state-machine change",
+        "realWorldUses_2": "Teaching deque / reverse patterns while keeping overall BFS guarantees",
+        "realWorldUses_3": "Serialization puzzles that require alternating row direction",
+        "facts_0": "Still Θ(n) time; space remains O(w) for the widest level when you enqueue one layer at a time.",
+        "facts_1": "The zigzag permutation does not reorder children for the next level—spatial left-to-right must be preserved.",
+        "facts_2": "The breadcrumb badges show scan direction separately from remaining frontier nodes.",
+        "facts_3": "Odd-sized levels still zigzag—you simply reverse single-node rows with no visible change."
+      },
       "preorderTraversal": {
         "history": "Preorder (prefix) order—node, then left subtree, then right subtree—is standard in textbooks on trees and expression evaluation. Together with inorder it is one half of the classic pair used to reconstruct a binary tree when node values are unique.",
         "intuition": "Always record the current node before going deeper: visit the node, then explore the entire left branch, then the entire right branch. The visualization uses an explicit stack (push right before left so left is processed first), mirroring recursive calls without unbounded recursion depth in the UI runner.",
@@ -780,7 +795,9 @@
     "treeAria": "Tree with {{count}} nodes",
     "treeAriaEmpty": "Empty tree",
     "queueBadge": "Queue: {{order}}",
-    "visitOrderBadge": "Visited: {{order}}"
+    "visitOrderBadge": "Visited: {{order}}",
+    "levelScanLtr": "This level: left to right",
+    "levelScanRtl": "This level: right to left"
   },
   "languages": {
     "en": "English",
@@ -815,6 +832,11 @@
     "levelOrderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "levelOrderComplete": "Level-order complete. Final order: {{order}}",
     "levelOrderEmpty": "Tree is empty — nothing to traverse.",
+    "zigzagLevelStart": "Zigzag level-order: same layers as BFS, but scan left-to-right on even depths and right-to-left on odd depths (starting at the root).",
+    "zigzagLevelVisiting": "Visiting node {{node}}",
+    "zigzagLevelVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "zigzagLevelComplete": "Zigzag level-order complete. Final order: {{order}}",
+    "zigzagLevelEmpty": "Tree is empty — nothing to traverse.",
     "preorderStart": "Preorder traversal: node, then left subtree, then right subtree (NLR).",
     "preorderVisiting": "Visiting node {{node}}",
     "preorderVisited": "Recorded {{node}}. Order so far: {{order}}",
@@ -974,7 +996,7 @@
       "treeTraversal": {
         "title": "Tree Traversals",
         "description": "Explore classic tree traversal orders and learn how each visit order explores a tree structure.",
-        "algorithms": "Inorder Traversal, Level-order Traversal, Preorder Traversal, Postorder Traversal, Morris Traversal"
+        "algorithms": "Inorder Traversal, Level-order Traversal, Zigzag Level-order Traversal, Preorder Traversal, Postorder Traversal, Morris Traversal"
       }
     },
     "features": {

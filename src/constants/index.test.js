@@ -111,11 +111,12 @@ describe('Constants', () => {
       expect(Object.values(TREE_TRAVERSAL_ALGORITHMS)).toEqual([
         'inorderTraversal',
         'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
         'morrisTraversal',
       ]);
-      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(5);
+      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(6);
     });
   });
 
@@ -323,6 +324,7 @@ describe('Constants', () => {
       expect(keys).toEqual([
         'inorderTraversal',
         'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
         'morrisTraversal',

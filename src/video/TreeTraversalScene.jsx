@@ -19,7 +19,7 @@ const VIEW_INNER = 100 - 2 * VIEW_PAD;
  * Remotion SVG tree traversal scene (normalized coordinates on nodes).
  *
  * @param {Object} props
- * @param {Array<{ nodes: Array, edges: Array, nodeStates: Record<string,string>, queueOrder?: string[] }>} props.steps
+ * @param {Array<{ nodes: Array, edges: Array, nodeStates: Record<string,string>, queueOrder?: string[], levelScanDirection?: 'ltr'|'rtl' }>} props.steps
  * @param {number} props.framesPerStep
  * @param {'light'|'dark'} [props.exportTheme]
  */
@@ -47,7 +47,13 @@ function TreeTraversalSceneInner({
   const step = steps[stepIndex] ?? steps[0];
   if (!step?.nodes?.length) return null;
 
-  const { nodes, edges, nodeStates, queueOrder = [] } = step;
+  const {
+    nodes,
+    edges,
+    nodeStates,
+    queueOrder = [],
+    levelScanDirection,
+  } = step;
   const nodeCount = nodes.length;
   const nodeRadius = Math.max(2.8, Math.min(5.5, 6.2 - nodeCount * 0.12));
 
@@ -69,6 +75,12 @@ function TreeTraversalSceneInner({
   );
   const labelById = Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id]));
   const queueLabels = queueOrder.map(id => labelById[id] ?? id);
+  const levelScanCaption =
+    levelScanDirection === 'ltr'
+      ? 'This level: left to right'
+      : levelScanDirection === 'rtl'
+        ? 'This level: right to left'
+        : null;
 
   return (
     <div
@@ -87,7 +99,7 @@ function TreeTraversalSceneInner({
         <div
           style={{
             position: 'absolute',
-            top: 28,
+            top: levelScanDirection ? 14 : 28,
             left: '50%',
             transform: 'translateX(-50%)',
             maxWidth: '82%',
@@ -106,6 +118,31 @@ function TreeTraversalSceneInner({
           }}
         >
           {`Queue: ${queueLabels.join(', ')}`}
+        </div>
+      ) : null}
+      {levelScanCaption ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: queueLabels.length > 0 ? 68 : 28,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            maxWidth: '88%',
+            padding: '6px 14px',
+            borderRadius: 9999,
+            background: captionBg,
+            border: `1px solid ${captionBorder}`,
+            color: descText,
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: 18,
+            fontWeight: 600,
+            opacity: 0.95,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {levelScanCaption}
         </div>
       ) : null}
       <svg

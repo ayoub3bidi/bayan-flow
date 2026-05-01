@@ -137,6 +137,36 @@ const LEVEL_ORDER_TRAVERSAL_TEST_CASES = [
   },
 ];
 
+/** zigzag_level_order_traversal(root) -> list alternating direction per depth */
+const ZIGZAG_LEVEL_ORDER_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'zigzag-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[4, 6, 2, 1, 3, 5, 7]',
+  },
+  {
+    id: 'zigzag-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'zigzag-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'zigzag-right-skew',
+    name: 'Right-skewed chain',
+    input:
+      "{'value': 1, 'left': None, 'right': {'value': 2, 'left': None, 'right': {'value': 3, 'left': None, 'right': None}}}",
+    expected: '[1, 2, 3]',
+  },
+];
+
 /** Counting sort only works with non-negative integers */
 const COUNTING_SORT_TEST_CASES = [
   {
@@ -699,6 +729,10 @@ export const algorithmTestCases = {
   levelOrderTraversal: {
     functionName: 'level_order_traversal',
     testCases: LEVEL_ORDER_TRAVERSAL_TEST_CASES,
+  },
+  zigzagLevelOrderTraversal: {
+    functionName: 'zigzag_level_order_traversal',
+    testCases: ZIGZAG_LEVEL_ORDER_TRAVERSAL_TEST_CASES,
   },
   preorderTraversal: {
     functionName: 'preorder_traversal',

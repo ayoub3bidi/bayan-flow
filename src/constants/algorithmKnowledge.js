@@ -266,6 +266,14 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  zigzagLevelOrderTraversal: {
+    inventor:
+      'Breadth-first level-by-level pattern extended with alternating scan direction — common textbook and interview formulation',
+    year: 1990,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
   preorderTraversal: {
     inventor: 'Foundational tree-walk pattern in CS curricula',
     year: 1960,

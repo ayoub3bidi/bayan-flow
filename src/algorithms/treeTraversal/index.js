@@ -9,6 +9,10 @@ import {
   levelOrderTraversal,
   levelOrderTraversalPure,
 } from './levelOrderTraversal';
+import {
+  zigzagLevelOrderTraversal,
+  zigzagLevelOrderTraversalPure,
+} from './zigzagLevelOrderTraversal';
 import { preorderTraversal, preorderTraversalPure } from './preorderTraversal';
 import {
   postorderTraversal,
@@ -19,6 +23,7 @@ import { morrisTraversal, morrisTraversalPure } from './morrisTraversal';
 export const treeTraversalAlgorithms = {
   inorderTraversal,
   levelOrderTraversal,
+  zigzagLevelOrderTraversal,
   preorderTraversal,
   postorderTraversal,
   morrisTraversal,
@@ -27,6 +32,7 @@ export const treeTraversalAlgorithms = {
 export const pureTreeTraversalAlgorithms = {
   inorderTraversal: inorderTraversalPure,
   levelOrderTraversal: levelOrderTraversalPure,
+  zigzagLevelOrderTraversal: zigzagLevelOrderTraversalPure,
   preorderTraversal: preorderTraversalPure,
   postorderTraversal: postorderTraversalPure,
   morrisTraversal: morrisTraversalPure,
@@ -37,6 +43,8 @@ export {
   inorderTraversalPure,
   levelOrderTraversal,
   levelOrderTraversalPure,
+  zigzagLevelOrderTraversal,
+  zigzagLevelOrderTraversalPure,
   preorderTraversal,
   preorderTraversalPure,
   postorderTraversal,

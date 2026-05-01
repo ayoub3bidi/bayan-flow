@@ -54,6 +54,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toContain('LevelOrderTraversal');
   });
 
+  it('returns pseudocode for zigzagLevelOrderTraversal', () => {
+    const text = getPseudocodeForLocale('zigzagLevelOrderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('ZigzagLevelOrderTraversal');
+  });
+
   it('returns pseudocode for preorderTraversal', () => {
     const text = getPseudocodeForLocale('preorderTraversal', 'en');
     expect(text).toBeTruthy();

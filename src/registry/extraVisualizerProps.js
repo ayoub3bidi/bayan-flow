@@ -60,6 +60,7 @@ export function getExtraVisualizerProps(
       nodeStates: treeTraversalVisualization.treeNodeStates,
       visitOrder: treeTraversalVisualization.visitOrder,
       queueOrder: treeTraversalVisualization.queueOrder,
+      levelScanDirection: treeTraversalVisualization.treeLevelScanDirection,
       complexityDataset: 'treeTraversal',
     };
   }

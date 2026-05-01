@@ -81,6 +81,7 @@
     "treeTraversal": {
       "inorderTraversal": "Parcours infixe",
       "levelOrderTraversal": "Parcours en largeur de l'arbre",
+      "zigzagLevelOrderTraversal": "Parcours en largeur en zigzag",
       "preorderTraversal": "Parcours préfixe",
       "postorderTraversal": "Parcours suffixe",
       "morrisTraversal": "Parcours de Morris"
@@ -119,6 +120,7 @@
       "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes",
       "inorderTraversal": "Démarrage du parcours infixe",
       "levelOrderTraversal": "Démarrage du parcours en largeur de l'arbre",
+      "zigzagLevelOrderTraversal": "Démarrage du parcours en largeur en zigzag",
       "preorderTraversal": "Démarrage du parcours préfixe",
       "postorderTraversal": "Démarrage du parcours suffixe",
       "morrisTraversal": "Démarrage du parcours de Morris"
@@ -159,6 +161,7 @@
     "breadthFirstSearchGraph": "O(V + E)",
     "inorderTraversal": "O(n)",
     "levelOrderTraversal": "O(n)",
+    "zigzagLevelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)",
     "morrisTraversal": "O(n)"
@@ -671,6 +674,18 @@
         "facts_2": "Sur le même arbre, ce parcours met en évidence les niveaux horizontaux plutôt que la profondeur branche par branche.",
         "facts_3": "Il s'agit du motif BFS standard sur les arbres, car toutes les arêtes ont le même poids."
       },
+      "zigzagLevelOrderTraversal": {
+        "history": "Le parcours en largeur zigzag superpose aux niveaux habituels une contrainte d’entretiens : changer le sens de visite une profondeur sur deux. Variante très courante des problèmes de concours (« traversée en zigzag ») basée sur le traitement couche par couche.",
+        "intuition": "Comme le parcours par niveaux, rassembler tous les nœuds d’un même étage avant de passer au suivant. Conserver l’ordre gauche-droite spatial pour préparer correctement la file des enfants, mais inverser l’ordre de visite sur les niveaux pairs ou impairs pour obtenir l’alternance.",
+        "realWorldUses_0": "Exercices de parcours d’arbres type LeetCode et mises en page à sens alternés",
+        "realWorldUses_1": "Comparer un BFS classique avec un simple drapeau de direction",
+        "realWorldUses_2": "Montrer l’usage d’une deque ou d’un reverse léger tout en gardant une complexité linéaire",
+        "realWorldUses_3": "Énigmes de sérialisation où chaque niveau doit s’afficher dans un sens différent",
+        "facts_0": "Temps toujours Θ(n) ; l’espace reste dominé par O(w), largeur maximale d’un niveau.",
+        "facts_1": "Le zigzag ne doit pas changer l’ordre spatial utilisé pour enfiler les enfants sinon les niveaux se mélangent.",
+        "facts_2": "Un badge séparé rappelle le sens de lecture du niveau en cours au lieu de tout coder dans la file.",
+        "facts_3": "Pour un niveau d’un seul nœud, inverser ne change pas l’ordre visible."
+      },
       "preorderTraversal": {
         "history": "Le parcours préfixe (nœud, sous-arbre gauche, sous-arbre droit) est classique pour l'évaluation d'expressions et la sérialisation. Avec l'infixe, il forme la paire utilisée pour reconstruire un arbre binaire lorsque les valeurs sont uniques.",
         "intuition": "Enregistrer le nœud courant avant d'aller plus profond : visiter le nœud, puis tout le sous-arbre gauche, puis le droit. La visualisation utilise une pile explicite (empiler le droit avant le gauche pour traiter le gauche en premier), comme les appels récursifs sans récursion illimitée dans le navigateur.",
@@ -780,7 +795,9 @@
     "treeAria": "Arbre à {{count}} nœuds",
     "treeAriaEmpty": "Arbre vide",
     "queueBadge": "File : {{order}}",
-    "visitOrderBadge": "Visités : {{order}}"
+    "visitOrderBadge": "Visités : {{order}}",
+    "levelScanLtr": "Ce niveau : de gauche à droite",
+    "levelScanRtl": "Ce niveau : de droite à gauche"
   },
   "languages": {
     "en": "English",
@@ -815,6 +832,11 @@
     "levelOrderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "levelOrderComplete": "Parcours en largeur terminé. Ordre final : {{order}}",
     "levelOrderEmpty": "Arbre vide — rien à parcourir.",
+    "zigzagLevelStart": "Parcours en largeur zigzag : mêmes couches que le BFS, mais on alterne gauche→droite et droite→gauche selon la profondeur (en commençant par la racine).",
+    "zigzagLevelVisiting": "Visite du nœud {{node}}",
+    "zigzagLevelVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "zigzagLevelComplete": "Parcours en largeur zigzag terminé. Ordre final : {{order}}",
+    "zigzagLevelEmpty": "Arbre vide — rien à parcourir.",
     "preorderStart": "Parcours préfixe : nœud, puis sous-arbre gauche, puis sous-arbre droit (NLR).",
     "preorderVisiting": "Visite du nœud {{node}}",
     "preorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
@@ -975,7 +997,7 @@
       "treeTraversal": {
         "title": "Parcours d'arbres",
         "description": "Explorez les ordres classiques de parcours d'arbres et comprenez comment chaque ordre visite les nœuds.",
-        "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours préfixe, Parcours postfixe, Parcours de Morris"
+        "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours en largeur en zigzag, Parcours préfixe, Parcours postfixe, Parcours de Morris"
       }
     },
     "features": {

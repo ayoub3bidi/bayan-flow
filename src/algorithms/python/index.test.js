@@ -385,6 +385,7 @@ describe('Python Algorithms Index', () => {
         'breadthFirstSearchGraph',
         'inorderTraversal',
         'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
         'preorderTraversal',
         'postorderTraversal',
         'morrisTraversal',
