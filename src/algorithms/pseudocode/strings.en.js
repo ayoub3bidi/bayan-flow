@@ -453,4 +453,91 @@ FUNCTION DepthLimitedSearch(node, goal, g, threshold, heuristic):
         parent[neighbor] ← current
         enqueue neighbor
   RETURN not found`,
+
+  inorderTraversal: `FUNCTION InorderTraversal(node):
+  IF node is null:
+    RETURN
+  InorderTraversal(left child of node)
+  visit node
+  InorderTraversal(right child of node)
+
+To traverse the whole binary tree, call InorderTraversal(root)`,
+
+  levelOrderTraversal: `FUNCTION LevelOrderTraversal(root):
+  IF root is null:
+    RETURN empty list
+  queue ← empty queue
+  enqueue root
+  WHILE queue is not empty:
+    current ← dequeue front
+    visit current
+    IF current has left child:
+      enqueue left child
+    IF current has right child:
+      enqueue right child
+
+To traverse the whole binary tree, call LevelOrderTraversal(root)`,
+
+  zigzagLevelOrderTraversal: `FUNCTION ZigzagLevelOrderTraversal(root):
+  IF root is null:
+    RETURN empty list
+  queue ← deque with root
+  leftToRight ← true
+  WHILE queue is not empty:
+    count ← length of queue
+    level ← empty list
+    REPEAT count times:
+      append dequeue-left(queue) to level          // spatial left → right order
+    IF NOT leftToRight:
+      reverse level                               // scan right → left this depth
+    FOR each node in level:
+      visit node
+    FOR each node in spatialOrder(level):       // rebuild next frontier left → right
+      IF node has left child:
+        enqueue-right(queue, left child)
+      IF node has right child:
+        enqueue-right(queue, right child)
+    leftToRight ← NOT leftToRight                 // alternate next depth
+
+Uses two scans per depth: zigzag visitation order, then spatial enqueue so the next level stays correct.
+
+To traverse the whole binary tree, call ZigzagLevelOrderTraversal(root)`,
+
+  preorderTraversal: `FUNCTION PreorderTraversal(node):
+  IF node is null:
+    RETURN
+  visit node
+  PreorderTraversal(left child of node)
+  PreorderTraversal(right child of node)
+
+To traverse the whole binary tree, call PreorderTraversal(root)`,
+
+  postorderTraversal: `FUNCTION PostorderTraversal(node):
+  IF node is null:
+    RETURN
+  PostorderTraversal(left child of node)
+  PostorderTraversal(right child of node)
+  visit node
+
+To traverse the whole binary tree, call PostorderTraversal(root)`,
+
+  morrisTraversal: `FUNCTION MorrisInorder(root):
+  current ← root
+  WHILE current is not null:
+    IF left child of current is null:
+      visit current
+      current ← right child of current
+    ELSE:
+      pred ← left child of current
+      WHILE pred has right child AND right child of pred ≠ current:
+        pred ← right child of pred
+      IF right child of pred is null:
+        temporarily set right child of pred ← current  // thread
+        current ← left child of current
+      ELSE:
+        restore right child of pred ← null  // unthread
+        visit current
+        current ← right child of current
+
+Uses only O(1) extra space; restores original tree links after the walk.`,
 };

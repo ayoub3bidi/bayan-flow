@@ -29,14 +29,13 @@
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
     "autoplayOnly": "uniquement",
-    "mysteryCategory": "Mystère",
-    "mysteryCategoryHint": "Bientôt",
-    "mysteryCategoryAria": "Catégorie d’algorithmes à venir, pas encore disponible"
+    "treeNodeCount": "Nœuds de l'arbre"
   },
   "modes": {
     "sorting": "Tri",
     "pathfinding": "Recherche de Chemin",
     "searching": "Recherche",
+    "treeTraversal": "Parcours d'arbres",
     "manual": "Manuel",
     "autoplay": "Lecture Auto"
   },
@@ -79,6 +78,14 @@
       "depthFirstSearch": "Parcours en profondeur (graphe)",
       "breadthFirstSearchGraph": "Parcours en largeur (graphe)"
     },
+    "treeTraversal": {
+      "inorderTraversal": "Parcours infixe",
+      "levelOrderTraversal": "Parcours en largeur de l'arbre",
+      "zigzagLevelOrderTraversal": "Parcours en largeur en zigzag",
+      "preorderTraversal": "Parcours préfixe",
+      "postorderTraversal": "Parcours suffixe",
+      "morrisTraversal": "Parcours de Morris"
+    },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
@@ -110,7 +117,13 @@
       "exponentialSearch": "Démarrage de la recherche exponentielle",
       "fibonacciSearch": "Démarrage de la recherche de Fibonacci",
       "depthFirstSearch": "Démarrage du parcours en profondeur sur le graphe nœuds–arêtes",
-      "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes"
+      "breadthFirstSearchGraph": "Démarrage du parcours en largeur sur le graphe nœuds–arêtes",
+      "inorderTraversal": "Démarrage du parcours infixe",
+      "levelOrderTraversal": "Démarrage du parcours en largeur de l'arbre",
+      "zigzagLevelOrderTraversal": "Démarrage du parcours en largeur en zigzag",
+      "preorderTraversal": "Démarrage du parcours préfixe",
+      "postorderTraversal": "Démarrage du parcours suffixe",
+      "morrisTraversal": "Démarrage du parcours de Morris"
     }
   },
   "complexity": {
@@ -145,7 +158,13 @@
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
-    "breadthFirstSearchGraph": "O(V + E)"
+    "breadthFirstSearchGraph": "O(V + E)",
+    "inorderTraversal": "O(n)",
+    "levelOrderTraversal": "O(n)",
+    "zigzagLevelOrderTraversal": "O(n)",
+    "preorderTraversal": "O(n)",
+    "postorderTraversal": "O(n)",
+    "morrisTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Lent",
@@ -630,6 +649,78 @@
         "facts_1": "BFS garantit le chemin le plus court (sauts minimaux) sur les graphes non pondérés ; DFS ne le garantit pas.",
         "facts_2": "La tête de file est affichée en haut du canevas — le prochain nœud à défiler.",
         "facts_3": "La même mise en page d'arbre utilisée pour DFS est réutilisée ici, afin de comparer les deux algorithmes."
+      },
+      "inorderTraversal": {
+        "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
+        "intuition": "Depuis la racine, empiler le long des fils gauches jusqu'à l'absence de fils gauche ; visiter (enregistrer) le nœud, puis passer au fils droit et répéter. Chaque nœud est traité après tout son sous-arbre gauche.",
+        "realWorldUses_0": "Énumération triée d'un ABR sans tableau séparé",
+        "realWorldUses_1": "Retrouver la notation infixe depuis un arbre d'expression",
+        "realWorldUses_2": "Introduire les parcours profondeur avant préfixe et suffixe",
+        "realWorldUses_3": "Base des itérateurs d'arbres dans les bibliothèques",
+        "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour une pile explicite avec hauteur h.",
+        "facts_1": "Les arbres aléatoires assignent les valeurs par indexation infixe pour produire 1…n — un ABR valide.",
+        "facts_2": "La version récursive correspond au comportement itératif montré pas à pas.",
+        "facts_3": "Contrairement au DFS dans un graphe avec but, le parcours visite chaque nœud une fois."
+      },
+      "levelOrderTraversal": {
+        "history": "Le parcours en largeur d'un arbre est la version arborescente du breadth-first search : traiter la racine, puis tous les nœuds à distance 1, puis à distance 2, etc. C'est le contrepoint fondé sur une file aux parcours en profondeur basés sur pile ou récursion.",
+        "intuition": "On commence par enfiler la racine. À chaque étape, on retire le nœud en tête, on le visite, puis on enfile ses enfants de gauche à droite. Comme la file conserve l'ordre de découverte, tous les nœuds de profondeur d sont traités avant ceux de profondeur d + 1.",
+        "realWorldUses_0": "Formats de sérialisation d'arbres niveau par niveau",
+        "realWorldUses_1": "Trouver le nœud le plus proche vérifiant une propriété",
+        "realWorldUses_2": "Afficher ou analyser un arbre couche par couche",
+        "realWorldUses_3": "Enseigner l'approche par file avant le BFS sur graphe",
+        "facts_0": "Le temps est Θ(n) ; l'espace auxiliaire est O(w), où w est la largeur maximale de l'arbre.",
+        "facts_1": "Contrairement aux parcours en profondeur, ce parcours dépend d'une file et non d'une pile.",
+        "facts_2": "Sur le même arbre, ce parcours met en évidence les niveaux horizontaux plutôt que la profondeur branche par branche.",
+        "facts_3": "Il s'agit du motif BFS standard sur les arbres, car toutes les arêtes ont le même poids."
+      },
+      "zigzagLevelOrderTraversal": {
+        "history": "Le parcours en largeur zigzag superpose aux niveaux habituels une contrainte d’entretiens : changer le sens de visite une profondeur sur deux. Variante très courante des problèmes de concours (« traversée en zigzag ») basée sur le traitement couche par couche.",
+        "intuition": "Comme le parcours par niveaux, rassembler tous les nœuds d’un même étage avant de passer au suivant. Conserver l’ordre gauche-droite spatial pour préparer correctement la file des enfants, mais inverser l’ordre de visite sur les niveaux pairs ou impairs pour obtenir l’alternance.",
+        "realWorldUses_0": "Exercices de parcours d’arbres type LeetCode et mises en page à sens alternés",
+        "realWorldUses_1": "Comparer un BFS classique avec un simple drapeau de direction",
+        "realWorldUses_2": "Montrer l’usage d’une deque ou d’un reverse léger tout en gardant une complexité linéaire",
+        "realWorldUses_3": "Énigmes de sérialisation où chaque niveau doit s’afficher dans un sens différent",
+        "facts_0": "Temps toujours Θ(n) ; l’espace reste dominé par O(w), largeur maximale d’un niveau.",
+        "facts_1": "Le zigzag ne doit pas changer l’ordre spatial utilisé pour enfiler les enfants sinon les niveaux se mélangent.",
+        "facts_2": "Un badge séparé rappelle le sens de lecture du niveau en cours au lieu de tout coder dans la file.",
+        "facts_3": "Pour un niveau d’un seul nœud, inverser ne change pas l’ordre visible."
+      },
+      "preorderTraversal": {
+        "history": "Le parcours préfixe (nœud, sous-arbre gauche, sous-arbre droit) est classique pour l'évaluation d'expressions et la sérialisation. Avec l'infixe, il forme la paire utilisée pour reconstruire un arbre binaire lorsque les valeurs sont uniques.",
+        "intuition": "Enregistrer le nœud courant avant d'aller plus profond : visiter le nœud, puis tout le sous-arbre gauche, puis le droit. La visualisation utilise une pile explicite (empiler le droit avant le gauche pour traiter le gauche en premier), comme les appels récursifs sans récursion illimitée dans le navigateur.",
+        "realWorldUses_0": "Copie ou sérialisation d'un arbre (nœud puis enfants)",
+        "realWorldUses_1": "Notation polonaise préfixe depuis un arbre d'expression",
+        "realWorldUses_2": "Reconstruction d'arbre combinée avec le parcours infixe",
+        "realWorldUses_3": "Enseigner le parcours profondeur « parent d'abord » avant le suffixe",
+        "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour la pile explicite avec hauteur h.",
+        "facts_1": "Les mêmes arbres aléatoires qu'en infixe portent des étiquettes en ABR (infixe → 1…n) ; l'ordre préfixe dépend de la forme, pas du tri des étiquettes.",
+        "facts_2": "Le panneau Python propose versions récursive et itérative avec le même ordre de visite.",
+        "facts_3": "Le préfixe seul ne trie pas les clés d'un ABR — l'infixe oui."
+      },
+      "postorderTraversal": {
+        "history": "Le parcours suffixe (sous-arbre gauche, sous-arbre droit, nœud) est le troisième membre du trio classique. C'est l'ordre naturel pour la suppression récursive d'arbres et la résolution de dépendances, où les enfants doivent être traités avant le parent.",
+        "intuition": "Traiter complètement les deux enfants avant le nœud courant : descendre gauche, puis droit, puis visiter. Contrairement au préfixe « nœud d'abord », le suffixe traite les feuilles avant leurs ancêtres. Cela correspond à la logique de suppression (détruire les sous-arbres avant le nœud) et au tri topologique.",
+        "realWorldUses_0": "Destruction d'un arbre (supprimer les enfants avant le parent, éviter les pointeurs dangling)",
+        "realWorldUses_1": "Calculer la hauteur, la taille ou les agrégats d'arbre de bas en haut",
+        "realWorldUses_2": "Notation polonaise inverse (postfixe) et évaluation d'expressions",
+        "realWorldUses_3": "Résolution de dépendances dans les systèmes de construction et l'ordonnancement (tâches avant leurs dépendants)",
+        "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour la pile explicite avec hauteur h.",
+        "facts_1": "Deux piles itératives : première pile traite les nœuds ; seconde collecte le résultat en suffixe inverse.",
+        "facts_2": "Récursivement : récurser gauche, récurser droit, puis visiter. Correspond à la version itérative.",
+        "facts_3": "Suffixe + infixe détermine uniquement un arbre (valeurs uniques supposées) ; suffixe seul ne le fait pas."
+      },
+      "morrisTraversal": {
+        "history": "Joseph M. Morris a publié en 1979 le parcours infixe avec fils vers le prédécesseur—une réponse élégante au défi « infixe sans pile ni récursion ». Les liens temporaires sur le fils droit encodent les mêmes informations qu’une pile puis l’arbre est rétabli sur place.",
+        "intuition": "Pour un nœud avec un fils gauche, trouver le prédécesseur en infixe (le plus à droite dans le sous-arbre gauche). Si son fils droit est nul, connecter ce prédécesseur au nœud courant (retour après le gauche) puis aller à gauche. Si le fils droit pointe déjà vers le courant, le sous-arbre gauche est fini : on rompt le fil, on visite le nœud, on va à droite. Aucune structure auxiliaire.",
+        "realWorldUses_0": "Concours et entretiens sur les limites d’espace des parcours",
+        "realWorldUses_1": "Très petits systèmes embarqués où la profondeur de pile risquée ou absente",
+        "realWorldUses_2": "Illustrer comment la structure du nœud peut servir d’état de navigation",
+        "realWorldUses_3": "Comparer avec un infixe itératif à pile explicite en O(h)",
+        "facts_0": "Temps Θ(n) : chaque arête réelle est traversée un nombre borné de fois ; même ordre qu’un infixe classique.",
+        "facts_1": "Espace auxiliaire en O(1) : pas de pile explicite ni de file.",
+        "facts_2": "Les fils sont retirés avant la fin du parcours ; la forme finale de l’arbre est inchangée.",
+        "facts_3": "La visualisation représente chaque fil temporaire par une arête supplémentaire sur l’étape concernée."
       }
     }
   },
@@ -683,6 +774,12 @@
       "stackFrontier": "Pile / frontière",
       "visited": "Visité",
       "discoveryPath": "Chemin de découverte"
+    },
+    "treeTraversal": {
+      "pending": "Non visité",
+      "visiting": "En cours",
+      "visited": "Visité",
+      "visitOrder": "Ordre de visite"
     }
   },
   "visualization": {
@@ -694,7 +791,13 @@
     "graphAriaEmpty": "Graphe vide",
     "stackTop": "Sommet de pile : {{top}}",
     "queueFront": "Tête de file : {{front}}",
-    "graphSubstrate": "Visualisation de graphe"
+    "graphSubstrate": "Visualisation de graphe",
+    "treeAria": "Arbre à {{count}} nœuds",
+    "treeAriaEmpty": "Arbre vide",
+    "queueBadge": "File : {{order}}",
+    "visitOrderBadge": "Visités : {{order}}",
+    "levelScanLtr": "Ce niveau : de gauche à droite",
+    "levelScanRtl": "Ce niveau : de droite à gauche"
   },
   "languages": {
     "en": "English",
@@ -719,6 +822,38 @@
     "dfsGraphVisiting": "Exploration du nœud {{node}}",
     "bfsGraphDequeue": "Nœud {{node}} sorti de la file — examen des voisins niveau par niveau",
     "bfsGraphEnqueue": "{{count}} voisin(s) ajouté(s) à la file ; le suivant est en tête",
+    "inorderStart": "Parcours infixe : sous-arbre gauche, nœud, sous-arbre droit (LNR).",
+    "inorderVisiting": "Visite du nœud {{node}}",
+    "inorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "inorderComplete": "Parcours infixe terminé. Ordre final : {{order}}",
+    "inorderEmpty": "Arbre vide — rien à parcourir.",
+    "levelOrderStart": "Parcours en largeur de l'arbre : visiter chaque niveau à l'aide d'une file.",
+    "levelOrderVisiting": "Visite du nœud {{node}}",
+    "levelOrderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "levelOrderComplete": "Parcours en largeur terminé. Ordre final : {{order}}",
+    "levelOrderEmpty": "Arbre vide — rien à parcourir.",
+    "zigzagLevelStart": "Parcours en largeur zigzag : mêmes couches que le BFS, mais on alterne gauche→droite et droite→gauche selon la profondeur (en commençant par la racine).",
+    "zigzagLevelVisiting": "Visite du nœud {{node}}",
+    "zigzagLevelVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "zigzagLevelComplete": "Parcours en largeur zigzag terminé. Ordre final : {{order}}",
+    "zigzagLevelEmpty": "Arbre vide — rien à parcourir.",
+    "preorderStart": "Parcours préfixe : nœud, puis sous-arbre gauche, puis sous-arbre droit (NLR).",
+    "preorderVisiting": "Visite du nœud {{node}}",
+    "preorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "preorderComplete": "Parcours préfixe terminé. Ordre final : {{order}}",
+    "preorderEmpty": "Arbre vide — rien à parcourir.",
+    "postorderStart": "Parcours suffixe : sous-arbre gauche, puis sous-arbre droit, puis nœud (LRN).",
+    "postorderVisiting": "Visite du nœud {{node}}",
+    "postorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "postorderComplete": "Parcours suffixe terminé. Ordre final : {{order}}",
+    "postorderEmpty": "Arbre vide — rien à parcourir.",
+    "morrisStart": "Parcours de Morris : ordre infixe (LNR) avec un espace auxiliaire en O(1) — des fils temporaires remplacent la pile.",
+    "morrisThreading": "Fil : lier le prédécesseur {{from}} → {{to}} pour revenir après le sous-arbre gauche.",
+    "morrisUnthreading": "Défil : restaurer le pointeur droit de {{from}} ; le sous-arbre gauche de {{to}} est fini — visiter {{to}}.",
+    "morrisVisiting": "Visite du nœud {{node}}",
+    "morrisVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
+    "morrisComplete": "Parcours de Morris terminé. Ordre final : {{order}}",
+    "morrisEmpty": "Arbre vide — rien à parcourir.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -858,6 +993,11 @@
         "title": "Algorithmes de recherche",
         "description": "Suivez les recherches sur des données triées étape par étape. Voyez comment chaque comparaison réduit l'intervalle jusqu'à trouver la cible ou conclure à son absence.",
         "algorithms": "Recherche dichotomique, recherche par sauts, recherche par interpolation, recherche exponentielle"
+      },
+      "treeTraversal": {
+        "title": "Parcours d'arbres",
+        "description": "Explorez les ordres classiques de parcours d'arbres et comprenez comment chaque ordre visite les nœuds.",
+        "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours en largeur en zigzag, Parcours préfixe, Parcours postfixe, Parcours de Morris"
       }
     },
     "features": {
@@ -914,7 +1054,10 @@
     "logarithmicSearch": "Recherche logarithmique",
     "blockJumpSearch": "Recherche par blocs / sauts",
     "distributionAwareSearch": "Recherche sensible à la distribution",
-    "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)"
+    "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)",
+    "depthFirstTraversal": "Parcours en profondeur",
+    "breadthFirstTraversal": "Parcours en largeur",
+    "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire"
   },
   "roadmap": {
     "hero": {

@@ -15,13 +15,20 @@ import { isNodeLinkSearchingAlgorithm } from './searchingSubstrate';
  * @param {{
  *   sortingVisualization: { array: unknown },
  *   searchingVisualization: Record<string, unknown>,
+ *   treeTraversalVisualization: Record<string, unknown>,
  *   gridSize: number,
  *   activeAlgorithmKey: string,
  * }} ctx
  */
 export function getExtraVisualizerProps(
   algorithmType,
-  { sortingVisualization, searchingVisualization, gridSize, activeAlgorithmKey }
+  {
+    sortingVisualization,
+    searchingVisualization,
+    treeTraversalVisualization,
+    gridSize,
+    activeAlgorithmKey,
+  }
 ) {
   if (algorithmType === ALGORITHM_TYPES.SORTING) {
     return { array: sortingVisualization.array, complexityDataset: 'sorting' };
@@ -45,6 +52,17 @@ export function getExtraVisualizerProps(
   }
   if (algorithmType === ALGORITHM_TYPES.PATHFINDING) {
     return { gridSize, complexityDataset: 'pathfinding' };
+  }
+  if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
+    return {
+      nodes: treeTraversalVisualization.treeNodes,
+      edges: treeTraversalVisualization.treeEdges,
+      nodeStates: treeTraversalVisualization.treeNodeStates,
+      visitOrder: treeTraversalVisualization.visitOrder,
+      queueOrder: treeTraversalVisualization.queueOrder,
+      levelScanDirection: treeTraversalVisualization.treeLevelScanDirection,
+      complexityDataset: 'treeTraversal',
+    };
   }
   return {};
 }

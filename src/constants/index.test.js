@@ -15,6 +15,7 @@ import {
   SORTING_ALGORITHMS,
   PATHFINDING_ALGORITHMS,
   SEARCHING_ALGORITHMS,
+  TREE_TRAVERSAL_ALGORITHMS,
   ANIMATION_SPEEDS,
   ELEMENT_STATES,
   STATE_COLORS,
@@ -28,6 +29,7 @@ import {
   DEFAULT_GRID_SIZE,
   PATHFINDING_COMPLEXITY,
   SEARCHING_COMPLEXITY,
+  TREE_TRAVERSAL_COMPLEXITY,
 } from './index.js';
 
 describe('Constants', () => {
@@ -37,6 +39,7 @@ describe('Constants', () => {
         SORTING: 'sorting',
         PATHFINDING: 'pathfinding',
         SEARCHING: 'searching',
+        TREE_TRAVERSAL: 'treeTraversal',
       });
     });
   });
@@ -100,6 +103,20 @@ describe('Constants', () => {
         'breadthFirstSearchGraph',
       ]);
       expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(9);
+    });
+  });
+
+  describe('TREE_TRAVERSAL_ALGORITHMS', () => {
+    it('should contain tree traversal algorithm keys', () => {
+      expect(Object.values(TREE_TRAVERSAL_ALGORITHMS)).toEqual([
+        'inorderTraversal',
+        'preorderTraversal',
+        'postorderTraversal',
+        'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
+        'morrisTraversal',
+      ]);
+      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(6);
     });
   });
 
@@ -290,6 +307,33 @@ describe('Constants', () => {
     it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
       keys.forEach(algoKey => {
         const meta = SEARCHING_COMPLEXITY[algoKey];
+        expect(meta).toHaveProperty('name');
+        expect(meta).toHaveProperty('timeComplexity');
+        expect(meta).toHaveProperty('spaceComplexity');
+        expect(meta).toHaveProperty('description');
+        expect(meta).toHaveProperty('useCases');
+        expect(Array.isArray(meta.useCases)).toBe(true);
+      });
+    });
+  });
+
+  describe('TREE_TRAVERSAL_COMPLEXITY', () => {
+    const keys = Object.keys(TREE_TRAVERSAL_COMPLEXITY);
+
+    it('should have metadata for all tree traversal algorithms', () => {
+      expect(keys).toEqual([
+        'inorderTraversal',
+        'preorderTraversal',
+        'postorderTraversal',
+        'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
+        'morrisTraversal',
+      ]);
+    });
+
+    it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
+      keys.forEach(algoKey => {
+        const meta = TREE_TRAVERSAL_COMPLEXITY[algoKey];
         expect(meta).toHaveProperty('name');
         expect(meta).toHaveProperty('timeComplexity');
         expect(meta).toHaveProperty('spaceComplexity');

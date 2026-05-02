@@ -73,6 +73,26 @@ vi.mock('./binary_search.py?raw', () => ({
     'def binary_search(arr, target):\n    """Binary Search Algorithm"""\n    return -1',
 }));
 
+vi.mock('./inorder_traversal.py?raw', () => ({
+  default:
+    'def inorder_traversal(root):\n    """Inorder Traversal"""\n    return []',
+}));
+
+vi.mock('./level_order_traversal.py?raw', () => ({
+  default:
+    'def level_order_traversal(root):\n    """Level-order Traversal"""\n    return []',
+}));
+
+vi.mock('./postorder_traversal.py?raw', () => ({
+  default:
+    'def postorder_traversal(root):\n    """Postorder Traversal"""\n    return []',
+}));
+
+vi.mock('./bfs_graph.py?raw', () => ({
+  default:
+    'def bfs_graph(adj, root, goal):\n    """BFS on graph"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -183,6 +203,24 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Fibonacci Search Algorithm');
     });
 
+    it('returns Python code for postorder traversal', () => {
+      const code = getPythonCode('postorderTraversal');
+      expect(code).toContain('def postorder_traversal');
+      expect(code).toContain('Postorder Traversal');
+    });
+
+    it('returns Python code for Morris traversal', () => {
+      const code = getPythonCode('morrisTraversal');
+      expect(code).toContain('def morris_traversal');
+      expect(code).toContain('Morris');
+    });
+
+    it('returns Python code for level-order traversal', () => {
+      const code = getPythonCode('levelOrderTraversal');
+      expect(code).toContain('def level_order_traversal');
+      expect(code).toContain('Level-order Traversal');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -228,6 +266,11 @@ describe('Python Algorithms Index', () => {
     it('returns correct display name for Dijkstra', () => {
       const name = getAlgorithmDisplayName('dijkstra');
       expect(name).toBe("Dijkstra's Algorithm");
+    });
+
+    it('returns correct display name for level-order traversal', () => {
+      const name = getAlgorithmDisplayName('levelOrderTraversal');
+      expect(name).toBe('Level-order Traversal');
     });
 
     it('returns correct display name for A*', () => {
@@ -290,6 +333,16 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Depth-First Search (graph)');
     });
 
+    it('returns correct display name for postorder traversal', () => {
+      const name = getAlgorithmDisplayName('postorderTraversal');
+      expect(name).toBe('Postorder Traversal');
+    });
+
+    it('returns correct display name for Morris traversal', () => {
+      const name = getAlgorithmDisplayName('morrisTraversal');
+      expect(name).toBe('Morris Traversal');
+    });
+
     it('returns algorithm name as fallback for unknown algorithm', () => {
       const name = getAlgorithmDisplayName('unknownSort');
       expect(name).toBe('unknownSort');
@@ -329,6 +382,13 @@ describe('Python Algorithms Index', () => {
         'exponentialSearch',
         'fibonacciSearch',
         'depthFirstSearch',
+        'breadthFirstSearchGraph',
+        'inorderTraversal',
+        'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
+        'preorderTraversal',
+        'postorderTraversal',
+        'morrisTraversal',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

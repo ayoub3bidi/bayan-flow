@@ -9,6 +9,7 @@ import {
   ELEMENT_STATES,
   GRID_ELEMENT_STATES,
   GRAPH_NODE_STATES,
+  TREE_NODE_STATES,
 } from '../../constants/index.js';
 import { isNodeLinkSearchingAlgorithm } from '../../registry/searchingSubstrate.js';
 
@@ -165,6 +166,28 @@ function buildSearchingGraphCues(steps, framesPerStep) {
 }
 
 /**
+ * Tree traversal — visiting frame uses `VISITING` node state (mirrors hook sound).
+ *
+ * @param {Array} steps
+ * @param {number} framesPerStep
+ * @returns {ExportSoundCue[]}
+ */
+function buildTreeTraversalCues(steps, framesPerStep) {
+  /** @type {ExportSoundCue[]} */
+  const cues = [];
+
+  steps.forEach((step, stepIndex) => {
+    const vals = Object.values(step.nodeStates ?? {});
+    const base = stepIndex * framesPerStep;
+    if (vals.includes(TREE_NODE_STATES.VISITING)) {
+      cues.push({ fromFrame: base, kind: 'nodeVisit' });
+    }
+  });
+
+  return cues;
+}
+
+/**
  * Pure list of sound cues for the main algorithm segment (excludes complexity tail).
  *
  * @param {Object} opts
@@ -197,6 +220,10 @@ export function buildExportSoundCues({
       }
     }
     return buildSearchingArrayCues(steps, framesPerStep);
+  }
+
+  if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
+    return buildTreeTraversalCues(steps, framesPerStep);
   }
 
   return [];

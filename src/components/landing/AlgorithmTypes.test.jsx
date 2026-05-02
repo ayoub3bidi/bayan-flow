@@ -34,8 +34,11 @@ vi.mock('../ui/Section', () => ({
 // Mock icons
 vi.mock('lucide-react', () => ({
   ArrowUpDown: () => <svg data-testid="arrow-icon" />,
+  BarChart3: () => <svg data-testid="bar-chart-icon" />,
+  Grid3x3: () => <svg data-testid="grid-icon" />,
   Route: () => <svg data-testid="route-icon" />,
   Search: () => <svg data-testid="search-icon" />,
+  GitBranch: () => <svg data-testid="git-branch-icon" />,
 }));
 
 const renderComponent = () => {
@@ -88,19 +91,27 @@ describe('AlgorithmTypes', () => {
       ).toBeInTheDocument();
     });
 
+    it('should render tree traversal mode card', () => {
+      renderComponent();
+      expect(
+        screen.getByRole('heading', { name: /Tree Traversals/i })
+      ).toBeInTheDocument();
+    });
+
     it('should render category icons', () => {
       renderComponent();
-      expect(screen.getByTestId('arrow-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('route-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('bar-chart-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('grid-icon')).toBeInTheDocument();
       expect(screen.getByTestId('search-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('git-branch-icon')).toBeInTheDocument();
     });
   });
 
   describe('Content Structure', () => {
-    it('should have three algorithm type cards', () => {
+    it('should have four algorithm type cards', () => {
       const { container } = renderComponent();
       const cards = container.querySelectorAll('div[class*="group"]');
-      expect(cards.length).toBeGreaterThanOrEqual(3);
+      expect(cards.length).toBeGreaterThanOrEqual(4);
     });
 
     it('should display sorting algorithms list', () => {
@@ -123,11 +134,18 @@ describe('AlgorithmTypes', () => {
       expect(screen.getByText(/Interpolation Search/i)).toBeInTheDocument();
     });
 
+    it('should display tree traversal algorithms list', () => {
+      renderComponent();
+      expect(screen.getByText(/Inorder Traversal/i)).toBeInTheDocument();
+      expect(screen.getByText(/Level-order Traversal/i)).toBeInTheDocument();
+    });
+
     it('should display descriptions for all modes', () => {
       renderComponent();
       expect(screen.getByText(/comparison-based sorting/i)).toBeInTheDocument();
       expect(screen.getByText(/navigate through grids/i)).toBeInTheDocument();
       expect(screen.getByText(/sorted data/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/tree traversal/i).length).toBeGreaterThan(0);
     });
   });
 
@@ -219,15 +237,15 @@ describe('AlgorithmTypes', () => {
   });
 
   describe('Icon Display', () => {
-    it('should display arrow icon for sorting', () => {
+    it('should display bar chart icon for sorting', () => {
       renderComponent();
-      const icons = screen.getAllByTestId('arrow-icon');
+      const icons = screen.getAllByTestId('bar-chart-icon');
       expect(icons.length).toBeGreaterThan(0);
     });
 
-    it('should display route icon for pathfinding', () => {
+    it('should display grid icon for pathfinding', () => {
       renderComponent();
-      const icons = screen.getAllByTestId('route-icon');
+      const icons = screen.getAllByTestId('grid-icon');
       expect(icons.length).toBeGreaterThan(0);
     });
 
@@ -278,6 +296,16 @@ describe('AlgorithmTypes', () => {
       const grid = container.querySelector('div[class*="grid"]');
       expect(grid).toHaveClass('md:grid-cols-2');
       expect(grid).toHaveClass('lg:grid-cols-3');
+    });
+
+    it('should make the fourth card span the full row on large screens', () => {
+      const { container } = renderComponent();
+      const cards = container.querySelectorAll(
+        'div.group.relative.h-full.min-h-0.self-stretch'
+      );
+      expect(cards.length).toBe(4);
+      const fourthCard = cards[3];
+      expect(fourthCard).toHaveClass('lg:col-span-3');
     });
 
     it('should have centered text on mobile', () => {

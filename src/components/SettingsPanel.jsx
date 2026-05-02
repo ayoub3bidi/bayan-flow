@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Hand, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Play, Hand, Volume2, VolumeX } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   ALGORITHM_TYPES,
@@ -14,6 +14,7 @@ import {
   VISUALIZATION_MODES,
   ALGORITHM_TYPE_LIST,
   SEARCH_GRAPH_NODE_COUNT,
+  TREE_NODE_COUNT,
 } from '../constants';
 import { soundManager } from '../utils/soundManager';
 import { useAlgorithmConfig } from '../config/algorithmConfig';
@@ -35,6 +36,8 @@ function SettingsPanel({
   onGridSizeChange,
   searchGraphNodeCount,
   onSearchGraphNodeCountChange,
+  treeNodeCount,
+  onTreeNodeCountChange,
   isPlaying,
   mode,
   onModeChange,
@@ -65,20 +68,32 @@ function SettingsPanel({
           max: SEARCH_GRAPH_NODE_COUNT.max,
           step: SEARCH_GRAPH_NODE_COUNT.step,
         }
-      : categoryConfig.sizeControl;
+      : effectiveSizeBinding === 'tree'
+        ? {
+            type: 'slider',
+            i18nKey: 'settings.treeNodeCount',
+            min: TREE_NODE_COUNT.min,
+            max: TREE_NODE_COUNT.max,
+            step: TREE_NODE_COUNT.step,
+          }
+        : categoryConfig.sizeControl;
 
   const sizeValue =
     effectiveSizeBinding === 'array'
       ? arraySize
       : effectiveSizeBinding === 'searchGraph'
         ? searchGraphNodeCount
-        : gridSize;
+        : effectiveSizeBinding === 'tree'
+          ? treeNodeCount
+          : gridSize;
   const onSizeChange =
     effectiveSizeBinding === 'array'
       ? onArraySizeChange
       : effectiveSizeBinding === 'searchGraph'
         ? onSearchGraphNodeCountChange
-        : onGridSizeChange;
+        : effectiveSizeBinding === 'tree'
+          ? onTreeNodeCountChange
+          : onGridSizeChange;
 
   const currentSpeedIndex = Math.max(
     0,
@@ -149,23 +164,6 @@ function SettingsPanel({
               </button>
             );
           })}
-          <div
-            className="flex min-h-touch flex-col items-center justify-center gap-1 rounded-xl bg-bg/50 px-2 py-3 text-center text-text-secondary shadow-sm"
-            role="note"
-            aria-label={t('settings.mysteryCategoryAria')}
-          >
-            <Sparkles
-              size={20}
-              className="shrink-0 text-amber-500/90 dark:text-amber-400/90"
-              aria-hidden
-            />
-            <span className="text-xs font-semibold text-text-primary">
-              {t('settings.mysteryCategory')}
-            </span>
-            <span className="text-[10px] font-medium uppercase tracking-wide text-text-secondary">
-              {t('settings.mysteryCategoryHint')}
-            </span>
-          </div>
         </div>
       </div>
 

@@ -41,6 +41,42 @@ describe('getPseudocodeForLocale', () => {
   it('returns null for unknown algorithm keys', () => {
     expect(getPseudocodeForLocale('notARealAlgorithmKey123', 'en')).toBeNull();
   });
+
+  it('returns pseudocode for inorderTraversal', () => {
+    const text = getPseudocodeForLocale('inorderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('InorderTraversal');
+  });
+
+  it('returns pseudocode for levelOrderTraversal', () => {
+    const text = getPseudocodeForLocale('levelOrderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('LevelOrderTraversal');
+  });
+
+  it('returns pseudocode for zigzagLevelOrderTraversal', () => {
+    const text = getPseudocodeForLocale('zigzagLevelOrderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('ZigzagLevelOrderTraversal');
+  });
+
+  it('returns pseudocode for preorderTraversal', () => {
+    const text = getPseudocodeForLocale('preorderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('PreorderTraversal');
+  });
+
+  it('returns pseudocode for postorderTraversal', () => {
+    const text = getPseudocodeForLocale('postorderTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('PostorderTraversal');
+  });
+
+  it('returns pseudocode for morrisTraversal', () => {
+    const text = getPseudocodeForLocale('morrisTraversal', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('MorrisInorder');
+  });
 });
 
 describe('getPseudocode', () => {

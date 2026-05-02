@@ -248,4 +248,52 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+
+  // ── Tree traversals ───────────────────────────────────────────────────────
+  inorderTraversal: {
+    inventor:
+      'Foundational tree-walk pattern in CS curricula and compiler design',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  levelOrderTraversal: {
+    inventor:
+      'Konrad Zuse / classic breadth-first traversal formulation applied to trees',
+    year: 1945,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  zigzagLevelOrderTraversal: {
+    inventor:
+      'Breadth-first level-by-level pattern extended with alternating scan direction — common textbook and interview formulation',
+    year: 1990,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  preorderTraversal: {
+    inventor: 'Foundational tree-walk pattern in CS curricula',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  postorderTraversal: {
+    inventor:
+      'Foundational tree-walk pattern in CS curricula and compiler design',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  morrisTraversal: {
+    inventor: 'Joseph M. Morris',
+    year: 1979,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 };

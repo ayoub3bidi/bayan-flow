@@ -120,6 +120,45 @@ export const ALGORITHM_STEPS = {
   BFS_GRAPH_DEQUEUE: 'bfsGraphDequeue',
   BFS_GRAPH_ENQUEUE: 'bfsGraphEnqueue',
 
+  // Tree traversals (inorder)
+  INORDER_START: 'inorderStart',
+  INORDER_VISITING: 'inorderVisiting',
+  INORDER_VISITED: 'inorderVisited',
+  INORDER_COMPLETE: 'inorderComplete',
+  INORDER_EMPTY: 'inorderEmpty',
+
+  LEVEL_ORDER_START: 'levelOrderStart',
+  LEVEL_ORDER_VISITING: 'levelOrderVisiting',
+  LEVEL_ORDER_VISITED: 'levelOrderVisited',
+  LEVEL_ORDER_COMPLETE: 'levelOrderComplete',
+  LEVEL_ORDER_EMPTY: 'levelOrderEmpty',
+
+  ZIGZAG_LEVEL_START: 'zigzagLevelStart',
+  ZIGZAG_LEVEL_VISITING: 'zigzagLevelVisiting',
+  ZIGZAG_LEVEL_VISITED: 'zigzagLevelVisited',
+  ZIGZAG_LEVEL_COMPLETE: 'zigzagLevelComplete',
+  ZIGZAG_LEVEL_EMPTY: 'zigzagLevelEmpty',
+
+  PREORDER_START: 'preorderStart',
+  PREORDER_VISITING: 'preorderVisiting',
+  PREORDER_VISITED: 'preorderVisited',
+  PREORDER_COMPLETE: 'preorderComplete',
+  PREORDER_EMPTY: 'preorderEmpty',
+
+  POSTORDER_START: 'postorderStart',
+  POSTORDER_VISITING: 'postorderVisiting',
+  POSTORDER_VISITED: 'postorderVisited',
+  POSTORDER_COMPLETE: 'postorderComplete',
+  POSTORDER_EMPTY: 'postorderEmpty',
+
+  MORRIS_START: 'morrisStart',
+  MORRIS_THREADING: 'morrisThreading',
+  MORRIS_UNTHREADING: 'morrisUnthreading',
+  MORRIS_VISITING: 'morrisVisiting',
+  MORRIS_VISITED: 'morrisVisited',
+  MORRIS_COMPLETE: 'morrisComplete',
+  MORRIS_EMPTY: 'morrisEmpty',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

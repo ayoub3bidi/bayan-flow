@@ -22,6 +22,7 @@ const AlgorithmInsightPanel = lazy(
 import { useSortingVisualization } from '../hooks/useSortingVisualization';
 import { usePathfindingVisualization } from '../hooks/usePathfindingVisualization';
 import { useSearchingVisualization } from '../hooks/useSearchingVisualization';
+import { useTreeTraversalVisualization } from '../hooks/useTreeTraversalVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
 import { useVideoExporter } from '../video/useVideoExporter';
 import { soundManager } from '../utils/soundManager';
@@ -29,6 +30,7 @@ import {
   DEFAULT_ARRAY_SIZE,
   DEFAULT_GRID_SIZE,
   DEFAULT_SEARCH_GRAPH_NODE_COUNT,
+  DEFAULT_TREE_NODE_COUNT,
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
@@ -81,6 +83,7 @@ function App() {
   const [searchGraphNodeCount, setSearchGraphNodeCount] = useState(
     DEFAULT_SEARCH_GRAPH_NODE_COUNT
   );
+  const [treeNodeCount, setTreeNodeCount] = useState(DEFAULT_TREE_NODE_COUNT);
   const [sortOrder, setSortOrder] = useState(SORT_ORDERS.ASCENDING);
   const prevSortOrderRef = useRef(sortOrder);
   const [array, setArray] = useState(() =>
@@ -122,6 +125,12 @@ function App() {
     mode,
     searchGraphNodeCount
   );
+  const treeTraversalVisualization = useTreeTraversalVisualization(
+    selectedAlgorithms[ALGORITHM_TYPES.TREE_TRAVERSAL],
+    speed,
+    mode,
+    treeNodeCount
+  );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
   const {
@@ -142,6 +151,7 @@ function App() {
     sortingVisualization,
     pathfindingVisualization,
     searchingVisualization,
+    treeTraversalVisualization,
   });
 
   const visualization = visualizationMap[algorithmType];
@@ -174,7 +184,9 @@ function App() {
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
   const handleGenerateArray = () => {
     const cfg = CATEGORY_CONFIG[algorithmType];
-    if (
+    if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
+      treeTraversalVisualization.regenerateTree();
+    } else if (
       algorithmType === ALGORITHM_TYPES.SEARCHING &&
       isNodeLinkSearchingAlgorithm(
         selectedAlgorithms[ALGORITHM_TYPES.SEARCHING]
@@ -221,6 +233,10 @@ function App() {
 
   const handleSearchGraphNodeCountChange = newCount => {
     setSearchGraphNodeCount(newCount);
+  };
+
+  const handleTreeNodeCountChange = newCount => {
+    setTreeNodeCount(newCount);
   };
 
   const handleExportVideo = () => {
@@ -277,6 +293,7 @@ function App() {
   const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
     sortingVisualization,
     searchingVisualization,
+    treeTraversalVisualization,
     gridSize,
     activeAlgorithmKey,
   });
@@ -375,6 +392,8 @@ function App() {
                       onSearchGraphNodeCountChange={
                         handleSearchGraphNodeCountChange
                       }
+                      treeNodeCount={treeNodeCount}
+                      onTreeNodeCountChange={handleTreeNodeCountChange}
                       isPlaying={visualization.isPlaying}
                       mode={mode}
                       onModeChange={setMode}

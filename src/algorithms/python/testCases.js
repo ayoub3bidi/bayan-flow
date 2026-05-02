@@ -47,6 +47,126 @@ const SORTING_TEST_CASES = [
   },
 ];
 
+/** morris_traversal(root) -> inorder list of values with O(1) extra space */
+const MORRIS_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'morris-bst-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[1, 2, 3, 4, 5, 6, 7]',
+  },
+  {
+    id: 'morris-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'morris-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'morris-left-skew',
+    name: 'Left-skewed chain',
+    input:
+      "{'value': 3, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': None}, 'right': None}",
+    expected: '[1, 2, 3]',
+  },
+];
+
+/** postorder_traversal(root) -> list of values in LRN order; root is dict or None */
+const POSTORDER_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'post-bst-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[1, 3, 2, 5, 7, 6, 4]',
+  },
+  {
+    id: 'post-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'post-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'post-left-skew',
+    name: 'Left-skewed chain',
+    input:
+      "{'value': 3, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': None}, 'right': None}",
+    expected: '[1, 2, 3]',
+  },
+];
+
+/** level_order_traversal(root) -> list of values in breadth-first order; root is dict or None */
+const LEVEL_ORDER_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'level-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[4, 2, 6, 1, 3, 5, 7]',
+  },
+  {
+    id: 'level-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'level-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'level-right-skew',
+    name: 'Right-skewed chain',
+    input:
+      "{'value': 1, 'left': None, 'right': {'value': 2, 'left': None, 'right': {'value': 3, 'left': None, 'right': None}}}",
+    expected: '[1, 2, 3]',
+  },
+];
+
+/** zigzag_level_order_traversal(root) -> list alternating direction per depth */
+const ZIGZAG_LEVEL_ORDER_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'zigzag-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[4, 6, 2, 1, 3, 5, 7]',
+  },
+  {
+    id: 'zigzag-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'zigzag-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'zigzag-right-skew',
+    name: 'Right-skewed chain',
+    input:
+      "{'value': 1, 'left': None, 'right': {'value': 2, 'left': None, 'right': {'value': 3, 'left': None, 'right': None}}}",
+    expected: '[1, 2, 3]',
+  },
+];
+
 /** Counting sort only works with non-negative integers */
 const COUNTING_SORT_TEST_CASES = [
   {
@@ -430,6 +550,36 @@ const PATHFINDING_TEST_CASES = [
   },
 ];
 
+/** preorder_traversal(root) -> list of values in NLR order; root is dict or None */
+const PREORDER_TRAVERSAL_TEST_CASES = [
+  {
+    id: 'pre-bst-balanced',
+    name: 'Balanced BST (values 1–7)',
+    input:
+      "{'value': 4, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': {'value': 3, 'left': None, 'right': None}}, 'right': {'value': 6, 'left': {'value': 5, 'left': None, 'right': None}, 'right': {'value': 7, 'left': None, 'right': None}}}",
+    expected: '[4, 2, 1, 3, 6, 5, 7]',
+  },
+  {
+    id: 'pre-empty',
+    name: 'Empty tree',
+    input: 'None',
+    expected: '[]',
+  },
+  {
+    id: 'pre-single',
+    name: 'Single node',
+    input: "{'value': 42, 'left': None, 'right': None}",
+    expected: '[42]',
+  },
+  {
+    id: 'pre-left-skew',
+    name: 'Left-skewed chain',
+    input:
+      "{'value': 3, 'left': {'value': 2, 'left': {'value': 1, 'left': None, 'right': None}, 'right': None}, 'right': None}",
+    expected: '[3, 2, 1]',
+  },
+];
+
 /** ida_star(grid, start, end, rows, cols) */
 const IDA_STAR_TEST_CASES = [
   {
@@ -575,6 +725,26 @@ export const algorithmTestCases = {
   breadthFirstSearchGraph: {
     functionName: 'breadth_first_search_graph',
     testCases: BREADTH_FIRST_SEARCH_TEST_CASES,
+  },
+  levelOrderTraversal: {
+    functionName: 'level_order_traversal',
+    testCases: LEVEL_ORDER_TRAVERSAL_TEST_CASES,
+  },
+  zigzagLevelOrderTraversal: {
+    functionName: 'zigzag_level_order_traversal',
+    testCases: ZIGZAG_LEVEL_ORDER_TRAVERSAL_TEST_CASES,
+  },
+  preorderTraversal: {
+    functionName: 'preorder_traversal',
+    testCases: PREORDER_TRAVERSAL_TEST_CASES,
+  },
+  postorderTraversal: {
+    functionName: 'postorder_traversal',
+    testCases: POSTORDER_TRAVERSAL_TEST_CASES,
+  },
+  morrisTraversal: {
+    functionName: 'morris_traversal',
+    testCases: MORRIS_TRAVERSAL_TEST_CASES,
   },
 };
 

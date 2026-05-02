@@ -20,13 +20,20 @@ export function useCategoryVisualizations({
   sortingVisualization,
   pathfindingVisualization,
   searchingVisualization,
+  treeTraversalVisualization,
 }) {
   return useMemo(
     () => ({
       [ALGORITHM_TYPES.SORTING]: sortingVisualization,
       [ALGORITHM_TYPES.PATHFINDING]: pathfindingVisualization,
       [ALGORITHM_TYPES.SEARCHING]: searchingVisualization,
+      [ALGORITHM_TYPES.TREE_TRAVERSAL]: treeTraversalVisualization,
     }),
-    [sortingVisualization, pathfindingVisualization, searchingVisualization]
+    [
+      sortingVisualization,
+      pathfindingVisualization,
+      searchingVisualization,
+      treeTraversalVisualization,
+    ]
   );
 }

@@ -29,14 +29,13 @@
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
     "autoplayOnly": "only",
-    "mysteryCategory": "Mystery",
-    "mysteryCategoryHint": "Coming soon",
-    "mysteryCategoryAria": "Upcoming algorithm category, not yet available"
+    "treeNodeCount": "Tree nodes"
   },
   "modes": {
     "sorting": "Sorting",
     "pathfinding": "Pathfinding",
     "searching": "Searching",
+    "treeTraversal": "Tree Traversals",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },
@@ -79,6 +78,14 @@
       "depthFirstSearch": "Depth-First Search (graph)",
       "breadthFirstSearchGraph": "Breadth-First Search (graph)"
     },
+    "treeTraversal": {
+      "inorderTraversal": "Inorder Traversal",
+      "levelOrderTraversal": "Level-order Traversal",
+      "zigzagLevelOrderTraversal": "Zigzag Level-order Traversal",
+      "preorderTraversal": "Preorder Traversal",
+      "postorderTraversal": "Postorder Traversal",
+      "morrisTraversal": "Morris Traversal"
+    },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
@@ -111,7 +118,13 @@
       "exponentialSearch": "Starting Exponential Search",
       "fibonacciSearch": "Starting Fibonacci Search",
       "depthFirstSearch": "Starting depth-first search on the node–link graph",
-      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph"
+      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph",
+      "inorderTraversal": "Starting inorder traversal",
+      "levelOrderTraversal": "Starting level-order traversal",
+      "zigzagLevelOrderTraversal": "Starting zigzag level-order traversal",
+      "preorderTraversal": "Starting preorder traversal",
+      "postorderTraversal": "Starting postorder traversal",
+      "morrisTraversal": "Starting Morris traversal"
     }
   },
   "complexity": {
@@ -146,7 +159,13 @@
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
-    "breadthFirstSearchGraph": "O(V + E)"
+    "breadthFirstSearchGraph": "O(V + E)",
+    "inorderTraversal": "O(n)",
+    "levelOrderTraversal": "O(n)",
+    "zigzagLevelOrderTraversal": "O(n)",
+    "preorderTraversal": "O(n)",
+    "postorderTraversal": "O(n)",
+    "morrisTraversal": "O(n)"
   },
   "speeds": {
     "slow": "Slow",
@@ -631,6 +650,78 @@
         "facts_1": "BFS guarantees a shortest (minimum-hop) path on unweighted graphs; DFS does not.",
         "facts_2": "The queue front is shown at the top of the canvas — the next node to be dequeued.",
         "facts_3": "The same tree layout used for DFS is reused here, so you can compare both algorithms side by side on re-generation."
+      },
+      "inorderTraversal": {
+        "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
+        "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
+        "realWorldUses_0": "BST range queries and sorted enumeration without maintaining a separate sorted array",
+        "realWorldUses_1": "Recovering infix notation from expression trees",
+        "realWorldUses_2": "Teaching depth-first patterns before preorder and postorder",
+        "realWorldUses_3": "Foundation for Euler tours and tree iterators in standard libraries",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for an explicit stack with tree height h.",
+        "facts_1": "Random trees here assign values by inorder indexing so inorder produces 1…n — a valid BST.",
+        "facts_2": "Recursive formulation matches the iterative stack behavior shown step by step.",
+        "facts_3": "Unlike graph DFS with a goal, traversal visits every node exactly once."
+      },
+      "levelOrderTraversal": {
+        "history": "Level-order traversal is breadth-first search specialized to trees: process the root, then every node one edge away, then every node two edges away, and so on. As a tree algorithm it is the queue-based counterpoint to the stack/recursion style used by inorder, preorder, and postorder.",
+        "intuition": "Start by enqueuing the root. Repeatedly dequeue the front node, visit it, then enqueue its children from left to right. Because the queue preserves discovery order, all nodes at depth d are processed before any node at depth d + 1.",
+        "realWorldUses_0": "Tree serialization formats that need level-by-level output",
+        "realWorldUses_1": "Finding the nearest node that matches a condition",
+        "realWorldUses_2": "Printing or analyzing trees by layers instead of by branches",
+        "realWorldUses_3": "Teaching queue-based breadth-first thinking before moving to graph BFS",
+        "facts_0": "Time is Θ(n) on n nodes; auxiliary space is O(w), where w is the maximum width of the tree.",
+        "facts_1": "Unlike the depth-first traversals, level-order depends on a queue rather than a stack or recursion.",
+        "facts_2": "On the same tree shape, level-order highlights horizontal layers rather than root-to-leaf depth.",
+        "facts_3": "This traversal is also the standard BFS pattern on trees because each edge has equal weight."
+      },
+      "zigzagLevelOrderTraversal": {
+        "history": "Zigzag (spiral) level-order is breadth-first layering with an interview-favorite twist: within each depth, the visit direction alternates. It appears in textbooks and contests as “binary tree zigzag traversal” layered on ordinary BFS batching.",
+        "intuition": "Like level-order, gather all nodes of the next depth together. Snapshot them in spatial left-to-right order for building the queue, but visit odd depths in reverse to create the zigzag effect. Toggle a single Boolean (or parity) instead of rewriting the breadth-first scaffold.",
+        "realWorldUses_0": "LeetCode-style tree traversal exercises and directional pretty-print layouts",
+        "realWorldUses_1": "Contrasting vanilla level-order with a tiny state-machine change",
+        "realWorldUses_2": "Teaching deque / reverse patterns while keeping overall BFS guarantees",
+        "realWorldUses_3": "Serialization puzzles that require alternating row direction",
+        "facts_0": "Still Θ(n) time; space remains O(w) for the widest level when you enqueue one layer at a time.",
+        "facts_1": "The zigzag permutation does not reorder children for the next level—spatial left-to-right must be preserved.",
+        "facts_2": "The breadcrumb badges show scan direction separately from remaining frontier nodes.",
+        "facts_3": "Odd-sized levels still zigzag—you simply reverse single-node rows with no visible change."
+      },
+      "preorderTraversal": {
+        "history": "Preorder (prefix) order—node, then left subtree, then right subtree—is standard in textbooks on trees and expression evaluation. Together with inorder it is one half of the classic pair used to reconstruct a binary tree when node values are unique.",
+        "intuition": "Always record the current node before going deeper: visit the node, then explore the entire left branch, then the entire right branch. The visualization uses an explicit stack (push right before left so left is processed first), mirroring recursive calls without unbounded recursion depth in the UI runner.",
+        "realWorldUses_0": "Copying or serializing a tree structure (save node, then children)",
+        "realWorldUses_1": "Prefix (Polish) notation from expression trees",
+        "realWorldUses_2": "Tree reconstruction when combined with inorder traversal",
+        "realWorldUses_3": "Teaching parent-first depth-first thinking before postorder",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for the explicit stack with tree height h.",
+        "facts_1": "The same random binary trees as inorder use BST-shaped labels (inorder yields 1…n); preorder order depends on shape, not sorted labels.",
+        "facts_2": "The Python panel includes both recursive and iterative implementations with identical visit order.",
+        "facts_3": "Preorder alone does not yield sorted keys on a BST—inorder does."
+      },
+      "postorderTraversal": {
+        "history": "Postorder (suffix/postfix) order—left subtree, right subtree, then node—is the third member of the classic traversal trio. It is the natural order for recursive tree deletion and dependency resolution, where you must finish children before handling the parent.",
+        "intuition": "Process both children entirely before handling the current node: descend left, then right, then visit. Unlike preorder's 'node-first' approach, postorder processes leaf nodes before their ancestors. This matches deletion logic (delete subtrees before deleting the node) and topological sorting of DAGs.",
+        "realWorldUses_0": "Deleting or destroying a tree structure (delete children before parent, avoiding dangling pointers)",
+        "realWorldUses_1": "Computing tree height, size, or aggregate values bottom-up",
+        "realWorldUses_2": "Postfix (Reverse Polish) notation and expression evaluation",
+        "realWorldUses_3": "Dependency resolution in build systems and task scheduling (tasks done before their dependents)",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for the explicit stack with tree height h.",
+        "facts_1": "Two-stack iterative approach: first stack processes nodes; second stack collects result in reverse postorder.",
+        "facts_2": "Recursively matches the iterative version: recurse left, recurse right, then visit.",
+        "facts_3": "Postorder + inorder uniquely determine a tree (assuming unique node values); postorder alone does not."
+      },
+      "morrisTraversal": {
+        "history": "Joseph M. Morris published the threaded inorder walk in 1979—an elegant answer to “inorder without recursion or a stack.” Temporary right-child links (threads) encode the same push/pop information a stack would hold, then the tree is repaired in place.",
+        "intuition": "For each node with a left child, find its inorder predecessor (rightmost in the left subtree). If that predecessor’s right is null, wire it to the current node as a return link and go left. If the right already points back to the current node, you’ve finished the left subtree—remove the wire, visit the node, go right. No extra structures—only clever pointer surgery.",
+        "realWorldUses_0": "Interview and exam questions on space-bounded tree algorithms",
+        "realWorldUses_1": "Very small embedded systems where stack depth is risky or unavailable",
+        "realWorldUses_2": "Teaching how tree structure can double as navigation state",
+        "realWorldUses_3": "Contrasting with iterative inorder that needs O(h) stack space",
+        "facts_0": "Time Θ(n): each real edge is crossed a constant number of times; same visit order as classic inorder.",
+        "facts_1": "Extra space is O(1) pointers only—no recursion stack, no explicit stack, no queue.",
+        "facts_2": "Threads are removed before the walk ends; the tree ends with the same shape it started with.",
+        "facts_3": "The visualization draws each temporary thread as an extra edge for that step."
       }
     }
   },
@@ -683,6 +774,12 @@
       "stackFrontier": "Stack / frontier",
       "visited": "Visited",
       "discoveryPath": "Discovery path"
+    },
+    "treeTraversal": {
+      "pending": "Not visited",
+      "visiting": "Visiting",
+      "visited": "Visited",
+      "visitOrder": "Visit order"
     }
   },
   "visualization": {
@@ -694,7 +791,13 @@
     "graphAriaEmpty": "Empty graph",
     "stackTop": "Stack top: {{top}}",
     "queueFront": "Queue front: {{front}}",
-    "graphSubstrate": "Graph visualization"
+    "graphSubstrate": "Graph visualization",
+    "treeAria": "Tree with {{count}} nodes",
+    "treeAriaEmpty": "Empty tree",
+    "queueBadge": "Queue: {{order}}",
+    "visitOrderBadge": "Visited: {{order}}",
+    "levelScanLtr": "This level: left to right",
+    "levelScanRtl": "This level: right to left"
   },
   "languages": {
     "en": "English",
@@ -719,6 +822,38 @@
     "dfsGraphVisiting": "Exploring node {{node}}",
     "bfsGraphDequeue": "Dequeued node {{node}} — examining neighbors level by level",
     "bfsGraphEnqueue": "Enqueued {{count}} neighbor(s); queue front is next",
+    "inorderStart": "Inorder traversal: left subtree, node, right subtree (LNR).",
+    "inorderVisiting": "Visiting node {{node}}",
+    "inorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "inorderComplete": "Inorder complete. Final order: {{order}}",
+    "inorderEmpty": "Tree is empty — nothing to traverse.",
+    "levelOrderStart": "Level-order traversal: visit the tree one layer at a time using a queue.",
+    "levelOrderVisiting": "Visiting node {{node}}",
+    "levelOrderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "levelOrderComplete": "Level-order complete. Final order: {{order}}",
+    "levelOrderEmpty": "Tree is empty — nothing to traverse.",
+    "zigzagLevelStart": "Zigzag level-order: same layers as BFS, but scan left-to-right on even depths and right-to-left on odd depths (starting at the root).",
+    "zigzagLevelVisiting": "Visiting node {{node}}",
+    "zigzagLevelVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "zigzagLevelComplete": "Zigzag level-order complete. Final order: {{order}}",
+    "zigzagLevelEmpty": "Tree is empty — nothing to traverse.",
+    "preorderStart": "Preorder traversal: node, then left subtree, then right subtree (NLR).",
+    "preorderVisiting": "Visiting node {{node}}",
+    "preorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "preorderComplete": "Preorder complete. Final order: {{order}}",
+    "preorderEmpty": "Tree is empty — nothing to traverse.",
+    "postorderStart": "Postorder traversal: left subtree, then right subtree, then node (LRN).",
+    "postorderVisiting": "Visiting node {{node}}",
+    "postorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "postorderComplete": "Postorder complete. Final order: {{order}}",
+    "postorderEmpty": "Tree is empty — nothing to traverse.",
+    "morrisStart": "Morris traversal: inorder (LNR) with O(1) extra space — temporary threads replace a stack.",
+    "morrisThreading": "Thread: link predecessor {{from}} → {{to}} so we can return after the left subtree.",
+    "morrisUnthreading": "Unthread: restore {{from}}'s right pointer; left subtree of {{to}} is done — visit {{to}}.",
+    "morrisVisiting": "Visiting node {{node}}",
+    "morrisVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "morrisComplete": "Morris traversal complete. Final order: {{order}}",
+    "morrisEmpty": "Tree is empty — nothing to traverse.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -857,6 +992,11 @@
         "title": "Searching Algorithms",
         "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
         "algorithms": "Binary Search, Jump Search, Interpolation Search, Exponential Search"
+      },
+      "treeTraversal": {
+        "title": "Tree Traversals",
+        "description": "Explore classic tree traversal orders and learn how each visit order explores a tree structure.",
+        "algorithms": "Inorder Traversal, Level-order Traversal, Zigzag Level-order Traversal, Preorder Traversal, Postorder Traversal, Morris Traversal"
       }
     },
     "features": {
@@ -913,7 +1053,10 @@
     "logarithmicSearch": "Logarithmic search",
     "blockJumpSearch": "Block / jump search",
     "distributionAwareSearch": "Distribution-aware search",
-    "graphTraversalSearch": "Graph traversal (node–link)"
+    "graphTraversalSearch": "Graph traversal (node–link)",
+    "depthFirstTraversal": "Depth-first traversals",
+    "breadthFirstTraversal": "Breadth-first traversals",
+    "spaceOptimizedTraversal": "Space-optimized traversals"
   },
   "roadmap": {
     "hero": {

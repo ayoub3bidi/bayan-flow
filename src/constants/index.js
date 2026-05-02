@@ -8,6 +8,7 @@ export const ALGORITHM_TYPES = {
   SORTING: 'sorting',
   PATHFINDING: 'pathfinding',
   SEARCHING: 'searching',
+  TREE_TRAVERSAL: 'treeTraversal',
 };
 
 // Ordered list for UI tab rendering and registry iteration.
@@ -59,6 +60,15 @@ export const SEARCHING_ALGORITHMS = {
   FIBONACCI_SEARCH: 'fibonacciSearch',
   DEPTH_FIRST_SEARCH: 'depthFirstSearch',
   BREADTH_FIRST_SEARCH_GRAPH: 'breadthFirstSearchGraph',
+};
+
+export const TREE_TRAVERSAL_ALGORITHMS = {
+  INORDER_TRAVERSAL: 'inorderTraversal',
+  PREORDER_TRAVERSAL: 'preorderTraversal',
+  POSTORDER_TRAVERSAL: 'postorderTraversal',
+  LEVEL_ORDER_TRAVERSAL: 'levelOrderTraversal',
+  ZIGZAG_LEVEL_ORDER_TRAVERSAL: 'zigzagLevelOrderTraversal',
+  MORRIS_TRAVERSAL: 'morrisTraversal',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -129,6 +139,28 @@ export const GRAPH_NODE_STATE_COLORS = {
   [GRAPH_NODE_STATES.CURRENT]: '#f97316',
   [GRAPH_NODE_STATES.VISITED]: '#60a5fa',
   [GRAPH_NODE_STATES.PATH]: '#10b981',
+};
+
+/** Tree traversal visualization (inorder / future traversals). */
+export const TREE_NODE_STATES = {
+  DEFAULT: 'default',
+  VISITING: 'visiting',
+  VISITED: 'visited',
+};
+
+export const TREE_NODE_STATE_COLORS = {
+  [TREE_NODE_STATES.DEFAULT]: '#e5e7eb',
+  [TREE_NODE_STATES.VISITING]: '#f97316',
+  [TREE_NODE_STATES.VISITED]: '#10b981',
+};
+
+/** Default node count for tree traversal (SettingsPanel slider). */
+export const DEFAULT_TREE_NODE_COUNT = 15;
+
+export const TREE_NODE_COUNT = {
+  min: 3,
+  max: 31,
+  step: 1,
 };
 
 /** Default node count for searching graph algorithms (SettingsPanel slider). */
@@ -506,6 +538,110 @@ export const SEARCHING_COMPLEXITY = {
       'Shortest-path on unweighted graphs',
       'Level-order tree traversal and layer-by-layer graph analysis',
       'Contrasting with DFS: same graph, queue vs. stack, shortest vs. any path',
+    ],
+  },
+};
+
+export const TREE_TRAVERSAL_COMPLEXITY = {
+  inorderTraversal: {
+    name: 'Inorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Inorder traversal visits the left subtree, then the node, then the right subtree (LNR). On a binary search tree this visits keys in sorted order. This implementation uses an explicit stack—space is proportional to tree height.',
+    useCases: [
+      'BST in-sorted-order output',
+      'Expression trees (recreate infix notation)',
+      'Teaching left–root–right before preorder and postorder',
+    ],
+  },
+  preorderTraversal: {
+    name: 'Preorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Preorder traversal visits the node, then the left subtree, then the right subtree (NLR). Useful for copying a tree, prefix (Polish) expression evaluation, and serialization. This visualization uses an explicit stack—space is proportional to tree height.',
+    useCases: [
+      'Tree duplication and serialization',
+      'Prefix (Polish) notation from expression trees',
+      'Reconstruction with inorder when both traversals are known',
+      'Teaching parent-before-children depth-first order',
+    ],
+  },
+  postorderTraversal: {
+    name: 'Postorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Postorder traversal visits the left subtree, then the right subtree, then the node (LRN). It is ideal for bottom-up operations such as tree deletion, dependency resolution, and postfix expression evaluation.',
+    useCases: [
+      'Deleting a tree safely (children before parent)',
+      'Evaluating postfix (Reverse Polish) expression trees',
+      'Computing tree aggregates bottom-up (height, size, checksums)',
+      'Dependency-style processing where prerequisites must finish first',
+    ],
+  },
+  levelOrderTraversal: {
+    name: 'Level-order Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(w)',
+    description:
+      'Level-order traversal visits the tree breadth-first: root first, then every node on depth 1, then depth 2, and so on. It uses a queue, so its auxiliary space depends on the maximum number of nodes stored from one level at a time.',
+    useCases: [
+      'Tree serialization and reconstruction formats',
+      'Printing or analyzing a tree level by level',
+      'Finding the nearest node that satisfies a property',
+      'Teaching queue-based breadth-first traversal vs. stack-based DFS',
+    ],
+  },
+  zigzagLevelOrderTraversal: {
+    name: 'Zigzag Level-order Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(w)',
+    description:
+      'Zigzag (spiral) level-order traversal visits the tree breadth-first like level-order, but alternates scanning direction each depth: typically left-to-right on even levels and right-to-left on odd levels. Auxiliary space grows with the maximum width of one level.',
+    useCases: [
+      'Interview-style breadth-first variants and serialization puzzles',
+      'Pretty-printing or exporting trees with alternating row direction',
+      'Contrasting plain level-order with a simple directional state machine',
+      'Teaching BFS level batching with reversed visit order on every other level',
+    ],
+  },
+  morrisTraversal: {
+    name: 'Morris Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      "Morris traversal produces the same visit order as inorder (LNR) but uses only O(1) extra space. It temporarily redirects a predecessor's null right child into a back-link (a thread) to the current node, then restores the tree—no explicit stack or recursion.",
+    useCases: [
+      'Interview problems on space-bounded tree walks',
+      'Memory-constrained embedded or stream processing over trees',
+      'Teaching pointer threading and in-place tree tricks',
+      'Contrasting O(h) stack inorder with constant auxiliary space',
     ],
   },
 };
