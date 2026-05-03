@@ -402,7 +402,7 @@ function GraphVisualizer({
             </AnimatePresence>
 
             {isGraphAlgorithm && outputOrder.length > 0 && (
-              <div className="absolute top-4 sm:top-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none">
+              <div className="absolute top-24 sm:top-28 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none">
                 <div className="bg-surface-elevated px-4 py-2 rounded-full shadow-lg border border-gray-200 text-xs sm:text-sm font-mono font-semibold text-text-primary">
                   {t('visualization.outputOrderBadge', {
                     order: outputOrder

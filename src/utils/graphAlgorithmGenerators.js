@@ -14,8 +14,35 @@ function clampNodeCount(nodeCount) {
 }
 
 /**
- * Layered directed acyclic graph generator. Edges are only created from lower
- * numeric ids to higher numeric ids, so cycles are impossible by construction.
+ * Compute the longest path from each node to any sink node in a DAG.
+ * This is used to assign topological levels for hierarchical layout.
+ */
+function computeTopologicalLevels(adjacency) {
+  const ids = Object.keys(adjacency ?? {});
+  const memo = {};
+
+  function longestPath(id) {
+    if (memo[id] !== undefined) return memo[id];
+    const neighbors = adjacency[id] ?? [];
+    if (neighbors.length === 0) {
+      return (memo[id] = 0);
+    }
+    memo[id] = 1 + Math.max(...neighbors.map(longestPath));
+    return memo[id];
+  }
+
+  const levels = {};
+  const maxLevel = Math.max(...ids.map(longestPath), 0);
+  for (const id of ids) {
+    levels[id] = maxLevel - longestPath(id);
+  }
+  return { levels, maxLevel };
+}
+
+/**
+ * Layered directed acyclic graph generator using hierarchical layout.
+ * Nodes are assigned to levels based on their topological depth, minimizing
+ * edge crossings and creating a clean, understandable visualization.
  *
  * @param {Object} opts
  * @param {number} opts.nodeCount
@@ -36,25 +63,13 @@ export function generateRandomDag({
 }) {
   const n = clampNodeCount(nodeCount);
   const ids = Array.from({ length: n }, (_, i) => String(i));
-  const columns = Math.min(5, Math.max(1, Math.ceil(Math.sqrt(n))));
-  const rows = Math.ceil(n / columns);
-
-  const nodes = ids.map((id, index) => {
-    const col = index % columns;
-    const row = Math.floor(index / columns);
-    return {
-      id,
-      label: String.fromCharCode(65 + index),
-      x: columns === 1 ? 0.5 : col / (columns - 1),
-      y: rows === 1 ? 0.5 : row / (rows - 1),
-    };
-  });
 
   /** @type {Record<string, string[]>} */
   const adjacency = Object.fromEntries(ids.map(id => [id, []]));
   /** @type {GraphAlgorithmEdge[]} */
   const edges = [];
 
+  // Generate edges: only from lower ids to higher ids (ensures acyclicity)
   for (let fromIndex = 0; fromIndex < n; fromIndex++) {
     for (let toIndex = fromIndex + 1; toIndex < n; toIndex++) {
       const isBackboneEdge = toIndex === fromIndex + 1 && fromIndex % 2 === 0;
@@ -69,6 +84,41 @@ export function generateRandomDag({
 
   for (const id of ids) {
     adjacency[id].sort((a, b) => Number(a) - Number(b));
+  }
+
+  // Compute hierarchical levels for clean layout
+  const { levels, maxLevel } = computeTopologicalLevels(adjacency);
+
+  // Group nodes by level
+  const nodesPerLevel = Array.from({ length: maxLevel + 1 }, () => []);
+  for (const id of ids) {
+    nodesPerLevel[levels[id]].push(id);
+  }
+
+  // Sort nodes within each level by their original id for consistency
+  for (const level of nodesPerLevel) {
+    level.sort((a, b) => Number(a) - Number(b));
+  }
+
+  // Position nodes: x based on position within level, y based on level
+  const nodes = [];
+  for (let levelIndex = 0; levelIndex < nodesPerLevel.length; levelIndex++) {
+    const levelNodes = nodesPerLevel[levelIndex];
+    const levelY = maxLevel === 0 ? 0.5 : levelIndex / maxLevel;
+
+    for (let i = 0; i < levelNodes.length; i++) {
+      const id = levelNodes[i];
+      const originalIndex = ids.indexOf(id);
+      const levelX =
+        levelNodes.length === 1 ? 0.5 : i / (levelNodes.length - 1);
+
+      nodes.push({
+        id,
+        label: String.fromCharCode(65 + originalIndex),
+        x: levelX,
+        y: levelY,
+      });
+    }
   }
 
   return {
