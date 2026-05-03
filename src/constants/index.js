@@ -9,6 +9,7 @@ export const ALGORITHM_TYPES = {
   PATHFINDING: 'pathfinding',
   SEARCHING: 'searching',
   TREE_TRAVERSAL: 'treeTraversal',
+  GRAPH_ALGORITHM: 'graphAlgorithm',
 };
 
 // Ordered list for UI tab rendering and registry iteration.
@@ -71,6 +72,10 @@ export const TREE_TRAVERSAL_ALGORITHMS = {
   MORRIS_TRAVERSAL: 'morrisTraversal',
 };
 
+export const GRAPH_ALGORITHMS = {
+  TOPOLOGICAL_SORT: 'topologicalSort',
+};
+
 export const ANIMATION_SPEEDS = {
   SLOW: 8000,
   MEDIUM: 4800,
@@ -129,6 +134,7 @@ export const GRAPH_NODE_STATES = {
   CURRENT: 'current',
   VISITED: 'visited',
   PATH: 'path',
+  CYCLE: 'cycle',
 };
 
 export const GRAPH_NODE_STATE_COLORS = {
@@ -139,6 +145,23 @@ export const GRAPH_NODE_STATE_COLORS = {
   [GRAPH_NODE_STATES.CURRENT]: '#f97316',
   [GRAPH_NODE_STATES.VISITED]: '#60a5fa',
   [GRAPH_NODE_STATES.PATH]: '#10b981',
+  [GRAPH_NODE_STATES.CYCLE]: '#ef4444',
+};
+
+export const GRAPH_EDGE_STATES = {
+  DEFAULT: 'default',
+  ACTIVE: 'active',
+  VISITED: 'visited',
+  SELECTED: 'selected',
+  CYCLE: 'cycle',
+};
+
+export const GRAPH_EDGE_STATE_COLORS = {
+  [GRAPH_EDGE_STATES.DEFAULT]: '#9ca3af',
+  [GRAPH_EDGE_STATES.ACTIVE]: '#f97316',
+  [GRAPH_EDGE_STATES.VISITED]: '#60a5fa',
+  [GRAPH_EDGE_STATES.SELECTED]: '#10b981',
+  [GRAPH_EDGE_STATES.CYCLE]: '#ef4444',
 };
 
 /** Tree traversal visualization (inorder / future traversals). */
@@ -169,6 +192,14 @@ export const DEFAULT_SEARCH_GRAPH_NODE_COUNT = 12;
 export const SEARCH_GRAPH_NODE_COUNT = {
   min: 5,
   max: 24,
+  step: 1,
+};
+
+export const DEFAULT_GRAPH_NODE_COUNT = 10;
+
+export const GRAPH_NODE_COUNT = {
+  min: 3,
+  max: 18,
   step: 1,
 };
 
@@ -642,6 +673,26 @@ export const TREE_TRAVERSAL_COMPLEXITY = {
       'Memory-constrained embedded or stream processing over trees',
       'Teaching pointer threading and in-place tree tricks',
       'Contrasting O(h) stack inorder with constant auxiliary space',
+    ],
+  },
+};
+
+export const GRAPH_ALGORITHM_COMPLEXITY = {
+  topologicalSort: {
+    name: 'Topological Sort (DFS)',
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      'DFS-based topological sort orders vertices in a directed acyclic graph so every dependency edge u -> v places u before v. It uses temporary marks to detect cycles and a completion stack to build the final order.',
+    useCases: [
+      'Task scheduling with prerequisites',
+      'Build systems and dependency resolution',
+      'Course prerequisite ordering',
+      'Instruction scheduling and dependency graphs',
     ],
   },
 };

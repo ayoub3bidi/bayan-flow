@@ -15,6 +15,7 @@ describe('useCategoryVisualizations', () => {
     const pathfinding = { id: 'path' };
     const searching = { id: 'search' };
     const treeTraversal = { id: 'tree' };
+    const graphAlgorithm = { id: 'graph' };
 
     const { result } = renderHook(() =>
       useCategoryVisualizations({
@@ -22,6 +23,7 @@ describe('useCategoryVisualizations', () => {
         pathfindingVisualization: pathfinding,
         searchingVisualization: searching,
         treeTraversalVisualization: treeTraversal,
+        graphAlgorithmVisualization: graphAlgorithm,
       })
     );
 
@@ -32,5 +34,8 @@ describe('useCategoryVisualizations', () => {
     expect(result.current[ALGORITHM_TYPES.PATHFINDING]).toBe(pathfinding);
     expect(result.current[ALGORITHM_TYPES.SEARCHING]).toBe(searching);
     expect(result.current[ALGORITHM_TYPES.TREE_TRAVERSAL]).toBe(treeTraversal);
+    expect(result.current[ALGORITHM_TYPES.GRAPH_ALGORITHM]).toBe(
+      graphAlgorithm
+    );
   });
 });

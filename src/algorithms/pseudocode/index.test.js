@@ -77,6 +77,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('MorrisInorder');
   });
+
+  it('returns pseudocode for topologicalSort', () => {
+    const text = getPseudocodeForLocale('topologicalSort', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('TopologicalSort');
+  });
 });
 
 describe('getPseudocode', () => {

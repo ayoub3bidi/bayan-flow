@@ -55,8 +55,8 @@ describe('CATEGORY_CONFIG', () => {
           expect(data).toBeDefined();
         });
 
-        it('has sizeBinding "array", "grid", or "tree"', () => {
-          expect(['array', 'grid', 'tree']).toContain(
+        it('has a supported sizeBinding', () => {
+          expect(['array', 'grid', 'tree', 'graph']).toContain(
             CATEGORY_CONFIG[type].sizeBinding
           );
         });
@@ -67,6 +67,7 @@ describe('CATEGORY_CONFIG', () => {
             'pathfinding',
             'searching',
             'treeTraversal',
+            'graphAlgorithm',
           ]).toContain(CATEGORY_CONFIG[type].complexityDataset);
         });
       });

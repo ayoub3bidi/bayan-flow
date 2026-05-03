@@ -18,11 +18,22 @@ describe('getExtraVisualizerProps', () => {
     visitOrder: [],
     queueOrder: [],
   };
+  const graphAlgorithmVisualization = {
+    graphNodes: [{ id: '0', x: 0, y: 0 }],
+    graphEdges: [{ id: '0->1', from: '0', to: '1' }],
+    graphNodeStates: { 0: 'current' },
+    graphEdgeStates: { '0->1': 'active' },
+    graphStackOrder: ['0'],
+    graphOutputOrder: [],
+    directed: true,
+    weighted: false,
+  };
 
   const ctxBase = {
     sortingVisualization,
     searchingVisualization,
     treeTraversalVisualization,
+    graphAlgorithmVisualization,
     gridSize: 25,
   };
 
@@ -100,6 +111,26 @@ describe('getExtraVisualizerProps', () => {
       queueOrder: [],
       levelScanDirection: undefined,
       complexityDataset: 'treeTraversal',
+    });
+  });
+
+  it('returns graph props for graph algorithm category', () => {
+    expect(
+      getExtraVisualizerProps(ALGORITHM_TYPES.GRAPH_ALGORITHM, {
+        ...ctxBase,
+        activeAlgorithmKey: 'topologicalSort',
+      })
+    ).toEqual({
+      nodes: [{ id: '0', x: 0, y: 0 }],
+      edges: [{ id: '0->1', from: '0', to: '1' }],
+      nodeStates: { 0: 'current' },
+      edgeStates: { '0->1': 'active' },
+      stackOrder: ['0'],
+      outputOrder: [],
+      directed: true,
+      weighted: false,
+      graphVariant: 'graphAlgorithm',
+      complexityDataset: 'graphAlgorithm',
     });
   });
 

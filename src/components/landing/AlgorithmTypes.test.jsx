@@ -39,6 +39,7 @@ vi.mock('lucide-react', () => ({
   Route: () => <svg data-testid="route-icon" />,
   Search: () => <svg data-testid="search-icon" />,
   GitBranch: () => <svg data-testid="git-branch-icon" />,
+  Network: () => <svg data-testid="network-icon" />,
 }));
 
 const renderComponent = () => {
@@ -98,12 +99,20 @@ describe('AlgorithmTypes', () => {
       ).toBeInTheDocument();
     });
 
+    it('should render graph algorithms mode card', () => {
+      renderComponent();
+      expect(
+        screen.getByRole('heading', { name: /Graph Algorithms/i })
+      ).toBeInTheDocument();
+    });
+
     it('should render category icons', () => {
       renderComponent();
       expect(screen.getByTestId('bar-chart-icon')).toBeInTheDocument();
       expect(screen.getByTestId('grid-icon')).toBeInTheDocument();
       expect(screen.getByTestId('search-icon')).toBeInTheDocument();
       expect(screen.getByTestId('git-branch-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('network-icon')).toBeInTheDocument();
     });
   });
 
@@ -298,14 +307,14 @@ describe('AlgorithmTypes', () => {
       expect(grid).toHaveClass('lg:grid-cols-3');
     });
 
-    it('should make the fourth card span the full row on large screens', () => {
+    it('should render all category cards without four-card special spanning', () => {
       const { container } = renderComponent();
       const cards = container.querySelectorAll(
         'div.group.relative.h-full.min-h-0.self-stretch'
       );
-      expect(cards.length).toBe(4);
+      expect(cards.length).toBe(5);
       const fourthCard = cards[3];
-      expect(fourthCard).toHaveClass('lg:col-span-3');
+      expect(fourthCard).not.toHaveClass('lg:col-span-3');
     });
 
     it('should have centered text on mobile', () => {

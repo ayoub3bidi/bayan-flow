@@ -29,13 +29,15 @@
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
     "autoplayOnly": "uniquement",
-    "treeNodeCount": "Nœuds de l'arbre"
+    "treeNodeCount": "Nœuds de l'arbre",
+    "graphNodeCount": "Sommets du graphe"
   },
   "modes": {
     "sorting": "Tri",
     "pathfinding": "Recherche de Chemin",
     "searching": "Recherche",
     "treeTraversal": "Parcours d'arbres",
+    "graphAlgorithm": "Algorithmes de graphe",
     "manual": "Manuel",
     "autoplay": "Lecture Auto"
   },
@@ -86,6 +88,9 @@
       "postorderTraversal": "Parcours suffixe",
       "morrisTraversal": "Parcours de Morris"
     },
+    "graphAlgorithm": {
+      "topologicalSort": "Tri topologique (DFS)"
+    },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
@@ -123,7 +128,8 @@
       "zigzagLevelOrderTraversal": "Démarrage du parcours en largeur en zigzag",
       "preorderTraversal": "Démarrage du parcours préfixe",
       "postorderTraversal": "Démarrage du parcours suffixe",
-      "morrisTraversal": "Démarrage du parcours de Morris"
+      "morrisTraversal": "Démarrage du parcours de Morris",
+      "topologicalSort": "Démarrage du tri topologique basé sur DFS"
     }
   },
   "complexity": {
@@ -164,7 +170,8 @@
     "zigzagLevelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)",
-    "morrisTraversal": "O(n)"
+    "morrisTraversal": "O(n)",
+    "topologicalSort": "O(V + E)"
   },
   "speeds": {
     "slow": "Lent",
@@ -607,7 +614,7 @@
         "intuition": "On avance en doublant l’indice à chaque fois (1, 2, 4, 8, …) jusqu’à ce que la valeur à cet indice soit au moins la cible ou qu’on atteigne la fin du tableau. Cela encadre la cible en O(log i) sondes lorsque la réponse est près de l’indice i. Ensuite, on applique la dichotomie ordinaire sur l’intervalle borné — encore un nombre logarithmique d’étapes dans cette fenêtre.",
         "realWorldUses_0": "Recherche dans des flux ou listes triées dont la longueur est inconnue ou très grande",
         "realWorldUses_1": "Enseigner la combinaison encadrement + dichotomie",
-"realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
+        "realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
         "realWorldUses_3": "Bases pour des variantes « galloping » dans des fusions et des recherches adaptatives",
         "facts_0": "Sur des données triées non bornées, trouver une cible à l’indice i coûte O(log i) en phase de doublement plus O(log i) pour la dichotomie sur l’intervalle — O(log i) au total.",
         "facts_1": "Sur un tableau fini de taille n, le pire cas reste en O(log n), comme la dichotomie, avec une phase de doublement avant le premier partage.",
@@ -649,6 +656,18 @@
         "facts_1": "BFS garantit le chemin le plus court (sauts minimaux) sur les graphes non pondérés ; DFS ne le garantit pas.",
         "facts_2": "La tête de file est affichée en haut du canevas — le prochain nœud à défiler.",
         "facts_3": "La même mise en page d'arbre utilisée pour DFS est réutilisée ici, afin de comparer les deux algorithmes."
+      },
+      "topologicalSort": {
+        "history": "Le tri topologique vient de l'étude des ordres partiels et des graphes de dépendances. La version avec pile de fin DFS est aujourd'hui classique dans les cours d'algorithmes.",
+        "intuition": "Un sommet ne peut être placé qu'après le traitement de tous les sommets atteignables par ses arêtes sortantes. DFS fournit naturellement cet ordre : quand un appel se termine, on pousse le sommet sur une pile, puis on inverse la pile.",
+        "realWorldUses_0": "Systèmes de build qui compilent les dépendances avant les dépendants",
+        "realWorldUses_1": "Planification de prérequis de cours",
+        "realWorldUses_2": "Ordonnancement des dépendances dans les gestionnaires de paquets",
+        "realWorldUses_3": "Planification de tâches avec contraintes unidirectionnelles",
+        "facts_0": "Un ordre topologique existe si et seulement si le graphe orienté est acyclique.",
+        "facts_1": "Plusieurs ordres valides peuvent exister pour le même DAG.",
+        "facts_2": "Les marques temporaires de DFS détectent les arêtes de retour, donc les cycles.",
+        "facts_3": "L'algorithme est en O(V + E), car chaque sommet et chaque arête est traité une fois."
       },
       "inorderTraversal": {
         "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
@@ -780,6 +799,14 @@
       "visiting": "En cours",
       "visited": "Visité",
       "visitOrder": "Ordre de visite"
+    },
+    "graphAlgorithm": {
+      "unvisited": "Non visité",
+      "recursionStack": "Pile de récursion",
+      "current": "Sommet courant",
+      "completed": "Terminé",
+      "outputOrder": "Ordre topologique",
+      "cycle": "Cycle détecté"
     }
   },
   "visualization": {
@@ -797,7 +824,8 @@
     "queueBadge": "File : {{order}}",
     "visitOrderBadge": "Visités : {{order}}",
     "levelScanLtr": "Ce niveau : de gauche à droite",
-    "levelScanRtl": "Ce niveau : de droite à gauche"
+    "levelScanRtl": "Ce niveau : de droite à gauche",
+    "outputOrderBadge": "Ordre : {{order}}"
   },
   "languages": {
     "en": "English",
@@ -854,6 +882,12 @@
     "morrisVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "morrisComplete": "Parcours de Morris terminé. Ordre final : {{order}}",
     "morrisEmpty": "Arbre vide — rien à parcourir.",
+    "topologicalStart": "Tri topologique : exécuter DFS et enregistrer chaque sommet après la fin de toutes ses arêtes sortantes.",
+    "topologicalEnter": "Entrer dans {{node}} et l'ajouter à la pile de récursion.",
+    "topologicalExploreEdge": "Explorer l'arête de dépendance {{from}} → {{to}}.",
+    "topologicalCompleteNode": "Toutes les arêtes sortantes de {{node}} sont traitées. L'ajouter à la pile de fin : {{stack}}.",
+    "topologicalCycle": "Cycle détecté sur l'arête {{from}} → {{to}}. Un ordre topologique n'existe que pour les DAG.",
+    "topologicalFinish": "Inverser la pile de fin pour obtenir un ordre topologique valide : {{order}}.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -998,6 +1032,11 @@
         "title": "Parcours d'arbres",
         "description": "Explorez les ordres classiques de parcours d'arbres et comprenez comment chaque ordre visite les nœuds.",
         "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours en largeur en zigzag, Parcours préfixe, Parcours postfixe, Parcours de Morris"
+      },
+      "graphAlgorithm": {
+        "title": "Algorithmes de graphe",
+        "description": "Étudiez les problèmes sur graphes orientés comme l'ordonnancement des dépendances, en commençant par le tri topologique DFS sur des DAG générés.",
+        "algorithms": "Tri topologique"
       }
     },
     "features": {
@@ -1057,7 +1096,8 @@
     "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)",
     "depthFirstTraversal": "Parcours en profondeur",
     "breadthFirstTraversal": "Parcours en largeur",
-    "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire"
+    "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire",
+    "topologicalOrdering": "Ordonnancement topologique"
   },
   "roadmap": {
     "hero": {

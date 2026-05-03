@@ -17,6 +17,7 @@ const ALGORITHM_TYPE_GRADIENTS = {
   pathfinding: 'from-purple-500 via-pink-500 to-purple-600',
   searching: 'from-emerald-500 via-teal-500 to-emerald-600',
   treeTraversal: 'from-orange-500 via-amber-500 to-orange-600',
+  graphAlgorithm: 'from-sky-500 via-indigo-500 to-slate-700',
 };
 
 function AlgorithmTypes() {

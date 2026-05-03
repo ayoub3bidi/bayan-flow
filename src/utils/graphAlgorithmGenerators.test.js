@@ -1,0 +1,33 @@
+/**
+ * Copyright (c) 2025 Bayan Flow
+ * Licensed under Elastic License 2.0 OR Commercial
+ * See LICENSE for details.
+ */
+
+import { describe, expect, it } from 'vitest';
+import { generateRandomDag, isAcyclic } from './graphAlgorithmGenerators.js';
+
+describe('generateRandomDag', () => {
+  it('generates the requested number of nodes', () => {
+    const graph = generateRandomDag({ nodeCount: 6, rng: () => 1 });
+
+    expect(graph.nodes).toHaveLength(6);
+    expect(Object.keys(graph.adjacency)).toHaveLength(6);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(false);
+  });
+
+  it('only creates forward edges by numeric rank', () => {
+    const graph = generateRandomDag({ nodeCount: 8, rng: () => 0 });
+
+    graph.edges.forEach(edge => {
+      expect(Number(edge.from)).toBeLessThan(Number(edge.to));
+    });
+  });
+
+  it('generates acyclic adjacency', () => {
+    const graph = generateRandomDag({ nodeCount: 12, rng: () => 0.2 });
+
+    expect(isAcyclic(graph.adjacency)).toBe(true);
+  });
+});

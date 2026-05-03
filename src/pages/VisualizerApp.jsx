@@ -23,11 +23,13 @@ import { useSortingVisualization } from '../hooks/useSortingVisualization';
 import { usePathfindingVisualization } from '../hooks/usePathfindingVisualization';
 import { useSearchingVisualization } from '../hooks/useSearchingVisualization';
 import { useTreeTraversalVisualization } from '../hooks/useTreeTraversalVisualization';
+import { useGraphAlgorithmVisualization } from '../hooks/useGraphAlgorithmVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
 import { useVideoExporter } from '../video/useVideoExporter';
 import { soundManager } from '../utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
+  DEFAULT_GRAPH_NODE_COUNT,
   DEFAULT_GRID_SIZE,
   DEFAULT_SEARCH_GRAPH_NODE_COUNT,
   DEFAULT_TREE_NODE_COUNT,
@@ -84,6 +86,9 @@ function App() {
     DEFAULT_SEARCH_GRAPH_NODE_COUNT
   );
   const [treeNodeCount, setTreeNodeCount] = useState(DEFAULT_TREE_NODE_COUNT);
+  const [graphNodeCount, setGraphNodeCount] = useState(
+    DEFAULT_GRAPH_NODE_COUNT
+  );
   const [sortOrder, setSortOrder] = useState(SORT_ORDERS.ASCENDING);
   const prevSortOrderRef = useRef(sortOrder);
   const [array, setArray] = useState(() =>
@@ -131,6 +136,12 @@ function App() {
     mode,
     treeNodeCount
   );
+  const graphAlgorithmVisualization = useGraphAlgorithmVisualization(
+    selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM],
+    speed,
+    mode,
+    graphNodeCount
+  );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
   const {
@@ -152,6 +163,7 @@ function App() {
     pathfindingVisualization,
     searchingVisualization,
     treeTraversalVisualization,
+    graphAlgorithmVisualization,
   });
 
   const visualization = visualizationMap[algorithmType];
@@ -186,6 +198,8 @@ function App() {
     const cfg = CATEGORY_CONFIG[algorithmType];
     if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
       treeTraversalVisualization.regenerateTree();
+    } else if (algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM) {
+      graphAlgorithmVisualization.regenerateGraph();
     } else if (
       algorithmType === ALGORITHM_TYPES.SEARCHING &&
       isNodeLinkSearchingAlgorithm(
@@ -237,6 +251,10 @@ function App() {
 
   const handleTreeNodeCountChange = newCount => {
     setTreeNodeCount(newCount);
+  };
+
+  const handleGraphNodeCountChange = newCount => {
+    setGraphNodeCount(newCount);
   };
 
   const handleExportVideo = () => {
@@ -294,6 +312,7 @@ function App() {
     sortingVisualization,
     searchingVisualization,
     treeTraversalVisualization,
+    graphAlgorithmVisualization,
     gridSize,
     activeAlgorithmKey,
   });
@@ -394,6 +413,8 @@ function App() {
                       }
                       treeNodeCount={treeNodeCount}
                       onTreeNodeCountChange={handleTreeNodeCountChange}
+                      graphNodeCount={graphNodeCount}
+                      onGraphNodeCountChange={handleGraphNodeCountChange}
                       isPlaying={visualization.isPlaying}
                       mode={mode}
                       onModeChange={setMode}

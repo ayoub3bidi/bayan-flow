@@ -159,6 +159,14 @@ export const ALGORITHM_STEPS = {
   MORRIS_COMPLETE: 'morrisComplete',
   MORRIS_EMPTY: 'morrisEmpty',
 
+  // Graph algorithms
+  TOPOLOGICAL_START: 'topologicalStart',
+  TOPOLOGICAL_ENTER: 'topologicalEnter',
+  TOPOLOGICAL_EXPLORE_EDGE: 'topologicalExploreEdge',
+  TOPOLOGICAL_COMPLETE_NODE: 'topologicalCompleteNode',
+  TOPOLOGICAL_CYCLE: 'topologicalCycle',
+  TOPOLOGICAL_FINISH: 'topologicalFinish',
+
   // Pathfinding
   EXPLORING: 'exploring',
   EXPLORING_FORWARD: 'exploringForward',

@@ -29,13 +29,15 @@
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
     "autoplayOnly": "only",
-    "treeNodeCount": "Tree nodes"
+    "treeNodeCount": "Tree nodes",
+    "graphNodeCount": "Graph vertices"
   },
   "modes": {
     "sorting": "Sorting",
     "pathfinding": "Pathfinding",
     "searching": "Searching",
     "treeTraversal": "Tree Traversals",
+    "graphAlgorithm": "Graph Algorithms",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },
@@ -86,6 +88,9 @@
       "postorderTraversal": "Postorder Traversal",
       "morrisTraversal": "Morris Traversal"
     },
+    "graphAlgorithm": {
+      "topologicalSort": "Topological Sort (DFS)"
+    },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
@@ -124,7 +129,8 @@
       "zigzagLevelOrderTraversal": "Starting zigzag level-order traversal",
       "preorderTraversal": "Starting preorder traversal",
       "postorderTraversal": "Starting postorder traversal",
-      "morrisTraversal": "Starting Morris traversal"
+      "morrisTraversal": "Starting Morris traversal",
+      "topologicalSort": "Starting DFS-based topological sort"
     }
   },
   "complexity": {
@@ -165,7 +171,8 @@
     "zigzagLevelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)",
-    "morrisTraversal": "O(n)"
+    "morrisTraversal": "O(n)",
+    "topologicalSort": "O(V + E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -651,6 +658,18 @@
         "facts_2": "The queue front is shown at the top of the canvas — the next node to be dequeued.",
         "facts_3": "The same tree layout used for DFS is reused here, so you can compare both algorithms side by side on re-generation."
       },
+      "topologicalSort": {
+        "history": "Topological sorting grew from early work on partial orders and dependency graphs. The DFS completion-stack formulation is now a standard companion to depth-first search in algorithms courses and build-system discussions.",
+        "intuition": "A vertex can appear in the final order only after every vertex reachable through its outgoing edges has been handled. DFS naturally gives this: when a call finishes, push that vertex to a stack. Reversing the finish stack puts prerequisites before dependents.",
+        "realWorldUses_0": "Build systems that compile dependencies before dependents",
+        "realWorldUses_1": "Course prerequisite planning",
+        "realWorldUses_2": "Package manager dependency ordering",
+        "realWorldUses_3": "Scheduling tasks with one-way prerequisite edges",
+        "facts_0": "A topological ordering exists if and only if the directed graph is acyclic.",
+        "facts_1": "Multiple valid orders may exist for the same DAG.",
+        "facts_2": "DFS temporary marks detect back edges, which prove a cycle.",
+        "facts_3": "The algorithm runs in O(V + E) time because each vertex and edge is processed once."
+      },
       "inorderTraversal": {
         "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
         "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
@@ -780,6 +799,14 @@
       "visiting": "Visiting",
       "visited": "Visited",
       "visitOrder": "Visit order"
+    },
+    "graphAlgorithm": {
+      "unvisited": "Unvisited",
+      "recursionStack": "Recursion stack",
+      "current": "Current vertex",
+      "completed": "Completed",
+      "outputOrder": "Topological order",
+      "cycle": "Cycle detected"
     }
   },
   "visualization": {
@@ -797,7 +824,8 @@
     "queueBadge": "Queue: {{order}}",
     "visitOrderBadge": "Visited: {{order}}",
     "levelScanLtr": "This level: left to right",
-    "levelScanRtl": "This level: right to left"
+    "levelScanRtl": "This level: right to left",
+    "outputOrderBadge": "Order: {{order}}"
   },
   "languages": {
     "en": "English",
@@ -854,6 +882,12 @@
     "morrisVisited": "Recorded {{node}}. Order so far: {{order}}",
     "morrisComplete": "Morris traversal complete. Final order: {{order}}",
     "morrisEmpty": "Tree is empty — nothing to traverse.",
+    "topologicalStart": "Topological sort: run DFS and record each vertex after all outgoing edges finish.",
+    "topologicalEnter": "Enter {{node}} and add it to the recursion stack.",
+    "topologicalExploreEdge": "Explore dependency edge {{from}} → {{to}}.",
+    "topologicalCompleteNode": "All outgoing edges from {{node}} are done. Push it onto the finish stack: {{stack}}.",
+    "topologicalCycle": "Cycle detected on edge {{from}} → {{to}}. A topological order only exists for DAGs.",
+    "topologicalFinish": "Reverse the finish stack to get a valid topological order: {{order}}.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -997,6 +1031,11 @@
         "title": "Tree Traversals",
         "description": "Explore classic tree traversal orders and learn how each visit order explores a tree structure.",
         "algorithms": "Inorder Traversal, Level-order Traversal, Zigzag Level-order Traversal, Preorder Traversal, Postorder Traversal, Morris Traversal"
+      },
+      "graphAlgorithm": {
+        "title": "Graph Algorithms",
+        "description": "Study directed graph problems such as dependency ordering, starting with DFS-based topological sort on generated DAGs.",
+        "algorithms": "Topological Sort"
       }
     },
     "features": {
@@ -1056,7 +1095,8 @@
     "graphTraversalSearch": "Graph traversal (node–link)",
     "depthFirstTraversal": "Depth-first traversals",
     "breadthFirstTraversal": "Breadth-first traversals",
-    "spaceOptimizedTraversal": "Space-optimized traversals"
+    "spaceOptimizedTraversal": "Space-optimized traversals",
+    "topologicalOrdering": "Topological ordering"
   },
   "roadmap": {
     "hero": {

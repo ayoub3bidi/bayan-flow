@@ -16,8 +16,10 @@ const constantsMockValue = {
   DEFAULT_ARRAY_SIZE: 20,
   DEFAULT_SEARCH_GRAPH_NODE_COUNT: 12,
   DEFAULT_TREE_NODE_COUNT: 15,
+  DEFAULT_GRAPH_NODE_COUNT: 10,
   TREE_NODE_COUNT: { min: 3, max: 31, step: 1 },
   SEARCH_GRAPH_NODE_COUNT: { min: 5, max: 24, step: 1 },
+  GRAPH_NODE_COUNT: { min: 3, max: 18, step: 1 },
   GRAPH_NODE_STATES: {
     DEFAULT: 'default',
     ROOT: 'root',
@@ -26,6 +28,14 @@ const constantsMockValue = {
     CURRENT: 'current',
     VISITED: 'visited',
     PATH: 'path',
+    CYCLE: 'cycle',
+  },
+  GRAPH_EDGE_STATES: {
+    DEFAULT: 'default',
+    ACTIVE: 'active',
+    VISITED: 'visited',
+    SELECTED: 'selected',
+    CYCLE: 'cycle',
   },
   TREE_NODE_STATES: {
     DEFAULT: 'default',
@@ -45,6 +55,14 @@ const constantsMockValue = {
     current: '#f97316',
     visited: '#60a5fa',
     path: '#10b981',
+    cycle: '#ef4444',
+  },
+  GRAPH_EDGE_STATE_COLORS: {
+    default: '#9ca3af',
+    active: '#f97316',
+    visited: '#60a5fa',
+    selected: '#10b981',
+    cycle: '#ef4444',
   },
   ANIMATION_SPEEDS: {
     SLOW: 2000,
@@ -61,8 +79,15 @@ const constantsMockValue = {
     PATHFINDING: 'pathfinding',
     SEARCHING: 'searching',
     TREE_TRAVERSAL: 'treeTraversal',
+    GRAPH_ALGORITHM: 'graphAlgorithm',
   },
-  ALGORITHM_TYPE_LIST: ['sorting', 'pathfinding', 'searching', 'treeTraversal'],
+  ALGORITHM_TYPE_LIST: [
+    'sorting',
+    'pathfinding',
+    'searching',
+    'treeTraversal',
+    'graphAlgorithm',
+  ],
   SORT_ORDERS: {
     ASCENDING: 'ascending',
     DESCENDING: 'descending',
@@ -85,6 +110,9 @@ const constantsMockValue = {
     JUMP_SEARCH: 'jumpSearch',
     INTERPOLATION_SEARCH: 'interpolationSearch',
     EXPONENTIAL_SEARCH: 'exponentialSearch',
+  },
+  GRAPH_ALGORITHMS: {
+    TOPOLOGICAL_SORT: 'topologicalSort',
   },
   ELEMENT_STATES: {
     DEFAULT: 'default',
@@ -120,6 +148,17 @@ const constantsMockValue = {
         worst: 'O(n)',
       },
       spaceComplexity: 'O(h)',
+    },
+  },
+  GRAPH_ALGORITHM_COMPLEXITY: {
+    topologicalSort: {
+      name: 'Topological Sort (DFS)',
+      timeComplexity: {
+        best: 'O(V + E)',
+        average: 'O(V + E)',
+        worst: 'O(V + E)',
+      },
+      spaceComplexity: 'O(V)',
     },
   },
   COMPLEXITY_FUNCTIONS: {},

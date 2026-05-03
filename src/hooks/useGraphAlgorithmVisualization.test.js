@@ -1,0 +1,72 @@
+/**
+ * Copyright (c) 2025 Bayan Flow
+ * Licensed under Elastic License 2.0 OR Commercial
+ * See LICENSE for details.
+ */
+
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { VISUALIZATION_MODES } from '../constants/index.js';
+import { useGraphAlgorithmVisualization } from './useGraphAlgorithmVisualization.js';
+
+const { soundManager } = vi.hoisted(() => ({
+  soundManager: {
+    playNodeVisit: vi.fn(),
+  },
+}));
+
+vi.mock('../utils/soundManager.js', () => ({
+  soundManager,
+}));
+
+describe('useGraphAlgorithmVisualization', () => {
+  beforeEach(() => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('loads topologicalSort steps on mount', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'topologicalSort',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        6
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    expect(result.current.graphNodes).toHaveLength(6);
+    expect(result.current.directed).toBe(true);
+    expect(result.current.weighted).toBe(false);
+    expect(result.current.description.length).toBeGreaterThan(0);
+  });
+
+  it('regenerates graph structure and resets playback', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'topologicalSort',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        5
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    act(() => {
+      result.current.regenerateGraph();
+    });
+
+    await waitFor(() => {
+      expect(result.current.graphNodes).toHaveLength(5);
+      expect(result.current.currentStep).toBe(0);
+      expect(result.current.totalSteps).toBeGreaterThan(0);
+    });
+  });
+});

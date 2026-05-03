@@ -22,22 +22,24 @@
 
 ## What it is
 
-Bayan Flow is a client-side SPA: pick a **mode** (sorting, pathfinding, or searching), choose an algorithm, then step through or autoplay the visualization. Optional **Python** implementations run in the browser (Pyodide), with a **complexity** panel and **video export** (including horizontal and vertical layouts) when you want to share or study offline.
+Bayan Flow is a client-side SPA: pick a **mode** (sorting, pathfinding, searching, tree traversal, or graph algorithms), choose an algorithm, then step through or autoplay the visualization. Optional **Python** implementations run in the browser (Pyodide), with a **complexity** panel and **video export** (including horizontal and vertical layouts) when you want to share or study offline.
 
 ## Features (overview)
 
-| Mode | What you get |
-|------|----------------|
-| **Sorting** | A broad set of sorting algorithms on a configurable random array, color-coded bars, manual or autoplay |
-| **Pathfinding** | Multiple grid-based algorithms, configurable grid sizes, start/end positions, step-by-step exploration |
-| **Searching** | **Array** algorithms on sorted data (e.g. binary search) with bar visualization and target highlighting; **graph** algorithms (e.g. depth-first search) on a generated node–link tree with explicit vertices and edges—separate from the pathfinding grid |
+| Mode                 | What you get                                                                                                                                                                                                                                              |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sorting**          | A broad set of sorting algorithms on a configurable random array, color-coded bars, manual or autoplay                                                                                                                                                    |
+| **Pathfinding**      | Multiple grid-based algorithms, configurable grid sizes, start/end positions, step-by-step exploration                                                                                                                                                    |
+| **Searching**        | **Array** algorithms on sorted data (e.g. binary search) with bar visualization and target highlighting; **graph** algorithms (e.g. depth-first search) on a generated node–link tree with explicit vertices and edges—separate from the pathfinding grid |
+| **Tree Traversals**  | Binary-tree traversal algorithms with explicit visit order, queue/stack context, and traversal-state highlighting                                                                                                                                         |
+| **Graph Algorithms** | Directed node–link graph algorithms, starting with DFS-based topological sort on generated DAGs                                                                                                                                                           |
 
 **Shared**
 
-- Manual vs autoplay, speed presets, mobile swipe (manual), fullscreen, optional sound  
-- Python editor + run, test cases (built-in + custom), algorithm insight panel  
-- Internationalization (English, French, Arabic with RTL), light/dark theme  
-- In-browser video export (high resolution, orientation choice, short complexity segment at the end)  
+- Manual vs autoplay, speed presets, mobile swipe (manual), fullscreen, optional sound
+- Python editor + run, test cases (built-in + custom), algorithm insight panel
+- Internationalization (English, French, Arabic with RTL), light/dark theme
+- In-browser video export (high resolution, orientation choice, short complexity segment at the end)
 
 Details, stack notes, and contributor workflows live in the docs linked below—not duplicated here.
 
@@ -56,11 +58,11 @@ Then open the local URL printed in the terminal.
 
 ## Documentation
 
-| Doc | Use it when you… |
-|-----|------------------|
-| **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)** | Run lint/tests/build, follow patterns, add an algorithm or language |
-| **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | Understand routes, hooks, data flow, video export, testing layout |
-| **[CONTRIBUTING.md](./CONTRIBUTING.md)** | Contribute: branch targets `develop`, CI, PR template, standards |
+| Doc                                                | Use it when you…                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------- |
+| **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)**   | Run lint/tests/build, follow patterns, add an algorithm or language |
+| **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | Understand routes, hooks, data flow, video export, testing layout   |
+| **[CONTRIBUTING.md](./CONTRIBUTING.md)**           | Contribute: branch targets `develop`, CI, PR template, standards    |
 
 ## Contributing
 

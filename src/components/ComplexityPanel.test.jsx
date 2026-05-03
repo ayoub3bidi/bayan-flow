@@ -71,6 +71,17 @@ vi.mock('../constants', () => ({
       spaceComplexity: 'O(h)',
     },
   },
+  GRAPH_ALGORITHM_COMPLEXITY: {
+    topologicalSort: {
+      name: 'Topological Sort (DFS)',
+      timeComplexity: {
+        best: 'O(V + E)',
+        average: 'O(V + E)',
+        worst: 'O(V + E)',
+      },
+      spaceComplexity: 'O(V)',
+    },
+  },
   COMPLEXITY_FUNCTIONS: {
     'O(n²)': n => n * n,
     'O(V + E)': n => n + n * 4,

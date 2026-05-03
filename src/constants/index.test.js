@@ -16,6 +16,7 @@ import {
   PATHFINDING_ALGORITHMS,
   SEARCHING_ALGORITHMS,
   TREE_TRAVERSAL_ALGORITHMS,
+  GRAPH_ALGORITHMS,
   ANIMATION_SPEEDS,
   ELEMENT_STATES,
   STATE_COLORS,
@@ -30,6 +31,7 @@ import {
   PATHFINDING_COMPLEXITY,
   SEARCHING_COMPLEXITY,
   TREE_TRAVERSAL_COMPLEXITY,
+  GRAPH_ALGORITHM_COMPLEXITY,
 } from './index.js';
 
 describe('Constants', () => {
@@ -40,6 +42,7 @@ describe('Constants', () => {
         PATHFINDING: 'pathfinding',
         SEARCHING: 'searching',
         TREE_TRAVERSAL: 'treeTraversal',
+        GRAPH_ALGORITHM: 'graphAlgorithm',
       });
     });
   });
@@ -117,6 +120,13 @@ describe('Constants', () => {
         'morrisTraversal',
       ]);
       expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(6);
+    });
+  });
+
+  describe('GRAPH_ALGORITHMS', () => {
+    it('should contain graph algorithm keys', () => {
+      expect(Object.values(GRAPH_ALGORITHMS)).toEqual(['topologicalSort']);
+      expect(Object.keys(GRAPH_ALGORITHMS)).toHaveLength(1);
     });
   });
 
@@ -334,6 +344,26 @@ describe('Constants', () => {
     it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
       keys.forEach(algoKey => {
         const meta = TREE_TRAVERSAL_COMPLEXITY[algoKey];
+        expect(meta).toHaveProperty('name');
+        expect(meta).toHaveProperty('timeComplexity');
+        expect(meta).toHaveProperty('spaceComplexity');
+        expect(meta).toHaveProperty('description');
+        expect(meta).toHaveProperty('useCases');
+        expect(Array.isArray(meta.useCases)).toBe(true);
+      });
+    });
+  });
+
+  describe('GRAPH_ALGORITHM_COMPLEXITY', () => {
+    const keys = Object.keys(GRAPH_ALGORITHM_COMPLEXITY);
+
+    it('should have metadata for graph algorithms', () => {
+      expect(keys).toEqual(['topologicalSort']);
+    });
+
+    it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
+      keys.forEach(algoKey => {
+        const meta = GRAPH_ALGORITHM_COMPLEXITY[algoKey];
         expect(meta).toHaveProperty('name');
         expect(meta).toHaveProperty('timeComplexity');
         expect(meta).toHaveProperty('spaceComplexity');

@@ -540,4 +540,27 @@ To traverse the whole binary tree, call PostorderTraversal(root)`,
         current ← right child of current
 
 Uses only O(1) extra space; restores original tree links after the walk.`,
+
+  topologicalSort: `FUNCTION TopologicalSort(graph):
+  temporary ← empty set
+  permanent ← empty set
+  finishStack ← empty stack
+
+  FUNCTION Visit(vertex):
+    IF vertex is in temporary:
+      REPORT cycle and stop
+    IF vertex is in permanent:
+      RETURN
+    add vertex to temporary
+    FOR each neighbor in adjacency[vertex]:
+      Visit(neighbor)
+    remove vertex from temporary
+    add vertex to permanent
+    push vertex onto finishStack
+
+  FOR each vertex in graph:
+    IF vertex is not in permanent:
+      Visit(vertex)
+
+  RETURN reverse(finishStack)`,
 };

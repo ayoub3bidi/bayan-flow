@@ -528,6 +528,33 @@ const BREADTH_FIRST_SEARCH_TEST_CASES = [
   },
 ];
 
+const TOPOLOGICAL_SORT_TEST_CASES = [
+  {
+    id: 'topo-basic-dag',
+    name: 'Basic DAG',
+    input: "{'0': ['1', '2'], '1': ['3'], '2': ['3'], '3': []}",
+    expected: "['0', '2', '1', '3']",
+  },
+  {
+    id: 'topo-disconnected',
+    name: 'Disconnected DAG',
+    input: "{'0': ['1'], '1': [], '2': ['3'], '3': []}",
+    expected: "['2', '3', '0', '1']",
+  },
+  {
+    id: 'topo-single',
+    name: 'Single vertex',
+    input: "{'0': []}",
+    expected: "['0']",
+  },
+  {
+    id: 'topo-cycle',
+    name: 'Cycle rejected',
+    input: "{'0': ['1'], '1': ['0']}",
+    expected: 'None',
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -725,6 +752,10 @@ export const algorithmTestCases = {
   breadthFirstSearchGraph: {
     functionName: 'breadth_first_search_graph',
     testCases: BREADTH_FIRST_SEARCH_TEST_CASES,
+  },
+  topologicalSort: {
+    functionName: 'topological_sort',
+    testCases: TOPOLOGICAL_SORT_TEST_CASES,
   },
   levelOrderTraversal: {
     functionName: 'level_order_traversal',

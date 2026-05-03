@@ -114,6 +114,31 @@ const treeTraversalVisualization = {
   steps: [{ description: 'tree step' }],
 };
 
+const graphAlgorithmVisualization = {
+  graphNodes: [],
+  graphEdges: [],
+  graphNodeStates: {},
+  graphEdgeStates: {},
+  graphStackOrder: [],
+  graphOutputOrder: [],
+  directed: true,
+  weighted: false,
+  states: [],
+  description: 'Graph description',
+  isComplete: false,
+  stepForward: vi.fn(),
+  stepBackward: vi.fn(),
+  play: vi.fn(),
+  pause: vi.fn(),
+  reset: vi.fn(),
+  regenerateGraph: vi.fn(),
+  reloadSteps: vi.fn(),
+  isPlaying: false,
+  currentStep: 0,
+  totalSteps: 1,
+  steps: [{ description: 'graph step' }],
+};
+
 vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }) => <>{children}</>,
   motion: {
@@ -253,6 +278,12 @@ vi.mock('../components/TreeVisualizer', () => ({
   ),
 }));
 
+vi.mock('../components/GraphVisualizer', () => ({
+  default: ({ algorithm }) => (
+    <div data-testid="graph-visualizer">{algorithm}</div>
+  ),
+}));
+
 vi.mock('../hooks/useSortingVisualization', () => ({
   /** Forward input array from VisualizerApp so sort-order and generate handlers affect the mock visualizer. */
   useSortingVisualization: (_algorithmKey, initialArray, _speed, _mode) => ({
@@ -273,6 +304,10 @@ vi.mock('../hooks/useSearchingVisualization', () => ({
 
 vi.mock('../hooks/useTreeTraversalVisualization', () => ({
   useTreeTraversalVisualization: () => treeTraversalVisualization,
+}));
+
+vi.mock('../hooks/useGraphAlgorithmVisualization', () => ({
+  useGraphAlgorithmVisualization: () => graphAlgorithmVisualization,
 }));
 
 vi.mock('../hooks/useFullScreen', () => ({

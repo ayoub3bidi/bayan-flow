@@ -93,6 +93,11 @@ vi.mock('./bfs_graph.py?raw', () => ({
     'def bfs_graph(adj, root, goal):\n    """BFS on graph"""\n    return []',
 }));
 
+vi.mock('./topological_sort.py?raw', () => ({
+  default:
+    'def topological_sort(adjacency):\n    """Topological Sort"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -221,6 +226,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Level-order Traversal');
     });
 
+    it('returns Python code for topological sort', () => {
+      const code = getPythonCode('topologicalSort');
+      expect(code).toContain('def topological_sort');
+      expect(code).toContain('Topological Sort');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -333,6 +344,11 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Depth-First Search (graph)');
     });
 
+    it('returns correct display name for topological sort', () => {
+      const name = getAlgorithmDisplayName('topologicalSort');
+      expect(name).toBe('Topological Sort (DFS)');
+    });
+
     it('returns correct display name for postorder traversal', () => {
       const name = getAlgorithmDisplayName('postorderTraversal');
       expect(name).toBe('Postorder Traversal');
@@ -389,6 +405,7 @@ describe('Python Algorithms Index', () => {
         'preorderTraversal',
         'postorderTraversal',
         'morrisTraversal',
+        'topologicalSort',
       ];
 
       supportedAlgorithms.forEach(algorithm => {

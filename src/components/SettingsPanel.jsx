@@ -13,6 +13,7 @@ import {
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPE_LIST,
+  GRAPH_NODE_COUNT,
   SEARCH_GRAPH_NODE_COUNT,
   TREE_NODE_COUNT,
 } from '../constants';
@@ -38,6 +39,8 @@ function SettingsPanel({
   onSearchGraphNodeCountChange,
   treeNodeCount,
   onTreeNodeCountChange,
+  graphNodeCount,
+  onGraphNodeCountChange,
   isPlaying,
   mode,
   onModeChange,
@@ -76,7 +79,15 @@ function SettingsPanel({
             max: TREE_NODE_COUNT.max,
             step: TREE_NODE_COUNT.step,
           }
-        : categoryConfig.sizeControl;
+        : effectiveSizeBinding === 'graph'
+          ? {
+              type: 'slider',
+              i18nKey: 'settings.graphNodeCount',
+              min: GRAPH_NODE_COUNT.min,
+              max: GRAPH_NODE_COUNT.max,
+              step: GRAPH_NODE_COUNT.step,
+            }
+          : categoryConfig.sizeControl;
 
   const sizeValue =
     effectiveSizeBinding === 'array'
@@ -85,7 +96,9 @@ function SettingsPanel({
         ? searchGraphNodeCount
         : effectiveSizeBinding === 'tree'
           ? treeNodeCount
-          : gridSize;
+          : effectiveSizeBinding === 'graph'
+            ? graphNodeCount
+            : gridSize;
   const onSizeChange =
     effectiveSizeBinding === 'array'
       ? onArraySizeChange
@@ -93,7 +106,9 @@ function SettingsPanel({
         ? onSearchGraphNodeCountChange
         : effectiveSizeBinding === 'tree'
           ? onTreeNodeCountChange
-          : onGridSizeChange;
+          : effectiveSizeBinding === 'graph'
+            ? onGraphNodeCountChange
+            : onGridSizeChange;
 
   const currentSpeedIndex = Math.max(
     0,

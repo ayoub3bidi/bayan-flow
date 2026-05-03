@@ -16,6 +16,7 @@ import { isNodeLinkSearchingAlgorithm } from './searchingSubstrate';
  *   sortingVisualization: { array: unknown },
  *   searchingVisualization: Record<string, unknown>,
  *   treeTraversalVisualization: Record<string, unknown>,
+ *   graphAlgorithmVisualization: Record<string, unknown>,
  *   gridSize: number,
  *   activeAlgorithmKey: string,
  * }} ctx
@@ -26,6 +27,7 @@ export function getExtraVisualizerProps(
     sortingVisualization,
     searchingVisualization,
     treeTraversalVisualization,
+    graphAlgorithmVisualization,
     gridSize,
     activeAlgorithmKey,
   }
@@ -62,6 +64,20 @@ export function getExtraVisualizerProps(
       queueOrder: treeTraversalVisualization.queueOrder,
       levelScanDirection: treeTraversalVisualization.treeLevelScanDirection,
       complexityDataset: 'treeTraversal',
+    };
+  }
+  if (algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM) {
+    return {
+      nodes: graphAlgorithmVisualization.graphNodes,
+      edges: graphAlgorithmVisualization.graphEdges,
+      nodeStates: graphAlgorithmVisualization.graphNodeStates,
+      edgeStates: graphAlgorithmVisualization.graphEdgeStates,
+      stackOrder: graphAlgorithmVisualization.graphStackOrder,
+      outputOrder: graphAlgorithmVisualization.graphOutputOrder,
+      directed: graphAlgorithmVisualization.directed,
+      weighted: graphAlgorithmVisualization.weighted,
+      graphVariant: 'graphAlgorithm',
+      complexityDataset: 'graphAlgorithm',
     };
   }
   return {};

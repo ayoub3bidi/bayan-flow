@@ -42,6 +42,7 @@ import zigzagLevelOrderTraversalPython from './zigzag_level_order_traversal.py?r
 import preorderTraversalPython from './preorder_traversal.py?raw';
 import postorderTraversalPython from './postorder_traversal.py?raw';
 import morrisTraversalPython from './morris_traversal.py?raw';
+import topologicalSortPython from './topological_sort.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -82,6 +83,7 @@ export const pythonAlgorithms = {
   preorderTraversal: preorderTraversalPython,
   postorderTraversal: postorderTraversalPython,
   morrisTraversal: morrisTraversalPython,
+  topologicalSort: topologicalSortPython,
 };
 
 export const algorithmDisplayNames = {
@@ -123,6 +125,7 @@ export const algorithmDisplayNames = {
   preorderTraversal: 'Preorder Traversal',
   postorderTraversal: 'Postorder Traversal',
   morrisTraversal: 'Morris Traversal',
+  topologicalSort: 'Topological Sort (DFS)',
 };
 
 export function getPythonCode(algorithmName) {
