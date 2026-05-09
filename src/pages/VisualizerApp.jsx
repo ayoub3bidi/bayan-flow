@@ -101,6 +101,7 @@ function App() {
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
+  const [selectedGraphScenario, setSelectedGraphScenario] = useState(null);
 
   // ── Active Algorithm Key / Name ───────────────────────────────────────────
   const activeAlgorithmKey = selectedAlgorithms[algorithmType];
@@ -140,7 +141,8 @@ function App() {
     selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM],
     speed,
     mode,
-    graphNodeCount
+    graphNodeCount,
+    selectedGraphScenario
   );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
@@ -371,6 +373,8 @@ function App() {
               exportState={exportState}
               exportProgress={exportProgress}
               canRenderOnWeb={canRenderOnWeb}
+              selectedGraphScenario={selectedGraphScenario}
+              onGraphScenarioChange={setSelectedGraphScenario}
             />
           </motion.div>
         ) : (
@@ -462,6 +466,8 @@ function App() {
                       exportState={exportState}
                       exportProgress={exportProgress}
                       canRenderOnWeb={canRenderOnWeb}
+                      selectedGraphScenario={selectedGraphScenario}
+                      onGraphScenarioChange={setSelectedGraphScenario}
                     />
                   </section>
                 </div>

@@ -50,6 +50,8 @@ import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
  * @param {string} exportState - 'idle' | 'checking' | 'rendering' | 'done' | 'error'
  * @param {number} exportProgress - 0-1 progress when rendering
  * @param {boolean|null} canRenderOnWeb - Whether browser supports web render (null = unknown)
+ * @param {string} [selectedGraphScenario] - Currently selected graph scenario ID
+ * @param {Function} [onGraphScenarioChange] - Handler for changing graph scenario
  */
 function ControlPanel({
   isPlaying,
@@ -73,6 +75,8 @@ function ControlPanel({
   exportState = 'idle',
   exportProgress: _exportProgress = 0,
   canRenderOnWeb = null,
+  selectedGraphScenario = null,
+  onGraphScenarioChange = null,
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
@@ -216,6 +220,9 @@ function ControlPanel({
               )}
             </button>
           )}
+
+          {/* Graph Scenarios - Hidden for now */}
+          {/* TODO: Revisit scenario selector UI/UX in future iteration */}
 
           {/* Export Video / Stop Export */}
           {exportState === 'checking' || exportState === 'rendering' ? (

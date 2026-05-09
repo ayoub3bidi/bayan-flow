@@ -246,12 +246,13 @@ function GraphVisualizer({
               isComplete={isComplete}
             />
 
-            {/* Stack / Queue badge — container is ALWAYS mounted so height is reserved. */}
+            {/* Stack / Queue badge + Output Order badge — same row, same height */}
             <div
-              className="flex justify-center mt-1 mb-1 shrink-0 h-7"
+              className="flex justify-center gap-2 mt-1 mb-1 shrink-0 h-7 flex-wrap"
               aria-label={t('legend.searchingGraph.stackFrontier')}
               aria-live="polite"
             >
+              {/* Stack / Queue badge */}
               <motion.span
                 animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
                 transition={{ duration: 0.15 }}
@@ -271,6 +272,23 @@ function GraphVisualizer({
                     : '\u00a0'}
                 </span>
               </motion.span>
+
+              {/* Output Order badge — same row and size */}
+              {isGraphAlgorithm && outputOrder.length > 0 && (
+                <motion.span
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.15 }}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+                >
+                  <span className="font-semibold text-text-primary">
+                    {t('visualization.outputOrderBadge', {
+                      order: outputOrder
+                        .map(id => labelById[id] ?? id)
+                        .join(' → '),
+                    })}
+                  </span>
+                </motion.span>
+              )}
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center overflow-auto touch-pan-y pb-12 sm:pb-14 min-h-0">
@@ -401,17 +419,7 @@ function GraphVisualizer({
               )}
             </AnimatePresence>
 
-            {isGraphAlgorithm && outputOrder.length > 0 && (
-              <div className="absolute top-24 sm:top-28 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none">
-                <div className="bg-surface-elevated px-4 py-2 rounded-full shadow-lg border border-gray-200 text-xs sm:text-sm font-mono font-semibold text-text-primary">
-                  {t('visualization.outputOrderBadge', {
-                    order: outputOrder
-                      .map(id => labelById[id] ?? id)
-                      .join(' → '),
-                  })}
-                </div>
-              </div>
-            )}
+            {/* Output order badge moved to top badges row */}
           </motion.div>
         )}
       </AnimatePresence>

@@ -15,6 +15,7 @@ import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 import { generateRandomDag } from '../utils/graphAlgorithmGenerators.js';
+import { GRAPH_SCENARIOS } from '../utils/graphTestScenarios.js';
 
 function initialGraphNodeStates(nodes) {
   /** @type {Record<string, string>} */
@@ -32,12 +33,14 @@ function initialGraphNodeStates(nodes) {
  * @param {number} speed
  * @param {string} mode
  * @param {number} [graphNodeCount]
+ * @param {string} [scenarioId] - Optional preset scenario ID
  */
 export function useGraphAlgorithmVisualization(
   algorithmKey,
   speed,
   mode = VISUALIZATION_MODES.MANUAL,
-  graphNodeCount = DEFAULT_GRAPH_NODE_COUNT
+  graphNodeCount = DEFAULT_GRAPH_NODE_COUNT,
+  scenarioId = null
 ) {
   const [graphNodes, setGraphNodes] = useState([]);
   const [graphEdges, setGraphEdges] = useState([]);
@@ -68,7 +71,22 @@ export function useGraphAlgorithmVisualization(
   const regenerateGraphStructure = useCallback(() => {
     engine.loadSteps([]);
 
-    const graph = generateRandomDag({ nodeCount: graphNodeCount });
+    let graph;
+    if (scenarioId && GRAPH_SCENARIOS[scenarioId]) {
+      // Load preset scenario
+      const scenario = GRAPH_SCENARIOS[scenarioId];
+      graph = {
+        nodes: scenario.nodes,
+        edges: scenario.edges,
+        adjacency: scenario.adjacency,
+        directed: true,
+        weighted: false,
+      };
+    } else {
+      // Generate random DAG
+      graph = generateRandomDag({ nodeCount: graphNodeCount });
+    }
+
     setGraphNodes(graph.nodes);
     setGraphEdges(graph.edges);
     setGraphNodeStates(initialGraphNodeStates(graph.nodes));
@@ -79,12 +97,12 @@ export function useGraphAlgorithmVisualization(
     setWeighted(graph.weighted);
     setGraphContext(graph);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphNodeCount, engine.loadSteps]);
+  }, [graphNodeCount, engine.loadSteps, scenarioId]);
 
   useEffect(() => {
     regenerateGraphStructure();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [algorithmKey, graphNodeCount]);
+  }, [algorithmKey, graphNodeCount, scenarioId]);
 
   const loadStepsForCurrentAlgorithm = useCallback(() => {
     if (!algorithmKey || !graphContext) {

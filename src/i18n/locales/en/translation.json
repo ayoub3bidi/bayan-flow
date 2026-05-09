@@ -744,6 +744,14 @@
       }
     }
   },
+  "graphScenarios": {
+    "linearChain": "Linear Chain (A→B→C→D)",
+    "diamond": "Diamond Pattern (merge point)",
+    "complex": "Complex DAG (realistic dependencies)",
+    "disconnected": "Disconnected Components",
+    "singleNode": "Single Node (trivial case)",
+    "wide": "Wide Graph (no dependencies)"
+  },
   "footer": {
     "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",

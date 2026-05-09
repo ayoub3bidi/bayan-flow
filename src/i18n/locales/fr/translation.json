@@ -743,6 +743,14 @@
       }
     }
   },
+  "graphScenarios": {
+    "linearChain": "Chaîne linéaire (A→B→C→D)",
+    "diamond": "Motif en diamant (point de fusion)",
+    "complex": "DAG complexe (dépendances réalistes)",
+    "disconnected": "Composants déconnectés",
+    "singleNode": "Nœud unique (cas trivial)",
+    "wide": "Graphe large (pas de dépendances)"
+  },
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
