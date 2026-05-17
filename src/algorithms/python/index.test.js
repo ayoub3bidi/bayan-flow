@@ -104,6 +104,11 @@ vi.mock('./kahn_algorithm.py?raw', () => ({
     'def kahn_algorithm(adjacency):\n    """Kahn Algorithm"""\n    return []',
 }));
 
+vi.mock('./kruskal_algorithm.py?raw', () => ({
+  default:
+    'def kruskal_algorithm(nodes, edges):\n    """Kruskal Algorithm"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -244,6 +249,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Kahn Algorithm');
     });
 
+    it("returns Python code for Kruskal's algorithm", () => {
+      const code = getPythonCode('kruskalAlgorithm');
+      expect(code).toContain('def kruskal_algorithm');
+      expect(code).toContain('Kruskal Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -364,6 +375,11 @@ describe('Python Algorithms Index', () => {
     it("returns correct display name for Kahn's algorithm", () => {
       const name = getAlgorithmDisplayName('kahnAlgorithm');
       expect(name).toBe("Kahn's Algorithm");
+    });
+
+    it("returns correct display name for Kruskal's algorithm", () => {
+      const name = getAlgorithmDisplayName('kruskalAlgorithm');
+      expect(name).toBe("Kruskal's Algorithm");
     });
 
     it('returns correct display name for postorder traversal', () => {

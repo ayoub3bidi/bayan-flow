@@ -5,7 +5,12 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { generateRandomDag, isAcyclic } from './graphAlgorithmGenerators.js';
+import {
+  generateRandomDag,
+  generateRandomWeightedUndirectedGraph,
+  isAcyclic,
+  isConnectedUndirectedGraph,
+} from './graphAlgorithmGenerators.js';
 
 describe('generateRandomDag', () => {
   it('generates the requested number of nodes', () => {
@@ -29,5 +34,40 @@ describe('generateRandomDag', () => {
     const graph = generateRandomDag({ nodeCount: 12, rng: () => 0.2 });
 
     expect(isAcyclic(graph.adjacency)).toBe(true);
+  });
+});
+
+describe('generateRandomWeightedUndirectedGraph', () => {
+  it('generates the requested number of nodes', () => {
+    const graph = generateRandomWeightedUndirectedGraph({
+      nodeCount: 6,
+      rng: () => 1,
+    });
+
+    expect(graph.nodes).toHaveLength(6);
+    expect(Object.keys(graph.adjacency)).toHaveLength(6);
+    expect(graph.directed).toBe(false);
+    expect(graph.weighted).toBe(true);
+  });
+
+  it('generates connected graphs for MST algorithms', () => {
+    const graph = generateRandomWeightedUndirectedGraph({
+      nodeCount: 8,
+      rng: () => 0.2,
+    });
+
+    expect(isConnectedUndirectedGraph(graph.adjacency)).toBe(true);
+  });
+
+  it('assigns weights to every edge', () => {
+    const graph = generateRandomWeightedUndirectedGraph({
+      nodeCount: 5,
+      rng: () => 0.2,
+    });
+
+    graph.edges.forEach(edge => {
+      expect(typeof edge.weight).toBe('number');
+      expect(edge.weight).toBeGreaterThanOrEqual(1);
+    });
   });
 });

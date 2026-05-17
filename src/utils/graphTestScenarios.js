@@ -195,6 +195,97 @@ export const SCENARIO_DIRECTED_CYCLE = {
 };
 
 /**
+ * Weighted undirected triangle
+ * Best for: Understanding the simplest cycle rejection in Kruskal's algorithm
+ */
+export const SCENARIO_WEIGHTED_TRIANGLE = {
+  id: 'weightedTriangle',
+  i18nKey: 'graphScenarios.weightedTriangle',
+  directed: false,
+  weighted: true,
+  nodes: [
+    { id: '0', label: 'A', x: 0.5, y: 0.1 },
+    { id: '1', label: 'B', x: 0.18, y: 0.82 },
+    { id: '2', label: 'C', x: 0.82, y: 0.82 },
+  ],
+  edges: [
+    { id: '0<->1', from: '0', to: '1', weight: 1 },
+    { id: '1<->2', from: '1', to: '2', weight: 2 },
+    { id: '0<->2', from: '0', to: '2', weight: 4 },
+  ],
+  adjacency: {
+    0: ['1', '2'],
+    1: ['0', '2'],
+    2: ['0', '1'],
+  },
+};
+
+/**
+ * Weighted connected graph with several candidate cycles
+ * Best for: Comparing selected versus rejected edges in a richer MST example
+ */
+export const SCENARIO_WEIGHTED_BRIDGE = {
+  id: 'weightedBridge',
+  i18nKey: 'graphScenarios.weightedBridge',
+  directed: false,
+  weighted: true,
+  nodes: [
+    { id: '0', label: 'A', x: 0.14, y: 0.26 },
+    { id: '1', label: 'B', x: 0.42, y: 0.12 },
+    { id: '2', label: 'C', x: 0.42, y: 0.52 },
+    { id: '3', label: 'D', x: 0.72, y: 0.3 },
+    { id: '4', label: 'E', x: 0.88, y: 0.72 },
+  ],
+  edges: [
+    { id: '0<->1', from: '0', to: '1', weight: 2 },
+    { id: '0<->2', from: '0', to: '2', weight: 3 },
+    { id: '1<->2', from: '1', to: '2', weight: 1 },
+    { id: '1<->3', from: '1', to: '3', weight: 4 },
+    { id: '2<->3', from: '2', to: '3', weight: 5 },
+    { id: '2<->4', from: '2', to: '4', weight: 6 },
+    { id: '3<->4', from: '3', to: '4', weight: 2 },
+  ],
+  adjacency: {
+    0: ['1', '2'],
+    1: ['0', '2', '3'],
+    2: ['0', '1', '3', '4'],
+    3: ['1', '2', '4'],
+    4: ['2', '3'],
+  },
+};
+
+/**
+ * Weighted disconnected graph
+ * Best for: Showing that Kruskal returns a minimum spanning forest
+ */
+export const SCENARIO_WEIGHTED_DISCONNECTED = {
+  id: 'weightedDisconnected',
+  i18nKey: 'graphScenarios.weightedDisconnected',
+  directed: false,
+  weighted: true,
+  nodes: [
+    { id: '0', label: 'A', x: 0.18, y: 0.32 },
+    { id: '1', label: 'B', x: 0.34, y: 0.7 },
+    { id: '2', label: 'C', x: 0.52, y: 0.3 },
+    { id: '3', label: 'D', x: 0.72, y: 0.24 },
+    { id: '4', label: 'E', x: 0.86, y: 0.72 },
+  ],
+  edges: [
+    { id: '0<->1', from: '0', to: '1', weight: 1 },
+    { id: '1<->2', from: '1', to: '2', weight: 3 },
+    { id: '0<->2', from: '0', to: '2', weight: 4 },
+    { id: '3<->4', from: '3', to: '4', weight: 2 },
+  ],
+  adjacency: {
+    0: ['1', '2'],
+    1: ['0', '2'],
+    2: ['0', '1'],
+    3: ['4'],
+    4: ['3'],
+  },
+};
+
+/**
  * All scenarios mapped by id for easy lookup
  */
 export const GRAPH_SCENARIOS = {
@@ -205,6 +296,9 @@ export const GRAPH_SCENARIOS = {
   [SCENARIO_SINGLE_NODE.id]: SCENARIO_SINGLE_NODE,
   [SCENARIO_WIDE.id]: SCENARIO_WIDE,
   [SCENARIO_DIRECTED_CYCLE.id]: SCENARIO_DIRECTED_CYCLE,
+  [SCENARIO_WEIGHTED_TRIANGLE.id]: SCENARIO_WEIGHTED_TRIANGLE,
+  [SCENARIO_WEIGHTED_BRIDGE.id]: SCENARIO_WEIGHTED_BRIDGE,
+  [SCENARIO_WEIGHTED_DISCONNECTED.id]: SCENARIO_WEIGHTED_DISCONNECTED,
 };
 
 /**

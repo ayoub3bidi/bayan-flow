@@ -90,7 +90,8 @@
     },
     "graphAlgorithm": {
       "topologicalSort": "Topological Sort (DFS)",
-      "kahnAlgorithm": "Kahn's Algorithm"
+      "kahnAlgorithm": "Kahn's Algorithm",
+      "kruskalAlgorithm": "Kruskal's Algorithm"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -132,7 +133,8 @@
       "postorderTraversal": "Starting postorder traversal",
       "morrisTraversal": "Starting Morris traversal",
       "topologicalSort": "Starting DFS-based topological sort",
-      "kahnAlgorithm": "Starting Kahn's topological sort"
+      "kahnAlgorithm": "Starting Kahn's topological sort",
+      "kruskalAlgorithm": "Starting Kruskal's minimum spanning tree algorithm"
     }
   },
   "complexity": {
@@ -175,7 +177,8 @@
     "postorderTraversal": "O(n)",
     "morrisTraversal": "O(n)",
     "topologicalSort": "O(V + E)",
-    "kahnAlgorithm": "O(V + E)"
+    "kahnAlgorithm": "O(V + E)",
+    "kruskalAlgorithm": "O(E log E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -687,6 +690,18 @@
         "facts_2": "Different queue tie-break rules can produce different valid topological orders.",
         "facts_3": "This implementation keeps the ready queue sorted for deterministic educational output."
       },
+      "kruskalAlgorithm": {
+        "history": "Joseph Kruskal introduced this minimum spanning tree algorithm in 1956. Its elegance comes from a simple greedy idea: process edges in nondecreasing weight order and keep only those that connect different components.",
+        "intuition": "Sort every weighted edge from lightest to heaviest. If an edge connects two different components, keep it because it is the cheapest available way to merge them right now. If it connects vertices already joined, reject it because adding it would only form a cycle.",
+        "realWorldUses_0": "Minimum-cost network design",
+        "realWorldUses_1": "Hierarchical clustering and segmentation",
+        "realWorldUses_2": "Teaching Union-Find with a concrete greedy algorithm",
+        "realWorldUses_3": "Building minimum spanning forests on disconnected graphs",
+        "facts_0": "Kruskal works on disconnected graphs too; the result is then a minimum spanning forest.",
+        "facts_1": "Union-Find makes cycle detection nearly constant-time per edge after sorting.",
+        "facts_2": "If all edge weights are distinct, the minimum spanning tree is unique.",
+        "facts_3": "The O(E log E) cost is dominated by sorting the weighted edges."
+      },
       "inorderTraversal": {
         "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
         "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
@@ -768,7 +783,10 @@
     "disconnected": "Disconnected Components",
     "singleNode": "Single Node (trivial case)",
     "wide": "Wide Graph (no dependencies)",
-    "directedCycle": "Directed Cycle (cycle detection)"
+    "directedCycle": "Directed Cycle (cycle detection)",
+    "weightedTriangle": "Weighted Triangle",
+    "weightedBridge": "Weighted Connected Graph",
+    "weightedDisconnected": "Weighted Disconnected Graph"
   },
   "footer": {
     "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
@@ -853,6 +871,8 @@
     "treeAriaEmpty": "Empty tree",
     "queueBadge": "Queue: {{order}}",
     "inDegreeBadge": "In-degrees: {{pairs}}",
+    "edgeQueueBadge": "Remaining edges: {{order}}",
+    "totalWeightBadge": "Total weight: {{weight}}",
     "visitOrderBadge": "Visited: {{order}}",
     "levelScanLtr": "This level: left to right",
     "levelScanRtl": "This level: right to left",
@@ -927,6 +947,10 @@
     "kahnEnqueue": "Removing {{from}} → {{node}} makes {{node}} ready. Enqueue it.",
     "kahnCycle": "The queue is empty after ordering {{count}} of {{total}} vertices. Remaining incoming edges prove a cycle.",
     "kahnFinish": "All vertices were removed successfully. Final topological order: {{order}}.",
+    "kruskalStart": "Kruskal's algorithm: sort all weighted edges from lightest to heaviest and test them one by one.",
+    "kruskalSelectEdge": "Select edge {{from}}-{{to}} with weight {{weight}}. It connects two different components, so the total weight becomes {{totalWeight}}.",
+    "kruskalRejectEdge": "Reject edge {{from}}-{{to}} with weight {{weight}} because its endpoints are already connected, so it would create a cycle.",
+    "kruskalFinish": "Kruskal is complete. Selected edges form a minimum spanning forest with total weight {{totalWeight}} across {{components}} component(s).",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -1135,7 +1159,8 @@
     "depthFirstTraversal": "Depth-first traversals",
     "breadthFirstTraversal": "Breadth-first traversals",
     "spaceOptimizedTraversal": "Space-optimized traversals",
-    "topologicalOrdering": "Topological ordering"
+    "topologicalOrdering": "Topological ordering",
+    "minimumSpanningTree": "Minimum spanning tree"
   },
   "roadmap": {
     "hero": {

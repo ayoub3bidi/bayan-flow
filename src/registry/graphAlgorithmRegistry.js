@@ -4,10 +4,16 @@
  * See LICENSE for details.
  */
 
-import { generateRandomDag } from '../utils/graphAlgorithmGenerators.js';
+import {
+  generateRandomDag,
+  generateRandomWeightedUndirectedGraph,
+} from '../utils/graphAlgorithmGenerators.js';
 import {
   GRAPH_SCENARIOS,
   SCENARIO_DIRECTED_CYCLE,
+  SCENARIO_WEIGHTED_BRIDGE,
+  SCENARIO_WEIGHTED_DISCONNECTED,
+  SCENARIO_WEIGHTED_TRIANGLE,
   SCENARIO_ORDER,
 } from '../utils/graphTestScenarios.js';
 
@@ -68,6 +74,29 @@ export const GRAPH_ALGORITHM_PROFILES = {
         return cloneScenarioGraph(scenario);
       }
       return generateRandomDag({ nodeCount, rng });
+    },
+  },
+  kruskalAlgorithm: {
+    key: 'kruskalAlgorithm',
+    groupLabelKey: 'algorithmGroups.minimumSpanningTree',
+    representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+    directed: false,
+    weighted: true,
+    supportsRandomGeneration: true,
+    scenarioIds: [
+      SCENARIO_WEIGHTED_TRIANGLE.id,
+      SCENARIO_WEIGHTED_BRIDGE.id,
+      SCENARIO_WEIGHTED_DISCONNECTED.id,
+    ],
+    createInput({ nodeCount, scenarioId, rng = Math.random }) {
+      const scenario =
+        scenarioId && GRAPH_SCENARIOS[scenarioId]
+          ? GRAPH_SCENARIOS[scenarioId]
+          : null;
+      if (scenario) {
+        return cloneScenarioGraph(scenario);
+      }
+      return generateRandomWeightedUndirectedGraph({ nodeCount, rng });
     },
   },
 };

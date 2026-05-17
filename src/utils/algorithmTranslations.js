@@ -172,6 +172,10 @@ export const ALGORITHM_STEPS = {
   KAHN_ENQUEUE: 'kahnEnqueue',
   KAHN_CYCLE: 'kahnCycle',
   KAHN_FINISH: 'kahnFinish',
+  KRUSKAL_START: 'kruskalStart',
+  KRUSKAL_SELECT_EDGE: 'kruskalSelectEdge',
+  KRUSKAL_REJECT_EDGE: 'kruskalRejectEdge',
+  KRUSKAL_FINISH: 'kruskalFinish',
 
   // Pathfinding
   EXPLORING: 'exploring',

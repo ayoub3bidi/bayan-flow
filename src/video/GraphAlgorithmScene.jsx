@@ -44,6 +44,7 @@ function GraphAlgorithmSceneInner({
     nodeStates = {},
     edgeStates = {},
     directed = true,
+    weighted = false,
     graphArtifacts = {},
   } = step;
   const nodeCount = nodes.length;
@@ -143,18 +144,43 @@ function GraphAlgorithmSceneInner({
           const stroke =
             GRAPH_EDGE_STATE_COLORS[state] ??
             GRAPH_EDGE_STATE_COLORS[GRAPH_EDGE_STATES.DEFAULT];
+          const x1 = a.cx + (dx / length) * nodeRadius;
+          const y1 = a.cy + (dy / length) * nodeRadius;
+          const x2 = b.cx - (dx / length) * (nodeRadius + 1.2);
+          const y2 = b.cy - (dy / length) * (nodeRadius + 1.2);
+          const mx = (a.cx + b.cx) / 2;
+          const my = (a.cy + b.cy) / 2;
+
           return (
-            <line
-              key={`${edge.from}-${edge.to}-${index}`}
-              x1={a.cx + (dx / length) * nodeRadius}
-              y1={a.cy + (dy / length) * nodeRadius}
-              x2={b.cx - (dx / length) * (nodeRadius + 1.2)}
-              y2={b.cy - (dy / length) * (nodeRadius + 1.2)}
-              stroke={stroke}
-              strokeWidth={state === GRAPH_EDGE_STATES.ACTIVE ? 0.9 : 0.5}
-              strokeLinecap="round"
-              markerEnd={directed ? 'url(#video-graph-arrowhead)' : undefined}
-            />
+            <g key={`${edge.from}-${edge.to}-${index}`}>
+              <line
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke={stroke}
+                strokeWidth={state === GRAPH_EDGE_STATES.ACTIVE ? 0.9 : 0.5}
+                strokeLinecap="round"
+                markerEnd={directed ? 'url(#video-graph-arrowhead)' : undefined}
+              />
+              {weighted && edge.weight != null ? (
+                <text
+                  x={mx}
+                  y={my - 1.4}
+                  textAnchor="middle"
+                  fill="#111827"
+                  style={{
+                    fontSize: 3.1,
+                    fontWeight: 800,
+                    paintOrder: 'stroke',
+                    stroke: '#f8fafc',
+                    strokeWidth: 0.8,
+                  }}
+                >
+                  {edge.weight}
+                </text>
+              ) : null}
+            </g>
           );
         })}
         {nodes.map(node => {

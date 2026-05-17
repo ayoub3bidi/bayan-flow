@@ -75,6 +75,7 @@ export const TREE_TRAVERSAL_ALGORITHMS = {
 export const GRAPH_ALGORITHMS = {
   TOPOLOGICAL_SORT: 'topologicalSort',
   KAHN_ALGORITHM: 'kahnAlgorithm',
+  KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -713,6 +714,23 @@ export const GRAPH_ALGORITHM_COMPLEXITY = {
       'Teaching in-degree based reasoning on DAGs',
     ],
   },
+  kruskalAlgorithm: {
+    name: "Kruskal's Algorithm",
+    timeComplexity: {
+      best: 'O(E log E)',
+      average: 'O(E log E)',
+      worst: 'O(E log E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kruskal's algorithm sorts weighted edges from lightest to heaviest, then adds each edge only if it connects two different components. A Union-Find structure keeps the selected edges cycle-free while still producing an optimal minimum spanning tree or forest.",
+    useCases: [
+      'Network design with minimum total cable cost',
+      'Clustering and image segmentation',
+      'Teaching greedy algorithms with Union-Find',
+      'Building minimum spanning forests on disconnected graphs',
+    ],
+  },
 };
 
 export const COMPLEXITY_FUNCTIONS = {
@@ -730,6 +748,7 @@ export const COMPLEXITY_FUNCTIONS = {
   'O(2^n)': n => Math.pow(2, n),
   'O(V + E)': n => n + n * 4, // Approximation: V vertices + E edges (grid has ~4 edges per vertex)
   'O((V + E) log V)': n => (n + n * 4) * Math.log2(n),
+  'O(E log E)': n => n * 4 * Math.log2(Math.max(2, n * 4)),
   'O(E)': n => n * 4, // Approximation for grid edges
   'O(VE)': n => n * n * 4, // Approximation: V vertices × E edges per vertex (~4)
   'O(b^d)': n => Math.pow(4, Math.log2(n)), // Approximation: branching factor 4, depth log(n)

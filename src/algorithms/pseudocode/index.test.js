@@ -89,6 +89,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('KahnsAlgorithm');
   });
+
+  it('returns pseudocode for kruskalAlgorithm', () => {
+    const text = getPseudocodeForLocale('kruskalAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('KruskalAlgorithm');
+  });
 });
 
 describe('getPseudocode', () => {

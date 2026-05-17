@@ -582,6 +582,24 @@ const KAHN_ALGORITHM_TEST_CASES = [
   },
 ];
 
+const KRUSKAL_ALGORITHM_TEST_CASES = [
+  {
+    id: 'kruskal-bridge',
+    name: 'Connected weighted graph',
+    input:
+      "(['0', '1', '2', '3', '4'], [('0', '1', 2), ('0', '2', 3), ('1', '2', 1), ('1', '3', 4), ('2', '3', 5), ('2', '4', 6), ('3', '4', 2)])",
+    expected:
+      "([('1', '2', 1), ('0', '1', 2), ('3', '4', 2), ('1', '3', 4)], 9)",
+  },
+  {
+    id: 'kruskal-disconnected',
+    name: 'Disconnected weighted graph',
+    input:
+      "(['0', '1', '2', '3', '4'], [('0', '1', 1), ('1', '2', 3), ('0', '2', 4), ('3', '4', 2)])",
+    expected: "([('0', '1', 1), ('3', '4', 2), ('1', '2', 3)], 6)",
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -787,6 +805,10 @@ export const algorithmTestCases = {
   kahnAlgorithm: {
     functionName: 'kahn_algorithm',
     testCases: KAHN_ALGORITHM_TEST_CASES,
+  },
+  kruskalAlgorithm: {
+    functionName: 'kruskal_algorithm',
+    testCases: KRUSKAL_ALGORITHM_TEST_CASES,
   },
   levelOrderTraversal: {
     functionName: 'level_order_traversal',

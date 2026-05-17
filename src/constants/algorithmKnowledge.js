@@ -263,6 +263,13 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  kruskalAlgorithm: {
+    inventor: 'Joseph Kruskal',
+    year: 1956,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 
   // ── Tree traversals ───────────────────────────────────────────────────────
   inorderTraversal: {

@@ -585,4 +585,18 @@ Uses only O(1) extra space; restores original tree links after the walk.`,
     REPORT cycle
 
   RETURN order`,
+
+  kruskalAlgorithm: `FUNCTION KruskalAlgorithm(vertices, edges):
+  make each vertex its own component
+  sort edges by ascending weight
+  selectedEdges ← empty list
+
+  FOR each edge (u, v, w) in sorted edges:
+    IF Find(u) ≠ Find(v):
+      add edge to selectedEdges
+      Union(u, v)
+    ELSE:
+      skip edge because it would create a cycle
+
+  RETURN selectedEdges`,
 };

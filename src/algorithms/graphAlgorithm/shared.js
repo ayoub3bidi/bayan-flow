@@ -38,12 +38,21 @@ export function makeEdgeId(from, to) {
   return `${from}->${to}`;
 }
 
-export function buildEdgeIdByEndpoints(edges) {
+export function makeUndirectedEdgeId(a, b) {
+  return sortNodeIds([a, b]).join('|');
+}
+
+export function buildEdgeIdByEndpoints(edges, directed = true) {
   const map = new Map();
   for (const edge of edges) {
     map.set(
-      makeEdgeId(edge.from, edge.to),
-      edge.id ?? makeEdgeId(edge.from, edge.to)
+      directed
+        ? makeEdgeId(edge.from, edge.to)
+        : makeUndirectedEdgeId(edge.from, edge.to),
+      edge.id ??
+        (directed
+          ? makeEdgeId(edge.from, edge.to)
+          : makeUndirectedEdgeId(edge.from, edge.to))
     );
   }
   return map;

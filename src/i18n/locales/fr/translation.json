@@ -90,7 +90,8 @@
     },
     "graphAlgorithm": {
       "topologicalSort": "Tri topologique (DFS)",
-      "kahnAlgorithm": "Algorithme de Kahn"
+      "kahnAlgorithm": "Algorithme de Kahn",
+      "kruskalAlgorithm": "Algorithme de Kruskal"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -131,7 +132,8 @@
       "postorderTraversal": "Démarrage du parcours suffixe",
       "morrisTraversal": "Démarrage du parcours de Morris",
       "topologicalSort": "Démarrage du tri topologique basé sur DFS",
-      "kahnAlgorithm": "Démarrage du tri topologique de Kahn"
+      "kahnAlgorithm": "Démarrage du tri topologique de Kahn",
+      "kruskalAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Kruskal"
     }
   },
   "complexity": {
@@ -174,7 +176,8 @@
     "postorderTraversal": "O(n)",
     "morrisTraversal": "O(n)",
     "topologicalSort": "O(V + E)",
-    "kahnAlgorithm": "O(V + E)"
+    "kahnAlgorithm": "O(V + E)",
+    "kruskalAlgorithm": "O(E log E)"
   },
   "speeds": {
     "slow": "Lent",
@@ -686,6 +689,18 @@
         "facts_2": "Des règles de priorité différentes dans la file peuvent produire des ordres topologiques valides différents.",
         "facts_3": "Cette implémentation garde la file triée pour obtenir une sortie déterministe et pédagogique."
       },
+      "kruskalAlgorithm": {
+        "history": "Joseph Kruskal a présenté cet algorithme d'arbre couvrant minimal en 1956. Son élégance vient d'une idée gloutonne simple : traiter les arêtes par poids croissant et ne garder que celles qui relient deux composantes différentes.",
+        "intuition": "On trie toutes les arêtes pondérées de la plus légère à la plus lourde. Si une arête relie deux composantes différentes, on la conserve car c'est actuellement le moyen le moins coûteux de les fusionner. Si ses extrémités sont déjà connectées, on la rejette car elle créerait seulement un cycle.",
+        "realWorldUses_0": "Conception de réseaux à coût minimal",
+        "realWorldUses_1": "Clustering hiérarchique et segmentation",
+        "realWorldUses_2": "Enseigner Union-Find avec un algorithme glouton concret",
+        "realWorldUses_3": "Construire des forêts couvrantes minimales sur des graphes déconnectés",
+        "facts_0": "Kruskal fonctionne aussi sur des graphes déconnectés ; le résultat est alors une forêt couvrante minimale.",
+        "facts_1": "Union-Find rend la détection des cycles presque constante par arête après le tri.",
+        "facts_2": "Si tous les poids sont distincts, l'arbre couvrant minimal est unique.",
+        "facts_3": "Le coût O(E log E) est dominé par le tri des arêtes pondérées."
+      },
       "inorderTraversal": {
         "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
         "intuition": "Depuis la racine, empiler le long des fils gauches jusqu'à l'absence de fils gauche ; visiter (enregistrer) le nœud, puis passer au fils droit et répéter. Chaque nœud est traité après tout son sous-arbre gauche.",
@@ -767,7 +782,10 @@
     "disconnected": "Composants déconnectés",
     "singleNode": "Nœud unique (cas trivial)",
     "wide": "Graphe large (pas de dépendances)",
-    "directedCycle": "Cycle orienté (détection de cycle)"
+    "directedCycle": "Cycle orienté (détection de cycle)",
+    "weightedTriangle": "Triangle pondéré",
+    "weightedBridge": "Graphe pondéré connecté",
+    "weightedDisconnected": "Graphe pondéré déconnecté"
   },
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
@@ -853,6 +871,8 @@
     "treeAriaEmpty": "Arbre vide",
     "queueBadge": "File : {{order}}",
     "inDegreeBadge": "Degrés entrants : {{pairs}}",
+    "edgeQueueBadge": "Arêtes restantes : {{order}}",
+    "totalWeightBadge": "Poids total : {{weight}}",
     "visitOrderBadge": "Visités : {{order}}",
     "levelScanLtr": "Ce niveau : de gauche à droite",
     "levelScanRtl": "Ce niveau : de droite à gauche",
@@ -927,6 +947,10 @@
     "kahnEnqueue": "La suppression de {{from}} → {{node}} rend {{node}} disponible. L'enfiler.",
     "kahnCycle": "La file est vide après l'ordonnancement de {{count}} sommets sur {{total}}. Les arêtes entrantes restantes prouvent l'existence d'un cycle.",
     "kahnFinish": "Tous les sommets ont été retirés avec succès. Ordre topologique final : {{order}}.",
+    "kruskalStart": "Algorithme de Kruskal : trier toutes les arêtes pondérées de la plus légère à la plus lourde et les tester une à une.",
+    "kruskalSelectEdge": "Sélection de l'arête {{from}}-{{to}} de poids {{weight}}. Elle relie deux composantes différentes, donc le poids total devient {{totalWeight}}.",
+    "kruskalRejectEdge": "Rejet de l'arête {{from}}-{{to}} de poids {{weight}} car ses extrémités sont déjà connectées ; elle créerait un cycle.",
+    "kruskalFinish": "Kruskal est terminé. Les arêtes sélectionnées forment une forêt couvrante minimale de poids total {{totalWeight}} sur {{components}} composante(s).",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -1136,7 +1160,8 @@
     "depthFirstTraversal": "Parcours en profondeur",
     "breadthFirstTraversal": "Parcours en largeur",
     "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire",
-    "topologicalOrdering": "Ordonnancement topologique"
+    "topologicalOrdering": "Ordonnancement topologique",
+    "minimumSpanningTree": "Arbre couvrant minimal"
   },
   "roadmap": {
     "hero": {

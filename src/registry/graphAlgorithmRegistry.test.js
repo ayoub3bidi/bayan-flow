@@ -18,11 +18,19 @@ import {
 
 describe('graphAlgorithmRegistry', () => {
   it('exports the graph algorithm keys used by the category', () => {
-    expect(GRAPH_ALGORITHM_KEYS).toEqual(['topologicalSort', 'kahnAlgorithm']);
+    expect(GRAPH_ALGORITHM_KEYS).toEqual([
+      'topologicalSort',
+      'kahnAlgorithm',
+      'kruskalAlgorithm',
+    ]);
     expect(GRAPH_ALGORITHM_GROUPS).toEqual([
       {
         labelKey: 'algorithmGroups.topologicalOrdering',
         algorithms: ['topologicalSort', 'kahnAlgorithm'],
+      },
+      {
+        labelKey: 'algorithmGroups.minimumSpanningTree',
+        algorithms: ['kruskalAlgorithm'],
       },
     ]);
   });
@@ -47,6 +55,18 @@ describe('graphAlgorithmRegistry', () => {
       weighted: false,
     });
     expect(getGraphAlgorithmRepresentation('kahnAlgorithm')).toBe(
+      GRAPH_REPRESENTATIONS.NODE_LINK
+    );
+  });
+
+  it('returns the profile and representation for kruskalAlgorithm', () => {
+    expect(getGraphAlgorithmProfile('kruskalAlgorithm')).toMatchObject({
+      key: 'kruskalAlgorithm',
+      representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+      directed: false,
+      weighted: true,
+    });
+    expect(getGraphAlgorithmRepresentation('kruskalAlgorithm')).toBe(
       GRAPH_REPRESENTATIONS.NODE_LINK
     );
   });
@@ -77,6 +97,17 @@ describe('graphAlgorithmRegistry', () => {
     expect(isGraphScenarioSupported('kahnAlgorithm', 'directedCycle')).toBe(
       true
     );
+  });
+
+  it('returns weighted undirected scenarios for kruskalAlgorithm', () => {
+    expect(getGraphAlgorithmScenarioOptions('kruskalAlgorithm')).toEqual([
+      { id: 'weightedTriangle', i18nKey: 'graphScenarios.weightedTriangle' },
+      { id: 'weightedBridge', i18nKey: 'graphScenarios.weightedBridge' },
+      {
+        id: 'weightedDisconnected',
+        i18nKey: 'graphScenarios.weightedDisconnected',
+      },
+    ]);
   });
 
   it('creates deterministic scenario input when a supported scenario is selected', () => {
@@ -113,5 +144,17 @@ describe('graphAlgorithmRegistry', () => {
     expect(graph.edges).toHaveLength(4);
     expect(graph.directed).toBe(true);
     expect(graph.weighted).toBe(false);
+  });
+
+  it('creates weighted disconnected input for kruskalAlgorithm', () => {
+    const graph = createGraphInputForAlgorithm('kruskalAlgorithm', {
+      nodeCount: 99,
+      scenarioId: 'weightedDisconnected',
+    });
+
+    expect(graph.nodes).toHaveLength(5);
+    expect(graph.edges).toHaveLength(4);
+    expect(graph.directed).toBe(false);
+    expect(graph.weighted).toBe(true);
   });
 });

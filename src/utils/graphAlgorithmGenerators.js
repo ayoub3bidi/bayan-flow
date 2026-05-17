@@ -13,6 +13,30 @@ function clampNodeCount(nodeCount) {
   return Math.max(1, Math.floor(Number(nodeCount) || 1));
 }
 
+function buildNodeLabels(ids) {
+  return Object.fromEntries(
+    ids.map((id, index) => [id, String.fromCharCode(65 + index)])
+  );
+}
+
+function buildCircularNodes(ids) {
+  const labels = buildNodeLabels(ids);
+  const radius = ids.length <= 1 ? 0 : 0.38;
+  return ids.map((id, index) => {
+    const angle = (2 * Math.PI * index) / Math.max(1, ids.length) - Math.PI / 2;
+    return {
+      id,
+      label: labels[id],
+      x: 0.5 + Math.cos(angle) * radius,
+      y: 0.5 + Math.sin(angle) * radius,
+    };
+  });
+}
+
+function randomWeight(rng, minWeight, maxWeight) {
+  return minWeight + Math.floor(rng() * (maxWeight - minWeight + 1));
+}
+
 /**
  * Compute the longest path from each node to any sink node in a DAG.
  * This is used to assign topological levels for hierarchical layout.
@@ -131,6 +155,83 @@ export function generateRandomDag({
 }
 
 /**
+ * Random connected undirected weighted graph for MST algorithms.
+ *
+ * @param {Object} opts
+ * @param {number} opts.nodeCount
+ * @param {() => number} [opts.rng]
+ * @param {number} [opts.edgeProbability]
+ * @param {number} [opts.minWeight]
+ * @param {number} [opts.maxWeight]
+ * @returns {{
+ *   nodes: GraphAlgorithmNode[],
+ *   edges: GraphAlgorithmEdge[],
+ *   adjacency: Record<string, string[]>,
+ *   directed: false,
+ *   weighted: true,
+ * }}
+ */
+export function generateRandomWeightedUndirectedGraph({
+  nodeCount,
+  rng = Math.random,
+  edgeProbability = 0.35,
+  minWeight = 1,
+  maxWeight = 9,
+}) {
+  const n = clampNodeCount(nodeCount);
+  const ids = Array.from({ length: n }, (_, i) => String(i));
+  const adjacency = Object.fromEntries(ids.map(id => [id, []]));
+  const edges = [];
+  const edgeIds = new Set();
+
+  const addEdge = (from, to, weight) => {
+    const key = [from, to].sort((a, b) => Number(a) - Number(b)).join('|');
+    if (edgeIds.has(key)) return;
+    edgeIds.add(key);
+    adjacency[from].push(to);
+    adjacency[to].push(from);
+    edges.push({
+      id: `${from}<->${to}`,
+      from,
+      to,
+      weight,
+    });
+  };
+
+  for (let index = 0; index < n - 1; index++) {
+    addEdge(
+      ids[index],
+      ids[index + 1],
+      randomWeight(rng, minWeight, maxWeight)
+    );
+  }
+
+  for (let fromIndex = 0; fromIndex < n; fromIndex++) {
+    for (let toIndex = fromIndex + 2; toIndex < n; toIndex++) {
+      if (rng() < edgeProbability) {
+        addEdge(
+          ids[fromIndex],
+          ids[toIndex],
+          randomWeight(rng, minWeight, maxWeight)
+        );
+      }
+    }
+  }
+
+  for (const id of ids) {
+    adjacency[id].sort((a, b) => Number(a) - Number(b));
+  }
+
+  return {
+    nodes: buildCircularNodes(ids),
+    edges,
+    adjacency,
+    directed: false,
+    weighted: true,
+  };
+}
+
+/**
  * @param {Record<string, string[]>} adjacency
  * @returns {boolean}
  */
@@ -152,4 +253,27 @@ export function isAcyclic(adjacency) {
   }
 
   return ids.every(dfs);
+}
+
+/**
+ * @param {Record<string, string[]>} adjacency
+ * @returns {boolean}
+ */
+export function isConnectedUndirectedGraph(adjacency) {
+  const ids = Object.keys(adjacency ?? {});
+  if (ids.length <= 1) return true;
+
+  const visited = new Set();
+  const stack = [ids[0]];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (visited.has(current)) continue;
+    visited.add(current);
+    for (const next of adjacency[current] ?? []) {
+      if (!visited.has(next)) stack.push(next);
+    }
+  }
+
+  return visited.size === ids.length;
 }
