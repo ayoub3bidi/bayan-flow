@@ -166,6 +166,12 @@ export const ALGORITHM_STEPS = {
   TOPOLOGICAL_COMPLETE_NODE: 'topologicalCompleteNode',
   TOPOLOGICAL_CYCLE: 'topologicalCycle',
   TOPOLOGICAL_FINISH: 'topologicalFinish',
+  KAHN_START: 'kahnStart',
+  KAHN_DEQUEUE: 'kahnDequeue',
+  KAHN_RELAX_EDGE: 'kahnRelaxEdge',
+  KAHN_ENQUEUE: 'kahnEnqueue',
+  KAHN_CYCLE: 'kahnCycle',
+  KAHN_FINISH: 'kahnFinish',
 
   // Pathfinding
   EXPLORING: 'exploring',

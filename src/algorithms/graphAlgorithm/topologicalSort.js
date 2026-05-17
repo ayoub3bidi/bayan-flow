@@ -11,33 +11,16 @@ import {
   ALGORITHM_STEPS,
   getAlgorithmDescription,
 } from '../../utils/algorithmTranslations.js';
-
-function cloneNodes(nodes) {
-  return nodes.map(n => ({ ...n }));
-}
-
-function cloneEdges(edges) {
-  return edges.map(e => ({ ...e }));
-}
-
-function makeEdgeId(from, to) {
-  return `${from}->${to}`;
-}
-
-function buildEdgeIdByEndpoints(edges) {
-  const m = new Map();
-  for (const edge of edges) {
-    m.set(
-      makeEdgeId(edge.from, edge.to),
-      edge.id ?? makeEdgeId(edge.from, edge.to)
-    );
-  }
-  return m;
-}
-
-function labelById(nodes) {
-  return Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id]));
-}
+import {
+  buildEdgeIdByEndpoints,
+  cloneEdges,
+  cloneNodes,
+  ensureVisibleNodes,
+  labelById,
+  makeEdgeId,
+  normalizeAdjacency,
+  sortNodeIds,
+} from './shared.js';
 
 function formatBadgeText(labelKey, labels) {
   return i18n.t(labelKey, {
@@ -115,21 +98,6 @@ function makeStep({
   };
 }
 
-function normalizeAdjacency(adjacency) {
-  const out = {};
-  for (const [id, neighbors] of Object.entries(adjacency ?? {})) {
-    out[id] = [...new Set(neighbors ?? [])].sort((a, b) =>
-      String(a).localeCompare(String(b), undefined, { numeric: true })
-    );
-  }
-  for (const neighbors of Object.values(out)) {
-    for (const id of neighbors) {
-      if (!out[id]) out[id] = [];
-    }
-  }
-  return out;
-}
-
 /**
  * DFS-based topological sort for validation and tests.
  *
@@ -138,9 +106,7 @@ function normalizeAdjacency(adjacency) {
  */
 export function topologicalSortPure(adjacency) {
   const graph = normalizeAdjacency(adjacency);
-  const ids = Object.keys(graph).sort((a, b) =>
-    String(a).localeCompare(String(b), undefined, { numeric: true })
-  );
+  const ids = sortNodeIds(Object.keys(graph));
   const temporary = new Set();
   const permanent = new Set();
   const finishStack = [];
@@ -204,20 +170,11 @@ export function isValidTopologicalOrder(order, adjacency) {
  */
 export function topologicalSort({ nodes = [], edges = [], adjacency = {} }) {
   const graph = normalizeAdjacency(adjacency);
-  const ids = nodes.length
-    ? nodes.map(n => n.id)
-    : Object.keys(graph).sort((a, b) =>
-        String(a).localeCompare(String(b), undefined, { numeric: true })
-      );
-  const visibleNodes =
+  const ids =
     nodes.length > 0
-      ? nodes
-      : ids.map((id, index) => ({
-          id,
-          label: id,
-          x: ids.length <= 1 ? 0.5 : index / (ids.length - 1),
-          y: 0.5,
-        }));
+      ? nodes.map(node => node.id)
+      : sortNodeIds(Object.keys(graph));
+  const visibleNodes = ensureVisibleNodes(nodes, graph);
   const labels = labelById(visibleNodes);
   const edgeIdByEndpoints = buildEdgeIdByEndpoints(edges);
   const steps = [];

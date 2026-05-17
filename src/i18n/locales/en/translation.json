@@ -89,7 +89,8 @@
       "morrisTraversal": "Morris Traversal"
     },
     "graphAlgorithm": {
-      "topologicalSort": "Topological Sort (DFS)"
+      "topologicalSort": "Topological Sort (DFS)",
+      "kahnAlgorithm": "Kahn's Algorithm"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -130,7 +131,8 @@
       "preorderTraversal": "Starting preorder traversal",
       "postorderTraversal": "Starting postorder traversal",
       "morrisTraversal": "Starting Morris traversal",
-      "topologicalSort": "Starting DFS-based topological sort"
+      "topologicalSort": "Starting DFS-based topological sort",
+      "kahnAlgorithm": "Starting Kahn's topological sort"
     }
   },
   "complexity": {
@@ -172,7 +174,8 @@
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)",
     "morrisTraversal": "O(n)",
-    "topologicalSort": "O(V + E)"
+    "topologicalSort": "O(V + E)",
+    "kahnAlgorithm": "O(V + E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -672,6 +675,18 @@
         "facts_2": "DFS temporary marks detect back edges, which prove a cycle.",
         "facts_3": "The algorithm runs in O(V + E) time because each vertex and edge is processed once."
       },
+      "kahnAlgorithm": {
+        "history": "Arthur B. Kahn published this queue-based topological sorting method in 1962. It became the classic iterative counterpart to DFS topological sort because it frames the same problem through in-degrees instead of recursion and finish times.",
+        "intuition": "Count how many incoming prerequisites each vertex still has. Any vertex with in-degree 0 is ready now, so put it in a queue. Remove one such vertex at a time, subtract its outgoing edges from neighbors, and enqueue every neighbor whose in-degree drops to 0.",
+        "realWorldUses_0": "Dependency resolution with explicit cycle detection",
+        "realWorldUses_1": "Task scheduling where ready work should be surfaced immediately",
+        "realWorldUses_2": "Build graph validation before compilation starts",
+        "realWorldUses_3": "Teaching topological sort without recursion",
+        "facts_0": "If the queue becomes empty before every vertex is output, some cycle still supplies incoming edges.",
+        "facts_1": "The algorithm is O(V + E) because each vertex is queued once and each edge is removed once.",
+        "facts_2": "Different queue tie-break rules can produce different valid topological orders.",
+        "facts_3": "This implementation keeps the ready queue sorted for deterministic educational output."
+      },
       "inorderTraversal": {
         "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
         "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
@@ -752,7 +767,8 @@
     "complex": "Complex DAG (realistic dependencies)",
     "disconnected": "Disconnected Components",
     "singleNode": "Single Node (trivial case)",
-    "wide": "Wide Graph (no dependencies)"
+    "wide": "Wide Graph (no dependencies)",
+    "directedCycle": "Directed Cycle (cycle detection)"
   },
   "footer": {
     "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
@@ -836,6 +852,7 @@
     "treeAria": "Tree with {{count}} nodes",
     "treeAriaEmpty": "Empty tree",
     "queueBadge": "Queue: {{order}}",
+    "inDegreeBadge": "In-degrees: {{pairs}}",
     "visitOrderBadge": "Visited: {{order}}",
     "levelScanLtr": "This level: left to right",
     "levelScanRtl": "This level: right to left",
@@ -904,6 +921,12 @@
     "topologicalCompleteNode": "All outgoing edges from {{node}} are done. Push it onto the finish stack: {{stack}}.",
     "topologicalCycle": "Cycle detected on edge {{from}} → {{to}}. A topological order only exists for DAGs.",
     "topologicalFinish": "Reverse the finish stack to get a valid topological order: {{order}}.",
+    "kahnStart": "Kahn's algorithm: compute in-degrees and enqueue every vertex with in-degree 0. Initial queue: {{queue}}.",
+    "kahnDequeue": "Dequeue {{node}} and append it to the topological order. Order so far: {{order}}.",
+    "kahnRelaxEdge": "Remove edge {{from}} → {{to}}. The in-degree of {{to}} drops to {{inDegree}}.",
+    "kahnEnqueue": "Removing {{from}} → {{node}} makes {{node}} ready. Enqueue it.",
+    "kahnCycle": "The queue is empty after ordering {{count}} of {{total}} vertices. Remaining incoming edges prove a cycle.",
+    "kahnFinish": "All vertices were removed successfully. Final topological order: {{order}}.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",

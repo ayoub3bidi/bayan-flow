@@ -45,9 +45,7 @@ describe('useGraphAlgorithmVisualization', () => {
     expect(result.current.graphNodes).toHaveLength(6);
     expect(result.current.directed).toBe(true);
     expect(result.current.weighted).toBe(false);
-    expect(result.current.representation).toBe(
-      GRAPH_REPRESENTATIONS.NODE_LINK
-    );
+    expect(result.current.representation).toBe(GRAPH_REPRESENTATIONS.NODE_LINK);
     expect(result.current.scenarioOptions).toHaveLength(6);
     expect(result.current.description.length).toBeGreaterThan(0);
   });
@@ -90,5 +88,25 @@ describe('useGraphAlgorithmVisualization', () => {
 
     expect(result.current.graphNodes).toHaveLength(4);
     expect(result.current.graphArtifacts.badges).toBeDefined();
+  });
+
+  it('loads Kahn steps and supports the directed cycle scenario', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'kahnAlgorithm',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        9,
+        'directedCycle'
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    expect(result.current.graphNodes).toHaveLength(4);
+    expect(result.current.directed).toBe(true);
+    expect(result.current.weighted).toBe(false);
+    expect(result.current.scenarioOptions).toHaveLength(7);
+    expect(result.current.description.length).toBeGreaterThan(0);
   });
 });

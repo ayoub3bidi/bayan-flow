@@ -89,7 +89,8 @@
       "morrisTraversal": "Parcours de Morris"
     },
     "graphAlgorithm": {
-      "topologicalSort": "Tri topologique (DFS)"
+      "topologicalSort": "Tri topologique (DFS)",
+      "kahnAlgorithm": "Algorithme de Kahn"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -129,7 +130,8 @@
       "preorderTraversal": "Démarrage du parcours préfixe",
       "postorderTraversal": "Démarrage du parcours suffixe",
       "morrisTraversal": "Démarrage du parcours de Morris",
-      "topologicalSort": "Démarrage du tri topologique basé sur DFS"
+      "topologicalSort": "Démarrage du tri topologique basé sur DFS",
+      "kahnAlgorithm": "Démarrage du tri topologique de Kahn"
     }
   },
   "complexity": {
@@ -171,7 +173,8 @@
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)",
     "morrisTraversal": "O(n)",
-    "topologicalSort": "O(V + E)"
+    "topologicalSort": "O(V + E)",
+    "kahnAlgorithm": "O(V + E)"
   },
   "speeds": {
     "slow": "Lent",
@@ -671,6 +674,18 @@
         "facts_2": "Les marques temporaires de DFS détectent les arêtes de retour, donc les cycles.",
         "facts_3": "L'algorithme est en O(V + E), car chaque sommet et chaque arête est traité une fois."
       },
+      "kahnAlgorithm": {
+        "history": "Arthur B. Kahn a publié cette méthode de tri topologique basée sur une file en 1962. Elle est devenue le pendant itératif classique du tri topologique par DFS, car elle reformule le problème avec les degrés entrants plutôt qu'avec la récursion.",
+        "intuition": "On compte combien de prérequis entrants restent pour chaque sommet. Tout sommet de degré entrant 0 est prêt immédiatement, donc on le place dans une file. On retire ensuite un sommet prêt, on supprime ses arêtes sortantes, puis on enfile tout voisin dont le degré entrant devient 0.",
+        "realWorldUses_0": "Résolution de dépendances avec détection explicite des cycles",
+        "realWorldUses_1": "Planification de tâches où le travail prêt doit apparaître immédiatement",
+        "realWorldUses_2": "Validation de graphes de build avant la compilation",
+        "realWorldUses_3": "Enseigner le tri topologique sans récursion",
+        "facts_0": "Si la file devient vide avant la sortie de tous les sommets, un cycle fournit encore des arêtes entrantes.",
+        "facts_1": "L'algorithme est en O(V + E) car chaque sommet est mis en file une fois et chaque arête est supprimée une fois.",
+        "facts_2": "Des règles de priorité différentes dans la file peuvent produire des ordres topologiques valides différents.",
+        "facts_3": "Cette implémentation garde la file triée pour obtenir une sortie déterministe et pédagogique."
+      },
       "inorderTraversal": {
         "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
         "intuition": "Depuis la racine, empiler le long des fils gauches jusqu'à l'absence de fils gauche ; visiter (enregistrer) le nœud, puis passer au fils droit et répéter. Chaque nœud est traité après tout son sous-arbre gauche.",
@@ -751,7 +766,8 @@
     "complex": "DAG complexe (dépendances réalistes)",
     "disconnected": "Composants déconnectés",
     "singleNode": "Nœud unique (cas trivial)",
-    "wide": "Graphe large (pas de dépendances)"
+    "wide": "Graphe large (pas de dépendances)",
+    "directedCycle": "Cycle orienté (détection de cycle)"
   },
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
@@ -836,6 +852,7 @@
     "treeAria": "Arbre à {{count}} nœuds",
     "treeAriaEmpty": "Arbre vide",
     "queueBadge": "File : {{order}}",
+    "inDegreeBadge": "Degrés entrants : {{pairs}}",
     "visitOrderBadge": "Visités : {{order}}",
     "levelScanLtr": "Ce niveau : de gauche à droite",
     "levelScanRtl": "Ce niveau : de droite à gauche",
@@ -904,6 +921,12 @@
     "topologicalCompleteNode": "Toutes les arêtes sortantes de {{node}} sont traitées. L'ajouter à la pile de fin : {{stack}}.",
     "topologicalCycle": "Cycle détecté sur l'arête {{from}} → {{to}}. Un ordre topologique n'existe que pour les DAG.",
     "topologicalFinish": "Inverser la pile de fin pour obtenir un ordre topologique valide : {{order}}.",
+    "kahnStart": "Algorithme de Kahn : calculer les degrés entrants et enfiler chaque sommet de degré entrant 0. File initiale : {{queue}}.",
+    "kahnDequeue": "Retirer {{node}} de la file et l'ajouter à l'ordre topologique. Ordre actuel : {{order}}.",
+    "kahnRelaxEdge": "Supprimer l'arête {{from}} → {{to}}. Le degré entrant de {{to}} descend à {{inDegree}}.",
+    "kahnEnqueue": "La suppression de {{from}} → {{node}} rend {{node}} disponible. L'enfiler.",
+    "kahnCycle": "La file est vide après l'ordonnancement de {{count}} sommets sur {{total}}. Les arêtes entrantes restantes prouvent l'existence d'un cycle.",
+    "kahnFinish": "Tous les sommets ont été retirés avec succès. Ordre topologique final : {{order}}.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",

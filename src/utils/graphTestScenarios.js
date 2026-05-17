@@ -28,10 +28,10 @@ export const SCENARIO_LINEAR_CHAIN = {
     { id: '2->3', from: '2', to: '3' },
   ],
   adjacency: {
-    '0': ['1'],
-    '1': ['2'],
-    '2': ['3'],
-    '3': [],
+    0: ['1'],
+    1: ['2'],
+    2: ['3'],
+    3: [],
   },
 };
 
@@ -55,10 +55,10 @@ export const SCENARIO_DIAMOND = {
     { id: '2->3', from: '2', to: '3' },
   ],
   adjacency: {
-    '0': ['1', '2'],
-    '1': ['3'],
-    '2': ['3'],
-    '3': [],
+    0: ['1', '2'],
+    1: ['3'],
+    2: ['3'],
+    3: [],
   },
 };
 
@@ -90,13 +90,13 @@ export const SCENARIO_COMPLEX = {
     { id: '5->6', from: '5', to: '6' },
   ],
   adjacency: {
-    '0': ['1', '2', '3'],
-    '1': ['4'],
-    '2': ['4', '5'],
-    '3': ['5'],
-    '4': ['6'],
-    '5': ['6'],
-    '6': [],
+    0: ['1', '2', '3'],
+    1: ['4'],
+    2: ['4', '5'],
+    3: ['5'],
+    4: ['6'],
+    5: ['6'],
+    6: [],
   },
 };
 
@@ -120,10 +120,10 @@ export const SCENARIO_DISCONNECTED = {
     { id: '2->3', from: '2', to: '3' },
   ],
   adjacency: {
-    '0': ['1'],
-    '1': [],
-    '2': ['3'],
-    '3': [],
+    0: ['1'],
+    1: [],
+    2: ['3'],
+    3: [],
   },
 };
 
@@ -137,7 +137,7 @@ export const SCENARIO_SINGLE_NODE = {
   nodes: [{ id: '0', label: 'A', x: 0.5, y: 0.5 }],
   edges: [],
   adjacency: {
-    '0': [],
+    0: [],
   },
 };
 
@@ -157,11 +157,40 @@ export const SCENARIO_WIDE = {
   ],
   edges: [],
   adjacency: {
-    '0': [],
-    '1': [],
-    '2': [],
-    '3': [],
-    '4': [],
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+  },
+};
+
+/**
+ * Directed cycle
+ * Best for: Showing why Kahn's queue can empty before every vertex is ordered
+ */
+export const SCENARIO_DIRECTED_CYCLE = {
+  id: 'directedCycle',
+  i18nKey: 'graphScenarios.directedCycle',
+  directed: true,
+  weighted: false,
+  nodes: [
+    { id: '0', label: 'A', x: 0.5, y: 0.08 },
+    { id: '1', label: 'B', x: 0.16, y: 0.5 },
+    { id: '2', label: 'C', x: 0.84, y: 0.5 },
+    { id: '3', label: 'D', x: 0.5, y: 0.92 },
+  ],
+  edges: [
+    { id: '0->1', from: '0', to: '1' },
+    { id: '1->3', from: '1', to: '3' },
+    { id: '3->2', from: '3', to: '2' },
+    { id: '2->0', from: '2', to: '0' },
+  ],
+  adjacency: {
+    0: ['1'],
+    1: ['3'],
+    2: ['0'],
+    3: ['2'],
   },
 };
 
@@ -175,6 +204,7 @@ export const GRAPH_SCENARIOS = {
   [SCENARIO_DISCONNECTED.id]: SCENARIO_DISCONNECTED,
   [SCENARIO_SINGLE_NODE.id]: SCENARIO_SINGLE_NODE,
   [SCENARIO_WIDE.id]: SCENARIO_WIDE,
+  [SCENARIO_DIRECTED_CYCLE.id]: SCENARIO_DIRECTED_CYCLE,
 };
 
 /**

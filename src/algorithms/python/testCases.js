@@ -555,6 +555,33 @@ const TOPOLOGICAL_SORT_TEST_CASES = [
   },
 ];
 
+const KAHN_ALGORITHM_TEST_CASES = [
+  {
+    id: 'kahn-basic-dag',
+    name: 'Basic DAG',
+    input: "{'0': ['1', '2'], '1': ['3'], '2': ['3'], '3': []}",
+    expected: "['0', '1', '2', '3']",
+  },
+  {
+    id: 'kahn-disconnected',
+    name: 'Disconnected DAG',
+    input: "{'0': ['1'], '1': [], '2': ['3'], '3': []}",
+    expected: "['0', '1', '2', '3']",
+  },
+  {
+    id: 'kahn-single',
+    name: 'Single vertex',
+    input: "{'0': []}",
+    expected: "['0']",
+  },
+  {
+    id: 'kahn-cycle',
+    name: 'Cycle rejected',
+    input: "{'0': ['1'], '1': ['0']}",
+    expected: 'None',
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -756,6 +783,10 @@ export const algorithmTestCases = {
   topologicalSort: {
     functionName: 'topological_sort',
     testCases: TOPOLOGICAL_SORT_TEST_CASES,
+  },
+  kahnAlgorithm: {
+    functionName: 'kahn_algorithm',
+    testCases: KAHN_ALGORITHM_TEST_CASES,
   },
   levelOrderTraversal: {
     functionName: 'level_order_traversal',

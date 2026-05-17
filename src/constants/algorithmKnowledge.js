@@ -256,6 +256,13 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  kahnAlgorithm: {
+    inventor: 'Arthur B. Kahn',
+    year: 1962,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 
   // ── Tree traversals ───────────────────────────────────────────────────────
   inorderTraversal: {

@@ -563,4 +563,26 @@ Uses only O(1) extra space; restores original tree links after the walk.`,
       Visit(vertex)
 
   RETURN reverse(finishStack)`,
+
+  kahnAlgorithm: `FUNCTION KahnsAlgorithm(graph):
+  inDegree ← map with 0 for every vertex
+  FOR each vertex in graph:
+    FOR each neighbor in adjacency[vertex]:
+      inDegree[neighbor] ← inDegree[neighbor] + 1
+
+  queue ← all vertices with inDegree 0
+  order ← empty list
+
+  WHILE queue is not empty:
+    vertex ← dequeue front vertex
+    append vertex to order
+    FOR each neighbor in adjacency[vertex]:
+      inDegree[neighbor] ← inDegree[neighbor] - 1
+      IF inDegree[neighbor] = 0:
+        enqueue neighbor
+
+  IF length(order) ≠ number of vertices:
+    REPORT cycle
+
+  RETURN order`,
 };

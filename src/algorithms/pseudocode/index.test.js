@@ -83,6 +83,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('TopologicalSort');
   });
+
+  it('returns pseudocode for kahnAlgorithm', () => {
+    const text = getPseudocodeForLocale('kahnAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('KahnsAlgorithm');
+  });
 });
 
 describe('getPseudocode', () => {

@@ -9,13 +9,22 @@ import {
   topologicalSort,
   topologicalSortPure,
 } from './topologicalSort.js';
+import { kahnAlgorithm, kahnAlgorithmPure } from './kahnAlgorithm.js';
 
 export const graphAlgorithms = {
   topologicalSort,
+  kahnAlgorithm,
 };
 
 export const pureGraphAlgorithms = {
   topologicalSort: topologicalSortPure,
+  kahnAlgorithm: kahnAlgorithmPure,
 };
 
-export { topologicalSort, topologicalSortPure, isValidTopologicalOrder };
+export {
+  kahnAlgorithm,
+  kahnAlgorithmPure,
+  topologicalSort,
+  topologicalSortPure,
+  isValidTopologicalOrder,
+};

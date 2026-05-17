@@ -74,6 +74,7 @@ export const TREE_TRAVERSAL_ALGORITHMS = {
 
 export const GRAPH_ALGORITHMS = {
   TOPOLOGICAL_SORT: 'topologicalSort',
+  KAHN_ALGORITHM: 'kahnAlgorithm',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -693,6 +694,23 @@ export const GRAPH_ALGORITHM_COMPLEXITY = {
       'Build systems and dependency resolution',
       'Course prerequisite ordering',
       'Instruction scheduling and dependency graphs',
+    ],
+  },
+  kahnAlgorithm: {
+    name: "Kahn's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kahn's algorithm builds a topological order by repeatedly removing vertices whose in-degree is zero. It is iterative, queue-based, and detects cycles when the queue empties before every vertex is output.",
+    useCases: [
+      'Dependency resolution with explicit cycle detection',
+      'Task scheduling and prerequisite planning',
+      'Build graph validation',
+      'Teaching in-degree based reasoning on DAGs',
     ],
   },
 };

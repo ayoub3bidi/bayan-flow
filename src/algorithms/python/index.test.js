@@ -99,6 +99,11 @@ vi.mock('./topological_sort.py?raw', () => ({
     'def topological_sort(adjacency):\n    """Topological Sort"""\n    return []',
 }));
 
+vi.mock('./kahn_algorithm.py?raw', () => ({
+  default:
+    'def kahn_algorithm(adjacency):\n    """Kahn Algorithm"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -233,6 +238,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Topological Sort');
     });
 
+    it("returns Python code for Kahn's algorithm", () => {
+      const code = getPythonCode('kahnAlgorithm');
+      expect(code).toContain('def kahn_algorithm');
+      expect(code).toContain('Kahn Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -348,6 +359,11 @@ describe('Python Algorithms Index', () => {
     it('returns correct display name for topological sort', () => {
       const name = getAlgorithmDisplayName('topologicalSort');
       expect(name).toBe('Topological Sort (DFS)');
+    });
+
+    it("returns correct display name for Kahn's algorithm", () => {
+      const name = getAlgorithmDisplayName('kahnAlgorithm');
+      expect(name).toBe("Kahn's Algorithm");
     });
 
     it('returns correct display name for postorder traversal', () => {

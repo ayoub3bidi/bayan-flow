@@ -5,7 +5,11 @@
  */
 
 import { generateRandomDag } from '../utils/graphAlgorithmGenerators.js';
-import { GRAPH_SCENARIOS, SCENARIO_ORDER } from '../utils/graphTestScenarios.js';
+import {
+  GRAPH_SCENARIOS,
+  SCENARIO_DIRECTED_CYCLE,
+  SCENARIO_ORDER,
+} from '../utils/graphTestScenarios.js';
 
 export const GRAPH_REPRESENTATIONS = {
   NODE_LINK: 'nodeLink',
@@ -22,8 +26,8 @@ function cloneScenarioGraph(scenario) {
         [...neighbors],
       ])
     ),
-    directed: true,
-    weighted: false,
+    directed: scenario.directed ?? true,
+    weighted: scenario.weighted ?? false,
   };
 }
 
@@ -36,6 +40,25 @@ export const GRAPH_ALGORITHM_PROFILES = {
     weighted: false,
     supportsRandomGeneration: true,
     scenarioIds: SCENARIO_ORDER,
+    createInput({ nodeCount, scenarioId, rng = Math.random }) {
+      const scenario =
+        scenarioId && GRAPH_SCENARIOS[scenarioId]
+          ? GRAPH_SCENARIOS[scenarioId]
+          : null;
+      if (scenario) {
+        return cloneScenarioGraph(scenario);
+      }
+      return generateRandomDag({ nodeCount, rng });
+    },
+  },
+  kahnAlgorithm: {
+    key: 'kahnAlgorithm',
+    groupLabelKey: 'algorithmGroups.topologicalOrdering',
+    representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+    directed: true,
+    weighted: false,
+    supportsRandomGeneration: true,
+    scenarioIds: [...SCENARIO_ORDER, SCENARIO_DIRECTED_CYCLE.id],
     createInput({ nodeCount, scenarioId, rng = Math.random }) {
       const scenario =
         scenarioId && GRAPH_SCENARIOS[scenarioId]
