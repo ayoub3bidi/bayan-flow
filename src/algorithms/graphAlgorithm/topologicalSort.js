@@ -5,6 +5,8 @@
  */
 
 import { GRAPH_EDGE_STATES, GRAPH_NODE_STATES } from '../../constants/index.js';
+import i18n from '../../i18n/index.js';
+import { GRAPH_REPRESENTATIONS } from '../../registry/graphAlgorithmRegistry.js';
 import {
   ALGORITHM_STEPS,
   getAlgorithmDescription,
@@ -35,6 +37,13 @@ function buildEdgeIdByEndpoints(edges) {
 
 function labelById(nodes) {
   return Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id]));
+}
+
+function formatBadgeText(labelKey, labels) {
+  return i18n.t(labelKey, {
+    order: labels.join(' → '),
+    defaultValue: labels.join(' → '),
+  });
 }
 
 function paintNodeStates(
@@ -78,6 +87,7 @@ function paintNodeStates(
  * @param {string[]} args.stackOrder
  * @param {string[]} args.outputOrder
  * @param {string} args.description
+ * @param {Object} [args.graphArtifacts]
  * @param {boolean} [args.hasCycle]
  */
 function makeStep({
@@ -88,6 +98,7 @@ function makeStep({
   stackOrder,
   outputOrder,
   description,
+  graphArtifacts = {},
   hasCycle = false,
 }) {
   return {
@@ -98,6 +109,8 @@ function makeStep({
     stackOrder: [...stackOrder],
     outputOrder: [...outputOrder],
     description,
+    representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+    graphArtifacts: { ...graphArtifacts },
     hasCycle,
   };
 }
@@ -214,6 +227,29 @@ export function topologicalSort({ nodes = [], edges = [], adjacency = {} }) {
   const edgeStates = {};
   let hasCycle = false;
 
+  const buildGraphArtifacts = (frontierIds, resultIds) => {
+    const badges = [];
+    if (frontierIds.length > 0) {
+      badges.push({
+        id: 'frontier',
+        text: formatBadgeText(
+          'visualization.recursionStackBadge',
+          frontierIds.map(nodeId => labels[nodeId] ?? nodeId)
+        ),
+      });
+    }
+    if (resultIds.length > 0) {
+      badges.push({
+        id: 'result',
+        text: formatBadgeText(
+          'visualization.topologicalOrderBadge',
+          resultIds.map(nodeId => labels[nodeId] ?? nodeId)
+        ),
+      });
+    }
+    return { badges };
+  };
+
   const push = (
     description,
     currentId = null,
@@ -240,6 +276,10 @@ export function topologicalSort({ nodes = [], edges = [], adjacency = {} }) {
             ? finalOrder
             : [...finishStack],
         description,
+        graphArtifacts: buildGraphArtifacts(
+          [...temporary],
+          hasCycle || finalOrder.length === 0 ? [] : finalOrder
+        ),
         hasCycle,
       })
     );

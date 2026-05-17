@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import { getExtraVisualizerProps } from './extraVisualizerProps';
 import { ALGORITHM_TYPES } from '../constants';
+import { GRAPH_REPRESENTATIONS } from './graphAlgorithmRegistry.js';
 
 describe('getExtraVisualizerProps', () => {
   const sortingVisualization = { array: [3, 1, 2] };
@@ -25,6 +26,9 @@ describe('getExtraVisualizerProps', () => {
     graphEdgeStates: { '0->1': 'active' },
     graphStackOrder: ['0'],
     graphOutputOrder: [],
+    graphArtifacts: { badges: [{ id: 'frontier', text: 'Recursion stack: A' }] },
+    graphMatrix: null,
+    representation: GRAPH_REPRESENTATIONS.NODE_LINK,
     directed: true,
     weighted: false,
   };
@@ -127,9 +131,13 @@ describe('getExtraVisualizerProps', () => {
       edgeStates: { '0->1': 'active' },
       stackOrder: ['0'],
       outputOrder: [],
+      graphArtifacts: {
+        badges: [{ id: 'frontier', text: 'Recursion stack: A' }],
+      },
+      matrix: null,
+      representation: GRAPH_REPRESENTATIONS.NODE_LINK,
       directed: true,
       weighted: false,
-      graphVariant: 'graphAlgorithm',
       complexityDataset: 'graphAlgorithm',
     });
   });

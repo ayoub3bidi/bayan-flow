@@ -225,7 +225,13 @@ function AlgorithmVideo({
           }}
         >
           {renderMainScene
-            ? renderMainScene({ steps, framesPerStep, gridSize, exportTheme })
+            ? renderMainScene({
+                steps,
+                framesPerStep,
+                gridSize,
+                exportTheme,
+                algorithmKey,
+              })
             : null}
         </div>
       </AbsoluteFill>

@@ -181,10 +181,10 @@ export const GRAPH_SCENARIOS = {
  * Default scenario order for UI display
  */
 export const SCENARIO_ORDER = [
-  SCENARIO_SINGLE_NODE.id,
   SCENARIO_LINEAR_CHAIN.id,
   SCENARIO_DIAMOND.id,
   SCENARIO_WIDE.id,
   SCENARIO_DISCONNECTED.id,
   SCENARIO_COMPLEX.id,
+  SCENARIO_SINGLE_NODE.id,
 ];

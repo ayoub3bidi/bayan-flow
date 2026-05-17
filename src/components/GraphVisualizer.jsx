@@ -28,6 +28,7 @@ const VIEW_INNER = 100 - 2 * VIEW_PAD;
  * @param {Record<string, string>} [edgeStates]
  * @param {string[]} [stackOrder]
  * @param {string[]} [outputOrder]
+ * @param {{ badges?: Array<{ id: string, text: string }> }} [graphArtifacts]
  * @param {string} description
  * @param {boolean} isComplete
  * @param {string} algorithm
@@ -47,6 +48,7 @@ function GraphVisualizer({
   edgeStates = {},
   stackOrder = [],
   outputOrder = [],
+  graphArtifacts = {},
   description,
   isComplete,
   algorithm,
@@ -127,6 +129,31 @@ function GraphVisualizer({
     () => Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id])),
     [nodes]
   );
+  const graphBadgeItems =
+    Array.isArray(graphArtifacts.badges)
+      ? graphArtifacts.badges
+      : [
+          stackOrder.length > 0
+            ? {
+                id: 'frontier',
+                text: t('visualization.recursionStackBadge', {
+                  order: stackOrder
+                    .map(id => labelById[id] ?? id)
+                    .join(' → '),
+                }),
+              }
+            : null,
+          outputOrder.length > 0
+            ? {
+                id: 'result',
+                text: t('visualization.topologicalOrderBadge', {
+                  order: outputOrder
+                    .map(id => labelById[id] ?? id)
+                    .join(' → '),
+                }),
+              }
+            : null,
+        ].filter(Boolean);
 
   const legendItems = isGraphAlgorithm
     ? [
@@ -136,7 +163,7 @@ function GraphVisualizer({
         },
         {
           state: GRAPH_NODE_STATES.FRONTIER,
-          label: t('legend.graphAlgorithm.recursionStack'),
+          label: t('legend.graphAlgorithm.frontier'),
         },
         {
           state: GRAPH_NODE_STATES.CURRENT,
@@ -148,7 +175,7 @@ function GraphVisualizer({
         },
         {
           state: GRAPH_NODE_STATES.PATH,
-          label: t('legend.graphAlgorithm.outputOrder'),
+          label: t('legend.graphAlgorithm.result'),
         },
         {
           state: GRAPH_NODE_STATES.CYCLE,
@@ -246,49 +273,50 @@ function GraphVisualizer({
               isComplete={isComplete}
             />
 
-            {/* Stack / Queue badge + Output Order badge — same row, same height */}
+            {/* Stack / queue / graph badges */}
             <div
               className="flex justify-center gap-2 mt-1 mb-1 shrink-0 h-7 flex-wrap"
-              aria-label={t('legend.searchingGraph.stackFrontier')}
+              aria-label={
+                isGraphAlgorithm
+                  ? t('visualization.graphSubstrate')
+                  : t('legend.searchingGraph.stackFrontier')
+              }
               aria-live="polite"
             >
-              {/* Stack / Queue badge */}
-              <motion.span
-                animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
-                transition={{ duration: 0.15 }}
-                className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
-              >
-                <span className="font-semibold text-text-primary">
-                  {stackOrder.length > 0
-                    ? isBfsGraph
-                      ? t('visualization.queueFront', {
-                          front: stackOrder[0],
-                          defaultValue: `Queue front: ${stackOrder[0]}`,
-                        })
-                      : t('visualization.stackTop', {
-                          top: stackOrder[stackOrder.length - 1],
-                          defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
-                        })
-                    : '\u00a0'}
-                </span>
-              </motion.span>
-
-              {/* Output Order badge — same row and size */}
-              {isGraphAlgorithm && outputOrder.length > 0 && (
-                <motion.span
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.15 }}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
-                >
-                  <span className="font-semibold text-text-primary">
-                    {t('visualization.outputOrderBadge', {
-                      order: outputOrder
-                        .map(id => labelById[id] ?? id)
-                        .join(' → '),
-                    })}
-                  </span>
-                </motion.span>
-              )}
+              {isGraphAlgorithm
+                ? graphBadgeItems.map(badge => (
+                    <motion.span
+                      key={badge.id}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.15 }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+                    >
+                      <span className="font-semibold text-text-primary">
+                        {badge.text}
+                      </span>
+                    </motion.span>
+                  ))
+                : (
+                    <motion.span
+                      animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+                    >
+                      <span className="font-semibold text-text-primary">
+                        {stackOrder.length > 0
+                          ? isBfsGraph
+                            ? t('visualization.queueFront', {
+                                front: stackOrder[0],
+                                defaultValue: `Queue front: ${stackOrder[0]}`,
+                              })
+                            : t('visualization.stackTop', {
+                                top: stackOrder[stackOrder.length - 1],
+                                defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
+                              })
+                          : '\u00a0'}
+                      </span>
+                    </motion.span>
+                  )}
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center overflow-auto touch-pan-y pb-12 sm:pb-14 min-h-0">

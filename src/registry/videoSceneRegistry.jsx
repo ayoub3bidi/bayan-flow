@@ -9,7 +9,7 @@ import SortingScene from '../video/SortingScene.jsx';
 import PathfindingScene from '../video/PathfindingScene.jsx';
 import SearchingVideoScene from '../video/SearchingVideoScene.jsx';
 import TreeTraversalScene from '../video/TreeTraversalScene.jsx';
-import GraphAlgorithmScene from '../video/GraphAlgorithmScene.jsx';
+import GraphAlgorithmVideoScene from '../video/GraphAlgorithmVideoScene.jsx';
 
 /**
  * Remotion main-scene renderers. Add an entry when a new category exports video.
@@ -50,11 +50,13 @@ export const VIDEO_SCENE_RENDERERS = {
     steps,
     framesPerStep,
     exportTheme,
+    algorithmKey,
   }) => (
-    <GraphAlgorithmScene
+    <GraphAlgorithmVideoScene
       steps={steps}
       framesPerStep={framesPerStep}
       exportTheme={exportTheme}
+      algorithmKey={algorithmKey}
     />
   ),
 };

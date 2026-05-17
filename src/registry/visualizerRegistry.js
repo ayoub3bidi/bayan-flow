@@ -6,7 +6,7 @@
 
 import ArrayVisualizer from '../components/ArrayVisualizer';
 import GridVisualizer from '../components/GridVisualizer';
-import GraphVisualizer from '../components/GraphVisualizer';
+import GraphAlgorithmCategoryVisualizer from '../components/GraphAlgorithmCategoryVisualizer';
 import SearchingCategoryVisualizer from '../components/SearchingCategoryVisualizer';
 import TreeVisualizer from '../components/TreeVisualizer';
 import { ALGORITHM_TYPES } from '../constants';
@@ -25,5 +25,5 @@ export const VISUALIZER_REGISTRY = {
   [ALGORITHM_TYPES.PATHFINDING]: GridVisualizer,
   [ALGORITHM_TYPES.SEARCHING]: SearchingCategoryVisualizer,
   [ALGORITHM_TYPES.TREE_TRAVERSAL]: TreeVisualizer,
-  [ALGORITHM_TYPES.GRAPH_ALGORITHM]: GraphVisualizer,
+  [ALGORITHM_TYPES.GRAPH_ALGORITHM]: GraphAlgorithmCategoryVisualizer,
 };

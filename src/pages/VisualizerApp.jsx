@@ -44,6 +44,7 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
+import { isGraphScenarioSupported } from '../registry/graphAlgorithmRegistry.js';
 import {
   finalizeSortingInputArray,
   reorderArrayForSortOrder,
@@ -169,6 +170,22 @@ function App() {
   });
 
   const visualization = visualizationMap[algorithmType];
+
+  useEffect(() => {
+    if (
+      selectedGraphScenario &&
+      !isGraphScenarioSupported(
+        selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM],
+        selectedGraphScenario
+      )
+    ) {
+      setSelectedGraphScenario(null);
+    }
+  }, [
+    selectedAlgorithms,
+    selectedGraphScenario,
+    setSelectedGraphScenario,
+  ]);
 
   useEffect(() => {
     if (algorithmType !== ALGORITHM_TYPES.SORTING) {
@@ -373,8 +390,6 @@ function App() {
               exportState={exportState}
               exportProgress={exportProgress}
               canRenderOnWeb={canRenderOnWeb}
-              selectedGraphScenario={selectedGraphScenario}
-              onGraphScenarioChange={setSelectedGraphScenario}
             />
           </motion.div>
         ) : (
@@ -419,6 +434,11 @@ function App() {
                       onTreeNodeCountChange={handleTreeNodeCountChange}
                       graphNodeCount={graphNodeCount}
                       onGraphNodeCountChange={handleGraphNodeCountChange}
+                      selectedGraphScenario={selectedGraphScenario}
+                      onGraphScenarioChange={setSelectedGraphScenario}
+                      graphScenarioOptions={
+                        graphAlgorithmVisualization.scenarioOptions
+                      }
                       isPlaying={visualization.isPlaying}
                       mode={mode}
                       onModeChange={setMode}
@@ -466,8 +486,6 @@ function App() {
                       exportState={exportState}
                       exportProgress={exportProgress}
                       canRenderOnWeb={canRenderOnWeb}
-                      selectedGraphScenario={selectedGraphScenario}
-                      onGraphScenarioChange={setSelectedGraphScenario}
                     />
                   </section>
                 </div>

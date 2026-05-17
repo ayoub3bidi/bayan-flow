@@ -23,6 +23,7 @@ import { useSettingsConfig } from '../config/settingsConfig';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import AlgorithmDropdown from './AlgorithmDropdown';
+import GraphScenarioDropdown from './GraphScenarioDropdown';
 
 function SettingsPanel({
   algorithmType,
@@ -41,14 +42,19 @@ function SettingsPanel({
   onTreeNodeCountChange,
   graphNodeCount,
   onGraphNodeCountChange,
+  selectedGraphScenario,
+  onGraphScenarioChange,
+  graphScenarioOptions = [],
   isPlaying,
   mode,
   onModeChange,
 }) {
   const { t } = useTranslation();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAlgorithmDropdownOpen, setIsAlgorithmDropdownOpen] = useState(false);
+  const [isScenarioDropdownOpen, setIsScenarioDropdownOpen] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const dropdownRef = useRef(null);
+  const algorithmDropdownRef = useRef(null);
+  const scenarioDropdownRef = useRef(null);
 
   const { byType } = useAlgorithmConfig();
   const { speedOptions } = useSettingsConfig();
@@ -117,8 +123,17 @@ function SettingsPanel({
 
   useEffect(() => {
     const handleClickOutside = event => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
+      if (
+        algorithmDropdownRef.current &&
+        !algorithmDropdownRef.current.contains(event.target)
+      ) {
+        setIsAlgorithmDropdownOpen(false);
+      }
+      if (
+        scenarioDropdownRef.current &&
+        !scenarioDropdownRef.current.contains(event.target)
+      ) {
+        setIsScenarioDropdownOpen(false);
       }
     };
 
@@ -191,12 +206,30 @@ function SettingsPanel({
           algorithmGroups={groups}
           selectedAlgorithm={selectedAlgorithm}
           onAlgorithmSelect={onAlgorithmChange}
-          isDropdownOpen={isDropdownOpen}
-          setIsDropdownOpen={setIsDropdownOpen}
+          isDropdownOpen={isAlgorithmDropdownOpen}
+          setIsDropdownOpen={setIsAlgorithmDropdownOpen}
           isPlaying={isPlaying}
-          dropdownRef={dropdownRef}
+          dropdownRef={algorithmDropdownRef}
         />
       </div>
+
+      {algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM &&
+      graphScenarioOptions.length > 0 ? (
+        <div>
+          <label className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent">
+            {t('controls.graphScenario')}
+          </label>
+          <GraphScenarioDropdown
+            scenarioOptions={graphScenarioOptions}
+            selectedScenario={selectedGraphScenario}
+            onScenarioSelect={onGraphScenarioChange}
+            isDropdownOpen={isScenarioDropdownOpen}
+            setIsDropdownOpen={setIsScenarioDropdownOpen}
+            isPlaying={isPlaying}
+            dropdownRef={scenarioDropdownRef}
+          />
+        </div>
+      ) : null}
 
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">

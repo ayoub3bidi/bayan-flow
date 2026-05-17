@@ -43,7 +43,8 @@ function GraphAlgorithmSceneInner({
     edges,
     nodeStates = {},
     edgeStates = {},
-    outputOrder = [],
+    directed = true,
+    graphArtifacts = {},
   } = step;
   const nodeCount = nodes.length;
   const nodeRadius = Math.max(2.8, Math.min(5.5, 6.2 - nodeCount * 0.12));
@@ -62,7 +63,6 @@ function GraphAlgorithmSceneInner({
       },
     ])
   );
-  const labelById = Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id]));
 
   return (
     <div
@@ -77,28 +77,40 @@ function GraphAlgorithmSceneInner({
         position: 'relative',
       }}
     >
-      {outputOrder.length > 0 ? (
+      {graphArtifacts.badges?.length ? (
         <div
           style={{
             position: 'absolute',
             top: 20,
             left: '50%',
             transform: 'translateX(-50%)',
-            maxWidth: '86%',
-            padding: '10px 16px',
-            borderRadius: 9999,
-            background: captionBg,
-            border: `2px solid ${captionBorder}`,
-            color: descText,
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSize: 21,
-            fontWeight: 800,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            display: 'flex',
+            gap: 12,
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            maxWidth: '88%',
           }}
         >
-          {`Order: ${outputOrder.map(id => labelById[id] ?? id).join(' -> ')}`}
+          {graphArtifacts.badges.map(badge => (
+            <div
+              key={badge.id}
+              style={{
+                padding: '10px 16px',
+                borderRadius: 9999,
+                background: captionBg,
+                border: `2px solid ${captionBorder}`,
+                color: descText,
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: 21,
+                fontWeight: 800,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {badge.text}
+            </div>
+          ))}
         </div>
       ) : null}
       <svg
@@ -141,7 +153,7 @@ function GraphAlgorithmSceneInner({
               stroke={stroke}
               strokeWidth={state === GRAPH_EDGE_STATES.ACTIVE ? 0.9 : 0.5}
               strokeLinecap="round"
-              markerEnd="url(#video-graph-arrowhead)"
+              markerEnd={directed ? 'url(#video-graph-arrowhead)' : undefined}
             />
           );
         })}

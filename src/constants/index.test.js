@@ -9,6 +9,7 @@ import { vi, describe, it, expect } from 'vitest';
 // Unmock constants so we test the real module (setup.js mocks it globally)
 vi.unmock('../constants');
 vi.unmock('../constants/index.js');
+vi.unmock('../registry/graphAlgorithmRegistry.js');
 
 import {
   ALGORITHM_TYPES,
@@ -33,6 +34,7 @@ import {
   TREE_TRAVERSAL_COMPLEXITY,
   GRAPH_ALGORITHM_COMPLEXITY,
 } from './index.js';
+import { GRAPH_ALGORITHM_KEYS } from '../registry/graphAlgorithmRegistry.js';
 
 describe('Constants', () => {
   describe('ALGORITHM_TYPES', () => {
@@ -125,8 +127,10 @@ describe('Constants', () => {
 
   describe('GRAPH_ALGORITHMS', () => {
     it('should contain graph algorithm keys', () => {
-      expect(Object.values(GRAPH_ALGORITHMS)).toEqual(['topologicalSort']);
-      expect(Object.keys(GRAPH_ALGORITHMS)).toHaveLength(1);
+      expect(Object.values(GRAPH_ALGORITHMS)).toEqual(GRAPH_ALGORITHM_KEYS);
+      expect(Object.keys(GRAPH_ALGORITHMS)).toHaveLength(
+        GRAPH_ALGORITHM_KEYS.length
+      );
     });
   });
 
@@ -358,7 +362,7 @@ describe('Constants', () => {
     const keys = Object.keys(GRAPH_ALGORITHM_COMPLEXITY);
 
     it('should have metadata for graph algorithms', () => {
-      expect(keys).toEqual(['topologicalSort']);
+      expect(keys).toEqual(GRAPH_ALGORITHM_KEYS);
     });
 
     it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {

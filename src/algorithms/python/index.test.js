@@ -6,6 +6,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { getPythonCode, getAlgorithmDisplayName } from './index';
+import { GRAPH_ALGORITHM_KEYS } from '../../registry/graphAlgorithmRegistry.js';
 
 // Mock the raw imports
 vi.mock('./bubble_sort.py?raw', () => ({
@@ -405,7 +406,7 @@ describe('Python Algorithms Index', () => {
         'preorderTraversal',
         'postorderTraversal',
         'morrisTraversal',
-        'topologicalSort',
+        ...GRAPH_ALGORITHM_KEYS,
       ];
 
       supportedAlgorithms.forEach(algorithm => {

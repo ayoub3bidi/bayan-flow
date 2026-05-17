@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ALGORITHM_TYPES,
   DEFAULT_GRAPH_NODE_COUNT,
@@ -14,8 +14,13 @@ import {
 import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
-import { generateRandomDag } from '../utils/graphAlgorithmGenerators.js';
-import { GRAPH_SCENARIOS } from '../utils/graphTestScenarios.js';
+import {
+  createGraphInputForAlgorithm,
+  getGraphAlgorithmProfile,
+  getGraphAlgorithmScenarioOptions,
+  GRAPH_REPRESENTATIONS,
+  isGraphScenarioSupported,
+} from '../registry/graphAlgorithmRegistry.js';
 
 function initialGraphNodeStates(nodes) {
   /** @type {Record<string, string>} */
@@ -24,6 +29,22 @@ function initialGraphNodeStates(nodes) {
     states[node.id] = GRAPH_NODE_STATES.DEFAULT;
   }
   return states;
+}
+
+function normalizeGraphAlgorithmSteps(steps, graphContext, profile) {
+  return steps.map(step => ({
+    ...step,
+    nodes: step.nodes ?? graphContext?.nodes ?? [],
+    edges: step.edges ?? graphContext?.edges ?? [],
+    directed: step.directed ?? graphContext?.directed ?? profile?.directed,
+    weighted: step.weighted ?? graphContext?.weighted ?? profile?.weighted,
+    matrix: step.matrix ?? graphContext?.matrix ?? null,
+    representation:
+      step.representation ??
+      profile?.representation ??
+      GRAPH_REPRESENTATIONS.NODE_LINK,
+    graphArtifacts: step.graphArtifacts ?? { badges: [] },
+  }));
 }
 
 /**
@@ -48,17 +69,39 @@ export function useGraphAlgorithmVisualization(
   const [graphEdgeStates, setGraphEdgeStates] = useState({});
   const [graphStackOrder, setGraphStackOrder] = useState([]);
   const [graphOutputOrder, setGraphOutputOrder] = useState([]);
+  const [graphArtifacts, setGraphArtifacts] = useState({ badges: [] });
+  const [graphMatrix, setGraphMatrix] = useState(null);
+  const [representation, setRepresentation] = useState(
+    GRAPH_REPRESENTATIONS.NODE_LINK
+  );
   const [directed, setDirected] = useState(true);
   const [weighted, setWeighted] = useState(false);
   const [graphContext, setGraphContext] = useState(null);
+  const graphContextRef = useRef(null);
+
+  const profile = getGraphAlgorithmProfile(algorithmKey);
+  const scenarioOptions = getGraphAlgorithmScenarioOptions(algorithmKey);
+  const effectiveScenarioId = isGraphScenarioSupported(algorithmKey, scenarioId)
+    ? scenarioId
+    : null;
 
   const executeStep = useCallback(step => {
-    setGraphNodes(step.nodes ?? []);
-    setGraphEdges(step.edges ?? []);
+    const baseContext = graphContextRef.current;
+    setGraphNodes(step.nodes ?? baseContext?.nodes ?? []);
+    setGraphEdges(step.edges ?? baseContext?.edges ?? []);
     setGraphNodeStates(step.nodeStates ?? {});
     setGraphEdgeStates(step.edgeStates ?? {});
     setGraphStackOrder(step.stackOrder ?? []);
     setGraphOutputOrder(step.outputOrder ?? []);
+    setGraphArtifacts(step.graphArtifacts ?? { badges: [] });
+    setGraphMatrix(step.matrix ?? baseContext?.matrix ?? null);
+    setRepresentation(
+      step.representation ??
+        baseContext?.representation ??
+        GRAPH_REPRESENTATIONS.NODE_LINK
+    );
+    setDirected(step.directed ?? baseContext?.directed ?? true);
+    setWeighted(step.weighted ?? baseContext?.weighted ?? false);
 
     const states = step.nodeStates ?? {};
     if (Object.values(states).includes(GRAPH_NODE_STATES.CURRENT)) {
@@ -71,38 +114,47 @@ export function useGraphAlgorithmVisualization(
   const regenerateGraphStructure = useCallback(() => {
     engine.loadSteps([]);
 
-    let graph;
-    if (scenarioId && GRAPH_SCENARIOS[scenarioId]) {
-      // Load preset scenario
-      const scenario = GRAPH_SCENARIOS[scenarioId];
-      graph = {
-        nodes: scenario.nodes,
-        edges: scenario.edges,
-        adjacency: scenario.adjacency,
-        directed: true,
-        weighted: false,
-      };
-    } else {
-      // Generate random DAG
-      graph = generateRandomDag({ nodeCount: graphNodeCount });
-    }
+    const graph = createGraphInputForAlgorithm(algorithmKey, {
+      nodeCount: graphNodeCount,
+      scenarioId: effectiveScenarioId,
+    });
+    const representationValue =
+      profile?.representation ?? GRAPH_REPRESENTATIONS.NODE_LINK;
+    const nextContext = {
+      ...graph,
+      representation: representationValue,
+      directed: graph.directed ?? profile?.directed ?? true,
+      weighted: graph.weighted ?? profile?.weighted ?? false,
+    };
 
-    setGraphNodes(graph.nodes);
-    setGraphEdges(graph.edges);
-    setGraphNodeStates(initialGraphNodeStates(graph.nodes));
+    setGraphNodes(nextContext.nodes ?? []);
+    setGraphEdges(nextContext.edges ?? []);
+    setGraphNodeStates(initialGraphNodeStates(nextContext.nodes ?? []));
     setGraphEdgeStates({});
     setGraphStackOrder([]);
     setGraphOutputOrder([]);
-    setDirected(graph.directed);
-    setWeighted(graph.weighted);
-    setGraphContext(graph);
+    setGraphArtifacts({ badges: [] });
+    setGraphMatrix(nextContext.matrix ?? null);
+    setRepresentation(representationValue);
+    setDirected(nextContext.directed);
+    setWeighted(nextContext.weighted);
+    graphContextRef.current = nextContext;
+    setGraphContext(nextContext);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphNodeCount, engine.loadSteps, scenarioId]);
+  }, [
+    algorithmKey,
+    effectiveScenarioId,
+    engine.loadSteps,
+    graphNodeCount,
+    profile?.directed,
+    profile?.representation,
+    profile?.weighted,
+  ]);
 
   useEffect(() => {
     regenerateGraphStructure();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [algorithmKey, graphNodeCount, scenarioId]);
+  }, [algorithmKey, graphNodeCount, effectiveScenarioId]);
 
   const loadStepsForCurrentAlgorithm = useCallback(() => {
     if (!algorithmKey || !graphContext) {
@@ -114,12 +166,14 @@ export function useGraphAlgorithmVisualization(
         algorithmKey
       );
     if (fn) {
-      engine.loadSteps(fn(graphContext));
+      engine.loadSteps(
+        normalizeGraphAlgorithmSteps(fn(graphContext), graphContext, profile)
+      );
       return;
     }
     engine.loadSteps([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [algorithmKey, graphContext]);
+  }, [algorithmKey, graphContext, profile]);
 
   useEffect(() => {
     loadStepsForCurrentAlgorithm();
@@ -133,8 +187,12 @@ export function useGraphAlgorithmVisualization(
     graphEdgeStates,
     graphStackOrder,
     graphOutputOrder,
+    graphArtifacts,
+    graphMatrix,
+    representation,
     directed,
     weighted,
+    scenarioOptions,
     regenerateGraph: regenerateGraphStructure,
     reloadSteps: loadStepsForCurrentAlgorithm,
     ...engine,

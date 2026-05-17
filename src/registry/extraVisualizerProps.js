@@ -74,9 +74,11 @@ export function getExtraVisualizerProps(
       edgeStates: graphAlgorithmVisualization.graphEdgeStates,
       stackOrder: graphAlgorithmVisualization.graphStackOrder,
       outputOrder: graphAlgorithmVisualization.graphOutputOrder,
+      graphArtifacts: graphAlgorithmVisualization.graphArtifacts,
+      matrix: graphAlgorithmVisualization.graphMatrix,
+      representation: graphAlgorithmVisualization.representation,
       directed: graphAlgorithmVisualization.directed,
       weighted: graphAlgorithmVisualization.weighted,
-      graphVariant: 'graphAlgorithm',
       complexityDataset: 'graphAlgorithm',
     };
   }

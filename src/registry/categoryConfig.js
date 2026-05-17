@@ -24,7 +24,11 @@ import {
 } from '../constants';
 import { treeTraversalAlgorithms } from '../algorithms/treeTraversal';
 import { generateTreeForTraversal } from '../utils/treeGenerators';
-import { generateRandomDag } from '../utils/graphAlgorithmGenerators';
+import {
+  createGraphInputForAlgorithm,
+  GRAPH_ALGORITHM_GROUPS,
+  GRAPH_ALGORITHM_KEYS,
+} from './graphAlgorithmRegistry.js';
 
 /**
  * Per-category configuration registry.
@@ -292,7 +296,7 @@ export const CATEGORY_CONFIG = {
     sizeBinding: 'graph',
     getAlgorithmFn: key => graphAlgorithms[key],
     generateData: (size = DEFAULT_GRAPH_NODE_COUNT) =>
-      generateRandomDag({ nodeCount: size }),
+      createGraphInputForAlgorithm('topologicalSort', { nodeCount: size }),
     features: {
       hasDataRefresh: true,
     },
@@ -304,12 +308,7 @@ export const CATEGORY_CONFIG = {
       max: 18,
       step: 1,
     },
-    algorithmKeys: ['topologicalSort'],
-    groupDefs: [
-      {
-        labelKey: 'algorithmGroups.topologicalOrdering',
-        algorithms: ['topologicalSort'],
-      },
-    ],
+    algorithmKeys: GRAPH_ALGORITHM_KEYS,
+    groupDefs: GRAPH_ALGORITHM_GROUPS,
   },
 };

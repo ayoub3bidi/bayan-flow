@@ -216,7 +216,9 @@
     "exitFullScreen": "Quitter le Plein Écran (Esc)",
     "ascending": "Ordre d'entrée aléatoire (appuyez pour ordre décroissant)",
     "descending": "Ordre d'entrée décroissant (appuyez pour aléatoire)",
-    "sortOrder": "Basculer l'ordre initial du tableau pour le tri"
+    "sortOrder": "Basculer l'ordre initial du tableau pour le tri",
+    "graphScenario": "Scénario de graphe",
+    "randomGraph": "Graphe aléatoire"
   },
   "info": {
     "step": "Étape {{current}} sur {{total}}",
@@ -811,9 +813,11 @@
     "graphAlgorithm": {
       "unvisited": "Non visité",
       "recursionStack": "Pile de récursion",
+      "frontier": "Frontière / ensemble actif",
       "current": "Sommet courant",
       "completed": "Terminé",
       "outputOrder": "Ordre topologique",
+      "result": "Résultat / ensemble sélectionné",
       "cycle": "Cycle détecté"
     }
   },
@@ -827,13 +831,17 @@
     "stackTop": "Sommet de pile : {{top}}",
     "queueFront": "Tête de file : {{front}}",
     "graphSubstrate": "Visualisation de graphe",
+    "graphMatrix": "Visualisation matricielle",
+    "matrixCorner": "i / j",
     "treeAria": "Arbre à {{count}} nœuds",
     "treeAriaEmpty": "Arbre vide",
     "queueBadge": "File : {{order}}",
     "visitOrderBadge": "Visités : {{order}}",
     "levelScanLtr": "Ce niveau : de gauche à droite",
     "levelScanRtl": "Ce niveau : de droite à gauche",
-    "outputOrderBadge": "Ordre : {{order}}"
+    "outputOrderBadge": "Ordre : {{order}}",
+    "recursionStackBadge": "Pile de récursion : {{order}}",
+    "topologicalOrderBadge": "Ordre topologique : {{order}}"
   },
   "languages": {
     "en": "English",

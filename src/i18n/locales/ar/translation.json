@@ -216,7 +216,9 @@
     "exitFullScreen": "الخروج من ملء الشاشة (Esc)",
     "ascending": "ترتيب إدخال عشوائي (اضغط لترتيب تنازلي)",
     "descending": "ترتيب إدخال تنازلي (اضغط للعشوائي)",
-    "sortOrder": "تبديل ترتيب المصفوفة الأولي للفرز"
+    "sortOrder": "تبديل ترتيب المصفوفة الأولي للفرز",
+    "graphScenario": "سيناريو الرسم البياني",
+    "randomGraph": "رسم بياني عشوائي"
   },
   "info": {
     "step": "الخطوة {{current}} من {{total}}",
@@ -811,9 +813,11 @@
     "graphAlgorithm": {
       "unvisited": "غير مزور",
       "recursionStack": "مكدس الاستدعاء",
+      "frontier": "الجبهة / المجموعة النشطة",
       "current": "الرأس الحالي",
       "completed": "مكتمل",
       "outputOrder": "الترتيب الطوبولوجي",
+      "result": "النتيجة / المجموعة المحددة",
       "cycle": "تم اكتشاف دورة"
     }
   },
@@ -827,13 +831,17 @@
     "stackTop": "قمة المكدس: {{top}}",
     "queueFront": "مقدمة الطابور: {{front}}",
     "graphSubstrate": "تصور الرسم البياني",
+    "graphMatrix": "تصور مصفوفي",
+    "matrixCorner": "i / j",
     "treeAria": "شجرة بعدد {{count}} عقد",
     "treeAriaEmpty": "شجرة فارغة",
     "queueBadge": "الطابور: {{order}}",
     "visitOrderBadge": "تمت الزيارة: {{order}}",
     "levelScanLtr": "هذا المستوى: من اليسار إلى اليمين",
     "levelScanRtl": "هذا المستوى: من اليمين إلى اليسار",
-    "outputOrderBadge": "الترتيب: {{order}}"
+    "outputOrderBadge": "الترتيب: {{order}}",
+    "recursionStackBadge": "مكدس الاستدعاء: {{order}}",
+    "topologicalOrderBadge": "الترتيب الطوبولوجي: {{order}}"
   },
   "languages": {
     "en": "English",

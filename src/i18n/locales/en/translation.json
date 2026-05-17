@@ -217,7 +217,9 @@
     "exitFullScreen": "Exit Full Screen (Esc)",
     "ascending": "Random input order (tap for descending input)",
     "descending": "Descending input order (tap for random input)",
-    "sortOrder": "Toggle initial array order for sorting"
+    "sortOrder": "Toggle initial array order for sorting",
+    "graphScenario": "Graph scenario",
+    "randomGraph": "Random graph"
   },
   "info": {
     "step": "Step {{current}} of {{total}}",
@@ -811,9 +813,11 @@
     "graphAlgorithm": {
       "unvisited": "Unvisited",
       "recursionStack": "Recursion stack",
+      "frontier": "Frontier / active set",
       "current": "Current vertex",
       "completed": "Completed",
       "outputOrder": "Topological order",
+      "result": "Result / selected set",
       "cycle": "Cycle detected"
     }
   },
@@ -827,13 +831,17 @@
     "stackTop": "Stack top: {{top}}",
     "queueFront": "Queue front: {{front}}",
     "graphSubstrate": "Graph visualization",
+    "graphMatrix": "Matrix visualization",
+    "matrixCorner": "i / j",
     "treeAria": "Tree with {{count}} nodes",
     "treeAriaEmpty": "Empty tree",
     "queueBadge": "Queue: {{order}}",
     "visitOrderBadge": "Visited: {{order}}",
     "levelScanLtr": "This level: left to right",
     "levelScanRtl": "This level: right to left",
-    "outputOrderBadge": "Order: {{order}}"
+    "outputOrderBadge": "Order: {{order}}",
+    "recursionStackBadge": "Recursion stack: {{order}}",
+    "topologicalOrderBadge": "Topological order: {{order}}"
   },
   "languages": {
     "en": "English",
