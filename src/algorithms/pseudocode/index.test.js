@@ -95,6 +95,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('KruskalAlgorithm');
   });
+
+  it('returns pseudocode for primAlgorithm', () => {
+    const text = getPseudocodeForLocale('primAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('PrimAlgorithm');
+  });
 });
 
 describe('getPseudocode', () => {

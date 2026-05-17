@@ -176,6 +176,10 @@ export const ALGORITHM_STEPS = {
   KRUSKAL_SELECT_EDGE: 'kruskalSelectEdge',
   KRUSKAL_REJECT_EDGE: 'kruskalRejectEdge',
   KRUSKAL_FINISH: 'kruskalFinish',
+  PRIM_START: 'primStart',
+  PRIM_FRONTIER: 'primFrontier',
+  PRIM_SELECT_EDGE: 'primSelectEdge',
+  PRIM_FINISH: 'primFinish',
 
   // Pathfinding
   EXPLORING: 'exploring',

@@ -11,17 +11,20 @@ import {
 } from './topologicalSort.js';
 import { kahnAlgorithm, kahnAlgorithmPure } from './kahnAlgorithm.js';
 import { kruskalAlgorithm, kruskalAlgorithmPure } from './kruskalAlgorithm.js';
+import { primAlgorithm, primAlgorithmPure } from './primAlgorithm.js';
 
 export const graphAlgorithms = {
   topologicalSort,
   kahnAlgorithm,
   kruskalAlgorithm,
+  primAlgorithm,
 };
 
 export const pureGraphAlgorithms = {
   topologicalSort: topologicalSortPure,
   kahnAlgorithm: kahnAlgorithmPure,
   kruskalAlgorithm: kruskalAlgorithmPure,
+  primAlgorithm: primAlgorithmPure,
 };
 
 export {
@@ -29,6 +32,8 @@ export {
   kahnAlgorithmPure,
   kruskalAlgorithm,
   kruskalAlgorithmPure,
+  primAlgorithm,
+  primAlgorithmPure,
   topologicalSort,
   topologicalSortPure,
   isValidTopologicalOrder,

@@ -109,6 +109,11 @@ vi.mock('./kruskal_algorithm.py?raw', () => ({
     'def kruskal_algorithm(nodes, edges):\n    """Kruskal Algorithm"""\n    return []',
 }));
 
+vi.mock('./prim_algorithm.py?raw', () => ({
+  default:
+    'def prim_algorithm(nodes, edges):\n    """Prim Algorithm"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -255,6 +260,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Kruskal Algorithm');
     });
 
+    it("returns Python code for Prim's algorithm", () => {
+      const code = getPythonCode('primAlgorithm');
+      expect(code).toContain('def prim_algorithm');
+      expect(code).toContain('Prim Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -380,6 +391,11 @@ describe('Python Algorithms Index', () => {
     it("returns correct display name for Kruskal's algorithm", () => {
       const name = getAlgorithmDisplayName('kruskalAlgorithm');
       expect(name).toBe("Kruskal's Algorithm");
+    });
+
+    it("returns correct display name for Prim's algorithm", () => {
+      const name = getAlgorithmDisplayName('primAlgorithm');
+      expect(name).toBe("Prim's Algorithm");
     });
 
     it('returns correct display name for postorder traversal', () => {

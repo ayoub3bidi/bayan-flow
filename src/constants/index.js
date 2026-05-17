@@ -76,6 +76,7 @@ export const GRAPH_ALGORITHMS = {
   TOPOLOGICAL_SORT: 'topologicalSort',
   KAHN_ALGORITHM: 'kahnAlgorithm',
   KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
+  PRIM_ALGORITHM: 'primAlgorithm',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -729,6 +730,23 @@ export const GRAPH_ALGORITHM_COMPLEXITY = {
       'Clustering and image segmentation',
       'Teaching greedy algorithms with Union-Find',
       'Building minimum spanning forests on disconnected graphs',
+    ],
+  },
+  primAlgorithm: {
+    name: "Prim's Algorithm",
+    timeComplexity: {
+      best: 'O((V + E) log V)',
+      average: 'O((V + E) log V)',
+      worst: 'O((V + E) log V)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Prim's algorithm grows a minimum spanning tree from a chosen start vertex. At each step it adds the lightest edge that connects the current tree to an unvisited vertex.",
+    useCases: [
+      'Minimum-cost network expansion from a seed node',
+      'Dense-graph MST teaching and comparison with Kruskal',
+      'Incrementally growing a spanning backbone',
+      'Demonstrating greedy frontier expansion on weighted graphs',
     ],
   },
 };

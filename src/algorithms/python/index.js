@@ -45,6 +45,7 @@ import morrisTraversalPython from './morris_traversal.py?raw';
 import topologicalSortPython from './topological_sort.py?raw';
 import kahnAlgorithmPython from './kahn_algorithm.py?raw';
 import kruskalAlgorithmPython from './kruskal_algorithm.py?raw';
+import primAlgorithmPython from './prim_algorithm.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -88,6 +89,7 @@ export const pythonAlgorithms = {
   topologicalSort: topologicalSortPython,
   kahnAlgorithm: kahnAlgorithmPython,
   kruskalAlgorithm: kruskalAlgorithmPython,
+  primAlgorithm: primAlgorithmPython,
 };
 
 export const algorithmDisplayNames = {
@@ -132,6 +134,7 @@ export const algorithmDisplayNames = {
   topologicalSort: 'Topological Sort (DFS)',
   kahnAlgorithm: "Kahn's Algorithm",
   kruskalAlgorithm: "Kruskal's Algorithm",
+  primAlgorithm: "Prim's Algorithm",
 };
 
 export function getPythonCode(algorithmName) {

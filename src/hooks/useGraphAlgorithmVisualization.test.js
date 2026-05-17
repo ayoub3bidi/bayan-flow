@@ -129,4 +129,24 @@ describe('useGraphAlgorithmVisualization', () => {
     expect(result.current.scenarioOptions).toHaveLength(3);
     expect(result.current.description.length).toBeGreaterThan(0);
   });
+
+  it('loads Prim steps with connected weighted graph metadata', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'primAlgorithm',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        9,
+        'weightedTriangle'
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    expect(result.current.graphNodes).toHaveLength(3);
+    expect(result.current.directed).toBe(false);
+    expect(result.current.weighted).toBe(true);
+    expect(result.current.scenarioOptions).toHaveLength(2);
+    expect(result.current.description.length).toBeGreaterThan(0);
+  });
 });

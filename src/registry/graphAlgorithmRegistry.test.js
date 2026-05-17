@@ -22,6 +22,7 @@ describe('graphAlgorithmRegistry', () => {
       'topologicalSort',
       'kahnAlgorithm',
       'kruskalAlgorithm',
+      'primAlgorithm',
     ]);
     expect(GRAPH_ALGORITHM_GROUPS).toEqual([
       {
@@ -30,7 +31,7 @@ describe('graphAlgorithmRegistry', () => {
       },
       {
         labelKey: 'algorithmGroups.minimumSpanningTree',
-        algorithms: ['kruskalAlgorithm'],
+        algorithms: ['kruskalAlgorithm', 'primAlgorithm'],
       },
     ]);
   });
@@ -71,6 +72,18 @@ describe('graphAlgorithmRegistry', () => {
     );
   });
 
+  it('returns the profile and representation for primAlgorithm', () => {
+    expect(getGraphAlgorithmProfile('primAlgorithm')).toMatchObject({
+      key: 'primAlgorithm',
+      representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+      directed: false,
+      weighted: true,
+    });
+    expect(getGraphAlgorithmRepresentation('primAlgorithm')).toBe(
+      GRAPH_REPRESENTATIONS.NODE_LINK
+    );
+  });
+
   it('returns scenario options for topologicalSort', () => {
     expect(getGraphAlgorithmScenarioOptions('topologicalSort')).toEqual([
       { id: 'linearChain', i18nKey: 'graphScenarios.linearChain' },
@@ -107,6 +120,13 @@ describe('graphAlgorithmRegistry', () => {
         id: 'weightedDisconnected',
         i18nKey: 'graphScenarios.weightedDisconnected',
       },
+    ]);
+  });
+
+  it('returns connected weighted scenarios for primAlgorithm', () => {
+    expect(getGraphAlgorithmScenarioOptions('primAlgorithm')).toEqual([
+      { id: 'weightedTriangle', i18nKey: 'graphScenarios.weightedTriangle' },
+      { id: 'weightedBridge', i18nKey: 'graphScenarios.weightedBridge' },
     ]);
   });
 
@@ -154,6 +174,18 @@ describe('graphAlgorithmRegistry', () => {
 
     expect(graph.nodes).toHaveLength(5);
     expect(graph.edges).toHaveLength(4);
+    expect(graph.directed).toBe(false);
+    expect(graph.weighted).toBe(true);
+  });
+
+  it('creates connected weighted input for primAlgorithm', () => {
+    const graph = createGraphInputForAlgorithm('primAlgorithm', {
+      nodeCount: 99,
+      scenarioId: 'weightedTriangle',
+    });
+
+    expect(graph.nodes).toHaveLength(3);
+    expect(graph.edges).toHaveLength(3);
     expect(graph.directed).toBe(false);
     expect(graph.weighted).toBe(true);
   });

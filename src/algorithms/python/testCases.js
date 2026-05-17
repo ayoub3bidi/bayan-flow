@@ -600,6 +600,23 @@ const KRUSKAL_ALGORITHM_TEST_CASES = [
   },
 ];
 
+const PRIM_ALGORITHM_TEST_CASES = [
+  {
+    id: 'prim-bridge',
+    name: 'Connected weighted graph',
+    input:
+      "(['0', '1', '2', '3', '4'], [('0', '1', 2), ('0', '2', 3), ('1', '2', 1), ('1', '3', 4), ('2', '3', 5), ('2', '4', 6), ('3', '4', 2)])",
+    expected:
+      "([('0', '1', 2), ('1', '2', 1), ('1', '3', 4), ('3', '4', 2)], 9)",
+  },
+  {
+    id: 'prim-single',
+    name: 'Single vertex',
+    input: "(['0'], [])",
+    expected: '([], 0)',
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -809,6 +826,10 @@ export const algorithmTestCases = {
   kruskalAlgorithm: {
     functionName: 'kruskal_algorithm',
     testCases: KRUSKAL_ALGORITHM_TEST_CASES,
+  },
+  primAlgorithm: {
+    functionName: 'prim_algorithm',
+    testCases: PRIM_ALGORITHM_TEST_CASES,
   },
   levelOrderTraversal: {
     functionName: 'level_order_traversal',

@@ -599,4 +599,19 @@ Uses only O(1) extra space; restores original tree links after the walk.`,
       skip edge because it would create a cycle
 
   RETURN selectedEdges`,
+
+  primAlgorithm: `FUNCTION PrimAlgorithm(vertices, edges, start):
+  visited ← {start}
+  frontier ← priority queue of edges leaving start
+  selectedEdges ← empty list
+
+  WHILE frontier is not empty AND not all vertices are visited:
+    edge ← extract minimum-weight edge from frontier
+    IF edge.to is already visited:
+      CONTINUE
+    add edge to selectedEdges
+    mark edge.to as visited
+    push every outgoing edge from edge.to to an unvisited vertex into frontier
+
+  RETURN selectedEdges`,
 };

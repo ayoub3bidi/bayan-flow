@@ -91,7 +91,8 @@
     "graphAlgorithm": {
       "topologicalSort": "Tri topologique (DFS)",
       "kahnAlgorithm": "Algorithme de Kahn",
-      "kruskalAlgorithm": "Algorithme de Kruskal"
+      "kruskalAlgorithm": "Algorithme de Kruskal",
+      "primAlgorithm": "Algorithme de Prim"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -133,7 +134,8 @@
       "morrisTraversal": "Démarrage du parcours de Morris",
       "topologicalSort": "Démarrage du tri topologique basé sur DFS",
       "kahnAlgorithm": "Démarrage du tri topologique de Kahn",
-      "kruskalAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Kruskal"
+      "kruskalAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Kruskal",
+      "primAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Prim"
     }
   },
   "complexity": {
@@ -177,7 +179,8 @@
     "morrisTraversal": "O(n)",
     "topologicalSort": "O(V + E)",
     "kahnAlgorithm": "O(V + E)",
-    "kruskalAlgorithm": "O(E log E)"
+    "kruskalAlgorithm": "O(E log E)",
+    "primAlgorithm": "O((V + E) log V)"
   },
   "speeds": {
     "slow": "Lent",
@@ -701,6 +704,18 @@
         "facts_2": "Si tous les poids sont distincts, l'arbre couvrant minimal est unique.",
         "facts_3": "Le coût O(E log E) est dominé par le tri des arêtes pondérées."
       },
+      "primAlgorithm": {
+        "history": "Robert C. Prim a publié cet algorithme d'arbre couvrant minimal en 1957, en s'appuyant sur des idées antérieures de Vojtěch Jarník. Au lieu de trier toutes les arêtes globalement, il fait croître un seul arbre à partir d'un sommet de départ.",
+        "intuition": "On démarre d'un sommet et l'arbre courant devient une île connectée. Parmi toutes les arêtes qui quittent cette île, on choisit la plus légère puis on attire dans l'arbre son extrémité non visitée. Répéter cette étape gloutonne de frontière finit par couvrir tout le graphe connecté.",
+        "realWorldUses_0": "Étendre progressivement une infrastructure à faible coût depuis un site de départ",
+        "realWorldUses_1": "Comparer une croissance de MST centrée sur les sommets à l'approche centrée sur les arêtes de Kruskal",
+        "realWorldUses_2": "Enseigner l'expansion gloutonne d'une frontière avec une file de priorité",
+        "realWorldUses_3": "Prétraitement de graphes pondérés denses",
+        "facts_0": "Prim et Kruskal donnent toujours le même poids total de MST sur un graphe connecté, même si les arêtes choisies diffèrent en cas d'égalité.",
+        "facts_1": "Une implémentation avec tas atteint O((V + E) log V).",
+        "facts_2": "L'algorithme n'a besoin que de l'arête la plus légère quittant l'arbre courant, pas d'un tri global de toutes les arêtes.",
+        "facts_3": "Changer le sommet de départ peut modifier l'ordre exact des arêtes tout en conservant le poids total optimal."
+      },
       "inorderTraversal": {
         "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
         "intuition": "Depuis la racine, empiler le long des fils gauches jusqu'à l'absence de fils gauche ; visiter (enregistrer) le nœud, puis passer au fils droit et répéter. Chaque nœud est traité après tout son sous-arbre gauche.",
@@ -872,6 +887,7 @@
     "queueBadge": "File : {{order}}",
     "inDegreeBadge": "Degrés entrants : {{pairs}}",
     "edgeQueueBadge": "Arêtes restantes : {{order}}",
+    "frontierEdgeBadge": "Prochaine arête de frontière : {{edge}}",
     "totalWeightBadge": "Poids total : {{weight}}",
     "visitOrderBadge": "Visités : {{order}}",
     "levelScanLtr": "Ce niveau : de gauche à droite",
@@ -951,6 +967,10 @@
     "kruskalSelectEdge": "Sélection de l'arête {{from}}-{{to}} de poids {{weight}}. Elle relie deux composantes différentes, donc le poids total devient {{totalWeight}}.",
     "kruskalRejectEdge": "Rejet de l'arête {{from}}-{{to}} de poids {{weight}} car ses extrémités sont déjà connectées ; elle créerait un cycle.",
     "kruskalFinish": "Kruskal est terminé. Les arêtes sélectionnées forment une forêt couvrante minimale de poids total {{totalWeight}} sur {{components}} composante(s).",
+    "primStart": "Algorithme de Prim : démarrer l'arbre au sommet {{node}} et observer les arêtes les plus légères qui quittent l'arbre courant.",
+    "primFrontier": "L'arête la plus légère sur la frontière est {{edge}}.",
+    "primSelectEdge": "Ajouter l'arête {{from}}-{{to}} de poids {{weight}} pour agrandir l'arbre. Le poids total vaut maintenant {{totalWeight}}.",
+    "primFinish": "Prim est terminé. L'arbre utilise {{count}} arête(s) pour un poids total de {{totalWeight}}.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",

@@ -99,6 +99,25 @@ export const GRAPH_ALGORITHM_PROFILES = {
       return generateRandomWeightedUndirectedGraph({ nodeCount, rng });
     },
   },
+  primAlgorithm: {
+    key: 'primAlgorithm',
+    groupLabelKey: 'algorithmGroups.minimumSpanningTree',
+    representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+    directed: false,
+    weighted: true,
+    supportsRandomGeneration: true,
+    scenarioIds: [SCENARIO_WEIGHTED_TRIANGLE.id, SCENARIO_WEIGHTED_BRIDGE.id],
+    createInput({ nodeCount, scenarioId, rng = Math.random }) {
+      const scenario =
+        scenarioId && GRAPH_SCENARIOS[scenarioId]
+          ? GRAPH_SCENARIOS[scenarioId]
+          : null;
+      if (scenario) {
+        return cloneScenarioGraph(scenario);
+      }
+      return generateRandomWeightedUndirectedGraph({ nodeCount, rng });
+    },
+  },
 };
 
 export const GRAPH_ALGORITHM_KEYS = Object.freeze(
