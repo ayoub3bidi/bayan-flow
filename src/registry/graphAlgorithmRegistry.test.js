@@ -24,6 +24,7 @@ describe('graphAlgorithmRegistry', () => {
       'kruskalAlgorithm',
       'primAlgorithm',
       'tarjanAlgorithm',
+      'kosarajuAlgorithm',
     ]);
     expect(GRAPH_ALGORITHM_GROUPS).toEqual([
       {
@@ -36,7 +37,7 @@ describe('graphAlgorithmRegistry', () => {
       },
       {
         labelKey: 'algorithmGroups.stronglyConnectedComponents',
-        algorithms: ['tarjanAlgorithm'],
+        algorithms: ['tarjanAlgorithm', 'kosarajuAlgorithm'],
       },
     ]);
   });
@@ -101,6 +102,18 @@ describe('graphAlgorithmRegistry', () => {
     );
   });
 
+  it('returns the profile and representation for kosarajuAlgorithm', () => {
+    expect(getGraphAlgorithmProfile('kosarajuAlgorithm')).toMatchObject({
+      key: 'kosarajuAlgorithm',
+      representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+      directed: true,
+      weighted: false,
+    });
+    expect(getGraphAlgorithmRepresentation('kosarajuAlgorithm')).toBe(
+      GRAPH_REPRESENTATIONS.NODE_LINK
+    );
+  });
+
   it('returns scenario options for topologicalSort', () => {
     expect(getGraphAlgorithmScenarioOptions('topologicalSort')).toEqual([
       { id: 'linearChain', i18nKey: 'graphScenarios.linearChain' },
@@ -149,6 +162,16 @@ describe('graphAlgorithmRegistry', () => {
 
   it('returns SCC scenarios for tarjanAlgorithm', () => {
     expect(getGraphAlgorithmScenarioOptions('tarjanAlgorithm')).toEqual([
+      { id: 'sccCycle', i18nKey: 'graphScenarios.sccCycle' },
+      { id: 'multiScc', i18nKey: 'graphScenarios.multiScc' },
+      { id: 'selfLoop', i18nKey: 'graphScenarios.selfLoop' },
+      { id: 'disconnected', i18nKey: 'graphScenarios.disconnected' },
+      { id: 'singleNode', i18nKey: 'graphScenarios.singleNode' },
+    ]);
+  });
+
+  it('returns SCC scenarios for kosarajuAlgorithm', () => {
+    expect(getGraphAlgorithmScenarioOptions('kosarajuAlgorithm')).toEqual([
       { id: 'sccCycle', i18nKey: 'graphScenarios.sccCycle' },
       { id: 'multiScc', i18nKey: 'graphScenarios.multiScc' },
       { id: 'selfLoop', i18nKey: 'graphScenarios.selfLoop' },
@@ -225,6 +248,18 @@ describe('graphAlgorithmRegistry', () => {
 
     expect(graph.nodes).toHaveLength(5);
     expect(graph.edges).toHaveLength(6);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(false);
+  });
+
+  it('creates self-loop input for kosarajuAlgorithm', () => {
+    const graph = createGraphInputForAlgorithm('kosarajuAlgorithm', {
+      nodeCount: 99,
+      scenarioId: 'selfLoop',
+    });
+
+    expect(graph.nodes).toHaveLength(3);
+    expect(graph.edges).toHaveLength(3);
     expect(graph.directed).toBe(true);
     expect(graph.weighted).toBe(false);
   });

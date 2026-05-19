@@ -93,7 +93,8 @@
       "kahnAlgorithm": "Kahn's Algorithm",
       "kruskalAlgorithm": "Kruskal's Algorithm",
       "primAlgorithm": "Prim's Algorithm",
-      "tarjanAlgorithm": "Tarjan's Algorithm"
+      "tarjanAlgorithm": "Tarjan's Algorithm",
+      "kosarajuAlgorithm": "Kosaraju's Algorithm"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -138,7 +139,8 @@
       "kahnAlgorithm": "Starting Kahn's topological sort",
       "kruskalAlgorithm": "Starting Kruskal's minimum spanning tree algorithm",
       "primAlgorithm": "Starting Prim's minimum spanning tree algorithm",
-      "tarjanAlgorithm": "Starting Tarjan's strongly connected components algorithm"
+      "tarjanAlgorithm": "Starting Tarjan's strongly connected components algorithm",
+      "kosarajuAlgorithm": "Starting Kosaraju's strongly connected components algorithm"
     }
   },
   "complexity": {
@@ -184,7 +186,8 @@
     "kahnAlgorithm": "O(V + E)",
     "kruskalAlgorithm": "O(E log E)",
     "primAlgorithm": "O((V + E) log V)",
-    "tarjanAlgorithm": "O(V + E)"
+    "tarjanAlgorithm": "O(V + E)",
+    "kosarajuAlgorithm": "O(V + E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -732,6 +735,18 @@
         "facts_2": "Every SCC is popped exactly once, at the moment its root vertex finishes.",
         "facts_3": "Compared with Kosaraju, Tarjan avoids building an explicit transpose graph."
       },
+      "kosarajuAlgorithm": {
+        "history": "S. Rao Kosaraju described this two-pass SCC method in 1978. It became a standard teaching alternative to Tarjan because the main ideas are concrete: record finish order, reverse the graph, then sweep again in reverse finish order.",
+        "intuition": "The first DFS pass tells you which vertices finish last, which exposes the right order to enter SCCs. After reversing every edge, a DFS started from the largest remaining finish time stays inside exactly one SCC, so each second-pass traversal peels off one component.",
+        "realWorldUses_0": "Teaching SCCs with an explicit transpose graph",
+        "realWorldUses_1": "Comparing one-pass and two-pass SCC approaches",
+        "realWorldUses_2": "Grouping mutually reachable pages, modules, or accounts",
+        "realWorldUses_3": "Building SCC condensation graphs after a reverse-edge preprocessing step",
+        "facts_0": "Kosaraju is O(V + E): one pass on the original graph, one pass on the transpose, plus linear-time transpose construction.",
+        "facts_1": "The transpose keeps SCC membership unchanged, but reverses the edges between SCCs.",
+        "facts_2": "Processing vertices in reverse finish order is what isolates one SCC at a time in the second pass.",
+        "facts_3": "This approach is often easier to explain than Tarjan, though it needs the extra transpose graph."
+      },
       "inorderTraversal": {
         "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
         "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
@@ -915,7 +930,9 @@
     "topologicalOrderBadge": "Topological order: {{order}}",
     "sccStackBadge": "SCC stack: {{order}}",
     "lowLinkBadge": "Index/low: {{pairs}}",
-    "sccListBadge": "SCCs: {{components}}"
+    "sccListBadge": "SCCs: {{components}}",
+    "finishStackBadge": "Finish stack: {{order}}",
+    "passBadge": "Pass {{pass}}"
   },
   "languages": {
     "en": "English",
@@ -999,6 +1016,12 @@
     "tarjanBackEdge": "Back edge {{from}} → {{to}} reaches an active vertex, so {{from}} lowers its low-link to {{lowLink}}.",
     "tarjanSccFound": "Low-link matches the root. Pop one strongly connected component: {{component}}.",
     "tarjanFinish": "Tarjan complete. Found {{count}} strongly connected component(s).",
+    "kosarajuStart": "Kosaraju's algorithm: first run DFS on the original graph to build a finish stack.",
+    "kosarajuVisit": "Pass {{pass}} visits {{node}}.",
+    "kosarajuFinishOrder": "{{node}} finishes in pass 1. Push it onto the finish stack: {{stack}}.",
+    "kosarajuTranspose": "Build the transpose graph, then process vertices in reverse finish order: {{order}}.",
+    "kosarajuCollectScc": "Pass 2 starts from {{node}} on the transpose and discovers one SCC: {{component}}.",
+    "kosarajuFinish": "Kosaraju complete. Found {{count}} strongly connected component(s).",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",

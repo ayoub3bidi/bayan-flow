@@ -284,6 +284,13 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  kosarajuAlgorithm: {
+    inventor: 'S. Rao Kosaraju',
+    year: 1978,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 
   // ── Tree traversals ───────────────────────────────────────────────────────
   inorderTraversal: {

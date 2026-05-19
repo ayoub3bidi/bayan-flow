@@ -107,6 +107,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('TarjanAlgorithm');
   });
+
+  it('returns pseudocode for kosarajuAlgorithm', () => {
+    const text = getPseudocodeForLocale('kosarajuAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('KosarajuAlgorithm');
+  });
 });
 
 describe('getPseudocode', () => {

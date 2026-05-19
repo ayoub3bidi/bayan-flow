@@ -78,6 +78,7 @@ export const GRAPH_ALGORITHMS = {
   KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
   PRIM_ALGORITHM: 'primAlgorithm',
   TARJAN_ALGORITHM: 'tarjanAlgorithm',
+  KOSARAJU_ALGORITHM: 'kosarajuAlgorithm',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -765,6 +766,23 @@ export const GRAPH_ALGORITHM_COMPLEXITY = {
       'Graph condensation before higher-level analysis',
       'Teaching low-link reasoning beyond bridges and articulation points',
       'Community and circuit structure discovery in directed networks',
+    ],
+  },
+  kosarajuAlgorithm: {
+    name: "Kosaraju's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kosaraju's algorithm finds strongly connected components with two DFS passes: first to compute finish order, then on the transposed graph to collect each component. It is especially useful pedagogically because the transpose and reverse-finish-order ideas are explicit.",
+    useCases: [
+      'Teaching SCC discovery with a simpler two-pass mental model',
+      'Condensing directed graphs after an explicit transpose build',
+      'Comparing single-pass and two-pass SCC strategies',
+      'Analyzing mutually reachable clusters in directed networks',
     ],
   },
 };

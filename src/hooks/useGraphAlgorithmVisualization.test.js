@@ -169,4 +169,24 @@ describe('useGraphAlgorithmVisualization', () => {
     expect(result.current.scenarioOptions).toHaveLength(5);
     expect(result.current.graphArtifacts.badges).toBeDefined();
   });
+
+  it('loads Kosaraju steps with SCC scenarios', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'kosarajuAlgorithm',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        9,
+        'multiScc'
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    expect(result.current.graphNodes).toHaveLength(5);
+    expect(result.current.directed).toBe(true);
+    expect(result.current.weighted).toBe(false);
+    expect(result.current.scenarioOptions).toHaveLength(5);
+    expect(result.current.graphArtifacts.badges).toBeDefined();
+  });
 });

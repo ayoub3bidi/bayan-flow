@@ -93,7 +93,8 @@
       "kahnAlgorithm": "Algorithme de Kahn",
       "kruskalAlgorithm": "Algorithme de Kruskal",
       "primAlgorithm": "Algorithme de Prim",
-      "tarjanAlgorithm": "Algorithme de Tarjan"
+      "tarjanAlgorithm": "Algorithme de Tarjan",
+      "kosarajuAlgorithm": "Algorithme de Kosaraju"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -137,7 +138,8 @@
       "kahnAlgorithm": "Démarrage du tri topologique de Kahn",
       "kruskalAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Kruskal",
       "primAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Prim",
-      "tarjanAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Tarjan"
+      "tarjanAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Tarjan",
+      "kosarajuAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Kosaraju"
     }
   },
   "complexity": {
@@ -183,7 +185,8 @@
     "kahnAlgorithm": "O(V + E)",
     "kruskalAlgorithm": "O(E log E)",
     "primAlgorithm": "O((V + E) log V)",
-    "tarjanAlgorithm": "O(V + E)"
+    "tarjanAlgorithm": "O(V + E)",
+    "kosarajuAlgorithm": "O(V + E)"
   },
   "speeds": {
     "slow": "Lent",
@@ -731,6 +734,18 @@
         "facts_2": "Chaque CFC est dépilée exactement une fois, quand sa racine termine.",
         "facts_3": "Par rapport à Kosaraju, Tarjan évite de construire explicitement le graphe transposé."
       },
+      "kosarajuAlgorithm": {
+        "history": "S. Rao Kosaraju a décrit cette méthode à deux parcours pour les CFC en 1978. Elle est devenue une alternative pédagogique classique à Tarjan car ses idées sont très concrètes : enregistrer l'ordre de fin, inverser les arêtes, puis relancer DFS dans l'ordre inverse des fins.",
+        "intuition": "Le premier parcours DFS révèle quels sommets finissent en dernier, donc dans quel ordre entrer dans les CFC. Une fois toutes les arêtes inversées, un DFS lancé depuis le plus grand temps de fin restant reste exactement dans une seule CFC ; chaque parcours du second passage extrait ainsi une composante.",
+        "realWorldUses_0": "Enseigner les CFC avec un graphe transposé explicite",
+        "realWorldUses_1": "Comparer des approches CFC à un passage et à deux passages",
+        "realWorldUses_2": "Regrouper des pages, modules ou comptes mutuellement accessibles",
+        "realWorldUses_3": "Construire le graphe de condensation après une étape d'inversion des arêtes",
+        "facts_0": "Kosaraju est en O(V + E) : un passage sur le graphe original, un sur le transposé, plus une construction linéaire du transposé.",
+        "facts_1": "Le graphe transposé conserve l'appartenance aux CFC mais inverse les arêtes entre elles.",
+        "facts_2": "Le traitement en ordre inverse de fin est ce qui isole une CFC à la fois lors du second passage.",
+        "facts_3": "Cette méthode est souvent plus facile à expliquer que Tarjan, au prix d'un graphe transposé supplémentaire."
+      },
       "inorderTraversal": {
         "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
         "intuition": "Depuis la racine, empiler le long des fils gauches jusqu'à l'absence de fils gauche ; visiter (enregistrer) le nœud, puis passer au fils droit et répéter. Chaque nœud est traité après tout son sous-arbre gauche.",
@@ -915,7 +930,9 @@
     "topologicalOrderBadge": "Ordre topologique : {{order}}",
     "sccStackBadge": "Pile CFC : {{order}}",
     "lowLinkBadge": "Indice/low-link : {{pairs}}",
-    "sccListBadge": "CFC : {{components}}"
+    "sccListBadge": "CFC : {{components}}",
+    "finishStackBadge": "Pile de fin : {{order}}",
+    "passBadge": "Passage {{pass}}"
   },
   "languages": {
     "en": "English",
@@ -999,6 +1016,12 @@
     "tarjanBackEdge": "L'arête de retour {{from}} → {{to}} atteint un sommet actif ; {{from}} abaisse donc son low-link à {{lowLink}}.",
     "tarjanSccFound": "Le low-link correspond à la racine. Dépiler une composante fortement connexe : {{component}}.",
     "tarjanFinish": "Tarjan terminé. {{count}} composante(s) fortement connexe(s) trouvée(s).",
+    "kosarajuStart": "Algorithme de Kosaraju : lancer d'abord DFS sur le graphe original pour construire une pile de fin.",
+    "kosarajuVisit": "Le passage {{pass}} visite {{node}}.",
+    "kosarajuFinishOrder": "{{node}} termine au passage 1. L'ajouter à la pile de fin : {{stack}}.",
+    "kosarajuTranspose": "Construire le graphe transposé puis traiter les sommets en ordre inverse de fin : {{order}}.",
+    "kosarajuCollectScc": "Le passage 2 part de {{node}} sur le transposé et découvre une CFC : {{component}}.",
+    "kosarajuFinish": "Kosaraju terminé. {{count}} composante(s) fortement connexe(s) trouvée(s).",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",

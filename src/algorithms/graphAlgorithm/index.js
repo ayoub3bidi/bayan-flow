@@ -12,6 +12,10 @@ import {
 import { kahnAlgorithm, kahnAlgorithmPure } from './kahnAlgorithm.js';
 import { kruskalAlgorithm, kruskalAlgorithmPure } from './kruskalAlgorithm.js';
 import { primAlgorithm, primAlgorithmPure } from './primAlgorithm.js';
+import {
+  kosarajuAlgorithm,
+  kosarajuAlgorithmPure,
+} from './kosarajuAlgorithm.js';
 import { tarjanAlgorithm, tarjanAlgorithmPure } from './tarjanAlgorithm.js';
 
 export const graphAlgorithms = {
@@ -19,6 +23,7 @@ export const graphAlgorithms = {
   kahnAlgorithm,
   kruskalAlgorithm,
   primAlgorithm,
+  kosarajuAlgorithm,
   tarjanAlgorithm,
 };
 
@@ -27,12 +32,15 @@ export const pureGraphAlgorithms = {
   kahnAlgorithm: kahnAlgorithmPure,
   kruskalAlgorithm: kruskalAlgorithmPure,
   primAlgorithm: primAlgorithmPure,
+  kosarajuAlgorithm: kosarajuAlgorithmPure,
   tarjanAlgorithm: tarjanAlgorithmPure,
 };
 
 export {
   kahnAlgorithm,
   kahnAlgorithmPure,
+  kosarajuAlgorithm,
+  kosarajuAlgorithmPure,
   kruskalAlgorithm,
   kruskalAlgorithmPure,
   primAlgorithm,

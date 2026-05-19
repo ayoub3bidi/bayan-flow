@@ -117,6 +117,7 @@ const constantsMockValue = {
     KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
     PRIM_ALGORITHM: 'primAlgorithm',
     TARJAN_ALGORITHM: 'tarjanAlgorithm',
+    KOSARAJU_ALGORITHM: 'kosarajuAlgorithm',
   },
   ELEMENT_STATES: {
     DEFAULT: 'default',
@@ -166,6 +167,15 @@ const constantsMockValue = {
     },
     tarjanAlgorithm: {
       name: "Tarjan's Algorithm",
+      timeComplexity: {
+        best: 'O(V + E)',
+        average: 'O(V + E)',
+        worst: 'O(V + E)',
+      },
+      spaceComplexity: 'O(V)',
+    },
+    kosarajuAlgorithm: {
+      name: "Kosaraju's Algorithm",
       timeComplexity: {
         best: 'O(V + E)',
         average: 'O(V + E)',

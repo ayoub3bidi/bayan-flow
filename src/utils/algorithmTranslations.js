@@ -187,6 +187,12 @@ export const ALGORITHM_STEPS = {
   TARJAN_BACK_EDGE: 'tarjanBackEdge',
   TARJAN_SCC_FOUND: 'tarjanSccFound',
   TARJAN_FINISH: 'tarjanFinish',
+  KOSARAJU_START: 'kosarajuStart',
+  KOSARAJU_VISIT: 'kosarajuVisit',
+  KOSARAJU_FINISH_ORDER: 'kosarajuFinishOrder',
+  KOSARAJU_TRANSPOSE: 'kosarajuTranspose',
+  KOSARAJU_COLLECT_SCC: 'kosarajuCollectScc',
+  KOSARAJU_FINISH: 'kosarajuFinish',
 
   // Pathfinding
   EXPLORING: 'exploring',

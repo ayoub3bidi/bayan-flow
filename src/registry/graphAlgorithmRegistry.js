@@ -149,6 +149,31 @@ export const GRAPH_ALGORITHM_PROFILES = {
       return generateRandomDirectedGraph({ nodeCount, rng });
     },
   },
+  kosarajuAlgorithm: {
+    key: 'kosarajuAlgorithm',
+    groupLabelKey: 'algorithmGroups.stronglyConnectedComponents',
+    representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+    directed: true,
+    weighted: false,
+    supportsRandomGeneration: true,
+    scenarioIds: [
+      SCENARIO_SCC_CYCLE.id,
+      SCENARIO_MULTI_SCC.id,
+      SCENARIO_SELF_LOOP.id,
+      SCENARIO_DISCONNECTED.id,
+      SCENARIO_SINGLE_NODE.id,
+    ],
+    createInput({ nodeCount, scenarioId, rng = Math.random }) {
+      const scenario =
+        scenarioId && GRAPH_SCENARIOS[scenarioId]
+          ? GRAPH_SCENARIOS[scenarioId]
+          : null;
+      if (scenario) {
+        return cloneScenarioGraph(scenario);
+      }
+      return generateRandomDirectedGraph({ nodeCount, rng });
+    },
+  },
 };
 
 export const GRAPH_ALGORITHM_KEYS = Object.freeze(

@@ -119,6 +119,11 @@ vi.mock('./tarjan_algorithm.py?raw', () => ({
     'def tarjan_algorithm(adjacency):\n    """Tarjan Algorithm"""\n    return []',
 }));
 
+vi.mock('./kosaraju_algorithm.py?raw', () => ({
+  default:
+    'def kosaraju_algorithm(adjacency):\n    """Kosaraju Algorithm"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -277,6 +282,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Tarjan Algorithm');
     });
 
+    it("returns Python code for Kosaraju's algorithm", () => {
+      const code = getPythonCode('kosarajuAlgorithm');
+      expect(code).toContain('def kosaraju_algorithm');
+      expect(code).toContain('Kosaraju Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -412,6 +423,11 @@ describe('Python Algorithms Index', () => {
     it("returns correct display name for Tarjan's algorithm", () => {
       const name = getAlgorithmDisplayName('tarjanAlgorithm');
       expect(name).toBe("Tarjan's Algorithm");
+    });
+
+    it("returns correct display name for Kosaraju's algorithm", () => {
+      const name = getAlgorithmDisplayName('kosarajuAlgorithm');
+      expect(name).toBe("Kosaraju's Algorithm");
     });
 
     it('returns correct display name for postorder traversal', () => {

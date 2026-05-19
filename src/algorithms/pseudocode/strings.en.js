@@ -651,4 +651,38 @@ Uses only O(1) extra space; restores original tree links after the walk.`,
       StrongConnect(vertex)
 
   RETURN components`,
+
+  kosarajuAlgorithm: `FUNCTION KosarajuAlgorithm(graph):
+  visited ← empty set
+  finishStack ← empty list
+
+  FUNCTION DfsOriginal(vertex):
+    mark vertex visited
+    FOR each neighbor in adjacency[vertex]:
+      IF neighbor is not visited:
+        DfsOriginal(neighbor)
+    append vertex to finishStack
+
+  FOR each vertex in graph:
+    IF vertex is not visited:
+      DfsOriginal(vertex)
+
+  transpose ← graph with every edge reversed
+  visited ← empty set
+  components ← empty list
+
+  FUNCTION DfsTranspose(vertex, component):
+    mark vertex visited
+    append vertex to component
+    FOR each neighbor in transpose[vertex]:
+      IF neighbor is not visited:
+        DfsTranspose(neighbor, component)
+
+  FOR each vertex in reverse(finishStack):
+    IF vertex is not visited:
+      component ← empty list
+      DfsTranspose(vertex, component)
+      append component to components
+
+  RETURN components`,
 };

@@ -638,6 +638,27 @@ const TARJAN_ALGORITHM_TEST_CASES = [
   },
 ];
 
+const KOSARAJU_ALGORITHM_TEST_CASES = [
+  {
+    id: 'kosaraju-multi-scc',
+    name: 'Multiple SCCs',
+    input: "{'0': ['1'], '1': ['2', '3'], '2': ['0'], '3': ['4'], '4': ['3']}",
+    expected: "[['0', '1', '2'], ['3', '4']]",
+  },
+  {
+    id: 'kosaraju-self-loop',
+    name: 'Self-loop singleton SCC',
+    input: "{'0': ['0', '1'], '1': ['2'], '2': []}",
+    expected: "[['0'], ['1'], ['2']]",
+  },
+  {
+    id: 'kosaraju-single',
+    name: 'Single vertex',
+    input: "{'0': []}",
+    expected: "[['0']]",
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -855,6 +876,10 @@ export const algorithmTestCases = {
   tarjanAlgorithm: {
     functionName: 'tarjan_algorithm',
     testCases: TARJAN_ALGORITHM_TEST_CASES,
+  },
+  kosarajuAlgorithm: {
+    functionName: 'kosaraju_algorithm',
+    testCases: KOSARAJU_ALGORITHM_TEST_CASES,
   },
   levelOrderTraversal: {
     functionName: 'level_order_traversal',
