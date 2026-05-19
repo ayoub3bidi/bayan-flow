@@ -6,11 +6,17 @@
 
 import {
   generateRandomDag,
+  generateRandomDirectedGraph,
   generateRandomWeightedUndirectedGraph,
 } from '../utils/graphAlgorithmGenerators.js';
 import {
   GRAPH_SCENARIOS,
+  SCENARIO_DISCONNECTED,
+  SCENARIO_MULTI_SCC,
   SCENARIO_DIRECTED_CYCLE,
+  SCENARIO_SCC_CYCLE,
+  SCENARIO_SINGLE_NODE,
+  SCENARIO_SELF_LOOP,
   SCENARIO_WEIGHTED_BRIDGE,
   SCENARIO_WEIGHTED_DISCONNECTED,
   SCENARIO_WEIGHTED_TRIANGLE,
@@ -116,6 +122,31 @@ export const GRAPH_ALGORITHM_PROFILES = {
         return cloneScenarioGraph(scenario);
       }
       return generateRandomWeightedUndirectedGraph({ nodeCount, rng });
+    },
+  },
+  tarjanAlgorithm: {
+    key: 'tarjanAlgorithm',
+    groupLabelKey: 'algorithmGroups.stronglyConnectedComponents',
+    representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+    directed: true,
+    weighted: false,
+    supportsRandomGeneration: true,
+    scenarioIds: [
+      SCENARIO_SCC_CYCLE.id,
+      SCENARIO_MULTI_SCC.id,
+      SCENARIO_SELF_LOOP.id,
+      SCENARIO_DISCONNECTED.id,
+      SCENARIO_SINGLE_NODE.id,
+    ],
+    createInput({ nodeCount, scenarioId, rng = Math.random }) {
+      const scenario =
+        scenarioId && GRAPH_SCENARIOS[scenarioId]
+          ? GRAPH_SCENARIOS[scenarioId]
+          : null;
+      if (scenario) {
+        return cloneScenarioGraph(scenario);
+      }
+      return generateRandomDirectedGraph({ nodeCount, rng });
     },
   },
 };

@@ -286,6 +286,94 @@ export const SCENARIO_WEIGHTED_DISCONNECTED = {
 };
 
 /**
+ * Single strongly connected cycle
+ * Best for: Understanding Tarjan/Kosaraju on one SCC
+ */
+export const SCENARIO_SCC_CYCLE = {
+  id: 'sccCycle',
+  i18nKey: 'graphScenarios.sccCycle',
+  directed: true,
+  weighted: false,
+  nodes: [
+    { id: '0', label: 'A', x: 0.5, y: 0.1 },
+    { id: '1', label: 'B', x: 0.84, y: 0.5 },
+    { id: '2', label: 'C', x: 0.5, y: 0.9 },
+    { id: '3', label: 'D', x: 0.16, y: 0.5 },
+  ],
+  edges: [
+    { id: '0->1', from: '0', to: '1' },
+    { id: '1->2', from: '1', to: '2' },
+    { id: '2->3', from: '2', to: '3' },
+    { id: '3->0', from: '3', to: '0' },
+  ],
+  adjacency: {
+    0: ['1'],
+    1: ['2'],
+    2: ['3'],
+    3: ['0'],
+  },
+};
+
+/**
+ * Multiple SCCs connected in one direction
+ * Best for: Showing SCC condensation structure
+ */
+export const SCENARIO_MULTI_SCC = {
+  id: 'multiScc',
+  i18nKey: 'graphScenarios.multiScc',
+  directed: true,
+  weighted: false,
+  nodes: [
+    { id: '0', label: 'A', x: 0.12, y: 0.25 },
+    { id: '1', label: 'B', x: 0.28, y: 0.62 },
+    { id: '2', label: 'C', x: 0.45, y: 0.25 },
+    { id: '3', label: 'D', x: 0.68, y: 0.25 },
+    { id: '4', label: 'E', x: 0.84, y: 0.62 },
+  ],
+  edges: [
+    { id: '0->1', from: '0', to: '1' },
+    { id: '1->2', from: '1', to: '2' },
+    { id: '2->0', from: '2', to: '0' },
+    { id: '1->3', from: '1', to: '3' },
+    { id: '3->4', from: '3', to: '4' },
+    { id: '4->3', from: '4', to: '3' },
+  ],
+  adjacency: {
+    0: ['1'],
+    1: ['2', '3'],
+    2: ['0'],
+    3: ['4'],
+    4: ['3'],
+  },
+};
+
+/**
+ * Self-loop plus outbound edge
+ * Best for: Verifying singleton SCCs with self loops
+ */
+export const SCENARIO_SELF_LOOP = {
+  id: 'selfLoop',
+  i18nKey: 'graphScenarios.selfLoop',
+  directed: true,
+  weighted: false,
+  nodes: [
+    { id: '0', label: 'A', x: 0.24, y: 0.5 },
+    { id: '1', label: 'B', x: 0.58, y: 0.26 },
+    { id: '2', label: 'C', x: 0.82, y: 0.74 },
+  ],
+  edges: [
+    { id: '0->0', from: '0', to: '0' },
+    { id: '0->1', from: '0', to: '1' },
+    { id: '1->2', from: '1', to: '2' },
+  ],
+  adjacency: {
+    0: ['0', '1'],
+    1: ['2'],
+    2: [],
+  },
+};
+
+/**
  * All scenarios mapped by id for easy lookup
  */
 export const GRAPH_SCENARIOS = {
@@ -299,6 +387,9 @@ export const GRAPH_SCENARIOS = {
   [SCENARIO_WEIGHTED_TRIANGLE.id]: SCENARIO_WEIGHTED_TRIANGLE,
   [SCENARIO_WEIGHTED_BRIDGE.id]: SCENARIO_WEIGHTED_BRIDGE,
   [SCENARIO_WEIGHTED_DISCONNECTED.id]: SCENARIO_WEIGHTED_DISCONNECTED,
+  [SCENARIO_SCC_CYCLE.id]: SCENARIO_SCC_CYCLE,
+  [SCENARIO_MULTI_SCC.id]: SCENARIO_MULTI_SCC,
+  [SCENARIO_SELF_LOOP.id]: SCENARIO_SELF_LOOP,
 };
 
 /**

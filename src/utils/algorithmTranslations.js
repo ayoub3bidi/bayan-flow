@@ -180,6 +180,13 @@ export const ALGORITHM_STEPS = {
   PRIM_FRONTIER: 'primFrontier',
   PRIM_SELECT_EDGE: 'primSelectEdge',
   PRIM_FINISH: 'primFinish',
+  TARJAN_START: 'tarjanStart',
+  TARJAN_VISIT: 'tarjanVisit',
+  TARJAN_EXPLORE_EDGE: 'tarjanExploreEdge',
+  TARJAN_LOW_LINK_UPDATE: 'tarjanLowLinkUpdate',
+  TARJAN_BACK_EDGE: 'tarjanBackEdge',
+  TARJAN_SCC_FOUND: 'tarjanSccFound',
+  TARJAN_FINISH: 'tarjanFinish',
 
   // Pathfinding
   EXPLORING: 'exploring',

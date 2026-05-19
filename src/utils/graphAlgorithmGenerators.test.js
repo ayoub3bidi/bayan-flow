@@ -7,6 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   generateRandomDag,
+  generateRandomDirectedGraph,
   generateRandomWeightedUndirectedGraph,
   isAcyclic,
   isConnectedUndirectedGraph,
@@ -69,5 +70,30 @@ describe('generateRandomWeightedUndirectedGraph', () => {
       expect(typeof edge.weight).toBe('number');
       expect(edge.weight).toBeGreaterThanOrEqual(1);
     });
+  });
+});
+
+describe('generateRandomDirectedGraph', () => {
+  it('generates the requested number of directed nodes', () => {
+    const graph = generateRandomDirectedGraph({
+      nodeCount: 6,
+      rng: () => 1,
+    });
+
+    expect(graph.nodes).toHaveLength(6);
+    expect(Object.keys(graph.adjacency)).toHaveLength(6);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(false);
+  });
+
+  it('seeds a visible SCC cycle when at least three nodes exist', () => {
+    const graph = generateRandomDirectedGraph({
+      nodeCount: 5,
+      rng: () => 1,
+    });
+
+    expect(graph.adjacency['0']).toContain('1');
+    expect(graph.adjacency['1']).toContain('2');
+    expect(graph.adjacency['2']).toContain('0');
   });
 });

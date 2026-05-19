@@ -114,6 +114,11 @@ vi.mock('./prim_algorithm.py?raw', () => ({
     'def prim_algorithm(nodes, edges):\n    """Prim Algorithm"""\n    return []',
 }));
 
+vi.mock('./tarjan_algorithm.py?raw', () => ({
+  default:
+    'def tarjan_algorithm(adjacency):\n    """Tarjan Algorithm"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -266,6 +271,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Prim Algorithm');
     });
 
+    it("returns Python code for Tarjan's algorithm", () => {
+      const code = getPythonCode('tarjanAlgorithm');
+      expect(code).toContain('def tarjan_algorithm');
+      expect(code).toContain('Tarjan Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -396,6 +407,11 @@ describe('Python Algorithms Index', () => {
     it("returns correct display name for Prim's algorithm", () => {
       const name = getAlgorithmDisplayName('primAlgorithm');
       expect(name).toBe("Prim's Algorithm");
+    });
+
+    it("returns correct display name for Tarjan's algorithm", () => {
+      const name = getAlgorithmDisplayName('tarjanAlgorithm');
+      expect(name).toBe("Tarjan's Algorithm");
     });
 
     it('returns correct display name for postorder traversal', () => {

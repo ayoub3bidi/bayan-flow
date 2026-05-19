@@ -113,6 +113,10 @@ const constantsMockValue = {
   },
   GRAPH_ALGORITHMS: {
     TOPOLOGICAL_SORT: 'topologicalSort',
+    KAHN_ALGORITHM: 'kahnAlgorithm',
+    KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
+    PRIM_ALGORITHM: 'primAlgorithm',
+    TARJAN_ALGORITHM: 'tarjanAlgorithm',
   },
   ELEMENT_STATES: {
     DEFAULT: 'default',
@@ -153,6 +157,15 @@ const constantsMockValue = {
   GRAPH_ALGORITHM_COMPLEXITY: {
     topologicalSort: {
       name: 'Topological Sort (DFS)',
+      timeComplexity: {
+        best: 'O(V + E)',
+        average: 'O(V + E)',
+        worst: 'O(V + E)',
+      },
+      spaceComplexity: 'O(V)',
+    },
+    tarjanAlgorithm: {
+      name: "Tarjan's Algorithm",
       timeComplexity: {
         best: 'O(V + E)',
         average: 'O(V + E)',

@@ -101,6 +101,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('PrimAlgorithm');
   });
+
+  it('returns pseudocode for tarjanAlgorithm', () => {
+    const text = getPseudocodeForLocale('tarjanAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('TarjanAlgorithm');
+  });
 });
 
 describe('getPseudocode', () => {

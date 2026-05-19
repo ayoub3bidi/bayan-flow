@@ -614,4 +614,41 @@ Uses only O(1) extra space; restores original tree links after the walk.`,
     push every outgoing edge from edge.to to an unvisited vertex into frontier
 
   RETURN selectedEdges`,
+
+  tarjanAlgorithm: `FUNCTION TarjanAlgorithm(graph):
+  index ← 0
+  stack ← empty stack
+  onStack ← empty set
+  indices ← empty map
+  lowLink ← empty map
+  components ← empty list
+
+  FUNCTION StrongConnect(vertex):
+    indices[vertex] ← index
+    lowLink[vertex] ← index
+    index ← index + 1
+    push vertex onto stack
+    add vertex to onStack
+
+    FOR each neighbor in adjacency[vertex]:
+      IF neighbor is not in indices:
+        StrongConnect(neighbor)
+        lowLink[vertex] ← MIN(lowLink[vertex], lowLink[neighbor])
+      ELSE IF neighbor is in onStack:
+        lowLink[vertex] ← MIN(lowLink[vertex], indices[neighbor])
+
+    IF lowLink[vertex] = indices[vertex]:
+      component ← empty list
+      REPEAT:
+        node ← pop stack
+        remove node from onStack
+        append node to component
+      UNTIL node = vertex
+      append component to components
+
+  FOR each vertex in graph:
+    IF vertex is not in indices:
+      StrongConnect(vertex)
+
+  RETURN components`,
 };

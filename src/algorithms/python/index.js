@@ -46,6 +46,7 @@ import topologicalSortPython from './topological_sort.py?raw';
 import kahnAlgorithmPython from './kahn_algorithm.py?raw';
 import kruskalAlgorithmPython from './kruskal_algorithm.py?raw';
 import primAlgorithmPython from './prim_algorithm.py?raw';
+import tarjanAlgorithmPython from './tarjan_algorithm.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -90,6 +91,7 @@ export const pythonAlgorithms = {
   kahnAlgorithm: kahnAlgorithmPython,
   kruskalAlgorithm: kruskalAlgorithmPython,
   primAlgorithm: primAlgorithmPython,
+  tarjanAlgorithm: tarjanAlgorithmPython,
 };
 
 export const algorithmDisplayNames = {
@@ -135,6 +137,7 @@ export const algorithmDisplayNames = {
   kahnAlgorithm: "Kahn's Algorithm",
   kruskalAlgorithm: "Kruskal's Algorithm",
   primAlgorithm: "Prim's Algorithm",
+  tarjanAlgorithm: "Tarjan's Algorithm",
 };
 
 export function getPythonCode(algorithmName) {

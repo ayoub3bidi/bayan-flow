@@ -232,6 +232,71 @@ export function generateRandomWeightedUndirectedGraph({
 }
 
 /**
+ * Random directed graph with at least one strongly connected component when n >= 3.
+ *
+ * @param {Object} opts
+ * @param {number} opts.nodeCount
+ * @param {() => number} [opts.rng]
+ * @param {number} [opts.edgeProbability]
+ * @returns {{
+ *   nodes: GraphAlgorithmNode[],
+ *   edges: GraphAlgorithmEdge[],
+ *   adjacency: Record<string, string[]>,
+ *   directed: true,
+ *   weighted: false,
+ * }}
+ */
+export function generateRandomDirectedGraph({
+  nodeCount,
+  rng = Math.random,
+  edgeProbability = 0.26,
+}) {
+  const n = clampNodeCount(nodeCount);
+  const ids = Array.from({ length: n }, (_, i) => String(i));
+  const adjacency = Object.fromEntries(ids.map(id => [id, []]));
+  const edges = [];
+  const edgeIds = new Set();
+
+  const addEdge = (from, to) => {
+    if (from === to) return;
+    const key = `${from}->${to}`;
+    if (edgeIds.has(key)) return;
+    edgeIds.add(key);
+    adjacency[from].push(to);
+    edges.push({ id: key, from, to });
+  };
+
+  if (n >= 2) {
+    addEdge(ids[0], ids[1]);
+  }
+  if (n >= 3) {
+    addEdge(ids[1], ids[2]);
+    addEdge(ids[2], ids[0]);
+  }
+
+  for (let fromIndex = 0; fromIndex < n; fromIndex++) {
+    for (let toIndex = 0; toIndex < n; toIndex++) {
+      if (fromIndex === toIndex) continue;
+      if (rng() < edgeProbability) {
+        addEdge(ids[fromIndex], ids[toIndex]);
+      }
+    }
+  }
+
+  for (const id of ids) {
+    adjacency[id].sort((a, b) => Number(a) - Number(b));
+  }
+
+  return {
+    nodes: buildCircularNodes(ids),
+    edges,
+    adjacency,
+    directed: true,
+    weighted: false,
+  };
+}
+
+/**
  * @param {Record<string, string[]>} adjacency
  * @returns {boolean}
  */

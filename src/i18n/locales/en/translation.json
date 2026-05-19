@@ -92,7 +92,8 @@
       "topologicalSort": "Topological Sort (DFS)",
       "kahnAlgorithm": "Kahn's Algorithm",
       "kruskalAlgorithm": "Kruskal's Algorithm",
-      "primAlgorithm": "Prim's Algorithm"
+      "primAlgorithm": "Prim's Algorithm",
+      "tarjanAlgorithm": "Tarjan's Algorithm"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -136,7 +137,8 @@
       "topologicalSort": "Starting DFS-based topological sort",
       "kahnAlgorithm": "Starting Kahn's topological sort",
       "kruskalAlgorithm": "Starting Kruskal's minimum spanning tree algorithm",
-      "primAlgorithm": "Starting Prim's minimum spanning tree algorithm"
+      "primAlgorithm": "Starting Prim's minimum spanning tree algorithm",
+      "tarjanAlgorithm": "Starting Tarjan's strongly connected components algorithm"
     }
   },
   "complexity": {
@@ -181,7 +183,8 @@
     "topologicalSort": "O(V + E)",
     "kahnAlgorithm": "O(V + E)",
     "kruskalAlgorithm": "O(E log E)",
-    "primAlgorithm": "O((V + E) log V)"
+    "primAlgorithm": "O((V + E) log V)",
+    "tarjanAlgorithm": "O(V + E)"
   },
   "speeds": {
     "slow": "Slow",
@@ -717,6 +720,18 @@
         "facts_2": "The algorithm only needs the lightest edge leaving the current tree, not a global sort of all edges.",
         "facts_3": "Changing the start vertex can change the exact edge order while keeping the optimal total weight."
       },
+      "tarjanAlgorithm": {
+        "history": "Robert Tarjan introduced this SCC algorithm in 1972. Its appeal is that one DFS traversal is enough to identify every strongly connected component, using discovery indices, low-link values, and a stack of active vertices.",
+        "intuition": "Give each vertex an index when first discovered, then keep track of the smallest index reachable from that vertex while the DFS is still active. When a vertex's low-link equals its own index, it is the root of a complete SCC, so pop the stack until that root appears.",
+        "realWorldUses_0": "Condensing directed graphs into SCC super-nodes",
+        "realWorldUses_1": "Detecting mutually reachable modules in dependency graphs",
+        "realWorldUses_2": "Analyzing cycles in control-flow and circuit graphs",
+        "realWorldUses_3": "Teaching advanced DFS invariants and low-link reasoning",
+        "facts_0": "Tarjan runs in O(V + E) time because each vertex and edge is processed a constant number of times.",
+        "facts_1": "Only vertices still on the active stack can lower a low-link through a back edge.",
+        "facts_2": "Every SCC is popped exactly once, at the moment its root vertex finishes.",
+        "facts_3": "Compared with Kosaraju, Tarjan avoids building an explicit transpose graph."
+      },
       "inorderTraversal": {
         "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
         "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
@@ -801,7 +816,10 @@
     "directedCycle": "Directed Cycle (cycle detection)",
     "weightedTriangle": "Weighted Triangle",
     "weightedBridge": "Weighted Connected Graph",
-    "weightedDisconnected": "Weighted Disconnected Graph"
+    "weightedDisconnected": "Weighted Disconnected Graph",
+    "sccCycle": "Single SCC Cycle",
+    "multiScc": "Multiple SCCs",
+    "selfLoop": "Self-loop SCC"
   },
   "footer": {
     "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
@@ -894,7 +912,10 @@
     "levelScanRtl": "This level: right to left",
     "outputOrderBadge": "Order: {{order}}",
     "recursionStackBadge": "Recursion stack: {{order}}",
-    "topologicalOrderBadge": "Topological order: {{order}}"
+    "topologicalOrderBadge": "Topological order: {{order}}",
+    "sccStackBadge": "SCC stack: {{order}}",
+    "lowLinkBadge": "Index/low: {{pairs}}",
+    "sccListBadge": "SCCs: {{components}}"
   },
   "languages": {
     "en": "English",
@@ -971,6 +992,13 @@
     "primFrontier": "The lightest edge on the frontier is {{edge}}.",
     "primSelectEdge": "Add edge {{from}}-{{to}} with weight {{weight}} to grow the tree. Total weight is now {{totalWeight}}.",
     "primFinish": "Prim is complete. The tree uses {{count}} edge(s) with total weight {{totalWeight}}.",
+    "tarjanStart": "Tarjan's algorithm: run one DFS, assigning each vertex an index and low-link while active vertices stay on a stack.",
+    "tarjanVisit": "Visit {{node}}, assign discovery index {{index}}, and push it onto the SCC stack.",
+    "tarjanExploreEdge": "Explore directed edge {{from}} → {{to}}.",
+    "tarjanLowLinkUpdate": "Return to {{node}} and lower its low-link to {{lowLink}} using descendant {{via}}.",
+    "tarjanBackEdge": "Back edge {{from}} → {{to}} reaches an active vertex, so {{from}} lowers its low-link to {{lowLink}}.",
+    "tarjanSccFound": "Low-link matches the root. Pop one strongly connected component: {{component}}.",
+    "tarjanFinish": "Tarjan complete. Found {{count}} strongly connected component(s).",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -1180,7 +1208,8 @@
     "breadthFirstTraversal": "Breadth-first traversals",
     "spaceOptimizedTraversal": "Space-optimized traversals",
     "topologicalOrdering": "Topological ordering",
-    "minimumSpanningTree": "Minimum spanning tree"
+    "minimumSpanningTree": "Minimum spanning tree",
+    "stronglyConnectedComponents": "Strongly connected components"
   },
   "roadmap": {
     "hero": {

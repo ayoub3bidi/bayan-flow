@@ -149,4 +149,24 @@ describe('useGraphAlgorithmVisualization', () => {
     expect(result.current.scenarioOptions).toHaveLength(2);
     expect(result.current.description.length).toBeGreaterThan(0);
   });
+
+  it('loads Tarjan steps with SCC scenarios', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'tarjanAlgorithm',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        9,
+        'multiScc'
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    expect(result.current.graphNodes).toHaveLength(5);
+    expect(result.current.directed).toBe(true);
+    expect(result.current.weighted).toBe(false);
+    expect(result.current.scenarioOptions).toHaveLength(5);
+    expect(result.current.graphArtifacts.badges).toBeDefined();
+  });
 });

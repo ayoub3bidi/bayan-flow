@@ -77,6 +77,7 @@ export const GRAPH_ALGORITHMS = {
   KAHN_ALGORITHM: 'kahnAlgorithm',
   KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
   PRIM_ALGORITHM: 'primAlgorithm',
+  TARJAN_ALGORITHM: 'tarjanAlgorithm',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -747,6 +748,23 @@ export const GRAPH_ALGORITHM_COMPLEXITY = {
       'Dense-graph MST teaching and comparison with Kruskal',
       'Incrementally growing a spanning backbone',
       'Demonstrating greedy frontier expansion on weighted graphs',
+    ],
+  },
+  tarjanAlgorithm: {
+    name: "Tarjan's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Tarjan's algorithm finds strongly connected components in a directed graph with one depth-first search. It assigns each vertex a discovery index and a low-link value, then uses a stack to identify exactly when a full SCC has been completed.",
+    useCases: [
+      'Cycle analysis in directed dependency graphs',
+      'Graph condensation before higher-level analysis',
+      'Teaching low-link reasoning beyond bridges and articulation points',
+      'Community and circuit structure discovery in directed networks',
     ],
   },
 };

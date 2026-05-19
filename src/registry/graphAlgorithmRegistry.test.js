@@ -23,6 +23,7 @@ describe('graphAlgorithmRegistry', () => {
       'kahnAlgorithm',
       'kruskalAlgorithm',
       'primAlgorithm',
+      'tarjanAlgorithm',
     ]);
     expect(GRAPH_ALGORITHM_GROUPS).toEqual([
       {
@@ -32,6 +33,10 @@ describe('graphAlgorithmRegistry', () => {
       {
         labelKey: 'algorithmGroups.minimumSpanningTree',
         algorithms: ['kruskalAlgorithm', 'primAlgorithm'],
+      },
+      {
+        labelKey: 'algorithmGroups.stronglyConnectedComponents',
+        algorithms: ['tarjanAlgorithm'],
       },
     ]);
   });
@@ -84,6 +89,18 @@ describe('graphAlgorithmRegistry', () => {
     );
   });
 
+  it('returns the profile and representation for tarjanAlgorithm', () => {
+    expect(getGraphAlgorithmProfile('tarjanAlgorithm')).toMatchObject({
+      key: 'tarjanAlgorithm',
+      representation: GRAPH_REPRESENTATIONS.NODE_LINK,
+      directed: true,
+      weighted: false,
+    });
+    expect(getGraphAlgorithmRepresentation('tarjanAlgorithm')).toBe(
+      GRAPH_REPRESENTATIONS.NODE_LINK
+    );
+  });
+
   it('returns scenario options for topologicalSort', () => {
     expect(getGraphAlgorithmScenarioOptions('topologicalSort')).toEqual([
       { id: 'linearChain', i18nKey: 'graphScenarios.linearChain' },
@@ -127,6 +144,16 @@ describe('graphAlgorithmRegistry', () => {
     expect(getGraphAlgorithmScenarioOptions('primAlgorithm')).toEqual([
       { id: 'weightedTriangle', i18nKey: 'graphScenarios.weightedTriangle' },
       { id: 'weightedBridge', i18nKey: 'graphScenarios.weightedBridge' },
+    ]);
+  });
+
+  it('returns SCC scenarios for tarjanAlgorithm', () => {
+    expect(getGraphAlgorithmScenarioOptions('tarjanAlgorithm')).toEqual([
+      { id: 'sccCycle', i18nKey: 'graphScenarios.sccCycle' },
+      { id: 'multiScc', i18nKey: 'graphScenarios.multiScc' },
+      { id: 'selfLoop', i18nKey: 'graphScenarios.selfLoop' },
+      { id: 'disconnected', i18nKey: 'graphScenarios.disconnected' },
+      { id: 'singleNode', i18nKey: 'graphScenarios.singleNode' },
     ]);
   });
 
@@ -188,5 +215,17 @@ describe('graphAlgorithmRegistry', () => {
     expect(graph.edges).toHaveLength(3);
     expect(graph.directed).toBe(false);
     expect(graph.weighted).toBe(true);
+  });
+
+  it('creates multi-SCC input for tarjanAlgorithm', () => {
+    const graph = createGraphInputForAlgorithm('tarjanAlgorithm', {
+      nodeCount: 99,
+      scenarioId: 'multiScc',
+    });
+
+    expect(graph.nodes).toHaveLength(5);
+    expect(graph.edges).toHaveLength(6);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(false);
   });
 });

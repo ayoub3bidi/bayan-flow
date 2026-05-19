@@ -277,6 +277,13 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  tarjanAlgorithm: {
+    inventor: 'Robert Tarjan',
+    year: 1972,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 
   // ── Tree traversals ───────────────────────────────────────────────────────
   inorderTraversal: {
