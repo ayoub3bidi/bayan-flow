@@ -94,7 +94,8 @@
       "kruskalAlgorithm": "Kruskal's Algorithm",
       "primAlgorithm": "Prim's Algorithm",
       "tarjanAlgorithm": "Tarjan's Algorithm",
-      "kosarajuAlgorithm": "Kosaraju's Algorithm"
+      "kosarajuAlgorithm": "Kosaraju's Algorithm",
+      "floydWarshallAlgorithm": "Floyd-Warshall Algorithm"
     },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
@@ -140,7 +141,8 @@
       "kruskalAlgorithm": "Starting Kruskal's minimum spanning tree algorithm",
       "primAlgorithm": "Starting Prim's minimum spanning tree algorithm",
       "tarjanAlgorithm": "Starting Tarjan's strongly connected components algorithm",
-      "kosarajuAlgorithm": "Starting Kosaraju's strongly connected components algorithm"
+      "kosarajuAlgorithm": "Starting Kosaraju's strongly connected components algorithm",
+      "floydWarshallAlgorithm": "Starting Floyd-Warshall all-pairs shortest paths"
     }
   },
   "complexity": {
@@ -187,7 +189,8 @@
     "kruskalAlgorithm": "O(E log E)",
     "primAlgorithm": "O((V + E) log V)",
     "tarjanAlgorithm": "O(V + E)",
-    "kosarajuAlgorithm": "O(V + E)"
+    "kosarajuAlgorithm": "O(V + E)",
+    "floydWarshallAlgorithm": "O(V³)"
   },
   "speeds": {
     "slow": "Slow",
@@ -747,6 +750,18 @@
         "facts_2": "Processing vertices in reverse finish order is what isolates one SCC at a time in the second pass.",
         "facts_3": "This approach is often easier to explain than Tarjan, though it needs the extra transpose graph."
       },
+      "floydWarshallAlgorithm": {
+        "history": "Robert Floyd and Stephen Warshall published closely related dynamic-programming formulations in 1962. Floyd-Warshall became the classic all-pairs shortest-path algorithm for dense or small graphs because its triple-loop structure is simple and systematic.",
+        "intuition": "Start with the best direct edge between every pair of vertices. Then allow one intermediate vertex at a time: if going from i to k and then k to j is cheaper than the current i to j distance, update it. Repeating that for every k gradually builds the final shortest-path matrix.",
+        "realWorldUses_0": "All-pairs shortest paths on small weighted directed graphs",
+        "realWorldUses_1": "Teaching dynamic programming on graph problems",
+        "realWorldUses_2": "Reachability and transitive-closure style reasoning",
+        "realWorldUses_3": "Detecting negative cycles through diagonal entries",
+        "facts_0": "Negative edge weights are allowed, but a negative cycle means shortest paths are not well-defined.",
+        "facts_1": "If any diagonal distance becomes negative, the graph contains a negative cycle.",
+        "facts_2": "The algorithm uses O(V²) memory for its distance matrix.",
+        "facts_3": "Compared with repeated Dijkstra runs, Floyd-Warshall is usually preferred only on smaller or denser graphs."
+      },
       "inorderTraversal": {
         "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
         "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
@@ -834,7 +849,11 @@
     "weightedDisconnected": "Weighted Disconnected Graph",
     "sccCycle": "Single SCC Cycle",
     "multiScc": "Multiple SCCs",
-    "selfLoop": "Self-loop SCC"
+    "selfLoop": "Self-loop SCC",
+    "weightedDirectedPositive": "Weighted Directed Graph",
+    "weightedDirectedNegative": "Negative Edge Graph",
+    "weightedDirectedNegativeCycle": "Negative Cycle Graph",
+    "weightedDirectedSingle": "Single Vertex Matrix"
   },
   "footer": {
     "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
@@ -932,7 +951,10 @@
     "lowLinkBadge": "Index/low: {{pairs}}",
     "sccListBadge": "SCCs: {{components}}",
     "finishStackBadge": "Finish stack: {{order}}",
-    "passBadge": "Pass {{pass}}"
+    "passBadge": "Pass {{pass}}",
+    "matrixIntermediateBadge": "Intermediate: {{node}}",
+    "pathUpdateBadge": "Updated path: {{path}}",
+    "negativeCycleBadge": "Negative cycle detected"
   },
   "languages": {
     "en": "English",
@@ -1022,6 +1044,11 @@
     "kosarajuTranspose": "Build the transpose graph, then process vertices in reverse finish order: {{order}}.",
     "kosarajuCollectScc": "Pass 2 starts from {{node}} on the transpose and discovers one SCC: {{component}}.",
     "kosarajuFinish": "Kosaraju complete. Found {{count}} strongly connected component(s).",
+    "floydWarshallStart": "Floyd-Warshall: initialize the distance matrix with direct edges, zeros on the diagonal, and ∞ where no path is known yet.",
+    "floydWarshallIntermediate": "Allow {{node}} as a new intermediate vertex for every pair of vertices.",
+    "floydWarshallUpdate": "Path {{from}} → {{to}} improves by routing through {{via}}. New distance: {{distance}}.",
+    "floydWarshallNegativeCycle": "A negative cycle is detected because the diagonal becomes negative at: {{nodes}}.",
+    "floydWarshallFinish": "Floyd-Warshall complete. The matrix now stores the shortest known distance between every pair of vertices.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -1168,8 +1195,8 @@
       },
       "graphAlgorithm": {
         "title": "Graph Algorithms",
-        "description": "Study directed graph problems such as dependency ordering, starting with DFS-based topological sort on generated DAGs.",
-        "algorithms": "Topological Sort"
+        "description": "Study dependency ordering, strongly connected components, minimum spanning trees, and all-pairs shortest paths through interactive graph and matrix visualizations.",
+        "algorithms": "Topological Sort, Tarjan, Kosaraju, Floyd-Warshall"
       }
     },
     "features": {
@@ -1232,7 +1259,8 @@
     "spaceOptimizedTraversal": "Space-optimized traversals",
     "topologicalOrdering": "Topological ordering",
     "minimumSpanningTree": "Minimum spanning tree",
-    "stronglyConnectedComponents": "Strongly connected components"
+    "stronglyConnectedComponents": "Strongly connected components",
+    "allPairsShortestPath": "All-pairs shortest path"
   },
   "roadmap": {
     "hero": {

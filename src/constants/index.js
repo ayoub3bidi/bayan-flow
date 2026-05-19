@@ -79,6 +79,7 @@ export const GRAPH_ALGORITHMS = {
   PRIM_ALGORITHM: 'primAlgorithm',
   TARJAN_ALGORITHM: 'tarjanAlgorithm',
   KOSARAJU_ALGORITHM: 'kosarajuAlgorithm',
+  FLOYD_WARSHALL_ALGORITHM: 'floydWarshallAlgorithm',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -783,6 +784,23 @@ export const GRAPH_ALGORITHM_COMPLEXITY = {
       'Condensing directed graphs after an explicit transpose build',
       'Comparing single-pass and two-pass SCC strategies',
       'Analyzing mutually reachable clusters in directed networks',
+    ],
+  },
+  floydWarshallAlgorithm: {
+    name: 'Floyd-Warshall Algorithm',
+    timeComplexity: {
+      best: 'O(V³)',
+      average: 'O(V³)',
+      worst: 'O(V³)',
+    },
+    spaceComplexity: 'O(V²)',
+    description:
+      'Floyd-Warshall computes all-pairs shortest paths by progressively allowing more intermediate vertices. It supports negative edge weights and detects negative cycles when any diagonal distance becomes negative.',
+    useCases: [
+      'All-pairs shortest paths on small directed graphs',
+      'Teaching dynamic programming on graphs',
+      'Transitive closure and reachability-style reasoning',
+      'Negative-cycle detection in weighted directed networks',
     ],
   },
 };

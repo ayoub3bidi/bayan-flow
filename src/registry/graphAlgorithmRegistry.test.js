@@ -25,6 +25,7 @@ describe('graphAlgorithmRegistry', () => {
       'primAlgorithm',
       'tarjanAlgorithm',
       'kosarajuAlgorithm',
+      'floydWarshallAlgorithm',
     ]);
     expect(GRAPH_ALGORITHM_GROUPS).toEqual([
       {
@@ -38,6 +39,10 @@ describe('graphAlgorithmRegistry', () => {
       {
         labelKey: 'algorithmGroups.stronglyConnectedComponents',
         algorithms: ['tarjanAlgorithm', 'kosarajuAlgorithm'],
+      },
+      {
+        labelKey: 'algorithmGroups.allPairsShortestPath',
+        algorithms: ['floydWarshallAlgorithm'],
       },
     ]);
   });
@@ -114,6 +119,18 @@ describe('graphAlgorithmRegistry', () => {
     );
   });
 
+  it('returns the profile and representation for floydWarshallAlgorithm', () => {
+    expect(getGraphAlgorithmProfile('floydWarshallAlgorithm')).toMatchObject({
+      key: 'floydWarshallAlgorithm',
+      representation: GRAPH_REPRESENTATIONS.MATRIX,
+      directed: true,
+      weighted: true,
+    });
+    expect(getGraphAlgorithmRepresentation('floydWarshallAlgorithm')).toBe(
+      GRAPH_REPRESENTATIONS.MATRIX
+    );
+  });
+
   it('returns scenario options for topologicalSort', () => {
     expect(getGraphAlgorithmScenarioOptions('topologicalSort')).toEqual([
       { id: 'linearChain', i18nKey: 'graphScenarios.linearChain' },
@@ -177,6 +194,27 @@ describe('graphAlgorithmRegistry', () => {
       { id: 'selfLoop', i18nKey: 'graphScenarios.selfLoop' },
       { id: 'disconnected', i18nKey: 'graphScenarios.disconnected' },
       { id: 'singleNode', i18nKey: 'graphScenarios.singleNode' },
+    ]);
+  });
+
+  it('returns Floyd-Warshall scenarios', () => {
+    expect(getGraphAlgorithmScenarioOptions('floydWarshallAlgorithm')).toEqual([
+      {
+        id: 'weightedDirectedPositive',
+        i18nKey: 'graphScenarios.weightedDirectedPositive',
+      },
+      {
+        id: 'weightedDirectedNegative',
+        i18nKey: 'graphScenarios.weightedDirectedNegative',
+      },
+      {
+        id: 'weightedDirectedNegativeCycle',
+        i18nKey: 'graphScenarios.weightedDirectedNegativeCycle',
+      },
+      {
+        id: 'weightedDirectedSingle',
+        i18nKey: 'graphScenarios.weightedDirectedSingle',
+      },
     ]);
   });
 
@@ -262,5 +300,17 @@ describe('graphAlgorithmRegistry', () => {
     expect(graph.edges).toHaveLength(3);
     expect(graph.directed).toBe(true);
     expect(graph.weighted).toBe(false);
+  });
+
+  it('creates weighted directed input for floydWarshallAlgorithm', () => {
+    const graph = createGraphInputForAlgorithm('floydWarshallAlgorithm', {
+      nodeCount: 99,
+      scenarioId: 'weightedDirectedPositive',
+    });
+
+    expect(graph.nodes).toHaveLength(4);
+    expect(graph.edges).toHaveLength(5);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(true);
   });
 });

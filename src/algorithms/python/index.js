@@ -48,6 +48,7 @@ import kruskalAlgorithmPython from './kruskal_algorithm.py?raw';
 import primAlgorithmPython from './prim_algorithm.py?raw';
 import tarjanAlgorithmPython from './tarjan_algorithm.py?raw';
 import kosarajuAlgorithmPython from './kosaraju_algorithm.py?raw';
+import floydWarshallAlgorithmPython from './floyd_warshall_algorithm.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -94,6 +95,7 @@ export const pythonAlgorithms = {
   primAlgorithm: primAlgorithmPython,
   tarjanAlgorithm: tarjanAlgorithmPython,
   kosarajuAlgorithm: kosarajuAlgorithmPython,
+  floydWarshallAlgorithm: floydWarshallAlgorithmPython,
 };
 
 export const algorithmDisplayNames = {
@@ -141,6 +143,7 @@ export const algorithmDisplayNames = {
   primAlgorithm: "Prim's Algorithm",
   tarjanAlgorithm: "Tarjan's Algorithm",
   kosarajuAlgorithm: "Kosaraju's Algorithm",
+  floydWarshallAlgorithm: 'Floyd-Warshall Algorithm',
 };
 
 export function getPythonCode(algorithmName) {

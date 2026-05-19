@@ -32,6 +32,7 @@ function GraphAlgorithmCategoryVisualizer({
     return (
       <GraphAlgorithmMatrixVisualizer
         matrix={matrix}
+        graphArtifacts={graphArtifacts}
         description={description}
         isComplete={isComplete}
         algorithm={algorithm}

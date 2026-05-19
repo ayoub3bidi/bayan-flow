@@ -37,7 +37,7 @@ describe('GraphAlgorithmVideoScene', () => {
         steps={[{ representation: GRAPH_REPRESENTATIONS.MATRIX }]}
         framesPerStep={1}
         exportTheme="dark"
-        algorithmKey="topologicalSort"
+        algorithmKey="floydWarshallAlgorithm"
       />
     );
 

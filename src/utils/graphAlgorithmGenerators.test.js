@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import {
   generateRandomDag,
   generateRandomDirectedGraph,
+  generateRandomWeightedDirectedGraph,
   generateRandomWeightedUndirectedGraph,
   isAcyclic,
   isConnectedUndirectedGraph,
@@ -95,5 +96,31 @@ describe('generateRandomDirectedGraph', () => {
     expect(graph.adjacency['0']).toContain('1');
     expect(graph.adjacency['1']).toContain('2');
     expect(graph.adjacency['2']).toContain('0');
+  });
+});
+
+describe('generateRandomWeightedDirectedGraph', () => {
+  it('generates weighted directed graphs for Floyd-Warshall', () => {
+    const graph = generateRandomWeightedDirectedGraph({
+      nodeCount: 6,
+      rng: () => 0,
+    });
+
+    expect(graph.nodes).toHaveLength(6);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(true);
+    graph.edges.forEach(edge => {
+      expect(edge.weight).toBeGreaterThanOrEqual(1);
+      expect(edge.weight).toBeLessThanOrEqual(9);
+    });
+  });
+
+  it('keeps random weighted directed graphs acyclic by construction', () => {
+    const graph = generateRandomWeightedDirectedGraph({
+      nodeCount: 8,
+      rng: () => 0.25,
+    });
+
+    expect(isAcyclic(graph.adjacency)).toBe(true);
   });
 });

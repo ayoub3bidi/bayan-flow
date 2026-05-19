@@ -124,6 +124,11 @@ vi.mock('./kosaraju_algorithm.py?raw', () => ({
     'def kosaraju_algorithm(adjacency):\n    """Kosaraju Algorithm"""\n    return []',
 }));
 
+vi.mock('./floyd_warshall_algorithm.py?raw', () => ({
+  default:
+    'def floyd_warshall_algorithm(nodes, edges):\n    """Floyd-Warshall Algorithm"""\n    return []',
+}));
+
 describe('Python Algorithms Index', () => {
   describe('getPythonCode', () => {
     it('returns Python code for bubble sort', () => {
@@ -288,6 +293,12 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Kosaraju Algorithm');
     });
 
+    it('returns Python code for Floyd-Warshall', () => {
+      const code = getPythonCode('floydWarshallAlgorithm');
+      expect(code).toContain('def floyd_warshall_algorithm');
+      expect(code).toContain('Floyd-Warshall Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -428,6 +439,11 @@ describe('Python Algorithms Index', () => {
     it("returns correct display name for Kosaraju's algorithm", () => {
       const name = getAlgorithmDisplayName('kosarajuAlgorithm');
       expect(name).toBe("Kosaraju's Algorithm");
+    });
+
+    it('returns correct display name for Floyd-Warshall', () => {
+      const name = getAlgorithmDisplayName('floydWarshallAlgorithm');
+      expect(name).toBe('Floyd-Warshall Algorithm');
     });
 
     it('returns correct display name for postorder traversal', () => {

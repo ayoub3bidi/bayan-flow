@@ -374,6 +374,108 @@ export const SCENARIO_SELF_LOOP = {
 };
 
 /**
+ * Positive weighted directed graph
+ * Best for: Basic Floyd-Warshall shortest-path updates
+ */
+export const SCENARIO_WEIGHTED_DIRECTED_POSITIVE = {
+  id: 'weightedDirectedPositive',
+  i18nKey: 'graphScenarios.weightedDirectedPositive',
+  directed: true,
+  weighted: true,
+  nodes: [
+    { id: '0', label: 'A', x: 0.14, y: 0.18 },
+    { id: '1', label: 'B', x: 0.48, y: 0.14 },
+    { id: '2', label: 'C', x: 0.82, y: 0.34 },
+    { id: '3', label: 'D', x: 0.48, y: 0.82 },
+  ],
+  edges: [
+    { id: '0->1', from: '0', to: '1', weight: 3 },
+    { id: '0->3', from: '0', to: '3', weight: 10 },
+    { id: '1->2', from: '1', to: '2', weight: 2 },
+    { id: '2->3', from: '2', to: '3', weight: 1 },
+    { id: '3->1', from: '3', to: '1', weight: 4 },
+  ],
+  adjacency: {
+    0: ['1', '3'],
+    1: ['2'],
+    2: ['3'],
+    3: ['1'],
+  },
+};
+
+/**
+ * Negative weighted directed graph without a negative cycle
+ * Best for: Showing safe negative-edge relaxation
+ */
+export const SCENARIO_WEIGHTED_DIRECTED_NEGATIVE = {
+  id: 'weightedDirectedNegative',
+  i18nKey: 'graphScenarios.weightedDirectedNegative',
+  directed: true,
+  weighted: true,
+  nodes: [
+    { id: '0', label: 'A', x: 0.14, y: 0.18 },
+    { id: '1', label: 'B', x: 0.48, y: 0.14 },
+    { id: '2', label: 'C', x: 0.82, y: 0.34 },
+    { id: '3', label: 'D', x: 0.48, y: 0.82 },
+  ],
+  edges: [
+    { id: '0->1', from: '0', to: '1', weight: 4 },
+    { id: '0->2', from: '0', to: '2', weight: 11 },
+    { id: '1->2', from: '1', to: '2', weight: -2 },
+    { id: '2->3', from: '2', to: '3', weight: 3 },
+    { id: '3->1', from: '3', to: '1', weight: 6 },
+  ],
+  adjacency: {
+    0: ['1', '2'],
+    1: ['2'],
+    2: ['3'],
+    3: ['1'],
+  },
+};
+
+/**
+ * Negative cycle graph
+ * Best for: Demonstrating diagonal-negative detection
+ */
+export const SCENARIO_WEIGHTED_DIRECTED_NEGATIVE_CYCLE = {
+  id: 'weightedDirectedNegativeCycle',
+  i18nKey: 'graphScenarios.weightedDirectedNegativeCycle',
+  directed: true,
+  weighted: true,
+  nodes: [
+    { id: '0', label: 'A', x: 0.2, y: 0.5 },
+    { id: '1', label: 'B', x: 0.5, y: 0.18 },
+    { id: '2', label: 'C', x: 0.8, y: 0.5 },
+  ],
+  edges: [
+    { id: '0->1', from: '0', to: '1', weight: 1 },
+    { id: '1->2', from: '1', to: '2', weight: -4 },
+    { id: '2->0', from: '2', to: '0', weight: 1 },
+  ],
+  adjacency: {
+    0: ['1'],
+    1: ['2'],
+    2: ['0'],
+  },
+};
+
+/**
+ * Single node matrix case
+ * Best for: Verifying trivial Floyd-Warshall input
+ */
+export const SCENARIO_WEIGHTED_DIRECTED_SINGLE = {
+  id: 'weightedDirectedSingle',
+  i18nKey: 'graphScenarios.weightedDirectedSingle',
+  directed: true,
+  weighted: true,
+  nodes: [{ id: '0', label: 'A', x: 0.5, y: 0.5 }],
+  edges: [],
+  adjacency: {
+    0: [],
+  },
+};
+
+/**
  * All scenarios mapped by id for easy lookup
  */
 export const GRAPH_SCENARIOS = {
@@ -390,6 +492,11 @@ export const GRAPH_SCENARIOS = {
   [SCENARIO_SCC_CYCLE.id]: SCENARIO_SCC_CYCLE,
   [SCENARIO_MULTI_SCC.id]: SCENARIO_MULTI_SCC,
   [SCENARIO_SELF_LOOP.id]: SCENARIO_SELF_LOOP,
+  [SCENARIO_WEIGHTED_DIRECTED_POSITIVE.id]: SCENARIO_WEIGHTED_DIRECTED_POSITIVE,
+  [SCENARIO_WEIGHTED_DIRECTED_NEGATIVE.id]: SCENARIO_WEIGHTED_DIRECTED_NEGATIVE,
+  [SCENARIO_WEIGHTED_DIRECTED_NEGATIVE_CYCLE.id]:
+    SCENARIO_WEIGHTED_DIRECTED_NEGATIVE_CYCLE,
+  [SCENARIO_WEIGHTED_DIRECTED_SINGLE.id]: SCENARIO_WEIGHTED_DIRECTED_SINGLE,
 };
 
 /**

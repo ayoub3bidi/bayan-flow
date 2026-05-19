@@ -113,6 +113,12 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('KosarajuAlgorithm');
   });
+
+  it('returns pseudocode for floydWarshallAlgorithm', () => {
+    const text = getPseudocodeForLocale('floydWarshallAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('FloydWarshall');
+  });
 });
 
 describe('getPseudocode', () => {

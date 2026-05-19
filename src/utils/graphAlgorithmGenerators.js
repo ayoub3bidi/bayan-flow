@@ -297,6 +297,40 @@ export function generateRandomDirectedGraph({
 }
 
 /**
+ * Random weighted directed graph for Floyd-Warshall.
+ * Uses a DAG backbone by default so random generations never contain negative cycles.
+ *
+ * @param {Object} opts
+ * @param {number} opts.nodeCount
+ * @param {() => number} [opts.rng]
+ * @param {number} [opts.minWeight]
+ * @param {number} [opts.maxWeight]
+ * @returns {{
+ *   nodes: GraphAlgorithmNode[],
+ *   edges: GraphAlgorithmEdge[],
+ *   adjacency: Record<string, string[]>,
+ *   directed: true,
+ *   weighted: true,
+ * }}
+ */
+export function generateRandomWeightedDirectedGraph({
+  nodeCount,
+  rng = Math.random,
+  minWeight = 1,
+  maxWeight = 9,
+}) {
+  const dag = generateRandomDag({ nodeCount, rng });
+  return {
+    ...dag,
+    edges: dag.edges.map(edge => ({
+      ...edge,
+      weight: randomWeight(rng, minWeight, maxWeight),
+    })),
+    weighted: true,
+  };
+}
+
+/**
  * @param {Record<string, string[]>} adjacency
  * @returns {boolean}
  */

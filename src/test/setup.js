@@ -118,6 +118,7 @@ const constantsMockValue = {
     PRIM_ALGORITHM: 'primAlgorithm',
     TARJAN_ALGORITHM: 'tarjanAlgorithm',
     KOSARAJU_ALGORITHM: 'kosarajuAlgorithm',
+    FLOYD_WARSHALL_ALGORITHM: 'floydWarshallAlgorithm',
   },
   ELEMENT_STATES: {
     DEFAULT: 'default',
@@ -182,6 +183,15 @@ const constantsMockValue = {
         worst: 'O(V + E)',
       },
       spaceComplexity: 'O(V)',
+    },
+    floydWarshallAlgorithm: {
+      name: 'Floyd-Warshall Algorithm',
+      timeComplexity: {
+        best: 'O(V³)',
+        average: 'O(V³)',
+        worst: 'O(V³)',
+      },
+      spaceComplexity: 'O(V²)',
     },
   },
   COMPLEXITY_FUNCTIONS: {},

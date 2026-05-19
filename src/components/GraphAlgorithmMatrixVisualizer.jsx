@@ -10,6 +10,7 @@ import ComplexityPanel from './ComplexityPanel';
 
 function GraphAlgorithmMatrixVisualizer({
   matrix = null,
+  graphArtifacts = {},
   description,
   isComplete,
   algorithm,
@@ -30,9 +31,24 @@ function GraphAlgorithmMatrixVisualizer({
   const columnLabels = matrix?.columnLabels ?? rowLabels;
   const cells = matrix?.cells ?? [];
   const cellStates = matrix?.cellStates ?? [];
+  const badgeItems = Array.isArray(graphArtifacts.badges)
+    ? graphArtifacts.badges
+    : [];
 
   return (
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative bg-surface flex flex-col p-4 sm:p-6">
+      {badgeItems.length ? (
+        <div className="mb-4 flex shrink-0 flex-wrap justify-center gap-2">
+          {badgeItems.map(badge => (
+            <span
+              key={badge.id}
+              className="inline-flex items-center rounded-full border border-gray-300 bg-surface-elevated px-3 py-1 text-xs font-mono font-semibold text-text-primary shadow-sm"
+            >
+              {badge.text}
+            </span>
+          ))}
+        </div>
+      ) : null}
       <div className="flex-1 overflow-auto">
         <div className="mx-auto w-full max-w-4xl">
           <div className="mb-3 text-center text-sm font-semibold text-text-secondary">

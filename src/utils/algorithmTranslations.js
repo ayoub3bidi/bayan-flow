@@ -193,6 +193,11 @@ export const ALGORITHM_STEPS = {
   KOSARAJU_TRANSPOSE: 'kosarajuTranspose',
   KOSARAJU_COLLECT_SCC: 'kosarajuCollectScc',
   KOSARAJU_FINISH: 'kosarajuFinish',
+  FLOYD_WARSHALL_START: 'floydWarshallStart',
+  FLOYD_WARSHALL_INTERMEDIATE: 'floydWarshallIntermediate',
+  FLOYD_WARSHALL_UPDATE: 'floydWarshallUpdate',
+  FLOYD_WARSHALL_NEGATIVE_CYCLE: 'floydWarshallNegativeCycle',
+  FLOYD_WARSHALL_FINISH: 'floydWarshallFinish',
 
   // Pathfinding
   EXPLORING: 'exploring',

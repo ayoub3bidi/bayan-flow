@@ -94,7 +94,8 @@
       "kruskalAlgorithm": "Algorithme de Kruskal",
       "primAlgorithm": "Algorithme de Prim",
       "tarjanAlgorithm": "Algorithme de Tarjan",
-      "kosarajuAlgorithm": "Algorithme de Kosaraju"
+      "kosarajuAlgorithm": "Algorithme de Kosaraju",
+      "floydWarshallAlgorithm": "Algorithme de Floyd-Warshall"
     },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
@@ -139,7 +140,8 @@
       "kruskalAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Kruskal",
       "primAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Prim",
       "tarjanAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Tarjan",
-      "kosarajuAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Kosaraju"
+      "kosarajuAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Kosaraju",
+      "floydWarshallAlgorithm": "Démarrage du plus court chemin tous couples de Floyd-Warshall"
     }
   },
   "complexity": {
@@ -186,7 +188,8 @@
     "kruskalAlgorithm": "O(E log E)",
     "primAlgorithm": "O((V + E) log V)",
     "tarjanAlgorithm": "O(V + E)",
-    "kosarajuAlgorithm": "O(V + E)"
+    "kosarajuAlgorithm": "O(V + E)",
+    "floydWarshallAlgorithm": "O(V³)"
   },
   "speeds": {
     "slow": "Lent",
@@ -746,6 +749,18 @@
         "facts_2": "Le traitement en ordre inverse de fin est ce qui isole une CFC à la fois lors du second passage.",
         "facts_3": "Cette méthode est souvent plus facile à expliquer que Tarjan, au prix d'un graphe transposé supplémentaire."
       },
+      "floydWarshallAlgorithm": {
+        "history": "Robert Floyd et Stephen Warshall ont publié en 1962 des formulations dynamiques très proches. Floyd-Warshall est devenu l'algorithme classique de plus court chemin tous couples sur les graphes petits ou denses grâce à sa structure simple en triple boucle.",
+        "intuition": "On part de la meilleure arête directe entre chaque paire de sommets. Puis on autorise un sommet intermédiaire supplémentaire à la fois : si passer de i à k puis de k à j coûte moins cher que la distance actuelle de i à j, on met la matrice à jour. Répéter cela pour chaque k construit progressivement toutes les distances finales.",
+        "realWorldUses_0": "Plus courts chemins tous couples sur de petits graphes orientés pondérés",
+        "realWorldUses_1": "Enseigner la programmation dynamique sur les graphes",
+        "realWorldUses_2": "Raisonnement de type fermeture transitive et accessibilité",
+        "realWorldUses_3": "Détection de cycles négatifs via la diagonale",
+        "facts_0": "Les poids négatifs sont autorisés, mais un cycle négatif rend les plus courts chemins mal définis.",
+        "facts_1": "Si une distance diagonale devient négative, le graphe contient un cycle négatif.",
+        "facts_2": "L'algorithme utilise O(V²) mémoire pour sa matrice des distances.",
+        "facts_3": "Par rapport à des exécutions répétées de Dijkstra, Floyd-Warshall n'est généralement préféré que sur des graphes plus petits ou plus denses."
+      },
       "inorderTraversal": {
         "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
         "intuition": "Depuis la racine, empiler le long des fils gauches jusqu'à l'absence de fils gauche ; visiter (enregistrer) le nœud, puis passer au fils droit et répéter. Chaque nœud est traité après tout son sous-arbre gauche.",
@@ -833,7 +848,11 @@
     "weightedDisconnected": "Graphe pondéré déconnecté",
     "sccCycle": "Cycle en une seule CFC",
     "multiScc": "Plusieurs CFC",
-    "selfLoop": "CFC avec boucle sur soi"
+    "selfLoop": "CFC avec boucle sur soi",
+    "weightedDirectedPositive": "Graphe orienté pondéré",
+    "weightedDirectedNegative": "Graphe à arête négative",
+    "weightedDirectedNegativeCycle": "Graphe à cycle négatif",
+    "weightedDirectedSingle": "Matrice à un sommet"
   },
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
@@ -932,7 +951,10 @@
     "lowLinkBadge": "Indice/low-link : {{pairs}}",
     "sccListBadge": "CFC : {{components}}",
     "finishStackBadge": "Pile de fin : {{order}}",
-    "passBadge": "Passage {{pass}}"
+    "passBadge": "Passage {{pass}}",
+    "matrixIntermediateBadge": "Intermédiaire : {{node}}",
+    "pathUpdateBadge": "Chemin mis à jour : {{path}}",
+    "negativeCycleBadge": "Cycle négatif détecté"
   },
   "languages": {
     "en": "English",
@@ -1022,6 +1044,11 @@
     "kosarajuTranspose": "Construire le graphe transposé puis traiter les sommets en ordre inverse de fin : {{order}}.",
     "kosarajuCollectScc": "Le passage 2 part de {{node}} sur le transposé et découvre une CFC : {{component}}.",
     "kosarajuFinish": "Kosaraju terminé. {{count}} composante(s) fortement connexe(s) trouvée(s).",
+    "floydWarshallStart": "Floyd-Warshall : initialiser la matrice des distances avec les arêtes directes, des zéros sur la diagonale et ∞ là où aucun chemin n'est encore connu.",
+    "floydWarshallIntermediate": "Autoriser {{node}} comme nouveau sommet intermédiaire pour toutes les paires de sommets.",
+    "floydWarshallUpdate": "Le chemin {{from}} → {{to}} s'améliore en passant par {{via}}. Nouvelle distance : {{distance}}.",
+    "floydWarshallNegativeCycle": "Un cycle négatif est détecté car la diagonale devient négative pour : {{nodes}}.",
+    "floydWarshallFinish": "Floyd-Warshall terminé. La matrice contient maintenant la plus courte distance connue entre chaque paire de sommets.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -1169,8 +1196,8 @@
       },
       "graphAlgorithm": {
         "title": "Algorithmes de graphe",
-        "description": "Étudiez les problèmes sur graphes orientés comme l'ordonnancement des dépendances, en commençant par le tri topologique DFS sur des DAG générés.",
-        "algorithms": "Tri topologique"
+        "description": "Étudiez l'ordonnancement des dépendances, les composantes fortement connexes, les arbres couvrants minimaux et les plus courts chemins tous couples via des visualisations interactives de graphes et de matrices.",
+        "algorithms": "Tri topologique, Tarjan, Kosaraju, Floyd-Warshall"
       }
     },
     "features": {
@@ -1233,7 +1260,8 @@
     "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire",
     "topologicalOrdering": "Ordonnancement topologique",
     "minimumSpanningTree": "Arbre couvrant minimal",
-    "stronglyConnectedComponents": "Composantes fortement connexes"
+    "stronglyConnectedComponents": "Composantes fortement connexes",
+    "allPairsShortestPath": "Plus court chemin tous couples"
   },
   "roadmap": {
     "hero": {

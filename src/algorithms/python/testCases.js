@@ -659,6 +659,29 @@ const KOSARAJU_ALGORITHM_TEST_CASES = [
   },
 ];
 
+const FLOYD_WARSHALL_ALGORITHM_TEST_CASES = [
+  {
+    id: 'floyd-positive',
+    name: 'Positive weighted directed graph',
+    input:
+      "(['0', '1', '2', '3'], [('0', '1', 3), ('0', '3', 10), ('1', '2', 2), ('2', '3', 1), ('3', '1', 4)])",
+    expected: '([[0, 3, 5, 6], [None, 0, 2, 3], [None, 5, 0, 1], [None, 4, 6, 0]], False)',
+  },
+  {
+    id: 'floyd-negative-edge',
+    name: 'Negative edge without negative cycle',
+    input:
+      "(['0', '1', '2', '3'], [('0', '1', 4), ('0', '2', 11), ('1', '2', -2), ('2', '3', 3), ('3', '1', 6)])",
+    expected: '([[0, 4, 2, 5], [None, 0, -2, 1], [None, 9, 0, 3], [None, 6, 4, 0]], False)',
+  },
+  {
+    id: 'floyd-negative-cycle',
+    name: 'Negative cycle',
+    input: "(['0', '1', '2'], [('0', '1', 1), ('1', '2', -4), ('2', '0', 1)])",
+    expected: '([[-2, -1, -5], [-3, -2, -6], [-1, 0, -4]], True)',
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -880,6 +903,10 @@ export const algorithmTestCases = {
   kosarajuAlgorithm: {
     functionName: 'kosaraju_algorithm',
     testCases: KOSARAJU_ALGORITHM_TEST_CASES,
+  },
+  floydWarshallAlgorithm: {
+    functionName: 'floyd_warshall_algorithm',
+    testCases: FLOYD_WARSHALL_ALGORITHM_TEST_CASES,
   },
   levelOrderTraversal: {
     functionName: 'level_order_traversal',

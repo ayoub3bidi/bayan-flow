@@ -685,4 +685,29 @@ Uses only O(1) extra space; restores original tree links after the walk.`,
       append component to components
 
   RETURN components`,
+
+  floydWarshallAlgorithm: `FUNCTION FloydWarshall(vertices, edges):
+  dist ← matrix filled with ∞
+  next ← matrix filled with null
+
+  FOR each vertex i:
+    dist[i][i] ← 0
+    next[i][i] ← i
+
+  FOR each directed edge (u, v, w):
+    IF w < dist[u][v]:
+      dist[u][v] ← w
+      next[u][v] ← v
+
+  FOR each intermediate vertex k:
+    FOR each source vertex i:
+      FOR each destination vertex j:
+        IF dist[i][k] + dist[k][j] < dist[i][j]:
+          dist[i][j] ← dist[i][k] + dist[k][j]
+          next[i][j] ← next[i][k]
+
+  IF any dist[i][i] < 0:
+    REPORT negative cycle
+
+  RETURN dist, next`,
 };

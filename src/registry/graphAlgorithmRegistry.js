@@ -7,6 +7,7 @@
 import {
   generateRandomDag,
   generateRandomDirectedGraph,
+  generateRandomWeightedDirectedGraph,
   generateRandomWeightedUndirectedGraph,
 } from '../utils/graphAlgorithmGenerators.js';
 import {
@@ -17,6 +18,10 @@ import {
   SCENARIO_SCC_CYCLE,
   SCENARIO_SINGLE_NODE,
   SCENARIO_SELF_LOOP,
+  SCENARIO_WEIGHTED_DIRECTED_NEGATIVE,
+  SCENARIO_WEIGHTED_DIRECTED_NEGATIVE_CYCLE,
+  SCENARIO_WEIGHTED_DIRECTED_POSITIVE,
+  SCENARIO_WEIGHTED_DIRECTED_SINGLE,
   SCENARIO_WEIGHTED_BRIDGE,
   SCENARIO_WEIGHTED_DISCONNECTED,
   SCENARIO_WEIGHTED_TRIANGLE,
@@ -172,6 +177,30 @@ export const GRAPH_ALGORITHM_PROFILES = {
         return cloneScenarioGraph(scenario);
       }
       return generateRandomDirectedGraph({ nodeCount, rng });
+    },
+  },
+  floydWarshallAlgorithm: {
+    key: 'floydWarshallAlgorithm',
+    groupLabelKey: 'algorithmGroups.allPairsShortestPath',
+    representation: GRAPH_REPRESENTATIONS.MATRIX,
+    directed: true,
+    weighted: true,
+    supportsRandomGeneration: true,
+    scenarioIds: [
+      SCENARIO_WEIGHTED_DIRECTED_POSITIVE.id,
+      SCENARIO_WEIGHTED_DIRECTED_NEGATIVE.id,
+      SCENARIO_WEIGHTED_DIRECTED_NEGATIVE_CYCLE.id,
+      SCENARIO_WEIGHTED_DIRECTED_SINGLE.id,
+    ],
+    createInput({ nodeCount, scenarioId, rng = Math.random }) {
+      const scenario =
+        scenarioId && GRAPH_SCENARIOS[scenarioId]
+          ? GRAPH_SCENARIOS[scenarioId]
+          : null;
+      if (scenario) {
+        return cloneScenarioGraph(scenario);
+      }
+      return generateRandomWeightedDirectedGraph({ nodeCount, rng });
     },
   },
 };
