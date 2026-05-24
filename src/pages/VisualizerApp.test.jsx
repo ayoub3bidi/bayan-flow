@@ -554,6 +554,34 @@ describe('VisualizerApp', () => {
     expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
   });
 
+  it('falls back safely when reading the stored sound preference throws', async () => {
+    const getItemSpy = vi
+      .spyOn(Storage.prototype, 'getItem')
+      .mockImplementation(() => {
+        throw new Error('storage read failed');
+      });
+
+    await renderApp();
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+
+    getItemSpy.mockRestore();
+  });
+
+  it('keeps rendering when persisting the sound preference throws', async () => {
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('storage write failed');
+      });
+
+    await renderApp();
+
+    expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+
+    setItemSpy.mockRestore();
+  });
+
   it('toggles sound through the shared control-panel state and persists it', async () => {
     await renderApp();
 
@@ -578,5 +606,19 @@ describe('VisualizerApp', () => {
         'false'
       );
     });
+  });
+
+  it('keeps the persisted sound preference when resume-on-interaction fails', async () => {
+    window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
+    soundManager.enable.mockRejectedValueOnce(new Error('resume failed'));
+
+    await renderApp();
+    fireEvent.pointerDown(document.body);
+
+    await waitFor(() => {
+      expect(soundManager.enable).toHaveBeenCalledTimes(1);
+    });
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
   });
 });
