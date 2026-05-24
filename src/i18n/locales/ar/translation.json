@@ -210,7 +210,7 @@
     "stepForward": "الخطوة التالية",
     "stepBackward": "الخطوة السابقة",
     "reset": "إعادة تعيين",
-    "generateArray": "إنشاء مصفوفة جديدة",
+    "generateInput": "إنشاء مدخلات جديدة",
     "exportVideo": "تصدير فيديو",
     "rendering": "جاري إنشاء الفيديو…",
     "exportDone": "تم تنزيل الفيديو",

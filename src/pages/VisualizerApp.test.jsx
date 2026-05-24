@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
+import { soundManager } from '../utils/soundManager';
 
 const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
   vi.hoisted(() => {
@@ -246,7 +247,10 @@ vi.mock('../components/ControlPanel', () => ({
     totalSteps,
     algorithmType,
     onExportVideo,
-    onGenerateArray,
+    onGenerateInput,
+    isSoundEnabled,
+    isSoundTogglePending,
+    onToggleSound,
     sortOrder,
     onSortOrderChange,
   }) => (
@@ -254,10 +258,15 @@ vi.mock('../components/ControlPanel', () => ({
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
       <span data-testid="control-algorithm-type">{algorithmType}</span>
       <span data-testid="control-sort-order">{String(sortOrder)}</span>
-      <button type="button" onClick={onGenerateArray}>
+      <span data-testid="sound-enabled">{String(isSoundEnabled)}</span>
+      <span data-testid="sound-pending">{String(isSoundTogglePending)}</span>
+      <button type="button" onClick={onGenerateInput}>
         generate-data
       </button>
       <button onClick={onExportVideo}>export</button>
+      <button type="button" onClick={onToggleSound}>
+        toggle-sound
+      </button>
       {algorithmType === 'sorting' && (
         <button
           type="button"
@@ -352,6 +361,8 @@ vi.mock('../video/useVideoExporter', () => ({
 
 describe('VisualizerApp', () => {
   beforeEach(() => {
+    window.localStorage.clear();
+    soundManager.disable();
     vi.clearAllMocks();
     fullScreenMock.isFullScreen = false;
     videoExporterMock.exportState = 'idle';
@@ -460,11 +471,13 @@ describe('VisualizerApp', () => {
 
   it('renders fullscreen layout when useFullScreen reports true', async () => {
     fullScreenMock.isFullScreen = true;
+    window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
     await renderApp();
 
     expect(screen.queryByTestId('header')).not.toBeInTheDocument();
     expect(screen.getByTestId('array-visualizer')).toBeInTheDocument();
     expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
   });
 
   it('calls exportVideo with algorithm metadata when orientation is chosen', async () => {
@@ -531,5 +544,39 @@ describe('VisualizerApp', () => {
     expect(screen.getByTestId('control-sort-order')).toHaveTextContent(
       'descending'
     );
+  });
+
+  it('hydrates the sound preference from localStorage', async () => {
+    window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
+
+    await renderApp();
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
+  });
+
+  it('toggles sound through the shared control-panel state and persists it', async () => {
+    await renderApp();
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+
+    fireEvent.click(screen.getByText('toggle-sound'));
+
+    await waitFor(() => {
+      expect(soundManager.enable).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
+      expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
+        'true'
+      );
+    });
+
+    fireEvent.click(screen.getByText('toggle-sound'));
+
+    await waitFor(() => {
+      expect(soundManager.disable).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+      expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
+        'false'
+      );
+    });
   });
 });

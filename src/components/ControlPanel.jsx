@@ -11,13 +11,15 @@ import {
   RotateCcw,
   SkipBack,
   SkipForward,
-  Shuffle,
+  RefreshCw,
   Maximize,
   Minimize,
   Video,
   Square,
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { soundManager } from '../utils/soundManager';
@@ -39,7 +41,7 @@ import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
  * @param {Function} onStepBackward - Handler for step backward button
  * @param {number} currentStep - Current step in the animation
  * @param {number} totalSteps - Total number of steps
- * @param {Function} onGenerateArray - Handler for generating new random start/end points
+ * @param {Function} onGenerateInput - Handler for generating new category input
  * @param {string} algorithmType - Current algorithm type ('sorting' | 'pathfinding' | 'searching')
  * @param {string} [sortOrder] - SORT_ORDERS (sorting only)
  * @param {Function} [onSortOrderChange] - Toggle sort input order (sorting only)
@@ -50,6 +52,9 @@ import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
  * @param {string} exportState - 'idle' | 'checking' | 'rendering' | 'done' | 'error'
  * @param {number} exportProgress - 0-1 progress when rendering
  * @param {boolean|null} canRenderOnWeb - Whether browser supports web render (null = unknown)
+ * @param {boolean} [isSoundEnabled] - Whether UI sound is currently enabled
+ * @param {boolean} [isSoundTogglePending] - Whether the sound toggle is waiting on audio setup
+ * @param {Function} [onToggleSound] - Handler for sound toggle button
  */
 function ControlPanel({
   isPlaying,
@@ -62,7 +67,7 @@ function ControlPanel({
   onStepBackward,
   currentStep,
   totalSteps,
-  onGenerateArray,
+  onGenerateInput,
   algorithmType,
   sortOrder = SORT_ORDERS.ASCENDING,
   onSortOrderChange,
@@ -73,6 +78,9 @@ function ControlPanel({
   exportState = 'idle',
   exportProgress: _exportProgress = 0,
   canRenderOnWeb = null,
+  isSoundEnabled = false,
+  isSoundTogglePending = false,
+  onToggleSound,
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
@@ -178,14 +186,14 @@ function ControlPanel({
             <button
               onClick={() => {
                 soundManager.playArrayGenerate();
-                onGenerateArray();
+                onGenerateInput();
               }}
               disabled={isPlaying}
               className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
-              title={t('controls.generateArray')}
-              aria-label={t('controls.generateArray')}
+              title={t('controls.generateInput')}
+              aria-label={t('controls.generateInput')}
             >
-              <Shuffle size={20} aria-hidden="true" />
+              <RefreshCw size={20} aria-hidden="true" />
             </button>
           )}
 
@@ -216,6 +224,32 @@ function ControlPanel({
               )}
             </button>
           )}
+
+          <button
+            type="button"
+            onClick={() => {
+              onToggleSound?.();
+            }}
+            disabled={isSoundTogglePending}
+            className={`${buttonBaseClasses} ${
+              isSoundEnabled
+                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md'
+                : 'bg-surface-elevated hover:bg-border text-text-primary'
+            }`}
+            title={
+              isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')
+            }
+            aria-label={
+              isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')
+            }
+            aria-pressed={isSoundEnabled}
+          >
+            {isSoundEnabled ? (
+              <Volume2 size={20} aria-hidden="true" />
+            ) : (
+              <VolumeX size={20} aria-hidden="true" />
+            )}
+          </button>
 
           {/* Export Video / Stop Export */}
           {exportState === 'checking' || exportState === 'rendering' ? (

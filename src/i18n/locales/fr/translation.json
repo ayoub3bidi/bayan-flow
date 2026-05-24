@@ -210,7 +210,7 @@
     "stepForward": "Étape Suivante",
     "stepBackward": "Étape Précédente",
     "reset": "Réinitialiser",
-    "generateArray": "Générer Nouveau Tableau",
+    "generateInput": "Générer une nouvelle entrée",
     "exportVideo": "Exporter en vidéo",
     "rendering": "Génération de la vidéo…",
     "exportDone": "Vidéo téléchargée",

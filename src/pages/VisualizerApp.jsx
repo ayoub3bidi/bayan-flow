@@ -54,6 +54,8 @@ import {
   reorderArrayForSortOrder,
 } from '../utils/arrayHelpers';
 
+const SOUND_PREFERENCE_STORAGE_KEY = 'bayan-flow:sound-enabled';
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -72,6 +74,29 @@ function buildDefaultSelectedAlgorithms() {
 
 function getDefaultGraphScenario(algorithmKey) {
   return getGraphAlgorithmScenarioOptions(algorithmKey)[0]?.id ?? null;
+}
+
+function readStoredSoundPreference() {
+  if (typeof window === 'undefined') return false;
+
+  try {
+    return window.localStorage.getItem(SOUND_PREFERENCE_STORAGE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function writeStoredSoundPreference(isEnabled) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(
+      SOUND_PREFERENCE_STORAGE_KEY,
+      String(isEnabled)
+    );
+  } catch {
+    // Ignore storage failures and keep the in-memory preference.
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -108,6 +133,10 @@ function App() {
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(
+    readStoredSoundPreference
+  );
+  const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
   const [selectedGraphScenario, setSelectedGraphScenario] = useState(() =>
@@ -214,6 +243,39 @@ function App() {
     }
   }, [sortOrder, algorithmType]);
 
+  useEffect(() => {
+    writeStoredSoundPreference(isSoundEnabled);
+
+    if (!isSoundEnabled && soundManager.getIsEnabled()) {
+      soundManager.disable();
+    }
+  }, [isSoundEnabled]);
+
+  useEffect(() => {
+    if (!isSoundEnabled || soundManager.getIsEnabled()) {
+      return undefined;
+    }
+
+    const resumeOnInteraction = async () => {
+      cleanup();
+      try {
+        await soundManager.enable();
+      } catch {
+        // Keep the preference; the user can toggle sound again if resume fails.
+      }
+    };
+
+    const cleanup = () => {
+      document.removeEventListener('pointerdown', resumeOnInteraction, true);
+      document.removeEventListener('keydown', resumeOnInteraction, true);
+    };
+
+    document.addEventListener('pointerdown', resumeOnInteraction, true);
+    document.addEventListener('keydown', resumeOnInteraction, true);
+
+    return cleanup;
+  }, [isSoundEnabled]);
+
   // ── Registry: visualizer component ───────────────────────────────────────
   const VisualizerComponent = VISUALIZER_REGISTRY[algorithmType];
 
@@ -229,7 +291,7 @@ function App() {
   // ── Handlers ───────────────────────────────────────────────────────────────
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
-  const handleGenerateArray = () => {
+  const handleGenerateInput = () => {
     const cfg = CATEGORY_CONFIG[algorithmType];
     if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
       treeTraversalVisualization.regenerateTree();
@@ -252,7 +314,32 @@ function App() {
     } else {
       pathfindingVisualization.regenerateGrid();
     }
-    soundManager.playArrayGenerate();
+  };
+
+  const handleSoundToggle = async () => {
+    if (isSoundTogglePending) return;
+
+    if (isSoundEnabled) {
+      soundManager.disable();
+      setIsSoundEnabled(false);
+      return;
+    }
+
+    setIsSoundTogglePending(true);
+
+    try {
+      await soundManager.enable();
+      const nextEnabledState = soundManager.getIsEnabled();
+      setIsSoundEnabled(nextEnabledState);
+      if (nextEnabledState) {
+        soundManager.playUIClick();
+      }
+    } catch (error) {
+      console.error('[Sound Toggle]', error);
+      setIsSoundEnabled(false);
+    } finally {
+      setIsSoundTogglePending(false);
+    }
   };
 
   const handleAlgorithmChange = algorithmName => {
@@ -395,7 +482,7 @@ function App() {
               onStepBackward={visualization.stepBackward}
               currentStep={visualization.currentStep}
               totalSteps={visualization.totalSteps}
-              onGenerateArray={handleGenerateArray}
+              onGenerateInput={handleGenerateInput}
               algorithmType={algorithmType}
               sortOrder={sortOrder}
               onSortOrderChange={setSortOrder}
@@ -406,6 +493,9 @@ function App() {
               exportState={exportState}
               exportProgress={exportProgress}
               canRenderOnWeb={canRenderOnWeb}
+              isSoundEnabled={isSoundEnabled}
+              isSoundTogglePending={isSoundTogglePending}
+              onToggleSound={handleSoundToggle}
             />
           </motion.div>
         ) : (
@@ -491,7 +581,7 @@ function App() {
                       onStepBackward={visualization.stepBackward}
                       currentStep={visualization.currentStep}
                       totalSteps={visualization.totalSteps}
-                      onGenerateArray={handleGenerateArray}
+                      onGenerateInput={handleGenerateInput}
                       algorithmType={algorithmType}
                       sortOrder={sortOrder}
                       onSortOrderChange={setSortOrder}
@@ -502,6 +592,9 @@ function App() {
                       exportState={exportState}
                       exportProgress={exportProgress}
                       canRenderOnWeb={canRenderOnWeb}
+                      isSoundEnabled={isSoundEnabled}
+                      isSoundTogglePending={isSoundTogglePending}
+                      onToggleSound={handleSoundToggle}
                     />
                   </section>
                 </div>

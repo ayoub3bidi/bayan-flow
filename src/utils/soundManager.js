@@ -39,6 +39,10 @@ class SoundManager {
     this.isEnabled = false;
   }
 
+  getIsEnabled() {
+    return this.isEnabled;
+  }
+
   playCompare(value) {
     if (!this.isEnabled) return;
     const freq = getCompareFrequency(value);
