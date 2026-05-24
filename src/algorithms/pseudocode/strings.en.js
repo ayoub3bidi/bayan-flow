@@ -540,4 +540,174 @@ To traverse the whole binary tree, call PostorderTraversal(root)`,
         current ← right child of current
 
 Uses only O(1) extra space; restores original tree links after the walk.`,
+
+  topologicalSort: `FUNCTION TopologicalSort(graph):
+  temporary ← empty set
+  permanent ← empty set
+  finishStack ← empty stack
+
+  FUNCTION Visit(vertex):
+    IF vertex is in temporary:
+      REPORT cycle and stop
+    IF vertex is in permanent:
+      RETURN
+    add vertex to temporary
+    FOR each neighbor in adjacency[vertex]:
+      Visit(neighbor)
+    remove vertex from temporary
+    add vertex to permanent
+    push vertex onto finishStack
+
+  FOR each vertex in graph:
+    IF vertex is not in permanent:
+      Visit(vertex)
+
+  RETURN reverse(finishStack)`,
+
+  kahnAlgorithm: `FUNCTION KahnsAlgorithm(graph):
+  inDegree ← map with 0 for every vertex
+  FOR each vertex in graph:
+    FOR each neighbor in adjacency[vertex]:
+      inDegree[neighbor] ← inDegree[neighbor] + 1
+
+  queue ← all vertices with inDegree 0
+  order ← empty list
+
+  WHILE queue is not empty:
+    vertex ← dequeue front vertex
+    append vertex to order
+    FOR each neighbor in adjacency[vertex]:
+      inDegree[neighbor] ← inDegree[neighbor] - 1
+      IF inDegree[neighbor] = 0:
+        enqueue neighbor
+
+  IF length(order) ≠ number of vertices:
+    REPORT cycle
+
+  RETURN order`,
+
+  kruskalAlgorithm: `FUNCTION KruskalAlgorithm(vertices, edges):
+  make each vertex its own component
+  sort edges by ascending weight
+  selectedEdges ← empty list
+
+  FOR each edge (u, v, w) in sorted edges:
+    IF Find(u) ≠ Find(v):
+      add edge to selectedEdges
+      Union(u, v)
+    ELSE:
+      skip edge because it would create a cycle
+
+  RETURN selectedEdges`,
+
+  primAlgorithm: `FUNCTION PrimAlgorithm(vertices, edges, start):
+  visited ← {start}
+  frontier ← priority queue of edges leaving start
+  selectedEdges ← empty list
+
+  WHILE frontier is not empty AND not all vertices are visited:
+    edge ← extract minimum-weight edge from frontier
+    IF edge.to is already visited:
+      CONTINUE
+    add edge to selectedEdges
+    mark edge.to as visited
+    push every outgoing edge from edge.to to an unvisited vertex into frontier
+
+  RETURN selectedEdges`,
+
+  tarjanAlgorithm: `FUNCTION TarjanAlgorithm(graph):
+  index ← 0
+  stack ← empty stack
+  onStack ← empty set
+  indices ← empty map
+  lowLink ← empty map
+  components ← empty list
+
+  FUNCTION StrongConnect(vertex):
+    indices[vertex] ← index
+    lowLink[vertex] ← index
+    index ← index + 1
+    push vertex onto stack
+    add vertex to onStack
+
+    FOR each neighbor in adjacency[vertex]:
+      IF neighbor is not in indices:
+        StrongConnect(neighbor)
+        lowLink[vertex] ← MIN(lowLink[vertex], lowLink[neighbor])
+      ELSE IF neighbor is in onStack:
+        lowLink[vertex] ← MIN(lowLink[vertex], indices[neighbor])
+
+    IF lowLink[vertex] = indices[vertex]:
+      component ← empty list
+      REPEAT:
+        node ← pop stack
+        remove node from onStack
+        append node to component
+      UNTIL node = vertex
+      append component to components
+
+  FOR each vertex in graph:
+    IF vertex is not in indices:
+      StrongConnect(vertex)
+
+  RETURN components`,
+
+  kosarajuAlgorithm: `FUNCTION KosarajuAlgorithm(graph):
+  visited ← empty set
+  finishStack ← empty list
+
+  FUNCTION DfsOriginal(vertex):
+    mark vertex visited
+    FOR each neighbor in adjacency[vertex]:
+      IF neighbor is not visited:
+        DfsOriginal(neighbor)
+    append vertex to finishStack
+
+  FOR each vertex in graph:
+    IF vertex is not visited:
+      DfsOriginal(vertex)
+
+  transpose ← graph with every edge reversed
+  visited ← empty set
+  components ← empty list
+
+  FUNCTION DfsTranspose(vertex, component):
+    mark vertex visited
+    append vertex to component
+    FOR each neighbor in transpose[vertex]:
+      IF neighbor is not visited:
+        DfsTranspose(neighbor, component)
+
+  FOR each vertex in reverse(finishStack):
+    IF vertex is not visited:
+      component ← empty list
+      DfsTranspose(vertex, component)
+      append component to components
+
+  RETURN components`,
+
+  floydWarshallAlgorithm: `FUNCTION FloydWarshall(vertices, edges):
+  dist ← matrix filled with ∞
+  next ← matrix filled with null
+
+  FOR each vertex i:
+    dist[i][i] ← 0
+    next[i][i] ← i
+
+  FOR each directed edge (u, v, w):
+    IF w < dist[u][v]:
+      dist[u][v] ← w
+      next[u][v] ← v
+
+  FOR each intermediate vertex k:
+    FOR each source vertex i:
+      FOR each destination vertex j:
+        IF dist[i][k] + dist[k][j] < dist[i][j]:
+          dist[i][j] ← dist[i][k] + dist[k][j]
+          next[i][j] ← next[i][k]
+
+  IF any dist[i][i] < 0:
+    REPORT negative cycle
+
+  RETURN dist, next`,
 };

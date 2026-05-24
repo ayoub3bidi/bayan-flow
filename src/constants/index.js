@@ -9,6 +9,7 @@ export const ALGORITHM_TYPES = {
   PATHFINDING: 'pathfinding',
   SEARCHING: 'searching',
   TREE_TRAVERSAL: 'treeTraversal',
+  GRAPH_ALGORITHM: 'graphAlgorithm',
 };
 
 // Ordered list for UI tab rendering and registry iteration.
@@ -71,6 +72,16 @@ export const TREE_TRAVERSAL_ALGORITHMS = {
   MORRIS_TRAVERSAL: 'morrisTraversal',
 };
 
+export const GRAPH_ALGORITHMS = {
+  TOPOLOGICAL_SORT: 'topologicalSort',
+  KAHN_ALGORITHM: 'kahnAlgorithm',
+  KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
+  PRIM_ALGORITHM: 'primAlgorithm',
+  TARJAN_ALGORITHM: 'tarjanAlgorithm',
+  KOSARAJU_ALGORITHM: 'kosarajuAlgorithm',
+  FLOYD_WARSHALL_ALGORITHM: 'floydWarshallAlgorithm',
+};
+
 export const ANIMATION_SPEEDS = {
   SLOW: 8000,
   MEDIUM: 4800,
@@ -129,6 +140,7 @@ export const GRAPH_NODE_STATES = {
   CURRENT: 'current',
   VISITED: 'visited',
   PATH: 'path',
+  CYCLE: 'cycle',
 };
 
 export const GRAPH_NODE_STATE_COLORS = {
@@ -139,6 +151,23 @@ export const GRAPH_NODE_STATE_COLORS = {
   [GRAPH_NODE_STATES.CURRENT]: '#f97316',
   [GRAPH_NODE_STATES.VISITED]: '#60a5fa',
   [GRAPH_NODE_STATES.PATH]: '#10b981',
+  [GRAPH_NODE_STATES.CYCLE]: '#ef4444',
+};
+
+export const GRAPH_EDGE_STATES = {
+  DEFAULT: 'default',
+  ACTIVE: 'active',
+  VISITED: 'visited',
+  SELECTED: 'selected',
+  CYCLE: 'cycle',
+};
+
+export const GRAPH_EDGE_STATE_COLORS = {
+  [GRAPH_EDGE_STATES.DEFAULT]: '#9ca3af',
+  [GRAPH_EDGE_STATES.ACTIVE]: '#f97316',
+  [GRAPH_EDGE_STATES.VISITED]: '#60a5fa',
+  [GRAPH_EDGE_STATES.SELECTED]: '#10b981',
+  [GRAPH_EDGE_STATES.CYCLE]: '#ef4444',
 };
 
 /** Tree traversal visualization (inorder / future traversals). */
@@ -169,6 +198,14 @@ export const DEFAULT_SEARCH_GRAPH_NODE_COUNT = 12;
 export const SEARCH_GRAPH_NODE_COUNT = {
   min: 5,
   max: 24,
+  step: 1,
+};
+
+export const DEFAULT_GRAPH_NODE_COUNT = 10;
+
+export const GRAPH_NODE_COUNT = {
+  min: 3,
+  max: 18,
   step: 1,
 };
 
@@ -646,6 +683,128 @@ export const TREE_TRAVERSAL_COMPLEXITY = {
   },
 };
 
+export const GRAPH_ALGORITHM_COMPLEXITY = {
+  topologicalSort: {
+    name: 'Topological Sort (DFS)',
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      'DFS-based topological sort orders vertices in a directed acyclic graph so every dependency edge u -> v places u before v. It uses temporary marks to detect cycles and a completion stack to build the final order.',
+    useCases: [
+      'Task scheduling with prerequisites',
+      'Build systems and dependency resolution',
+      'Course prerequisite ordering',
+      'Instruction scheduling and dependency graphs',
+    ],
+  },
+  kahnAlgorithm: {
+    name: "Kahn's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kahn's algorithm builds a topological order by repeatedly removing vertices whose in-degree is zero. It is iterative, queue-based, and detects cycles when the queue empties before every vertex is output.",
+    useCases: [
+      'Dependency resolution with explicit cycle detection',
+      'Task scheduling and prerequisite planning',
+      'Build graph validation',
+      'Teaching in-degree based reasoning on DAGs',
+    ],
+  },
+  kruskalAlgorithm: {
+    name: "Kruskal's Algorithm",
+    timeComplexity: {
+      best: 'O(E log E)',
+      average: 'O(E log E)',
+      worst: 'O(E log E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kruskal's algorithm sorts weighted edges from lightest to heaviest, then adds each edge only if it connects two different components. A Union-Find structure keeps the selected edges cycle-free while still producing an optimal minimum spanning tree or forest.",
+    useCases: [
+      'Network design with minimum total cable cost',
+      'Clustering and image segmentation',
+      'Teaching greedy algorithms with Union-Find',
+      'Building minimum spanning forests on disconnected graphs',
+    ],
+  },
+  primAlgorithm: {
+    name: "Prim's Algorithm",
+    timeComplexity: {
+      best: 'O((V + E) log V)',
+      average: 'O((V + E) log V)',
+      worst: 'O((V + E) log V)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Prim's algorithm grows a minimum spanning tree from a chosen start vertex. At each step it adds the lightest edge that connects the current tree to an unvisited vertex.",
+    useCases: [
+      'Minimum-cost network expansion from a seed node',
+      'Dense-graph MST teaching and comparison with Kruskal',
+      'Incrementally growing a spanning backbone',
+      'Demonstrating greedy frontier expansion on weighted graphs',
+    ],
+  },
+  tarjanAlgorithm: {
+    name: "Tarjan's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Tarjan's algorithm finds strongly connected components in a directed graph with one depth-first search. It assigns each vertex a discovery index and a low-link value, then uses a stack to identify exactly when a full SCC has been completed.",
+    useCases: [
+      'Cycle analysis in directed dependency graphs',
+      'Graph condensation before higher-level analysis',
+      'Teaching low-link reasoning beyond bridges and articulation points',
+      'Community and circuit structure discovery in directed networks',
+    ],
+  },
+  kosarajuAlgorithm: {
+    name: "Kosaraju's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kosaraju's algorithm finds strongly connected components with two DFS passes: first to compute finish order, then on the transposed graph to collect each component. It is especially useful pedagogically because the transpose and reverse-finish-order ideas are explicit.",
+    useCases: [
+      'Teaching SCC discovery with a simpler two-pass mental model',
+      'Condensing directed graphs after an explicit transpose build',
+      'Comparing single-pass and two-pass SCC strategies',
+      'Analyzing mutually reachable clusters in directed networks',
+    ],
+  },
+  floydWarshallAlgorithm: {
+    name: 'Floyd-Warshall Algorithm',
+    timeComplexity: {
+      best: 'O(V³)',
+      average: 'O(V³)',
+      worst: 'O(V³)',
+    },
+    spaceComplexity: 'O(V²)',
+    description:
+      'Floyd-Warshall computes all-pairs shortest paths by progressively allowing more intermediate vertices. It supports negative edge weights and detects negative cycles when any diagonal distance becomes negative.',
+    useCases: [
+      'All-pairs shortest paths on small directed graphs',
+      'Teaching dynamic programming on graphs',
+      'Transitive closure and reachability-style reasoning',
+      'Negative-cycle detection in weighted directed networks',
+    ],
+  },
+};
+
 export const COMPLEXITY_FUNCTIONS = {
   // eslint-disable-next-line no-unused-vars
   'O(1)': n => 1,
@@ -661,6 +820,7 @@ export const COMPLEXITY_FUNCTIONS = {
   'O(2^n)': n => Math.pow(2, n),
   'O(V + E)': n => n + n * 4, // Approximation: V vertices + E edges (grid has ~4 edges per vertex)
   'O((V + E) log V)': n => (n + n * 4) * Math.log2(n),
+  'O(E log E)': n => n * 4 * Math.log2(Math.max(2, n * 4)),
   'O(E)': n => n * 4, // Approximation for grid edges
   'O(VE)': n => n * n * 4, // Approximation: V vertices × E edges per vertex (~4)
   'O(b^d)': n => Math.pow(4, Math.log2(n)), // Approximation: branching factor 4, depth log(n)

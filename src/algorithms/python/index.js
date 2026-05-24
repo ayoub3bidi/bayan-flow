@@ -42,6 +42,13 @@ import zigzagLevelOrderTraversalPython from './zigzag_level_order_traversal.py?r
 import preorderTraversalPython from './preorder_traversal.py?raw';
 import postorderTraversalPython from './postorder_traversal.py?raw';
 import morrisTraversalPython from './morris_traversal.py?raw';
+import topologicalSortPython from './topological_sort.py?raw';
+import kahnAlgorithmPython from './kahn_algorithm.py?raw';
+import kruskalAlgorithmPython from './kruskal_algorithm.py?raw';
+import primAlgorithmPython from './prim_algorithm.py?raw';
+import tarjanAlgorithmPython from './tarjan_algorithm.py?raw';
+import kosarajuAlgorithmPython from './kosaraju_algorithm.py?raw';
+import floydWarshallAlgorithmPython from './floyd_warshall_algorithm.py?raw';
 
 export const pythonAlgorithms = {
   bubbleSort: bubbleSortPython,
@@ -82,6 +89,13 @@ export const pythonAlgorithms = {
   preorderTraversal: preorderTraversalPython,
   postorderTraversal: postorderTraversalPython,
   morrisTraversal: morrisTraversalPython,
+  topologicalSort: topologicalSortPython,
+  kahnAlgorithm: kahnAlgorithmPython,
+  kruskalAlgorithm: kruskalAlgorithmPython,
+  primAlgorithm: primAlgorithmPython,
+  tarjanAlgorithm: tarjanAlgorithmPython,
+  kosarajuAlgorithm: kosarajuAlgorithmPython,
+  floydWarshallAlgorithm: floydWarshallAlgorithmPython,
 };
 
 export const algorithmDisplayNames = {
@@ -123,6 +137,13 @@ export const algorithmDisplayNames = {
   preorderTraversal: 'Preorder Traversal',
   postorderTraversal: 'Postorder Traversal',
   morrisTraversal: 'Morris Traversal',
+  topologicalSort: 'Topological Sort (DFS)',
+  kahnAlgorithm: "Kahn's Algorithm",
+  kruskalAlgorithm: "Kruskal's Algorithm",
+  primAlgorithm: "Prim's Algorithm",
+  tarjanAlgorithm: "Tarjan's Algorithm",
+  kosarajuAlgorithm: "Kosaraju's Algorithm",
+  floydWarshallAlgorithm: 'Floyd-Warshall Algorithm',
 };
 
 export function getPythonCode(algorithmName) {

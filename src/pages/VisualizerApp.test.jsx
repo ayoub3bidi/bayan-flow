@@ -114,6 +114,38 @@ const treeTraversalVisualization = {
   steps: [{ description: 'tree step' }],
 };
 
+const graphAlgorithmVisualization = {
+  graphNodes: [],
+  graphEdges: [],
+  graphNodeStates: {},
+  graphEdgeStates: {},
+  graphStackOrder: [],
+  graphOutputOrder: [],
+  graphArtifacts: { badges: [] },
+  graphMatrix: null,
+  representation: 'nodeLink',
+  directed: true,
+  weighted: false,
+  scenarioOptions: [
+    { id: 'linearChain', i18nKey: 'graphScenarios.linearChain' },
+    { id: 'diamond', i18nKey: 'graphScenarios.diamond' },
+  ],
+  states: [],
+  description: 'Graph description',
+  isComplete: false,
+  stepForward: vi.fn(),
+  stepBackward: vi.fn(),
+  play: vi.fn(),
+  pause: vi.fn(),
+  reset: vi.fn(),
+  regenerateGraph: vi.fn(),
+  reloadSteps: vi.fn(),
+  isPlaying: false,
+  currentStep: 0,
+  totalSteps: 1,
+  steps: [{ description: 'graph step' }],
+};
+
 vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }) => <>{children}</>,
   motion: {
@@ -177,21 +209,33 @@ vi.mock('../components/SettingsPanel', () => ({
   default: ({
     algorithmType,
     selectedAlgorithm,
+    selectedGraphScenario,
+    graphNodeCount,
     onAlgorithmTypeChange,
     onAlgorithmChange,
   }) => (
     <div data-testid="settings-panel">
       <div data-testid="algorithm-type">{algorithmType}</div>
       <div data-testid="selected-algorithm">{selectedAlgorithm}</div>
+      <div data-testid="selected-graph-scenario">
+        {String(selectedGraphScenario)}
+      </div>
+      <div data-testid="graph-node-count">{String(graphNodeCount)}</div>
       <button onClick={() => onAlgorithmTypeChange('sorting')}>sorting</button>
       <button onClick={() => onAlgorithmTypeChange('pathfinding')}>
         pathfinding
+      </button>
+      <button onClick={() => onAlgorithmTypeChange('graphAlgorithm')}>
+        graphAlgorithm
       </button>
       <button onClick={() => onAlgorithmChange('dijkstra')}>
         select-dijkstra
       </button>
       <button onClick={() => onAlgorithmChange('quickSort')}>
         select-quick-sort
+      </button>
+      <button onClick={() => onAlgorithmChange('floydWarshallAlgorithm')}>
+        select-floyd-warshall
       </button>
     </div>
   ),
@@ -253,6 +297,12 @@ vi.mock('../components/TreeVisualizer', () => ({
   ),
 }));
 
+vi.mock('../components/GraphVisualizer', () => ({
+  default: ({ algorithm }) => (
+    <div data-testid="graph-visualizer">{algorithm}</div>
+  ),
+}));
+
 vi.mock('../hooks/useSortingVisualization', () => ({
   /** Forward input array from VisualizerApp so sort-order and generate handlers affect the mock visualizer. */
   useSortingVisualization: (_algorithmKey, initialArray, _speed, _mode) => ({
@@ -273,6 +323,10 @@ vi.mock('../hooks/useSearchingVisualization', () => ({
 
 vi.mock('../hooks/useTreeTraversalVisualization', () => ({
   useTreeTraversalVisualization: () => treeTraversalVisualization,
+}));
+
+vi.mock('../hooks/useGraphAlgorithmVisualization', () => ({
+  useGraphAlgorithmVisualization: () => graphAlgorithmVisualization,
 }));
 
 vi.mock('../hooks/useFullScreen', () => ({
@@ -322,6 +376,30 @@ describe('VisualizerApp', () => {
       screen.getByTestId('array-visualizer').textContent ?? '';
     expect(sortingText).toMatch(/^bubbleSort:\d+(,\d+)+$/);
     expect(screen.queryByTestId('grid-visualizer')).not.toBeInTheDocument();
+  });
+
+  it('defaults graph algorithms to the first supported preset scenario', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('graphAlgorithm'));
+
+    expect(screen.getByTestId('selected-graph-scenario')).toHaveTextContent(
+      'linearChain'
+    );
+  });
+
+  it('clamps graph node count when switching to Floyd-Warshall', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('graphAlgorithm'));
+    expect(screen.getByTestId('graph-node-count')).toHaveTextContent('10');
+
+    fireEvent.click(screen.getByText('select-floyd-warshall'));
+
+    expect(screen.getByTestId('selected-algorithm')).toHaveTextContent(
+      'floydWarshallAlgorithm'
+    );
+    expect(screen.getByTestId('graph-node-count')).toHaveTextContent('6');
   });
 
   it('preserves selected algorithms per category when switching tabs', async () => {

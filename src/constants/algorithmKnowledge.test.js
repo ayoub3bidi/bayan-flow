@@ -6,6 +6,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { ALGORITHM_KNOWLEDGE } from './algorithmKnowledge.js';
+import { GRAPH_ALGORITHM_KEYS } from '../registry/graphAlgorithmRegistry.js';
 
 describe('ALGORITHM_KNOWLEDGE', () => {
   it('includes linearSearch metadata for the insight panel', () => {
@@ -175,5 +176,20 @@ describe('ALGORITHM_KNOWLEDGE', () => {
     expect(
       meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
     ).toBe(true);
+  });
+
+  it('includes metadata for every graph algorithm insight entry', () => {
+    GRAPH_ALGORITHM_KEYS.forEach(algorithmKey => {
+      expect(ALGORITHM_KNOWLEDGE[algorithmKey]).toBeDefined();
+      const meta = ALGORITHM_KNOWLEDGE[algorithmKey];
+      expect(typeof meta.inventor).toBe('string');
+      expect(meta.inventor.length).toBeGreaterThan(0);
+      expect(typeof meta.year).toBe('number');
+      expect(meta.realWorldUsesCount).toBeGreaterThanOrEqual(0);
+      expect(meta.factsCount).toBeGreaterThanOrEqual(0);
+      expect(
+        meta.youtubeVideoId === null || typeof meta.youtubeVideoId === 'string'
+      ).toBe(true);
+    });
   });
 });

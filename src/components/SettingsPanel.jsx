@@ -20,8 +20,10 @@ import { soundManager } from '../utils/soundManager';
 import { useAlgorithmConfig } from '../config/algorithmConfig';
 import { useSettingsConfig } from '../config/settingsConfig';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { getGraphAlgorithmNodeCountRange } from '../registry/graphAlgorithmRegistry.js';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import AlgorithmDropdown from './AlgorithmDropdown';
+import GraphScenarioDropdown from './GraphScenarioDropdown';
 
 function SettingsPanel({
   algorithmType,
@@ -38,14 +40,21 @@ function SettingsPanel({
   onSearchGraphNodeCountChange,
   treeNodeCount,
   onTreeNodeCountChange,
+  graphNodeCount,
+  onGraphNodeCountChange,
+  selectedGraphScenario,
+  onGraphScenarioChange,
+  graphScenarioOptions = [],
   isPlaying,
   mode,
   onModeChange,
 }) {
   const { t } = useTranslation();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAlgorithmDropdownOpen, setIsAlgorithmDropdownOpen] = useState(false);
+  const [isScenarioDropdownOpen, setIsScenarioDropdownOpen] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const dropdownRef = useRef(null);
+  const algorithmDropdownRef = useRef(null);
+  const scenarioDropdownRef = useRef(null);
 
   const { byType } = useAlgorithmConfig();
   const { speedOptions } = useSettingsConfig();
@@ -53,6 +62,8 @@ function SettingsPanel({
   const { algorithms, groups } = byType[algorithmType];
 
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
+  const graphNodeCountRange =
+    getGraphAlgorithmNodeCountRange(selectedAlgorithm);
   const effectiveSizeBinding =
     algorithmType === ALGORITHM_TYPES.SEARCHING &&
     isNodeLinkSearchingAlgorithm(selectedAlgorithm)
@@ -76,7 +87,18 @@ function SettingsPanel({
             max: TREE_NODE_COUNT.max,
             step: TREE_NODE_COUNT.step,
           }
-        : categoryConfig.sizeControl;
+        : effectiveSizeBinding === 'graph'
+          ? {
+              type: 'slider',
+              i18nKey: 'settings.graphNodeCount',
+              min: graphNodeCountRange.min,
+              max: graphNodeCountRange.max,
+              step: graphNodeCountRange.step,
+            }
+          : categoryConfig.sizeControl;
+  const isPresetGraphScenarioSelected =
+    algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM &&
+    Boolean(selectedGraphScenario);
 
   const sizeValue =
     effectiveSizeBinding === 'array'
@@ -85,7 +107,9 @@ function SettingsPanel({
         ? searchGraphNodeCount
         : effectiveSizeBinding === 'tree'
           ? treeNodeCount
-          : gridSize;
+          : effectiveSizeBinding === 'graph'
+            ? graphNodeCount
+            : gridSize;
   const onSizeChange =
     effectiveSizeBinding === 'array'
       ? onArraySizeChange
@@ -93,7 +117,9 @@ function SettingsPanel({
         ? onSearchGraphNodeCountChange
         : effectiveSizeBinding === 'tree'
           ? onTreeNodeCountChange
-          : onGridSizeChange;
+          : effectiveSizeBinding === 'graph'
+            ? onGraphNodeCountChange
+            : onGridSizeChange;
 
   const currentSpeedIndex = Math.max(
     0,
@@ -102,8 +128,17 @@ function SettingsPanel({
 
   useEffect(() => {
     const handleClickOutside = event => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
+      if (
+        algorithmDropdownRef.current &&
+        !algorithmDropdownRef.current.contains(event.target)
+      ) {
+        setIsAlgorithmDropdownOpen(false);
+      }
+      if (
+        scenarioDropdownRef.current &&
+        !scenarioDropdownRef.current.contains(event.target)
+      ) {
+        setIsScenarioDropdownOpen(false);
       }
     };
 
@@ -176,12 +211,30 @@ function SettingsPanel({
           algorithmGroups={groups}
           selectedAlgorithm={selectedAlgorithm}
           onAlgorithmSelect={onAlgorithmChange}
-          isDropdownOpen={isDropdownOpen}
-          setIsDropdownOpen={setIsDropdownOpen}
+          isDropdownOpen={isAlgorithmDropdownOpen}
+          setIsDropdownOpen={setIsAlgorithmDropdownOpen}
           isPlaying={isPlaying}
-          dropdownRef={dropdownRef}
+          dropdownRef={algorithmDropdownRef}
         />
       </div>
+
+      {algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM &&
+      graphScenarioOptions.length > 0 ? (
+        <div>
+          <label className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent">
+            {t('controls.graphScenario')}
+          </label>
+          <GraphScenarioDropdown
+            scenarioOptions={graphScenarioOptions}
+            selectedScenario={selectedGraphScenario}
+            onScenarioSelect={onGraphScenarioChange}
+            isDropdownOpen={isScenarioDropdownOpen}
+            setIsDropdownOpen={setIsScenarioDropdownOpen}
+            isPlaying={isPlaying}
+            dropdownRef={scenarioDropdownRef}
+          />
+        </div>
+      ) : null}
 
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
@@ -276,7 +329,7 @@ function SettingsPanel({
         </button>
       </div>
 
-      {sizeControl.type === 'slider' && (
+      {sizeControl.type === 'slider' && !isPresetGraphScenarioSelected && (
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-2">
             {t(sizeControl.i18nKey)}: {sizeValue}
@@ -297,6 +350,12 @@ function SettingsPanel({
           </div>
         </div>
       )}
+
+      {isPresetGraphScenarioSelected ? (
+        <p className="text-xs text-text-secondary">
+          {t('settings.graphScenarioNodeCountLocked')}
+        </p>
+      ) : null}
 
       {sizeControl.type === 'buttons' && (
         <div>

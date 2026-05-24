@@ -9,6 +9,7 @@ import SortingScene from '../video/SortingScene.jsx';
 import PathfindingScene from '../video/PathfindingScene.jsx';
 import SearchingVideoScene from '../video/SearchingVideoScene.jsx';
 import TreeTraversalScene from '../video/TreeTraversalScene.jsx';
+import GraphAlgorithmVideoScene from '../video/GraphAlgorithmVideoScene.jsx';
 
 /**
  * Remotion main-scene renderers. Add an entry when a new category exports video.
@@ -45,6 +46,19 @@ export const VIDEO_SCENE_RENDERERS = {
       exportTheme={exportTheme}
     />
   ),
+  [ALGORITHM_TYPES.GRAPH_ALGORITHM]: ({
+    steps,
+    framesPerStep,
+    exportTheme,
+    algorithmKey,
+  }) => (
+    <GraphAlgorithmVideoScene
+      steps={steps}
+      framesPerStep={framesPerStep}
+      exportTheme={exportTheme}
+      algorithmKey={algorithmKey}
+    />
+  ),
 };
 
 /** Fallback title when algorithmName is empty (Remotion bundle has no i18n). */
@@ -53,4 +67,5 @@ export const VIDEO_TITLE_FALLBACK = {
   [ALGORITHM_TYPES.PATHFINDING]: 'Pathfinding',
   [ALGORITHM_TYPES.SEARCHING]: 'Searching',
   [ALGORITHM_TYPES.TREE_TRAVERSAL]: 'Tree Traversals',
+  [ALGORITHM_TYPES.GRAPH_ALGORITHM]: 'Graph Algorithms',
 };

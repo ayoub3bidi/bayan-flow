@@ -77,6 +77,48 @@ describe('getPseudocodeForLocale', () => {
     expect(text).toBeTruthy();
     expect(text).toContain('MorrisInorder');
   });
+
+  it('returns pseudocode for topologicalSort', () => {
+    const text = getPseudocodeForLocale('topologicalSort', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('TopologicalSort');
+  });
+
+  it('returns pseudocode for kahnAlgorithm', () => {
+    const text = getPseudocodeForLocale('kahnAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('KahnsAlgorithm');
+  });
+
+  it('returns pseudocode for kruskalAlgorithm', () => {
+    const text = getPseudocodeForLocale('kruskalAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('KruskalAlgorithm');
+  });
+
+  it('returns pseudocode for primAlgorithm', () => {
+    const text = getPseudocodeForLocale('primAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('PrimAlgorithm');
+  });
+
+  it('returns pseudocode for tarjanAlgorithm', () => {
+    const text = getPseudocodeForLocale('tarjanAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('TarjanAlgorithm');
+  });
+
+  it('returns pseudocode for kosarajuAlgorithm', () => {
+    const text = getPseudocodeForLocale('kosarajuAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('KosarajuAlgorithm');
+  });
+
+  it('returns pseudocode for floydWarshallAlgorithm', () => {
+    const text = getPseudocodeForLocale('floydWarshallAlgorithm', 'en');
+    expect(text).toBeTruthy();
+    expect(text).toContain('FloydWarshall');
+  });
 });
 
 describe('getPseudocode', () => {

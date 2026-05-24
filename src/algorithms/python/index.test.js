@@ -6,6 +6,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { getPythonCode, getAlgorithmDisplayName } from './index';
+import { GRAPH_ALGORITHM_KEYS } from '../../registry/graphAlgorithmRegistry.js';
 
 // Mock the raw imports
 vi.mock('./bubble_sort.py?raw', () => ({
@@ -91,6 +92,41 @@ vi.mock('./postorder_traversal.py?raw', () => ({
 vi.mock('./bfs_graph.py?raw', () => ({
   default:
     'def bfs_graph(adj, root, goal):\n    """BFS on graph"""\n    return []',
+}));
+
+vi.mock('./topological_sort.py?raw', () => ({
+  default:
+    'def topological_sort(adjacency):\n    """Topological Sort"""\n    return []',
+}));
+
+vi.mock('./kahn_algorithm.py?raw', () => ({
+  default:
+    'def kahn_algorithm(adjacency):\n    """Kahn Algorithm"""\n    return []',
+}));
+
+vi.mock('./kruskal_algorithm.py?raw', () => ({
+  default:
+    'def kruskal_algorithm(nodes, edges):\n    """Kruskal Algorithm"""\n    return []',
+}));
+
+vi.mock('./prim_algorithm.py?raw', () => ({
+  default:
+    'def prim_algorithm(nodes, edges):\n    """Prim Algorithm"""\n    return []',
+}));
+
+vi.mock('./tarjan_algorithm.py?raw', () => ({
+  default:
+    'def tarjan_algorithm(adjacency):\n    """Tarjan Algorithm"""\n    return []',
+}));
+
+vi.mock('./kosaraju_algorithm.py?raw', () => ({
+  default:
+    'def kosaraju_algorithm(adjacency):\n    """Kosaraju Algorithm"""\n    return []',
+}));
+
+vi.mock('./floyd_warshall_algorithm.py?raw', () => ({
+  default:
+    'def floyd_warshall_algorithm(nodes, edges):\n    """Floyd-Warshall Algorithm"""\n    return []',
 }));
 
 describe('Python Algorithms Index', () => {
@@ -221,6 +257,48 @@ describe('Python Algorithms Index', () => {
       expect(code).toContain('Level-order Traversal');
     });
 
+    it('returns Python code for topological sort', () => {
+      const code = getPythonCode('topologicalSort');
+      expect(code).toContain('def topological_sort');
+      expect(code).toContain('Topological Sort');
+    });
+
+    it("returns Python code for Kahn's algorithm", () => {
+      const code = getPythonCode('kahnAlgorithm');
+      expect(code).toContain('def kahn_algorithm');
+      expect(code).toContain('Kahn Algorithm');
+    });
+
+    it("returns Python code for Kruskal's algorithm", () => {
+      const code = getPythonCode('kruskalAlgorithm');
+      expect(code).toContain('def kruskal_algorithm');
+      expect(code).toContain('Kruskal Algorithm');
+    });
+
+    it("returns Python code for Prim's algorithm", () => {
+      const code = getPythonCode('primAlgorithm');
+      expect(code).toContain('def prim_algorithm');
+      expect(code).toContain('Prim Algorithm');
+    });
+
+    it("returns Python code for Tarjan's algorithm", () => {
+      const code = getPythonCode('tarjanAlgorithm');
+      expect(code).toContain('def tarjan_algorithm');
+      expect(code).toContain('Tarjan Algorithm');
+    });
+
+    it("returns Python code for Kosaraju's algorithm", () => {
+      const code = getPythonCode('kosarajuAlgorithm');
+      expect(code).toContain('def kosaraju_algorithm');
+      expect(code).toContain('Kosaraju Algorithm');
+    });
+
+    it('returns Python code for Floyd-Warshall', () => {
+      const code = getPythonCode('floydWarshallAlgorithm');
+      expect(code).toContain('def floyd_warshall_algorithm');
+      expect(code).toContain('Floyd-Warshall Algorithm');
+    });
+
     it('returns null for unknown algorithm', () => {
       const code = getPythonCode('unknownSort');
       expect(code).toBeNull();
@@ -333,6 +411,41 @@ describe('Python Algorithms Index', () => {
       expect(name).toBe('Depth-First Search (graph)');
     });
 
+    it('returns correct display name for topological sort', () => {
+      const name = getAlgorithmDisplayName('topologicalSort');
+      expect(name).toBe('Topological Sort (DFS)');
+    });
+
+    it("returns correct display name for Kahn's algorithm", () => {
+      const name = getAlgorithmDisplayName('kahnAlgorithm');
+      expect(name).toBe("Kahn's Algorithm");
+    });
+
+    it("returns correct display name for Kruskal's algorithm", () => {
+      const name = getAlgorithmDisplayName('kruskalAlgorithm');
+      expect(name).toBe("Kruskal's Algorithm");
+    });
+
+    it("returns correct display name for Prim's algorithm", () => {
+      const name = getAlgorithmDisplayName('primAlgorithm');
+      expect(name).toBe("Prim's Algorithm");
+    });
+
+    it("returns correct display name for Tarjan's algorithm", () => {
+      const name = getAlgorithmDisplayName('tarjanAlgorithm');
+      expect(name).toBe("Tarjan's Algorithm");
+    });
+
+    it("returns correct display name for Kosaraju's algorithm", () => {
+      const name = getAlgorithmDisplayName('kosarajuAlgorithm');
+      expect(name).toBe("Kosaraju's Algorithm");
+    });
+
+    it('returns correct display name for Floyd-Warshall', () => {
+      const name = getAlgorithmDisplayName('floydWarshallAlgorithm');
+      expect(name).toBe('Floyd-Warshall Algorithm');
+    });
+
     it('returns correct display name for postorder traversal', () => {
       const name = getAlgorithmDisplayName('postorderTraversal');
       expect(name).toBe('Postorder Traversal');
@@ -389,6 +502,7 @@ describe('Python Algorithms Index', () => {
         'preorderTraversal',
         'postorderTraversal',
         'morrisTraversal',
+        ...GRAPH_ALGORITHM_KEYS,
       ];
 
       supportedAlgorithms.forEach(algorithm => {

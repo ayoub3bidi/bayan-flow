@@ -29,13 +29,16 @@
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
     "autoplayOnly": "uniquement",
-    "treeNodeCount": "Nœuds de l'arbre"
+    "treeNodeCount": "Nœuds de l'arbre",
+    "graphNodeCount": "Sommets du graphe",
+    "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier."
   },
   "modes": {
     "sorting": "Tri",
     "pathfinding": "Recherche de Chemin",
     "searching": "Recherche",
     "treeTraversal": "Parcours d'arbres",
+    "graphAlgorithm": "Algorithmes de graphe",
     "manual": "Manuel",
     "autoplay": "Lecture Auto"
   },
@@ -86,6 +89,15 @@
       "postorderTraversal": "Parcours suffixe",
       "morrisTraversal": "Parcours de Morris"
     },
+    "graphAlgorithm": {
+      "topologicalSort": "Tri topologique (DFS)",
+      "kahnAlgorithm": "Algorithme de Kahn",
+      "kruskalAlgorithm": "Algorithme de Kruskal",
+      "primAlgorithm": "Algorithme de Prim",
+      "tarjanAlgorithm": "Algorithme de Tarjan",
+      "kosarajuAlgorithm": "Algorithme de Kosaraju",
+      "floydWarshallAlgorithm": "Algorithme de Floyd-Warshall"
+    },
     "descriptions": {
       "bubbleSort": "Démarrage du Tri à Bulles",
       "quickSort": "Démarrage du Tri Rapide",
@@ -123,7 +135,14 @@
       "zigzagLevelOrderTraversal": "Démarrage du parcours en largeur en zigzag",
       "preorderTraversal": "Démarrage du parcours préfixe",
       "postorderTraversal": "Démarrage du parcours suffixe",
-      "morrisTraversal": "Démarrage du parcours de Morris"
+      "morrisTraversal": "Démarrage du parcours de Morris",
+      "topologicalSort": "Démarrage du tri topologique basé sur DFS",
+      "kahnAlgorithm": "Démarrage du tri topologique de Kahn",
+      "kruskalAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Kruskal",
+      "primAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Prim",
+      "tarjanAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Tarjan",
+      "kosarajuAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Kosaraju",
+      "floydWarshallAlgorithm": "Démarrage du plus court chemin tous couples de Floyd-Warshall"
     }
   },
   "complexity": {
@@ -164,7 +183,14 @@
     "zigzagLevelOrderTraversal": "O(n)",
     "preorderTraversal": "O(n)",
     "postorderTraversal": "O(n)",
-    "morrisTraversal": "O(n)"
+    "morrisTraversal": "O(n)",
+    "topologicalSort": "O(V + E)",
+    "kahnAlgorithm": "O(V + E)",
+    "kruskalAlgorithm": "O(E log E)",
+    "primAlgorithm": "O((V + E) log V)",
+    "tarjanAlgorithm": "O(V + E)",
+    "kosarajuAlgorithm": "O(V + E)",
+    "floydWarshallAlgorithm": "O(V³)"
   },
   "speeds": {
     "slow": "Lent",
@@ -209,7 +235,9 @@
     "exitFullScreen": "Quitter le Plein Écran (Esc)",
     "ascending": "Ordre d'entrée aléatoire (appuyez pour ordre décroissant)",
     "descending": "Ordre d'entrée décroissant (appuyez pour aléatoire)",
-    "sortOrder": "Basculer l'ordre initial du tableau pour le tri"
+    "sortOrder": "Basculer l'ordre initial du tableau pour le tri",
+    "graphScenario": "Scénario de graphe",
+    "randomGraph": "Graphe aléatoire"
   },
   "info": {
     "step": "Étape {{current}} sur {{total}}",
@@ -607,7 +635,7 @@
         "intuition": "On avance en doublant l’indice à chaque fois (1, 2, 4, 8, …) jusqu’à ce que la valeur à cet indice soit au moins la cible ou qu’on atteigne la fin du tableau. Cela encadre la cible en O(log i) sondes lorsque la réponse est près de l’indice i. Ensuite, on applique la dichotomie ordinaire sur l’intervalle borné — encore un nombre logarithmique d’étapes dans cette fenêtre.",
         "realWorldUses_0": "Recherche dans des flux ou listes triées dont la longueur est inconnue ou très grande",
         "realWorldUses_1": "Enseigner la combinaison encadrement + dichotomie",
-"realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
+        "realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
         "realWorldUses_3": "Bases pour des variantes « galloping » dans des fusions et des recherches adaptatives",
         "facts_0": "Sur des données triées non bornées, trouver une cible à l’indice i coûte O(log i) en phase de doublement plus O(log i) pour la dichotomie sur l’intervalle — O(log i) au total.",
         "facts_1": "Sur un tableau fini de taille n, le pire cas reste en O(log n), comme la dichotomie, avec une phase de doublement avant le premier partage.",
@@ -649,6 +677,90 @@
         "facts_1": "BFS garantit le chemin le plus court (sauts minimaux) sur les graphes non pondérés ; DFS ne le garantit pas.",
         "facts_2": "La tête de file est affichée en haut du canevas — le prochain nœud à défiler.",
         "facts_3": "La même mise en page d'arbre utilisée pour DFS est réutilisée ici, afin de comparer les deux algorithmes."
+      },
+      "topologicalSort": {
+        "history": "Le tri topologique vient de l'étude des ordres partiels et des graphes de dépendances. La version avec pile de fin DFS est aujourd'hui classique dans les cours d'algorithmes.",
+        "intuition": "Un sommet ne peut être placé qu'après le traitement de tous les sommets atteignables par ses arêtes sortantes. DFS fournit naturellement cet ordre : quand un appel se termine, on pousse le sommet sur une pile, puis on inverse la pile.",
+        "realWorldUses_0": "Systèmes de build qui compilent les dépendances avant les dépendants",
+        "realWorldUses_1": "Planification de prérequis de cours",
+        "realWorldUses_2": "Ordonnancement des dépendances dans les gestionnaires de paquets",
+        "realWorldUses_3": "Planification de tâches avec contraintes unidirectionnelles",
+        "facts_0": "Un ordre topologique existe si et seulement si le graphe orienté est acyclique.",
+        "facts_1": "Plusieurs ordres valides peuvent exister pour le même DAG.",
+        "facts_2": "Les marques temporaires de DFS détectent les arêtes de retour, donc les cycles.",
+        "facts_3": "L'algorithme est en O(V + E), car chaque sommet et chaque arête est traité une fois."
+      },
+      "kahnAlgorithm": {
+        "history": "Arthur B. Kahn a publié cette méthode de tri topologique basée sur une file en 1962. Elle est devenue le pendant itératif classique du tri topologique par DFS, car elle reformule le problème avec les degrés entrants plutôt qu'avec la récursion.",
+        "intuition": "On compte combien de prérequis entrants restent pour chaque sommet. Tout sommet de degré entrant 0 est prêt immédiatement, donc on le place dans une file. On retire ensuite un sommet prêt, on supprime ses arêtes sortantes, puis on enfile tout voisin dont le degré entrant devient 0.",
+        "realWorldUses_0": "Résolution de dépendances avec détection explicite des cycles",
+        "realWorldUses_1": "Planification de tâches où le travail prêt doit apparaître immédiatement",
+        "realWorldUses_2": "Validation de graphes de build avant la compilation",
+        "realWorldUses_3": "Enseigner le tri topologique sans récursion",
+        "facts_0": "Si la file devient vide avant la sortie de tous les sommets, un cycle fournit encore des arêtes entrantes.",
+        "facts_1": "L'algorithme est en O(V + E) car chaque sommet est mis en file une fois et chaque arête est supprimée une fois.",
+        "facts_2": "Des règles de priorité différentes dans la file peuvent produire des ordres topologiques valides différents.",
+        "facts_3": "Cette implémentation garde la file triée pour obtenir une sortie déterministe et pédagogique."
+      },
+      "kruskalAlgorithm": {
+        "history": "Joseph Kruskal a présenté cet algorithme d'arbre couvrant minimal en 1956. Son élégance vient d'une idée gloutonne simple : traiter les arêtes par poids croissant et ne garder que celles qui relient deux composantes différentes.",
+        "intuition": "On trie toutes les arêtes pondérées de la plus légère à la plus lourde. Si une arête relie deux composantes différentes, on la conserve car c'est actuellement le moyen le moins coûteux de les fusionner. Si ses extrémités sont déjà connectées, on la rejette car elle créerait seulement un cycle.",
+        "realWorldUses_0": "Conception de réseaux à coût minimal",
+        "realWorldUses_1": "Clustering hiérarchique et segmentation",
+        "realWorldUses_2": "Enseigner Union-Find avec un algorithme glouton concret",
+        "realWorldUses_3": "Construire des forêts couvrantes minimales sur des graphes déconnectés",
+        "facts_0": "Kruskal fonctionne aussi sur des graphes déconnectés ; le résultat est alors une forêt couvrante minimale.",
+        "facts_1": "Union-Find rend la détection des cycles presque constante par arête après le tri.",
+        "facts_2": "Si tous les poids sont distincts, l'arbre couvrant minimal est unique.",
+        "facts_3": "Le coût O(E log E) est dominé par le tri des arêtes pondérées."
+      },
+      "primAlgorithm": {
+        "history": "Robert C. Prim a publié cet algorithme d'arbre couvrant minimal en 1957, en s'appuyant sur des idées antérieures de Vojtěch Jarník. Au lieu de trier toutes les arêtes globalement, il fait croître un seul arbre à partir d'un sommet de départ.",
+        "intuition": "On démarre d'un sommet et l'arbre courant devient une île connectée. Parmi toutes les arêtes qui quittent cette île, on choisit la plus légère puis on attire dans l'arbre son extrémité non visitée. Répéter cette étape gloutonne de frontière finit par couvrir tout le graphe connecté.",
+        "realWorldUses_0": "Étendre progressivement une infrastructure à faible coût depuis un site de départ",
+        "realWorldUses_1": "Comparer une croissance de MST centrée sur les sommets à l'approche centrée sur les arêtes de Kruskal",
+        "realWorldUses_2": "Enseigner l'expansion gloutonne d'une frontière avec une file de priorité",
+        "realWorldUses_3": "Prétraitement de graphes pondérés denses",
+        "facts_0": "Prim et Kruskal donnent toujours le même poids total de MST sur un graphe connecté, même si les arêtes choisies diffèrent en cas d'égalité.",
+        "facts_1": "Une implémentation avec tas atteint O((V + E) log V).",
+        "facts_2": "L'algorithme n'a besoin que de l'arête la plus légère quittant l'arbre courant, pas d'un tri global de toutes les arêtes.",
+        "facts_3": "Changer le sommet de départ peut modifier l'ordre exact des arêtes tout en conservant le poids total optimal."
+      },
+      "tarjanAlgorithm": {
+        "history": "Robert Tarjan a présenté cet algorithme de composantes fortement connexes en 1972. Sa force est qu'un seul parcours en profondeur suffit pour identifier toutes les CFC grâce aux indices de découverte, aux low-links et à une pile de sommets actifs.",
+        "intuition": "On attribue à chaque sommet un indice lors de sa première découverte, puis on suit le plus petit indice encore atteignable pendant que le DFS reste actif. Quand le low-link d'un sommet est égal à son propre indice, ce sommet est la racine d'une CFC complète et on dépile jusqu'à cette racine.",
+        "realWorldUses_0": "Compacter un graphe orienté en super-nœuds de CFC",
+        "realWorldUses_1": "Détecter des modules mutuellement accessibles dans des graphes de dépendances",
+        "realWorldUses_2": "Analyser des cycles dans des graphes de contrôle ou de circuits",
+        "realWorldUses_3": "Enseigner des invariants avancés de DFS et le raisonnement par low-link",
+        "facts_0": "Tarjan s'exécute en O(V + E) car chaque sommet et chaque arête sont traités un nombre constant de fois.",
+        "facts_1": "Seuls les sommets encore présents sur la pile active peuvent réduire un low-link via une arête de retour.",
+        "facts_2": "Chaque CFC est dépilée exactement une fois, quand sa racine termine.",
+        "facts_3": "Par rapport à Kosaraju, Tarjan évite de construire explicitement le graphe transposé."
+      },
+      "kosarajuAlgorithm": {
+        "history": "S. Rao Kosaraju a décrit cette méthode à deux parcours pour les CFC en 1978. Elle est devenue une alternative pédagogique classique à Tarjan car ses idées sont très concrètes : enregistrer l'ordre de fin, inverser les arêtes, puis relancer DFS dans l'ordre inverse des fins.",
+        "intuition": "Le premier parcours DFS révèle quels sommets finissent en dernier, donc dans quel ordre entrer dans les CFC. Une fois toutes les arêtes inversées, un DFS lancé depuis le plus grand temps de fin restant reste exactement dans une seule CFC ; chaque parcours du second passage extrait ainsi une composante.",
+        "realWorldUses_0": "Enseigner les CFC avec un graphe transposé explicite",
+        "realWorldUses_1": "Comparer des approches CFC à un passage et à deux passages",
+        "realWorldUses_2": "Regrouper des pages, modules ou comptes mutuellement accessibles",
+        "realWorldUses_3": "Construire le graphe de condensation après une étape d'inversion des arêtes",
+        "facts_0": "Kosaraju est en O(V + E) : un passage sur le graphe original, un sur le transposé, plus une construction linéaire du transposé.",
+        "facts_1": "Le graphe transposé conserve l'appartenance aux CFC mais inverse les arêtes entre elles.",
+        "facts_2": "Le traitement en ordre inverse de fin est ce qui isole une CFC à la fois lors du second passage.",
+        "facts_3": "Cette méthode est souvent plus facile à expliquer que Tarjan, au prix d'un graphe transposé supplémentaire."
+      },
+      "floydWarshallAlgorithm": {
+        "history": "Robert Floyd et Stephen Warshall ont publié en 1962 des formulations dynamiques très proches. Floyd-Warshall est devenu l'algorithme classique de plus court chemin tous couples sur les graphes petits ou denses grâce à sa structure simple en triple boucle.",
+        "intuition": "On part de la meilleure arête directe entre chaque paire de sommets. Puis on autorise un sommet intermédiaire supplémentaire à la fois : si passer de i à k puis de k à j coûte moins cher que la distance actuelle de i à j, on met la matrice à jour. Répéter cela pour chaque k construit progressivement toutes les distances finales.",
+        "realWorldUses_0": "Plus courts chemins tous couples sur de petits graphes orientés pondérés",
+        "realWorldUses_1": "Enseigner la programmation dynamique sur les graphes",
+        "realWorldUses_2": "Raisonnement de type fermeture transitive et accessibilité",
+        "realWorldUses_3": "Détection de cycles négatifs via la diagonale",
+        "facts_0": "Les poids négatifs sont autorisés, mais un cycle négatif rend les plus courts chemins mal définis.",
+        "facts_1": "Si une distance diagonale devient négative, le graphe contient un cycle négatif.",
+        "facts_2": "L'algorithme utilise O(V²) mémoire pour sa matrice des distances.",
+        "facts_3": "Par rapport à des exécutions répétées de Dijkstra, Floyd-Warshall n'est généralement préféré que sur des graphes plus petits ou plus denses."
       },
       "inorderTraversal": {
         "history": "Les parcours systématiques d'arbres binaires sont standard dans les compilateurs : sous-arbre gauche, nœud, sous-arbre droit (parcours infixe). Pour un arbre binaire de recherche, l'infixe énumère les clés triées.",
@@ -724,6 +836,25 @@
       }
     }
   },
+  "graphScenarios": {
+    "linearChain": "Chaîne linéaire (A→B→C→D)",
+    "diamond": "Motif en diamant (point de fusion)",
+    "complex": "DAG complexe (dépendances réalistes)",
+    "disconnected": "Composants déconnectés",
+    "singleNode": "Nœud unique (cas trivial)",
+    "wide": "Graphe large (pas de dépendances)",
+    "directedCycle": "Cycle orienté (détection de cycle)",
+    "weightedTriangle": "Triangle pondéré",
+    "weightedBridge": "Graphe pondéré connecté",
+    "weightedDisconnected": "Graphe pondéré déconnecté",
+    "sccCycle": "Cycle en une seule CFC",
+    "multiScc": "Plusieurs CFC",
+    "selfLoop": "CFC avec boucle sur soi",
+    "weightedDirectedPositive": "Graphe orienté pondéré",
+    "weightedDirectedNegative": "Graphe à arête négative",
+    "weightedDirectedNegativeCycle": "Graphe à cycle négatif",
+    "weightedDirectedSingle": "Matrice à un sommet"
+  },
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
@@ -780,6 +911,16 @@
       "visiting": "En cours",
       "visited": "Visité",
       "visitOrder": "Ordre de visite"
+    },
+    "graphAlgorithm": {
+      "unvisited": "Non visité",
+      "recursionStack": "Pile de récursion",
+      "frontier": "Frontière / ensemble actif",
+      "current": "Sommet courant",
+      "completed": "Terminé",
+      "outputOrder": "Ordre topologique",
+      "result": "Résultat / ensemble sélectionné",
+      "cycle": "Cycle détecté"
     }
   },
   "visualization": {
@@ -792,12 +933,29 @@
     "stackTop": "Sommet de pile : {{top}}",
     "queueFront": "Tête de file : {{front}}",
     "graphSubstrate": "Visualisation de graphe",
+    "graphMatrix": "Visualisation matricielle",
+    "matrixCorner": "i / j",
     "treeAria": "Arbre à {{count}} nœuds",
     "treeAriaEmpty": "Arbre vide",
     "queueBadge": "File : {{order}}",
+    "inDegreeBadge": "Degrés entrants : {{pairs}}",
+    "edgeQueueBadge": "Arêtes restantes : {{order}}",
+    "frontierEdgeBadge": "Prochaine arête de frontière : {{edge}}",
+    "totalWeightBadge": "Poids total : {{weight}}",
     "visitOrderBadge": "Visités : {{order}}",
     "levelScanLtr": "Ce niveau : de gauche à droite",
-    "levelScanRtl": "Ce niveau : de droite à gauche"
+    "levelScanRtl": "Ce niveau : de droite à gauche",
+    "outputOrderBadge": "Ordre : {{order}}",
+    "recursionStackBadge": "Pile de récursion : {{order}}",
+    "topologicalOrderBadge": "Ordre topologique : {{order}}",
+    "sccStackBadge": "Pile CFC : {{order}}",
+    "lowLinkBadge": "Indice/low-link : {{pairs}}",
+    "sccListBadge": "CFC : {{components}}",
+    "finishStackBadge": "Pile de fin : {{order}}",
+    "passBadge": "Passage {{pass}}",
+    "matrixIntermediateBadge": "Intermédiaire : {{node}}",
+    "pathUpdateBadge": "Chemin mis à jour : {{path}}",
+    "negativeCycleBadge": "Cycle négatif détecté"
   },
   "languages": {
     "en": "English",
@@ -854,6 +1012,44 @@
     "morrisVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "morrisComplete": "Parcours de Morris terminé. Ordre final : {{order}}",
     "morrisEmpty": "Arbre vide — rien à parcourir.",
+    "topologicalStart": "Tri topologique : exécuter DFS et enregistrer chaque sommet après la fin de toutes ses arêtes sortantes.",
+    "topologicalEnter": "Entrer dans {{node}} et l'ajouter à la pile de récursion.",
+    "topologicalExploreEdge": "Explorer l'arête de dépendance {{from}} → {{to}}.",
+    "topologicalCompleteNode": "Toutes les arêtes sortantes de {{node}} sont traitées. L'ajouter à la pile de fin : {{stack}}.",
+    "topologicalCycle": "Cycle détecté sur l'arête {{from}} → {{to}}. Un ordre topologique n'existe que pour les DAG.",
+    "topologicalFinish": "Inverser la pile de fin pour obtenir un ordre topologique valide : {{order}}.",
+    "kahnStart": "Algorithme de Kahn : calculer les degrés entrants et enfiler chaque sommet de degré entrant 0. File initiale : {{queue}}.",
+    "kahnDequeue": "Retirer {{node}} de la file et l'ajouter à l'ordre topologique. Ordre actuel : {{order}}.",
+    "kahnRelaxEdge": "Supprimer l'arête {{from}} → {{to}}. Le degré entrant de {{to}} descend à {{inDegree}}.",
+    "kahnEnqueue": "La suppression de {{from}} → {{node}} rend {{node}} disponible. L'enfiler.",
+    "kahnCycle": "La file est vide après l'ordonnancement de {{count}} sommets sur {{total}}. Les arêtes entrantes restantes prouvent l'existence d'un cycle.",
+    "kahnFinish": "Tous les sommets ont été retirés avec succès. Ordre topologique final : {{order}}.",
+    "kruskalStart": "Algorithme de Kruskal : trier toutes les arêtes pondérées de la plus légère à la plus lourde et les tester une à une.",
+    "kruskalSelectEdge": "Sélection de l'arête {{from}}-{{to}} de poids {{weight}}. Elle relie deux composantes différentes, donc le poids total devient {{totalWeight}}.",
+    "kruskalRejectEdge": "Rejet de l'arête {{from}}-{{to}} de poids {{weight}} car ses extrémités sont déjà connectées ; elle créerait un cycle.",
+    "kruskalFinish": "Kruskal est terminé. Les arêtes sélectionnées forment une forêt couvrante minimale de poids total {{totalWeight}} sur {{components}} composante(s).",
+    "primStart": "Algorithme de Prim : démarrer l'arbre au sommet {{node}} et observer les arêtes les plus légères qui quittent l'arbre courant.",
+    "primFrontier": "L'arête la plus légère sur la frontière est {{edge}}.",
+    "primSelectEdge": "Ajouter l'arête {{from}}-{{to}} de poids {{weight}} pour agrandir l'arbre. Le poids total vaut maintenant {{totalWeight}}.",
+    "primFinish": "Prim est terminé. L'arbre utilise {{count}} arête(s) pour un poids total de {{totalWeight}}.",
+    "tarjanStart": "Algorithme de Tarjan : exécuter un seul DFS, attribuer à chaque sommet un indice et un low-link, et conserver les sommets actifs sur une pile.",
+    "tarjanVisit": "Visiter {{node}}, lui attribuer l'indice de découverte {{index}} et l'empiler dans la pile des CFC.",
+    "tarjanExploreEdge": "Explorer l'arête orientée {{from}} → {{to}}.",
+    "tarjanLowLinkUpdate": "Retour vers {{node}} et réduction de son low-link à {{lowLink}} grâce au descendant {{via}}.",
+    "tarjanBackEdge": "L'arête de retour {{from}} → {{to}} atteint un sommet actif ; {{from}} abaisse donc son low-link à {{lowLink}}.",
+    "tarjanSccFound": "Le low-link correspond à la racine. Dépiler une composante fortement connexe : {{component}}.",
+    "tarjanFinish": "Tarjan terminé. {{count}} composante(s) fortement connexe(s) trouvée(s).",
+    "kosarajuStart": "Algorithme de Kosaraju : lancer d'abord DFS sur le graphe original pour construire une pile de fin.",
+    "kosarajuVisit": "Le passage {{pass}} visite {{node}}.",
+    "kosarajuFinishOrder": "{{node}} termine au passage 1. L'ajouter à la pile de fin : {{stack}}.",
+    "kosarajuTranspose": "Construire le graphe transposé puis traiter les sommets en ordre inverse de fin : {{order}}.",
+    "kosarajuCollectScc": "Le passage 2 part de {{node}} sur le transposé et découvre une CFC : {{component}}.",
+    "kosarajuFinish": "Kosaraju terminé. {{count}} composante(s) fortement connexe(s) trouvée(s).",
+    "floydWarshallStart": "Floyd-Warshall : initialiser la matrice des distances avec les arêtes directes, des zéros sur la diagonale et ∞ là où aucun chemin n'est encore connu.",
+    "floydWarshallIntermediate": "Autoriser {{node}} comme nouveau sommet intermédiaire pour toutes les paires de sommets.",
+    "floydWarshallUpdate": "Le chemin {{from}} → {{to}} s'améliore en passant par {{via}}. Nouvelle distance : {{distance}}.",
+    "floydWarshallNegativeCycle": "Un cycle négatif est détecté car la diagonale devient négative pour : {{nodes}}.",
+    "floydWarshallFinish": "Floyd-Warshall terminé. La matrice contient maintenant la plus courte distance connue entre chaque paire de sommets.",
     "pathFoundGraph": "Chemin trouvé ! {{length}} nœuds sur le chemin de découverte",
     "exploring": "Exploration de la cellule ({{row}}, {{col}})",
     "exploringForward": "Recherche avant explorant la cellule ({{row}}, {{col}})",
@@ -998,6 +1194,11 @@
         "title": "Parcours d'arbres",
         "description": "Explorez les ordres classiques de parcours d'arbres et comprenez comment chaque ordre visite les nœuds.",
         "algorithms": "Parcours infixe, Parcours niveau par niveau, Parcours en largeur en zigzag, Parcours préfixe, Parcours postfixe, Parcours de Morris"
+      },
+      "graphAlgorithm": {
+        "title": "Algorithmes de graphe",
+        "description": "Étudiez l'ordonnancement des dépendances, les composantes fortement connexes, les arbres couvrants minimaux et les plus courts chemins tous couples via des visualisations interactives de graphes et de matrices.",
+        "algorithms": "Tri topologique, Tarjan, Kosaraju, Floyd-Warshall"
       }
     },
     "features": {
@@ -1057,7 +1258,11 @@
     "graphTraversalSearch": "Parcours de graphe (nœuds–arêtes)",
     "depthFirstTraversal": "Parcours en profondeur",
     "breadthFirstTraversal": "Parcours en largeur",
-    "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire"
+    "spaceOptimizedTraversal": "Parcours peu gourmands en mémoire",
+    "topologicalOrdering": "Ordonnancement topologique",
+    "minimumSpanningTree": "Arbre couvrant minimal",
+    "stronglyConnectedComponents": "Composantes fortement connexes",
+    "allPairsShortestPath": "Plus court chemin tous couples"
   },
   "roadmap": {
     "hero": {

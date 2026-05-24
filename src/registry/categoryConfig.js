@@ -4,10 +4,11 @@
  * See LICENSE for details.
  */
 
-import { BarChart3, Grid3x3, GitBranch, Search } from 'lucide-react';
+import { BarChart3, GitBranch, Grid3x3, Network, Search } from 'lucide-react';
 import { algorithms } from '../algorithms';
 import { pathfindingAlgorithms } from '../algorithms/pathfinding';
 import { searchingAlgorithms } from '../algorithms/searching';
+import { graphAlgorithms } from '../algorithms/graphAlgorithm';
 import {
   generateRandomArray,
   generateSortedRandomArray,
@@ -16,12 +17,18 @@ import { createEmptyGrid } from '../utils/gridHelpers';
 import {
   ALGORITHM_TYPES,
   DEFAULT_ARRAY_SIZE,
+  DEFAULT_GRAPH_NODE_COUNT,
   DEFAULT_GRID_SIZE,
   DEFAULT_TREE_NODE_COUNT,
   GRID_SIZES,
 } from '../constants';
 import { treeTraversalAlgorithms } from '../algorithms/treeTraversal';
 import { generateTreeForTraversal } from '../utils/treeGenerators';
+import {
+  createGraphInputForAlgorithm,
+  GRAPH_ALGORITHM_GROUPS,
+  GRAPH_ALGORITHM_KEYS,
+} from './graphAlgorithmRegistry.js';
 
 /**
  * Per-category configuration registry.
@@ -279,5 +286,29 @@ export const CATEGORY_CONFIG = {
         algorithms: ['morrisTraversal'],
       },
     ],
+  },
+
+  [ALGORITHM_TYPES.GRAPH_ALGORITHM]: {
+    defaultAlgorithm: 'topologicalSort',
+    i18nPrefix: 'algorithms.graphAlgorithm',
+    i18nTabKey: 'modes.graphAlgorithm',
+    icon: Network,
+    sizeBinding: 'graph',
+    getAlgorithmFn: key => graphAlgorithms[key],
+    generateData: (size = DEFAULT_GRAPH_NODE_COUNT) =>
+      createGraphInputForAlgorithm('topologicalSort', { nodeCount: size }),
+    features: {
+      hasDataRefresh: true,
+    },
+    complexityDataset: 'graphAlgorithm',
+    sizeControl: {
+      type: 'slider',
+      i18nKey: 'settings.graphNodeCount',
+      min: 3,
+      max: 18,
+      step: 1,
+    },
+    algorithmKeys: GRAPH_ALGORITHM_KEYS,
+    groupDefs: GRAPH_ALGORITHM_GROUPS,
   },
 };

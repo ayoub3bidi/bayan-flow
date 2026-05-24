@@ -8,7 +8,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen } from '../test/testUtils';
 import ControlPanel from './ControlPanel';
 import { ALGORITHM_TYPES } from '../constants';
-import i18n from '../i18n';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -47,7 +46,7 @@ function getBaseProps(overrides = {}) {
 }
 
 describe('ControlPanel', () => {
-  const shuffleLabel = () => i18n.t('controls.generateArray');
+  const shuffleLabel = () => 'Generate New Array';
 
   it('shows data refresh shuffle when category has hasDataRefresh true (sorting)', () => {
     renderWithI18n(<ControlPanel {...getBaseProps()} />);

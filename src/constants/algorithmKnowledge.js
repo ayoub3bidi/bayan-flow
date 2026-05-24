@@ -248,6 +248,56 @@ export const ALGORITHM_KNOWLEDGE = {
     factsCount: 4,
     youtubeVideoId: null,
   },
+  topologicalSort: {
+    inventor:
+      'Classic DFS finishing-time formulation for partially ordered directed acyclic graphs',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  kahnAlgorithm: {
+    inventor: 'Arthur B. Kahn',
+    year: 1962,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  kruskalAlgorithm: {
+    inventor: 'Joseph Kruskal',
+    year: 1956,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  primAlgorithm: {
+    inventor: 'Robert C. Prim',
+    year: 1957,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  tarjanAlgorithm: {
+    inventor: 'Robert Tarjan',
+    year: 1972,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  kosarajuAlgorithm: {
+    inventor: 'S. Rao Kosaraju',
+    year: 1978,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  floydWarshallAlgorithm: {
+    inventor: 'Robert Floyd / Stephen Warshall',
+    year: 1962,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
 
   // ── Tree traversals ───────────────────────────────────────────────────────
   inorderTraversal: {

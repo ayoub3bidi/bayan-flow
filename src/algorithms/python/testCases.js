@@ -528,6 +528,162 @@ const BREADTH_FIRST_SEARCH_TEST_CASES = [
   },
 ];
 
+const TOPOLOGICAL_SORT_TEST_CASES = [
+  {
+    id: 'topo-basic-dag',
+    name: 'Basic DAG',
+    input: "{'0': ['1', '2'], '1': ['3'], '2': ['3'], '3': []}",
+    expected: "['0', '2', '1', '3']",
+  },
+  {
+    id: 'topo-disconnected',
+    name: 'Disconnected DAG',
+    input: "{'0': ['1'], '1': [], '2': ['3'], '3': []}",
+    expected: "['2', '3', '0', '1']",
+  },
+  {
+    id: 'topo-single',
+    name: 'Single vertex',
+    input: "{'0': []}",
+    expected: "['0']",
+  },
+  {
+    id: 'topo-cycle',
+    name: 'Cycle rejected',
+    input: "{'0': ['1'], '1': ['0']}",
+    expected: 'None',
+  },
+];
+
+const KAHN_ALGORITHM_TEST_CASES = [
+  {
+    id: 'kahn-basic-dag',
+    name: 'Basic DAG',
+    input: "{'0': ['1', '2'], '1': ['3'], '2': ['3'], '3': []}",
+    expected: "['0', '1', '2', '3']",
+  },
+  {
+    id: 'kahn-disconnected',
+    name: 'Disconnected DAG',
+    input: "{'0': ['1'], '1': [], '2': ['3'], '3': []}",
+    expected: "['0', '1', '2', '3']",
+  },
+  {
+    id: 'kahn-single',
+    name: 'Single vertex',
+    input: "{'0': []}",
+    expected: "['0']",
+  },
+  {
+    id: 'kahn-cycle',
+    name: 'Cycle rejected',
+    input: "{'0': ['1'], '1': ['0']}",
+    expected: 'None',
+  },
+];
+
+const KRUSKAL_ALGORITHM_TEST_CASES = [
+  {
+    id: 'kruskal-bridge',
+    name: 'Connected weighted graph',
+    input:
+      "(['0', '1', '2', '3', '4'], [('0', '1', 2), ('0', '2', 3), ('1', '2', 1), ('1', '3', 4), ('2', '3', 5), ('2', '4', 6), ('3', '4', 2)])",
+    expected:
+      "([('1', '2', 1), ('0', '1', 2), ('3', '4', 2), ('1', '3', 4)], 9)",
+  },
+  {
+    id: 'kruskal-disconnected',
+    name: 'Disconnected weighted graph',
+    input:
+      "(['0', '1', '2', '3', '4'], [('0', '1', 1), ('1', '2', 3), ('0', '2', 4), ('3', '4', 2)])",
+    expected: "([('0', '1', 1), ('3', '4', 2), ('1', '2', 3)], 6)",
+  },
+];
+
+const PRIM_ALGORITHM_TEST_CASES = [
+  {
+    id: 'prim-bridge',
+    name: 'Connected weighted graph',
+    input:
+      "(['0', '1', '2', '3', '4'], [('0', '1', 2), ('0', '2', 3), ('1', '2', 1), ('1', '3', 4), ('2', '3', 5), ('2', '4', 6), ('3', '4', 2)])",
+    expected:
+      "([('0', '1', 2), ('1', '2', 1), ('1', '3', 4), ('3', '4', 2)], 9)",
+  },
+  {
+    id: 'prim-single',
+    name: 'Single vertex',
+    input: "(['0'], [])",
+    expected: '([], 0)',
+  },
+];
+
+const TARJAN_ALGORITHM_TEST_CASES = [
+  {
+    id: 'tarjan-multi-scc',
+    name: 'Multiple SCCs',
+    input: "{'0': ['1'], '1': ['2', '3'], '2': ['0'], '3': ['4'], '4': ['3']}",
+    expected: "[['3', '4'], ['0', '1', '2']]",
+  },
+  {
+    id: 'tarjan-self-loop',
+    name: 'Self-loop singleton SCC',
+    input: "{'0': ['0', '1'], '1': ['2'], '2': []}",
+    expected: "[['2'], ['1'], ['0']]",
+  },
+  {
+    id: 'tarjan-single',
+    name: 'Single vertex',
+    input: "{'0': []}",
+    expected: "[['0']]",
+  },
+];
+
+const KOSARAJU_ALGORITHM_TEST_CASES = [
+  {
+    id: 'kosaraju-multi-scc',
+    name: 'Multiple SCCs',
+    input: "{'0': ['1'], '1': ['2', '3'], '2': ['0'], '3': ['4'], '4': ['3']}",
+    expected: "[['0', '1', '2'], ['3', '4']]",
+  },
+  {
+    id: 'kosaraju-self-loop',
+    name: 'Self-loop singleton SCC',
+    input: "{'0': ['0', '1'], '1': ['2'], '2': []}",
+    expected: "[['0'], ['1'], ['2']]",
+  },
+  {
+    id: 'kosaraju-single',
+    name: 'Single vertex',
+    input: "{'0': []}",
+    expected: "[['0']]",
+  },
+];
+
+const FLOYD_WARSHALL_ALGORITHM_TEST_CASES = [
+  {
+    id: 'floyd-positive',
+    name: 'Positive weighted directed graph',
+    input:
+      "(['0', '1', '2', '3'], [('0', '1', 3), ('0', '3', 10), ('1', '2', 2), ('2', '3', 1), ('3', '1', 4)])",
+    expected:
+      '([[0, 3, 5, 6], [None, 0, 2, 3], [None, 5, 0, 1], [None, 4, 6, 0]], False)',
+  },
+  {
+    id: 'floyd-negative-edge',
+    name: 'Negative edge without negative cycle',
+    input:
+      "(['0', '1', '2', '3'], [('0', '1', 4), ('0', '2', 11), ('1', '2', -2), ('2', '3', 3), ('3', '1', 6)])",
+    expected:
+      '([[0, 4, 2, 5], [None, 0, -2, 1], [None, 9, 0, 3], [None, 6, 4, 0]], False)',
+  },
+  {
+    id: 'floyd-negative-cycle',
+    name: 'Negative cycle',
+    input: "(['0', '1', '2'], [('0', '1', 1), ('1', '2', -4), ('2', '0', 1)])",
+    expected: '([[-2, -1, -5], [-3, -2, -6], [-1, 0, -4]], True)',
+  },
+];
+
 /** Pathfinding test cases for grid, start, end */
 const PATHFINDING_TEST_CASES = [
   {
@@ -725,6 +881,34 @@ export const algorithmTestCases = {
   breadthFirstSearchGraph: {
     functionName: 'breadth_first_search_graph',
     testCases: BREADTH_FIRST_SEARCH_TEST_CASES,
+  },
+  topologicalSort: {
+    functionName: 'topological_sort',
+    testCases: TOPOLOGICAL_SORT_TEST_CASES,
+  },
+  kahnAlgorithm: {
+    functionName: 'kahn_algorithm',
+    testCases: KAHN_ALGORITHM_TEST_CASES,
+  },
+  kruskalAlgorithm: {
+    functionName: 'kruskal_algorithm',
+    testCases: KRUSKAL_ALGORITHM_TEST_CASES,
+  },
+  primAlgorithm: {
+    functionName: 'prim_algorithm',
+    testCases: PRIM_ALGORITHM_TEST_CASES,
+  },
+  tarjanAlgorithm: {
+    functionName: 'tarjan_algorithm',
+    testCases: TARJAN_ALGORITHM_TEST_CASES,
+  },
+  kosarajuAlgorithm: {
+    functionName: 'kosaraju_algorithm',
+    testCases: KOSARAJU_ALGORITHM_TEST_CASES,
+  },
+  floydWarshallAlgorithm: {
+    functionName: 'floyd_warshall_algorithm',
+    testCases: FLOYD_WARSHALL_ALGORITHM_TEST_CASES,
   },
   levelOrderTraversal: {
     functionName: 'level_order_traversal',

@@ -9,6 +9,7 @@ import { vi, describe, it, expect } from 'vitest';
 // Unmock constants so we test the real module (setup.js mocks it globally)
 vi.unmock('../constants');
 vi.unmock('../constants/index.js');
+vi.unmock('../registry/graphAlgorithmRegistry.js');
 
 import {
   ALGORITHM_TYPES,
@@ -16,6 +17,7 @@ import {
   PATHFINDING_ALGORITHMS,
   SEARCHING_ALGORITHMS,
   TREE_TRAVERSAL_ALGORITHMS,
+  GRAPH_ALGORITHMS,
   ANIMATION_SPEEDS,
   ELEMENT_STATES,
   STATE_COLORS,
@@ -30,7 +32,9 @@ import {
   PATHFINDING_COMPLEXITY,
   SEARCHING_COMPLEXITY,
   TREE_TRAVERSAL_COMPLEXITY,
+  GRAPH_ALGORITHM_COMPLEXITY,
 } from './index.js';
+import { GRAPH_ALGORITHM_KEYS } from '../registry/graphAlgorithmRegistry.js';
 
 describe('Constants', () => {
   describe('ALGORITHM_TYPES', () => {
@@ -40,6 +44,7 @@ describe('Constants', () => {
         PATHFINDING: 'pathfinding',
         SEARCHING: 'searching',
         TREE_TRAVERSAL: 'treeTraversal',
+        GRAPH_ALGORITHM: 'graphAlgorithm',
       });
     });
   });
@@ -117,6 +122,15 @@ describe('Constants', () => {
         'morrisTraversal',
       ]);
       expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(6);
+    });
+  });
+
+  describe('GRAPH_ALGORITHMS', () => {
+    it('should contain graph algorithm keys', () => {
+      expect(Object.values(GRAPH_ALGORITHMS)).toEqual(GRAPH_ALGORITHM_KEYS);
+      expect(Object.keys(GRAPH_ALGORITHMS)).toHaveLength(
+        GRAPH_ALGORITHM_KEYS.length
+      );
     });
   });
 
@@ -334,6 +348,26 @@ describe('Constants', () => {
     it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
       keys.forEach(algoKey => {
         const meta = TREE_TRAVERSAL_COMPLEXITY[algoKey];
+        expect(meta).toHaveProperty('name');
+        expect(meta).toHaveProperty('timeComplexity');
+        expect(meta).toHaveProperty('spaceComplexity');
+        expect(meta).toHaveProperty('description');
+        expect(meta).toHaveProperty('useCases');
+        expect(Array.isArray(meta.useCases)).toBe(true);
+      });
+    });
+  });
+
+  describe('GRAPH_ALGORITHM_COMPLEXITY', () => {
+    const keys = Object.keys(GRAPH_ALGORITHM_COMPLEXITY);
+
+    it('should have metadata for graph algorithms', () => {
+      expect(keys).toEqual(GRAPH_ALGORITHM_KEYS);
+    });
+
+    it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
+      keys.forEach(algoKey => {
+        const meta = GRAPH_ALGORITHM_COMPLEXITY[algoKey];
         expect(meta).toHaveProperty('name');
         expect(meta).toHaveProperty('timeComplexity');
         expect(meta).toHaveProperty('spaceComplexity');

@@ -40,9 +40,11 @@ export function buildGroupsForCategory(t, cfg) {
  *   sortingAlgorithms: Array,
  *   pathfindingAlgorithms: Array,
  *   searchingAlgorithms: Array,
+ *   graphAlgorithmAlgorithms: Array,
  *   sortingGroups: Array,
  *   pathfindingGroups: Array,
  *   searchingGroups: Array,
+ *   graphAlgorithmGroups: Array,
  * }}
  */
 export const useAlgorithmConfig = () => {
@@ -65,8 +67,11 @@ export const useAlgorithmConfig = () => {
     sortingAlgorithms: byType[ALGORITHM_TYPES.SORTING].algorithms,
     pathfindingAlgorithms: byType[ALGORITHM_TYPES.PATHFINDING].algorithms,
     searchingAlgorithms: byType[ALGORITHM_TYPES.SEARCHING].algorithms,
+    graphAlgorithmAlgorithms:
+      byType[ALGORITHM_TYPES.GRAPH_ALGORITHM].algorithms,
     sortingGroups: byType[ALGORITHM_TYPES.SORTING].groups,
     pathfindingGroups: byType[ALGORITHM_TYPES.PATHFINDING].groups,
     searchingGroups: byType[ALGORITHM_TYPES.SEARCHING].groups,
+    graphAlgorithmGroups: byType[ALGORITHM_TYPES.GRAPH_ALGORITHM].groups,
   };
 };
