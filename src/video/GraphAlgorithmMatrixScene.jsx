@@ -7,6 +7,7 @@
 import { memo } from 'react';
 import { interpolateColors, useCurrentFrame } from 'remotion';
 import { getVideoExportTheme } from './videoExportTheme.js';
+import { getGraphMatrixLayout } from '../utils/graphMatrixLayout.js';
 
 function GraphAlgorithmMatrixSceneInner({
   steps,
@@ -33,27 +34,23 @@ function GraphAlgorithmMatrixSceneInner({
   const prevCellStates = prevStep?.matrix?.cellStates ?? cellStates;
   const columnCount = Math.max(1, columnLabels.length);
   const rowCount = Math.max(1, cells.length);
-  const topSafeArea = 210;
-  const bottomSafeArea = 60;
-  const sidePadding = 240;
-  const maxMatrixWidth = 1280 - sidePadding * 2;
-  const maxMatrixHeight = 720 - topSafeArea - bottomSafeArea;
-  const cellSize = Math.max(
-    96,
-    Math.min(
-      128,
-      Math.floor(Math.min(maxMatrixWidth / columnCount, maxMatrixHeight / rowCount))
-    )
-  );
-  const drawCellSize = cellSize - Math.max(8, Math.round(cellSize * 0.1));
-  const labelFontSize = Math.max(24, Math.round(cellSize * 0.28));
-  const cellFontSize = Math.max(24, Math.round(cellSize * 0.24));
-  const matrixWidth = columnCount * cellSize;
-  const matrixHeight = rowCount * cellSize;
-  const startX = Math.round((1280 - matrixWidth) / 2);
-  const startY =
-    topSafeArea +
-    Math.max(0, Math.round((maxMatrixHeight - matrixHeight) / 2));
+  const layout = getGraphMatrixLayout({
+    rowCount,
+    columnCount,
+    viewportWidth: 1280,
+    viewportHeight: 720,
+    sidePadding: 180,
+    topSafeArea: 210,
+    bottomSafeArea: 70,
+    maxCellSize: 128,
+    labelMaxWidth: 62,
+    labelMaxHeight: 56,
+    axisGap: 20,
+    labelFontMin: 20,
+    labelFontMax: 32,
+    cellFontMin: 18,
+    cellFontMax: 28,
+  });
 
   const getCellColor = state => {
     if (state === 'current') return '#fdba74';
@@ -115,21 +112,26 @@ function GraphAlgorithmMatrixSceneInner({
         role="img"
       >
         <text
-          x={startX - 72}
-          y={startY - 32}
+          x={layout.startX + layout.labelColumnWidth / 2}
+          y={layout.startY + layout.headerRowHeight / 2 + 7}
           fill={vTheme.complexity.subheading}
-          fontSize={Math.max(22, labelFontSize - 4)}
+          fontSize={Math.max(18, layout.labelFontSize - 3)}
           fontWeight="700"
+          textAnchor="middle"
         >
           i \ j
         </text>
         {columnLabels.map((label, columnIndex) => (
           <text
             key={`col-${label}`}
-            x={startX + columnIndex * cellSize + cellSize / 2}
-            y={startY - 32}
+            x={
+              layout.gridStartX +
+              columnIndex * layout.cellSize +
+              layout.cellSize / 2
+            }
+            y={layout.startY + layout.headerRowHeight / 2 + 7}
             fill={vTheme.headerText}
-            fontSize={labelFontSize}
+            fontSize={layout.labelFontSize}
             fontWeight="700"
             textAnchor="middle"
           >
@@ -139,10 +141,15 @@ function GraphAlgorithmMatrixSceneInner({
         {cells.map((row, rowIndex) => (
           <g key={`row-${rowLabels[rowIndex] ?? rowIndex}`}>
             <text
-              x={startX - 44}
-              y={startY + rowIndex * cellSize + cellSize / 2 + 10}
+              x={layout.startX + layout.labelColumnWidth / 2}
+              y={
+                layout.gridStartY +
+                rowIndex * layout.cellSize +
+                layout.cellSize / 2 +
+                9
+              }
               fill={vTheme.headerText}
-              fontSize={labelFontSize}
+              fontSize={layout.labelFontSize}
               fontWeight="700"
               textAnchor="middle"
             >
@@ -168,20 +175,37 @@ function GraphAlgorithmMatrixSceneInner({
               return (
                 <g key={`${rowIndex}-${columnIndex}`}>
                   <rect
-                    x={startX + columnIndex * cellSize}
-                    y={startY + rowIndex * cellSize}
-                    width={drawCellSize}
-                    height={drawCellSize}
-                    rx="16"
+                    x={
+                      layout.gridStartX +
+                      columnIndex * layout.cellSize +
+                      layout.cellInset / 2
+                    }
+                    y={
+                      layout.gridStartY +
+                      rowIndex * layout.cellSize +
+                      layout.cellInset / 2
+                    }
+                    width={layout.drawCellSize}
+                    height={layout.drawCellSize}
+                    rx={layout.cellRadius}
                     fill={fill}
                     stroke={vTheme.complexity.chartBorder}
                     strokeWidth="3"
                   />
                   <text
-                    x={startX + columnIndex * cellSize + drawCellSize / 2}
-                    y={startY + rowIndex * cellSize + cellSize / 2 + 8}
+                    x={
+                      layout.gridStartX +
+                      columnIndex * layout.cellSize +
+                      layout.cellSize / 2
+                    }
+                    y={
+                      layout.gridStartY +
+                      rowIndex * layout.cellSize +
+                      layout.cellSize / 2 +
+                      8
+                    }
                     fill={state === 'default' ? vTheme.headerText : '#111827'}
-                    fontSize={cellFontSize}
+                    fontSize={layout.cellFontSize}
                     fontWeight="700"
                     textAnchor="middle"
                   >

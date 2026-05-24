@@ -15,6 +15,7 @@ import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 import {
+  clampGraphAlgorithmNodeCount,
   createGraphInputForAlgorithm,
   getGraphAlgorithmProfile,
   getGraphAlgorithmScenarioOptions,
@@ -81,6 +82,10 @@ export function useGraphAlgorithmVisualization(
 
   const profile = getGraphAlgorithmProfile(algorithmKey);
   const scenarioOptions = getGraphAlgorithmScenarioOptions(algorithmKey);
+  const effectiveGraphNodeCount = clampGraphAlgorithmNodeCount(
+    algorithmKey,
+    graphNodeCount
+  );
   const effectiveScenarioId = isGraphScenarioSupported(algorithmKey, scenarioId)
     ? scenarioId
     : null;
@@ -115,7 +120,7 @@ export function useGraphAlgorithmVisualization(
     engine.loadSteps([]);
 
     const graph = createGraphInputForAlgorithm(algorithmKey, {
-      nodeCount: graphNodeCount,
+      nodeCount: effectiveGraphNodeCount,
       scenarioId: effectiveScenarioId,
     });
     const representationValue =
@@ -144,8 +149,8 @@ export function useGraphAlgorithmVisualization(
   }, [
     algorithmKey,
     effectiveScenarioId,
+    effectiveGraphNodeCount,
     engine.loadSteps,
-    graphNodeCount,
     profile?.directed,
     profile?.representation,
     profile?.weighted,
@@ -154,7 +159,7 @@ export function useGraphAlgorithmVisualization(
   useEffect(() => {
     regenerateGraphStructure();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [algorithmKey, graphNodeCount, effectiveScenarioId]);
+  }, [algorithmKey, effectiveGraphNodeCount, effectiveScenarioId]);
 
   const loadStepsForCurrentAlgorithm = useCallback(() => {
     if (!algorithmKey || !graphContext) {

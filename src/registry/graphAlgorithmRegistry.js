@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { GRAPH_NODE_COUNT } from '../constants/index.js';
 import {
   generateRandomDag,
   generateRandomDirectedGraph,
@@ -32,6 +33,18 @@ export const GRAPH_REPRESENTATIONS = {
   NODE_LINK: 'nodeLink',
   MATRIX: 'matrix',
 };
+
+const DEFAULT_GRAPH_NODE_COUNT_RANGE = Object.freeze({
+  min: GRAPH_NODE_COUNT.min,
+  max: GRAPH_NODE_COUNT.max,
+  step: GRAPH_NODE_COUNT.step,
+});
+
+const FLOYD_WARSHALL_NODE_COUNT_RANGE = Object.freeze({
+  min: GRAPH_NODE_COUNT.min,
+  max: 6,
+  step: GRAPH_NODE_COUNT.step,
+});
 
 function cloneScenarioGraph(scenario) {
   return {
@@ -186,6 +199,7 @@ export const GRAPH_ALGORITHM_PROFILES = {
     directed: true,
     weighted: true,
     supportsRandomGeneration: true,
+    nodeCountRange: FLOYD_WARSHALL_NODE_COUNT_RANGE,
     scenarioIds: [
       SCENARIO_WEIGHTED_DIRECTED_POSITIVE.id,
       SCENARIO_WEIGHTED_DIRECTED_NEGATIVE.id,
@@ -237,6 +251,19 @@ export function getGraphAlgorithmRepresentation(algorithmKey) {
   );
 }
 
+export function getGraphAlgorithmNodeCountRange(algorithmKey) {
+  return (
+    getGraphAlgorithmProfile(algorithmKey)?.nodeCountRange ??
+    DEFAULT_GRAPH_NODE_COUNT_RANGE
+  );
+}
+
+export function clampGraphAlgorithmNodeCount(algorithmKey, nodeCount) {
+  const range = getGraphAlgorithmNodeCountRange(algorithmKey);
+  const normalizedValue = Math.floor(Number(nodeCount) || range.min);
+  return Math.min(range.max, Math.max(range.min, normalizedValue));
+}
+
 export function getGraphAlgorithmScenarioOptions(algorithmKey) {
   const profile = getGraphAlgorithmProfile(algorithmKey);
   if (!profile?.scenarioIds?.length) return [];
@@ -265,12 +292,16 @@ export function createGraphInputForAlgorithm(
   { nodeCount, scenarioId = null, rng = Math.random } = {}
 ) {
   const profile = getGraphAlgorithmProfile(algorithmKey);
+  const clampedNodeCount = clampGraphAlgorithmNodeCount(
+    algorithmKey,
+    nodeCount
+  );
   if (!profile?.createInput) {
-    return generateRandomDag({ nodeCount, rng });
+    return generateRandomDag({ nodeCount: clampedNodeCount, rng });
   }
 
   return profile.createInput({
-    nodeCount,
+    nodeCount: clampedNodeCount,
     scenarioId: isGraphScenarioSupported(algorithmKey, scenarioId)
       ? scenarioId
       : null,

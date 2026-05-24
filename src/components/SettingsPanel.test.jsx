@@ -158,4 +158,23 @@ describe('SettingsPanel', () => {
     expect(sliders).toHaveLength(2);
     expect(sliders[1]).toBeEnabled();
   });
+
+  it('uses the Floyd-Warshall node cap for the graph size slider', () => {
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          selectedAlgorithm: 'floydWarshallAlgorithm',
+          selectedGraphScenario: null,
+          graphNodeCount: 6,
+        })}
+      />
+    );
+
+    const sliders = screen.getAllByRole('slider');
+
+    expect(sliders[1]).toHaveAttribute('min', '3');
+    expect(sliders[1]).toHaveAttribute('max', '6');
+    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByText('6')).toBeInTheDocument();
+  });
 });

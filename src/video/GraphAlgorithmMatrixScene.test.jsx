@@ -50,4 +50,39 @@ describe('GraphAlgorithmMatrixScene', () => {
     expect(firstCell).toBeInTheDocument();
     expect(Number(firstCell?.getAttribute('y'))).toBeGreaterThanOrEqual(210);
   });
+
+  it('keeps a 6x6 matrix inside the scene safe area', () => {
+    const { container } = render(
+      <GraphAlgorithmMatrixScene
+        framesPerStep={1}
+        exportTheme="dark"
+        steps={[
+          {
+            matrix: {
+              rowLabels: ['A', 'B', 'C', 'D', 'E', 'F'],
+              columnLabels: ['A', 'B', 'C', 'D', 'E', 'F'],
+              cells: Array.from({ length: 6 }, (_, rowIndex) =>
+                Array.from({ length: 6 }, (_, columnIndex) =>
+                  String((rowIndex + columnIndex) % 7)
+                )
+              ),
+              cellStates: Array.from({ length: 6 }, () =>
+                Array.from({ length: 6 }, () => 'default')
+              ),
+            },
+            graphArtifacts: {
+              badges: [{ id: 'intermediate', text: 'Intermediate: C' }],
+            },
+          },
+        ]}
+      />
+    );
+
+    const firstCell = container.querySelector('rect');
+
+    expect(firstCell).toBeInTheDocument();
+    expect(Number(firstCell?.getAttribute('x'))).toBeGreaterThanOrEqual(180);
+    expect(Number(firstCell?.getAttribute('y'))).toBeGreaterThanOrEqual(210);
+    expect(Number(firstCell?.getAttribute('width'))).toBeGreaterThan(0);
+  });
 });

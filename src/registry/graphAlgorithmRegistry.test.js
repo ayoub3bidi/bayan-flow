@@ -6,7 +6,9 @@
 
 import { describe, expect, it, vi } from 'vitest';
 import {
+  clampGraphAlgorithmNodeCount,
   createGraphInputForAlgorithm,
+  getGraphAlgorithmNodeCountRange,
   getGraphAlgorithmProfile,
   getGraphAlgorithmRepresentation,
   getGraphAlgorithmScenarioOptions,
@@ -125,10 +127,34 @@ describe('graphAlgorithmRegistry', () => {
       representation: GRAPH_REPRESENTATIONS.MATRIX,
       directed: true,
       weighted: true,
+      nodeCountRange: {
+        min: 3,
+        max: 6,
+        step: 1,
+      },
     });
     expect(getGraphAlgorithmRepresentation('floydWarshallAlgorithm')).toBe(
       GRAPH_REPRESENTATIONS.MATRIX
     );
+  });
+
+  it('returns algorithm-specific node count ranges', () => {
+    expect(getGraphAlgorithmNodeCountRange('topologicalSort')).toEqual({
+      min: 3,
+      max: 18,
+      step: 1,
+    });
+    expect(getGraphAlgorithmNodeCountRange('floydWarshallAlgorithm')).toEqual({
+      min: 3,
+      max: 6,
+      step: 1,
+    });
+  });
+
+  it('clamps node counts to the algorithm-supported range', () => {
+    expect(clampGraphAlgorithmNodeCount('topologicalSort', 22)).toBe(18);
+    expect(clampGraphAlgorithmNodeCount('floydWarshallAlgorithm', 9)).toBe(6);
+    expect(clampGraphAlgorithmNodeCount('floydWarshallAlgorithm', 1)).toBe(3);
   });
 
   it('returns scenario options for topologicalSort', () => {
@@ -310,6 +336,17 @@ describe('graphAlgorithmRegistry', () => {
 
     expect(graph.nodes).toHaveLength(4);
     expect(graph.edges).toHaveLength(5);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(true);
+  });
+
+  it('caps Floyd-Warshall random input to the readable matrix range', () => {
+    const graph = createGraphInputForAlgorithm('floydWarshallAlgorithm', {
+      nodeCount: 12,
+      rng: vi.fn(() => 0),
+    });
+
+    expect(graph.nodes).toHaveLength(6);
     expect(graph.directed).toBe(true);
     expect(graph.weighted).toBe(true);
   });

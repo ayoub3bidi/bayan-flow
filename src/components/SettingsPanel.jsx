@@ -13,7 +13,6 @@ import {
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPE_LIST,
-  GRAPH_NODE_COUNT,
   SEARCH_GRAPH_NODE_COUNT,
   TREE_NODE_COUNT,
 } from '../constants';
@@ -21,6 +20,7 @@ import { soundManager } from '../utils/soundManager';
 import { useAlgorithmConfig } from '../config/algorithmConfig';
 import { useSettingsConfig } from '../config/settingsConfig';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { getGraphAlgorithmNodeCountRange } from '../registry/graphAlgorithmRegistry.js';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import AlgorithmDropdown from './AlgorithmDropdown';
 import GraphScenarioDropdown from './GraphScenarioDropdown';
@@ -62,6 +62,7 @@ function SettingsPanel({
   const { algorithms, groups } = byType[algorithmType];
 
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
+  const graphNodeCountRange = getGraphAlgorithmNodeCountRange(selectedAlgorithm);
   const effectiveSizeBinding =
     algorithmType === ALGORITHM_TYPES.SEARCHING &&
     isNodeLinkSearchingAlgorithm(selectedAlgorithm)
@@ -89,9 +90,9 @@ function SettingsPanel({
           ? {
               type: 'slider',
               i18nKey: 'settings.graphNodeCount',
-              min: GRAPH_NODE_COUNT.min,
-              max: GRAPH_NODE_COUNT.max,
-              step: GRAPH_NODE_COUNT.step,
+              min: graphNodeCountRange.min,
+              max: graphNodeCountRange.max,
+              step: graphNodeCountRange.step,
             }
           : categoryConfig.sizeControl;
   const isPresetGraphScenarioSelected =

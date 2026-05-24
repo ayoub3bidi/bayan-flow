@@ -62,4 +62,36 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
       vi.useRealTimers();
     }
   });
+
+  it('renders larger matrices in a fit-first frame without scroll containers', () => {
+    const { getByTestId } = render(
+      <GraphAlgorithmMatrixVisualizer
+        matrix={{
+          rowLabels: ['A', 'B', 'C', 'D', 'E', 'F'],
+          columnLabels: ['A', 'B', 'C', 'D', 'E', 'F'],
+          cells: [
+            ['0', '1', '2', '3', '4', '5'],
+            ['1', '0', '2', '3', '4', '5'],
+            ['2', '2', '0', '3', '4', '5'],
+            ['3', '3', '3', '0', '4', '5'],
+            ['4', '4', '4', '4', '0', '5'],
+            ['5', '5', '5', '5', '5', '0'],
+          ],
+          cellStates: Array.from({ length: 6 }, () =>
+            Array.from({ length: 6 }, () => 'default')
+          ),
+        }}
+        graphArtifacts={{ badges: [] }}
+        description=""
+        isComplete={false}
+        algorithm="floydWarshallAlgorithm"
+      />
+    );
+
+    const frame = getByTestId('graph-matrix-frame');
+
+    expect(frame).toHaveAttribute('data-density', 'compact');
+    expect(frame.className).toContain('overflow-hidden');
+    expect(frame.className).not.toContain('overflow-auto');
+  });
 });

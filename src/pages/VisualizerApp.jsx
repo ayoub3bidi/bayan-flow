@@ -45,6 +45,7 @@ import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import {
+  clampGraphAlgorithmNodeCount,
   getGraphAlgorithmScenarioOptions,
   isGraphScenarioSupported,
 } from '../registry/graphAlgorithmRegistry.js';
@@ -196,6 +197,13 @@ function App() {
     selectedGraphScenario,
     setSelectedGraphScenario,
   ]);
+
+  useEffect(() => {
+    const graphAlgorithmKey = selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
+    setGraphNodeCount(prev =>
+      clampGraphAlgorithmNodeCount(graphAlgorithmKey, prev)
+    );
+  }, [selectedAlgorithms]);
 
   useEffect(() => {
     if (algorithmType !== ALGORITHM_TYPES.SORTING) {

@@ -209,4 +209,20 @@ describe('useGraphAlgorithmVisualization', () => {
     expect(result.current.scenarioOptions).toHaveLength(4);
     expect(result.current.graphMatrix?.cells?.length).toBeGreaterThan(0);
   });
+
+  it('caps Floyd-Warshall random generation to the readable matrix range', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'floydWarshallAlgorithm',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        12
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    expect(result.current.graphNodes).toHaveLength(6);
+    expect(result.current.graphMatrix?.cells).toHaveLength(6);
+  });
 });
