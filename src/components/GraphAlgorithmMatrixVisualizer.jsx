@@ -48,10 +48,10 @@ function GraphAlgorithmMatrixVisualizer({
     : [];
 
   return (
-    <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative bg-surface flex flex-col p-4 sm:p-6">
-      {badgeItems.length ? (
-        <div className="mb-4 flex shrink-0 flex-wrap justify-center gap-2">
-          {badgeItems.map(badge => (
+    <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative bg-surface flex flex-col px-3 pb-24 pt-4 sm:px-5 sm:pb-28 sm:pt-6">
+      <div className="mb-3 flex min-h-14 shrink-0 flex-wrap content-start justify-center gap-2 sm:mb-4 sm:min-h-16">
+        {badgeItems.length > 0 &&
+          badgeItems.map(badge => (
             <span
               key={badge.id}
               className="inline-flex items-center rounded-full border border-gray-300 bg-surface-elevated px-3 py-1 text-xs font-mono font-semibold text-text-primary shadow-sm"
@@ -59,24 +59,23 @@ function GraphAlgorithmMatrixVisualizer({
               {badge.text}
             </span>
           ))}
-        </div>
-      ) : null}
-      <div className="flex-1 overflow-auto">
-        <div className="mx-auto w-full max-w-4xl">
-          <div className="mb-3 text-center text-sm font-semibold text-text-secondary">
+      </div>
+      <div className="flex-1 min-h-0 overflow-auto">
+        <div className="mx-auto flex min-h-full w-full max-w-6xl flex-col items-center justify-start pt-2 sm:pt-4">
+          <div className="mb-3 text-center text-sm font-semibold text-text-secondary sm:text-base">
             {t('visualization.graphMatrix')}
           </div>
-          <div className="overflow-auto rounded-xl border border-[var(--color-border-strong)] bg-surface-elevated p-3">
-            <table className="mx-auto border-separate border-spacing-2 text-center">
+          <div className="w-full overflow-auto rounded-xl border border-[var(--color-border-strong)] bg-surface-elevated p-2 sm:p-4">
+            <table className="mx-auto border-separate border-spacing-3 text-center sm:border-spacing-4">
               <thead>
                 <tr>
-                  <th className="px-2 py-1 text-xs font-semibold text-text-secondary">
+                  <th className="px-2 py-1 text-xs font-semibold text-text-secondary sm:text-sm">
                     {t('visualization.matrixCorner')}
                   </th>
                   {columnLabels.map(label => (
                     <th
                       key={`col-${label}`}
-                      className="px-2 py-1 text-xs font-semibold text-text-primary"
+                      className="px-2 py-1 text-xs font-semibold text-text-primary sm:text-sm"
                     >
                       {label}
                     </th>
@@ -86,7 +85,7 @@ function GraphAlgorithmMatrixVisualizer({
               <tbody>
                 {cells.map((row, rowIndex) => (
                   <tr key={`row-${rowLabels[rowIndex] ?? rowIndex}`}>
-                    <th className="px-2 py-1 text-xs font-semibold text-text-primary">
+                    <th className="px-2 py-1 text-xs font-semibold text-text-primary sm:text-sm">
                       {rowLabels[rowIndex] ?? rowIndex}
                     </th>
                     {row.map((value, columnIndex) => {
@@ -94,7 +93,7 @@ function GraphAlgorithmMatrixVisualizer({
                       return (
                         <td
                           key={`${rowIndex}-${columnIndex}`}
-                          className={`min-w-12 rounded-lg px-3 py-2 text-sm font-mono ${
+                          className={`min-w-16 rounded-xl px-4 py-3 text-base font-mono sm:min-w-20 sm:px-5 sm:py-4 sm:text-lg ${
                             state === 'current'
                               ? 'bg-orange-100 text-orange-800'
                               : state === 'updated'

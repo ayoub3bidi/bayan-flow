@@ -16,10 +16,30 @@ import {
   GRAPH_NODE_STATES,
   GRAPH_NODE_STATE_COLORS,
 } from '../constants';
+import { useTheme } from '../hooks/useTheme';
 import useSwipe from '../hooks/useSwipe';
 
 const VIEW_PAD = 8;
 const VIEW_INNER = 100 - 2 * VIEW_PAD;
+
+function getWeightLabelPosition(line, edgeIndex, directed) {
+  const dx = line.x2 - line.x1;
+  const dy = line.y2 - line.y1;
+  const length = Math.hypot(dx, dy) || 1;
+  const normalX = -dy / length;
+  const normalY = dx / length;
+  const side = directed ? 1 : edgeIndex % 2 === 0 ? 1 : -1;
+  const offset = directed ? 2.1 : 2.8;
+
+  return {
+    x: line.mx + normalX * offset * side,
+    y: line.my + normalY * offset * side,
+  };
+}
+
+function getWeightBadgeWidth(weight) {
+  return Math.max(7.4, String(weight).length * 2.35 + 3.6);
+}
 
 /**
  * @param {Array<{ id: string, x: number, y: number, label?: string }>} nodes
@@ -62,6 +82,7 @@ function GraphVisualizer({
   graphVariant = 'searching',
 }) {
   const { t } = useTranslation();
+  const { isDark } = useTheme();
 
   // BFS uses a queue (FIFO); DFS/topological sort use stack-like frontiers.
   const isBfsGraph = algorithm === 'breadthFirstSearchGraph';
@@ -104,6 +125,20 @@ function GraphVisualizer({
     setShowSwipeTutorial(false);
     localStorage.setItem('swipeTutorialSeen', 'true');
   };
+
+  const weightLabelPalette = isDark
+    ? {
+        fill: '#f9fafb',
+        stroke: 'rgba(15, 23, 42, 0.98)',
+        bg: 'rgba(15, 23, 42, 0.82)',
+        border: 'rgba(148, 163, 184, 0.48)',
+      }
+    : {
+        fill: '#111827',
+        stroke: 'rgba(248, 250, 252, 0.98)',
+        bg: 'rgba(255, 255, 255, 0.94)',
+        border: 'rgba(148, 163, 184, 0.36)',
+      };
 
   useEffect(() => {
     if (isComplete) {
@@ -364,23 +399,47 @@ function GraphVisualizer({
                           directed ? 'url(#graph-arrowhead)' : undefined
                         }
                       />
-                      {weighted && e.weight != null ? (
-                        <text
-                          x={line.mx}
-                          y={line.my - 1.4}
-                          textAnchor="middle"
-                          className="fill-text-primary pointer-events-none"
-                          style={{
-                            fontSize: 3.1,
-                            fontWeight: 800,
-                            paintOrder: 'stroke',
-                            stroke: 'var(--color-surface)',
-                            strokeWidth: 0.8,
-                          }}
-                        >
-                          {e.weight}
-                        </text>
-                      ) : null}
+                      {weighted && e.weight != null ? (() => {
+                        const label = getWeightLabelPosition(
+                          line,
+                          i,
+                          directed
+                        );
+                        const badgeWidth = getWeightBadgeWidth(e.weight);
+                        const badgeHeight = 5.9;
+
+                        return (
+                          <g aria-hidden="true">
+                            <rect
+                              x={label.x - badgeWidth / 2}
+                              y={label.y - badgeHeight / 2}
+                              width={badgeWidth}
+                              height={badgeHeight}
+                              rx={2.25}
+                              fill={weightLabelPalette.bg}
+                              stroke={weightLabelPalette.border}
+                              strokeWidth={0.32}
+                            />
+                            <text
+                              x={label.x}
+                              y={label.y + 0.05}
+                              textAnchor="middle"
+                              dominantBaseline="central"
+                              fill={weightLabelPalette.fill}
+                              className="pointer-events-none"
+                              style={{
+                                fontSize: 3.1,
+                                fontWeight: 800,
+                                paintOrder: 'stroke',
+                                stroke: weightLabelPalette.stroke,
+                                strokeWidth: 0.55,
+                              }}
+                            >
+                              {e.weight}
+                            </text>
+                          </g>
+                        );
+                      })() : null}
                     </g>
                   );
                 })}

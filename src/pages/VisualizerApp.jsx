@@ -44,7 +44,10 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
-import { isGraphScenarioSupported } from '../registry/graphAlgorithmRegistry.js';
+import {
+  getGraphAlgorithmScenarioOptions,
+  isGraphScenarioSupported,
+} from '../registry/graphAlgorithmRegistry.js';
 import {
   finalizeSortingInputArray,
   reorderArrayForSortOrder,
@@ -64,6 +67,10 @@ function buildDefaultSelectedAlgorithms() {
       CATEGORY_CONFIG[type].defaultAlgorithm,
     ])
   );
+}
+
+function getDefaultGraphScenario(algorithmKey) {
+  return getGraphAlgorithmScenarioOptions(algorithmKey)[0]?.id ?? null;
 }
 
 // ---------------------------------------------------------------------------
@@ -102,7 +109,11 @@ function App() {
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
-  const [selectedGraphScenario, setSelectedGraphScenario] = useState(null);
+  const [selectedGraphScenario, setSelectedGraphScenario] = useState(() =>
+    getDefaultGraphScenario(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.GRAPH_ALGORITHM].defaultAlgorithm
+    )
+  );
 
   // ── Active Algorithm Key / Name ───────────────────────────────────────────
   const activeAlgorithmKey = selectedAlgorithms[algorithmType];
@@ -172,14 +183,13 @@ function App() {
   const visualization = visualizationMap[algorithmType];
 
   useEffect(() => {
+    const graphAlgorithmKey = selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
+
     if (
       selectedGraphScenario &&
-      !isGraphScenarioSupported(
-        selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM],
-        selectedGraphScenario
-      )
+      !isGraphScenarioSupported(graphAlgorithmKey, selectedGraphScenario)
     ) {
-      setSelectedGraphScenario(null);
+      setSelectedGraphScenario(getDefaultGraphScenario(graphAlgorithmKey));
     }
   }, [
     selectedAlgorithms,

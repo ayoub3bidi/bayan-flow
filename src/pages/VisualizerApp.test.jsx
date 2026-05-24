@@ -126,7 +126,10 @@ const graphAlgorithmVisualization = {
   representation: 'nodeLink',
   directed: true,
   weighted: false,
-  scenarioOptions: [{ id: 'diamond', i18nKey: 'graphScenarios.diamond' }],
+  scenarioOptions: [
+    { id: 'linearChain', i18nKey: 'graphScenarios.linearChain' },
+    { id: 'diamond', i18nKey: 'graphScenarios.diamond' },
+  ],
   states: [],
   description: 'Graph description',
   isComplete: false,
@@ -206,15 +209,22 @@ vi.mock('../components/SettingsPanel', () => ({
   default: ({
     algorithmType,
     selectedAlgorithm,
+    selectedGraphScenario,
     onAlgorithmTypeChange,
     onAlgorithmChange,
   }) => (
     <div data-testid="settings-panel">
       <div data-testid="algorithm-type">{algorithmType}</div>
       <div data-testid="selected-algorithm">{selectedAlgorithm}</div>
+      <div data-testid="selected-graph-scenario">
+        {String(selectedGraphScenario)}
+      </div>
       <button onClick={() => onAlgorithmTypeChange('sorting')}>sorting</button>
       <button onClick={() => onAlgorithmTypeChange('pathfinding')}>
         pathfinding
+      </button>
+      <button onClick={() => onAlgorithmTypeChange('graphAlgorithm')}>
+        graphAlgorithm
       </button>
       <button onClick={() => onAlgorithmChange('dijkstra')}>
         select-dijkstra
@@ -361,6 +371,16 @@ describe('VisualizerApp', () => {
       screen.getByTestId('array-visualizer').textContent ?? '';
     expect(sortingText).toMatch(/^bubbleSort:\d+(,\d+)+$/);
     expect(screen.queryByTestId('grid-visualizer')).not.toBeInTheDocument();
+  });
+
+  it('defaults graph algorithms to the first supported preset scenario', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('graphAlgorithm'));
+
+    expect(screen.getByTestId('selected-graph-scenario')).toHaveTextContent(
+      'linearChain'
+    );
   });
 
   it('preserves selected algorithms per category when switching tabs', async () => {

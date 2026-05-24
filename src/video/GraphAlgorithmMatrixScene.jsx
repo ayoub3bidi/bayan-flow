@@ -31,9 +31,29 @@ function GraphAlgorithmMatrixSceneInner({
   const cells = matrix.cells ?? [];
   const cellStates = matrix.cellStates ?? [];
   const prevCellStates = prevStep?.matrix?.cellStates ?? cellStates;
-  const cellSize = 88;
-  const startX = 180;
-  const startY = 170;
+  const columnCount = Math.max(1, columnLabels.length);
+  const rowCount = Math.max(1, cells.length);
+  const topSafeArea = 210;
+  const bottomSafeArea = 60;
+  const sidePadding = 240;
+  const maxMatrixWidth = 1280 - sidePadding * 2;
+  const maxMatrixHeight = 720 - topSafeArea - bottomSafeArea;
+  const cellSize = Math.max(
+    96,
+    Math.min(
+      128,
+      Math.floor(Math.min(maxMatrixWidth / columnCount, maxMatrixHeight / rowCount))
+    )
+  );
+  const drawCellSize = cellSize - Math.max(8, Math.round(cellSize * 0.1));
+  const labelFontSize = Math.max(24, Math.round(cellSize * 0.28));
+  const cellFontSize = Math.max(24, Math.round(cellSize * 0.24));
+  const matrixWidth = columnCount * cellSize;
+  const matrixHeight = rowCount * cellSize;
+  const startX = Math.round((1280 - matrixWidth) / 2);
+  const startY =
+    topSafeArea +
+    Math.max(0, Math.round((maxMatrixHeight - matrixHeight) / 2));
 
   const getCellColor = state => {
     if (state === 'current') return '#fdba74';
@@ -98,7 +118,7 @@ function GraphAlgorithmMatrixSceneInner({
           x={startX - 72}
           y={startY - 32}
           fill={vTheme.complexity.subheading}
-          fontSize="24"
+          fontSize={Math.max(22, labelFontSize - 4)}
           fontWeight="700"
         >
           i \ j
@@ -109,7 +129,7 @@ function GraphAlgorithmMatrixSceneInner({
             x={startX + columnIndex * cellSize + cellSize / 2}
             y={startY - 32}
             fill={vTheme.headerText}
-            fontSize="28"
+            fontSize={labelFontSize}
             fontWeight="700"
             textAnchor="middle"
           >
@@ -122,7 +142,7 @@ function GraphAlgorithmMatrixSceneInner({
               x={startX - 44}
               y={startY + rowIndex * cellSize + cellSize / 2 + 10}
               fill={vTheme.headerText}
-              fontSize="28"
+              fontSize={labelFontSize}
               fontWeight="700"
               textAnchor="middle"
             >
@@ -150,18 +170,18 @@ function GraphAlgorithmMatrixSceneInner({
                   <rect
                     x={startX + columnIndex * cellSize}
                     y={startY + rowIndex * cellSize}
-                    width={cellSize - 8}
-                    height={cellSize - 8}
+                    width={drawCellSize}
+                    height={drawCellSize}
                     rx="16"
                     fill={fill}
                     stroke={vTheme.complexity.chartBorder}
                     strokeWidth="3"
                   />
                   <text
-                    x={startX + columnIndex * cellSize + (cellSize - 8) / 2}
+                    x={startX + columnIndex * cellSize + drawCellSize / 2}
                     y={startY + rowIndex * cellSize + cellSize / 2 + 8}
                     fill={state === 'default' ? vTheme.headerText : '#111827'}
-                    fontSize="24"
+                    fontSize={cellFontSize}
                     fontWeight="700"
                     textAnchor="middle"
                   >

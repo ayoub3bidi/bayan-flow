@@ -21,6 +21,25 @@ function edgeKey(edge) {
   return edge.id ?? `${edge.from}->${edge.to}`;
 }
 
+function getWeightLabelPosition(line, edgeIndex, directed) {
+  const dx = line.x2 - line.x1;
+  const dy = line.y2 - line.y1;
+  const length = Math.hypot(dx, dy) || 1;
+  const normalX = -dy / length;
+  const normalY = dx / length;
+  const side = directed ? 1 : edgeIndex % 2 === 0 ? 1 : -1;
+  const offset = directed ? 2.1 : 2.8;
+
+  return {
+    x: line.mx + normalX * offset * side,
+    y: line.my + normalY * offset * side,
+  };
+}
+
+function getWeightBadgeWidth(weight) {
+  return Math.max(7.4, String(weight).length * 2.35 + 3.6);
+}
+
 function GraphAlgorithmSceneInner({
   steps,
   framesPerStep,
@@ -29,6 +48,7 @@ function GraphAlgorithmSceneInner({
   const frame = useCurrentFrame();
   const { graphEdgeStroke, graphNodeRing, captionBg, captionBorder, descText } =
     getVideoExportTheme(exportTheme);
+  const isDark = exportTheme !== 'light';
   const stepIndex = Math.min(
     Math.floor(frame / framesPerStep),
     Math.max(0, steps.length - 1)
@@ -150,6 +170,19 @@ function GraphAlgorithmSceneInner({
           const y2 = b.cy - (dy / length) * (nodeRadius + 1.2);
           const mx = (a.cx + b.cx) / 2;
           const my = (a.cy + b.cy) / 2;
+          const weightLabelPalette = isDark
+            ? {
+                fill: '#f9fafb',
+                stroke: 'rgba(15, 23, 42, 0.98)',
+                bg: 'rgba(15, 23, 42, 0.82)',
+                border: 'rgba(148, 163, 184, 0.48)',
+              }
+            : {
+                fill: '#111827',
+                stroke: 'rgba(248, 250, 252, 0.98)',
+                bg: 'rgba(255, 255, 255, 0.94)',
+                border: 'rgba(148, 163, 184, 0.36)',
+              };
 
           return (
             <g key={`${edge.from}-${edge.to}-${index}`}>
@@ -163,23 +196,46 @@ function GraphAlgorithmSceneInner({
                 strokeLinecap="round"
                 markerEnd={directed ? 'url(#video-graph-arrowhead)' : undefined}
               />
-              {weighted && edge.weight != null ? (
-                <text
-                  x={mx}
-                  y={my - 1.4}
-                  textAnchor="middle"
-                  fill="#111827"
-                  style={{
-                    fontSize: 3.1,
-                    fontWeight: 800,
-                    paintOrder: 'stroke',
-                    stroke: '#f8fafc',
-                    strokeWidth: 0.8,
-                  }}
-                >
-                  {edge.weight}
-                </text>
-              ) : null}
+              {weighted && edge.weight != null ? (() => {
+                const label = getWeightLabelPosition(
+                  { x1, y1, x2, y2, mx, my },
+                  index,
+                  directed
+                );
+                const badgeWidth = getWeightBadgeWidth(edge.weight);
+                const badgeHeight = 5.9;
+
+                return (
+                  <g aria-hidden="true">
+                    <rect
+                      x={label.x - badgeWidth / 2}
+                      y={label.y - badgeHeight / 2}
+                      width={badgeWidth}
+                      height={badgeHeight}
+                      rx={2.25}
+                      fill={weightLabelPalette.bg}
+                      stroke={weightLabelPalette.border}
+                      strokeWidth={0.32}
+                    />
+                    <text
+                      x={label.x}
+                      y={label.y + 0.05}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      fill={weightLabelPalette.fill}
+                      style={{
+                        fontSize: 3.1,
+                        fontWeight: 800,
+                        paintOrder: 'stroke',
+                        stroke: weightLabelPalette.stroke,
+                        strokeWidth: 0.55,
+                      }}
+                    >
+                      {edge.weight}
+                    </text>
+                  </g>
+                );
+              })() : null}
             </g>
           );
         })}
