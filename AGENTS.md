@@ -5,7 +5,7 @@
 - App type: client-side React SPA with routes `/`, `/app`, `/roadmap`
 - Tooling: Vite, Tailwind CSS 4, Vitest, Remotion, i18next, Pyodide
 - Algorithm categories: `sorting`, `pathfinding`, `searching`, `treeTraversal`, `graphAlgorithm`
-- Current branch focus: expand the `graphAlgorithm` category beyond DFS topological sort
+- Current branch focus: stabilize and polish the implemented `graphAlgorithm` category for the 0.5.0 line
 
 ## Architecture Map
 
@@ -15,6 +15,8 @@
 - Extra visualizer props: `src/registry/extraVisualizerProps.js`
 - Video scene registry: `src/registry/videoSceneRegistry.jsx`
 - Main page orchestration: `src/pages/VisualizerApp.jsx`
+- Graph input generators: `src/utils/graphAlgorithmGenerators.js`
+- Graph preset scenarios: `src/utils/graphTestScenarios.js`
 
 - Category hooks:
   - `src/hooks/useSortingVisualization.js`
@@ -31,6 +33,11 @@
   - `src/components/GraphVisualizer.jsx`
   - `src/components/GraphAlgorithmCategoryVisualizer.jsx`
   - `src/components/GraphAlgorithmMatrixVisualizer.jsx`
+
+- Graph algorithm video scenes:
+  - `src/video/GraphAlgorithmVideoScene.jsx`
+  - `src/video/GraphAlgorithmScene.jsx`
+  - `src/video/GraphAlgorithmMatrixScene.jsx`
 
 - Algorithm sources:
   - JS visualization + pure functions: `src/algorithms/**`
@@ -53,6 +60,7 @@
   - `matrix` is `{ rowLabels, columnLabels, cells, cellStates }`
 - Use `GRAPH_REPRESENTATIONS.NODE_LINK` for graph drawings and `GRAPH_REPRESENTATIONS.MATRIX` for matrix algorithms such as Floyd-Warshall.
 - Keep algorithm functions deterministic where tests depend on ordering. Sort node ids and equal-weight ties explicitly.
+- Preset graph scenarios are fixed datasets; when a scenario is selected, UI controls should not imply that `graphNodeCount` still changes the active graph.
 
 ## Adding A New Algorithm
 
@@ -82,12 +90,20 @@
   - `pnpm test:run`
   - `pnpm build`
 
+## Current Review Notes
+
+- Floyd-Warshall uses the matrix visualizer and matrix Remotion scene, so parity checks with node-link graph algorithms must include both interactive UI and export paths.
+- Completion UX should preserve the final algorithm state briefly before showing complexity analysis; do not swap to `ComplexityPanel` immediately on completion.
+- Export theme handling must stay aligned between `GraphAlgorithmScene` and `GraphAlgorithmMatrixScene`.
+- Preset scenario UX should stay truthful about fixed node counts and other locked graph properties.
+
 ## Workflow Rules For This Repo
 
 - Do not rewrite user-authored changes.
 - Prefer extending the existing registry-driven architecture over special-case logic in `VisualizerApp`.
-- Keep graph algorithm commits scoped to one completed algorithm at a time.
-- A completed algorithm commit must include:
+- Keep graph algorithm changes category-consistent across JS logic, UI, Remotion export, i18n, Python snippets, and tests when the touched behavior spans those surfaces.
+- For net-new graph algorithms, keep commits scoped to one completed algorithm at a time.
+- A completed algorithm addition must include:
   - JS implementation
   - registry wiring
   - translations

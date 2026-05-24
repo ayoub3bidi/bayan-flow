@@ -30,7 +30,8 @@
     "manualDescription": "Use step controls to advance manually",
     "autoplayOnly": "only",
     "treeNodeCount": "Tree nodes",
-    "graphNodeCount": "Graph vertices"
+    "graphNodeCount": "Graph vertices",
+    "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it."
   },
   "modes": {
     "sorting": "Sorting",

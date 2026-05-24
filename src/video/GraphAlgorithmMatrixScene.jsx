@@ -6,9 +6,15 @@
 
 import { memo } from 'react';
 import { interpolateColors, useCurrentFrame } from 'remotion';
+import { getVideoExportTheme } from './videoExportTheme.js';
 
-function GraphAlgorithmMatrixSceneInner({ steps, framesPerStep }) {
+function GraphAlgorithmMatrixSceneInner({
+  steps,
+  framesPerStep,
+  exportTheme = 'dark',
+}) {
   const frame = useCurrentFrame();
+  const vTheme = getVideoExportTheme(exportTheme);
   const stepIndex = Math.min(
     Math.floor(frame / framesPerStep),
     Math.max(0, steps.length - 1)
@@ -33,7 +39,7 @@ function GraphAlgorithmMatrixSceneInner({ steps, framesPerStep }) {
     if (state === 'current') return '#fdba74';
     if (state === 'updated') return '#86efac';
     if (state === 'considering') return '#93c5fd';
-    return '#f3f4f6';
+    return vTheme.complexity.chartBg;
   };
 
   return (
@@ -68,9 +74,9 @@ function GraphAlgorithmMatrixSceneInner({ steps, framesPerStep }) {
               style={{
                 padding: '10px 16px',
                 borderRadius: 9999,
-                background: '#0f172a',
-                border: '2px solid #334155',
-                color: '#e2e8f0',
+                background: vTheme.captionBg,
+                border: `2px solid ${vTheme.captionBorder}`,
+                color: vTheme.descText,
                 fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
                 fontSize: 21,
                 fontWeight: 800,
@@ -91,7 +97,7 @@ function GraphAlgorithmMatrixSceneInner({ steps, framesPerStep }) {
         <text
           x={startX - 72}
           y={startY - 32}
-          fill="#cbd5e1"
+          fill={vTheme.complexity.subheading}
           fontSize="24"
           fontWeight="700"
         >
@@ -102,7 +108,7 @@ function GraphAlgorithmMatrixSceneInner({ steps, framesPerStep }) {
             key={`col-${label}`}
             x={startX + columnIndex * cellSize + cellSize / 2}
             y={startY - 32}
-            fill="#e5e7eb"
+            fill={vTheme.headerText}
             fontSize="28"
             fontWeight="700"
             textAnchor="middle"
@@ -115,7 +121,7 @@ function GraphAlgorithmMatrixSceneInner({ steps, framesPerStep }) {
             <text
               x={startX - 44}
               y={startY + rowIndex * cellSize + cellSize / 2 + 10}
-              fill="#e5e7eb"
+              fill={vTheme.headerText}
               fontSize="28"
               fontWeight="700"
               textAnchor="middle"
@@ -148,13 +154,13 @@ function GraphAlgorithmMatrixSceneInner({ steps, framesPerStep }) {
                     height={cellSize - 8}
                     rx="16"
                     fill={fill}
-                    stroke="#334155"
+                    stroke={vTheme.complexity.chartBorder}
                     strokeWidth="3"
                   />
                   <text
                     x={startX + columnIndex * cellSize + (cellSize - 8) / 2}
                     y={startY + rowIndex * cellSize + cellSize / 2 + 8}
-                    fill="#111827"
+                    fill={state === 'default' ? vTheme.headerText : '#111827'}
                     fontSize="24"
                     fontWeight="700"
                     textAnchor="middle"

@@ -4,8 +4,8 @@
  * See LICENSE for details.
  */
 
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import GraphAlgorithmMatrixVisualizer from './GraphAlgorithmMatrixVisualizer.jsx';
 
 describe('GraphAlgorithmMatrixVisualizer', () => {
@@ -29,5 +29,37 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
 
     expect(screen.getByText('Intermediate: A')).toBeInTheDocument();
     expect(screen.getByText('0')).toBeInTheDocument();
+  });
+
+  it('keeps the completed matrix visible briefly before showing complexity', () => {
+    vi.useFakeTimers();
+
+    try {
+      render(
+        <GraphAlgorithmMatrixVisualizer
+          matrix={{
+            rowLabels: ['A'],
+            columnLabels: ['A'],
+            cells: [['0']],
+            cellStates: [['default']],
+          }}
+          graphArtifacts={{ badges: [] }}
+          description=""
+          isComplete
+          algorithm="floydWarshallAlgorithm"
+        />
+      );
+
+      expect(screen.getByText('0')).toBeInTheDocument();
+      expect(screen.queryByText('Complexity Analysis')).not.toBeInTheDocument();
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

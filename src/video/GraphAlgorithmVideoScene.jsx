@@ -25,6 +25,7 @@ function GraphAlgorithmVideoScene({
       <GraphAlgorithmMatrixScene
         steps={steps}
         framesPerStep={framesPerStep}
+        exportTheme={exportTheme}
       />
     );
   }

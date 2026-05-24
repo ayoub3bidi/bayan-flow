@@ -30,7 +30,8 @@
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
     "autoplayOnly": "uniquement",
     "treeNodeCount": "Nœuds de l'arbre",
-    "graphNodeCount": "Sommets du graphe"
+    "graphNodeCount": "Sommets du graphe",
+    "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier."
   },
   "modes": {
     "sorting": "Tri",

@@ -94,6 +94,9 @@ function SettingsPanel({
               step: GRAPH_NODE_COUNT.step,
             }
           : categoryConfig.sizeControl;
+  const isPresetGraphScenarioSelected =
+    algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM &&
+    Boolean(selectedGraphScenario);
 
   const sizeValue =
     effectiveSizeBinding === 'array'
@@ -324,7 +327,7 @@ function SettingsPanel({
         </button>
       </div>
 
-      {sizeControl.type === 'slider' && (
+      {sizeControl.type === 'slider' && !isPresetGraphScenarioSelected && (
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-2">
             {t(sizeControl.i18nKey)}: {sizeValue}
@@ -345,6 +348,12 @@ function SettingsPanel({
           </div>
         </div>
       )}
+
+      {isPresetGraphScenarioSelected ? (
+        <p className="text-xs text-text-secondary">
+          {t('settings.graphScenarioNodeCountLocked')}
+        </p>
+      ) : null}
 
       {sizeControl.type === 'buttons' && (
         <div>

@@ -134,4 +134,28 @@ describe('SettingsPanel', () => {
 
     expect(onGraphScenarioChange).toHaveBeenCalledWith('diamond');
   });
+
+  it('replaces the graph size slider with guidance while a preset scenario is selected', () => {
+    renderWithI18n(<SettingsPanel {...getBaseProps()} />);
+
+    expect(
+      screen.queryByRole('slider', { name: /graph vertices/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Preset scenarios use a fixed node count. Select Random graph to change it.'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('shows the graph size slider when random graph generation is selected', () => {
+    renderWithI18n(
+      <SettingsPanel {...getBaseProps({ selectedGraphScenario: null })} />
+    );
+
+    const sliders = screen.getAllByRole('slider');
+
+    expect(sliders).toHaveLength(2);
+    expect(sliders[1]).toBeEnabled();
+  });
 });

@@ -5,6 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ComplexityPanel from './ComplexityPanel';
 
@@ -17,8 +18,19 @@ function GraphAlgorithmMatrixVisualizer({
   complexityDataset = 'graphAlgorithm',
 }) {
   const { t } = useTranslation();
+  const [showComplexityPanel, setShowComplexityPanel] = useState(false);
 
-  if (isComplete) {
+  useEffect(() => {
+    if (isComplete) {
+      const timer = setTimeout(() => {
+        setShowComplexityPanel(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+    setShowComplexityPanel(false);
+  }, [isComplete]);
+
+  if (showComplexityPanel) {
     return (
       <ComplexityPanel
         algorithm={algorithm}
