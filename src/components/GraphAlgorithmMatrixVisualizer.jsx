@@ -115,9 +115,6 @@ function GraphAlgorithmMatrixVisualizer({
       </div>
       <div className="flex-1 min-h-0">
         <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-start pt-2 sm:pt-3">
-          <div className="mb-3 text-center text-sm font-semibold text-text-secondary sm:text-base">
-            {t('visualization.graphMatrix')}
-          </div>
           <div
             data-testid="graph-matrix-frame"
             data-density={layout.density}
