@@ -211,7 +211,7 @@
     "stepForward": "Step Forward",
     "stepBackward": "Step Backward",
     "reset": "Reset",
-    "generateArray": "Generate New Array",
+    "generateInput": "Generate New Input",
     "exportVideo": "Export Video",
     "rendering": "Rendering video…",
     "exportDone": "Video downloaded",

@@ -6,17 +6,15 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Hand, Volume2, VolumeX } from 'lucide-react';
+import { Play, Hand } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   ALGORITHM_TYPES,
-  ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPE_LIST,
   SEARCH_GRAPH_NODE_COUNT,
   TREE_NODE_COUNT,
 } from '../constants';
-import { soundManager } from '../utils/soundManager';
 import { useAlgorithmConfig } from '../config/algorithmConfig';
 import { useSettingsConfig } from '../config/settingsConfig';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
@@ -52,7 +50,6 @@ function SettingsPanel({
   const { t } = useTranslation();
   const [isAlgorithmDropdownOpen, setIsAlgorithmDropdownOpen] = useState(false);
   const [isScenarioDropdownOpen, setIsScenarioDropdownOpen] = useState(false);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const algorithmDropdownRef = useRef(null);
   const scenarioDropdownRef = useRef(null);
 
@@ -145,17 +142,6 @@ function SettingsPanel({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handleSoundToggle = async () => {
-    if (isSoundEnabled) {
-      soundManager.disable();
-      setIsSoundEnabled(false);
-    } else {
-      await soundManager.enable();
-      setIsSoundEnabled(true);
-      soundManager.playUIClick();
-    }
-  };
 
   return (
     <motion.div
@@ -304,29 +290,6 @@ function SettingsPanel({
           <span>{speedOptions[0].label}</span>
           <span>{speedOptions[speedOptions.length - 1].label}</span>
         </div>
-      </div>
-
-      {/* Sound Toggle */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <label className="block text-sm font-semibold text-text-primary">
-            {t('settings.sound')}
-          </label>
-          <span className="px-2.5 py-1 bg-amber-500/10 text-amber-500 text-xs font-semibold rounded-full border border-amber-500/20 whitespace-nowrap shadow-sm">
-            {t('settings.experimental')}
-          </span>
-        </div>
-        <button
-          onClick={handleSoundToggle}
-          className={`flex items-center justify-center gap-2 w-full px-4 py-3 min-h-[44px] text-sm font-medium rounded-lg transition-all duration-200 touch-manipulation ${
-            isSoundEnabled
-              ? 'bg-theme-primary-consistent text-white shadow-md'
-              : 'bg-surface-elevated text-text-primary hover:bg-border'
-          }`}
-        >
-          {isSoundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          {isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')}
-        </button>
       </div>
 
       {sizeControl.type === 'slider' && !isPresetGraphScenarioSelected && (

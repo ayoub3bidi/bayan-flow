@@ -231,35 +231,32 @@ vi.mock('tone', () => ({
 }));
 
 // Mock soundManager globally - prevents file execution
+const soundManagerState = {
+  isEnabled: false,
+};
+const soundManagerMock = {
+  playSound: vi.fn(),
+  playArrayGenerate: vi.fn(),
+  playCompare: vi.fn(),
+  playSwap: vi.fn(),
+  playPivot: vi.fn(),
+  playSorted: vi.fn(),
+  playNodeVisit: vi.fn(),
+  playPathFound: vi.fn(),
+  playUIClick: vi.fn(),
+  enable: vi.fn(async () => {
+    soundManagerState.isEnabled = true;
+  }),
+  disable: vi.fn(() => {
+    soundManagerState.isEnabled = false;
+  }),
+  getIsEnabled: vi.fn(() => soundManagerState.isEnabled),
+};
 vi.mock('../utils/soundManager', () => ({
-  soundManager: {
-    playSound: vi.fn(),
-    playArrayGenerate: vi.fn(),
-    playCompare: vi.fn(),
-    playSwap: vi.fn(),
-    playPivot: vi.fn(),
-    playSorted: vi.fn(),
-    playNodeVisit: vi.fn(),
-    playPathFound: vi.fn(),
-    playUIClick: vi.fn(),
-    enable: vi.fn(),
-    disable: vi.fn(),
-  },
+  soundManager: soundManagerMock,
 }));
 vi.mock('../utils/soundManager.js', () => ({
-  soundManager: {
-    playSound: vi.fn(),
-    playArrayGenerate: vi.fn(),
-    playCompare: vi.fn(),
-    playSwap: vi.fn(),
-    playPivot: vi.fn(),
-    playSorted: vi.fn(),
-    playNodeVisit: vi.fn(),
-    playPathFound: vi.fn(),
-    playUIClick: vi.fn(),
-    enable: vi.fn(),
-    disable: vi.fn(),
-  },
+  soundManager: soundManagerMock,
 }));
 
 // Mock gridHelpers globally to prevent issues when hooks are evaluated

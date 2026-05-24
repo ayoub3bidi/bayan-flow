@@ -96,6 +96,18 @@ function getBaseProps(overrides = {}) {
 }
 
 describe('SettingsPanel', () => {
+  it('does not render the sound section anymore', () => {
+    renderWithI18n(<SettingsPanel {...getBaseProps()} />);
+
+    expect(screen.queryByText('Sound')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Sound On' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Sound Off' })
+    ).not.toBeInTheDocument();
+  });
+
   it('shows the graph scenario selector in the settings panel for graph algorithms', () => {
     renderWithI18n(<SettingsPanel {...getBaseProps()} />);
 
