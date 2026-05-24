@@ -168,10 +168,16 @@
 
 ## Sound Notes
 
-- Sound enable/disable UI currently lives in `src/components/SettingsPanel.jsx`.
+- Sound enable/disable UI currently lives in `src/components/ControlPanel.jsx`.
+- Persisted sound preference and shared sound toggle state live in `src/pages/VisualizerApp.jsx`.
 - Actual audio state lives in the singleton `soundManager`.
 - If you touch sound UX, prefer lifting the enabled state into shared app state or exposing a reliable source of truth from `soundManager`.
 - Avoid duplicating sound effects across nested handlers; centralize the trigger in one layer per action.
+
+## Control Panel Notes
+
+- The shared regenerate action is category-neutral and should stay described as input regeneration, not array regeneration.
+- The shared control uses `Generate New Input` copy and a refresh-style icon because the same action regenerates arrays, grids, trees, and graphs depending on the active category.
 
 ## Adding Or Changing A Category
 
