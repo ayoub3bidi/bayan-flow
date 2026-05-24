@@ -196,46 +196,48 @@ function GraphAlgorithmSceneInner({
                 strokeLinecap="round"
                 markerEnd={directed ? 'url(#video-graph-arrowhead)' : undefined}
               />
-              {weighted && edge.weight != null ? (() => {
-                const label = getWeightLabelPosition(
-                  { x1, y1, x2, y2, mx, my },
-                  index,
-                  directed
-                );
-                const badgeWidth = getWeightBadgeWidth(edge.weight);
-                const badgeHeight = 5.9;
+              {weighted && edge.weight != null
+                ? (() => {
+                    const label = getWeightLabelPosition(
+                      { x1, y1, x2, y2, mx, my },
+                      index,
+                      directed
+                    );
+                    const badgeWidth = getWeightBadgeWidth(edge.weight);
+                    const badgeHeight = 5.9;
 
-                return (
-                  <g aria-hidden="true">
-                    <rect
-                      x={label.x - badgeWidth / 2}
-                      y={label.y - badgeHeight / 2}
-                      width={badgeWidth}
-                      height={badgeHeight}
-                      rx={2.25}
-                      fill={weightLabelPalette.bg}
-                      stroke={weightLabelPalette.border}
-                      strokeWidth={0.32}
-                    />
-                    <text
-                      x={label.x}
-                      y={label.y + 0.05}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      fill={weightLabelPalette.fill}
-                      style={{
-                        fontSize: 3.1,
-                        fontWeight: 800,
-                        paintOrder: 'stroke',
-                        stroke: weightLabelPalette.stroke,
-                        strokeWidth: 0.55,
-                      }}
-                    >
-                      {edge.weight}
-                    </text>
-                  </g>
-                );
-              })() : null}
+                    return (
+                      <g aria-hidden="true">
+                        <rect
+                          x={label.x - badgeWidth / 2}
+                          y={label.y - badgeHeight / 2}
+                          width={badgeWidth}
+                          height={badgeHeight}
+                          rx={2.25}
+                          fill={weightLabelPalette.bg}
+                          stroke={weightLabelPalette.border}
+                          strokeWidth={0.32}
+                        />
+                        <text
+                          x={label.x}
+                          y={label.y + 0.05}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          fill={weightLabelPalette.fill}
+                          style={{
+                            fontSize: 3.1,
+                            fontWeight: 800,
+                            paintOrder: 'stroke',
+                            stroke: weightLabelPalette.stroke,
+                            strokeWidth: 0.55,
+                          }}
+                        >
+                          {edge.weight}
+                        </text>
+                      </g>
+                    );
+                  })()
+                : null}
             </g>
           );
         })}

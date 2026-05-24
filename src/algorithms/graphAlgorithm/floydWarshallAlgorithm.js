@@ -67,7 +67,12 @@ function reconstructPath(ids, next, fromIndex, toIndex) {
   return path;
 }
 
-function buildGraphArtifacts(labels, intermediateId, path = null, hasNegativeCycle = false) {
+function buildGraphArtifacts(
+  labels,
+  intermediateId,
+  path = null,
+  hasNegativeCycle = false
+) {
   const badges = [];
 
   if (intermediateId) {
@@ -169,9 +174,7 @@ export function floydWarshallAlgorithmPure({ nodes = [], edges = [] }) {
     }
   }
 
-  const hasNegativeCycle = distances.some(
-    (row, index) => row[index] < 0
-  );
+  const hasNegativeCycle = distances.some((row, index) => row[index] < 0);
 
   return { distances, next, hasNegativeCycle, ids };
 }
@@ -215,7 +218,9 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
       labels,
       distances,
       cellStates,
-      description: getAlgorithmDescription(ALGORITHM_STEPS.FLOYD_WARSHALL_START),
+      description: getAlgorithmDescription(
+        ALGORITHM_STEPS.FLOYD_WARSHALL_START
+      ),
     })
   );
 
@@ -279,7 +284,9 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
     }
   }
 
-  const negativeCycleNodes = ids.filter((_, index) => distances[index][index] < 0);
+  const negativeCycleNodes = ids.filter(
+    (_, index) => distances[index][index] < 0
+  );
   if (negativeCycleNodes.length > 0) {
     cellStates = createMatrix(size, 'default');
     negativeCycleNodes.forEach(nodeId => {
@@ -311,7 +318,9 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
       labels,
       distances,
       cellStates: createMatrix(size, 'default'),
-      description: getAlgorithmDescription(ALGORITHM_STEPS.FLOYD_WARSHALL_FINISH),
+      description: getAlgorithmDescription(
+        ALGORITHM_STEPS.FLOYD_WARSHALL_FINISH
+      ),
     })
   );
 

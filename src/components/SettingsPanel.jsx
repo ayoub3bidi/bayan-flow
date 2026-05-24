@@ -62,7 +62,8 @@ function SettingsPanel({
   const { algorithms, groups } = byType[algorithmType];
 
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
-  const graphNodeCountRange = getGraphAlgorithmNodeCountRange(selectedAlgorithm);
+  const graphNodeCountRange =
+    getGraphAlgorithmNodeCountRange(selectedAlgorithm);
   const effectiveSizeBinding =
     algorithmType === ALGORITHM_TYPES.SEARCHING &&
     isNodeLinkSearchingAlgorithm(selectedAlgorithm)

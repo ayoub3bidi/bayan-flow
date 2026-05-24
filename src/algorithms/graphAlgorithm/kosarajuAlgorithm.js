@@ -56,7 +56,13 @@ function formatComponents(components, labels) {
   );
 }
 
-function buildGraphArtifacts({ passLabel, activeStack, finishOrder, sccs, labels }) {
+function buildGraphArtifacts({
+  passLabel,
+  activeStack,
+  finishOrder,
+  sccs,
+  labels,
+}) {
   return {
     badges: [
       {
@@ -67,7 +73,8 @@ function buildGraphArtifacts({ passLabel, activeStack, finishOrder, sccs, labels
         id: 'finish',
         text: i18n.t('visualization.finishStackBadge', {
           order: finishOrder.map(id => labels[id] ?? id).join(' → ') || '∅',
-          defaultValue: finishOrder.map(id => labels[id] ?? id).join(' → ') || '∅',
+          defaultValue:
+            finishOrder.map(id => labels[id] ?? id).join(' → ') || '∅',
         }),
       },
       {
@@ -81,7 +88,8 @@ function buildGraphArtifacts({ passLabel, activeStack, finishOrder, sccs, labels
         id: 'stack',
         text: i18n.t('visualization.sccStackBadge', {
           order: activeStack.map(id => labels[id] ?? id).join(' → ') || '∅',
-          defaultValue: activeStack.map(id => labels[id] ?? id).join(' → ') || '∅',
+          defaultValue:
+            activeStack.map(id => labels[id] ?? id).join(' → ') || '∅',
         }),
       },
     ],

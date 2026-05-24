@@ -225,4 +225,38 @@ describe('useGraphAlgorithmVisualization', () => {
     expect(result.current.graphNodes).toHaveLength(6);
     expect(result.current.graphMatrix?.cells).toHaveLength(6);
   });
+
+  it('falls back to random generation when the selected scenario is unsupported', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'topologicalSort',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        5,
+        'weightedTriangle'
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(0));
+
+    expect(result.current.graphNodes).toHaveLength(5);
+    expect(result.current.scenarioOptions).toHaveLength(6);
+  });
+
+  it('returns an empty step set for unknown graph algorithms', async () => {
+    const { result } = renderHook(() =>
+      useGraphAlgorithmVisualization(
+        'unknownAlgorithm',
+        1000,
+        VISUALIZATION_MODES.MANUAL,
+        4
+      )
+    );
+
+    await waitFor(() => expect(result.current.graphNodes).toHaveLength(4));
+
+    expect(result.current.totalSteps).toBe(0);
+    expect(result.current.representation).toBe(GRAPH_REPRESENTATIONS.NODE_LINK);
+    expect(result.current.scenarioOptions).toEqual([]);
+  });
 });

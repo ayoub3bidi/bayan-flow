@@ -155,6 +155,29 @@ describe('graphAlgorithmRegistry', () => {
     expect(clampGraphAlgorithmNodeCount('topologicalSort', 22)).toBe(18);
     expect(clampGraphAlgorithmNodeCount('floydWarshallAlgorithm', 9)).toBe(6);
     expect(clampGraphAlgorithmNodeCount('floydWarshallAlgorithm', 1)).toBe(3);
+    expect(clampGraphAlgorithmNodeCount('unknownAlgorithm', NaN)).toBe(3);
+  });
+
+  it('falls back gracefully for unknown algorithms and null scenarios', () => {
+    expect(getGraphAlgorithmProfile('unknownAlgorithm')).toBeNull();
+    expect(getGraphAlgorithmRepresentation('unknownAlgorithm')).toBe(
+      GRAPH_REPRESENTATIONS.NODE_LINK
+    );
+    expect(getGraphAlgorithmNodeCountRange('unknownAlgorithm')).toEqual({
+      min: 3,
+      max: 18,
+      step: 1,
+    });
+    expect(isGraphScenarioSupported('topologicalSort', null)).toBe(true);
+
+    const graph = createGraphInputForAlgorithm('unknownAlgorithm', {
+      nodeCount: 99,
+      rng: vi.fn(() => 0),
+    });
+
+    expect(graph.nodes).toHaveLength(18);
+    expect(graph.directed).toBe(true);
+    expect(graph.weighted).toBe(false);
   });
 
   it('returns scenario options for topologicalSort', () => {

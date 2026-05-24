@@ -26,7 +26,9 @@ describe('getExtraVisualizerProps', () => {
     graphEdgeStates: { '0->1': 'active' },
     graphStackOrder: ['0'],
     graphOutputOrder: [],
-    graphArtifacts: { badges: [{ id: 'frontier', text: 'Recursion stack: A' }] },
+    graphArtifacts: {
+      badges: [{ id: 'frontier', text: 'Recursion stack: A' }],
+    },
     graphMatrix: null,
     representation: GRAPH_REPRESENTATIONS.NODE_LINK,
     directed: true,

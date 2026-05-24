@@ -130,7 +130,9 @@ describe('SettingsPanel', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Graph scenario' }));
-    fireEvent.click(screen.getByRole('option', { name: 'Diamond Pattern (merge point)' }));
+    fireEvent.click(
+      screen.getByRole('option', { name: 'Diamond Pattern (merge point)' })
+    );
 
     expect(onGraphScenarioChange).toHaveBeenCalledWith('diamond');
   });

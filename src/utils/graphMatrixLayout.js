@@ -64,8 +64,7 @@ export function getGraphMatrixLayout({
     headerRowHeight + effectiveAxisGap + safeRowCount * cellSize;
   const startX = Math.round((viewportWidth - matrixWidth) / 2);
   const startY =
-    topSafeArea +
-    Math.max(0, Math.round((safeHeight - matrixHeight) / 2));
+    topSafeArea + Math.max(0, Math.round((safeHeight - matrixHeight) / 2));
   const gridStartX = startX + labelColumnWidth + effectiveAxisGap;
   const gridStartY = startY + headerRowHeight + effectiveAxisGap;
   const cellInset = clamp(

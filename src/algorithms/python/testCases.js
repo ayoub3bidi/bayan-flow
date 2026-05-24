@@ -665,14 +665,16 @@ const FLOYD_WARSHALL_ALGORITHM_TEST_CASES = [
     name: 'Positive weighted directed graph',
     input:
       "(['0', '1', '2', '3'], [('0', '1', 3), ('0', '3', 10), ('1', '2', 2), ('2', '3', 1), ('3', '1', 4)])",
-    expected: '([[0, 3, 5, 6], [None, 0, 2, 3], [None, 5, 0, 1], [None, 4, 6, 0]], False)',
+    expected:
+      '([[0, 3, 5, 6], [None, 0, 2, 3], [None, 5, 0, 1], [None, 4, 6, 0]], False)',
   },
   {
     id: 'floyd-negative-edge',
     name: 'Negative edge without negative cycle',
     input:
       "(['0', '1', '2', '3'], [('0', '1', 4), ('0', '2', 11), ('1', '2', -2), ('2', '3', 3), ('3', '1', 6)])",
-    expected: '([[0, 4, 2, 5], [None, 0, -2, 1], [None, 9, 0, 3], [None, 6, 4, 0]], False)',
+    expected:
+      '([[0, 4, 2, 5], [None, 0, -2, 1], [None, 9, 0, 3], [None, 6, 4, 0]], False)',
   },
   {
     id: 'floyd-negative-cycle',

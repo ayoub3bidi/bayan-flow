@@ -184,7 +184,8 @@ function App() {
   const visualization = visualizationMap[algorithmType];
 
   useEffect(() => {
-    const graphAlgorithmKey = selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
+    const graphAlgorithmKey =
+      selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
 
     if (
       selectedGraphScenario &&
@@ -192,14 +193,11 @@ function App() {
     ) {
       setSelectedGraphScenario(getDefaultGraphScenario(graphAlgorithmKey));
     }
-  }, [
-    selectedAlgorithms,
-    selectedGraphScenario,
-    setSelectedGraphScenario,
-  ]);
+  }, [selectedAlgorithms, selectedGraphScenario, setSelectedGraphScenario]);
 
   useEffect(() => {
-    const graphAlgorithmKey = selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
+    const graphAlgorithmKey =
+      selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
     setGraphNodeCount(prev =>
       clampGraphAlgorithmNodeCount(graphAlgorithmKey, prev)
     );

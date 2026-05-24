@@ -140,7 +140,11 @@ function GraphAlgorithmMatrixVisualizer({
               {columnLabels.map((label, columnIndex) => (
                 <text
                   key={`col-${label}`}
-                  x={layout.gridStartX + columnIndex * layout.cellSize + layout.cellSize / 2}
+                  x={
+                    layout.gridStartX +
+                    columnIndex * layout.cellSize +
+                    layout.cellSize / 2
+                  }
                   y={layout.startY + layout.headerRowHeight / 2 + 6}
                   fill="var(--color-text-primary)"
                   fontSize={layout.labelFontSize}
@@ -168,7 +172,8 @@ function GraphAlgorithmMatrixVisualizer({
                     {rowLabels[rowIndex] ?? rowIndex}
                   </text>
                   {row.map((value, columnIndex) => {
-                    const state = cellStates[rowIndex]?.[columnIndex] ?? 'default';
+                    const state =
+                      cellStates[rowIndex]?.[columnIndex] ?? 'default';
                     const cellStyle = getMatrixCellStyle(state);
 
                     return (

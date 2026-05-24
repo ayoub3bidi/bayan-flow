@@ -210,6 +210,7 @@ vi.mock('../components/SettingsPanel', () => ({
     algorithmType,
     selectedAlgorithm,
     selectedGraphScenario,
+    graphNodeCount,
     onAlgorithmTypeChange,
     onAlgorithmChange,
   }) => (
@@ -219,6 +220,7 @@ vi.mock('../components/SettingsPanel', () => ({
       <div data-testid="selected-graph-scenario">
         {String(selectedGraphScenario)}
       </div>
+      <div data-testid="graph-node-count">{String(graphNodeCount)}</div>
       <button onClick={() => onAlgorithmTypeChange('sorting')}>sorting</button>
       <button onClick={() => onAlgorithmTypeChange('pathfinding')}>
         pathfinding
@@ -231,6 +233,9 @@ vi.mock('../components/SettingsPanel', () => ({
       </button>
       <button onClick={() => onAlgorithmChange('quickSort')}>
         select-quick-sort
+      </button>
+      <button onClick={() => onAlgorithmChange('floydWarshallAlgorithm')}>
+        select-floyd-warshall
       </button>
     </div>
   ),
@@ -381,6 +386,20 @@ describe('VisualizerApp', () => {
     expect(screen.getByTestId('selected-graph-scenario')).toHaveTextContent(
       'linearChain'
     );
+  });
+
+  it('clamps graph node count when switching to Floyd-Warshall', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('graphAlgorithm'));
+    expect(screen.getByTestId('graph-node-count')).toHaveTextContent('10');
+
+    fireEvent.click(screen.getByText('select-floyd-warshall'));
+
+    expect(screen.getByTestId('selected-algorithm')).toHaveTextContent(
+      'floydWarshallAlgorithm'
+    );
+    expect(screen.getByTestId('graph-node-count')).toHaveTextContent('6');
   });
 
   it('preserves selected algorithms per category when switching tabs', async () => {

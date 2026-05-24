@@ -289,7 +289,9 @@ export function tarjanAlgorithm({ nodes = [], edges = [], adjacency = {} }) {
 
       push(
         getAlgorithmDescription(ALGORITHM_STEPS.TARJAN_SCC_FOUND, {
-          component: sortedComponent.map(nodeId => labels[nodeId] ?? nodeId).join(', '),
+          component: sortedComponent
+            .map(nodeId => labels[nodeId] ?? nodeId)
+            .join(', '),
         }),
         id
       );

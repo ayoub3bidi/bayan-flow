@@ -87,7 +87,9 @@ describe('floydWarshallAlgorithm visualization', () => {
       ],
     });
     const last = steps.at(-1);
-    const updateStep = steps.find(step => step.graphArtifacts.badges.length > 1);
+    const updateStep = steps.find(
+      step => step.graphArtifacts.badges.length > 1
+    );
 
     expect(steps.length).toBeGreaterThan(2);
     expect(last.representation).toBe(GRAPH_REPRESENTATIONS.MATRIX);

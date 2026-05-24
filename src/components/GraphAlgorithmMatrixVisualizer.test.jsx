@@ -94,4 +94,43 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
     expect(frame.className).toContain('overflow-hidden');
     expect(frame.className).not.toContain('overflow-auto');
   });
+
+  it('renders state-specific matrix cell colors and the description pill', () => {
+    const { container } = render(
+      <GraphAlgorithmMatrixVisualizer
+        matrix={{
+          rowLabels: ['A', 'B'],
+          columnLabels: ['A', 'B'],
+          cells: [
+            ['0', '1'],
+            ['2', '3'],
+          ],
+          cellStates: [
+            ['current', 'updated'],
+            ['considering', 'default'],
+          ],
+        }}
+        graphArtifacts={{ badges: [] }}
+        description="algorithmSteps.floydWarshallIntermediate"
+        isComplete={false}
+        algorithm="floydWarshallAlgorithm"
+      />
+    );
+
+    const rects = container.querySelectorAll('rect');
+    const valueTexts = screen
+      .getAllByText(/^[0-3]$/)
+      .filter(node => node.tagName.toLowerCase() === 'text');
+
+    expect(rects[0]).toHaveAttribute('fill', '#fed7aa');
+    expect(rects[1]).toHaveAttribute('fill', '#bbf7d0');
+    expect(rects[2]).toHaveAttribute('fill', '#bfdbfe');
+    expect(rects[3]).toHaveAttribute('fill', 'var(--color-bg)');
+    expect(valueTexts[0]).toHaveAttribute('fill', '#9a3412');
+    expect(valueTexts[1]).toHaveAttribute('fill', '#166534');
+    expect(valueTexts[2]).toHaveAttribute('fill', '#1d4ed8');
+    expect(
+      screen.getByText(/Allow .* intermediate vertex/i)
+    ).toBeInTheDocument();
+  });
 });

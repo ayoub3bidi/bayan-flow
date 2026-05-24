@@ -8,8 +8,10 @@ import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import GraphAlgorithmMatrixScene from './GraphAlgorithmMatrixScene.jsx';
 
+let currentFrame = 0;
+
 vi.mock('remotion', () => ({
-  useCurrentFrame: () => 0,
+  useCurrentFrame: () => currentFrame,
   interpolateColors: vi.fn((_value, _range, colors) => colors[1]),
 }));
 
@@ -84,5 +86,60 @@ describe('GraphAlgorithmMatrixScene', () => {
     expect(Number(firstCell?.getAttribute('x'))).toBeGreaterThanOrEqual(180);
     expect(Number(firstCell?.getAttribute('y'))).toBeGreaterThanOrEqual(210);
     expect(Number(firstCell?.getAttribute('width'))).toBeGreaterThan(0);
+  });
+
+  it('renders stateful matrix cells and dark-theme text treatment', () => {
+    currentFrame = 2;
+
+    const { container } = render(
+      <GraphAlgorithmMatrixScene
+        framesPerStep={2}
+        exportTheme="dark"
+        steps={[
+          {
+            matrix: {
+              rowLabels: ['A'],
+              columnLabels: ['A', 'B', 'C', 'D'],
+              cells: [['0', '1', '2', '3']],
+              cellStates: [['default', 'updated', 'considering', 'current']],
+            },
+          },
+          {
+            matrix: {
+              rowLabels: ['A'],
+              columnLabels: ['A', 'B', 'C', 'D'],
+              cells: [['0', '1', '2', '3']],
+              cellStates: [['default', 'updated', 'considering', 'current']],
+            },
+          },
+        ]}
+      />
+    );
+
+    const rects = container.querySelectorAll('rect');
+    const texts = Array.from(container.querySelectorAll('text')).filter(node =>
+      ['0', '1', '2', '3'].includes(node.textContent ?? '')
+    );
+
+    expect(rects[0]).toHaveAttribute('fill', '#1f2937');
+    expect(rects[1]).toHaveAttribute('fill', '#86efac');
+    expect(rects[2]).toHaveAttribute('fill', '#93c5fd');
+    expect(rects[3]).toHaveAttribute('fill', '#fdba74');
+    expect(texts[0]).toHaveAttribute('fill', '#f9fafb');
+    expect(texts[1]).toHaveAttribute('fill', '#111827');
+    expect(texts[2]).toHaveAttribute('fill', '#111827');
+    expect(texts[3]).toHaveAttribute('fill', '#111827');
+  });
+
+  it('returns nothing when no matrix cells are available', () => {
+    const { container } = render(
+      <GraphAlgorithmMatrixScene
+        framesPerStep={1}
+        exportTheme="dark"
+        steps={[{ matrix: { rowLabels: [], columnLabels: [], cells: [] } }]}
+      />
+    );
+
+    expect(container).toBeEmptyDOMElement();
   });
 });

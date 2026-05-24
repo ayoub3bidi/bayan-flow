@@ -164,31 +164,26 @@ function GraphVisualizer({
     () => Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id])),
     [nodes]
   );
-  const graphBadgeItems =
-    Array.isArray(graphArtifacts.badges)
-      ? graphArtifacts.badges
-      : [
-          stackOrder.length > 0
-            ? {
-                id: 'frontier',
-                text: t('visualization.recursionStackBadge', {
-                  order: stackOrder
-                    .map(id => labelById[id] ?? id)
-                    .join(' → '),
-                }),
-              }
-            : null,
-          outputOrder.length > 0
-            ? {
-                id: 'result',
-                text: t('visualization.topologicalOrderBadge', {
-                  order: outputOrder
-                    .map(id => labelById[id] ?? id)
-                    .join(' → '),
-                }),
-              }
-            : null,
-        ].filter(Boolean);
+  const graphBadgeItems = Array.isArray(graphArtifacts.badges)
+    ? graphArtifacts.badges
+    : [
+        stackOrder.length > 0
+          ? {
+              id: 'frontier',
+              text: t('visualization.recursionStackBadge', {
+                order: stackOrder.map(id => labelById[id] ?? id).join(' → '),
+              }),
+            }
+          : null,
+        outputOrder.length > 0
+          ? {
+              id: 'result',
+              text: t('visualization.topologicalOrderBadge', {
+                order: outputOrder.map(id => labelById[id] ?? id).join(' → '),
+              }),
+            }
+          : null,
+      ].filter(Boolean);
 
   const legendItems = isGraphAlgorithm
     ? [
@@ -318,40 +313,40 @@ function GraphVisualizer({
               }
               aria-live="polite"
             >
-              {isGraphAlgorithm
-                ? graphBadgeItems.map(badge => (
-                    <motion.span
-                      key={badge.id}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.15 }}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
-                    >
-                      <span className="font-semibold text-text-primary">
-                        {badge.text}
-                      </span>
-                    </motion.span>
-                  ))
-                : (
-                    <motion.span
-                      animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
-                      transition={{ duration: 0.15 }}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
-                    >
-                      <span className="font-semibold text-text-primary">
-                        {stackOrder.length > 0
-                          ? isBfsGraph
-                            ? t('visualization.queueFront', {
-                                front: stackOrder[0],
-                                defaultValue: `Queue front: ${stackOrder[0]}`,
-                              })
-                            : t('visualization.stackTop', {
-                                top: stackOrder[stackOrder.length - 1],
-                                defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
-                              })
-                          : '\u00a0'}
-                      </span>
-                    </motion.span>
-                  )}
+              {isGraphAlgorithm ? (
+                graphBadgeItems.map(badge => (
+                  <motion.span
+                    key={badge.id}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.15 }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+                  >
+                    <span className="font-semibold text-text-primary">
+                      {badge.text}
+                    </span>
+                  </motion.span>
+                ))
+              ) : (
+                <motion.span
+                  animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+                >
+                  <span className="font-semibold text-text-primary">
+                    {stackOrder.length > 0
+                      ? isBfsGraph
+                        ? t('visualization.queueFront', {
+                            front: stackOrder[0],
+                            defaultValue: `Queue front: ${stackOrder[0]}`,
+                          })
+                        : t('visualization.stackTop', {
+                            top: stackOrder[stackOrder.length - 1],
+                            defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
+                          })
+                      : '\u00a0'}
+                  </span>
+                </motion.span>
+              )}
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center overflow-auto touch-pan-y pb-12 sm:pb-14 min-h-0">
@@ -399,47 +394,49 @@ function GraphVisualizer({
                           directed ? 'url(#graph-arrowhead)' : undefined
                         }
                       />
-                      {weighted && e.weight != null ? (() => {
-                        const label = getWeightLabelPosition(
-                          line,
-                          i,
-                          directed
-                        );
-                        const badgeWidth = getWeightBadgeWidth(e.weight);
-                        const badgeHeight = 5.9;
+                      {weighted && e.weight != null
+                        ? (() => {
+                            const label = getWeightLabelPosition(
+                              line,
+                              i,
+                              directed
+                            );
+                            const badgeWidth = getWeightBadgeWidth(e.weight);
+                            const badgeHeight = 5.9;
 
-                        return (
-                          <g aria-hidden="true">
-                            <rect
-                              x={label.x - badgeWidth / 2}
-                              y={label.y - badgeHeight / 2}
-                              width={badgeWidth}
-                              height={badgeHeight}
-                              rx={2.25}
-                              fill={weightLabelPalette.bg}
-                              stroke={weightLabelPalette.border}
-                              strokeWidth={0.32}
-                            />
-                            <text
-                              x={label.x}
-                              y={label.y + 0.05}
-                              textAnchor="middle"
-                              dominantBaseline="central"
-                              fill={weightLabelPalette.fill}
-                              className="pointer-events-none"
-                              style={{
-                                fontSize: 3.1,
-                                fontWeight: 800,
-                                paintOrder: 'stroke',
-                                stroke: weightLabelPalette.stroke,
-                                strokeWidth: 0.55,
-                              }}
-                            >
-                              {e.weight}
-                            </text>
-                          </g>
-                        );
-                      })() : null}
+                            return (
+                              <g aria-hidden="true">
+                                <rect
+                                  x={label.x - badgeWidth / 2}
+                                  y={label.y - badgeHeight / 2}
+                                  width={badgeWidth}
+                                  height={badgeHeight}
+                                  rx={2.25}
+                                  fill={weightLabelPalette.bg}
+                                  stroke={weightLabelPalette.border}
+                                  strokeWidth={0.32}
+                                />
+                                <text
+                                  x={label.x}
+                                  y={label.y + 0.05}
+                                  textAnchor="middle"
+                                  dominantBaseline="central"
+                                  fill={weightLabelPalette.fill}
+                                  className="pointer-events-none"
+                                  style={{
+                                    fontSize: 3.1,
+                                    fontWeight: 800,
+                                    paintOrder: 'stroke',
+                                    stroke: weightLabelPalette.stroke,
+                                    strokeWidth: 0.55,
+                                  }}
+                                >
+                                  {e.weight}
+                                </text>
+                              </g>
+                            );
+                          })()
+                        : null}
                     </g>
                   );
                 })}

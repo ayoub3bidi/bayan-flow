@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { GRAPH_EDGE_STATES } from '../../constants/index.js';
+import { GRAPH_EDGE_STATES, GRAPH_NODE_STATES } from '../../constants/index.js';
 import { primAlgorithm, primAlgorithmPure } from './primAlgorithm.js';
 
 const nodes = [
@@ -27,6 +27,14 @@ const edges = [
 ];
 
 describe('primAlgorithmPure', () => {
+  it('returns an empty result when the graph has no nodes', () => {
+    expect(primAlgorithmPure({ nodes: [], edges: [] })).toEqual({
+      mstEdges: [],
+      totalWeight: 0,
+      startNode: null,
+    });
+  });
+
   it('returns an MST with optimal total weight from the smallest start node', () => {
     const result = primAlgorithmPure({ nodes, edges });
 
@@ -65,5 +73,21 @@ describe('primAlgorithm visualization', () => {
     expect(last.edgeStates['0<->1']).toBe(GRAPH_EDGE_STATES.SELECTED);
     expect(last.edgeStates['1<->2']).toBe(GRAPH_EDGE_STATES.SELECTED);
     expect(last.graphArtifacts.badges).toHaveLength(2);
+  });
+
+  it('leaves disconnected vertices unselected in the final tree state', () => {
+    const steps = primAlgorithm({
+      nodes: [
+        { id: '0', x: 0.1, y: 0.4 },
+        { id: '1', x: 0.4, y: 0.4 },
+        { id: '2', x: 0.8, y: 0.4 },
+      ],
+      edges: [{ from: '0', to: '1', weight: 4 }],
+    });
+    const last = steps.at(-1);
+
+    expect(last.nodes).toHaveLength(3);
+    expect(last.edgeStates['0|1']).toBe(GRAPH_EDGE_STATES.SELECTED);
+    expect(last.nodeStates['2']).toBe(GRAPH_NODE_STATES.DEFAULT);
   });
 });
