@@ -9,20 +9,23 @@ import { FileText, AlertCircle, Map } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import {
+  GITHUB_REPO_NAME,
+  GITHUB_REPO_OWNER,
+  GITHUB_REPO_URL,
+} from '../constants/githubRepo';
 
 function Footer() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [version, setVersion] = useState(null);
   const currentYear = new Date().getFullYear();
-  const repoOwner = 'ayoub3bidi';
-  const repoName = 'bayan-flow';
 
   useEffect(() => {
     const fetchLatestVersion = async () => {
       try {
         const response = await fetch(
-          `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`
+          `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch release data');
@@ -40,18 +43,18 @@ function Footer() {
     };
 
     fetchLatestVersion();
-  }, [repoOwner, repoName]);
+  }, []);
 
   const links = [
     {
       label: t('footer.viewDocs'),
       icon: FileText,
-      href: `https://github.com/${repoOwner}/${repoName}/tree/main/docs`,
+      href: `${GITHUB_REPO_URL}/tree/main/docs`,
     },
     {
       label: t('footer.reportIssue'),
       icon: AlertCircle,
-      href: `https://github.com/${repoOwner}/${repoName}/issues`,
+      href: `${GITHUB_REPO_URL}/issues`,
     },
     {
       label: t('landing.footer.seeRoadmap'),

@@ -7,8 +7,8 @@
   "header": {
     "title": "بيان Flow",
     "subtitle": "الوضوح في الخوارزميات",
-    "starOnGithub": "نجمة على GitHub",
-    "viewOnGithub": "عرض على GitHub"
+    "openGithubRepo": "فتح {{repo}} على GitHub — الإصدار {{version}}، {{stars}} نجمة، {{forks}} fork",
+    "goToRepository": "الانتقال إلى المستودع"
   },
   "settings": {
     "title": "الإعدادات",

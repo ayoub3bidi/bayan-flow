@@ -7,8 +7,8 @@
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarity in Algorithms",
-    "starOnGithub": "Star on GitHub",
-    "viewOnGithub": "View on GitHub"
+    "openGithubRepo": "Open {{repo}} on GitHub — version {{version}}, {{stars}} stars, {{forks}} forks",
+    "goToRepository": "Go to repository"
   },
   "settings": {
     "title": "Settings",
