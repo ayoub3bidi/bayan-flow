@@ -155,6 +155,7 @@
   - `src/algorithms/python/**`
   - `src/algorithms/pseudocode/**`
 - Audio:
+  - `src/utils/soundEvents.js`
   - `src/utils/soundManager.js`
   - `src/utils/soundFrequencies.js`
   - `src/utils/toneInstrumentPresets.js`
@@ -191,6 +192,7 @@
 - `getExtraVisualizerProps()` centralizes category-specific props for visualizer components.
 - `VIDEO_SCENE_RENDERERS` selects the Remotion scene.
 - `COMPLEXITY_DATASETS` must stay aligned with `CATEGORY_CONFIG[category].complexityDataset`.
+- Visualization sound is emitted from the shared playback layer through `getSoundEventsForStep()`, not from category-specific UI controls.
 
 ## Category-Specific Contracts
 
@@ -281,11 +283,18 @@
 
 - Sound enable/disable UI lives in `src/components/ControlPanel.jsx`.
 - Persisted sound preference and shared sound toggle state live in `src/pages/VisualizerApp.jsx`.
-- Actual audio state lives in the singleton `soundManager`.
+- Semantic sound event derivation lives in `src/utils/soundEvents.js`.
+- Actual Tone.js playback state lives in the singleton `soundManager`.
 - If you touch sound UX, keep the enabled state synchronized with `soundManager.getIsEnabled()` and local storage.
-- Avoid duplicating sound effects across nested handlers; centralize the trigger in one layer per action.
+- Sound is visualization-only: do not add click, settings, panel, export-button, fullscreen, or regeneration sounds.
+- Do not infer sound from localized `description` text. Use stable visual state or explicit semantic step metadata.
+- `useVisualization` is responsible for emitting sound during intentional forward playback/manual stepping. Initial load, reset, step-back, algorithm changes, and passive regeneration should stay silent.
+- `soundManager` should create Tone instruments lazily after sound is enabled, not at module import.
+- Interactive playback and export audio should consume the same sound events so they do not drift.
+- Graph algorithm and Floyd-Warshall matrix sound parity must cover both interactive visualization and Remotion export.
 - Export uses `@remotion/web-renderer`, supports horizontal and vertical orientations, and renders MP4/H.264 when the browser supports it.
 - `AlgorithmVideo` adds title, step counter, localized description, watermark, optional export audio, and final complexity scene.
+- `buildExportSoundCues()` should schedule cues from `getSoundEventsForStep()` and must not special-case translated copy.
 - Export descriptions use `resolveStepDescription()` and normalized export language. Keep description keys localizable.
 
 ## Adding Or Changing A Category
@@ -311,7 +320,8 @@
 6. Add pseudocode in all three pseudocode string files.
 7. Add Python code in `src/algorithms/python/` and register it in `src/algorithms/python/index.js`.
 8. Add Python test cases in `src/algorithms/python/testCases.js`.
-9. Add or extend tests for algorithm logic, registry wiring, hook behavior, visualizers, export scenes, Python index, complexity metadata, pseudocode, and insight metadata.
+9. Add/update semantic sound-event coverage in `src/utils/soundEvents.js` when the algorithm introduces new visual action states.
+10. Add or extend tests for algorithm logic, registry wiring, hook behavior, visualizers, export scenes, Python index, complexity metadata, pseudocode, sound events, and insight metadata.
 
 ## Adding A New Graph Algorithm
 
@@ -324,7 +334,8 @@
 7. Add pseudocode in all three pseudocode string files.
 8. Add Python code in `src/algorithms/python/` and register it in `src/algorithms/python/index.js`.
 9. Add Python test cases in `src/algorithms/python/testCases.js`.
-10. Add or extend tests for JS logic, graph profile/scenario wiring, hook behavior, visualizers, export scenes, Python index, complexity metadata, pseudocode, and insight metadata.
+10. Add/update graph or matrix sound-event coverage in `src/utils/soundEvents.js`.
+11. Add or extend tests for JS logic, graph profile/scenario wiring, hook behavior, visualizers, export scenes, Python index, complexity metadata, pseudocode, sound events, and insight metadata.
 
 ## Testing Workflow
 
@@ -343,7 +354,11 @@
   - `pnpm vitest run src/video/GraphAlgorithmVideoScene.test.jsx`
   - `pnpm vitest run src/video/GraphAlgorithmMatrixScene.test.jsx`
   - `pnpm vitest run src/hooks/useCategoryVisualizations.test.js`
+  - `pnpm vitest run src/hooks/useVisualization.test.js`
   - `pnpm vitest run src/hooks/useGraphAlgorithmVisualization.test.js`
+  - `pnpm vitest run src/utils/soundEvents.test.js`
+  - `pnpm vitest run src/utils/soundManager.test.js`
+  - `pnpm vitest run src/video/audio/buildExportSoundCues.test.js`
   - `pnpm vitest run src/algorithms/graphAlgorithm/*.test.js`
   - `pnpm vitest run src/algorithms/python/index.test.js`
   - `pnpm vitest run src/algorithms/pseudocode/index.test.js`
@@ -360,6 +375,9 @@
 - Keep shared registries synchronized; this codebase relies on configuration completeness more than ad hoc branching.
 - When changing a user-facing label or category concept, audit all locales and export fallbacks, not just the visible screen you touched.
 - When changing an algorithm, keep JS logic, UI, export, i18n, pseudocode, Python snippets, Python tests, complexity metadata, and insight metadata category-consistent.
+- When changing visual step states, keep `soundEvents` and export audio cue tests aligned with the new visual behavior.
+- Do not reintroduce controller/settings sounds; sound should come from visualization steps only.
+- Treat silence as intentional: if a new step has no sound, make sure that is a deliberate choice rather than an omitted event mapping.
 - For net-new graph algorithms, keep commits scoped to one completed algorithm at a time.
 - If a shared helper is required, add it in the earliest commit that needs it.
 - Prefer existing hooks, registries, helpers, and component patterns over one-off branches.

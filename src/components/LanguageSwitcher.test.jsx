@@ -7,16 +7,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import LanguageSwitcher from './LanguageSwitcher';
-
-// Mock framer-motion to avoid animation issues in tests
-vi.mock('framer-motion', () => ({
-  motion: {
-    button: ({ children, ...props }) => <button {...props}>{children}</button>,
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-  },
-  AnimatePresence: ({ children }) => <>{children}</>,
-}));
-
 // Mock react-i18next
 const mockChangeLanguage = vi.fn();
 const mockUseTranslation = vi.fn(() => ({

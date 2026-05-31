@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 /**
  * Asserts that pathfinding visualization steps have the required structure
@@ -626,6 +626,10 @@ describe('Pathfinding Algorithms - Visualization Versions', () => {
     });
 
     it('should return empty steps for invalid inputs', () => {
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
       const emptyGrid = Array(4)
         .fill(null)
         .map(() => Array(4).fill(0));
@@ -646,6 +650,7 @@ describe('Pathfinding Algorithms - Visualization Versions', () => {
         4
       );
       expect(outOfBoundsStart).toEqual([]);
+      consoleSpy.mockRestore();
     });
   });
 
@@ -750,6 +755,10 @@ describe('Pathfinding Algorithms - Visualization Versions', () => {
     });
 
     it('should return empty steps for invalid inputs', () => {
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
       const emptyGrid = Array(4)
         .fill(null)
         .map(() => Array(4).fill(0));
@@ -761,6 +770,7 @@ describe('Pathfinding Algorithms - Visualization Versions', () => {
 
       const noEnd = idaStar(emptyGrid, validStart, null, 4, 4);
       expect(noEnd).toEqual([]);
+      consoleSpy.mockRestore();
     });
   });
 

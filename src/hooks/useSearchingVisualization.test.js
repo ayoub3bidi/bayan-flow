@@ -13,9 +13,7 @@ import { useSearchingVisualization } from './useSearchingVisualization.js';
 
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
-    playCompare: vi.fn(),
-    playNodeVisit: vi.fn(),
-    playPathFound: vi.fn(),
+    playEvents: vi.fn(),
   },
 }));
 
@@ -254,7 +252,7 @@ describe('useSearchingVisualization', () => {
     expect(result.current.currentStep).toBe(1);
   });
 
-  it('calls playCompare when applied step includes COMPARING', async () => {
+  it('emits a compare sound event when applied step includes COMPARING', async () => {
     const values = [1, 3, 5, 7, 9];
     const { result } = renderHook(() =>
       useSearchingVisualization(
@@ -277,7 +275,9 @@ describe('useSearchingVisualization', () => {
     });
 
     const midValue = values[Math.floor((0 + (values.length - 1)) / 2)];
-    expect(soundManager.playCompare).toHaveBeenCalledWith(midValue);
+    expect(soundManager.playEvents).toHaveBeenCalledWith([
+      { kind: 'compare', value: midValue },
+    ]);
   });
 
   it('updates targetValue when stepping through steps that include targetValue', async () => {

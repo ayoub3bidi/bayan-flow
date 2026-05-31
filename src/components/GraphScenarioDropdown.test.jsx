@@ -9,14 +9,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
 import GraphScenarioDropdown from './GraphScenarioDropdown';
 
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }) => <>{children}</>,
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }) => <button {...props}>{children}</button>,
-  },
-}));
-
 function getBaseProps(overrides = {}) {
   return {
     scenarioOptions: [

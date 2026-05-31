@@ -16,6 +16,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { TONE_INSTRUMENT_PRESETS } from '../src/utils/toneInstrumentPresets.js';
 import { getCompareFrequency, getPivotFrequency } from '../src/utils/soundFrequencies.js';
+import { SOUND_EVENT_KINDS } from '../src/utils/soundEvents.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -43,7 +44,7 @@ await page.goto('about:blank');
 await page.addScriptTag({ path: toneBundle });
 
 const base64ByName = await page.evaluate(
-  async ({ presets, compareFreq: cf, pivotFreq: pf }) => {
+  async ({ presets, compareFreq: cf, pivotFreq: pf, SOUND_EVENT_KINDS }) => {
     const Tone = window.Tone;
     if (!Tone) {
       throw new Error('Tone not found on window');
@@ -118,20 +119,68 @@ const base64ByName = await page.evaluate(
       s.triggerAttackRelease(pf, '8n', 0.02);
     }, 0.65);
 
-    results.sorted = await toB64(() => {
+    results[SOUND_EVENT_KINDS.COMPLETE] = await toB64(() => {
       const p = new Tone.PolySynth().toDestination();
       p.triggerAttackRelease(['C4', 'E4', 'G4'], '2n', 0.05);
     }, 2.6);
 
-    results.nodeVisit = await toB64(() => {
+    results[SOUND_EVENT_KINDS.VISIT] = await toB64(() => {
       const s = new Tone.Synth(presets.softSynth).toDestination();
       s.triggerAttackRelease(220, '64n', 0.02);
     }, 0.3);
 
-    results.pathFound = await toB64(() => {
+    results[SOUND_EVENT_KINDS.FRONTIER] = await toB64(() => {
+      const p = new Tone.PluckSynth(presets.pluckSynth).toDestination();
+      p.triggerAttackRelease('D4', '32n', 0.02);
+    }, 0.3);
+
+    results[SOUND_EVENT_KINDS.TARGET_FOUND] = await toB64(() => {
+      const p = new Tone.PolySynth().toDestination();
+      p.triggerAttackRelease(['E4', 'G4', 'B4'], '4n', 0.05);
+    }, 1.4);
+
+    results[SOUND_EVENT_KINDS.PATH_FOUND] = await toB64(() => {
       const p = new Tone.PolySynth().toDestination();
       p.triggerAttackRelease(['C3', 'E3', 'G3', 'C4'], '1n', 0.05);
     }, 3.2);
+
+    results[SOUND_EVENT_KINDS.NO_RESULT] = await toB64(() => {
+      const p = new Tone.PolySynth().toDestination();
+      p.triggerAttackRelease(['D3', 'F3', 'A3'], '4n', 0.05);
+    }, 1.2);
+
+    results[SOUND_EVENT_KINDS.EDGE_CONSIDER] = await toB64(() => {
+      const p = new Tone.PluckSynth(presets.pluckSynth).toDestination();
+      p.triggerAttackRelease('A3', '32n', 0.02);
+    }, 0.3);
+
+    results[SOUND_EVENT_KINDS.EDGE_SELECT] = await toB64(() => {
+      const m = new Tone.MetalSynth(presets.metallicSynth).toDestination();
+      m.triggerAttackRelease('16n', 0.02);
+    }, 0.55);
+
+    results[SOUND_EVENT_KINDS.CYCLE] = await toB64(() => {
+      const p = new Tone.PolySynth().toDestination();
+      p.triggerAttackRelease(['C3', 'F#3'], '8n', 0.05);
+    }, 0.85);
+
+    results[SOUND_EVENT_KINDS.MATRIX_CONSIDER] = await toB64(() => {
+      const s = new Tone.Synth(presets.softSynth).toDestination();
+      s.triggerAttackRelease('B3', '32n', 0.02);
+    }, 0.3);
+
+    results[SOUND_EVENT_KINDS.MATRIX_UPDATE] = await toB64(() => {
+      const s = new Tone.Synth(presets.softSynth).toDestination();
+      s.triggerAttackRelease('E4', '16n', 0.02);
+    }, 0.55);
+
+    results[SOUND_EVENT_KINDS.COMPONENT_COMPLETE] = await toB64(() => {
+      const p = new Tone.PolySynth().toDestination();
+      p.triggerAttackRelease(['A3', 'C4', 'E4'], '4n', 0.05);
+    }, 1.4);
+
+    results.sorted = results[SOUND_EVENT_KINDS.COMPLETE];
+    results.nodeVisit = results[SOUND_EVENT_KINDS.VISIT];
 
     return results;
   },
@@ -139,6 +188,7 @@ const base64ByName = await page.evaluate(
     presets: TONE_INSTRUMENT_PRESETS,
     compareFreq,
     pivotFreq,
+    SOUND_EVENT_KINDS,
   }
 );
 

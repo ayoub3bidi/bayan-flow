@@ -261,7 +261,7 @@ function App() {
       try {
         await soundManager.enable();
       } catch {
-        // Keep the preference; the user can toggle sound again if resume fails.
+        setIsSoundEnabled(false);
       }
     };
 
@@ -331,9 +331,6 @@ function App() {
       await soundManager.enable();
       const nextEnabledState = soundManager.getIsEnabled();
       setIsSoundEnabled(nextEnabledState);
-      if (nextEnabledState) {
-        soundManager.playUIClick();
-      }
     } catch (error) {
       console.error('[Sound Toggle]', error);
       setIsSoundEnabled(false);

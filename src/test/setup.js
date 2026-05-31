@@ -200,6 +200,28 @@ const constantsMockValue = {
 vi.mock('../constants', () => constantsMockValue);
 vi.mock('../constants/index.js', () => constantsMockValue);
 
+vi.mock('framer-motion', async () => {
+  const { createFramerMotionMock } = await import('./framerMotionMock.jsx');
+  return createFramerMotionMock();
+});
+
+if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    configurable: true,
+    value: vi.fn(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(() => false),
+    })),
+  });
+}
+
 // Mock Tone.js globally FIRST - soundManager depends on it
 // Use exact pattern from soundManager.test.js which successfully tests soundManager
 vi.mock('tone', () => ({
@@ -235,15 +257,7 @@ const soundManagerState = {
   isEnabled: false,
 };
 const soundManagerMock = {
-  playSound: vi.fn(),
-  playArrayGenerate: vi.fn(),
-  playCompare: vi.fn(),
-  playSwap: vi.fn(),
-  playPivot: vi.fn(),
-  playSorted: vi.fn(),
-  playNodeVisit: vi.fn(),
-  playPathFound: vi.fn(),
-  playUIClick: vi.fn(),
+  playEvents: vi.fn(),
   enable: vi.fn(async () => {
     soundManagerState.isEnabled = true;
   }),

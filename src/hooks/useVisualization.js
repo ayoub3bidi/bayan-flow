@@ -38,11 +38,14 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { VISUALIZATION_MODES } from '../constants/index.js';
+import { getSoundEventsForStep } from '../utils/soundEvents.js';
+import { soundManager } from '../utils/soundManager.js';
 
 export function useVisualization({
   executeStep,
   speed,
   mode = VISUALIZATION_MODES.MANUAL,
+  soundContext = null,
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -71,11 +74,22 @@ export function useVisualization({
 
   // Stable helper: apply a step and update description.
   const applyStep = useCallback(
-    step => {
+    (step, { emitSound = false, stepIndex = 0 } = {}) => {
       executeStep(step);
       setDescription(step.description ?? '');
+      if (emitSound && soundContext) {
+        const soundEvents = getSoundEventsForStep({
+          ...soundContext,
+          step,
+          stepIndex,
+          totalSteps: stepsRef.current.length,
+        });
+        if (soundEvents.length > 0) {
+          soundManager.playEvents(soundEvents);
+        }
+      }
     },
-    [executeStep]
+    [executeStep, soundContext]
   );
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
@@ -116,7 +130,7 @@ export function useVisualization({
     if (mode === VISUALIZATION_MODES.MANUAL) {
       if (currentStep < stepsRef.current.length - 1) {
         const next = currentStep + 1;
-        applyStep(stepsRef.current[next]);
+        applyStep(stepsRef.current[next], { emitSound: true, stepIndex: next });
         setCurrentStep(next);
         if (next === stepsRef.current.length - 1) setIsComplete(true);
       }
@@ -138,7 +152,7 @@ export function useVisualization({
         return;
       }
 
-      applyStep(stepsRef.current[idx]);
+      applyStep(stepsRef.current[idx], { emitSound: true, stepIndex: idx });
       setCurrentStep(idx);
 
       if (idx === stepsRef.current.length - 1) {
@@ -178,7 +192,7 @@ export function useVisualization({
   const stepForward = useCallback(() => {
     if (currentStep < stepsRef.current.length - 1) {
       const next = currentStep + 1;
-      applyStep(stepsRef.current[next]);
+      applyStep(stepsRef.current[next], { emitSound: true, stepIndex: next });
       setCurrentStep(next);
       if (next === stepsRef.current.length - 1) setIsComplete(true);
     }

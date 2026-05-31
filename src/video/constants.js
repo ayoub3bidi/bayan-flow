@@ -59,9 +59,21 @@ export const EXPORT_SFX_DURATION_FRAMES_BY_KIND = {
   compare: 14,
   swap: 14,
   pivot: 20,
+  complete: 80,
+  visit: 10,
+  frontier: 10,
+  targetFound: 40,
+  pathFound: 100,
+  noResult: 35,
+  edgeConsider: 10,
+  edgeSelect: 16,
+  cycle: 24,
+  matrixConsider: 10,
+  matrixUpdate: 16,
+  componentComplete: 40,
+  // Legacy names for old bundled inputs/tests.
   sorted: 80,
   nodeVisit: 10,
-  pathFound: 100,
 };
 
 export const DEFAULT_EXPORT_AUDIO_VOLUME = 0.85;

@@ -5,7 +5,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { act, screen, waitFor, fireEvent } from '@testing-library/react';
+import { useEffect } from 'react';
 import PythonCodePanel from './PythonCodePanel';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { renderWithI18n } from '../test/testUtils';
@@ -50,45 +51,60 @@ vi.mock('../algorithms/pseudocode', () => ({
   getPseudocodeForLocale: (...args) => getPseudocodeForLocaleMock(...args),
 }));
 
-// Mock framer-motion to avoid animation issues in tests
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-  },
-  AnimatePresence: ({ children }) => <>{children}</>,
-}));
-
 // Mock Monaco Editor
 vi.mock('@monaco-editor/react', () => ({
-  default: ({ onMount, theme, onChange, value, ...props }) => {
-    if (onMount) {
-      const mockEditor = {
-        addAction: vi.fn(),
-        getContainerDomNode: () => ({
-          style: {},
-          querySelector: sel =>
-            sel === '.monaco-scrollable-element' ? { style: {} } : null,
-        }),
-      };
-      const mockMonaco = {
-        editor: { setTheme: vi.fn() },
-        KeyMod: { CtrlCmd: 2048 },
-        KeyCode: { Enter: 3 },
-      };
-      setTimeout(() => onMount(mockEditor, mockMonaco), 0);
-    }
-    return (
-      <div data-testid="monaco-editor" data-theme={theme} {...props}>
-        Monaco Editor Mock
-        <button
-          type="button"
-          data-testid="monaco-simulate-edit"
-          onClick={() => onChange?.(`${value ?? ''}\n# edited`)}
+  default: ({
+    onMount,
+    theme,
+    onChange,
+    value,
+    defaultLanguage,
+    language,
+    height: _height,
+    width: _width,
+    options: _options,
+    loading: _loading,
+    ...props
+  }) => {
+    function MockEditor() {
+      useEffect(() => {
+        if (!onMount) return;
+        const mockEditor = {
+          addAction: vi.fn(),
+          getContainerDomNode: () => ({
+            style: {},
+            querySelector: sel =>
+              sel === '.monaco-scrollable-element' ? { style: {} } : null,
+          }),
+        };
+        const mockMonaco = {
+          editor: { setTheme: vi.fn() },
+          KeyMod: { CtrlCmd: 2048 },
+          KeyCode: { Enter: 3 },
+        };
+        onMount(mockEditor, mockMonaco);
+      }, []);
+
+      return (
+        <div
+          data-testid="monaco-editor"
+          data-theme={theme}
+          data-language={defaultLanguage ?? language}
+          {...props}
         >
-          simulate-edit
-        </button>
-      </div>
-    );
+          Monaco Editor Mock
+          <button
+            type="button"
+            data-testid="monaco-simulate-edit"
+            onClick={() => onChange?.(`${value ?? ''}\n# edited`)}
+          >
+            simulate-edit
+          </button>
+        </div>
+      );
+    }
+
+    return <MockEditor />;
   },
 }));
 
@@ -393,7 +409,9 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
     });
 
     it('sets pseudocode pre dir to rtl when language is Arabic', async () => {
-      await i18n.changeLanguage('ar');
+      await act(async () => {
+        await i18n.changeLanguage('ar');
+      });
       localStorageMock.getItem.mockReturnValue('light');
 
       renderWithI18n(
@@ -413,7 +431,9 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
         expect(pre).toHaveAttribute('dir', 'rtl');
       });
 
-      await i18n.changeLanguage('en');
+      await act(async () => {
+        await i18n.changeLanguage('en');
+      });
     });
 
     it('shows Reset after editing code and restores default on Reset', async () => {

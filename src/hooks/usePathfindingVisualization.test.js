@@ -37,8 +37,7 @@ vi.mock('../utils/gridHelpers.js', () => ({
 // Mock soundManager using vi.hoisted
 const { mockSoundManager } = vi.hoisted(() => ({
   mockSoundManager: {
-    playNodeVisit: vi.fn(),
-    playPathFound: vi.fn(),
+    playEvents: vi.fn(),
   },
 }));
 
@@ -598,8 +597,9 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playNodeVisit).toHaveBeenCalled();
-      expect(mockSoundManager.playPathFound).not.toHaveBeenCalled();
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
+        { kind: 'frontier' },
+      ]);
     });
 
     it('should play path found sound when path is discovered', () => {
@@ -641,8 +641,9 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playPathFound).toHaveBeenCalled();
-      expect(mockSoundManager.playNodeVisit).not.toHaveBeenCalled();
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
+        { kind: 'pathFound' },
+      ]);
     });
 
     it('should not play path sound for open nodes with non-path description', () => {
@@ -684,8 +685,9 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playNodeVisit).toHaveBeenCalled();
-      expect(mockSoundManager.playPathFound).not.toHaveBeenCalled();
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
+        { kind: 'frontier' },
+      ]);
     });
   });
 
@@ -1072,8 +1074,7 @@ describe('usePathfindingVisualization', () => {
       });
 
       // No sounds should play for default states
-      expect(mockSoundManager.playNodeVisit).not.toHaveBeenCalled();
-      expect(mockSoundManager.playPathFound).not.toHaveBeenCalled();
+      expect(mockSoundManager.playEvents).not.toHaveBeenCalled();
     });
 
     it('should handle executeStep with open nodes but non-path description', () => {
@@ -1115,8 +1116,9 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playNodeVisit).toHaveBeenCalled();
-      expect(mockSoundManager.playPathFound).not.toHaveBeenCalled();
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
+        { kind: 'frontier' },
+      ]);
     });
 
     it('should not throw when description is missing on a step', () => {
@@ -1146,7 +1148,7 @@ describe('usePathfindingVisualization', () => {
         });
       }).not.toThrow();
 
-      expect(mockSoundManager.playPathFound).not.toHaveBeenCalled();
+      expect(mockSoundManager.playEvents).not.toHaveBeenCalled();
     });
   });
 

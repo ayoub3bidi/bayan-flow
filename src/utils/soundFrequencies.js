@@ -14,7 +14,7 @@ export function getCompareFrequency(value) {
 }
 
 /**
- * Pivot tone frequency range (matches soundManager.playPivot).
+ * Pivot tone frequency range used by the semantic sound playback layer.
  * @param {number} value
  * @returns {number}
  */

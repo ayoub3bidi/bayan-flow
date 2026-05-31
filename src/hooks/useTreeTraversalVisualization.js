@@ -4,14 +4,13 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ALGORITHM_TYPES,
   TREE_NODE_STATES,
   VISUALIZATION_MODES,
   DEFAULT_TREE_NODE_COUNT,
 } from '../constants/index.js';
-import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 import { generateTreeForTraversal } from '../utils/treeGenerators.js';
@@ -59,17 +58,13 @@ export function useTreeTraversalVisualization(
     setVisitOrder(step.visitOrder ?? []);
     setQueueOrder(step.queueOrder ?? []);
     setTreeLevelScanDirection(step.levelScanDirection ?? null);
-
-    const states = step.nodeStates ?? {};
-    const hasVisiting = Object.values(states).includes(
-      TREE_NODE_STATES.VISITING
-    );
-    if (hasVisiting) {
-      soundManager.playNodeVisit();
-    }
   }, []);
 
-  const engine = useVisualization({ executeStep, speed, mode });
+  const soundContext = useMemo(
+    () => ({ algorithmType: ALGORITHM_TYPES.TREE_TRAVERSAL, algorithmKey }),
+    [algorithmKey]
+  );
+  const engine = useVisualization({ executeStep, speed, mode, soundContext });
 
   const regenerateTreeStructure = useCallback(() => {
     engine.loadSteps([]);

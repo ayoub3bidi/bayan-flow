@@ -4,22 +4,9 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderWithI18n, screen } from '../../test/testUtils';
 import ClaritySection from './ClaritySection';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    },
-    useInView: () => true,
-  };
-});
-
 describe('ClaritySection', () => {
   describe('Rendering', () => {
     it('should render section element', () => {

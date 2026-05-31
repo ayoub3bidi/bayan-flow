@@ -147,23 +147,6 @@ const graphAlgorithmVisualization = {
   steps: [{ description: 'graph step' }],
 };
 
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }) => <>{children}</>,
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      whileHover: _whileHover,
-      whileTap: _whileTap,
-      initial: _initial,
-      animate: _animate,
-      exit: _exit,
-      transition: _transition,
-      ...props
-    }) => <button {...props}>{children}</button>,
-  },
-}));
-
 vi.mock('../components/Header', () => ({
   default: () => <div data-testid="header">Header</div>,
 }));
@@ -560,12 +543,14 @@ describe('VisualizerApp', () => {
       .mockImplementation(() => {
         throw new Error('storage read failed');
       });
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await renderApp();
 
     expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
 
     getItemSpy.mockRestore();
+    consoleSpy.mockRestore();
   });
 
   it('keeps rendering when persisting the sound preference throws', async () => {
@@ -608,7 +593,7 @@ describe('VisualizerApp', () => {
     });
   });
 
-  it('keeps the persisted sound preference when resume-on-interaction fails', async () => {
+  it('turns sound off when resume-on-interaction fails', async () => {
     window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
     soundManager.enable.mockRejectedValueOnce(new Error('resume failed'));
 
@@ -619,6 +604,11 @@ describe('VisualizerApp', () => {
       expect(soundManager.enable).toHaveBeenCalledTimes(1);
     });
 
-    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
+    await waitFor(() => {
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+      expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
+        'false'
+      );
+    });
   });
 });

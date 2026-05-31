@@ -11,7 +11,7 @@ import { useTreeTraversalVisualization } from './useTreeTraversalVisualization.j
 
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
-    playNodeVisit: vi.fn(),
+    playEvents: vi.fn(),
   },
 }));
 
