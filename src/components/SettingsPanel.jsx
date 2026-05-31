@@ -162,10 +162,13 @@ function SettingsPanel({
           role="group"
           aria-labelledby="settings-algorithm-mode-label"
         >
-          {ALGORITHM_TYPE_LIST.map(type => {
+          {ALGORITHM_TYPE_LIST.map((type, index) => {
             const cfg = CATEGORY_CONFIG[type];
             const Icon = cfg.icon;
             const isActive = algorithmType === type;
+            const isLoneLastItem =
+              ALGORITHM_TYPE_LIST.length % 2 === 1 &&
+              index === ALGORITHM_TYPE_LIST.length - 1;
             return (
               <button
                 key={type}
@@ -173,6 +176,8 @@ function SettingsPanel({
                 onClick={() => !isPlaying && onAlgorithmTypeChange(type)}
                 disabled={isPlaying}
                 className={`min-h-touch flex flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-3 text-center transition-all duration-200 touch-manipulation leading-tight-consistent disabled:cursor-not-allowed ${
+                  isLoneLastItem ? 'col-span-2' : ''
+                } ${
                   isActive
                     ? 'bg-theme-primary-consistent text-white shadow-md'
                     : 'bg-surface-elevated text-text-primary shadow-sm hover:bg-bg hover:shadow'
