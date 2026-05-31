@@ -71,6 +71,14 @@ function Footer() {
     },
   ];
 
+  const contactLinks = [
+    {
+      label: 'contact@ayoub3bidi.me',
+      href: 'mailto:contact@ayoub3bidi.me',
+      ariaLabel: t('footer.contactEmailAria'),
+    },
+  ];
+
   const handleLinkClick = href => {
     if (href.startsWith('/')) {
       navigate(href);
@@ -177,27 +185,49 @@ function Footer() {
               })}
             </div>
           </div>
-          {/* Social & community links */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold text-text-primary">
-              {t('footer.followUs')}
-            </h3>
-            <div className="flex flex-col gap-2">
-              {socialLinks.map(item => (
-                <motion.a
-                  key={item.href}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.ariaLabel}
-                  className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
-                  whileHover={{ scale: 1.02, x: 2 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                >
-                  {item.label}
-                </motion.a>
-              ))}
+          {/* Follow us & contact */}
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-text-primary">
+                {t('footer.followUs')}
+              </h3>
+              <div className="flex flex-col gap-2">
+                {socialLinks.map(item => (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.ariaLabel}
+                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-text-primary">
+                {t('footer.contact')}
+              </h3>
+              <div className="flex flex-col gap-2">
+                {contactLinks.map(item => (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    aria-label={item.ariaLabel}
+                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+              </div>
             </div>
           </div>
           {/* Support */}
