@@ -146,4 +146,74 @@ describe('soundManager', () => {
     );
     expect(instruments.pluckSynth.triggerAttackRelease).not.toHaveBeenCalled();
   });
+
+  it('throws when ensureInstruments is called before enable()', async () => {
+    const { soundManager } = await import('./soundManager.js');
+    expect(() => soundManager.ensureInstruments()).toThrow(
+      /Call enable\(\) first/
+    );
+  });
+
+  it('plays each semantic event kind through the category palette', async () => {
+    const { soundManager } = await import('./soundManager.js');
+    const { ALGORITHM_TYPES } = await import('../constants/index.js');
+    await soundManager.enable();
+
+    const instruments = soundManager.ensureInstruments();
+    const cases = [
+      { kind: SOUND_EVENT_KINDS.SWAP, synth: 'kalimbaSynth' },
+      { kind: SOUND_EVENT_KINDS.PIVOT, synth: 'softSynth', value: 40 },
+      { kind: SOUND_EVENT_KINDS.PASS_COMPLETE, synth: 'kalimbaSynth' },
+      { kind: SOUND_EVENT_KINDS.COMPLETE, synth: 'polySynth' },
+      { kind: SOUND_EVENT_KINDS.PATH_FOUND, synth: 'polySynth' },
+      { kind: SOUND_EVENT_KINDS.TARGET_FOUND, synth: 'polySynth' },
+      { kind: SOUND_EVENT_KINDS.NO_RESULT, synth: 'polySynth' },
+      { kind: SOUND_EVENT_KINDS.EDGE_CONSIDER, synth: 'kalimbaSynth' },
+      { kind: SOUND_EVENT_KINDS.EDGE_SELECT, synth: 'kalimbaSynth' },
+      { kind: SOUND_EVENT_KINDS.CYCLE, synth: 'polySynth' },
+      { kind: SOUND_EVENT_KINDS.MATRIX_CONSIDER, synth: 'softSynth' },
+      { kind: SOUND_EVENT_KINDS.MATRIX_UPDATE, synth: 'kalimbaSynth' },
+      { kind: SOUND_EVENT_KINDS.COMPONENT_COMPLETE, synth: 'polySynth' },
+      { kind: SOUND_EVENT_KINDS.FRONTIER, synth: 'kalimbaSynth' },
+    ];
+
+    for (const { kind, synth, value } of cases) {
+      vi.clearAllMocks();
+      soundManager.playEvents([{ kind, value }], {
+        algorithmType: ALGORITHM_TYPES.GRAPH_ALGORITHM,
+        algorithmKey: 'kruskalAlgorithm',
+        speed: 1000,
+      });
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(instruments[synth].triggerAttackRelease).toHaveBeenCalled();
+    }
+  });
+
+  it('maps legacy sorted alias to complete playback', async () => {
+    const { soundManager } = await import('./soundManager.js');
+    await soundManager.enable();
+
+    const instruments = soundManager.ensureInstruments();
+    vi.clearAllMocks();
+
+    soundManager.playEvents([{ kind: 'sorted' }], {
+      algorithmType: 'sorting',
+    });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(instruments.polySynth.triggerAttackRelease).toHaveBeenCalled();
+  });
+
+  it('does not play when sound is disabled', async () => {
+    const { soundManager } = await import('./soundManager.js');
+    const Tone = await import('tone');
+    vi.clearAllMocks();
+
+    soundManager.playEvents([{ kind: SOUND_EVENT_KINDS.SWAP }]);
+    await Promise.resolve();
+
+    expect(Tone.Synth).not.toHaveBeenCalled();
+  });
 });

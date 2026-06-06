@@ -72,3 +72,4 @@ ignore:
   - "src/components/GridCell.jsx"
   - "src/components/ArrayBar.jsx"
   - "src/main.jsx"
+  - "scripts/**"

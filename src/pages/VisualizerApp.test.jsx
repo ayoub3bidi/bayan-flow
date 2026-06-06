@@ -465,6 +465,14 @@ describe('VisualizerApp', () => {
     expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
   });
 
+  it('opens export modal when export enters the error phase', async () => {
+    videoExporterMock.exportState = 'error';
+    videoExporterMock.exportErrorMessage = 'Codec unavailable';
+    await renderApp();
+
+    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
+  });
+
   it('calls exportVideo with algorithm metadata when orientation is chosen', async () => {
     videoExporterMock.exportState = 'orientation';
     await renderApp();

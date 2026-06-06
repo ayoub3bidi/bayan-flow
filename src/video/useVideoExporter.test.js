@@ -4,7 +4,8 @@
  * See LICENSE for details.
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
 import {
   cloneExportSteps,
   canProceedWithExport,
@@ -12,7 +13,18 @@ import {
   hasAudioRenderBlocker,
   isExportCancelledError,
   summarizeRenderIssues,
+  useVideoExporter,
 } from './useVideoExporter.js';
+
+const { canRenderMediaOnWeb, renderMediaOnWeb } = vi.hoisted(() => ({
+  canRenderMediaOnWeb: vi.fn(),
+  renderMediaOnWeb: vi.fn(),
+}));
+
+vi.mock('@remotion/web-renderer', () => ({
+  canRenderMediaOnWeb,
+  renderMediaOnWeb,
+}));
 
 describe('useVideoExporter helpers', () => {
   it('cloneExportSteps returns a deep copy of plain step data', () => {
@@ -90,5 +102,100 @@ describe('useVideoExporter helpers', () => {
     expect(isExportCancelledError(new Error('WebCodecs unavailable'))).toBe(
       false
     );
+  });
+
+  it('cloneExportSteps returns original steps when cloning fails', () => {
+    const circular = { array: [1] };
+    circular.self = circular;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    expect(cloneExportSteps(circular)).toBe(circular);
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+});
+
+describe('useVideoExporter hook', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    canRenderMediaOnWeb.mockResolvedValue({
+      canRender: true,
+      issues: [],
+    });
+    renderMediaOnWeb.mockResolvedValue({
+      getBlob: vi.fn().mockResolvedValue(new Blob(['video'])),
+    });
+    vi.stubGlobal('URL', {
+      createObjectURL: vi.fn(() => 'blob:export'),
+      revokeObjectURL: vi.fn(),
+    });
+  });
+
+  it('enters error state when export is requested with no steps', async () => {
+    const { result } = renderHook(() => useVideoExporter());
+
+    await act(async () => {
+      await result.current.exportVideo({ steps: [] });
+    });
+
+    expect(result.current.exportState).toBe('error');
+    expect(result.current.exportErrorMessage).toBe(
+      'No visualization steps to export.'
+    );
+  });
+
+  it('falls back to muted export when audio codec preflight fails', async () => {
+    canRenderMediaOnWeb
+      .mockResolvedValueOnce({
+        canRender: false,
+        issues: [{ type: 'audio-codec-unsupported', severity: 'error' }],
+      })
+      .mockResolvedValueOnce({
+        canRender: true,
+        issues: [],
+      });
+
+    const { result } = renderHook(() => useVideoExporter());
+    const steps = [{ array: [1, 2], states: ['default', 'default'] }];
+
+    await act(async () => {
+      await result.current.exportVideo({
+        steps,
+        algorithmName: 'Bubble Sort',
+        includeExportAudio: true,
+      });
+    });
+
+    expect(canRenderMediaOnWeb).toHaveBeenCalledTimes(2);
+    expect(renderMediaOnWeb).toHaveBeenCalledWith(
+      expect.objectContaining({ muted: true })
+    );
+    expect(result.current.exportState).toBe('preview');
+  });
+
+  it('cancelExport dismisses an in-flight export session', async () => {
+    renderMediaOnWeb.mockImplementation(
+      () =>
+        new Promise(() => {
+          /* never resolves */
+        })
+    );
+
+    const { result } = renderHook(() => useVideoExporter());
+    const steps = [{ array: [1], states: ['default'] }];
+
+    act(() => {
+      void result.current.exportVideo({ steps, algorithmName: 'Test' });
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    act(() => {
+      result.current.cancelExport();
+    });
+
+    expect(result.current.exportState).toBe('idle');
   });
 });

@@ -255,4 +255,130 @@ describe('getSoundEventsForStep', () => {
       })
     ).toEqual([{ kind: SOUND_EVENT_KINDS.COMPLETE }]);
   });
+
+  it('honors explicit soundEvents arrays and single sound aliases', () => {
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.SORTING,
+        algorithmKey: 'bubbleSort',
+        step: {
+          soundEvents: ['swap', { kind: SOUND_EVENT_KINDS.PIVOT, value: 7 }],
+        },
+      })
+    ).toEqual([
+      { kind: SOUND_EVENT_KINDS.SWAP },
+      { kind: SOUND_EVENT_KINDS.PIVOT, value: 7 },
+    ]);
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.SORTING,
+        algorithmKey: 'quickSort',
+        step: { sound: SOUND_EVENT_KINDS.COMPLETE },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.COMPLETE }]);
+  });
+
+  it('emits swap, pivot, and compare events from sorting visual states', () => {
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.SORTING,
+        algorithmKey: 'bubbleSort',
+        step: {
+          array: [3, 1, 2],
+          states: [
+            ELEMENT_STATES.SWAPPING,
+            ELEMENT_STATES.DEFAULT,
+            ELEMENT_STATES.DEFAULT,
+          ],
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.SWAP }]);
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.SORTING,
+        algorithmKey: 'quickSort',
+        step: {
+          array: [3, 1, 2],
+          states: [
+            ELEMENT_STATES.PIVOT,
+            ELEMENT_STATES.DEFAULT,
+            ELEMENT_STATES.DEFAULT,
+          ],
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.PIVOT, value: 3 }]);
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.SEARCHING,
+        algorithmKey: 'binarySearch',
+        step: {
+          array: [1, 2, 3],
+          states: [
+            ELEMENT_STATES.COMPARING,
+            ELEMENT_STATES.DEFAULT,
+            ELEMENT_STATES.DEFAULT,
+          ],
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.COMPARE, value: 1 }]);
+  });
+
+  it('covers graph ordering completion, matrix consider, and negative cycles', () => {
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.GRAPH_ALGORITHM,
+        algorithmKey: 'topologicalSort',
+        step: {
+          nodeStates: { a: GRAPH_NODE_STATES.PATH },
+          edgeStates: {},
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.COMPLETE }]);
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.GRAPH_ALGORITHM,
+        algorithmKey: 'floydWarshallAlgorithm',
+        step: {
+          representation: GRAPH_REPRESENTATIONS.MATRIX,
+          matrix: { cellStates: [['considering', 'default']] },
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.MATRIX_CONSIDER }]);
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.GRAPH_ALGORITHM,
+        algorithmKey: 'floydWarshallAlgorithm',
+        step: {
+          representation: GRAPH_REPRESENTATIONS.MATRIX,
+          hasNegativeCycle: true,
+          matrix: { cellStates: [['default', 'default']] },
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.CYCLE }]);
+  });
+
+  it('emits pathfinding no-result on the final step without a path', () => {
+    const stagnantGrid = {
+      states: [
+        [GRID_ELEMENT_STATES.START, GRID_ELEMENT_STATES.DEFAULT],
+        [GRID_ELEMENT_STATES.DEFAULT, GRID_ELEMENT_STATES.END],
+      ],
+    };
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.PATHFINDING,
+        algorithmKey: 'bfs',
+        previousStep: stagnantGrid,
+        step: stagnantGrid,
+        stepIndex: 2,
+        totalSteps: 3,
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.NO_RESULT }]);
+  });
 });
