@@ -194,6 +194,7 @@ function App() {
     exportState,
     exportProgress,
     exportBlobUrl,
+    exportErrorMessage,
     cancelExport,
     closePreview,
     downloadVideo,
@@ -261,7 +262,7 @@ function App() {
       try {
         await soundManager.enable();
       } catch {
-        // Keep the preference; the user can toggle sound again if resume fails.
+        setIsSoundEnabled(false);
       }
     };
 
@@ -331,9 +332,6 @@ function App() {
       await soundManager.enable();
       const nextEnabledState = soundManager.getIsEnabled();
       setIsSoundEnabled(nextEnabledState);
-      if (nextEnabledState) {
-        soundManager.playUIClick();
-      }
     } catch (error) {
       console.error('[Sound Toggle]', error);
       setIsSoundEnabled(false);
@@ -393,6 +391,7 @@ function App() {
       speed,
       gridSize,
       orientation,
+      includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
     });
@@ -626,7 +625,8 @@ function App() {
           exportState === 'orientation' ||
           exportState === 'checking' ||
           exportState === 'rendering' ||
-          exportState === 'preview'
+          exportState === 'preview' ||
+          exportState === 'error'
         }
         progress={exportProgress}
         phase={
@@ -634,10 +634,13 @@ function App() {
             ? 'orientation'
             : exportState === 'preview'
               ? 'preview'
-              : exportState === 'checking'
-                ? 'checking'
-                : 'rendering'
+              : exportState === 'error'
+                ? 'error'
+                : exportState === 'checking'
+                  ? 'checking'
+                  : 'rendering'
         }
+        errorMessage={exportErrorMessage}
         blobUrl={exportBlobUrl}
         onStop={cancelExport}
         onClose={closePreview}

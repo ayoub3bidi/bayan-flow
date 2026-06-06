@@ -21,6 +21,7 @@ const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
       exportState: 'idle',
       exportProgress: 0,
       exportBlobUrl: null,
+      exportErrorMessage: null,
       cancelExport: vi.fn(),
       closePreview: vi.fn(),
       downloadVideo: vi.fn(),
@@ -146,23 +147,6 @@ const graphAlgorithmVisualization = {
   totalSteps: 1,
   steps: [{ description: 'graph step' }],
 };
-
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }) => <>{children}</>,
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      whileHover: _whileHover,
-      whileTap: _whileTap,
-      initial: _initial,
-      animate: _animate,
-      exit: _exit,
-      transition: _transition,
-      ...props
-    }) => <button {...props}>{children}</button>,
-  },
-}));
 
 vi.mock('../components/Header', () => ({
   default: () => <div data-testid="header">Header</div>,
@@ -352,6 +336,7 @@ vi.mock('../video/useVideoExporter', () => ({
     exportState: videoExporterMock.exportState,
     exportProgress: videoExporterMock.exportProgress,
     exportBlobUrl: videoExporterMock.exportBlobUrl,
+    exportErrorMessage: videoExporterMock.exportErrorMessage,
     cancelExport: videoExporterMock.cancelExport,
     closePreview: videoExporterMock.closePreview,
     downloadVideo: videoExporterMock.downloadVideo,
@@ -480,6 +465,14 @@ describe('VisualizerApp', () => {
     expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
   });
 
+  it('opens export modal when export enters the error phase', async () => {
+    videoExporterMock.exportState = 'error';
+    videoExporterMock.exportErrorMessage = 'Codec unavailable';
+    await renderApp();
+
+    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
+  });
+
   it('calls exportVideo with algorithm metadata when orientation is chosen', async () => {
     videoExporterMock.exportState = 'orientation';
     await renderApp();
@@ -560,12 +553,14 @@ describe('VisualizerApp', () => {
       .mockImplementation(() => {
         throw new Error('storage read failed');
       });
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await renderApp();
 
     expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
 
     getItemSpy.mockRestore();
+    consoleSpy.mockRestore();
   });
 
   it('keeps rendering when persisting the sound preference throws', async () => {
@@ -608,7 +603,7 @@ describe('VisualizerApp', () => {
     });
   });
 
-  it('keeps the persisted sound preference when resume-on-interaction fails', async () => {
+  it('turns sound off when resume-on-interaction fails', async () => {
     window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
     soundManager.enable.mockRejectedValueOnce(new Error('resume failed'));
 
@@ -619,6 +614,11 @@ describe('VisualizerApp', () => {
       expect(soundManager.enable).toHaveBeenCalledTimes(1);
     });
 
-    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
+    await waitFor(() => {
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+      expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
+        'false'
+      );
+    });
   });
 });

@@ -7,8 +7,8 @@
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarity in Algorithms",
-    "starOnGithub": "Star on GitHub",
-    "viewOnGithub": "View on GitHub"
+    "openGithubRepo": "Open {{repo}} on GitHub — version {{version}}, {{stars}} stars, {{forks}} forks",
+    "goToRepository": "Go to repository"
   },
   "settings": {
     "title": "Settings",
@@ -869,6 +869,8 @@
     "followUs": "Follow us",
     "youtube": "YouTube",
     "support": "Support",
+    "contact": "Contact",
+    "contactEmailAria": "Email the Bayan Flow founder at contact@bayanflow.com",
     "enjoying": "Enjoying this project? Support my work!",
     "allRightsReserved": "All rights reserved",
     "youtubeAria": "Bayan Flow on YouTube — open channel in a new tab"
@@ -1209,7 +1211,8 @@
       },
       "pythonCode": {
         "title": "Interactive Python",
-        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code."
+        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code.",
+        "badge": "Experimental"
       },
       "sound": {
         "title": "Interactive Sound",

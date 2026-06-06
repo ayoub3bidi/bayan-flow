@@ -7,7 +7,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useVisualization } from './useVisualization';
-import { VISUALIZATION_MODES } from '../constants/index.js';
+import {
+  ALGORITHM_TYPES,
+  ELEMENT_STATES,
+  VISUALIZATION_MODES,
+} from '../constants/index.js';
+import { soundManager } from '../utils/soundManager.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -37,7 +42,10 @@ function makeHook(overrides = {}) {
 // ---------------------------------------------------------------------------
 
 describe('useVisualization', () => {
-  beforeEach(() => vi.useFakeTimers());
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.clearAllMocks();
+  });
   afterEach(() => vi.useRealTimers());
 
   // ── Initialization ────────────────────────────────────────────────────────
@@ -194,6 +202,56 @@ describe('useVisualization', () => {
         result.current.stepBackward();
       });
       expect(result.current.currentStep).toBe(0);
+    });
+
+    it('emits sound only for intentional forward playback', () => {
+      const { result } = makeHook({
+        soundContext: {
+          algorithmType: ALGORITHM_TYPES.SORTING,
+          algorithmKey: 'bubbleSort',
+        },
+      });
+      const steps = [
+        {
+          description: 'Initial',
+          array: [2, 1],
+          states: [ELEMENT_STATES.DEFAULT, ELEMENT_STATES.DEFAULT],
+        },
+        {
+          description: 'Compare',
+          array: [2, 1],
+          states: [ELEMENT_STATES.COMPARING, ELEMENT_STATES.DEFAULT],
+        },
+      ];
+
+      act(() => {
+        result.current.loadSteps(steps);
+      });
+      expect(soundManager.playEvents).not.toHaveBeenCalled();
+
+      act(() => {
+        result.current.stepForward();
+      });
+      expect(soundManager.playEvents).toHaveBeenCalledWith(
+        [{ kind: 'compare', value: 2 }],
+        expect.objectContaining({
+          algorithmType: ALGORITHM_TYPES.SORTING,
+          algorithmKey: 'bubbleSort',
+          stepIndex: 1,
+          speed: 100,
+        })
+      );
+
+      vi.clearAllMocks();
+      act(() => {
+        result.current.stepBackward();
+      });
+      expect(soundManager.playEvents).not.toHaveBeenCalled();
+
+      act(() => {
+        result.current.reset();
+      });
+      expect(soundManager.playEvents).not.toHaveBeenCalled();
     });
   });
 

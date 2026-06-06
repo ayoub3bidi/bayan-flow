@@ -8,17 +8,19 @@ This document provides an in-depth explanation of the Bayan Flow architecture, d
 
 1. [System Architecture](#system-architecture)
 2. [Routing & Pages](#routing--pages)
-3. [Component Hierarchy](#component-hierarchy)
-4. [Data Flow](#data-flow)
-5. [Theme System](#theme-system)
-6. [Internationalization](#internationalization)
-7. [Algorithm Implementation](#algorithm-implementation)
-8. [Animation System](#animation-system)
-9. [Audio System](#audio-system)
-10. [Video Export](#video-export)
-11. [State Management](#state-management)
-12. [Testing Strategy](#testing-strategy)
-13. [Performance Optimizations](#performance-optimizations)
+3. [Registry Layer](#registry-layer)
+4. [Component Hierarchy](#component-hierarchy)
+5. [Data Flow](#data-flow)
+6. [Theme System](#theme-system)
+7. [Internationalization](#internationalization)
+8. [Algorithm Implementation](#algorithm-implementation)
+9. [Animation System](#animation-system)
+10. [Audio System](#audio-system)
+11. [Video Export](#video-export)
+12. [State Management](#state-management)
+13. [Testing Strategy](#testing-strategy)
+14. [CI & Deployment](#ci--deployment)
+15. [Performance Optimizations](#performance-optimizations)
 
 ## System Architecture
 
@@ -71,33 +73,37 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 #### **LandingPage** (`/`)
 - Marketing homepage
 - Hero section with CTA
-- Feature highlights
-- Algorithm type overview
+- Feature highlights and algorithm-type overview
+- GitHub repo badge (Octokit live stars/forks/releases)
 - Roadmap CTA
 - No visualizer functionality
 
 **Components:**
-- Hero, LearnYourWay, AlgorithmTypes, Features, ClaritySection, RoadmapCTA
+- Hero, LearnYourWay, AlgorithmTypes, Features, ClaritySection, RoadmapCTA, GitHubRepoBadge
 - Footer, ThemeToggle, LanguageSwitcher
 - TechPattern (animated background)
 
 #### **VisualizerApp** (`/app`)
 - Main algorithm visualization interface
-- **Sorting**, **pathfinding**, and **searching** modes (mode tab + shared settings)
+- All **five** categories: sorting, pathfinding, searching, tree traversal, graph algorithms
 - Full control panel and settings
-- Python code panel (edit, run, test cases)
-- Complexity analysis
+- Python code panel and algorithm insight panel (lazy-loaded overlays)
+- Complexity analysis shown inside each visualizer after completion
 
 **Key State (conceptual):**
 ```javascript
-- algorithmType: 'sorting' | 'pathfinding' | 'searching'
-- array: 1D data for sorting and for array-substrate searching (sorted + target)
-- searchGraphNodeCount: node count for node–link searching (e.g. DFS); independent of pathfinding gridSize
+- algorithmType: 'sorting' | 'pathfinding' | 'searching' | 'treeTraversal' | 'graphAlgorithm'
+- selectedAlgorithms: per-category algorithm key map
+- arraySize: sorting + array-substrate searching
+- searchGraphNodeCount: node–link searching (independent of pathfinding grid)
 - gridSize / grid: pathfinding only
-- selectedAlgorithm: Current algorithm key
-- speed: Animation speed (autoplay)
-- mode: 'manual' | 'autoplay'
-- isFullScreen: Full-screen mode state
+- treeNodeCount: tree traversal (3–31)
+- graphNodeCount: graph algorithms (3–18; Floyd–Warshall capped lower)
+- graphScenarioId: preset graph scenario for graph algorithms (when supported)
+- sortOrder: ascending | descending (sorting only)
+- speed, mode: manual | autoplay
+- soundEnabled: persisted in localStorage
+- isFullScreen, export flow, lazy panel visibility
 ```
 
 #### **Roadmap** (`/roadmap`)
@@ -108,6 +114,31 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 - Animated timeline
 
 **Data Source:** `src/data/roadmapData.js`
+
+## Registry Layer
+
+Runtime behavior is driven by synchronized registries. Treat these as the source of truth (see also **[AGENTS.md](../AGENTS.md)**):
+
+| Registry | Role |
+| -------- | ---- |
+| `src/constants/index.js` | Category keys, algorithm keys, complexity maps, visual state enums |
+| `src/registry/categoryConfig.js` | Per-category defaults, i18n prefixes, size bindings, groups, features |
+| `src/config/algorithmConfig.js` | `useAlgorithmConfig()` — translated dropdown data from `CATEGORY_CONFIG` |
+| `src/registry/visualizerRegistry.js` | `VISUALIZER_REGISTRY` — category → React visualizer |
+| `src/registry/extraVisualizerProps.js` | Category-specific props for visualizer components |
+| `src/registry/videoSceneRegistry.jsx` | Remotion scene renderers + export title fallbacks |
+| `src/registry/complexityDatasetRegistry.js` | Maps dataset keys to static complexity metadata |
+| `src/registry/searchingSubstrate.js` | Array vs node–link searching branch point |
+| `src/registry/graphAlgorithmRegistry.js` | Profiles, scenarios, groups, node-count clamps |
+
+**Category hooks** (each called unconditionally in `VisualizerApp`):
+
+- `useSortingVisualization`, `usePathfindingVisualization`, `useSearchingVisualization`
+- `useTreeTraversalVisualization`, `useGraphAlgorithmVisualization`
+
+**Shared playback:** `useVisualization` owns step navigation and sound emission; category hooks supply `executeStep` and domain state.
+
+**Merged lookup:** `useCategoryVisualizations()` exposes all five controllers keyed by `ALGORITHM_TYPES`.
 
 ## Component Hierarchy
 
@@ -128,13 +159,19 @@ LandingPage
 
 VisualizerApp
 ├── Header
-├── SettingsPanel (uses useAlgorithmConfig, useSettingsConfig, AlgorithmDropdown)
-├── VISUALIZER_REGISTRY[mode]: ArrayVisualizer (sorting) | GridVisualizer (pathfinding) | SearchingCategoryVisualizer (searching → ArrayVisualizer or GraphVisualizer by substrate)
-├── ControlPanel
-├── FloatingActionButton
-├── ExportProgressModal (orientation selection, progress, preview)
-├── PythonCodePanel (lazy; Monaco editor, Output + Test Cases tabs)
-├── ComplexityPanel (lazy)
+├── SettingsPanel (category tabs, useAlgorithmConfig, useSettingsConfig, AlgorithmDropdown, GraphScenarioDropdown)
+├── VISUALIZER_REGISTRY[category]:
+│     ArrayVisualizer (sorting)
+│   | GridVisualizer (pathfinding)
+│   | SearchingCategoryVisualizer → ArrayVisualizer | GraphVisualizer (by substrate)
+│   | TreeVisualizer (treeTraversal)
+│   | GraphAlgorithmCategoryVisualizer → node-link | GraphAlgorithmMatrixVisualizer (Floyd–Warshall)
+├── ControlPanel (playback, shuffle, sort order, sound, export, fullscreen)
+├── FloatingActionButton (Python panel)
+├── InsightFloatingActionButton
+├── ExportProgressModal
+├── PythonCodePanel (lazy)
+├── AlgorithmInsightPanel (lazy)
 └── Footer
 
 Roadmap
@@ -158,20 +195,20 @@ Roadmap
 
 **Key State:**
 ```javascript
-- algorithmType: 'sorting' | 'pathfinding' | 'searching'
-- array / grid / graph snapshot: Depends on mode; searching may be sorted array **or** explicit nodes+edges (see `searchingSubstrate.js`)
-- speed: Animation speed
-- selectedAlgorithm: Current algorithm key
-- mode: manual / autoplay
-- isPythonPanelOpen: Python panel visibility
+- algorithmType + selectedAlgorithms (per category)
+- Size state: arraySize, gridSize, searchGraphNodeCount, treeNodeCount, graphNodeCount
+- graphScenarioId for preset graph-algorithm datasets
+- speed, mode, soundEnabled, isFullScreen, export + panel visibility
 ```
 
-#### **ArrayVisualizer / GridVisualizer / GraphVisualizer** (Presentation)
-- **ArrayVisualizer**: sorting and array-substrate searching (bars, target ring when applicable)
-- **GridVisualizer**: pathfinding only (cells, start/end, queue/path semantics)
-- **GraphVisualizer**: node–link searching (SVG nodes and edges, `GRAPH_NODE_STATES`, optional stack hint)
-- **SearchingCategoryVisualizer** routes by `getSearchingSubstrate(algorithm)` → `ARRAY` vs `NODE_LINK`
-- Presentational: swipe, auto-hiding legend, step descriptions, Framer Motion where used
+#### **ArrayVisualizer / GridVisualizer / GraphVisualizer / TreeVisualizer** (Presentation)
+- **ArrayVisualizer**: sorting; shows **ComplexityPanel** after completion delay
+- **GridVisualizer**: pathfinding; grid cells with start/end/wall/path semantics
+- **GraphVisualizer**: node–link searching and shared graph rendering primitives
+- **TreeVisualizer**: binary-tree traversals with visit order and optional queue/level direction
+- **SearchingCategoryVisualizer**: routes by `getSearchingSubstrate(algorithm)` → array bars or graph
+- **GraphAlgorithmCategoryVisualizer**: node–link graph algorithms; matrix handoff for Floyd–Warshall
+- Presentational: swipe (`useSwipe`), auto-hiding legend, step descriptions, Framer Motion
 
 #### **ArrayBar/GridCell** (Atomic Components)
 - Individual visualization elements
@@ -186,16 +223,23 @@ Roadmap
 - Export video button (triggers orientation selection flow)
 
 #### **SettingsPanel** (Configuration)
-- Algorithm type toggle (**sorting / pathfinding / searching**)
-- **AlgorithmDropdown**: Algorithm selection with grouped options (uses `useAlgorithmConfig`)
+- Category tabs for all five modes
+- **AlgorithmDropdown**: grouped algorithm selection (`useAlgorithmConfig`)
+- **GraphScenarioDropdown**: preset scenarios for supported graph algorithms
 - Control mode toggle (manual/autoplay)
-- Speed slider (autoplay only)
-- Size control is **effective** per mode: array size (sorting + array searching), graph node count (node–link searching), grid size (pathfinding)—see `SettingsPanel` + `searchingSubstrate.js`
-- Sound toggle
+- Speed presets (autoplay only)
+- Size control per `CATEGORY_CONFIG.sizeBinding`:
+  - `array` — array size slider (sorting + array searching)
+  - `grid` — preset buttons (pathfinding)
+  - `tree` — tree node count slider
+  - `graph` — graph node count slider (Floyd–Warshall uses a lower max)
+- Sort order toggle (sorting only)
+
+Sound toggle lives in **ControlPanel** (not SettingsPanel).
 
 #### **Config Layer** (`src/config/`)
-- **useAlgorithmConfig**: Returns sorting, pathfinding, and **searching** algorithm lists and groups (from `CATEGORY_CONFIG`, i18n-aware)
-- **useSettingsConfig**: Returns gridSizeOptions, speedOptions from constants
+- **useAlgorithmConfig**: Returns algorithm lists and groups for all five categories (from `CATEGORY_CONFIG`, i18n-aware)
+- **useSettingsConfig**: Returns `gridSizeOptions`, `speedOptions` from constants
 
 #### **PythonCodePanel** (Interactive Code & Testing)
 - Monaco editor: editable Python code, syntax highlighting, theme-aware (light/dark)
@@ -233,11 +277,11 @@ Algorithm Function (e.g., bubbleSort)
     ↓
 Generate Animation Steps[]
     ↓
-Load into Visualization Hook
+Load into Category Hook (useSortingVisualization, etc.)
     ↓
-User Action (Play/Step)
+useVisualization (shared playback + sound via getSoundEventsForStep)
     ↓
-Hook Updates Current Step
+User Action (Play/Step/Swipe)
     ↓
 Trigger React Re-render
     ↓
@@ -300,7 +344,41 @@ For searching — **node–link graph** substrate (e.g. DFS):
 }
 ```
 
-Registry helpers: `src/registry/searchingSubstrate.js` (`getSearchingSubstrate`, `isNodeLinkSearchingAlgorithm`). Extra visualizer props: `src/registry/extraVisualizerProps.js`.
+Registry helpers: `src/registry/searchingSubstrate.js`, `src/registry/graphAlgorithmRegistry.js`, `src/registry/extraVisualizerProps.js`.
+
+For **tree traversal**:
+
+```javascript
+{
+  nodes: [{ id, x, y, label, value? }, ...],
+  edges: [{ from, to }, ...],
+  nodeStates: { '2': 'current', ... },
+  visitOrder: ['0', '1', ...],
+  queueOrder?: ['3', '4'],           // BFS-style traversals
+  levelScanDirection?: 'left' | 'right', // zigzag level order
+  description: '…'
+}
+```
+
+For **graph algorithms** (node–link):
+
+```javascript
+{
+  nodes, edges, nodeStates, edgeStates,
+  stackOrder?, outputOrder?,
+  graphArtifacts?, description,
+  representation: 'nodeLink', directed, weighted
+}
+```
+
+For **Floyd–Warshall** (matrix):
+
+```javascript
+{
+  matrix: { rowLabels, columnLabels, cells, cellStates },
+  description, representation: 'matrix', directed, weighted, graphArtifacts?
+}
+```
 
 ## Theme System
 
@@ -618,68 +696,36 @@ const runAutoplay = (stepIndex) => {
 
 ## Audio System
 
-### SoundManager Architecture
+### Architecture
 
-The audio system uses **Tone.js** for Web Audio API abstraction:
+Sound is **visualization-only** and derived from semantic step metadata, not localized description text.
 
-```javascript
-class SoundManager {
-  constructor() {
-    this.isEnabled = false;
-    this.softSynth = new Tone.Synth({...});      // UI sounds
-    this.pluckSynth = new Tone.PluckSynth({...}); // Compare sounds
-    this.metallicSynth = new Tone.MetalSynth({...}); // Swap sounds
-    this.polySynth = new Tone.PolySynth({...});   // Chord sounds
-    this.membrane = new Tone.MembraneSynth({...});
-  }
-  
-  async enable() {
-    await Tone.start();
-    this.isEnabled = true;
-  }
-  
-  playCompare(value) {
-    if (!this.isEnabled) return;
-    const freq = 150 + ((value - 5) / 95) * 200;
-    this.pluckSynth.triggerAttackRelease(freq, '16n');
-  }
-}
+1. **`getSoundEventsForStep()`** (`src/utils/soundEvents.js`) — maps a step's visual state to zero or more sound event kinds
+2. **`useVisualization`** — calls `getSoundEventsForStep` during intentional forward playback and manual stepping; initial load, reset, step-back, algorithm changes, and passive regeneration stay silent
+3. **`soundManager`** (`src/utils/soundManager.js`) — singleton Tone.js playback; instruments created lazily after sound is enabled
+4. **Export audio** — `buildExportSoundCues()` schedules the same events for Remotion export (`public/video-export/sfx/` pre-rendered WAV assets)
+
+User toggle: **ControlPanel** → persisted in `localStorage` as `bayan-flow:sound-enabled`.
+
+Regenerate export WAV assets after changing presets or event kinds:
+
+```bash
+pnpm run generate:export-sfx
 ```
-
-### Sound Mapping Strategy
-
-**Sorting Operations:**
-- **Compare**: Pluck synth with frequency mapped to element value (150-350Hz)
-- **Swap**: Metallic synth for distinct swap feedback
-- **Pivot**: Soft synth with lower frequency range (100-200Hz)
-- **Sorted**: Major chord (C-E-G) for completion celebration
-
-**Pathfinding Operations:**
-- **Node Visit**: Soft synth at 220Hz (A3 note)
-- **Path Found**: Extended chord (C3-E3-G3-C4) for success
-- **UI Interactions**: Brief G4 note for clicks
 
 ### Integration Pattern
 
 ```javascript
-const executeStep = useCallback((step) => {
-  setArray(step.array);
-  setStates(step.states);
-  
-  // Trigger contextual audio
-  if (step.states.includes(ELEMENT_STATES.SWAPPING)) {
-    soundManager.playSwap();
-  } else if (step.states.includes(ELEMENT_STATES.COMPARING)) {
-    soundManager.playCompare(step.array[compareIndex]);
+// useVisualization.applyStep (simplified)
+if (emitSound && soundContext) {
+  const events = getSoundEventsForStep(step, soundContext);
+  for (const event of events) {
+    soundManager.playEvent(event);
   }
-}, []);
+}
 ```
 
-**Benefits:**
-- **Non-blocking**: Audio failures don't affect visualization
-- **User-controlled**: Easy enable/disable toggle
-- **Performance**: Early returns when disabled
-- **Contextual**: Sounds match visual operations
+Interactive playback and export must stay aligned — both consume `getSoundEventsForStep()`.
 
 ## Video Export
 
@@ -702,9 +748,14 @@ User clicks Export → Orientation selection (Horizontal / Vertical)
 
 - **useVideoExporter** (`src/video/useVideoExporter.js`): Hook managing export state (`idle` | `orientation` | `checking` | `rendering` | `preview` | `error`), blob storage, and download.
 - **ExportProgressModal** (`src/components/ExportProgressModal.jsx`): Single modal with phases—orientation choice, progress bar, video preview. RTL-aware close button.
-- **AlgorithmVideo** (`src/video/AlgorithmVideo.jsx`): Root Remotion composition; switches between main visualization and complexity segment.
-- **SortingScene** / **PathfindingScene** / **GraphSearchingScene**: Frame-based Remotion scenes; use `interpolate()` / `interpolateColors()` for smooth transitions. **Searching** uses **`SearchingVideoScene`**: array-shaped steps → **SortingScene**; graph-shaped steps (`nodes` + `edges` + `nodeStates`) → **GraphSearchingScene** (not the pathfinding grid).
-- **ComplexityScene**: Remotion-compatible complexity display (time/space, performance graph) shown for 10 seconds at the end.
+- **AlgorithmVideo** (`src/video/AlgorithmVideo.jsx`): Root Remotion composition; title, step counter, localized description, watermark, optional export audio, complexity segment.
+- **Scene routing** (`src/registry/videoSceneRegistry.jsx`):
+  - Sorting → `SortingScene`
+  - Pathfinding → `PathfindingScene`
+  - Searching → `SearchingVideoScene` (array steps → `SortingScene`; graph steps → `GraphSearchingScene`)
+  - Tree traversal → `TreeTraversalScene`
+  - Graph algorithms → `GraphAlgorithmVideoScene` (node–link → `GraphAlgorithmScene`; matrix → `GraphAlgorithmMatrixScene`)
+- **ComplexityScene**: Remotion-compatible complexity display shown for 10 seconds at the end.
 
 ### Orientations
 
@@ -721,48 +772,45 @@ User clicks Export → Orientation selection (Horizontal / Vertical)
 
 ## State Management
 
-### Custom Hooks Architecture
+### Shared Playback: `useVisualization`
 
-#### **useSortingVisualization**
+Category hooks delegate step navigation to this generic engine:
 
 ```javascript
-export function useSortingVisualization(initialArray, speed, mode) {
-  const [array, setArray] = useState(initialArray);
-  const [states, setStates] = useState([]);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [steps, setSteps] = useState([]);
-  const [description, setDescription] = useState('');
-  const [isComplete, setIsComplete] = useState(false);
-  const [isAutoplayActive, setIsAutoplayActive] = useState(false);
-  
-  const stepsRef = useRef([]);
-  const autoplayTimeoutRef = useRef(null);
-  
-  // Methods
-  const loadSteps = useCallback(...);
-  const play = useCallback(...);
-  const pause = useCallback(...);
-  const reset = useCallback(...);
-  const stepForward = useCallback(...);
-  const stepBackward = useCallback(...);
-  
-  return {
-    array, states, isPlaying, currentStep, totalSteps,
-    description, isComplete, mode,
-    loadSteps, play, pause, reset, stepForward, stepBackward
-  };
+export function useVisualization({ executeStep, speed, mode, soundContext }) {
+  // Owns: steps, currentStep, isPlaying, isComplete, description
+  // Methods: loadSteps, play, pause, reset, stepForward, stepBackward
+  // Emits sound via getSoundEventsForStep when advancing intentionally
 }
 ```
 
-**Key Features:**
-1. **Ref for Steps**: Uses `useRef` to avoid stale closures in async operations
-2. **Async Playback**: Handles Promise-based delays with cleanup
-3. **Cancellable**: Can interrupt animation mid-play
-4. **Bidirectional**: Can step forward and backward
-5. **Mode-Aware**: Different behavior for manual vs autoplay
+Each category hook provides `executeStep(step)` to apply domain state (array, grid, tree, graph, matrix).
 
-#### **usePythonExecution**
+### Category Hooks
+
+#### **useSortingVisualization**
+
+Wraps `useVisualization` with array state, sort-order handling, and step loading from sorting algorithms.
+
+#### **usePathfindingVisualization**
+
+Manages 2D grid state, start/end generation, wall placement, and grid regeneration.
+
+#### **useSearchingVisualization**
+
+Two internal paths (array vs node–link) selected by `searchingSubstrate.js`. Passes `searchGraphNodeCount` for graph searching — not `gridSize`.
+
+#### **useTreeTraversalVisualization**
+
+Tree snapshots from `generateTreeForTraversal()`; visit order, queue, and level-direction metadata.
+
+#### **useGraphAlgorithmVisualization**
+
+Node–link and matrix representations via `graphAlgorithmRegistry.js` profiles; scenario-aware input generation.
+
+#### **useCategoryVisualizations**
+
+Merges all five hook results into a map keyed by `ALGORITHM_TYPES` for `VisualizerApp` to index by active category.
 
 Manages Python execution via Pyodide in a Web Worker:
 - `runCode(code)` – Execute Python; lazy-loads Pyodide on first run
@@ -772,24 +820,7 @@ Manages Python execution via Pyodide in a Web Worker:
 - `clearOutput`, `clearTestResults`, `cancelExecution`
 - Timeout handling; worker cleanup on unmount
 
-#### **usePathfindingVisualization**
-
-Similar to sorting hook but manages:
-- 2D grid state instead of 1D array
-- Start/end position generation
-- Grid size changes
-- Grid regeneration
-
-#### **useSearchingVisualization**
-
-Same control surface as sorting (steps, play, step forward/back, autoplay) but **two internal paths**:
-
-- **Array substrate**: sorted arrays; random **target** per load; steps with `array`, `states`, optional **`targetValue`** → `ArrayVisualizer` / **`SortingScene`**
-- **Node–link substrate**: `generateRandomSearchTree`-style graph context; **`regenerateGraphStructure`** for new data; steps with **`nodes`**, **`edges`**, **`nodeStates`**, **`stackOrder`** → `GraphVisualizer` / **`GraphSearchingScene`** via `getExtraVisualizerProps`
-
-`VisualizerApp` passes **`searchGraphNodeCount`** (not `gridSize`) for graph searching. `VisualizerApp` selects this hook (with sorting and pathfinding) via `useCategoryVisualizations`.
-
-#### **useTheme**
+#### **usePythonExecution**
 
 ```javascript
 export function useTheme() {
@@ -868,6 +899,22 @@ export function useSwipe({ onLeft, onRight, threshold = 30 }) {
 
 ## Testing Strategy
 
+The suite contains **98** test files under `src/`. Vitest runs in jsdom with `@/` path alias; tests use sequential forks to reduce memory pressure (`vitest.config.js`).
+
+### Registry Completeness Tests
+
+Critical for this codebase — verify synchronized wiring:
+
+- `src/registry/categoryConfig.test.js`
+- `src/registry/categoryRuntimeCompleteness.test.js`
+- `src/registry/visualizerRegistry.test.js`
+- `src/registry/videoSceneRegistry.test.jsx`
+- `src/registry/complexityDatasetRegistry.test.js`
+- `src/registry/graphAlgorithmRegistry.test.js`
+- `src/registry/searchingSubstrate.test.js`
+
+See **[AGENTS.md](../AGENTS.md)** for the full targeted test command list.
+
 ### Unit Tests
 
 **Algorithm Tests** (`algorithms.test.js`):
@@ -935,6 +982,24 @@ pnpm test:coverage     # Coverage report (Codecov patch threshold 70%)
 
 **Test Setup:** `src/test/setup.js` mocks constants, tone, soundManager, gridHelpers. The constants test uses `vi.unmock()` to test the real module.
 
+## CI & Deployment
+
+GitHub Actions (`.github/workflows/ci.yml`) runs on push/PR to `main` and `develop`:
+
+1. **Quality** — ESLint + Prettier check
+2. **Test** — Vitest with coverage (Codecov upload; PR lcov comment)
+3. **Build** — production build with `VITE_GIT_BRANCH` embedded
+4. **Deploy** — Netlify (`main` → production, `develop` → dev site, PRs → preview)
+
+Build-time env:
+
+- `VITE_GIT_BRANCH` — branch name for deploy context (`src/utils/deployContext.js`)
+- `VITE_DEV_SITE_URL` — optional dev site link in CI builds
+
+Netlify config: `netlify.toml` (SPA redirects, branch contexts).
+
+PRs to `main` must originate from `develop` (or allowed mergers) via `ensure-pr-source-develop.yml`.
+
 ## Performance Optimizations
 
 ### React Optimizations
@@ -961,11 +1026,8 @@ const handlePlay = useCallback(() => {
 4. **Code Splitting with Lazy Loading**
 ```javascript
 const PythonCodePanel = lazy(() => import('./components/PythonCodePanel'));
-const ComplexityPanel = lazy(() => import('./components/ComplexityPanel'));
-
-<Suspense fallback={<LoadingSpinner />}>
-  <PythonCodePanel {...} />
-</Suspense>
+const AlgorithmInsightPanel = lazy(() => import('./components/AlgorithmInsightPanel'));
+// ComplexityPanel is embedded inside visualizers (not app-level lazy)
 ```
 
 ### Animation Optimizations
@@ -999,42 +1061,26 @@ useEffect(() => {
 
 ## Future Enhancements
 
-### Planned Features
+Representative ideas (see `src/data/roadmapData.js` and open issues for current priorities):
 
-1. **Additional Algorithms**
-   - 14 sorting algorithms; 9 pathfinding algorithms; **searching** with array algorithms (linear, binary, …) and **node–link** graph traversal (DFS today; room for BFS-on-graph, tree walks, etc. without reusing the pathfinding grid UI)
-
-2. **Richer graph searching**
-   - DAG / non-tree generators, directed edges, optional force-directed or editable layouts while keeping the same step schema
-
-3. **Advanced Features**
-   - Algorithm comparison mode
-   - Custom array/grid input
-   - Collaborative mode
-
-4. **Educational Enhancements**
-   - Step-by-step tutorials
-   - Quiz mode
-   - Code playground
-   - Performance benchmarking
-
-5. **Recently Completed** (representative; see repo for current scope)
-   - In-browser MP4 export via Remotion (orientation choice, preview, complexity segment)
-   - Broad sorting and pathfinding catalogs; **searching** with sorted-array UI and **node–link graph** DFS (`GraphVisualizer`, `GraphSearchingScene`, `searchingSubstrate`)
-   - Vitest-based test suite and CI aligned with `package.json` engines
-   - Centralized category config (`CATEGORY_CONFIG`) feeding `useAlgorithmConfig` and `useSettingsConfig`
-   - DocumentTitle for SEO; grouped algorithm dropdown
+- Algorithm comparison mode side-by-side
+- Custom user-provided inputs (arrays, grids, graphs)
+- Richer editable graph layouts for searching and graph algorithms
+- Step-by-step tutorials and quiz mode
+- Performance benchmarking against input size
 
 ## Conclusion
 
 Bayan Flow is built with:
-- **Modularity**: Three visualization categories (sorting, pathfinding, searching), each driven by `CATEGORY_CONFIG` and shared patterns
+
+- **Registry-driven modularity**: Five categories wired through `CATEGORY_CONFIG`, visualizer/video/complexity registries, and unconditional category hooks
+- **Shared playback**: `useVisualization` + semantic `soundEvents` keep categories consistent
 - **Maintainability**: Dual implementation (visualization steps + pure functions) for algorithms
-- **Testability**: Broad unit/integration coverage via Vitest
-- **Performance**: Optimized for smooth UI animations and lazy-loaded heavy panels
-- **Extensibility**: New algorithms plug into registries (`searchingSubstrate` for searching substrate), constants, i18n, and Python/test harness
-- **Accessibility**: Keyboard, ARIA, skip links, reduced-motion awareness
-- **Internationalization**: Multi-language support with RTL
+- **Testability**: 98 test files including registry completeness coverage
+- **Performance**: Lazy heavy panels, GPU-friendly Framer Motion, sequential Vitest forks
+- **Extensibility**: New algorithms plug into registries, constants, i18n, Python, pseudocode, and insight metadata
+- **Accessibility**: Keyboard shortcuts, ARIA, skip links, reduced-motion awareness
+- **Internationalization**: EN/FR/AR with RTL
 - **Theming**: CSS-variable-based light/dark system
 
 The architecture is designed to add modes and algorithms without forking the core visualizer flow.

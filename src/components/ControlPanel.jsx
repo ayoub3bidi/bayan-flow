@@ -22,7 +22,6 @@ import {
   VolumeX,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { soundManager } from '../utils/soundManager';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
 
@@ -106,10 +105,7 @@ function ControlPanel({
         <div className="flex items-center justify-center gap-2 shrink-0">
           {/* Step Backward - Always visible */}
           <button
-            onClick={() => {
-              soundManager.playUIClick();
-              onStepBackward();
-            }}
+            onClick={onStepBackward}
             disabled={isPlaying || currentStep === 0}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title={t('controls.stepBackward')}
@@ -122,10 +118,7 @@ function ControlPanel({
           {mode === 'autoplay' &&
             (isPlaying ? (
               <button
-                onClick={() => {
-                  soundManager.playUIClick();
-                  onPause();
-                }}
+                onClick={onPause}
                 className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
                 title={t('controls.pause')}
                 aria-label={t('controls.pause')}
@@ -134,10 +127,7 @@ function ControlPanel({
               </button>
             ) : (
               <button
-                onClick={() => {
-                  soundManager.playUIClick();
-                  onPlay();
-                }}
+                onClick={onPlay}
                 disabled={isComplete}
                 className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
                 title={t('controls.play')}
@@ -149,10 +139,7 @@ function ControlPanel({
 
           {/* Reset Button */}
           <button
-            onClick={() => {
-              soundManager.playUIClick();
-              onReset();
-            }}
+            onClick={onReset}
             disabled={isPlaying}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title={t('controls.reset')}
@@ -164,10 +151,7 @@ function ControlPanel({
           {/* Step Forward - Only visible in manual mode */}
           {mode === 'manual' && (
             <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onStepForward();
-              }}
+              onClick={onStepForward}
               disabled={isPlaying || isComplete}
               className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
               title={t('controls.stepForward')}
@@ -184,10 +168,7 @@ function ControlPanel({
           {CATEGORY_CONFIG[algorithmType]?.features?.hasDataRefresh ===
             true && (
             <button
-              onClick={() => {
-                soundManager.playArrayGenerate();
-                onGenerateInput();
-              }}
+              onClick={onGenerateInput}
               disabled={isPlaying}
               className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
               title={t('controls.generateInput')}
@@ -201,7 +182,6 @@ function ControlPanel({
             <button
               type="button"
               onClick={() => {
-                soundManager.playUIClick();
                 onSortOrderChange?.(
                   sortOrder === SORT_ORDERS.ASCENDING
                     ? SORT_ORDERS.DESCENDING
@@ -254,10 +234,7 @@ function ControlPanel({
           {/* Export Video / Stop Export */}
           {exportState === 'checking' || exportState === 'rendering' ? (
             <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onCancelExport?.();
-              }}
+              onClick={onCancelExport}
               className={`${buttonBaseClasses} bg-red-500 hover:bg-red-600 text-white`}
               title={t('controls.stopExport')}
               aria-label={t('controls.stopExport')}
@@ -266,10 +243,7 @@ function ControlPanel({
             </button>
           ) : (
             <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onExportVideo?.();
-              }}
+              onClick={onExportVideo}
               disabled={totalSteps === 0}
               className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed`}
               title={

@@ -15,7 +15,7 @@ We take the security of Bayan Flow seriously. If you discover a security vulnera
 ### How to Report
 
 1. **Do not** create a public GitHub issue for security vulnerabilities
-2. Send an email to [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me) with:
+2. Send an email to [contact@bayanflow.com](mailto:contact@bayanflow.com) with:
    - A clear description of the vulnerability
    - Steps to reproduce the issue
    - Potential impact assessment
@@ -82,7 +82,7 @@ Bayan Flow implements several security measures:
 ## Contact
 
 For security-related questions or concerns, please contact:
-- Email: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
+- Email: [contact@bayanflow.com](mailto:contact@bayanflow.com)
 - Subject line: "Bayan Flow Security"
 
 Thank you for helping keep Bayan Flow secure!

@@ -12,10 +12,7 @@ import { useSortingVisualization } from './useSortingVisualization';
 
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
-    playSwap: vi.fn(),
-    playPivot: vi.fn(),
-    playCompare: vi.fn(),
-    playSorted: vi.fn(),
+    playEvents: vi.fn(),
   },
 }));
 

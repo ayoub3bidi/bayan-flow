@@ -11,17 +11,26 @@
     <meta name="keywords" content="bayan flow, algorithm visualizer, sorting algorithms, pathfinding algorithms, computer science, education, interactive learning, bubble sort, quick sort, merge sort, dijkstra, bfs, a star, clarity" />
     <meta name="author" content="Ayoub Abidi" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://bayanflow.netlify.app/" />
+    <link rel="canonical" href="https://bayanflow.com/" />
 
     <!-- Umami Analytics - Dynamically loaded based on environment -->
     <script>
       (function() {
         const hostname = window.location.hostname;
         let websiteId;
-        if (hostname === 'dev-bayanflow.netlify.app' || hostname.includes('deploy-preview')) {
+        if (
+          hostname === 'dev.bayanflow.com' ||
+          hostname === 'dev-bayanflow.netlify.app' ||
+          hostname.includes('deploy-preview')
+        ) {
           // Develop
           websiteId = 'b21ffc5d-66c1-4bfc-9e54-e05dbbe26852';
-        } else if (hostname === 'bayanflow.netlify.app' || hostname === 'www.bayanflow.netlify.app') {
+        } else if (
+          hostname === 'bayanflow.com' ||
+          hostname === 'www.bayanflow.com' ||
+          hostname === 'bayanflow.netlify.app' ||
+          hostname === 'www.bayanflow.netlify.app'
+        ) {
           // main
           websiteId = 'c096589e-f026-47e9-b458-aeb6850d5d5c';
         }
@@ -37,18 +46,18 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bayanflow.netlify.app/" />
+    <meta property="og:url" content="https://bayanflow.com/" />
     <meta property="og:title" content="Bayan Flow - Interactive Algorithm Visualizer" />
     <meta property="og:description" content="Learn algorithms with clarity through interactive step-by-step animations. Explore sorting and pathfinding algorithms with real-time complexity analysis." />
-    <meta property="og:image" content="https://bayanflow.netlify.app/logo.png" />
+    <meta property="og:image" content="https://bayanflow.com/logo.png" />
     <meta property="og:site_name" content="Bayan Flow" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://bayanflow.netlify.app/" />
+    <meta property="twitter:url" content="https://bayanflow.com/" />
     <meta property="twitter:title" content="Bayan Flow - Interactive Algorithm Visualizer" />
     <meta property="twitter:description" content="Learn algorithms with clarity through interactive step-by-step animations. Explore sorting and pathfinding algorithms." />
-    <meta property="twitter:image" content="https://bayanflow.netlify.app/logo.png" />
+    <meta property="twitter:image" content="https://bayanflow.com/logo.png" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
@@ -62,7 +71,7 @@
       "@type": "WebApplication",
       "name": "Bayan Flow",
       "description": "Bayan Flow: Interactive educational tool for learning sorting and pathfinding algorithms through step-by-step visual animations with clarity. Bayan (بيان) means clarity in Arabic.",
-      "url": "https://bayanflow.netlify.app/",
+      "url": "https://bayanflow.com/",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "Web Browser",
       "author": {

@@ -8,18 +8,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen } from '../../test/testUtils';
 import { BrowserRouter } from 'react-router-dom';
 import AlgorithmTypes from './AlgorithmTypes';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    },
-  };
-});
-
 // Mock UI components
 vi.mock('../ui/Container', () => ({
   default: ({ children }) => <div>{children}</div>,

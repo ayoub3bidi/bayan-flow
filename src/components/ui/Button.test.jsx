@@ -8,21 +8,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Button from './Button';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      button: ({ children, ...props }) => (
-        <button {...props}>{children}</button>
-      ),
-      a: ({ children, ...props }) => <a {...props}>{children}</a>,
-    },
-  };
-});
-
 const renderButton = (props = {}) => {
   return render(
     <BrowserRouter>

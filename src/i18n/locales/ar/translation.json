@@ -7,8 +7,8 @@
   "header": {
     "title": "بيان Flow",
     "subtitle": "الوضوح في الخوارزميات",
-    "starOnGithub": "نجمة على GitHub",
-    "viewOnGithub": "عرض على GitHub"
+    "openGithubRepo": "فتح {{repo}} على GitHub — الإصدار {{version}}، {{stars}} نجمة، {{forks}} fork",
+    "goToRepository": "الانتقال إلى المستودع"
   },
   "settings": {
     "title": "الإعدادات",
@@ -868,6 +868,8 @@
     "followUs": "تابعنا",
     "youtube": "يوتيوب",
     "support": "الدعم",
+    "contact": "تواصل",
+    "contactEmailAria": "إرسال بريد إلكتروني إلى مؤسس بيان فلو على contact@bayanflow.com",
     "enjoying": "هل تستمتع بهذا المشروع؟ ادعم عملي!",
     "allRightsReserved": "جميع الحقوق محفوظة",
     "youtubeAria": "بيان فلو على يوتيوب — فتح القناة في تبويب جديد"
@@ -1210,7 +1212,8 @@
       },
       "pythonCode": {
         "title": "بايثون تفاعلي",
-        "description": "عدّل ونفّذ وشاهد المخرجات الحقيقية لكل خوارزمية. كل ذلك في متصفحك. تعلّم بالتجربة مع كود يعمل مباشرة."
+        "description": "عدّل ونفّذ وشاهد المخرجات الحقيقية لكل خوارزمية. كل ذلك في متصفحك. تعلّم بالتجربة مع كود يعمل مباشرة.",
+        "badge": "تجريبي"
       },
       "sound": {
         "title": "صوت تفاعلي",

@@ -7,18 +7,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import TimelineItem from './TimelineItem';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    },
-  };
-});
-
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
   CheckCircle2: () => <svg data-testid="check-icon" />,

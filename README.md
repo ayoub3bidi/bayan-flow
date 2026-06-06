@@ -17,31 +17,32 @@
 
 **Live sites**
 
-- **Production** (`main`): [bayanflow.netlify.app](https://bayanflow.netlify.app)
-- **Dev** (`develop`): [dev-bayanflow.netlify.app](https://dev-bayanflow.netlify.app)
+- **Production** (`main`): [bayanflow.com](https://bayanflow.com)
+- **Dev** (`develop`): [dev.bayanflow.com](https://dev.bayanflow.com)
 
 ## What it is
 
-Bayan Flow is a client-side SPA: pick a **mode** (sorting, pathfinding, searching, tree traversal, or graph algorithms), choose an algorithm, then step through or autoplay the visualization. Optional **Python** implementations run in the browser (Pyodide), with a **complexity** panel and **video export** (including horizontal and vertical layouts) when you want to share or study offline.
+Bayan Flow is a client-side SPA with **45 algorithms** across five modes. Pick a category, choose an algorithm, then step through or autoplay the visualization. Optional **Python** implementations run in the browser (Pyodide `0.27.5`), with a **complexity** panel after completion and **video export** (horizontal or vertical MP4) when you want to share or study offline.
 
 ## Features (overview)
 
-| Mode                 | What you get                                                                                                                                                                                                                                              |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sorting**          | A broad set of sorting algorithms on a configurable random array, color-coded bars, manual or autoplay                                                                                                                                                    |
-| **Pathfinding**      | Multiple grid-based algorithms, configurable grid sizes, start/end positions, step-by-step exploration                                                                                                                                                    |
-| **Searching**        | **Array** algorithms on sorted data (e.g. binary search) with bar visualization and target highlighting; **graph** algorithms (e.g. depth-first search) on a generated node–link tree with explicit vertices and edges—separate from the pathfinding grid |
-| **Tree Traversals**  | Binary-tree traversal algorithms with explicit visit order, queue/stack context, and traversal-state highlighting                                                                                                                                         |
-| **Graph Algorithms** | Directed node–link graph algorithms, starting with DFS-based topological sort on generated DAGs                                                                                                                                                           |
+| Mode                 | Algorithms | What you get |
+| -------------------- | ---------- | ------------ |
+| **Sorting**          | 14         | Random array, color-coded bars, ascending/descending order, comparison and non-comparison families |
+| **Pathfinding**      | 9          | Grid-based search on configurable presets; start/end, walls, open/closed/path highlighting |
+| **Searching**        | 9          | **Array** search on sorted data (linear through Fibonacci) with target highlighting; **node–link graph** search (DFS, BFS-on-graph)—separate from the pathfinding grid |
+| **Tree Traversals**  | 6          | Binary-tree traversals with visit order, queue/stack context, and Morris in-place walk |
+| **Graph Algorithms** | 7          | Node–link and matrix views: topological sort, MST (Kruskal/Prim), SCC (Tarjan/Kosaraju), Floyd–Warshall; preset scenarios for edge cases |
 
 **Shared**
 
-- Manual vs autoplay, speed presets, mobile swipe (manual), fullscreen, optional sound
-- Python editor + run, test cases (built-in + custom), algorithm insight panel
+- Manual vs autoplay, four speed presets, mobile swipe (manual), fullscreen, optional visualization sound
+- Python editor + run, built-in and custom test cases, pseudocode, algorithm insight panel
 - Internationalization (English, French, Arabic with RTL), light/dark theme
-- In-browser video export (high resolution, orientation choice, short complexity segment at the end)
+- In-browser video export with orientation choice, watermark, optional export audio, and a complexity segment at the end
+- Landing page with live GitHub stats; public roadmap timeline
 
-Details, stack notes, and contributor workflows live in the docs linked below—not duplicated here.
+Details, stack notes, registry wiring, and contributor workflows live in the docs linked below—not duplicated here.
 
 ## Quick start
 
@@ -60,6 +61,7 @@ Then open the local URL printed in the terminal.
 
 | Doc                                                | Use it when you…                                                    |
 | -------------------------------------------------- | ------------------------------------------------------------------- |
+| **[AGENTS.md](./AGENTS.md)**                       | Agent-oriented project map: registries, contracts, tests, CI        |
 | **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)**   | Run lint/tests/build, follow patterns, add an algorithm or language |
 | **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | Understand routes, hooks, data flow, video export, testing layout   |
 | **[CONTRIBUTING.md](./CONTRIBUTING.md)**           | Contribute: branch targets `develop`, CI, PR template, standards    |

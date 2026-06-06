@@ -9,19 +9,6 @@ import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
 import ControlPanel from './ControlPanel';
 import { ALGORITHM_TYPES } from '../constants';
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-  },
-}));
-
-vi.mock('../utils/soundManager', () => ({
-  soundManager: {
-    playUIClick: vi.fn(),
-    playArrayGenerate: vi.fn(),
-  },
-}));
-
 function getBaseProps(overrides = {}) {
   return {
     isPlaying: false,

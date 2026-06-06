@@ -7,8 +7,8 @@
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarté dans les Algorithmes",
-    "starOnGithub": "Étoiler sur GitHub",
-    "viewOnGithub": "Voir sur GitHub"
+    "openGithubRepo": "Ouvrir {{repo}} sur GitHub — version {{version}}, {{stars}} étoiles, {{forks}} forks",
+    "goToRepository": "Aller au dépôt"
   },
   "settings": {
     "title": "Paramètres",
@@ -868,6 +868,8 @@
     "followUs": "Suivez-nous",
     "youtube": "YouTube",
     "support": "Soutien",
+    "contact": "Contact",
+    "contactEmailAria": "Envoyer un e-mail au fondateur de Bayan Flow à contact@bayanflow.com",
     "enjoying": "Vous appréciez ce projet ? Soutenez mon travail !",
     "allRightsReserved": "Tous droits réservés",
     "youtubeAria": "Bayan Flow sur YouTube — ouvrir la chaîne dans un nouvel onglet"
@@ -1210,7 +1212,8 @@
       },
       "pythonCode": {
         "title": "Python Interactif",
-        "description": "Modifiez, exécutez et voyez la sortie réelle pour chaque algorithme. Tout dans votre navigateur. Apprenez en expérimentant avec du code en direct."
+        "description": "Modifiez, exécutez et voyez la sortie réelle pour chaque algorithme. Tout dans votre navigateur. Apprenez en expérimentant avec du code en direct.",
+        "badge": "Expérimental"
       },
       "sound": {
         "title": "Son Interactif",

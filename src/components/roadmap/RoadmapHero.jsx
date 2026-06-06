@@ -82,7 +82,7 @@ function RoadmapHero() {
                 components={[
                   <a
                     key="dev"
-                    href="https://dev-bayanflow.netlify.app/"
+                    href="https://dev.bayanflow.com/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#3b82f6] dark:text-[#60a5fa] hover:underline font-medium"

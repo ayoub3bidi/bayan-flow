@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   GRID_ELEMENT_STATES,
   ALGORITHM_TYPES,
@@ -15,14 +15,13 @@ import {
   generateRandomStartEnd,
   createEmptyGrid,
 } from '../utils/gridHelpers.js';
-import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 
 /**
  * Thin adapter around useVisualization for pathfinding algorithms.
  * Owns grid + cell-states domain state, start/end positions, and
- * pathfinding-specific sound effects.
+ * pathfinding-specific grid state.
  * All playback logic (play, pause, reset, step nav, autoplay) lives in
  * useVisualization.
  *
@@ -50,24 +49,14 @@ export function usePathfindingVisualization(
   const executeStep = useCallback(step => {
     setGrid(step.grid);
     setStates(step.states);
-
-    const hasOpen = step.states.some(row =>
-      row.includes(GRID_ELEMENT_STATES.OPEN)
-    );
-    const hasPath = step.states.some(row =>
-      row.includes(GRID_ELEMENT_STATES.PATH)
-    );
-
-    const desc = (step.description ?? '').toLowerCase();
-    if (hasPath && desc.includes('path found')) {
-      soundManager.playPathFound();
-    } else if (hasOpen) {
-      soundManager.playNodeVisit();
-    }
   }, []);
 
   // ── Shared playback engine ─────────────────────────────────────────────────
-  const engine = useVisualization({ executeStep, speed, mode });
+  const soundContext = useMemo(
+    () => ({ algorithmType: ALGORITHM_TYPES.PATHFINDING, algorithmKey }),
+    [algorithmKey]
+  );
+  const engine = useVisualization({ executeStep, speed, mode, soundContext });
 
   // ── Grid management ────────────────────────────────────────────────────────
   const generateNewGrid = useCallback(() => {

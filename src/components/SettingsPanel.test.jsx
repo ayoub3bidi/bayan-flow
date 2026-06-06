@@ -9,22 +9,6 @@ import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
 import SettingsPanel from './SettingsPanel';
 import { ALGORITHM_TYPES, VISUALIZATION_MODES } from '../constants';
 
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }) => <>{children}</>,
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }) => <button {...props}>{children}</button>,
-  },
-}));
-
-vi.mock('../utils/soundManager', () => ({
-  soundManager: {
-    enable: vi.fn(),
-    disable: vi.fn(),
-    playUIClick: vi.fn(),
-  },
-}));
-
 vi.mock('../config/algorithmConfig', () => ({
   useAlgorithmConfig: () => ({
     byType: {

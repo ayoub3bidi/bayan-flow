@@ -7,19 +7,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Timeline from './Timeline';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-      p: ({ children, ...props }) => <p {...props}>{children}</p>,
-    },
-  };
-});
-
 // Mock TimelineItem
 vi.mock('./TimelineItem', () => ({
   default: ({ title, position, index }) => (

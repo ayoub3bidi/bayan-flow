@@ -23,7 +23,8 @@ import { motion, AnimatePresence } from 'framer-motion';
  *
  * @param {boolean} open - Whether the modal is visible
  * @param {number} progress - 0–1 progress
- * @param {string} phase - 'orientation' | 'checking' | 'rendering' | 'preview'
+ * @param {string} phase - 'orientation' | 'checking' | 'rendering' | 'preview' | 'error'
+ * @param {string | null} [errorMessage] - Detail shown when phase === 'error'
  * @param {string | null} blobUrl - Object URL for video preview (when phase === 'preview')
  * @param {Function} onStop - Called when user clicks Stop
  * @param {Function} onClose - Called when user closes preview or orientation
@@ -39,11 +40,13 @@ function ExportProgressModal({
   onClose,
   onDownload,
   onOrientationSelect,
+  errorMessage = null,
 }) {
   const { t } = useTranslation();
   const percent = Math.round(progress * 100);
   const isPreview = phase === 'preview';
   const isOrientation = phase === 'orientation';
+  const isError = phase === 'error';
 
   return (
     <AnimatePresence>
@@ -66,7 +69,7 @@ function ExportProgressModal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
           >
-            {(isPreview || isOrientation) && (
+            {(isPreview || isOrientation || isError) && (
               <button
                 type="button"
                 onClick={onClose}
@@ -84,7 +87,9 @@ function ExportProgressModal({
                 ? t('controls.exportPreview')
                 : isOrientation
                   ? t('controls.exportOrientationTitle')
-                  : t('controls.exportingTitle')}
+                  : isError
+                    ? t('controls.exportError')
+                    : t('controls.exportingTitle')}
             </h2>
             <p
               id="export-progress-desc"
@@ -94,9 +99,11 @@ function ExportProgressModal({
                 ? t('controls.exportPreviewDesc')
                 : isOrientation
                   ? t('controls.exportOrientationDesc')
-                  : phase === 'checking'
-                    ? t('controls.exportingChecking')
-                    : t('controls.exportingRendering')}
+                  : isError
+                    ? errorMessage || t('controls.browserNotSupported')
+                    : phase === 'checking'
+                      ? t('controls.exportingChecking')
+                      : t('controls.exportingRendering')}
             </p>
 
             {isOrientation ? (
@@ -162,6 +169,16 @@ function ExportProgressModal({
                     {t('controls.downloadVideo')}
                   </button>
                 </div>
+              </div>
+            ) : isError ? (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2.5 rounded-lg bg-surface-elevated hover:bg-border text-text-primary font-medium transition-colors"
+                >
+                  {t('controls.closePreview')}
+                </button>
               </div>
             ) : phase === 'checking' || phase === 'rendering' ? (
               <>

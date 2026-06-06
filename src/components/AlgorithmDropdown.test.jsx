@@ -7,16 +7,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
 import AlgorithmDropdown from './AlgorithmDropdown';
-
-// Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }) => <button {...props}>{children}</button>,
-  },
-  AnimatePresence: ({ children }) => <>{children}</>,
-}));
-
 const mockAlgorithms = [
   { value: 'bubbleSort', label: 'Bubble Sort', complexity: 'O(n²)' },
   { value: 'quickSort', label: 'Quick Sort', complexity: 'O(n log n)' },

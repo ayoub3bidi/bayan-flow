@@ -8,14 +8,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ComplexityPanel from './ComplexityPanel';
 import '../test/setup';
-
-// Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-  },
-}));
-
 // Mock constants
 vi.mock('../constants', () => ({
   ALGORITHM_COMPLEXITY: {

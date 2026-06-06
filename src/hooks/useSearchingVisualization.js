@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ELEMENT_STATES,
   GRAPH_NODE_STATES,
@@ -12,7 +12,6 @@ import {
   VISUALIZATION_MODES,
   DEFAULT_SEARCH_GRAPH_NODE_COUNT,
 } from '../constants/index.js';
-import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate.js';
@@ -70,18 +69,6 @@ export function useSearchingVisualization(
         setGraphNodeStates(step.nodeStates ?? {});
         setGraphStackOrder(step.stackOrder ?? []);
 
-        const states = step.nodeStates ?? {};
-        const hasFrontier = Object.values(states).includes(
-          GRAPH_NODE_STATES.FRONTIER
-        );
-        const hasPath = Object.values(states).includes(GRAPH_NODE_STATES.PATH);
-        const desc = (step.description ?? '').toLowerCase();
-
-        if (hasPath && desc.includes('path')) {
-          soundManager.playPathFound();
-        } else if (hasFrontier) {
-          soundManager.playNodeVisit();
-        }
         return;
       }
 
@@ -90,17 +77,15 @@ export function useSearchingVisualization(
       if (step.targetValue !== undefined && step.targetValue !== null) {
         setTargetValue(step.targetValue);
       }
-
-      const hasComparing = step.states.includes(ELEMENT_STATES.COMPARING);
-      if (hasComparing) {
-        const idx = step.states.indexOf(ELEMENT_STATES.COMPARING);
-        soundManager.playCompare(step.array[idx]);
-      }
     },
     [algorithmKey]
   );
 
-  const engine = useVisualization({ executeStep, speed, mode });
+  const soundContext = useMemo(
+    () => ({ algorithmType: ALGORITHM_TYPES.SEARCHING, algorithmKey }),
+    [algorithmKey]
+  );
+  const engine = useVisualization({ executeStep, speed, mode, soundContext });
 
   const regenerateGraphStructure = useCallback(() => {
     engine.loadSteps([]);

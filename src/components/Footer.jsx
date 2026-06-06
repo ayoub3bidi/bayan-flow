@@ -9,20 +9,23 @@ import { FileText, AlertCircle, Map } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import {
+  GITHUB_REPO_NAME,
+  GITHUB_REPO_OWNER,
+  GITHUB_REPO_URL,
+} from '../constants/githubRepo';
 
 function Footer() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [version, setVersion] = useState(null);
   const currentYear = new Date().getFullYear();
-  const repoOwner = 'ayoub3bidi';
-  const repoName = 'bayan-flow';
 
   useEffect(() => {
     const fetchLatestVersion = async () => {
       try {
         const response = await fetch(
-          `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`
+          `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch release data');
@@ -40,18 +43,18 @@ function Footer() {
     };
 
     fetchLatestVersion();
-  }, [repoOwner, repoName]);
+  }, []);
 
   const links = [
     {
       label: t('footer.viewDocs'),
       icon: FileText,
-      href: `https://github.com/${repoOwner}/${repoName}/tree/main/docs`,
+      href: `${GITHUB_REPO_URL}/tree/main/docs`,
     },
     {
       label: t('footer.reportIssue'),
       icon: AlertCircle,
-      href: `https://github.com/${repoOwner}/${repoName}/issues`,
+      href: `${GITHUB_REPO_URL}/issues`,
     },
     {
       label: t('landing.footer.seeRoadmap'),
@@ -65,6 +68,14 @@ function Footer() {
       label: t('footer.youtube'),
       href: 'https://www.youtube.com/@bayan-flow',
       ariaLabel: t('footer.youtubeAria'),
+    },
+  ];
+
+  const contactLinks = [
+    {
+      label: 'contact@bayanflow.com',
+      href: 'mailto:contact@bayanflow.com',
+      ariaLabel: t('footer.contactEmailAria'),
     },
   ];
 
@@ -174,27 +185,49 @@ function Footer() {
               })}
             </div>
           </div>
-          {/* Social & community links */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold text-text-primary">
-              {t('footer.followUs')}
-            </h3>
-            <div className="flex flex-col gap-2">
-              {socialLinks.map(item => (
-                <motion.a
-                  key={item.href}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.ariaLabel}
-                  className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
-                  whileHover={{ scale: 1.02, x: 2 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                >
-                  {item.label}
-                </motion.a>
-              ))}
+          {/* Follow us & contact */}
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-text-primary">
+                {t('footer.followUs')}
+              </h3>
+              <div className="flex flex-col gap-2">
+                {socialLinks.map(item => (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.ariaLabel}
+                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-text-primary">
+                {t('footer.contact')}
+              </h3>
+              <div className="flex flex-col gap-2">
+                {contactLinks.map(item => (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    aria-label={item.ariaLabel}
+                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+              </div>
             </div>
           </div>
           {/* Support */}

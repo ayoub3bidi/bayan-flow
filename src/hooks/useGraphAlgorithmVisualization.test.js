@@ -12,7 +12,7 @@ import { GRAPH_REPRESENTATIONS } from '../registry/graphAlgorithmRegistry.js';
 
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
-    playNodeVisit: vi.fn(),
+    playEvents: vi.fn(),
   },
 }));
 

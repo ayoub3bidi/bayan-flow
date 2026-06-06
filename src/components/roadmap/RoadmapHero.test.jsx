@@ -15,20 +15,6 @@ const { mockIsProductionMainBranch } = vi.hoisted(() => ({
 vi.mock('../../utils/deployContext', () => ({
   isProductionMainBranch: () => mockIsProductionMainBranch(),
 }));
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-      h1: ({ children, ...props }) => <h1 {...props}>{children}</h1>,
-      p: ({ children, ...props }) => <p {...props}>{children}</p>,
-    },
-  };
-});
-
 // Mock Container
 vi.mock('../ui/Container', () => ({
   default: ({ children, className }) => (

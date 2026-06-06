@@ -4,14 +4,13 @@
  * See LICENSE for details.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ALGORITHM_TYPES,
   DEFAULT_GRAPH_NODE_COUNT,
   GRAPH_NODE_STATES,
   VISUALIZATION_MODES,
 } from '../constants/index.js';
-import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 import {
@@ -107,14 +106,13 @@ export function useGraphAlgorithmVisualization(
     );
     setDirected(step.directed ?? baseContext?.directed ?? true);
     setWeighted(step.weighted ?? baseContext?.weighted ?? false);
-
-    const states = step.nodeStates ?? {};
-    if (Object.values(states).includes(GRAPH_NODE_STATES.CURRENT)) {
-      soundManager.playNodeVisit();
-    }
   }, []);
 
-  const engine = useVisualization({ executeStep, speed, mode });
+  const soundContext = useMemo(
+    () => ({ algorithmType: ALGORITHM_TYPES.GRAPH_ALGORITHM, algorithmKey }),
+    [algorithmKey]
+  );
+  const engine = useVisualization({ executeStep, speed, mode, soundContext });
 
   const regenerateGraphStructure = useCallback(() => {
     engine.loadSteps([]);

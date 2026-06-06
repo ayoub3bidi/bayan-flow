@@ -12,20 +12,6 @@ import GraphVisualizer from './GraphVisualizer.jsx';
 let isDarkTheme = true;
 const swipeHandlers = [];
 
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }) => <>{children}</>,
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    span: ({ children, ...props }) => <span {...props}>{children}</span>,
-    circle: ({
-      initial: _initial,
-      animate: _animate,
-      transition: _transition,
-      ...props
-    }) => <circle {...props} />,
-  },
-}));
-
 vi.mock('../hooks/useSwipe', () => ({
   default: args => {
     swipeHandlers.push(args);
