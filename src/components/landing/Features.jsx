@@ -32,13 +32,13 @@ function Features() {
       title: t('landing.features.pythonCode.title'),
       description: t('landing.features.pythonCode.description'),
       gradient: 'from-amber-500 to-orange-500',
+      badge: t('landing.features.pythonCode.badge'),
     },
     {
       icon: Volume2,
       title: t('landing.features.sound.title'),
       description: t('landing.features.sound.description'),
       gradient: 'from-rose-500 to-pink-500',
-      badge: t('landing.features.sound.badge'),
     },
     {
       icon: Maximize,

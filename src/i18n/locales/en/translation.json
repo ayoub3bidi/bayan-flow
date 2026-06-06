@@ -1211,7 +1211,8 @@
       },
       "pythonCode": {
         "title": "Interactive Python",
-        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code."
+        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code.",
+        "badge": "Experimental"
       },
       "sound": {
         "title": "Interactive Sound",

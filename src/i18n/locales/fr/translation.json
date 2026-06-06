@@ -1212,7 +1212,8 @@
       },
       "pythonCode": {
         "title": "Python Interactif",
-        "description": "Modifiez, exécutez et voyez la sortie réelle pour chaque algorithme. Tout dans votre navigateur. Apprenez en expérimentant avec du code en direct."
+        "description": "Modifiez, exécutez et voyez la sortie réelle pour chaque algorithme. Tout dans votre navigateur. Apprenez en expérimentant avec du code en direct.",
+        "badge": "Expérimental"
       },
       "sound": {
         "title": "Son Interactif",
