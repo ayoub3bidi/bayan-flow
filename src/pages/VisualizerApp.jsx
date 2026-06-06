@@ -194,6 +194,7 @@ function App() {
     exportState,
     exportProgress,
     exportBlobUrl,
+    exportErrorMessage,
     cancelExport,
     closePreview,
     downloadVideo,
@@ -390,6 +391,7 @@ function App() {
       speed,
       gridSize,
       orientation,
+      includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
     });
@@ -623,7 +625,8 @@ function App() {
           exportState === 'orientation' ||
           exportState === 'checking' ||
           exportState === 'rendering' ||
-          exportState === 'preview'
+          exportState === 'preview' ||
+          exportState === 'error'
         }
         progress={exportProgress}
         phase={
@@ -631,10 +634,13 @@ function App() {
             ? 'orientation'
             : exportState === 'preview'
               ? 'preview'
-              : exportState === 'checking'
-                ? 'checking'
-                : 'rendering'
+              : exportState === 'error'
+                ? 'error'
+                : exportState === 'checking'
+                  ? 'checking'
+                  : 'rendering'
         }
+        errorMessage={exportErrorMessage}
         blobUrl={exportBlobUrl}
         onStop={cancelExport}
         onClose={closePreview}
