@@ -80,11 +80,7 @@ export function quantizeToScale(
  */
 export function getPentatonicNoteName(
   index,
-  {
-    scale = C_MAJOR_PENTATONIC,
-    baseMidi = 60,
-    octaveSpan = 2,
-  } = {}
+  { scale = C_MAJOR_PENTATONIC, baseMidi = 60, octaveSpan = 2 } = {}
 ) {
   const totalNotes = scale.length * octaveSpan;
   const wrapped = ((Math.floor(index) % totalNotes) + totalNotes) % totalNotes;

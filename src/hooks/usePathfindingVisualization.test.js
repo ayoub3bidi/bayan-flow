@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { usePathfindingVisualization } from './usePathfindingVisualization';
 import {
+  ALGORITHM_TYPES,
   GRID_ELEMENT_STATES,
   VISUALIZATION_MODES,
   DEFAULT_GRID_SIZE,
@@ -597,9 +598,15 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
-        { kind: 'frontier' },
-      ]);
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith(
+        [{ kind: 'frontier' }],
+        expect.objectContaining({
+          algorithmType: ALGORITHM_TYPES.PATHFINDING,
+          algorithmKey: TEST_ALGO_KEY,
+          stepIndex: 1,
+          speed: 1000,
+        })
+      );
     });
 
     it('should play path found sound when path is discovered', () => {
@@ -641,9 +648,15 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
-        { kind: 'pathFound' },
-      ]);
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith(
+        [{ kind: 'pathFound' }],
+        expect.objectContaining({
+          algorithmType: ALGORITHM_TYPES.PATHFINDING,
+          algorithmKey: TEST_ALGO_KEY,
+          stepIndex: 1,
+          speed: 1000,
+        })
+      );
     });
 
     it('should not play path sound for open nodes with non-path description', () => {
@@ -685,9 +698,15 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
-        { kind: 'frontier' },
-      ]);
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith(
+        [{ kind: 'frontier' }],
+        expect.objectContaining({
+          algorithmType: ALGORITHM_TYPES.PATHFINDING,
+          algorithmKey: TEST_ALGO_KEY,
+          stepIndex: 1,
+          speed: 1000,
+        })
+      );
     });
   });
 
@@ -1116,9 +1135,15 @@ describe('usePathfindingVisualization', () => {
         result.current.stepForward();
       });
 
-      expect(mockSoundManager.playEvents).toHaveBeenCalledWith([
-        { kind: 'frontier' },
-      ]);
+      expect(mockSoundManager.playEvents).toHaveBeenCalledWith(
+        [{ kind: 'frontier' }],
+        expect.objectContaining({
+          algorithmType: ALGORITHM_TYPES.PATHFINDING,
+          algorithmKey: TEST_ALGO_KEY,
+          stepIndex: 1,
+          speed: 1000,
+        })
+      );
     });
 
     it('should not throw when description is missing on a step', () => {

@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { VISUALIZATION_MODES } from '../constants/index.js';
+import { ALGORITHM_TYPES, VISUALIZATION_MODES } from '../constants/index.js';
 import { binarySearch } from '../algorithms/searching/binarySearch.js';
 import { jumpSearch } from '../algorithms/searching/jumpSearch.js';
 import { useSearchingVisualization } from './useSearchingVisualization.js';
@@ -275,9 +275,15 @@ describe('useSearchingVisualization', () => {
     });
 
     const midValue = values[Math.floor((0 + (values.length - 1)) / 2)];
-    expect(soundManager.playEvents).toHaveBeenCalledWith([
-      { kind: 'compare', value: midValue },
-    ]);
+    expect(soundManager.playEvents).toHaveBeenCalledWith(
+      [{ kind: 'compare', value: midValue }],
+      expect.objectContaining({
+        algorithmType: ALGORITHM_TYPES.SEARCHING,
+        algorithmKey: 'binarySearch',
+        stepIndex: 1,
+        speed: 100,
+      })
+    );
   });
 
   it('updates targetValue when stepping through steps that include targetValue', async () => {

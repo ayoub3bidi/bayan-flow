@@ -16,7 +16,9 @@ import {
 
 describe('useVideoExporter helpers', () => {
   it('cloneExportSteps returns a deep copy of plain step data', () => {
-    const steps = [{ array: [3, 1, 2], states: ['default', 'default', 'default'] }];
+    const steps = [
+      { array: [3, 1, 2], states: ['default', 'default', 'default'] },
+    ];
     const cloned = cloneExportSteps(steps);
     expect(cloned).toEqual(steps);
     expect(cloned).not.toBe(steps);
@@ -34,9 +36,9 @@ describe('useVideoExporter helpers', () => {
   });
 
   it('hasAudioRenderBlocker detects audio/container codec issues', () => {
-    expect(
-      hasAudioRenderBlocker([{ type: 'audio-codec-unsupported' }])
-    ).toBe(true);
+    expect(hasAudioRenderBlocker([{ type: 'audio-codec-unsupported' }])).toBe(
+      true
+    );
     expect(hasAudioRenderBlocker([{ type: 'webgl-unsupported' }])).toBe(false);
   });
 
@@ -76,9 +78,9 @@ describe('useVideoExporter helpers', () => {
   });
 
   it('isExportCancelledError detects abort and Remotion cancel messages', () => {
-    expect(isExportCancelledError(new DOMException('Aborted', 'AbortError'))).toBe(
-      true
-    );
+    expect(
+      isExportCancelledError(new DOMException('Aborted', 'AbortError'))
+    ).toBe(true);
     expect(
       isExportCancelledError(new Error('renderMediaOnWeb() was cancelled'))
     ).toBe(true);

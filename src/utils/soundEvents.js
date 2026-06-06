@@ -103,9 +103,7 @@ function gridStateIncreased(step, previousStep, state) {
   if (!previousStep?.states) {
     return hasGridState(step, state);
   }
-  return (
-    countGridState(step, state) > countGridState(previousStep, state)
-  );
+  return countGridState(step, state) > countGridState(previousStep, state);
 }
 
 function objectValues(obj) {
@@ -156,7 +154,9 @@ function buildPathfindingEvents(step, stepIndex, totalSteps, previousStep) {
 
   if (hasGridState(step, GRID_ELEMENT_STATES.PATH)) {
     events.push({ kind: SOUND_EVENT_KINDS.PATH_FOUND });
-  } else if (gridStateIncreased(step, previousStep, GRID_ELEMENT_STATES.CLOSED)) {
+  } else if (
+    gridStateIncreased(step, previousStep, GRID_ELEMENT_STATES.CLOSED)
+  ) {
     events.push({ kind: SOUND_EVENT_KINDS.VISIT });
   } else if (gridStateIncreased(step, previousStep, GRID_ELEMENT_STATES.OPEN)) {
     events.push({ kind: SOUND_EVENT_KINDS.FRONTIER });

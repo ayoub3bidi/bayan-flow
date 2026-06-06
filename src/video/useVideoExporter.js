@@ -53,7 +53,12 @@ export function cloneExportSteps(steps) {
 /** @param {unknown} err */
 export function isExportCancelledError(err) {
   if (!err) return false;
-  if (typeof err === 'object' && err !== null && 'name' in err && err.name === 'AbortError') {
+  if (
+    typeof err === 'object' &&
+    err !== null &&
+    'name' in err &&
+    err.name === 'AbortError'
+  ) {
     return true;
   }
   const message =
@@ -79,9 +84,7 @@ export function summarizeRenderIssues(issues = []) {
 /** @param {Array<{ type?: string }>} [issues] */
 export function hasAudioRenderBlocker(issues = []) {
   return issues.some(issue =>
-    ['audio-codec-unsupported', 'container-codec-mismatch'].includes(
-      issue.type
-    )
+    ['audio-codec-unsupported', 'container-codec-mismatch'].includes(issue.type)
   );
 }
 
@@ -248,7 +251,10 @@ export function useVideoExporter() {
 
         if (!canExport) {
           const issueSummary = summarizeRenderIssues(check.issues);
-          console.warn('[Export Video] Browser cannot render MP4:', check.issues);
+          console.warn(
+            '[Export Video] Browser cannot render MP4:',
+            check.issues
+          );
           setExportErrorMessage(
             issueSummary ||
               'Video export is not supported in this browser. Try Chrome 94+, Firefox 130+, or Safari 26+.'
@@ -309,7 +315,7 @@ export function useVideoExporter() {
         abortRef.current = null;
       }
     },
-    [dismissExportSession, resetExportSession]
+    [dismissExportSession]
   );
 
   return {
