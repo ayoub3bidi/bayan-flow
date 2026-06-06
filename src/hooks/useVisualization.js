@@ -85,11 +85,15 @@ export function useVisualization({
           totalSteps: stepsRef.current.length,
         });
         if (soundEvents.length > 0) {
-          soundManager.playEvents(soundEvents);
+          soundManager.playEvents(soundEvents, {
+            ...soundContext,
+            speed,
+            stepIndex,
+          });
         }
       }
     },
-    [executeStep, soundContext]
+    [executeStep, soundContext, speed]
   );
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────

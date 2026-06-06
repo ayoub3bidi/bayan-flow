@@ -60,6 +60,7 @@ export const EXPORT_SFX_DURATION_FRAMES_BY_KIND = {
   swap: 14,
   pivot: 20,
   complete: 80,
+  passComplete: 24,
   visit: 10,
   frontier: 10,
   targetFound: 40,

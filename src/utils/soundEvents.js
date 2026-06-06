@@ -31,6 +31,7 @@ export const SOUND_EVENT_KINDS = {
   MATRIX_CONSIDER: 'matrixConsider',
   MATRIX_UPDATE: 'matrixUpdate',
   COMPONENT_COMPLETE: 'componentComplete',
+  PASS_COMPLETE: 'passComplete',
 };
 
 const SCC_ALGORITHMS = new Set(['tarjanAlgorithm', 'kosarajuAlgorithm']);
@@ -65,6 +66,19 @@ function isFullySorted(states) {
     Array.isArray(states) &&
     states.length > 0 &&
     states.every(state => state === ELEMENT_STATES.SORTED)
+  );
+}
+
+function isPassProgressStep(states) {
+  if (!Array.isArray(states) || states.length === 0) return false;
+
+  const sortedCount = states.filter(
+    state => state === ELEMENT_STATES.SORTED
+  ).length;
+  if (sortedCount === 0 || sortedCount >= states.length) return false;
+
+  return states.every(
+    state => state === ELEMENT_STATES.SORTED || state === ELEMENT_STATES.DEFAULT
   );
 }
 
@@ -107,6 +121,8 @@ function buildSortingEvents(step, stepIndex, totalSteps) {
 
   if (isFinalStep(stepIndex, totalSteps) && isFullySorted(states)) {
     events.push({ kind: SOUND_EVENT_KINDS.COMPLETE });
+  } else if (isPassProgressStep(states)) {
+    events.push({ kind: SOUND_EVENT_KINDS.PASS_COMPLETE });
   }
 
   return events;

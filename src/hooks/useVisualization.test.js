@@ -232,9 +232,15 @@ describe('useVisualization', () => {
       act(() => {
         result.current.stepForward();
       });
-      expect(soundManager.playEvents).toHaveBeenCalledWith([
-        { kind: 'compare', value: 2 },
-      ]);
+      expect(soundManager.playEvents).toHaveBeenCalledWith(
+        [{ kind: 'compare', value: 2 }],
+        expect.objectContaining({
+          algorithmType: ALGORITHM_TYPES.SORTING,
+          algorithmKey: 'bubbleSort',
+          stepIndex: 1,
+          speed: 100,
+        })
+      );
 
       vi.clearAllMocks();
       act(() => {

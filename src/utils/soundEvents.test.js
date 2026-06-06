@@ -44,6 +44,27 @@ describe('getSoundEventsForStep', () => {
     ).toEqual([{ kind: SOUND_EVENT_KINDS.PATH_FOUND }]);
   });
 
+  it('emits pass-complete when a sorting pass finishes with partial sorted bars', () => {
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.SORTING,
+        algorithmKey: 'bubbleSort',
+        step: {
+          array: [2, 4, 5, 3, 1],
+          states: [
+            ELEMENT_STATES.DEFAULT,
+            ELEMENT_STATES.DEFAULT,
+            ELEMENT_STATES.DEFAULT,
+            ELEMENT_STATES.SORTED,
+            ELEMENT_STATES.SORTED,
+          ],
+        },
+        stepIndex: 4,
+        totalSteps: 10,
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.PASS_COMPLETE }]);
+  });
+
   it('emits sorting complete only for the final fully sorted step', () => {
     const partial = {
       array: [1, 2, 3],
@@ -66,7 +87,7 @@ describe('getSoundEventsForStep', () => {
         stepIndex: 1,
         totalSteps: 3,
       })
-    ).toEqual([]);
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.PASS_COMPLETE }]);
     expect(
       getSoundEventsForStep({
         algorithmType: ALGORITHM_TYPES.SORTING,

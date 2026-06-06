@@ -223,33 +223,33 @@ if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
 }
 
 // Mock Tone.js globally FIRST - soundManager depends on it
-// Use exact pattern from soundManager.test.js which successfully tests soundManager
+const toneNodeMock = () => ({
+  connect: vi.fn().mockReturnThis(),
+  chain: vi.fn().mockReturnThis(),
+  toDestination: vi.fn().mockReturnThis(),
+  triggerAttackRelease: vi.fn(),
+  volume: { value: 0 },
+});
+
 vi.mock('tone', () => ({
-  Synth: vi.fn(() => ({
-    toDestination: vi.fn().mockReturnThis(),
-    triggerAttackRelease: vi.fn(),
-  })),
-  PluckSynth: vi.fn(() => ({
-    toDestination: vi.fn().mockReturnThis(),
-    triggerAttackRelease: vi.fn(),
-  })),
-  MetalSynth: vi.fn(() => ({
-    toDestination: vi.fn().mockReturnThis(),
-    triggerAttackRelease: vi.fn(),
-  })),
-  PolySynth: vi.fn(() => ({
-    toDestination: vi.fn().mockReturnThis(),
-    triggerAttackRelease: vi.fn(),
-  })),
-  MembraneSynth: vi.fn(() => ({
-    toDestination: vi.fn().mockReturnThis(),
-    triggerAttackRelease: vi.fn(),
+  Synth: vi.fn(() => toneNodeMock()),
+  PluckSynth: vi.fn(() => toneNodeMock()),
+  FMSynth: vi.fn(() => toneNodeMock()),
+  AMSynth: vi.fn(() => toneNodeMock()),
+  PolySynth: vi.fn(() => toneNodeMock()),
+  Gain: vi.fn(() => toneNodeMock()),
+  Filter: vi.fn(() => toneNodeMock()),
+  Compressor: vi.fn(() => toneNodeMock()),
+  Reverb: vi.fn(() => ({
+    ...toneNodeMock(),
+    ready: Promise.resolve(),
   })),
   context: {
     state: 'suspended',
   },
   start: vi.fn().mockResolvedValue(undefined),
   now: vi.fn(() => 0),
+  Destination: toneNodeMock(),
 }));
 
 // Mock soundManager globally - prevents file execution
