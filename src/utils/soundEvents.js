@@ -88,6 +88,26 @@ function hasGridState(step, state) {
   );
 }
 
+function countGridState(step, state) {
+  let count = 0;
+  for (const row of step.states ?? []) {
+    if (!Array.isArray(row)) continue;
+    for (const cell of row) {
+      if (cell === state) count += 1;
+    }
+  }
+  return count;
+}
+
+function gridStateIncreased(step, previousStep, state) {
+  if (!previousStep?.states) {
+    return hasGridState(step, state);
+  }
+  return (
+    countGridState(step, state) > countGridState(previousStep, state)
+  );
+}
+
 function objectValues(obj) {
   return obj && typeof obj === 'object' ? Object.values(obj) : [];
 }
@@ -128,20 +148,29 @@ function buildSortingEvents(step, stepIndex, totalSteps) {
   return events;
 }
 
-function buildPathfindingEvents(step, stepIndex, totalSteps) {
+function buildPathfindingEvents(step, stepIndex, totalSteps, previousStep) {
   const explicitEvents = explicitSoundEvents(step);
   if (explicitEvents) return explicitEvents;
 
+  const events = [];
+
   if (hasGridState(step, GRID_ELEMENT_STATES.PATH)) {
-    return [{ kind: SOUND_EVENT_KINDS.PATH_FOUND }];
+    events.push({ kind: SOUND_EVENT_KINDS.PATH_FOUND });
+  } else if (gridStateIncreased(step, previousStep, GRID_ELEMENT_STATES.CLOSED)) {
+    events.push({ kind: SOUND_EVENT_KINDS.VISIT });
+  } else if (gridStateIncreased(step, previousStep, GRID_ELEMENT_STATES.OPEN)) {
+    events.push({ kind: SOUND_EVENT_KINDS.FRONTIER });
   }
-  if (hasGridState(step, GRID_ELEMENT_STATES.OPEN)) {
-    return [{ kind: SOUND_EVENT_KINDS.FRONTIER }];
+
+  if (
+    events.length === 0 &&
+    isFinalStep(stepIndex, totalSteps) &&
+    !hasGridState(step, GRID_ELEMENT_STATES.PATH)
+  ) {
+    events.push({ kind: SOUND_EVENT_KINDS.NO_RESULT });
   }
-  if (isFinalStep(stepIndex, totalSteps)) {
-    return [{ kind: SOUND_EVENT_KINDS.NO_RESULT }];
-  }
-  return [];
+
+  return events;
 }
 
 function buildSearchingEvents(step, algorithmKey, stepIndex, totalSteps) {
@@ -183,7 +212,17 @@ function buildSearchingEvents(step, algorithmKey, stepIndex, totalSteps) {
   return [];
 }
 
-function buildTreeTraversalEvents(step) {
+function isTreeTraversalComplete(step) {
+  const values = objectValues(step.nodeStates);
+  if (!values.length) return false;
+
+  return (
+    !values.includes(TREE_NODE_STATES.VISITING) &&
+    values.every(state => state === TREE_NODE_STATES.VISITED)
+  );
+}
+
+function buildTreeTraversalEvents(step, stepIndex, totalSteps) {
   const explicitEvents = explicitSoundEvents(step);
   if (explicitEvents) return explicitEvents;
 
@@ -191,6 +230,11 @@ function buildTreeTraversalEvents(step) {
   if (values.includes(TREE_NODE_STATES.VISITING)) {
     return [{ kind: SOUND_EVENT_KINDS.VISIT }];
   }
+
+  if (isFinalStep(stepIndex, totalSteps) && isTreeTraversalComplete(step)) {
+    return [{ kind: SOUND_EVENT_KINDS.COMPLETE }];
+  }
+
   return [];
 }
 
@@ -254,6 +298,7 @@ export function getSoundEventsForStep({
   algorithmType,
   algorithmKey = '',
   step,
+  previousStep = null,
   stepIndex = 0,
   totalSteps = 0,
 }) {
@@ -263,13 +308,13 @@ export function getSoundEventsForStep({
     return buildSortingEvents(step, stepIndex, totalSteps);
   }
   if (algorithmType === ALGORITHM_TYPES.PATHFINDING) {
-    return buildPathfindingEvents(step, stepIndex, totalSteps);
+    return buildPathfindingEvents(step, stepIndex, totalSteps, previousStep);
   }
   if (algorithmType === ALGORITHM_TYPES.SEARCHING) {
     return buildSearchingEvents(step, algorithmKey, stepIndex, totalSteps);
   }
   if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
-    return buildTreeTraversalEvents(step);
+    return buildTreeTraversalEvents(step, stepIndex, totalSteps);
   }
   if (algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM) {
     return buildGraphAlgorithmEvents(step, algorithmKey);

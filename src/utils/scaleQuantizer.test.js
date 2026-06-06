@@ -7,6 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   C_MAJOR_PENTATONIC,
+  getPentatonicNoteName,
   midiToFrequency,
   quantizeToScale,
 } from './scaleQuantizer.js';
@@ -16,6 +17,13 @@ describe('scaleQuantizer', () => {
   it('maps min and max values to the expected pentatonic range', () => {
     expect(quantizeToScale(5)).toBeCloseTo(midiToFrequency(60), 1);
     expect(quantizeToScale(100)).toBeCloseTo(midiToFrequency(81), 1);
+  });
+
+  it('maps step indices to ascending pentatonic note names', () => {
+    expect(getPentatonicNoteName(0)).toBe('C4');
+    expect(getPentatonicNoteName(1)).toBe('D4');
+    expect(getPentatonicNoteName(4)).toBe('A4');
+    expect(getPentatonicNoteName(5)).toBe('C5');
   });
 
   it('always returns frequencies on the C major pentatonic scale', () => {

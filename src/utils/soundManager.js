@@ -10,11 +10,10 @@ import { getCompareFrequency, getPivotFrequency } from './soundFrequencies.js';
 import { TONE_INSTRUMENT_PRESETS } from './toneInstrumentPresets.js';
 import { SOUND_EVENT_KINDS } from './soundEvents.js';
 import { createMasterChain } from './masterChain.js';
+import { getPentatonicNoteName } from './scaleQuantizer.js';
 import {
   getPaletteForCategory,
-  MILESTONE_CHORDS,
-  NEGATIVE_CHORDS,
-  PASS_COMPLETE_CHORD,
+  getChordForCategory,
 } from './categoryPalettes.js';
 
 const MAX_EVENTS_PER_STEP = 3;
@@ -26,10 +25,16 @@ const EVENT_ALIASES = {
 
 const ARPEGGIO_SPACING_SEC = 0.08;
 const MILESTONE_NOTE_DURATION = '4n';
-const MICRO_NOTE_DURATION = '16n';
 const COMPARE_NOTE_DURATION = '8n';
 const PASS_NOTE_DURATION = '8n';
-const VISIT_NOTE_DURATION = '32n';
+
+const MICRO_THROTTLE_KINDS = new Set([
+  SOUND_EVENT_KINDS.COMPARE,
+  SOUND_EVENT_KINDS.VISIT,
+  SOUND_EVENT_KINDS.FRONTIER,
+  SOUND_EVENT_KINDS.EDGE_CONSIDER,
+  SOUND_EVENT_KINDS.MATRIX_CONSIDER,
+]);
 
 class SoundManager {
   constructor() {
@@ -37,7 +42,8 @@ class SoundManager {
     this.instruments = null;
     this.initPromise = null;
     this.playbackContext = null;
-    this.compareEventCounter = 0;
+    this.microEventCounters = {};
+    this.melodicStepCounter = 0;
   }
 
   async _buildInstruments() {
@@ -98,7 +104,8 @@ class SoundManager {
       await Tone.start();
     }
     this.isEnabled = true;
-    this.compareEventCounter = 0;
+    this.microEventCounters = {};
+    this.melodicStepCounter = 0;
     await this.ensureInstrumentsAsync();
   }
 
@@ -112,6 +119,10 @@ class SoundManager {
 
   getPalette() {
     return getPaletteForCategory(this.playbackContext?.algorithmType);
+  }
+
+  resolveChord(chordKey) {
+    return getChordForCategory(this.playbackContext?.algorithmType, chordKey);
   }
 
   resolveInstrument(key) {
@@ -131,13 +142,26 @@ class SoundManager {
     synth.volume.value = previousVolume;
   }
 
-  shouldSkipCompare() {
+  shouldSkipMicroEvent(kind) {
+    if (!MICRO_THROTTLE_KINDS.has(kind)) return false;
+
     const speed = this.playbackContext?.speed;
     if (speed == null || speed > ANIMATION_SPEEDS.VERY_FAST) {
       return false;
     }
-    this.compareEventCounter += 1;
-    return this.compareEventCounter % 2 !== 0;
+
+    const nextCount = (this.microEventCounters[kind] ?? 0) + 1;
+    this.microEventCounters[kind] = nextCount;
+    return nextCount % 2 !== 0;
+  }
+
+  nextMelodicNote() {
+    const palette = this.getPalette();
+    const note = getPentatonicNoteName(this.melodicStepCounter, {
+      baseMidi: palette.melodicBaseMidi ?? 60,
+    });
+    this.melodicStepCounter += 1;
+    return note;
   }
 
   arpeggiate(
@@ -165,7 +189,7 @@ class SoundManager {
   }
 
   playCompare(value) {
-    if (this.shouldSkipCompare()) return;
+    if (this.shouldSkipMicroEvent(SOUND_EVENT_KINDS.COMPARE)) return;
 
     const palette = this.getPalette();
     this.runWhenReady(() => {
@@ -185,8 +209,9 @@ class SoundManager {
     const palette = this.getPalette();
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.swapInstrument);
+      const duration = palette.accentDuration;
       this.withTemporaryVolume(synth, palette.accentVolumeDb, () => {
-        synth.triggerAttackRelease('G4', MICRO_NOTE_DURATION);
+        synth.triggerAttackRelease('G4', duration);
       });
     });
   }
@@ -207,10 +232,11 @@ class SoundManager {
 
   playPassComplete() {
     const palette = this.getPalette();
+    const chord = this.resolveChord('passComplete');
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.swapInstrument);
       this.withTemporaryVolume(synth, palette.accentVolumeDb, () => {
-        this.arpeggiate(synth, PASS_COMPLETE_CHORD, {
+        this.arpeggiate(synth, chord, {
           noteDuration: PASS_NOTE_DURATION,
         });
       });
@@ -219,70 +245,86 @@ class SoundManager {
 
   playSorted() {
     const palette = this.getPalette();
+    const chord = this.resolveChord('complete');
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.milestoneInstrument);
       this.withTemporaryVolume(synth, palette.milestoneVolumeDb, () => {
-        this.arpeggiate(synth, MILESTONE_CHORDS.complete);
+        this.arpeggiate(synth, chord);
       });
     });
   }
 
   playNodeVisit() {
+    if (this.shouldSkipMicroEvent(SOUND_EVENT_KINDS.VISIT)) return;
+
     const palette = this.getPalette();
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.visitInstrument);
+      const note = this.nextMelodicNote();
+      const duration = palette.microDuration;
       this.withTemporaryVolume(synth, palette.microVolumeDb, () => {
-        synth.triggerAttackRelease('A3', VISIT_NOTE_DURATION);
+        synth.triggerAttackRelease(note, duration);
       });
     });
   }
 
   playPathFound() {
     const palette = this.getPalette();
+    const chord = this.resolveChord('pathFound');
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.milestoneInstrument);
       this.withTemporaryVolume(synth, palette.milestoneVolumeDb, () => {
-        this.arpeggiate(synth, MILESTONE_CHORDS.pathFound);
+        this.arpeggiate(synth, chord);
       });
     });
   }
 
   playFrontier() {
+    if (this.shouldSkipMicroEvent(SOUND_EVENT_KINDS.FRONTIER)) return;
+
     const palette = this.getPalette();
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.frontierInstrument);
+      const note = this.nextMelodicNote();
+      const duration = palette.microDuration;
       this.withTemporaryVolume(synth, palette.microVolumeDb, () => {
-        synth.triggerAttackRelease('D4', MICRO_NOTE_DURATION);
+        synth.triggerAttackRelease(note, duration);
       });
     });
   }
 
   playTargetFound() {
     const palette = this.getPalette();
+    const chord = this.resolveChord('targetFound');
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.milestoneInstrument);
       this.withTemporaryVolume(synth, palette.milestoneVolumeDb, () => {
-        this.arpeggiate(synth, MILESTONE_CHORDS.targetFound);
+        this.arpeggiate(synth, chord);
       });
     });
   }
 
   playNoResult() {
     const palette = this.getPalette();
+    const chord = this.resolveChord('noResult');
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.milestoneInstrument);
       this.withTemporaryVolume(synth, palette.milestoneVolumeDb, () => {
-        this.arpeggiate(synth, NEGATIVE_CHORDS.noResult, { ascending: false });
+        this.arpeggiate(synth, chord, { ascending: false });
       });
     });
   }
 
   playEdgeConsider() {
+    if (this.shouldSkipMicroEvent(SOUND_EVENT_KINDS.EDGE_CONSIDER)) return;
+
     const palette = this.getPalette();
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.edgeConsiderInstrument);
+      const note = this.nextMelodicNote();
+      const duration = palette.microDuration;
       this.withTemporaryVolume(synth, palette.microVolumeDb, () => {
-        synth.triggerAttackRelease('A3', MICRO_NOTE_DURATION);
+        synth.triggerAttackRelease(note, duration);
       });
     });
   }
@@ -291,28 +333,34 @@ class SoundManager {
     const palette = this.getPalette();
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.edgeSelectInstrument);
+      const duration = palette.accentDuration;
       this.withTemporaryVolume(synth, palette.accentVolumeDb, () => {
-        synth.triggerAttackRelease('E4', MICRO_NOTE_DURATION);
+        synth.triggerAttackRelease('E4', duration);
       });
     });
   }
 
   playCycle() {
     const palette = this.getPalette();
+    const chord = this.resolveChord('cycle');
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.milestoneInstrument);
       this.withTemporaryVolume(synth, palette.milestoneVolumeDb, () => {
-        this.arpeggiate(synth, NEGATIVE_CHORDS.cycle, { ascending: false });
+        this.arpeggiate(synth, chord, { ascending: false });
       });
     });
   }
 
   playMatrixConsider() {
+    if (this.shouldSkipMicroEvent(SOUND_EVENT_KINDS.MATRIX_CONSIDER)) return;
+
     const palette = this.getPalette();
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.matrixConsiderInstrument);
+      const note = this.nextMelodicNote();
+      const duration = palette.microDuration;
       this.withTemporaryVolume(synth, palette.microVolumeDb, () => {
-        synth.triggerAttackRelease('B3', MICRO_NOTE_DURATION);
+        synth.triggerAttackRelease(note, duration);
       });
     });
   }
@@ -321,18 +369,20 @@ class SoundManager {
     const palette = this.getPalette();
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.matrixUpdateInstrument);
+      const duration = palette.accentDuration;
       this.withTemporaryVolume(synth, palette.accentVolumeDb, () => {
-        synth.triggerAttackRelease('E4', '8n');
+        synth.triggerAttackRelease('E4', duration);
       });
     });
   }
 
   playComponentComplete() {
     const palette = this.getPalette();
+    const chord = this.resolveChord('componentComplete');
     this.runWhenReady(() => {
       const synth = this.resolveInstrument(palette.milestoneInstrument);
       this.withTemporaryVolume(synth, palette.milestoneVolumeDb, () => {
-        this.arpeggiate(synth, MILESTONE_CHORDS.componentComplete);
+        this.arpeggiate(synth, chord);
       });
     });
   }

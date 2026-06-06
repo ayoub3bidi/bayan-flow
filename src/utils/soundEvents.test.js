@@ -11,6 +11,7 @@ import {
   GRID_ELEMENT_STATES,
   GRAPH_EDGE_STATES,
   GRAPH_NODE_STATES,
+  TREE_NODE_STATES,
 } from '../constants/index.js';
 import { GRAPH_REPRESENTATIONS } from '../registry/graphAlgorithmRegistry.js';
 import { SOUND_EVENT_KINDS, getSoundEventsForStep } from './soundEvents.js';
@@ -146,6 +147,44 @@ describe('getSoundEventsForStep', () => {
 
     expect(
       getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.PATHFINDING,
+        algorithmKey: 'bfs',
+        previousStep: {
+          states: [
+            [GRID_ELEMENT_STATES.START, GRID_ELEMENT_STATES.DEFAULT],
+            [GRID_ELEMENT_STATES.DEFAULT, GRID_ELEMENT_STATES.DEFAULT],
+          ],
+        },
+        step: {
+          states: [
+            [GRID_ELEMENT_STATES.START, GRID_ELEMENT_STATES.CLOSED],
+            [GRID_ELEMENT_STATES.DEFAULT, GRID_ELEMENT_STATES.DEFAULT],
+          ],
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.VISIT }]);
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.PATHFINDING,
+        algorithmKey: 'bfs',
+        previousStep: {
+          states: [
+            [GRID_ELEMENT_STATES.START, GRID_ELEMENT_STATES.CLOSED],
+            [GRID_ELEMENT_STATES.DEFAULT, GRID_ELEMENT_STATES.DEFAULT],
+          ],
+        },
+        step: {
+          states: [
+            [GRID_ELEMENT_STATES.START, GRID_ELEMENT_STATES.CLOSED],
+            [GRID_ELEMENT_STATES.OPEN, GRID_ELEMENT_STATES.DEFAULT],
+          ],
+        },
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.FRONTIER }]);
+
+    expect(
+      getSoundEventsForStep({
         algorithmType: ALGORITHM_TYPES.SEARCHING,
         algorithmKey: 'binarySearch',
         step: {
@@ -180,5 +219,40 @@ describe('getSoundEventsForStep', () => {
         },
       })
     ).toEqual([{ kind: SOUND_EVENT_KINDS.COMPONENT_COMPLETE }]);
+  });
+
+  it('emits tree traversal complete on the final fully visited step', () => {
+    const visiting = {
+      nodeStates: {
+        a: TREE_NODE_STATES.VISITED,
+        b: TREE_NODE_STATES.VISITING,
+      },
+    };
+    const completed = {
+      nodeStates: {
+        a: TREE_NODE_STATES.VISITED,
+        b: TREE_NODE_STATES.VISITED,
+      },
+    };
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.TREE_TRAVERSAL,
+        algorithmKey: 'inorderTraversal',
+        step: visiting,
+        stepIndex: 3,
+        totalSteps: 5,
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.VISIT }]);
+
+    expect(
+      getSoundEventsForStep({
+        algorithmType: ALGORITHM_TYPES.TREE_TRAVERSAL,
+        algorithmKey: 'inorderTraversal',
+        step: completed,
+        stepIndex: 4,
+        totalSteps: 5,
+      })
+    ).toEqual([{ kind: SOUND_EVENT_KINDS.COMPLETE }]);
   });
 });

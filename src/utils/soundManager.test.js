@@ -106,4 +106,44 @@ describe('soundManager', () => {
       1
     );
   });
+
+  it('uses category instruments and melodic notes for tree visits', async () => {
+    const { soundManager } = await import('./soundManager.js');
+    const { ALGORITHM_TYPES } = await import('../constants/index.js');
+    await soundManager.enable();
+
+    const instruments = soundManager.ensureInstruments();
+    vi.clearAllMocks();
+
+    soundManager.playEvents([{ kind: SOUND_EVENT_KINDS.VISIT }], {
+      algorithmType: ALGORITHM_TYPES.TREE_TRAVERSAL,
+    });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(instruments.bellSynth.triggerAttackRelease).toHaveBeenCalledWith(
+      'D4',
+      '8n'
+    );
+  });
+
+  it('uses kalimba compare for searching array steps', async () => {
+    const { soundManager } = await import('./soundManager.js');
+    const { ALGORITHM_TYPES } = await import('../constants/index.js');
+    await soundManager.enable();
+
+    const instruments = soundManager.ensureInstruments();
+    vi.clearAllMocks();
+
+    soundManager.playEvents([{ kind: SOUND_EVENT_KINDS.COMPARE, value: 25 }], {
+      algorithmType: ALGORITHM_TYPES.SEARCHING,
+    });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(instruments.kalimbaSynth.triggerAttackRelease).toHaveBeenCalledTimes(
+      1
+    );
+    expect(instruments.pluckSynth.triggerAttackRelease).not.toHaveBeenCalled();
+  });
 });

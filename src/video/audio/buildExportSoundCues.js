@@ -57,10 +57,12 @@ export function buildExportSoundCues({
   const totalSteps = steps.length;
   return steps.flatMap((step, stepIndex) => {
     const base = stepIndex * framesPerStep;
+    const previousStep = stepIndex > 0 ? steps[stepIndex - 1] : null;
     return getSoundEventsForStep({
       algorithmType,
       algorithmKey,
       step,
+      previousStep,
       stepIndex,
       totalSteps,
     }).map(event => ({

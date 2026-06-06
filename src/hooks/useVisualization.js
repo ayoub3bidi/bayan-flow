@@ -78,9 +78,12 @@ export function useVisualization({
       executeStep(step);
       setDescription(step.description ?? '');
       if (emitSound && soundContext) {
+        const previousStep =
+          stepIndex > 0 ? stepsRef.current[stepIndex - 1] : null;
         const soundEvents = getSoundEventsForStep({
           ...soundContext,
           step,
+          previousStep,
           stepIndex,
           totalSteps: stepsRef.current.length,
         });

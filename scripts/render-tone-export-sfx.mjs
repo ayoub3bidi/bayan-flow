@@ -182,20 +182,23 @@ const base64ByName = await page.evaluate(
         new Tone.PolySynth(Tone.FMSynth, presets.polySynthVoice),
         bus
       );
+      p.volume.value = 1;
       arpeggiate(p, milestoneChords.complete, 0);
     }, 1.4);
 
     results[SOUND_EVENT_KINDS.VISIT] = await toB64(async () => {
       const bus = await createOfflineBus();
-      const s = connectToBus(new Tone.Synth(presets.softSynth), bus);
-      s.triggerAttackRelease('A3', '64n', 0.02);
-    }, 0.3);
+      const bell = connectToBus(new Tone.AMSynth(presets.bellSynth), bus);
+      bell.volume.value = 1;
+      bell.triggerAttackRelease('D4', '8n', 0.02);
+    }, 0.55);
 
     results[SOUND_EVENT_KINDS.FRONTIER] = await toB64(async () => {
       const bus = await createOfflineBus();
-      const p = connectToBus(new Tone.PluckSynth(presets.pluckSynth), bus);
-      p.triggerAttackRelease('D4', '32n', 0.02);
-    }, 0.3);
+      const s = connectToBus(new Tone.Synth(presets.softSynth), bus);
+      s.volume.value = 1;
+      s.triggerAttackRelease('A3', '8n', 0.02);
+    }, 0.55);
 
     results[SOUND_EVENT_KINDS.TARGET_FOUND] = await toB64(async () => {
       const bus = await createOfflineBus();
@@ -226,14 +229,15 @@ const base64ByName = await page.evaluate(
 
     results[SOUND_EVENT_KINDS.EDGE_CONSIDER] = await toB64(async () => {
       const bus = await createOfflineBus();
-      const p = connectToBus(new Tone.PluckSynth(presets.pluckSynth), bus);
-      p.triggerAttackRelease('A3', '32n', 0.02);
-    }, 0.3);
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.triggerAttackRelease('G3', '8n', 0.02);
+    }, 0.55);
 
     results[SOUND_EVENT_KINDS.EDGE_SELECT] = await toB64(async () => {
       const bus = await createOfflineBus();
       const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
-      kalimba.triggerAttackRelease('E4', '32n', 0.02);
+      kalimba.volume.value = 3;
+      kalimba.triggerAttackRelease('E4', '16n', 0.02);
     }, 0.4);
 
     results[SOUND_EVENT_KINDS.CYCLE] = await toB64(async () => {
@@ -248,14 +252,15 @@ const base64ByName = await page.evaluate(
     results[SOUND_EVENT_KINDS.MATRIX_CONSIDER] = await toB64(async () => {
       const bus = await createOfflineBus();
       const s = connectToBus(new Tone.Synth(presets.softSynth), bus);
-      s.triggerAttackRelease('B3', '32n', 0.02);
-    }, 0.3);
+      s.triggerAttackRelease('D4', '8n', 0.02);
+    }, 0.55);
 
     results[SOUND_EVENT_KINDS.MATRIX_UPDATE] = await toB64(async () => {
       const bus = await createOfflineBus();
-      const s = connectToBus(new Tone.Synth(presets.softSynth), bus);
-      s.triggerAttackRelease('E4', '16n', 0.02);
-    }, 0.55);
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.volume.value = 3;
+      kalimba.triggerAttackRelease('E4', '16n', 0.02);
+    }, 0.4);
 
     results[SOUND_EVENT_KINDS.COMPONENT_COMPLETE] = await toB64(async () => {
       const bus = await createOfflineBus();

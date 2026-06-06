@@ -10,6 +10,21 @@ export const C_MAJOR_PENTATONIC = [0, 2, 4, 7, 9];
 /** Semitone offsets for A minor pentatonic (A, C, D, E, G) relative to A. */
 export const A_MINOR_PENTATONIC = [0, 3, 5, 7, 10];
 
+const PITCH_CLASS_NAMES = [
+  'C',
+  'C#',
+  'D',
+  'D#',
+  'E',
+  'F',
+  'F#',
+  'G',
+  'G#',
+  'A',
+  'A#',
+  'B',
+];
+
 /**
  * Convert MIDI note number to frequency (Hz) at A4 = 440 Hz.
  * @param {number} midi
@@ -51,4 +66,32 @@ export function quantizeToScale(
   const degree = noteIndex % scale.length;
   const midi = baseMidi + octave * 12 + scale[degree];
   return midiToFrequency(midi);
+}
+
+/**
+ * Map a step index to a note name on a pentatonic scale (for melodic micro-events).
+ *
+ * @param {number} index
+ * @param {Object} [options]
+ * @param {number[]} [options.scale=C_MAJOR_PENTATONIC]
+ * @param {number} [options.baseMidi=60]
+ * @param {number} [options.octaveSpan=2]
+ * @returns {string}
+ */
+export function getPentatonicNoteName(
+  index,
+  {
+    scale = C_MAJOR_PENTATONIC,
+    baseMidi = 60,
+    octaveSpan = 2,
+  } = {}
+) {
+  const totalNotes = scale.length * octaveSpan;
+  const wrapped = ((Math.floor(index) % totalNotes) + totalNotes) % totalNotes;
+  const octaveOffset = Math.floor(wrapped / scale.length);
+  const degree = wrapped % scale.length;
+  const midi = baseMidi + octaveOffset * 12 + scale[degree];
+  const name = PITCH_CLASS_NAMES[midi % 12];
+  const octaveNum = Math.floor(midi / 12) - 1;
+  return `${name}${octaveNum}`;
 }
