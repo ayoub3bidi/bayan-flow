@@ -26,7 +26,7 @@ import { normalizeExportLanguage } from './exportLanguage.js';
 
 /**
  * Root Remotion composition: title bar, step counter + description, then full-frame visualization.
- * Shows complexity analysis for the last 10 seconds.
+ * Shows complexity analysis for the last 5 seconds.
  * Receives inputProps: steps, algorithmType, algorithmName, algorithmKey, framesPerStep, gridSize,
  * watermark (partial), includeExportAudio, exportAudioVolume, exportTheme ('light' | 'dark'),
  * exportLanguage ('en' | 'fr' | 'ar') for step label and description keys.

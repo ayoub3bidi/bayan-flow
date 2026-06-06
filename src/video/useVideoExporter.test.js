@@ -10,6 +10,7 @@ import {
   canProceedWithExport,
   getBlockingRenderIssues,
   hasAudioRenderBlocker,
+  isExportCancelledError,
   summarizeRenderIssues,
 } from './useVideoExporter.js';
 
@@ -72,5 +73,20 @@ describe('useVideoExporter helpers', () => {
 
     expect(canProceedWithExport(blocked)).toBe(false);
     expect(summarizeRenderIssues(blocked.issues)).toBe('WebCodecs unavailable');
+  });
+
+  it('isExportCancelledError detects abort and Remotion cancel messages', () => {
+    expect(isExportCancelledError(new DOMException('Aborted', 'AbortError'))).toBe(
+      true
+    );
+    expect(
+      isExportCancelledError(new Error('renderMediaOnWeb() was cancelled'))
+    ).toBe(true);
+    expect(
+      isExportCancelledError(new Error('renderMediaOnWeb() was canceled'))
+    ).toBe(true);
+    expect(isExportCancelledError(new Error('WebCodecs unavailable'))).toBe(
+      false
+    );
   });
 });

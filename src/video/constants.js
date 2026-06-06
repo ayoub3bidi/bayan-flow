@@ -22,9 +22,9 @@ export const DEFAULT_FRAMES_PER_STEP = 6;
 export const VIDEO_EXPORT_FRAMES_PER_STEP = 45;
 
 /**
- * Duration of the complexity analysis segment at the end of the video (10 seconds).
+ * Duration of the complexity analysis segment at the end of the video (5 seconds).
  */
-export const COMPLEXITY_DURATION_FRAMES = 10 * VIDEO_FPS;
+export const COMPLEXITY_DURATION_FRAMES = 5 * VIDEO_FPS;
 
 /**
  * Map app animation speed (ms delay) to video frames per step.

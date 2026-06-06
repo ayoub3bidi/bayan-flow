@@ -50,6 +50,23 @@ export function cloneExportSteps(steps) {
   }
 }
 
+/** @param {unknown} err */
+export function isExportCancelledError(err) {
+  if (!err) return false;
+  if (typeof err === 'object' && err !== null && 'name' in err && err.name === 'AbortError') {
+    return true;
+  }
+  const message =
+    err instanceof Error
+      ? err.message
+      : typeof err === 'string'
+        ? err
+        : typeof err === 'object' && err !== null && 'message' in err
+          ? String(err.message)
+          : '';
+  return /\bcancel(?:led|ed)\b/i.test(message);
+}
+
 /** @param {Array<{ severity?: string, message?: string, type?: string }>} [issues] */
 export function summarizeRenderIssues(issues = []) {
   const messages = getBlockingRenderIssues(issues)
@@ -83,6 +100,13 @@ export function useVideoExporter() {
   const [canRenderOnWeb, setCanRenderOnWeb] = useState(null);
   const blobRef = useRef(null);
   const abortRef = useRef(null);
+  const userCancelledRef = useRef(false);
+
+  const dismissExportSession = useCallback(() => {
+    setExportState('idle');
+    setExportProgress(0);
+    setExportErrorMessage(null);
+  }, []);
 
   const resetExportSession = useCallback(() => {
     if (exportBlobUrl) {
@@ -96,10 +120,10 @@ export function useVideoExporter() {
   }, [exportBlobUrl]);
 
   const cancelExport = useCallback(() => {
-    if (abortRef.current) {
-      abortRef.current.abort();
-    }
-  }, []);
+    userCancelledRef.current = true;
+    abortRef.current?.abort();
+    dismissExportSession();
+  }, [dismissExportSession]);
 
   const beginExportFlow = useCallback(() => {
     setExportErrorMessage(null);
@@ -180,10 +204,14 @@ export function useVideoExporter() {
       setExportState('checking');
       setExportProgress(0);
       setExportBlobUrl(null);
+      userCancelledRef.current = false;
+      abortRef.current = new AbortController();
 
       try {
         const { canRenderMediaOnWeb, renderMediaOnWeb } =
           await import('@remotion/web-renderer');
+
+        if (userCancelledRef.current) return;
 
         let check = await canRenderMediaOnWeb({
           width,
@@ -213,6 +241,8 @@ export function useVideoExporter() {
           }
         }
 
+        if (userCancelledRef.current) return;
+
         const canExport = canProceedWithExport(check);
         setCanRenderOnWeb(canExport);
 
@@ -234,7 +264,6 @@ export function useVideoExporter() {
         }
 
         setExportState('rendering');
-        abortRef.current = new AbortController();
 
         const { getBlob } = await renderMediaOnWeb({
           signal: abortRef.current.signal,
@@ -266,8 +295,8 @@ export function useVideoExporter() {
         setExportState('preview');
         setExportProgress(1);
       } catch (err) {
-        if (err?.name === 'AbortError') {
-          resetExportSession();
+        if (userCancelledRef.current || isExportCancelledError(err)) {
+          dismissExportSession();
           return;
         }
         console.error('[Export Video]', err);
@@ -280,7 +309,7 @@ export function useVideoExporter() {
         abortRef.current = null;
       }
     },
-    [resetExportSession]
+    [dismissExportSession, resetExportSession]
   );
 
   return {
