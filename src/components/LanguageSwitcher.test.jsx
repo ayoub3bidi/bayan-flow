@@ -60,9 +60,9 @@ describe('LanguageSwitcher', () => {
   });
 
   const mockLanguages = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'fr', name: 'French', flag: '🇫🇷' },
-    { code: 'ar', name: 'Arabic', flag: '🇸🇦' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'ar', name: 'Arabic' },
   ];
 
   it('renders the language switcher button', () => {
@@ -73,32 +73,11 @@ describe('LanguageSwitcher', () => {
     expect(button).toHaveAttribute('aria-label', 'Language');
   });
 
-  it('displays current language flag on desktop', () => {
+  it('displays current language code on the trigger button', () => {
     render(<LanguageSwitcher />);
 
-    const flags = screen.getAllByText('🇬🇧');
-    expect(flags.length).toBeGreaterThan(0);
-    // Check that at least one flag has desktop classes
-    const desktopFlag = flags.find(
-      flag =>
-        flag.classList.contains('hidden') ||
-        flag.classList.contains('sm:inline')
-    );
-    expect(desktopFlag).toBeDefined();
-  });
-
-  it('displays current language flag on mobile', () => {
-    render(<LanguageSwitcher />);
-
-    const flags = screen.getAllByText('🇬🇧');
-    expect(flags.length).toBeGreaterThan(0);
-    // Check that at least one flag has mobile classes
-    const mobileFlag = flags.find(
-      flag =>
-        flag.parentElement?.classList.contains('text-sm') ||
-        flag.closest('.text-sm')
-    );
-    expect(mobileFlag).toBeDefined();
+    const button = screen.getByRole('button', { name: 'Language' });
+    expect(button).toHaveTextContent('en');
   });
 
   it('opens dropdown when button is clicked', () => {
@@ -138,9 +117,6 @@ describe('LanguageSwitcher', () => {
     // Check all language options are present
     mockLanguages.forEach(language => {
       expect(screen.getByText(language.name)).toBeInTheDocument();
-      // Flags might appear multiple times, so use getAllByText and check at least one exists
-      const flags = screen.getAllByText(language.flag);
-      expect(flags.length).toBeGreaterThan(0);
     });
   });
 
@@ -193,7 +169,6 @@ describe('LanguageSwitcher', () => {
 
     // French should not be in the dropdown
     expect(screen.queryByText('French')).not.toBeInTheDocument();
-    expect(screen.queryByText('🇫🇷')).not.toBeInTheDocument();
 
     // English and Arabic should still be present
     expect(screen.getByText('English')).toBeInTheDocument();
