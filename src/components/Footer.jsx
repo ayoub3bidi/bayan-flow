@@ -73,8 +73,8 @@ function Footer() {
 
   const contactLinks = [
     {
-      label: 'contact@ayoub3bidi.me',
-      href: 'mailto:contact@ayoub3bidi.me',
+      label: 'contact@bayanflow.com',
+      href: 'mailto:contact@bayanflow.com',
       ariaLabel: t('footer.contactEmailAria'),
     },
   ];

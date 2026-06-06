@@ -17,8 +17,8 @@
 
 **Live sites**
 
-- **Production** (`main`): [bayanflow.netlify.app](https://bayanflow.netlify.app)
-- **Dev** (`develop`): [dev-bayanflow.netlify.app](https://dev-bayanflow.netlify.app)
+- **Production** (`main`): [bayanflow.com](https://bayanflow.com)
+- **Dev** (`develop`): [dev.bayanflow.com](https://dev.bayanflow.com)
 
 ## What it is
 

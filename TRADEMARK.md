@@ -12,4 +12,4 @@ You may NOT:
 * Use logos or wordmarks in a manner that confuses users into thinking they are interacting with the official Bayan Flow project or an official product offering.
 
 For requests to use the name or logo for derivative projects, forks, or commercial distributions, contact:
-Ayoub Abidi — [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
+Ayoub Abidi — [contact@bayanflow.com](mailto:contact@bayanflow.com)

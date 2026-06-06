@@ -9,8 +9,9 @@
 - License: `Elastic-2.0 OR Commercial` (see `LICENSE`, `COMMERCIAL_LICENSE.md`, `TRADEMARK.md`)
 - Repository/homepage:
   - `https://github.com/ayoub3bidi/bayan-flow`
-  - Production: `https://bayanflow.netlify.app` (`main`)
-  - Dev/beta: `https://dev-bayanflow.netlify.app` (`develop`)
+  - Production: `https://bayanflow.com` (`main`)
+  - Dev/beta: `https://dev.bayanflow.com` (`develop`)
+  - Contact: `contact@bayanflow.com`
 - Tooling: React 19, React Router 7, Rolldown Vite 7, Tailwind CSS 4, Vitest 3, React Testing Library, Framer Motion, Remotion 4, i18next, Monaco Editor, Tone.js, Lucide React, Octokit, Playwright (export SFX script only)
 - Python execution: Pyodide `0.27.5` loaded client-side in a worker
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` (CI uses pnpm 9)

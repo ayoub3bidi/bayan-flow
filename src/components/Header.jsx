@@ -20,7 +20,7 @@ function Header() {
   const isDevBranch =
     !!branchName && !['main', 'master', 'production'].includes(branchName);
   const devSiteUrl =
-    import.meta.env.VITE_DEV_SITE_URL || 'https://dev-bayanflow.netlify.app';
+    import.meta.env.VITE_DEV_SITE_URL || 'https://dev.bayanflow.com';
 
   const handleLogoClick = () => {
     navigate('/');

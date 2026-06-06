@@ -126,7 +126,7 @@ jobs:
         run: pnpm build
         env:
           VITE_GIT_BRANCH: ${{ github.ref_name }}
-          VITE_DEV_SITE_URL: 'https://dev-bayanflow.netlify.app'
+          VITE_DEV_SITE_URL: 'https://dev.bayanflow.com'
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
@@ -171,7 +171,7 @@ jobs:
           # embed branch name into Vite build so the frontend can read it at runtime
           VITE_GIT_BRANCH: ${{ github.ref_name }}
           # optional: clickable dev site URL to use in the badge
-          VITE_DEV_SITE_URL: 'https://dev-bayanflow.netlify.app'
+          VITE_DEV_SITE_URL: 'https://dev.bayanflow.com'
 
       - name: Deploy to Netlify
         id: netlify
