@@ -128,7 +128,7 @@ function TestCasesPanel({
               aria-hidden
             />
           ) : (
-            <Play size={14} />
+            <Play size={14} weight="bold" />
           )}
           {t('python_code.run_tests', { defaultValue: 'Run tests' })}
         </button>
@@ -167,9 +167,9 @@ function TestCasesPanel({
               >
                 <span className="text-gray-400 shrink-0">
                   {isExpanded ? (
-                    <CaretDown size={14} />
+                    <CaretDown size={14} weight="bold" />
                   ) : (
-                    <CaretRight size={14} />
+                    <CaretRight size={14} weight="bold" />
                   )}
                 </span>
                 {result && (
@@ -199,7 +199,7 @@ function TestCasesPanel({
                         defaultValue: 'Edit test case',
                       })}
                     >
-                      <PencilSimple size={12} />
+                      <PencilSimple size={12} weight="bold" />
                     </button>
                     <button
                       type="button"
@@ -209,7 +209,7 @@ function TestCasesPanel({
                         defaultValue: 'Delete test case',
                       })}
                     >
-                      <Trash size={12} />
+                      <Trash size={12} weight="bold" />
                     </button>
                   </div>
                 )}
@@ -393,7 +393,7 @@ function TestCasesPanel({
             onClick={() => setIsAdding(true)}
             className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-400 hover:text-gray-200 hover:bg-gray-700/50 rounded-lg border border-dashed border-gray-600 transition-colors"
           >
-            <Plus size={14} />
+            <Plus size={14} weight="bold" />
             {t('python_code.add_test_case', {
               defaultValue: 'Add test case',
             })}

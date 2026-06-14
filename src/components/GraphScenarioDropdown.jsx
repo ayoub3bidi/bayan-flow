@@ -50,6 +50,7 @@ function GraphScenarioDropdown({
         >
           <CaretDown
             size={20}
+            weight="bold"
             className={`${isDropdownOpen ? 'text-[#3b82f6]' : 'text-text-tertiary'}`}
           />
         </motion.div>
@@ -99,7 +100,11 @@ function GraphScenarioDropdown({
                         damping: 25,
                       }}
                     >
-                      <Check size={18} className="text-[#3b82f6]" />
+                      <Check
+                        size={18}
+                        weight="bold"
+                        className="text-[#3b82f6]"
+                      />
                     </motion.div>
                   ) : null}
                 </motion.button>

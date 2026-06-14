@@ -83,7 +83,10 @@ function LearnYourWay() {
                       transition: { duration: 0.6 },
                     }}
                   >
-                    <feature.icon className="w-7 h-7 text-white" />
+                    <feature.icon
+                      weight="bold"
+                      className="w-7 h-7 text-white"
+                    />
                   </motion.div>
 
                   {/* Content */}

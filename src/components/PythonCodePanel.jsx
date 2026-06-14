@@ -413,7 +413,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                     className="p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors"
                     aria-label={t('python_code.close')}
                   >
-                    <X size={20} />
+                    <X size={20} weight="bold" />
                   </button>
                 </div>
               )}
@@ -473,7 +473,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                       className={`self-end mb-2 p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors ${isRTL ? 'ml-auto' : 'mr-auto'}`}
                       aria-label={t('python_code.close')}
                     >
-                      <X size={20} />
+                      <X size={20} weight="bold" />
                     </button>
                   )}
                   <div className="flex-1 flex flex-col items-center justify-center text-center text-text-secondary">
@@ -506,7 +506,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                           defaultValue: 'Reset',
                         })}
                       >
-                        <ArrowCounterClockwise size={16} />
+                        <ArrowCounterClockwise size={16} weight="bold" />
                         {t('python_code.reset', { defaultValue: 'Reset' })}
                       </button>
                     )}
@@ -527,7 +527,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                           aria-hidden
                         />
                       ) : (
-                        <Play size={16} />
+                        <Play size={16} weight="bold" />
                       )}
                       {status === 'loading' || status === 'running'
                         ? t('python_code.running', {

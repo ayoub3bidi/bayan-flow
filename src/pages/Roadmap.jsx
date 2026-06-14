@@ -38,7 +38,7 @@ function Roadmap() {
           to="/"
           className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-surface hover:bg-surface-elevated text-text-primary rounded-lg transition-colors border border-border text-sm"
         >
-          <BackIcon size={16} className="sm:w-5 sm:h-5" />
+          <BackIcon size={16} weight="bold" className="sm:w-5 sm:h-5" />
           <span className="text-xs sm:text-sm font-medium hidden xs:inline">
             {t('common.backToHome')}
           </span>

@@ -187,6 +187,7 @@ function PanelContent({
       >
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <Lightbulb
+            weight="bold"
             className="w-5 h-5 text-amber-500 flex-shrink-0"
             aria-hidden="true"
           />
@@ -208,7 +209,7 @@ function PanelContent({
             className="p-2 text-secondary hover:text-primary rounded-lg hover:bg-panel-hover transition-colors flex-shrink-0 -my-2 -mx-1"
             aria-label={t('insight_panel.close')}
           >
-            <X size={20} />
+            <X size={20} weight="bold" />
           </button>
         )}
       </div>
@@ -346,7 +347,7 @@ function PanelContent({
                 className="flex flex-col items-center justify-center w-full aspect-video rounded-xl border-2 border-dashed border-panel-border bg-panel-hover text-secondary"
                 aria-hidden="true"
               >
-                <Play className="w-12 h-12 mb-2 opacity-60" />
+                <Play weight="bold" className="w-12 h-12 mb-2 opacity-60" />
                 <span className="text-sm font-medium">
                   {t('insight_panel.videoComingSoon')}
                 </span>

@@ -69,7 +69,7 @@ function ExportProgressModal({
                 className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-1.5 rounded-full text-text-secondary"
                 aria-label={t('controls.closePreview')}
               >
-                <X size={20} aria-hidden="true" />
+                <X size={20} weight="bold" aria-hidden="true" />
               </button>
             )}
             <h2
@@ -172,7 +172,11 @@ function ExportProgressModal({
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-medium transition-colors"
                     aria-label={t('controls.downloadVideo')}
                   >
-                    <DownloadSimple size={18} aria-hidden="true" />
+                    <DownloadSimple
+                      size={18}
+                      weight="bold"
+                      aria-hidden="true"
+                    />
                     {t('controls.downloadVideo')}
                   </button>
                 </div>
@@ -218,6 +222,7 @@ function ExportProgressModal({
                   {phase === 'checking' && (
                     <SpinnerGap
                       size={24}
+                      weight="bold"
                       className="animate-spin text-teal-500"
                       aria-hidden="true"
                     />
@@ -228,7 +233,7 @@ function ExportProgressModal({
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-colors"
                     aria-label={t('controls.stopExport')}
                   >
-                    <Square size={18} aria-hidden="true" />
+                    <Square size={18} weight="bold" aria-hidden="true" />
                     {t('controls.stopExport')}
                   </button>
                 </div>

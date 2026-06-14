@@ -122,7 +122,7 @@ function TimelineItem({
               <div
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${config.badgeColor}`}
               >
-                <StatusIcon className="w-3.5 h-3.5" />
+                <StatusIcon weight="bold" className="w-3.5 h-3.5" />
                 <span className="text-xs font-semibold">{config.badge}</span>
               </div>
             </div>
@@ -146,7 +146,7 @@ function TimelineItem({
                   transition: { duration: 0.5 },
                 }}
               >
-                <StatusIcon className="w-5 h-5 text-white" />
+                <StatusIcon weight="bold" className="w-5 h-5 text-white" />
               </motion.div>
               <h3 className="text-2xl font-bold text-text-primary">{title}</h3>
             </div>

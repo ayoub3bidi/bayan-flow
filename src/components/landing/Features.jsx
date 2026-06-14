@@ -138,7 +138,10 @@ function Features() {
                       transition: { duration: 0.5 },
                     }}
                   >
-                    <feature.icon className="w-6 h-6 text-white" />
+                    <feature.icon
+                      weight="bold"
+                      className="w-6 h-6 text-white"
+                    />
                   </motion.div>
 
                   {/* Title with optional badge */}

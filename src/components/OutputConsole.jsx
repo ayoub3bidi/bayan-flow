@@ -177,7 +177,7 @@ function OutputConsole({
                     defaultValue: 'Clear output',
                   })}
                 >
-                  <Trash size={14} />
+                  <Trash size={14} weight="bold" />
                 </button>
               )}
             </>
@@ -200,12 +200,16 @@ function OutputConsole({
                   defaultValue: 'Clear',
                 })}
               >
-                <Trash size={14} />
+                <Trash size={14} weight="bold" />
               </button>
             )}
           {onToggleExpand && (
             <span className="text-gray-400 shrink-0" aria-hidden>
-              {isExpanded ? <CaretDown size={16} /> : <CaretUp size={16} />}
+              {isExpanded ? (
+                <CaretDown size={16} weight="bold" />
+              ) : (
+                <CaretUp size={16} weight="bold" />
+              )}
             </span>
           )}
         </div>

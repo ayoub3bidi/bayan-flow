@@ -68,6 +68,7 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
         >
           <CaretDown
             size={12}
+            weight="bold"
             className={`${
               isOpen ? 'text-accent-primary' : 'text-text-secondary'
             }`}
@@ -107,7 +108,11 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
                         damping: 25,
                       }}
                     >
-                      <Check size={14} className="text-accent-primary" />
+                      <Check
+                        size={14}
+                        weight="bold"
+                        className="text-accent-primary"
+                      />
                     </motion.div>
                   )}
                 </motion.button>

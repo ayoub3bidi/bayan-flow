@@ -65,7 +65,7 @@ function RoadmapCTA() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary/10 text-theme-primary rounded-full text-sm font-semibold mb-6"
             >
-              <Sparkle size={16} />
+              <Sparkle size={16} weight="bold" />
               {t('landing.roadmapCTA.badge')}
             </motion.div>
 

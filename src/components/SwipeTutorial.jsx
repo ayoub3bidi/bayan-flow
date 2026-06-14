@@ -73,9 +73,17 @@ function SwipeTutorial({ show, onDismiss }) {
             >
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
                 {isRtl ? (
-                  <CaretRight size={24} className="text-blue-600" />
+                  <CaretRight
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 ) : (
-                  <CaretLeft size={24} className="text-blue-600" />
+                  <CaretLeft
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 )}
               </div>
               <motion.div
@@ -124,9 +132,17 @@ function SwipeTutorial({ show, onDismiss }) {
             >
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
                 {isRtl ? (
-                  <CaretLeft size={24} className="text-blue-600" />
+                  <CaretLeft
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 ) : (
-                  <CaretRight size={24} className="text-blue-600" />
+                  <CaretRight
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 )}
               </div>
               <motion.div
