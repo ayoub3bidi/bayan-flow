@@ -70,18 +70,21 @@ function Footer() {
       href: 'https://www.youtube.com/@bayan-flow',
       ariaLabel: t('footer.youtubeAria'),
       icon: <SiYoutube className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#FF0000]',
     },
     {
       label: t('footer.instagram'),
       href: 'https://www.instagram.com/bayanflow.app',
       ariaLabel: t('footer.instagramAria'),
       icon: <SiInstagram className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#d62976]',
     },
     {
       label: t('footer.tikTok'),
       href: 'https://www.tiktok.com/@bayan.flow',
       ariaLabel: t('footer.tikTokAria'),
       icon: <SiTiktok className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#8B5CF6]',
     },
   ];
 
@@ -218,7 +221,7 @@ function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.ariaLabel}
-                    className="flex items-center justify-center w-9 h-9 text-text-secondary hover:text-[#3b82f6] transition-colors rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    className={`flex items-center justify-center w-9 h-9 text-text-secondary ${item.hoverClass} transition-colors rounded-lg hover:bg-surface-elevated backdrop-blur-sm`}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
