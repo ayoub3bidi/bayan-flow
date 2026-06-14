@@ -6,7 +6,7 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Zap, Sparkles } from 'lucide-react';
+import { CheckCircle, Lightning, Sparkle } from '@phosphor-icons/react';
 
 function TimelineItem({
   date,
@@ -23,7 +23,7 @@ function TimelineItem({
   // Status-based styling
   const statusConfig = {
     completed: {
-      icon: CheckCircle2,
+      icon: CheckCircle,
       badge: t('roadmap.status.completed'),
       badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
       accentColor: 'bg-emerald-500',
@@ -33,7 +33,7 @@ function TimelineItem({
       glowColor: 'from-emerald-500 to-teal-500',
     },
     'in-progress': {
-      icon: Zap,
+      icon: Lightning,
       badge: t('roadmap.status.inProgress'),
       badgeColor: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
       accentColor: 'bg-amber-500',
@@ -44,7 +44,7 @@ function TimelineItem({
       pulse: true,
     },
     planned: {
-      icon: Sparkles,
+      icon: Sparkle,
       badge: t('roadmap.status.planned'),
       badgeColor: 'bg-sky-500/10 text-sky-500 border-sky-500/20',
       accentColor: 'bg-sky-500',

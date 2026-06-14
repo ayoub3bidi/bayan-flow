@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check } from 'lucide-react';
+import { CaretDown, Check } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -66,7 +66,7 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
           transition={{ duration: 0.2 }}
           className="hidden sm:block shrink-0"
         >
-          <ChevronDown
+          <CaretDown
             size={12}
             className={`${
               isOpen ? 'text-accent-primary' : 'text-text-secondary'

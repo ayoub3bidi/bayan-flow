@@ -20,12 +20,10 @@ vi.mock('../ui/Section', () => ({
 }));
 
 // Mock icons
-vi.mock('lucide-react', () => ({
-  ArrowUpDown: () => <svg data-testid="arrow-icon" />,
-  BarChart3: () => <svg data-testid="bar-chart-icon" />,
-  Grid3x3: () => <svg data-testid="grid-icon" />,
-  Route: () => <svg data-testid="route-icon" />,
-  Search: () => <svg data-testid="search-icon" />,
+vi.mock('@phosphor-icons/react', () => ({
+  ChartBar: () => <svg data-testid="bar-chart-icon" />,
+  GridFour: () => <svg data-testid="grid-icon" />,
+  MagnifyingGlass: () => <svg data-testid="search-icon" />,
   GitBranch: () => <svg data-testid="git-branch-icon" />,
   Network: () => <svg data-testid="network-icon" />,
 }));

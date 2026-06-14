@@ -28,9 +28,9 @@ vi.mock('../ui/Button', () => ({
   ),
 }));
 
-// Mock Sparkles icon
-vi.mock('lucide-react', () => ({
-  Sparkles: () => <svg data-testid="sparkles-icon" />,
+// Mock Sparkle icon
+vi.mock('@phosphor-icons/react', () => ({
+  Sparkle: () => <svg data-testid="sparkles-icon" />,
 }));
 
 const renderComponent = () => {

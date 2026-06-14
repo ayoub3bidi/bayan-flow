@@ -5,7 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle, Map } from 'lucide-react';
+import { FileText, WarningCircle, MapPin } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -53,12 +53,12 @@ function Footer() {
     },
     {
       label: t('footer.reportIssue'),
-      icon: AlertCircle,
+      icon: WarningCircle,
       href: `${GITHUB_REPO_URL}/issues`,
     },
     {
       label: t('landing.footer.seeRoadmap'),
-      icon: Map,
+      icon: MapPin,
       href: `/roadmap`,
     },
   ];
@@ -68,6 +68,89 @@ function Footer() {
       label: t('footer.youtube'),
       href: 'https://www.youtube.com/@bayan-flow',
       ariaLabel: t('footer.youtubeAria'),
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-5 h-5"
+        >
+          <rect x="2" y="6" width="20" height="12" rx="3" />
+          <polygon
+            points="10,9 16,12 10,15"
+            fill="currentColor"
+            stroke="none"
+          />
+        </svg>
+      ),
+    },
+    {
+      label: t('footer.facebook'),
+      href: 'https://www.facebook.com/bayanflow',
+      ariaLabel: t('footer.facebookAria'),
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-5 h-5"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M14 6h-3a3 3 0 0 0-3 3v2H6v3h2v6h3v-6h2.5l1-3H14V9a1 1 0 0 1 1-1h1.5V6H15a2 2 0 0 0-1 .27" />
+        </svg>
+      ),
+    },
+    {
+      label: t('footer.instagram'),
+      href: 'https://www.instagram.com/bayanflow.app',
+      ariaLabel: t('footer.instagramAria'),
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-5 h-5"
+        >
+          <rect x="2" y="2" width="20" height="20" rx="5" />
+          <circle cx="12" cy="12" r="5" />
+          <circle
+            cx="17.5"
+            cy="6.5"
+            r="1.5"
+            fill="currentColor"
+            stroke="none"
+          />
+        </svg>
+      ),
+    },
+    {
+      label: t('footer.tikTok'),
+      href: 'https://www.tiktok.com/@bayan.flow',
+      ariaLabel: t('footer.tikTokAria'),
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-5 h-5"
+        >
+          <circle cx="10" cy="18" r="4" />
+          <path d="M14 14V3" />
+          <path d="M14 3a6 6 0 0 0 6 6" />
+        </svg>
+      ),
     },
   ];
 
@@ -191,7 +274,7 @@ function Footer() {
               <h3 className="text-sm font-bold text-text-primary">
                 {t('footer.followUs')}
               </h3>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-row flex-wrap gap-2">
                 {socialLinks.map(item => (
                   <motion.a
                     key={item.href}
@@ -199,12 +282,12 @@ function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.ariaLabel}
-                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
-                    whileHover={{ scale: 1.02, x: 2 }}
-                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center justify-center w-9 h-9 text-text-secondary hover:text-[#3b82f6] transition-colors rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   >
-                    {item.label}
+                    {item.icon}
                   </motion.a>
                 ))}
               </div>

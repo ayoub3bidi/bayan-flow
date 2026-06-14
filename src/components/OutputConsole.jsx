@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash, CaretDown, CaretUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import TestCasesPanel from './TestCasesPanel';
 
@@ -177,7 +177,7 @@ function OutputConsole({
                     defaultValue: 'Clear output',
                   })}
                 >
-                  <Trash2 size={14} />
+                  <Trash size={14} />
                 </button>
               )}
             </>
@@ -200,12 +200,12 @@ function OutputConsole({
                   defaultValue: 'Clear',
                 })}
               >
-                <Trash2 size={14} />
+                <Trash size={14} />
               </button>
             )}
           {onToggleExpand && (
             <span className="text-gray-400 shrink-0" aria-hidden>
-              {isExpanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+              {isExpanded ? <CaretDown size={16} /> : <CaretUp size={16} />}
             </span>
           )}
         </div>

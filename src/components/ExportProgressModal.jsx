@@ -5,14 +5,7 @@
  */
 
 import { useTranslation } from 'react-i18next';
-import {
-  Loader2,
-  Square,
-  Download,
-  X,
-  RectangleHorizontal,
-  RectangleVertical,
-} from 'lucide-react';
+import { SpinnerGap, Square, DownloadSimple, X } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
@@ -115,10 +108,17 @@ function ExportProgressModal({
                   aria-label={t('controls.exportOrientationHorizontal')}
                 >
                   <div className="w-20 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
-                    <RectangleHorizontal
-                      size={28}
-                      className="text-teal-600 dark:text-teal-400 group-hover:text-teal-600 dark:group-hover:text-teal-300 shrink-0"
-                    />
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-7 h-7 text-teal-600 dark:text-teal-400 group-hover:text-teal-600 dark:group-hover:text-teal-300 shrink-0"
+                    >
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                    </svg>
                   </div>
                   <span className="font-semibold text-text-primary">
                     {t('controls.exportOrientationHorizontal')}
@@ -134,10 +134,17 @@ function ExportProgressModal({
                   aria-label={t('controls.exportOrientationVertical')}
                 >
                   <div className="w-12 h-20 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
-                    <RectangleVertical
-                      size={28}
-                      className="text-teal-600 dark:text-teal-400 group-hover:text-teal-600 dark:group-hover:text-teal-300 shrink-0"
-                    />
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-7 h-7 text-teal-600 dark:text-teal-400 group-hover:text-teal-600 dark:group-hover:text-teal-300 shrink-0"
+                    >
+                      <rect x="4" y="2" width="16" height="20" rx="2" />
+                    </svg>
                   </div>
                   <span className="font-semibold text-text-primary">
                     {t('controls.exportOrientationVertical')}
@@ -165,7 +172,7 @@ function ExportProgressModal({
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-medium transition-colors"
                     aria-label={t('controls.downloadVideo')}
                   >
-                    <Download size={18} aria-hidden="true" />
+                    <DownloadSimple size={18} aria-hidden="true" />
                     {t('controls.downloadVideo')}
                   </button>
                 </div>
@@ -209,7 +216,7 @@ function ExportProgressModal({
 
                 <div className="flex items-center justify-center gap-3">
                   {phase === 'checking' && (
-                    <Loader2
+                    <SpinnerGap
                       size={24}
                       className="animate-spin text-teal-500"
                       aria-hidden="true"

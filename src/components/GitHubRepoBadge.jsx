@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 import { useState, useEffect } from 'react';
-import { Star, Tag, GitFork } from 'lucide-react';
+import { Star, Tag, GitFork } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   GITHUB_REPO_FULL_NAME,

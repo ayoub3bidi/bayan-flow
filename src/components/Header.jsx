@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 import { motion } from 'framer-motion';
-import { GitBranch } from 'lucide-react';
+import { GitBranch } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';

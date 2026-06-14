@@ -6,7 +6,7 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Sparkles } from 'lucide-react';
+import { Sparkle } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
@@ -65,7 +65,7 @@ function RoadmapCTA() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary/10 text-theme-primary rounded-full text-sm font-semibold mb-6"
             >
-              <Sparkles size={16} />
+              <Sparkle size={16} />
               {t('landing.roadmapCTA.badge')}
             </motion.div>
 

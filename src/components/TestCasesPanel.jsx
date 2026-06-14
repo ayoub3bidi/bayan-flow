@@ -11,11 +11,11 @@ import { useState } from 'react';
 import {
   Play,
   Plus,
-  Pencil,
-  Trash2,
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react';
+  PencilSimple,
+  Trash,
+  CaretDown,
+  CaretRight,
+} from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -167,9 +167,9 @@ function TestCasesPanel({
               >
                 <span className="text-gray-400 shrink-0">
                   {isExpanded ? (
-                    <ChevronDown size={14} />
+                    <CaretDown size={14} />
                   ) : (
-                    <ChevronRight size={14} />
+                    <CaretRight size={14} />
                   )}
                 </span>
                 {result && (
@@ -199,7 +199,7 @@ function TestCasesPanel({
                         defaultValue: 'Edit test case',
                       })}
                     >
-                      <Pencil size={12} />
+                      <PencilSimple size={12} />
                     </button>
                     <button
                       type="button"
@@ -209,7 +209,7 @@ function TestCasesPanel({
                         defaultValue: 'Delete test case',
                       })}
                     >
-                      <Trash2 size={12} />
+                      <Trash size={12} />
                     </button>
                   </div>
                 )}

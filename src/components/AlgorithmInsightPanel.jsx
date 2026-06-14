@@ -6,7 +6,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lightbulb, X, Play } from 'lucide-react';
+import { Lightbulb, X, Play } from '@phosphor-icons/react';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
 
 // ─── Animation variants (mirror PythonCodePanel style) ──────────────────────

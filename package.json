@@ -51,6 +51,7 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@octokit/rest": "^22.0.1",
+    "@phosphor-icons/react": "^2.1.10",
     "@remotion/media": "4.0.436",
     "@remotion/web-renderer": "^4.0.436",
     "i18next": "^25.7.1",

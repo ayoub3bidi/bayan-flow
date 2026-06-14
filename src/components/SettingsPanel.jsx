@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Hand } from 'lucide-react';
+import { Play, Hand } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   ALGORITHM_TYPES,

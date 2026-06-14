@@ -7,11 +7,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import TimelineItem from './TimelineItem';
-// Mock lucide-react icons
-vi.mock('lucide-react', () => ({
-  CheckCircle2: () => <svg data-testid="check-icon" />,
-  Zap: () => <svg data-testid="zap-icon" />,
-  Sparkles: () => <svg data-testid="sparkles-icon" />,
+// Mock @phosphor-icons/react icons
+vi.mock('@phosphor-icons/react', () => ({
+  CheckCircle: () => <svg data-testid="check-icon" />,
+  Lightning: () => <svg data-testid="zap-icon" />,
+  Sparkle: () => <svg data-testid="sparkles-icon" />,
 }));
 
 describe('TimelineItem', () => {

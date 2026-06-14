@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, RotateCcw } from 'lucide-react';
+import { X, Play, ArrowCounterClockwise } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   getPythonCode,
@@ -506,7 +506,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                           defaultValue: 'Reset',
                         })}
                       >
-                        <RotateCcw size={16} />
+                        <ArrowCounterClockwise size={16} />
                         {t('python_code.reset', { defaultValue: 'Reset' })}
                       </button>
                     )}

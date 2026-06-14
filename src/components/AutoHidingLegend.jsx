@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Info, X } from 'lucide-react';
+import { Info, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 function AutoHidingLegend({ legendItems, isComplete }) {

@@ -5,7 +5,7 @@
  */
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 function GraphScenarioDropdown({
@@ -48,7 +48,7 @@ function GraphScenarioDropdown({
           animate={{ rotate: isDropdownOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronDown
+          <CaretDown
             size={20}
             className={`${isDropdownOpen ? 'text-[#3b82f6]' : 'text-text-tertiary'}`}
           />

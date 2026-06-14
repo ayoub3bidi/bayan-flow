@@ -6,7 +6,7 @@
 
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { isRTL } from '../utils/rtlManager';
 import RoadmapHero from '../components/roadmap/RoadmapHero';
