@@ -43,7 +43,7 @@ import {
  *   defaultAlgorithm  — key of the algorithm selected on first load.
  *   i18nPrefix        — prefix for algorithm name translations (`t(\`${i18nPrefix}.${key}\`)`).
  *   i18nTabKey        — translation key for the category tab label in SettingsPanel.
- *   icon              — Lucide React component for the category tab button.
+ *   icon              — Phosphor icon component for the category tab button.
  *   getAlgorithmFn    — (key: string) => function that returns steps[].
  *   generateData      — (size?: number) => the input data structure (array, grid, …).
  *                       Sorting: random array (VisualizerApp uses this for initial data, resize, shuffle).

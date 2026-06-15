@@ -106,5 +106,21 @@ describe('AlgorithmDropdown', () => {
 
       expect(onAlgorithmSelect).toHaveBeenCalledWith('quickSort');
     });
+
+    it('should show a check icon for the selected algorithm when dropdown is open', () => {
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          selectedAlgorithm="bubbleSort"
+        />
+      );
+
+      const bubbleSortButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.textContent?.includes('Bubble Sort'));
+      expect(bubbleSortButton).toBeTruthy();
+      expect(bubbleSortButton.querySelector('svg')).toBeTruthy();
+    });
   });
 });

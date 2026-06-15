@@ -42,8 +42,11 @@ https://github.com/tailwindlabs/tailwindcss
 Monaco Editor for React (MIT)
 https://github.com/suren-atoyan/monaco-react
 
-Lucide React (ISC)
-https://github.com/lucide-icons/lucide
+@phosphor-icons/react (MIT)
+https://github.com/phosphor-icons/react
+
+react-icons (MIT)
+https://github.com/react-icons/react-icons
 
 Tone.js (MIT)
 https://github.com/Tonejs/Tone.js
