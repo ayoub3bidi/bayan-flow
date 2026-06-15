@@ -7,13 +7,13 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
-  Sliders,
+  SlidersHorizontal,
   Code,
-  Volume2,
-  Maximize,
+  SpeakerHigh,
+  ArrowsOut,
   Lightbulb,
-  Video,
-} from 'lucide-react';
+  VideoCamera,
+} from '@phosphor-icons/react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
 
@@ -22,7 +22,7 @@ function Features() {
 
   const features = [
     {
-      icon: Sliders,
+      icon: SlidersHorizontal,
       title: t('landing.features.customization.title'),
       description: t('landing.features.customization.description'),
       gradient: 'from-emerald-500 to-teal-500',
@@ -35,13 +35,13 @@ function Features() {
       badge: t('landing.features.pythonCode.badge'),
     },
     {
-      icon: Volume2,
+      icon: SpeakerHigh,
       title: t('landing.features.sound.title'),
       description: t('landing.features.sound.description'),
       gradient: 'from-rose-500 to-pink-500',
     },
     {
-      icon: Maximize,
+      icon: ArrowsOut,
       title: t('landing.features.fullscreen.title'),
       description: t('landing.features.fullscreen.description'),
       gradient: 'from-indigo-500 to-purple-500',
@@ -53,7 +53,7 @@ function Features() {
       gradient: 'from-amber-500 to-yellow-500',
     },
     {
-      icon: Video,
+      icon: VideoCamera,
       title: t('landing.features.videoExport.title'),
       description: t('landing.features.videoExport.description'),
       gradient: 'from-teal-500 to-cyan-500',
@@ -138,7 +138,10 @@ function Features() {
                       transition: { duration: 0.5 },
                     }}
                   >
-                    <feature.icon className="w-6 h-6 text-white" />
+                    <feature.icon
+                      weight="bold"
+                      className="w-6 h-6 text-white"
+                    />
                   </motion.div>
 
                   {/* Title with optional badge */}

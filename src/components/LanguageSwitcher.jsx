@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check } from 'lucide-react';
+import { CaretDown, Check } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -66,8 +66,9 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
           transition={{ duration: 0.2 }}
           className="hidden sm:block shrink-0"
         >
-          <ChevronDown
+          <CaretDown
             size={12}
+            weight="bold"
             className={`${
               isOpen ? 'text-accent-primary' : 'text-text-secondary'
             }`}
@@ -107,7 +108,11 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
                         damping: 25,
                       }}
                     >
-                      <Check size={14} className="text-accent-primary" />
+                      <Check
+                        size={14}
+                        weight="bold"
+                        className="text-accent-primary"
+                      />
                     </motion.div>
                   )}
                 </motion.button>

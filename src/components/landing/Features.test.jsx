@@ -18,14 +18,14 @@ vi.mock('../ui/Section', () => ({
   ),
 }));
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
-  Sliders: () => <svg data-testid="sliders-icon" />,
+// Mock @phosphor-icons/react
+vi.mock('@phosphor-icons/react', () => ({
+  SlidersHorizontal: () => <svg data-testid="sliders-icon" />,
   Code: () => <svg data-testid="code-icon" />,
-  Volume2: () => <svg data-testid="volume-icon" />,
-  Maximize: () => <svg data-testid="maximize-icon" />,
+  SpeakerHigh: () => <svg data-testid="volume-icon" />,
+  ArrowsOut: () => <svg data-testid="maximize-icon" />,
   Lightbulb: () => <svg data-testid="lightbulb-icon" />,
-  Video: () => <svg data-testid="video-icon" />,
+  VideoCamera: () => <svg data-testid="video-icon" />,
 }));
 
 describe('Features', () => {

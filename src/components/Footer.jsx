@@ -5,7 +5,8 @@
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle, Map } from 'lucide-react';
+import { FileText, WarningCircle, MapPin } from '@phosphor-icons/react';
+import { SiYoutube, SiInstagram, SiTiktok } from 'react-icons/si';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -53,12 +54,12 @@ function Footer() {
     },
     {
       label: t('footer.reportIssue'),
-      icon: AlertCircle,
+      icon: WarningCircle,
       href: `${GITHUB_REPO_URL}/issues`,
     },
     {
       label: t('landing.footer.seeRoadmap'),
-      icon: Map,
+      icon: MapPin,
       href: `/roadmap`,
     },
   ];
@@ -68,6 +69,22 @@ function Footer() {
       label: t('footer.youtube'),
       href: 'https://www.youtube.com/@bayan-flow',
       ariaLabel: t('footer.youtubeAria'),
+      icon: <SiYoutube className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#FF0000]',
+    },
+    {
+      label: t('footer.instagram'),
+      href: 'https://www.instagram.com/bayanflow.app',
+      ariaLabel: t('footer.instagramAria'),
+      icon: <SiInstagram className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#d62976]',
+    },
+    {
+      label: t('footer.tikTok'),
+      href: 'https://www.tiktok.com/@bayan.flow',
+      ariaLabel: t('footer.tikTokAria'),
+      icon: <SiTiktok className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#8B5CF6]',
     },
   ];
 
@@ -178,7 +195,12 @@ function Footer() {
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   >
-                    <Icon size={14} className="opacity-70" aria-hidden />
+                    <Icon
+                      size={14}
+                      weight="bold"
+                      className="opacity-70"
+                      aria-hidden
+                    />
                     <span>{link.label}</span>
                   </motion.button>
                 );
@@ -191,7 +213,7 @@ function Footer() {
               <h3 className="text-sm font-bold text-text-primary">
                 {t('footer.followUs')}
               </h3>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-row flex-wrap gap-2">
                 {socialLinks.map(item => (
                   <motion.a
                     key={item.href}
@@ -199,12 +221,12 @@ function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.ariaLabel}
-                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
-                    whileHover={{ scale: 1.02, x: 2 }}
-                    whileTap={{ scale: 0.98 }}
+                    className={`flex items-center justify-center w-9 h-9 text-text-secondary ${item.hoverClass} transition-colors rounded-lg hover:bg-surface-elevated backdrop-blur-sm`}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   >
-                    {item.label}
+                    {item.icon}
                   </motion.a>
                 ))}
               </div>

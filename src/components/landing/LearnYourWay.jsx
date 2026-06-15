@@ -5,7 +5,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { Play, Hand } from 'lucide-react';
+import { Play, Hand } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
@@ -83,7 +83,10 @@ function LearnYourWay() {
                       transition: { duration: 0.6 },
                     }}
                   >
-                    <feature.icon className="w-7 h-7 text-white" />
+                    <feature.icon
+                      weight="bold"
+                      className="w-7 h-7 text-white"
+                    />
                   </motion.div>
 
                   {/* Content */}

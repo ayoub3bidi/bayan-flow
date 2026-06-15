@@ -4,7 +4,13 @@
  * See LICENSE for details.
  */
 
-import { BarChart3, GitBranch, Grid3x3, Network, Search } from 'lucide-react';
+import {
+  ChartBar,
+  GitBranch,
+  GridFour,
+  Network,
+  MagnifyingGlass,
+} from '@phosphor-icons/react';
 import { algorithms } from '../algorithms';
 import { pathfindingAlgorithms } from '../algorithms/pathfinding';
 import { searchingAlgorithms } from '../algorithms/searching';
@@ -37,7 +43,7 @@ import {
  *   defaultAlgorithm  — key of the algorithm selected on first load.
  *   i18nPrefix        — prefix for algorithm name translations (`t(\`${i18nPrefix}.${key}\`)`).
  *   i18nTabKey        — translation key for the category tab label in SettingsPanel.
- *   icon              — Lucide React component for the category tab button.
+ *   icon              — Phosphor icon component for the category tab button.
  *   getAlgorithmFn    — (key: string) => function that returns steps[].
  *   generateData      — (size?: number) => the input data structure (array, grid, …).
  *                       Sorting: random array (VisualizerApp uses this for initial data, resize, shuffle).
@@ -71,7 +77,7 @@ export const CATEGORY_CONFIG = {
     defaultAlgorithm: 'bubbleSort',
     i18nPrefix: 'algorithms.sorting',
     i18nTabKey: 'modes.sorting',
-    icon: BarChart3,
+    icon: ChartBar,
     sizeBinding: 'array',
     getAlgorithmFn: key => algorithms[key],
     generateData: (size = DEFAULT_ARRAY_SIZE) => generateRandomArray(size),
@@ -136,7 +142,7 @@ export const CATEGORY_CONFIG = {
     defaultAlgorithm: 'bfs',
     i18nPrefix: 'algorithms.pathfinding',
     i18nTabKey: 'modes.pathfinding',
-    icon: Grid3x3,
+    icon: GridFour,
     sizeBinding: 'grid',
     getAlgorithmFn: key => pathfindingAlgorithms[key],
     generateData: (size = DEFAULT_GRID_SIZE) => createEmptyGrid(size, size),
@@ -184,7 +190,7 @@ export const CATEGORY_CONFIG = {
     defaultAlgorithm: 'binarySearch',
     i18nPrefix: 'algorithms.searching',
     i18nTabKey: 'modes.searching',
-    icon: Search,
+    icon: MagnifyingGlass,
     sizeBinding: 'array',
     getAlgorithmFn: key => searchingAlgorithms[key],
     generateData: (size = DEFAULT_ARRAY_SIZE) =>

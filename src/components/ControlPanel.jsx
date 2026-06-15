@@ -8,19 +8,19 @@ import { motion } from 'framer-motion';
 import {
   Play,
   Pause,
-  RotateCcw,
+  ArrowCounterClockwise,
   SkipBack,
   SkipForward,
-  RefreshCw,
-  Maximize,
-  Minimize,
-  Video,
+  ArrowsClockwise,
+  ArrowsOut,
+  ArrowsIn,
+  VideoCamera,
   Square,
-  ArrowDownWideNarrow,
-  ArrowUpNarrowWide,
-  Volume2,
-  VolumeX,
-} from 'lucide-react';
+  SortDescending,
+  SortAscending,
+  SpeakerHigh,
+  SpeakerX,
+} from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
@@ -111,7 +111,7 @@ function ControlPanel({
             title={t('controls.stepBackward')}
             aria-label={t('controls.stepBackward')}
           >
-            <BackwardIcon size={20} aria-hidden="true" />
+            <BackwardIcon size={20} weight="bold" aria-hidden="true" />
           </button>
 
           {/* Play/Pause Button - Different behavior based on mode */}
@@ -123,7 +123,7 @@ function ControlPanel({
                 title={t('controls.pause')}
                 aria-label={t('controls.pause')}
               >
-                <Pause size={20} aria-hidden="true" />
+                <Pause size={20} weight="bold" aria-hidden="true" />
               </button>
             ) : (
               <button
@@ -133,7 +133,7 @@ function ControlPanel({
                 title={t('controls.play')}
                 aria-label={t('controls.play')}
               >
-                <Play size={20} aria-hidden="true" />
+                <Play size={20} weight="bold" aria-hidden="true" />
               </button>
             ))}
 
@@ -145,7 +145,7 @@ function ControlPanel({
             title={t('controls.reset')}
             aria-label={t('controls.reset')}
           >
-            <RotateCcw size={20} aria-hidden="true" />
+            <ArrowCounterClockwise size={20} weight="bold" aria-hidden="true" />
           </button>
 
           {/* Step Forward - Only visible in manual mode */}
@@ -157,7 +157,7 @@ function ControlPanel({
               title={t('controls.stepForward')}
               aria-label={t('controls.stepForward')}
             >
-              <ForwardIcon size={20} aria-hidden="true" />
+              <ForwardIcon size={20} weight="bold" aria-hidden="true" />
             </button>
           )}
         </div>
@@ -174,7 +174,7 @@ function ControlPanel({
               title={t('controls.generateInput')}
               aria-label={t('controls.generateInput')}
             >
-              <RefreshCw size={20} aria-hidden="true" />
+              <ArrowsClockwise size={20} weight="bold" aria-hidden="true" />
             </button>
           )}
 
@@ -198,9 +198,9 @@ function ControlPanel({
               aria-label={t('controls.sortOrder')}
             >
               {sortOrder === SORT_ORDERS.DESCENDING ? (
-                <ArrowDownWideNarrow size={20} aria-hidden="true" />
+                <SortDescending size={20} weight="bold" aria-hidden="true" />
               ) : (
-                <ArrowUpNarrowWide size={20} aria-hidden="true" />
+                <SortAscending size={20} weight="bold" aria-hidden="true" />
               )}
             </button>
           )}
@@ -225,9 +225,9 @@ function ControlPanel({
             aria-pressed={isSoundEnabled}
           >
             {isSoundEnabled ? (
-              <Volume2 size={20} aria-hidden="true" />
+              <SpeakerHigh size={20} weight="bold" aria-hidden="true" />
             ) : (
-              <VolumeX size={20} aria-hidden="true" />
+              <SpeakerX size={20} weight="bold" aria-hidden="true" />
             )}
           </button>
 
@@ -239,7 +239,7 @@ function ControlPanel({
               title={t('controls.stopExport')}
               aria-label={t('controls.stopExport')}
             >
-              <Square size={20} aria-hidden="true" />
+              <Square size={20} weight="bold" aria-hidden="true" />
             </button>
           ) : (
             <button
@@ -257,7 +257,7 @@ function ControlPanel({
               }
               aria-label={t('controls.exportVideo')}
             >
-              <Video size={20} aria-hidden="true" />
+              <VideoCamera size={20} weight="bold" aria-hidden="true" />
             </button>
           )}
 
@@ -277,9 +277,9 @@ function ControlPanel({
             }
           >
             {isFullScreen ? (
-              <Minimize size={20} aria-hidden="true" />
+              <ArrowsIn size={20} weight="bold" aria-hidden="true" />
             ) : (
-              <Maximize size={20} aria-hidden="true" />
+              <ArrowsOut size={20} weight="bold" aria-hidden="true" />
             )}
           </button>
         </div>

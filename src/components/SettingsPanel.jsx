@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Hand } from 'lucide-react';
+import { Play, Hand } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   ALGORITHM_TYPES,
@@ -183,7 +183,12 @@ function SettingsPanel({
                     : 'bg-surface-elevated text-text-primary shadow-sm hover:bg-bg hover:shadow'
                 } ${isPlaying ? 'opacity-50' : ''}`}
               >
-                <Icon size={20} className="shrink-0" aria-hidden />
+                <Icon
+                  size={20}
+                  weight="bold"
+                  className="shrink-0"
+                  aria-hidden
+                />
                 <span className="text-xs sm:text-sm font-semibold">
                   {t(cfg.i18nTabKey)}
                 </span>
@@ -243,7 +248,7 @@ function SettingsPanel({
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
-            <Play size={16} />
+            <Play size={16} weight="bold" />
             <span className="hidden sm:inline">{t('modes.autoplay')}</span>
           </button>
           <button
@@ -257,7 +262,7 @@ function SettingsPanel({
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
-            <Hand size={16} />
+            <Hand size={16} weight="bold" />
             <span className="hidden sm:inline">{t('modes.manual')}</span>
           </button>
         </div>

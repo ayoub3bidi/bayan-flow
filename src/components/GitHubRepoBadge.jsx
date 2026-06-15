@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 import { useState, useEffect } from 'react';
-import { Star, Tag, GitFork } from 'lucide-react';
+import { Star, Tag, GitFork } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   GITHUB_REPO_FULL_NAME,
@@ -39,7 +39,7 @@ const Metric = ({ icon, value }) => {
     <span className="inline-flex items-center gap-1">
       <IconComponent
         size={11}
-        strokeWidth={1.75}
+        weight="bold"
         className="shrink-0 text-text-tertiary"
         aria-hidden
       />

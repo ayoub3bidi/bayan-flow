@@ -12,7 +12,7 @@
   - Production: `https://bayanflow.com` (`main`)
   - Dev/beta: `https://dev.bayanflow.com` (`develop`)
   - Contact: `contact@bayanflow.com`
-- Tooling: React 19, React Router 7, Rolldown Vite 7, Tailwind CSS 4, Vitest 3, React Testing Library, Framer Motion, Remotion 4, i18next, Monaco Editor, Tone.js, Lucide React, Octokit, Playwright (export SFX script only)
+- Tooling: React 19, React Router 7, Rolldown Vite 7, Tailwind CSS 4, Vitest 3, React Testing Library, Framer Motion, Remotion 4, i18next, Monaco Editor, Tone.js, @phosphor-icons/react, react-icons (SimpleIcons for brand logos), Octokit, Playwright (export SFX script only)
 - Python execution: Pyodide `0.27.5` loaded client-side in a worker
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` (CI uses pnpm 9)
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
@@ -204,7 +204,7 @@
 - `CATEGORY_CONFIG` is the central registry for:
   - default algorithm
   - translation prefix and tab label
-  - icon (Lucide)
+  - icon (Phosphor)
   - `sizeBinding`: `array` | `grid` | `tree` | `graph`
   - algorithm lookup and data generation
   - feature flags (e.g. `hasDataRefresh`)

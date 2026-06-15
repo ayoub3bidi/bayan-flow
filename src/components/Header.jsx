@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 import { motion } from 'framer-motion';
-import { GitBranch } from 'lucide-react';
+import { GitBranch } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
@@ -122,7 +122,7 @@ function Header() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
-                <GitBranch className="w-3 h-3" />
+                <GitBranch weight="bold" className="w-3 h-3" />
                 <span className="font-mono tabular-nums text-xs">
                   {branchName}
                 </span>

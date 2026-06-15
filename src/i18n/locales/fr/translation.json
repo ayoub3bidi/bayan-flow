@@ -867,12 +867,16 @@
     "forDevelopers": "Pour les développeurs",
     "followUs": "Suivez-nous",
     "youtube": "YouTube",
+    "instagram": "Instagram",
+    "tikTok": "TikTok",
     "support": "Soutien",
     "contact": "Contact",
     "contactEmailAria": "Envoyer un e-mail au fondateur de Bayan Flow à contact@bayanflow.com",
     "enjoying": "Vous appréciez ce projet ? Soutenez mon travail !",
     "allRightsReserved": "Tous droits réservés",
-    "youtubeAria": "Bayan Flow sur YouTube — ouvrir la chaîne dans un nouvel onglet"
+    "youtubeAria": "Bayan Flow sur YouTube — ouvrir la chaîne dans un nouvel onglet",
+    "instagramAria": "Bayan Flow sur Instagram — ouvrir le profil dans un nouvel onglet",
+    "tikTokAria": "Bayan Flow sur TikTok — ouvrir le profil dans un nouvel onglet"
   },
   "legend": {
     "title": "Légende",

@@ -5,7 +5,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 function AlgorithmDropdown({
@@ -42,8 +42,9 @@ function AlgorithmDropdown({
           animate={{ rotate: isDropdownOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronDown
+          <CaretDown
             size={20}
+            weight="bold"
             className={`${isDropdownOpen ? 'text-[#3b82f6]' : 'text-text-tertiary'}`}
           />
         </motion.div>
@@ -100,7 +101,11 @@ function AlgorithmDropdown({
                             damping: 25,
                           }}
                         >
-                          <Check size={18} className="text-[#3b82f6]" />
+                          <Check
+                            size={18}
+                            weight="bold"
+                            className="text-[#3b82f6]"
+                          />
                         </motion.div>
                       )}
                     </motion.button>

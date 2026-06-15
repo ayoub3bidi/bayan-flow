@@ -6,7 +6,7 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Zap, Sparkles } from 'lucide-react';
+import { CheckCircle, Lightning, Sparkle } from '@phosphor-icons/react';
 
 function TimelineItem({
   date,
@@ -23,7 +23,7 @@ function TimelineItem({
   // Status-based styling
   const statusConfig = {
     completed: {
-      icon: CheckCircle2,
+      icon: CheckCircle,
       badge: t('roadmap.status.completed'),
       badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
       accentColor: 'bg-emerald-500',
@@ -33,7 +33,7 @@ function TimelineItem({
       glowColor: 'from-emerald-500 to-teal-500',
     },
     'in-progress': {
-      icon: Zap,
+      icon: Lightning,
       badge: t('roadmap.status.inProgress'),
       badgeColor: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
       accentColor: 'bg-amber-500',
@@ -44,7 +44,7 @@ function TimelineItem({
       pulse: true,
     },
     planned: {
-      icon: Sparkles,
+      icon: Sparkle,
       badge: t('roadmap.status.planned'),
       badgeColor: 'bg-sky-500/10 text-sky-500 border-sky-500/20',
       accentColor: 'bg-sky-500',
@@ -122,7 +122,7 @@ function TimelineItem({
               <div
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${config.badgeColor}`}
               >
-                <StatusIcon className="w-3.5 h-3.5" />
+                <StatusIcon weight="bold" className="w-3.5 h-3.5" />
                 <span className="text-xs font-semibold">{config.badge}</span>
               </div>
             </div>
@@ -146,7 +146,7 @@ function TimelineItem({
                   transition: { duration: 0.5 },
                 }}
               >
-                <StatusIcon className="w-5 h-5 text-white" />
+                <StatusIcon weight="bold" className="w-5 h-5 text-white" />
               </motion.div>
               <h3 className="text-2xl font-bold text-text-primary">{title}</h3>
             </div>

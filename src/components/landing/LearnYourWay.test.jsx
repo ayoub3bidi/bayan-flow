@@ -20,7 +20,7 @@ vi.mock('../ui/Section', () => ({
 }));
 
 // Mock icons
-vi.mock('lucide-react', () => ({
+vi.mock('@phosphor-icons/react', () => ({
   Play: () => <svg data-testid="play-icon" className="text-white" />,
   Hand: () => <svg data-testid="hand-icon" className="text-white" />,
 }));
