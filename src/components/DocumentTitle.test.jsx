@@ -143,4 +143,39 @@ describe('DocumentTitle', () => {
     expect(document.title).toBeTruthy();
     expect(document.title.length).toBeGreaterThan(0);
   });
+
+  it('should set privacy route title and descriptions', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/privacy']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    expect(document.title).toContain(i18n.t('legal.privacyTitle'));
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      i18n.t('legal.privacyDescription')
+    );
+    expect(
+      document.querySelector('meta[property="og:description"]')
+    ).toHaveAttribute('content', i18n.t('legal.privacyDescription'));
+  });
+
+  it('should set terms route title and descriptions', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/terms']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    expect(document.title).toContain(i18n.t('legal.termsTitle'));
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      i18n.t('legal.termsDescription')
+    );
+  });
 });
