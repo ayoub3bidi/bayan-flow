@@ -6,7 +6,7 @@ We actively support the following versions of Bayan Flow:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.4.x  | :white_check_mark: |
+| 0.5.x  | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
@@ -67,15 +67,20 @@ We appreciate security researchers who help keep Bayan Flow safe. With your perm
 
 Bayan Flow implements several security measures:
 
-- **Client-side only**: No server-side data processing or storage
-- **No external API calls**: All algorithms run locally in the browser
-- **Content Security Policy**: Implemented to prevent XSS attacks
-- **Dependency scanning**: Regular automated security scans
-- **Code review**: All contributions are reviewed for security issues
+- **Client-side only**: No server-side data processing or storage for algorithm execution
+- **Local algorithm execution**: Sorting, searching, pathfinding, and graph visualizations run entirely in the browser
+- **Limited third-party calls**: Umami analytics (privacy-oriented), GitHub public API (release/repo metadata), and jsDelivr (Pyodide, only when the user opens the Python panel)
+- **HTTP security headers** (via Netlify): Strict-Transport-Security, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy
+- **Content Security Policy**: Restricts script, connect, frame, and worker sources to approved origins
+- **Automated scanning**:
+  - **Semgrep** — static analysis on pull requests and scheduled full scans (GitHub Actions + Semgrep AppSec Platform)
+  - **Socket** — supply-chain dependency analysis on pull requests (GitHub App)
+  - **pnpm audit** — production dependency CVE checks in CI
+- **Code review**: Contributions are reviewed before merge; `main` requires approving review
 
 ## Known Security Considerations
 
-- **Algorithm execution**: Custom algorithms run in the browser context
+- **Algorithm execution**: Custom Python code runs in a Web Worker via Pyodide; user-edited code executes in the browser context
 - **Local storage**: User preferences are stored locally in the browser
 - **Third-party dependencies**: We regularly audit and update dependencies
 

@@ -43,6 +43,9 @@ jobs:
       - name: Check code formatting
         run: pnpm format:check
 
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level high
+
   # Job 2: Unit tests with coverage
   # Node 24.x matches package.json engines and the Quality / Build jobs (tests failed on 20.x + Vitest forks).
   test:
@@ -140,7 +143,7 @@ jobs:
     name: Deploy to Netlify
     runs-on: ubuntu-latest
     needs: [quality, test, build] # Only deploy if all checks pass
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
     permissions:
       contents: read
       pull-requests: write
