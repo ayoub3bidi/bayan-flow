@@ -39,6 +39,17 @@ function ensureMetaTag(property, content = '') {
   return el;
 }
 
+function ensureCanonicalLink(href = 'https://bayanflow.com/') {
+  let el = document.querySelector('link[rel="canonical"]');
+  if (!el) {
+    el = document.createElement('link');
+    el.setAttribute('rel', 'canonical');
+    document.head.appendChild(el);
+  }
+  el.setAttribute('href', href);
+  return el;
+}
+
 describe('DocumentTitle', () => {
   beforeEach(() => {
     document.title = '';
@@ -47,6 +58,9 @@ describe('DocumentTitle', () => {
     ensureMetaTag('og:description', '');
     ensureMetaTag('twitter:description', '');
     ensureMetaTag('description', '');
+    ensureMetaTag('og:url', '');
+    ensureMetaTag('twitter:url', '');
+    ensureCanonicalLink();
     i18n.changeLanguage('en');
   });
 
@@ -176,6 +190,32 @@ describe('DocumentTitle', () => {
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       'content',
       i18n.t('legal.termsDescription')
+    );
+  });
+
+  it('should set canonical and og:url for the active route', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/roadmap']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://bayanflow.com/roadmap'
+    );
+    expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+      'content',
+      'https://bayanflow.com/roadmap'
+    );
+    expect(
+      document.querySelector('meta[property="twitter:url"]')
+    ).toHaveAttribute('content', 'https://bayanflow.com/roadmap');
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      i18n.t('roadmap.hero.subtitle')
     );
   });
 });
