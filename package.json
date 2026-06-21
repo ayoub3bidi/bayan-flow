@@ -46,9 +46,11 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "generate:export-sfx": "node scripts/render-tone-export-sfx.mjs"
+    "generate:export-sfx": "node scripts/render-tone-export-sfx.mjs",
+    "fetch:youtube-thumbnails": "node scripts/fetch-youtube-thumbnails.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
     "@monaco-editor/react": "^4.7.0",
     "@octokit/rest": "^22.0.1",
     "@phosphor-icons/react": "^2.1.10",

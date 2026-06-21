@@ -877,7 +877,16 @@
     "allRightsReserved": "All rights reserved",
     "youtubeAria": "Bayan Flow on YouTube — open channel in a new tab",
     "instagramAria": "Bayan Flow on Instagram — open profile in a new tab",
-    "tikTokAria": "Bayan Flow on TikTok — open profile in a new tab"
+    "tikTokAria": "Bayan Flow on TikTok — open profile in a new tab",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
+  },
+  "legal": {
+    "privacyTitle": "Privacy Policy",
+    "termsTitle": "Terms of Use",
+    "privacyDescription": "How Bayan Flow handles analytics, local preferences, and third-party services.",
+    "termsDescription": "Terms of Use for the Bayan Flow educational web application."
   },
   "legend": {
     "title": "Legend",
@@ -1174,7 +1183,8 @@
     },
     "clarity": {
       "heading": "No Clutter, Just Clarity",
-      "description": "Bayan Flow strips away complexity to reveal the beauty of algorithms. Clean interface, clear explanations, and vivid animations help you see what's really happening."
+      "description": "Bayan Flow strips away complexity to reveal the beauty of algorithms. Clean interface, clear explanations, and vivid animations help you see what's really happening.",
+      "videoTitle": "Product Demo Video"
     },
     "algorithmTypes": {
       "heading": "Explore Algorithm Types",

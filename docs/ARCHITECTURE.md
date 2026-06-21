@@ -117,7 +117,7 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 
 ## Registry Layer
 
-Runtime behavior is driven by synchronized registries. Treat these as the source of truth (see also **[AGENTS.md](../AGENTS.md)**):
+Runtime behavior is driven by synchronized registries. Treat these as the source of truth (see also **[AGENTS.md](../AGENTS.md)** and **[AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md)**):
 
 | Registry | Role |
 | -------- | ---- |
@@ -913,7 +913,7 @@ Critical for this codebase — verify synchronized wiring:
 - `src/registry/graphAlgorithmRegistry.test.js`
 - `src/registry/searchingSubstrate.test.js`
 
-See **[AGENTS.md](../AGENTS.md)** for the full targeted test command list.
+See **[AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md)** for the full targeted test command list. **[AGENTS.md](../AGENTS.md)** covers the ship-it test ladder and non-negotiable contracts.
 
 ### Unit Tests
 

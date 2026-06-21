@@ -24,16 +24,20 @@ describe('ClaritySection', () => {
       expect(screen.getByText(/strips away complexity/i)).toBeInTheDocument();
     });
 
-    it('should render youtube iframe', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe).toBeInTheDocument();
+    it('should render youtube facade without iframe on load', () => {
+      renderWithI18n(<ClaritySection />);
+      expect(
+        screen.getByRole('button', { name: /Play video: Product Demo Video/i })
+      ).toBeInTheDocument();
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
     });
 
-    it('should have correct youtube video ID', () => {
+    it('should use local thumbnail for video facade', () => {
       const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.src).toContain('ZwcT68ZRD0U');
+      const thumb = container.querySelector(
+        'img[src="/thumbnails/ZwcT68ZRD0U.jpg"]'
+      );
+      expect(thumb).toBeInTheDocument();
     });
   });
 
@@ -188,49 +192,16 @@ describe('ClaritySection', () => {
   });
 
   describe('YouTube Integration', () => {
-    it('should set iframe title', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.title).toBe('Product Demo Video');
+    it('should expose accessible play control before embed loads', () => {
+      renderWithI18n(<ClaritySection />);
+      expect(
+        screen.getByRole('button', { name: /Play video: Product Demo Video/i })
+      ).toBeInTheDocument();
     });
 
-    it('should allow full screen on iframe', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.hasAttribute('allowFullScreen')).toBe(true);
-    });
-
-    it('should have proper iframe permissions', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      const allow = iframe?.getAttribute('allow');
-      expect(allow).toContain('accelerometer');
-      expect(allow).toContain('autoplay');
-      expect(allow).toContain('encrypted-media');
-    });
-
-    it('should have zero border', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.getAttribute('frameBorder')).toBe('0');
-    });
-
-    it('should have youtube embed src', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.src).toContain('youtube.com/embed');
-    });
-
-    it('should set autoplay params', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.src).toContain('autoplay=0');
-    });
-
-    it('should mute video by default', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.src).toContain('mute=1');
+    it('should not mount iframe until visitor activates play', () => {
+      renderWithI18n(<ClaritySection />);
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
     });
   });
 
@@ -268,10 +239,11 @@ describe('ClaritySection', () => {
       expect(headings.length).toBeGreaterThan(0);
     });
 
-    it('should have accessible video description', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      const iframe = container.querySelector('iframe');
-      expect(iframe?.title).toBeTruthy();
+    it('should have accessible video description via play button', () => {
+      renderWithI18n(<ClaritySection />);
+      expect(
+        screen.getByRole('button', { name: /Play video: Product Demo Video/i })
+      ).toBeInTheDocument();
     });
 
     it('should have readable text content', () => {
@@ -301,9 +273,12 @@ describe('ClaritySection', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should render even if video fails to load', () => {
-      const { container } = renderWithI18n(<ClaritySection />);
-      expect(container.querySelector('iframe')).toBeInTheDocument();
+    it('should render video facade without iframe on load', () => {
+      renderWithI18n(<ClaritySection />);
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Play video/i })
+      ).toBeInTheDocument();
     });
 
     it('should render with all decorative elements', () => {
@@ -356,10 +331,10 @@ describe('ClaritySection', () => {
       const { container } = renderWithI18n(<ClaritySection />);
       const heading = container.querySelector('h2');
       const paragraph = container.querySelector('p');
-      const iframe = container.querySelector('iframe');
+      const playButton = screen.getByRole('button', { name: /Play video/i });
       expect(heading).toBeInTheDocument();
       expect(paragraph).toBeInTheDocument();
-      expect(iframe).toBeInTheDocument();
+      expect(playButton).toBeInTheDocument();
     });
   });
 });

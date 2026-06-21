@@ -7,11 +7,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
+import { MemoryRouter } from 'react-router-dom';
 import DocumentTitle from './DocumentTitle';
 import i18n from '../i18n';
 
 const wrapper = ({ children }) => (
-  <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
+  <I18nextProvider i18n={i18n}>
+    <MemoryRouter initialEntries={['/']}>{children}</MemoryRouter>
+  </I18nextProvider>
 );
 
 const renderDocumentTitle = (options = {}) =>

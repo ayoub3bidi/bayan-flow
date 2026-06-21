@@ -5,26 +5,40 @@
  */
 
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+
+const ROUTE_TITLE_KEYS = {
+  '/privacy': 'legal.privacyTitle',
+  '/terms': 'legal.termsTitle',
+  '/roadmap': 'roadmap.hero.title',
+  '/app': 'header.title',
+};
 
 export default function DocumentTitle() {
   const { t, i18n } = useTranslation();
+  const { pathname } = useLocation();
 
   useEffect(() => {
+    const routeKey = ROUTE_TITLE_KEYS[pathname];
     const baseTitle = t('header.title');
-    const subtitle = t('landing.hero.title');
-    const fullTitle = `${baseTitle} - ${subtitle}`;
 
-    // Update document title
+    let fullTitle;
+    if (routeKey && pathname !== '/') {
+      fullTitle = `${baseTitle} - ${t(routeKey)}`;
+    } else if (pathname === '/') {
+      fullTitle = `${baseTitle} - ${t('landing.hero.title')}`;
+    } else {
+      fullTitle = baseTitle;
+    }
+
     document.title = fullTitle;
 
-    // Update Open Graph meta tags
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) {
       ogTitle.setAttribute('content', fullTitle);
     }
 
-    // Update Twitter meta tags
     const twitterTitle = document.querySelector(
       'meta[property="twitter:title"]'
     );
@@ -32,7 +46,6 @@ export default function DocumentTitle() {
       twitterTitle.setAttribute('content', fullTitle);
     }
 
-    // Update meta description as well for better localization
     const ogDescription = document.querySelector(
       'meta[property="og:description"]'
     );
@@ -41,18 +54,34 @@ export default function DocumentTitle() {
     );
     const metaDescription = document.querySelector('meta[name="description"]');
 
+    const ogTwitterDescription =
+      pathname === '/privacy'
+        ? t('legal.privacyDescription')
+        : pathname === '/terms'
+          ? t('legal.termsDescription')
+          : pathname === '/'
+            ? t('landing.hero.subtitle')
+            : t('footer.description');
+
+    const metaDescriptionText =
+      pathname === '/privacy'
+        ? t('legal.privacyDescription')
+        : pathname === '/terms'
+          ? t('legal.termsDescription')
+          : t('footer.description');
+
     if (ogDescription) {
-      ogDescription.setAttribute('content', t('landing.hero.subtitle'));
+      ogDescription.setAttribute('content', ogTwitterDescription);
     }
 
     if (twitterDescription) {
-      twitterDescription.setAttribute('content', t('landing.hero.subtitle'));
+      twitterDescription.setAttribute('content', ogTwitterDescription);
     }
 
     if (metaDescription) {
-      metaDescription.setAttribute('content', t('footer.description'));
+      metaDescription.setAttribute('content', metaDescriptionText);
     }
-  }, [i18n.language, t]);
+  }, [i18n.language, t, pathname]);
 
   return null;
 }

@@ -6,9 +6,9 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
+import YouTubeFacade from '../YouTubeFacade';
 
-// Mock Container and Section components for demo
 const Container = ({ children }) => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
 );
@@ -19,23 +19,13 @@ const Section = ({ children }) => (
 
 function ClaritySection() {
   const { t } = useTranslation();
-  const videoRef = useRef(null);
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
-  const [isVideoReady, setIsVideoReady] = useState(false);
+  useInView(sectionRef, { once: true, margin: '-100px' });
 
-  // Replace with your YouTube video ID
   const YOUTUBE_VIDEO_ID = 'ZwcT68ZRD0U';
-
-  useEffect(() => {
-    if (isInView && isVideoReady && videoRef.current) {
-      // Play video when in view
-      videoRef.current.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        '*'
-      );
-    }
-  }, [isInView, isVideoReady]);
+  const videoTitle = t('landing.clarity.videoTitle', {
+    defaultValue: 'Product Demo Video',
+  });
 
   return (
     <Section>
@@ -44,7 +34,6 @@ function ClaritySection() {
           className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
           ref={sectionRef}
         >
-          {/* Text Content */}
           <motion.div
             className="lg:w-2/5"
             initial={{ opacity: 0, x: -30 }}
@@ -61,7 +50,6 @@ function ClaritySection() {
             </p>
           </motion.div>
 
-          {/* Modern Video Container */}
           <motion.div
             className="lg:w-3/5 w-full"
             initial={{ opacity: 0, x: 30 }}
@@ -70,29 +58,21 @@ function ClaritySection() {
             transition={{ duration: 0.6 }}
           >
             <div className="relative group">
-              {/* Main video container with modern styling */}
               <div className="relative overflow-hidden rounded-3xl">
-                {/* Gradient border effect */}
                 <div className="absolute inset-0 bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 opacity-75 blur-xl group-hover:opacity-100 transition-opacity duration-500" />
 
-                {/* Video wrapper with inner border */}
                 <div className="relative bg-gray-900 rounded-3xl p-1">
                   <div className="relative aspect-video rounded-2xl overflow-hidden bg-black">
-                    <iframe
-                      ref={videoRef}
-                      className="absolute inset-0 w-full h-full"
-                      src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?enablejsapi=1&mute=1&autoplay=0&controls=1&modestbranding=1&rel=0`}
-                      title="Product Demo Video"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      onLoad={() => setIsVideoReady(true)}
+                    <YouTubeFacade
+                      videoId={YOUTUBE_VIDEO_ID}
+                      title={videoTitle}
+                      embedParams="modestbranding=1"
+                      className="rounded-2xl"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Animated glow particles */}
               <motion.div
                 className="absolute -top-8 -right-8 w-32 h-32 bg-blue-500/30 rounded-full blur-3xl pointer-events-none"
                 animate={{
@@ -132,7 +112,6 @@ function ClaritySection() {
                 }}
               />
 
-              {/* Floating decorative elements */}
               <motion.div
                 className="absolute -top-4 left-1/4 w-2 h-2 bg-blue-400 rounded-full"
                 animate={{
