@@ -61,7 +61,8 @@ Then open the local URL printed in the terminal.
 
 | Doc                                                | Use it when you…                                                    |
 | -------------------------------------------------- | ------------------------------------------------------------------- |
-| **[AGENTS.md](./AGENTS.md)**                       | Agent-oriented project map: registries, contracts, tests, CI        |
+| **[AGENTS.md](./AGENTS.md)**                             | Lean agent guide: registries, contracts, ship-it ladder             |
+| **[docs/AGENTS_REFERENCE.md](./docs/AGENTS_REFERENCE.md)** | Full agent lookup: inventories, architecture map, test catalog, checklists |
 | **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)**   | Run lint/tests/build, follow patterns, add an algorithm or language |
 | **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | Understand routes, hooks, data flow, video export, testing layout   |
 | **[CONTRIBUTING.md](./CONTRIBUTING.md)**           | Contribute: branch targets `develop`, CI, PR template, standards    |

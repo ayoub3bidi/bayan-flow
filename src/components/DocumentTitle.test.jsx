@@ -7,11 +7,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
+import { MemoryRouter } from 'react-router-dom';
 import DocumentTitle from './DocumentTitle';
 import i18n from '../i18n';
 
 const wrapper = ({ children }) => (
-  <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
+  <I18nextProvider i18n={i18n}>
+    <MemoryRouter initialEntries={['/']}>{children}</MemoryRouter>
+  </I18nextProvider>
 );
 
 const renderDocumentTitle = (options = {}) =>
@@ -36,6 +39,17 @@ function ensureMetaTag(property, content = '') {
   return el;
 }
 
+function ensureCanonicalLink(href = 'https://bayanflow.com/') {
+  let el = document.querySelector('link[rel="canonical"]');
+  if (!el) {
+    el = document.createElement('link');
+    el.setAttribute('rel', 'canonical');
+    document.head.appendChild(el);
+  }
+  el.setAttribute('href', href);
+  return el;
+}
+
 describe('DocumentTitle', () => {
   beforeEach(() => {
     document.title = '';
@@ -44,6 +58,9 @@ describe('DocumentTitle', () => {
     ensureMetaTag('og:description', '');
     ensureMetaTag('twitter:description', '');
     ensureMetaTag('description', '');
+    ensureMetaTag('og:url', '');
+    ensureMetaTag('twitter:url', '');
+    ensureCanonicalLink();
     i18n.changeLanguage('en');
   });
 
@@ -139,5 +156,66 @@ describe('DocumentTitle', () => {
     // Title still contains app name (Bayan Flow) in French
     expect(document.title).toBeTruthy();
     expect(document.title.length).toBeGreaterThan(0);
+  });
+
+  it('should set privacy route title and descriptions', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/privacy']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    expect(document.title).toContain(i18n.t('legal.privacyTitle'));
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      i18n.t('legal.privacyDescription')
+    );
+    expect(
+      document.querySelector('meta[property="og:description"]')
+    ).toHaveAttribute('content', i18n.t('legal.privacyDescription'));
+  });
+
+  it('should set terms route title and descriptions', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/terms']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    expect(document.title).toContain(i18n.t('legal.termsTitle'));
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      i18n.t('legal.termsDescription')
+    );
+  });
+
+  it('should set canonical and og:url for the active route', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/roadmap']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://bayanflow.com/roadmap'
+    );
+    expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+      'content',
+      'https://bayanflow.com/roadmap'
+    );
+    expect(
+      document.querySelector('meta[property="twitter:url"]')
+    ).toHaveAttribute('content', 'https://bayanflow.com/roadmap');
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      i18n.t('roadmap.hero.subtitle')
+    );
   });
 });

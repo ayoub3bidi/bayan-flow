@@ -7,6 +7,8 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle, Lightning, Sparkle } from '@phosphor-icons/react';
+import YouTubeFacade from '../YouTubeFacade';
+import { extractYoutubeVideoId } from '../../utils/youtubeVideoId';
 
 function TimelineItem({
   date,
@@ -57,6 +59,7 @@ function TimelineItem({
 
   const config = statusConfig[status] || statusConfig.planned;
   const StatusIcon = config.icon;
+  const youtubeVideoId = extractYoutubeVideoId(videoUrl);
 
   return (
     <motion.div
@@ -157,7 +160,7 @@ function TimelineItem({
             </p>
 
             {/* Optional YouTube Embed */}
-            {videoUrl && (
+            {youtubeVideoId && (
               <motion.div
                 className="relative w-full aspect-video rounded-lg overflow-hidden mt-4 shadow-lg"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -165,12 +168,10 @@ function TimelineItem({
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
               >
-                <iframe
-                  src={videoUrl}
+                <YouTubeFacade
+                  videoId={youtubeVideoId}
                   title={title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full"
+                  className="rounded-lg"
                 />
               </motion.div>
             )}

@@ -4,7 +4,8 @@
 
 - **Pull requests** must target the **`develop`** branch, not **`main`**.
 - Read **[CONTRIBUTING.md](../CONTRIBUTING.md)** for contribution rules, CI expectations, and the PR workflow.
-- Read **[AGENTS.md](../AGENTS.md)** for the agent-oriented project map (registries, contracts, test commands).
+- Read **[AGENTS.md](../AGENTS.md)** for always-on agent rules (registries, contracts, ship-it ladder).
+- Use **[docs/AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md)** for the full test command catalog, architecture map, and add-algorithm checklists.
 - Use this guide for implementation patterns; use **[ARCHITECTURE.md](./ARCHITECTURE.md)** for how the app is structured end to end.
 - New PRs should follow **[.github/PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md)** (GitHub loads it automatically—fill it in, do not strip required sections).
 
@@ -683,7 +684,7 @@ Before opening a PR, run locally:
 pnpm test:run && pnpm build && pnpm lint && pnpm format:check
 ```
 
-Registry changes should also pass targeted tests listed in **[AGENTS.md](../AGENTS.md)**.
+Registry changes should also pass targeted tests listed in **[AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md)** (Testing Workflow section).
 
 ### Adding a New Language
 
@@ -1007,7 +1008,7 @@ Do not add sounds for UI clicks, panel toggles, export buttons, or regeneration 
 - [ ] Check performance (no janky animations)
 - [ ] Update relevant documentation
 - [ ] For new algorithms: Verify step translations, pseudocode, Python index, insight metadata, and sound events
-- [ ] For registry changes: Run targeted tests from AGENTS.md (`categoryRuntimeCompleteness`, etc.)
+- [ ] For registry changes: Run targeted tests from [AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md) (`categoryRuntimeCompleteness`, etc.)
 
 ### Code Review Checklist
 

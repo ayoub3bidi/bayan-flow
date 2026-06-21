@@ -281,12 +281,32 @@ function Footer() {
             </div>
           </div>
         </div>
-        {/* Bottom: Copyright centered */}
+        {/* Bottom: Copyright and legal links */}
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
             <p className="text-xs text-text-secondary text-center">
               © {currentYear} Bayan Flow. {t('footer.allRightsReserved')}
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <motion.button
+                type="button"
+                onClick={() => handleLinkClick('/privacy')}
+                className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {t('footer.privacy')}
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={() => handleLinkClick('/terms')}
+                className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {t('footer.terms')}
+              </motion.button>
+            </div>
           </div>
         </div>
       </div>

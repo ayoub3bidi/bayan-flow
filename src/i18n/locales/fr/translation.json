@@ -876,7 +876,16 @@
     "allRightsReserved": "Tous droits réservés",
     "youtubeAria": "Bayan Flow sur YouTube — ouvrir la chaîne dans un nouvel onglet",
     "instagramAria": "Bayan Flow sur Instagram — ouvrir le profil dans un nouvel onglet",
-    "tikTokAria": "Bayan Flow sur TikTok — ouvrir le profil dans un nouvel onglet"
+    "tikTokAria": "Bayan Flow sur TikTok — ouvrir le profil dans un nouvel onglet",
+    "legal": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
+  },
+  "legal": {
+    "privacyTitle": "Politique de confidentialité",
+    "termsTitle": "Conditions d'utilisation",
+    "privacyDescription": "Comment Bayan Flow traite les analyses, les préférences locales et les services tiers.",
+    "termsDescription": "Conditions d'utilisation de l'application web éducative Bayan Flow."
   },
   "legend": {
     "title": "Légende",

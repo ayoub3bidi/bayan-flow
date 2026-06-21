@@ -27,7 +27,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'src/test/'],
+      exclude: [
+        'node_modules/',
+        'src/test/',
+        'scripts/**',
+        '**/*.test.js',
+        '**/*.test.jsx',
+      ],
     },
   },
 });

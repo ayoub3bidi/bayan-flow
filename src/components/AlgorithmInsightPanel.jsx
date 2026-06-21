@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightbulb, X, Play } from '@phosphor-icons/react';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
+import YouTubeFacade from './YouTubeFacade';
 
 // ─── Animation variants (mirror PythonCodePanel style) ──────────────────────
 
@@ -334,12 +335,12 @@ function PanelContent({
           <section className="pt-2">
             {meta.youtubeVideoId ? (
               <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10">
-                <iframe
-                  title="Video"
-                  className="absolute inset-0 w-full h-full"
-                  src={`https://www.youtube.com/embed/${meta.youtubeVideoId}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                <YouTubeFacade
+                  videoId={meta.youtubeVideoId}
+                  title={t('insight_panel.relatedVideo', {
+                    defaultValue: 'Related video',
+                  })}
+                  className="rounded-xl"
                 />
               </div>
             ) : (

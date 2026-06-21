@@ -12,6 +12,7 @@ vi.mock('@phosphor-icons/react', () => ({
   CheckCircle: () => <svg data-testid="check-icon" />,
   Lightning: () => <svg data-testid="zap-icon" />,
   Sparkle: () => <svg data-testid="sparkles-icon" />,
+  Play: () => <svg data-testid="play-icon" />,
 }));
 
 describe('TimelineItem', () => {
@@ -51,21 +52,19 @@ describe('TimelineItem', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render iframe when videoUrl is provided', () => {
+    it('should render video facade when videoUrl is provided', () => {
       const props = {
         ...defaultProps,
         videoUrl: 'https://www.youtube.com/embed/test123',
       };
       render(<TimelineItem {...props} />);
-      const iframe = screen.getByTitle('Test Feature');
-      expect(iframe).toBeInTheDocument();
-      expect(iframe).toHaveAttribute(
-        'src',
-        'https://www.youtube.com/embed/test123'
-      );
+      expect(
+        screen.getByRole('button', { name: 'Play video: Test Feature' })
+      ).toBeInTheDocument();
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
     });
 
-    it('should not render iframe when videoUrl is not provided', () => {
+    it('should not render video facade when videoUrl is not provided', () => {
       render(<TimelineItem {...defaultProps} />);
       expect(screen.queryByTitle('Test Feature')).not.toBeInTheDocument();
     });
@@ -205,14 +204,15 @@ describe('TimelineItem', () => {
       expect(heading?.textContent).toContain('Test Feature');
     });
 
-    it('should have alt text for iframe if present', () => {
+    it('should have accessible play control when video is present', () => {
       const props = {
         ...defaultProps,
         videoUrl: 'https://www.youtube.com/embed/test123',
       };
       render(<TimelineItem {...props} />);
-      const iframe = screen.getByTitle('Test Feature');
-      expect(iframe).toHaveAttribute('title', 'Test Feature');
+      expect(
+        screen.getByRole('button', { name: 'Play video: Test Feature' })
+      ).toBeInTheDocument();
     });
   });
 
@@ -244,6 +244,9 @@ describe('TimelineItem', () => {
       const props = { ...defaultProps, videoUrl: '' };
       const { container } = render(<TimelineItem {...props} />);
       expect(container.querySelector('iframe')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /Play video/i })
+      ).not.toBeInTheDocument();
     });
 
     it('should handle undefined values gracefully', () => {
