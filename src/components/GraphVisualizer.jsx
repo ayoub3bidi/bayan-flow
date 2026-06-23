@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -10,31 +10,65 @@ import { useTranslation } from 'react-i18next';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
 import AutoHidingLegend from './AutoHidingLegend';
-import { GRAPH_NODE_STATES, GRAPH_NODE_STATE_COLORS } from '../constants';
+import {
+  GRAPH_EDGE_STATES,
+  GRAPH_EDGE_STATE_COLORS,
+  GRAPH_NODE_STATES,
+  GRAPH_NODE_STATE_COLORS,
+} from '../constants';
+import { useTheme } from '../hooks/useTheme';
 import useSwipe from '../hooks/useSwipe';
 
 const VIEW_PAD = 8;
 const VIEW_INNER = 100 - 2 * VIEW_PAD;
 
+function getWeightLabelPosition(line, edgeIndex, directed) {
+  const dx = line.x2 - line.x1;
+  const dy = line.y2 - line.y1;
+  const length = Math.hypot(dx, dy) || 1;
+  const normalX = -dy / length;
+  const normalY = dx / length;
+  const side = directed ? 1 : edgeIndex % 2 === 0 ? 1 : -1;
+  const offset = directed ? 2.1 : 2.8;
+
+  return {
+    x: line.mx + normalX * offset * side,
+    y: line.my + normalY * offset * side,
+  };
+}
+
+function getWeightBadgeWidth(weight) {
+  return Math.max(7.4, String(weight).length * 2.35 + 3.6);
+}
+
 /**
  * @param {Array<{ id: string, x: number, y: number, label?: string }>} nodes
- * @param {Array<{ from: string, to: string }>} edges
+ * @param {Array<{ id?: string, from: string, to: string, weight?: number }>} edges
  * @param {Record<string, string>} nodeStates
+ * @param {Record<string, string>} [edgeStates]
  * @param {string[]} [stackOrder]
+ * @param {string[]} [outputOrder]
+ * @param {{ badges?: Array<{ id: string, text: string }> }} [graphArtifacts]
  * @param {string} description
  * @param {boolean} isComplete
  * @param {string} algorithm
  * @param {Function} onStepForward
  * @param {Function} onStepBackward
  * @param {string} mode
- * @param {'searching'} [complexityDataset]
+ * @param {'searching'|'graphAlgorithm'} [complexityDataset]
  * @param {{ from: string, to: string } | undefined} [activeEdge]
+ * @param {boolean} [directed]
+ * @param {boolean} [weighted]
+ * @param {'searching'|'graphAlgorithm'} [graphVariant]
  */
 function GraphVisualizer({
   nodes = [],
   edges = [],
   nodeStates = {},
+  edgeStates = {},
   stackOrder = [],
+  outputOrder = [],
+  graphArtifacts = {},
   description,
   isComplete,
   algorithm,
@@ -43,11 +77,16 @@ function GraphVisualizer({
   mode,
   complexityDataset = 'searching',
   activeEdge,
+  directed = false,
+  weighted = false,
+  graphVariant = 'searching',
 }) {
   const { t } = useTranslation();
+  const { isDark } = useTheme();
 
-  // BFS uses a queue (FIFO); DFS uses a stack (LIFO) — label the badge accordingly.
+  // BFS uses a queue (FIFO); DFS/topological sort use stack-like frontiers.
   const isBfsGraph = algorithm === 'breadthFirstSearchGraph';
+  const isGraphAlgorithm = graphVariant === 'graphAlgorithm';
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
 
@@ -87,6 +126,20 @@ function GraphVisualizer({
     localStorage.setItem('swipeTutorialSeen', 'true');
   };
 
+  const weightLabelPalette = isDark
+    ? {
+        fill: '#f9fafb',
+        stroke: 'rgba(15, 23, 42, 0.98)',
+        bg: 'rgba(15, 23, 42, 0.82)',
+        border: 'rgba(148, 163, 184, 0.48)',
+      }
+    : {
+        fill: '#111827',
+        stroke: 'rgba(248, 250, 252, 0.98)',
+        bg: 'rgba(255, 255, 255, 0.94)',
+        border: 'rgba(148, 163, 184, 0.36)',
+      };
+
   useEffect(() => {
     if (isComplete) {
       const timer = setTimeout(() => {
@@ -107,29 +160,80 @@ function GraphVisualizer({
     }
     return m;
   }, [nodes]);
+  const labelById = useMemo(
+    () => Object.fromEntries(nodes.map(n => [n.id, n.label ?? n.id])),
+    [nodes]
+  );
+  const graphBadgeItems = Array.isArray(graphArtifacts.badges)
+    ? graphArtifacts.badges
+    : [
+        stackOrder.length > 0
+          ? {
+              id: 'frontier',
+              text: t('visualization.recursionStackBadge', {
+                order: stackOrder.map(id => labelById[id] ?? id).join(' → '),
+              }),
+            }
+          : null,
+        outputOrder.length > 0
+          ? {
+              id: 'result',
+              text: t('visualization.topologicalOrderBadge', {
+                order: outputOrder.map(id => labelById[id] ?? id).join(' → '),
+              }),
+            }
+          : null,
+      ].filter(Boolean);
 
-  const legendItems = [
-    {
-      state: GRAPH_NODE_STATES.ROOT,
-      label: t('legend.searchingGraph.root'),
-    },
-    {
-      state: GRAPH_NODE_STATES.GOAL,
-      label: t('legend.searchingGraph.goal'),
-    },
-    {
-      state: GRAPH_NODE_STATES.FRONTIER,
-      label: t('legend.searchingGraph.stackFrontier'),
-    },
-    {
-      state: GRAPH_NODE_STATES.VISITED,
-      label: t('legend.searchingGraph.visited'),
-    },
-    {
-      state: GRAPH_NODE_STATES.PATH,
-      label: t('legend.searchingGraph.discoveryPath'),
-    },
-  ];
+  const legendItems = isGraphAlgorithm
+    ? [
+        {
+          state: GRAPH_NODE_STATES.DEFAULT,
+          label: t('legend.graphAlgorithm.unvisited'),
+        },
+        {
+          state: GRAPH_NODE_STATES.FRONTIER,
+          label: t('legend.graphAlgorithm.frontier'),
+        },
+        {
+          state: GRAPH_NODE_STATES.CURRENT,
+          label: t('legend.graphAlgorithm.current'),
+        },
+        {
+          state: GRAPH_NODE_STATES.VISITED,
+          label: t('legend.graphAlgorithm.completed'),
+        },
+        {
+          state: GRAPH_NODE_STATES.PATH,
+          label: t('legend.graphAlgorithm.result'),
+        },
+        {
+          state: GRAPH_NODE_STATES.CYCLE,
+          label: t('legend.graphAlgorithm.cycle'),
+        },
+      ]
+    : [
+        {
+          state: GRAPH_NODE_STATES.ROOT,
+          label: t('legend.searchingGraph.root'),
+        },
+        {
+          state: GRAPH_NODE_STATES.GOAL,
+          label: t('legend.searchingGraph.goal'),
+        },
+        {
+          state: GRAPH_NODE_STATES.FRONTIER,
+          label: t('legend.searchingGraph.stackFrontier'),
+        },
+        {
+          state: GRAPH_NODE_STATES.VISITED,
+          label: t('legend.searchingGraph.visited'),
+        },
+        {
+          state: GRAPH_NODE_STATES.PATH,
+          label: t('legend.searchingGraph.discoveryPath'),
+        },
+      ];
 
   const swipe = useSwipe({
     onLeft: mode === 'manual' && onStepBackward ? onStepBackward : undefined,
@@ -139,8 +243,32 @@ function GraphVisualizer({
 
   const isActiveEdge = (from, to) =>
     activeEdge &&
-    ((activeEdge.from === from && activeEdge.to === to) ||
-      (activeEdge.from === to && activeEdge.to === from));
+    (directed
+      ? activeEdge.from === from && activeEdge.to === to
+      : (activeEdge.from === from && activeEdge.to === to) ||
+        (activeEdge.from === to && activeEdge.to === from));
+
+  const getEdgeState = edge => {
+    const edgeId = edge.id ?? `${edge.from}->${edge.to}`;
+    if (edgeStates[edgeId]) return edgeStates[edgeId];
+    if (isActiveEdge(edge.from, edge.to)) return GRAPH_EDGE_STATES.ACTIVE;
+    return GRAPH_EDGE_STATES.DEFAULT;
+  };
+
+  const getShortenedLine = (a, b) => {
+    const dx = b.cx - a.cx;
+    const dy = b.cy - a.cy;
+    const length = Math.hypot(dx, dy) || 1;
+    const pad = directed ? nodeRadius + 1.2 : nodeRadius;
+    return {
+      x1: a.cx + (dx / length) * nodeRadius,
+      y1: a.cy + (dy / length) * nodeRadius,
+      x2: b.cx - (dx / length) * pad,
+      y2: b.cy - (dy / length) * pad,
+      mx: (a.cx + b.cx) / 2,
+      my: (a.cy + b.cy) / 2,
+    };
+  };
 
   const ariaSummary =
     nodes.length > 0
@@ -175,31 +303,50 @@ function GraphVisualizer({
               isComplete={isComplete}
             />
 
-            {/* Stack / Queue badge — container is ALWAYS mounted so height is reserved. */}
+            {/* Stack / queue / graph badges */}
             <div
-              className="flex justify-center mt-1 mb-1 shrink-0 h-7"
-              aria-label={t('legend.searchingGraph.stackFrontier')}
+              className="flex justify-center gap-2 mt-1 mb-1 shrink-0 h-7 flex-wrap"
+              aria-label={
+                isGraphAlgorithm
+                  ? t('visualization.graphSubstrate')
+                  : t('legend.searchingGraph.stackFrontier')
+              }
               aria-live="polite"
             >
-              <motion.span
-                animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
-                transition={{ duration: 0.15 }}
-                className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
-              >
-                <span className="font-semibold text-text-primary">
-                  {stackOrder.length > 0
-                    ? isBfsGraph
-                      ? t('visualization.queueFront', {
-                          front: stackOrder[0],
-                          defaultValue: `Queue front: ${stackOrder[0]}`,
-                        })
-                      : t('visualization.stackTop', {
-                          top: stackOrder[stackOrder.length - 1],
-                          defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
-                        })
-                    : '\u00a0'}
-                </span>
-              </motion.span>
+              {isGraphAlgorithm ? (
+                graphBadgeItems.map(badge => (
+                  <motion.span
+                    key={badge.id}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.15 }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+                  >
+                    <span className="font-semibold text-text-primary">
+                      {badge.text}
+                    </span>
+                  </motion.span>
+                ))
+              ) : (
+                <motion.span
+                  animate={{ opacity: stackOrder.length > 0 ? 1 : 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-elevated px-3 py-1 text-xs font-mono text-text-secondary shadow-sm"
+                >
+                  <span className="font-semibold text-text-primary">
+                    {stackOrder.length > 0
+                      ? isBfsGraph
+                        ? t('visualization.queueFront', {
+                            front: stackOrder[0],
+                            defaultValue: `Queue front: ${stackOrder[0]}`,
+                          })
+                        : t('visualization.stackTop', {
+                            top: stackOrder[stackOrder.length - 1],
+                            defaultValue: `Stack top: ${stackOrder[stackOrder.length - 1]}`,
+                          })
+                      : '\u00a0'}
+                  </span>
+                </motion.span>
+              )}
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center overflow-auto touch-pan-y pb-12 sm:pb-14 min-h-0">
@@ -210,22 +357,87 @@ function GraphVisualizer({
                 aria-label={ariaSummary}
               >
                 <title>{ariaSummary}</title>
+                <defs>
+                  <marker
+                    id="graph-arrowhead"
+                    markerWidth="5"
+                    markerHeight="5"
+                    refX="4"
+                    refY="2.5"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                  >
+                    <path d="M 0 0 L 5 2.5 L 0 5 z" fill="#6b7280" />
+                  </marker>
+                </defs>
                 {edges.map((e, i) => {
                   const a = posById.get(e.from);
                   const b = posById.get(e.to);
                   if (!a || !b) return null;
-                  const active = isActiveEdge(e.from, e.to);
+                  const state = getEdgeState(e);
+                  const active = state === GRAPH_EDGE_STATES.ACTIVE;
+                  const stroke =
+                    GRAPH_EDGE_STATE_COLORS[state] ??
+                    GRAPH_EDGE_STATE_COLORS[GRAPH_EDGE_STATES.DEFAULT];
+                  const line = getShortenedLine(a, b);
                   return (
-                    <line
-                      key={`${e.from}-${e.to}-${i}`}
-                      x1={a.cx}
-                      y1={a.cy}
-                      x2={b.cx}
-                      y2={b.cy}
-                      stroke={active ? '#f97316' : '#9ca3af'}
-                      strokeWidth={active ? 0.9 : 0.45}
-                      strokeLinecap="round"
-                    />
+                    <g key={`${e.from}-${e.to}-${i}`}>
+                      <line
+                        x1={line.x1}
+                        y1={line.y1}
+                        x2={line.x2}
+                        y2={line.y2}
+                        stroke={stroke}
+                        strokeWidth={active ? 0.9 : 0.5}
+                        strokeLinecap="round"
+                        markerEnd={
+                          directed ? 'url(#graph-arrowhead)' : undefined
+                        }
+                      />
+                      {weighted && e.weight != null
+                        ? (() => {
+                            const label = getWeightLabelPosition(
+                              line,
+                              i,
+                              directed
+                            );
+                            const badgeWidth = getWeightBadgeWidth(e.weight);
+                            const badgeHeight = 5.9;
+
+                            return (
+                              <g aria-hidden="true">
+                                <rect
+                                  x={label.x - badgeWidth / 2}
+                                  y={label.y - badgeHeight / 2}
+                                  width={badgeWidth}
+                                  height={badgeHeight}
+                                  rx={2.25}
+                                  fill={weightLabelPalette.bg}
+                                  stroke={weightLabelPalette.border}
+                                  strokeWidth={0.32}
+                                />
+                                <text
+                                  x={label.x}
+                                  y={label.y + 0.05}
+                                  textAnchor="middle"
+                                  dominantBaseline="central"
+                                  fill={weightLabelPalette.fill}
+                                  className="pointer-events-none"
+                                  style={{
+                                    fontSize: 3.1,
+                                    fontWeight: 800,
+                                    paintOrder: 'stroke',
+                                    stroke: weightLabelPalette.stroke,
+                                    strokeWidth: 0.55,
+                                  }}
+                                >
+                                  {e.weight}
+                                </text>
+                              </g>
+                            );
+                          })()
+                        : null}
+                    </g>
                   );
                 })}
                 {nodes.map(n => {
@@ -290,6 +502,8 @@ function GraphVisualizer({
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Output order badge moved to top badges row */}
           </motion.div>
         )}
       </AnimatePresence>

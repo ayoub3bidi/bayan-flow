@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -8,18 +8,22 @@ import { motion } from 'framer-motion';
 import {
   Play,
   Pause,
-  RotateCcw,
+  ArrowCounterClockwise,
   SkipBack,
   SkipForward,
-  Shuffle,
-  Maximize,
-  Minimize,
-  Video,
+  ArrowsClockwise,
+  ArrowsOut,
+  ArrowsIn,
+  VideoCamera,
   Square,
-} from 'lucide-react';
+  SortDescending,
+  SortAscending,
+  SpeakerHigh,
+  SpeakerX,
+} from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { soundManager } from '../utils/soundManager';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
 
 /**
  * ControlPanel Component
@@ -36,8 +40,10 @@ import { CATEGORY_CONFIG } from '../registry/categoryConfig';
  * @param {Function} onStepBackward - Handler for step backward button
  * @param {number} currentStep - Current step in the animation
  * @param {number} totalSteps - Total number of steps
- * @param {Function} onGenerateArray - Handler for generating new random start/end points
- * @param {string} algorithmType - Current algorithm type ('sorting' or 'pathfinding')
+ * @param {Function} onGenerateInput - Handler for generating new category input
+ * @param {string} algorithmType - Current algorithm type ('sorting' | 'pathfinding' | 'searching')
+ * @param {string} [sortOrder] - SORT_ORDERS (sorting only)
+ * @param {Function} [onSortOrderChange] - Toggle sort input order (sorting only)
  * @param {boolean} isFullScreen - Whether full-screen mode is active
  * @param {Function} onToggleFullScreen - Handler for toggling full-screen mode
  * @param {Function} onExportVideo - Handler for export video button
@@ -45,6 +51,9 @@ import { CATEGORY_CONFIG } from '../registry/categoryConfig';
  * @param {string} exportState - 'idle' | 'checking' | 'rendering' | 'done' | 'error'
  * @param {number} exportProgress - 0-1 progress when rendering
  * @param {boolean|null} canRenderOnWeb - Whether browser supports web render (null = unknown)
+ * @param {boolean} [isSoundEnabled] - Whether UI sound is currently enabled
+ * @param {boolean} [isSoundTogglePending] - Whether the sound toggle is waiting on audio setup
+ * @param {Function} [onToggleSound] - Handler for sound toggle button
  */
 function ControlPanel({
   isPlaying,
@@ -57,8 +66,10 @@ function ControlPanel({
   onStepBackward,
   currentStep,
   totalSteps,
-  onGenerateArray,
+  onGenerateInput,
   algorithmType,
+  sortOrder = SORT_ORDERS.ASCENDING,
+  onSortOrderChange,
   isFullScreen,
   onToggleFullScreen,
   onExportVideo,
@@ -66,6 +77,9 @@ function ControlPanel({
   exportState = 'idle',
   exportProgress: _exportProgress = 0,
   canRenderOnWeb = null,
+  isSoundEnabled = false,
+  isSoundTogglePending = false,
+  onToggleSound,
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
@@ -91,74 +105,59 @@ function ControlPanel({
         <div className="flex items-center justify-center gap-2 shrink-0">
           {/* Step Backward - Always visible */}
           <button
-            onClick={() => {
-              soundManager.playUIClick();
-              onStepBackward();
-            }}
+            onClick={onStepBackward}
             disabled={isPlaying || currentStep === 0}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title={t('controls.stepBackward')}
             aria-label={t('controls.stepBackward')}
           >
-            <BackwardIcon size={20} aria-hidden="true" />
+            <BackwardIcon size={20} weight="bold" aria-hidden="true" />
           </button>
 
           {/* Play/Pause Button - Different behavior based on mode */}
           {mode === 'autoplay' &&
             (isPlaying ? (
               <button
-                onClick={() => {
-                  soundManager.playUIClick();
-                  onPause();
-                }}
+                onClick={onPause}
                 className={`${buttonBaseClasses} bg-amber-500 hover:bg-amber-600 text-white`}
                 title={t('controls.pause')}
                 aria-label={t('controls.pause')}
               >
-                <Pause size={20} aria-hidden="true" />
+                <Pause size={20} weight="bold" aria-hidden="true" />
               </button>
             ) : (
               <button
-                onClick={() => {
-                  soundManager.playUIClick();
-                  onPlay();
-                }}
+                onClick={onPlay}
                 disabled={isComplete}
                 className={`${buttonBaseClasses} bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-300`}
                 title={t('controls.play')}
                 aria-label={t('controls.play')}
               >
-                <Play size={20} aria-hidden="true" />
+                <Play size={20} weight="bold" aria-hidden="true" />
               </button>
             ))}
 
           {/* Reset Button */}
           <button
-            onClick={() => {
-              soundManager.playUIClick();
-              onReset();
-            }}
+            onClick={onReset}
             disabled={isPlaying}
             className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
             title={t('controls.reset')}
             aria-label={t('controls.reset')}
           >
-            <RotateCcw size={20} aria-hidden="true" />
+            <ArrowCounterClockwise size={20} weight="bold" aria-hidden="true" />
           </button>
 
           {/* Step Forward - Only visible in manual mode */}
           {mode === 'manual' && (
             <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onStepForward();
-              }}
+              onClick={onStepForward}
               disabled={isPlaying || isComplete}
               className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
               title={t('controls.stepForward')}
               aria-label={t('controls.stepForward')}
             >
-              <ForwardIcon size={20} aria-hidden="true" />
+              <ForwardIcon size={20} weight="bold" aria-hidden="true" />
             </button>
           )}
         </div>
@@ -169,38 +168,82 @@ function ControlPanel({
           {CATEGORY_CONFIG[algorithmType]?.features?.hasDataRefresh ===
             true && (
             <button
-              onClick={() => {
-                soundManager.playArrayGenerate();
-                onGenerateArray();
-              }}
+              onClick={onGenerateInput}
               disabled={isPlaying}
               className={`${buttonBaseClasses} bg-blue-500 hover:bg-blue-600 text-white`}
-              title={t('controls.generateArray')}
-              aria-label={t('controls.generateArray')}
+              title={t('controls.generateInput')}
+              aria-label={t('controls.generateInput')}
             >
-              <Shuffle size={20} aria-hidden="true" />
+              <ArrowsClockwise size={20} weight="bold" aria-hidden="true" />
             </button>
           )}
+
+          {algorithmType === ALGORITHM_TYPES.SORTING && (
+            <button
+              type="button"
+              onClick={() => {
+                onSortOrderChange?.(
+                  sortOrder === SORT_ORDERS.ASCENDING
+                    ? SORT_ORDERS.DESCENDING
+                    : SORT_ORDERS.ASCENDING
+                );
+              }}
+              disabled={isPlaying}
+              className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white`}
+              title={
+                sortOrder === SORT_ORDERS.DESCENDING
+                  ? t('controls.descending')
+                  : t('controls.ascending')
+              }
+              aria-label={t('controls.sortOrder')}
+            >
+              {sortOrder === SORT_ORDERS.DESCENDING ? (
+                <SortDescending size={20} weight="bold" aria-hidden="true" />
+              ) : (
+                <SortAscending size={20} weight="bold" aria-hidden="true" />
+              )}
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => {
+              onToggleSound?.();
+            }}
+            disabled={isSoundTogglePending}
+            className={`${buttonBaseClasses} ${
+              isSoundEnabled
+                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md'
+                : 'bg-surface-elevated hover:bg-border text-text-primary'
+            }`}
+            title={
+              isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')
+            }
+            aria-label={
+              isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')
+            }
+            aria-pressed={isSoundEnabled}
+          >
+            {isSoundEnabled ? (
+              <SpeakerHigh size={20} weight="bold" aria-hidden="true" />
+            ) : (
+              <SpeakerX size={20} weight="bold" aria-hidden="true" />
+            )}
+          </button>
 
           {/* Export Video / Stop Export */}
           {exportState === 'checking' || exportState === 'rendering' ? (
             <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onCancelExport?.();
-              }}
+              onClick={onCancelExport}
               className={`${buttonBaseClasses} bg-red-500 hover:bg-red-600 text-white`}
               title={t('controls.stopExport')}
               aria-label={t('controls.stopExport')}
             >
-              <Square size={20} aria-hidden="true" />
+              <Square size={20} weight="bold" aria-hidden="true" />
             </button>
           ) : (
             <button
-              onClick={() => {
-                soundManager.playUIClick();
-                onExportVideo?.();
-              }}
+              onClick={onExportVideo}
               disabled={totalSteps === 0}
               className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed`}
               title={
@@ -214,7 +257,7 @@ function ControlPanel({
               }
               aria-label={t('controls.exportVideo')}
             >
-              <Video size={20} aria-hidden="true" />
+              <VideoCamera size={20} weight="bold" aria-hidden="true" />
             </button>
           )}
 
@@ -234,9 +277,9 @@ function ControlPanel({
             }
           >
             {isFullScreen ? (
-              <Minimize size={20} aria-hidden="true" />
+              <ArrowsIn size={20} weight="bold" aria-hidden="true" />
             ) : (
-              <Maximize size={20} aria-hidden="true" />
+              <ArrowsOut size={20} weight="bold" aria-hidden="true" />
             )}
           </button>
         </div>

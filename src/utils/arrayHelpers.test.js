@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -12,7 +12,10 @@ import {
   generateReversedArray,
   isSorted,
   cloneArray,
+  finalizeSortingInputArray,
+  reorderArrayForSortOrder,
 } from './arrayHelpers';
+import { SORT_ORDERS } from '../constants';
 
 describe('Array Helper Functions', () => {
   describe('generateRandomArray', () => {
@@ -102,6 +105,36 @@ describe('Array Helper Functions', () => {
     it('should handle negative numbers', () => {
       expect(isSorted([-5, -3, -1, 0, 2, 4])).toBe(true);
       expect(isSorted([-1, -5, 0, 2])).toBe(false);
+    });
+  });
+
+  describe('finalizeSortingInputArray', () => {
+    it('returns a copy in descending order when sort order is descending', () => {
+      const raw = [3, 1, 4, 1, 5];
+      const out = finalizeSortingInputArray(raw, SORT_ORDERS.DESCENDING);
+      expect(out).toEqual([5, 4, 3, 1, 1]);
+      expect(out).not.toBe(raw);
+    });
+
+    it('returns a copy with same order for ascending', () => {
+      const raw = [3, 1, 4];
+      const out = finalizeSortingInputArray(raw, SORT_ORDERS.ASCENDING);
+      expect(out).toEqual([3, 1, 4]);
+      expect(out).not.toBe(raw);
+    });
+  });
+
+  describe('reorderArrayForSortOrder', () => {
+    it('sorts ascending for ascending order', () => {
+      expect(
+        reorderArrayForSortOrder([3, 1, 2], SORT_ORDERS.ASCENDING)
+      ).toEqual([1, 2, 3]);
+    });
+
+    it('sorts descending for descending order', () => {
+      expect(
+        reorderArrayForSortOrder([3, 1, 2], SORT_ORDERS.DESCENDING)
+      ).toEqual([3, 2, 1]);
     });
   });
 

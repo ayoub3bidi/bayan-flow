@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -11,13 +11,17 @@ import {
 } from './complexityDatasetRegistry';
 
 describe('COMPLEXITY_DATASETS', () => {
-  it('exposes sorting, pathfinding, and searching maps', () => {
+  it('exposes all category complexity maps', () => {
     expect(COMPLEXITY_DATASETS.sorting).toBeDefined();
     expect(COMPLEXITY_DATASETS.pathfinding).toBeDefined();
     expect(COMPLEXITY_DATASETS.searching).toBeDefined();
+    expect(COMPLEXITY_DATASETS.treeTraversal).toBeDefined();
+    expect(COMPLEXITY_DATASETS.graphAlgorithm).toBeDefined();
     expect(typeof COMPLEXITY_DATASETS.sorting).toBe('object');
     expect(typeof COMPLEXITY_DATASETS.pathfinding).toBe('object');
     expect(typeof COMPLEXITY_DATASETS.searching).toBe('object');
+    expect(typeof COMPLEXITY_DATASETS.treeTraversal).toBe('object');
+    expect(typeof COMPLEXITY_DATASETS.graphAlgorithm).toBe('object');
   });
 });
 

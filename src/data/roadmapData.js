@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -39,7 +39,7 @@ export const roadmapData = [
   },
   {
     id: 3,
-    date: 'Q1 2026',
+    date: 'March 2026',
     title: 'Algorithm Library Expansion (0.3.0)',
     description:
       'Expanded the sorting catalog to 14 algorithms and pathfinding to 9, improved animation clarity and performance, and introduced a full test suite.',
@@ -48,11 +48,11 @@ export const roadmapData = [
   },
   {
     id: 4,
-    date: 'Q2 2026',
+    date: 'April 2026',
     title: 'Searching & Educational Tooling (0.4.0)',
     description:
       'Introduced a Searching category with 8 algorithms across sorted-array and graph substrates (Linear Search, Binary Search, Jump Search, Interpolation, Exponential, Fibonacci, Ternary Search, and DFS). Added an insight panel with algorithm history and complexity facts, an interactive Python code panel with LeetCode-style test cases, and in-browser video export (horizontal and vertical) powered by Remotion.',
-    videoUrl: '',
+    videoUrl: 'https://www.youtube.com/embed/uL3G3nvjGh4',
     status: 'completed',
   },
   {
@@ -62,11 +62,11 @@ export const roadmapData = [
     description:
       "Expand into two new algorithm families built on dedicated renderers. Tree Traversals: Inorder, Preorder, Postorder, Level-order, Morris Traversal, and Zigzag Level-order. Graph Algorithms: Topological Sort, Kahn's Algorithm, Kruskal's and Prim's (MST), Tarjan's and Kosaraju's (SCC), and Floyd-Warshall. Also introduces user accounts with saved favorite algorithms and per-algorithm explanation videos embedded in the insight panel.",
     videoUrl: '',
-    status: 'in-progress',
+    status: 'completed',
   },
   {
     id: 6,
-    date: 'Q3–Q4 2026',
+    date: 'Q4 2026',
     title: 'Dynamic Programming & String Algorithms (0.6.0)',
     description:
       'Two high-demand categories for CS students and interview prep. Dynamic Programming: Fibonacci (memoization vs tabulation), 0/1 Knapsack, LCS, LIS, Edit Distance, and Coin Change — visualized on a reusable table/matrix renderer. String Algorithms: KMP, Rabin-Karp, Boyer-Moore, Z Algorithm, and Aho-Corasick — visualized on a character-array renderer.',
@@ -75,7 +75,7 @@ export const roadmapData = [
   },
   {
     id: 7,
-    date: 'Q4 2026',
+    date: 'Q1 2027',
     title: 'Pro Tier & Power Features (0.7.0)',
     description:
       'Launch the Pro plan. Pro features include custom array and graph input (visualize your own data), unlimited video export with watermark control, shareable step links (encode algorithm + step + input into a URL), and algorithm comparison mode (run two algorithms side-by-side on the same input). Free users retain full access to all algorithm visualizations.',

@@ -1,13 +1,14 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lightbulb, X, Play } from 'lucide-react';
+import { Lightbulb, X, Play } from '@phosphor-icons/react';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
+import YouTubeFacade from './YouTubeFacade';
 
 // ─── Animation variants (mirror PythonCodePanel style) ──────────────────────
 
@@ -187,6 +188,7 @@ function PanelContent({
       >
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <Lightbulb
+            weight="bold"
             className="w-5 h-5 text-amber-500 flex-shrink-0"
             aria-hidden="true"
           />
@@ -208,7 +210,7 @@ function PanelContent({
             className="p-2 text-secondary hover:text-primary rounded-lg hover:bg-panel-hover transition-colors flex-shrink-0 -my-2 -mx-1"
             aria-label={t('insight_panel.close')}
           >
-            <X size={20} />
+            <X size={20} weight="bold" />
           </button>
         )}
       </div>
@@ -333,12 +335,12 @@ function PanelContent({
           <section className="pt-2">
             {meta.youtubeVideoId ? (
               <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10">
-                <iframe
-                  title="Video"
-                  className="absolute inset-0 w-full h-full"
-                  src={`https://www.youtube.com/embed/${meta.youtubeVideoId}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                <YouTubeFacade
+                  videoId={meta.youtubeVideoId}
+                  title={t('insight_panel.relatedVideo', {
+                    defaultValue: 'Related video',
+                  })}
+                  className="rounded-xl"
                 />
               </div>
             ) : (
@@ -346,7 +348,7 @@ function PanelContent({
                 className="flex flex-col items-center justify-center w-full aspect-video rounded-xl border-2 border-dashed border-panel-border bg-panel-hover text-secondary"
                 aria-hidden="true"
               >
-                <Play className="w-12 h-12 mb-2 opacity-60" />
+                <Play weight="bold" className="w-12 h-12 mb-2 opacity-60" />
                 <span className="text-sm font-medium">
                   {t('insight_panel.videoComingSoon')}
                 </span>

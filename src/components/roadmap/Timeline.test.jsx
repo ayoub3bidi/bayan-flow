@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -7,19 +7,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Timeline from './Timeline';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-      p: ({ children, ...props }) => <p {...props}>{children}</p>,
-    },
-  };
-});
-
 // Mock TimelineItem
 vi.mock('./TimelineItem', () => ({
   default: ({ title, position, index }) => (

@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isRTL } from '../utils/rtlManager';
@@ -73,9 +73,17 @@ function SwipeTutorial({ show, onDismiss }) {
             >
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
                 {isRtl ? (
-                  <ChevronRight size={24} className="text-blue-600" />
+                  <CaretRight
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 ) : (
-                  <ChevronLeft size={24} className="text-blue-600" />
+                  <CaretLeft
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 )}
               </div>
               <motion.div
@@ -124,9 +132,17 @@ function SwipeTutorial({ show, onDismiss }) {
             >
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
                 {isRtl ? (
-                  <ChevronLeft size={24} className="text-blue-600" />
+                  <CaretLeft
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 ) : (
-                  <ChevronRight size={24} className="text-blue-600" />
+                  <CaretRight
+                    size={24}
+                    weight="bold"
+                    className="text-blue-600"
+                  />
                 )}
               </div>
               <motion.div

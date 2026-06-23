@@ -1,35 +1,42 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { motion } from 'framer-motion';
-import { FileText, AlertCircle, Map, Youtube } from 'lucide-react';
+import { FileText, WarningCircle, MapPin } from '@phosphor-icons/react';
+import { SiYoutube, SiInstagram, SiTiktok } from 'react-icons/si';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import {
+  GITHUB_REPO_NAME,
+  GITHUB_REPO_OWNER,
+  GITHUB_REPO_URL,
+} from '../constants/githubRepo';
 
 function Footer() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [version, setVersion] = useState('0.0.0');
+  const [version, setVersion] = useState(null);
   const currentYear = new Date().getFullYear();
-  const repoOwner = 'ayoub3bidi';
-  const repoName = 'bayan-flow';
-  const authorName = 'Ayoub Abidi';
 
   useEffect(() => {
     const fetchLatestVersion = async () => {
       try {
         const response = await fetch(
-          `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`
+          `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch release data');
         }
         const data = await response.json();
-        const versionTag = data.tag_name.replace(/^v/, '');
+        const rawTag = data.tag_name;
+        if (typeof rawTag !== 'string' || !rawTag.trim()) {
+          throw new Error('Missing release tag');
+        }
+        const versionTag = rawTag.replace(/^v/, '');
         setVersion(versionTag);
       } catch (error) {
         console.error('Failed to fetch latest version:', error);
@@ -37,23 +44,55 @@ function Footer() {
     };
 
     fetchLatestVersion();
-  }, [repoOwner, repoName]);
+  }, []);
 
   const links = [
     {
       label: t('footer.viewDocs'),
       icon: FileText,
-      href: `https://github.com/${repoOwner}/${repoName}/tree/main/docs`,
+      href: `${GITHUB_REPO_URL}/tree/main/docs`,
     },
     {
       label: t('footer.reportIssue'),
-      icon: AlertCircle,
-      href: `https://github.com/${repoOwner}/${repoName}/issues`,
+      icon: WarningCircle,
+      href: `${GITHUB_REPO_URL}/issues`,
     },
     {
       label: t('landing.footer.seeRoadmap'),
-      icon: Map,
+      icon: MapPin,
       href: `/roadmap`,
+    },
+  ];
+
+  const socialLinks = [
+    {
+      label: t('footer.youtube'),
+      href: 'https://www.youtube.com/@bayan-flow',
+      ariaLabel: t('footer.youtubeAria'),
+      icon: <SiYoutube className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#FF0000]',
+    },
+    {
+      label: t('footer.instagram'),
+      href: 'https://www.instagram.com/bayanflow.app',
+      ariaLabel: t('footer.instagramAria'),
+      icon: <SiInstagram className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#d62976]',
+    },
+    {
+      label: t('footer.tikTok'),
+      href: 'https://www.tiktok.com/@bayan.flow',
+      ariaLabel: t('footer.tikTokAria'),
+      icon: <SiTiktok className="w-5 h-5" />,
+      hoverClass: 'hover:text-[#8B5CF6]',
+    },
+  ];
+
+  const contactLinks = [
+    {
+      label: 'contact@bayanflow.com',
+      href: 'mailto:contact@bayanflow.com',
+      ariaLabel: t('footer.contactEmailAria'),
     },
   ];
 
@@ -75,7 +114,7 @@ function Footer() {
     >
       <div className="absolute inset-0 bg-(--color-glass-bg) backdrop-blur-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {/* Left: Project Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -121,20 +160,6 @@ function Footer() {
               <h3 className="text-sm font-bold text-text-primary">
                 Bayan Flow
               </h3>
-              <a
-                href="https://www.youtube.com/@bayan-flow"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ms-auto rounded-md p-1.5 text-text-secondary transition-colors hover:bg-surface-elevated hover:text-text-primary md:ms-0"
-                aria-label={t('footer.youtubeAria')}
-              >
-                <Youtube
-                  size={18}
-                  strokeWidth={2}
-                  aria-hidden
-                  className="block"
-                />
-              </a>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
               {t('footer.description')}
@@ -145,15 +170,17 @@ function Footer() {
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
                 Elastic-2.0 License
               </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                v{version}
-              </span>
+              {version ? (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                  v{version}
+                </span>
+              ) : null}
             </div>
           </div>
           {/* Center: Quick Links */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-text-primary">
-              {t('footer.quickLinks')}
+              {t('footer.forDevelopers')}
             </h3>
             <div className="flex flex-col gap-2">
               {links.map(link => {
@@ -163,19 +190,69 @@ function Footer() {
                     key={link.label}
                     type="button"
                     onClick={() => handleLinkClick(link.href)}
-                    className="flex items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
+                    className="flex cursor-pointer items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
                     whileHover={{ scale: 1.02, x: 2 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   >
-                    <Icon size={14} className="opacity-70" aria-hidden />
+                    <Icon
+                      size={14}
+                      weight="bold"
+                      className="opacity-70"
+                      aria-hidden
+                    />
                     <span>{link.label}</span>
                   </motion.button>
                 );
               })}
             </div>
           </div>
-          {/* Right: Support */}
+          {/* Follow us & contact */}
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-text-primary">
+                {t('footer.followUs')}
+              </h3>
+              <div className="flex flex-row flex-wrap gap-2">
+                {socialLinks.map(item => (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.ariaLabel}
+                    className={`flex items-center justify-center w-9 h-9 text-text-secondary ${item.hoverClass} transition-colors rounded-lg hover:bg-surface-elevated backdrop-blur-sm`}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    {item.icon}
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-text-primary">
+                {t('footer.contact')}
+              </h3>
+              <div className="flex flex-col gap-2">
+                {contactLinks.map(item => (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    aria-label={item.ariaLabel}
+                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Support */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-text-primary">
               {t('footer.support')}
@@ -195,29 +272,41 @@ function Footer() {
                 <img
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
                   alt="Bayan Flow - Interactive algorithm visualizer | Product Hunt"
-                  width="250"
-                  height="54"
+                  width={250}
+                  height={54}
+                  loading="lazy"
                   className="w-[250px] h-[54px]"
                 />
               </motion.a>
             </div>
           </div>
         </div>
-        {/* Bottom: Copyright centered */}
+        {/* Bottom: Copyright and legal links */}
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
             <p className="text-xs text-text-secondary text-center">
-              © {currentYear}{' '}
-              <motion.button
-                onClick={() => handleLinkClick('https://ayoub3bidi.me')}
-                className="font-semibold text-text-primary hover:text-[#3b82f6] transition-colors underline decoration-dotted underline-offset-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {authorName}
-              </motion.button>
-              . {t('footer.allRightsReserved')}
+              © {currentYear} Bayan Flow. {t('footer.allRightsReserved')}
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <motion.button
+                type="button"
+                onClick={() => handleLinkClick('/privacy')}
+                className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {t('footer.privacy')}
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={() => handleLinkClick('/terms')}
+                className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {t('footer.terms')}
+              </motion.button>
+            </div>
           </div>
         </div>
       </div>

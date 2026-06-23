@@ -4,6 +4,8 @@
 
 - **Pull requests** must target the **`develop`** branch, not **`main`**.
 - Read **[CONTRIBUTING.md](../CONTRIBUTING.md)** for contribution rules, CI expectations, and the PR workflow.
+- Read **[AGENTS.md](../AGENTS.md)** for always-on agent rules (registries, contracts, ship-it ladder).
+- Use **[docs/AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md)** for the full test command catalog, architecture map, and add-algorithm checklists.
 - Use this guide for implementation patterns; use **[ARCHITECTURE.md](./ARCHITECTURE.md)** for how the app is structured end to end.
 - New PRs should follow **[.github/PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md)** (GitHub loads it automatically—fill it in, do not strip required sections).
 
@@ -45,9 +47,14 @@ pnpm format:check    # Check formatting
 ### Testing
 ```bash
 pnpm test            # Run tests in watch mode
-pnpm test:run        # Run tests once
+pnpm test:run        # Run tests once (98 test files under src/)
 pnpm test:ui         # Open Vitest UI
-pnpm test:coverage   # Generate coverage report
+pnpm test:coverage   # Generate coverage report (CI uses this)
+```
+
+### Maintenance scripts
+```bash
+pnpm run generate:export-sfx   # Regenerate public/video-export/sfx WAV assets (Playwright + Tone)
 ```
 
 ## Design Patterns & Best Practices
@@ -279,14 +286,16 @@ src/
 │   ├── roadmap/       # Roadmap page specific
 │   ├── ui/            # Reusable primitives
 │   └── [feature].jsx  # Feature components
+├── registry/          # categoryConfig, visualizerRegistry, videoSceneRegistry, …
 ├── config/            # useAlgorithmConfig, useSettingsConfig
 ├── contexts/          # React contexts
-├── hooks/             # Custom hooks
+├── hooks/             # Custom hooks (category hooks + useVisualization)
 ├── video/             # Remotion video export (useVideoExporter, scenes)
-├── algorithms/        # sorting/, pathfinding/, searching/, python/
-├── utils/             # Pure utilities (e.g. `graphSearchGenerators.js` for searching graph demos)
-├── data/              # Static data
-└── constants/         # App constants
+├── algorithms/        # sorting/, pathfinding/, searching/, treeTraversal/, graphAlgorithm/, python/, pseudocode/
+├── utils/             # Pure utilities and generators
+├── data/              # Static data (roadmapData.js)
+├── constants/         # App constants + algorithmKnowledge.js + githubRepo.js
+└── workers/           # pyodide.worker.js
 ```
 
 ### 9. Config Hooks Pattern
@@ -295,9 +304,8 @@ Algorithm and settings configuration is centralized in `src/config/`:
 
 ```javascript
 // algorithmConfig.js - useAlgorithmConfig()
-// Returns (from CATEGORY_CONFIG + i18n): sortingAlgorithms, pathfindingAlgorithms,
-// searchingAlgorithms, sortingGroups, pathfindingGroups, searchingGroups
-// Uses useTranslation for i18n-aware labels
+// Returns (from CATEGORY_CONFIG + i18n): algorithm lists and groups for all five categories
+// sorting, pathfinding, searching, treeTraversal, graphAlgorithm
 
 // settingsConfig.js - useSettingsConfig()
 // Returns: gridSizeOptions, speedOptions
@@ -319,11 +327,12 @@ Video export uses **Remotion** (`@remotion/web-renderer`) to render MP4 files in
 **Key files:**
 - `src/video/useVideoExporter.js` – Hook: `beginExportFlow`, `exportVideo`, `closePreview`, `downloadVideo`
 - `src/video/AlgorithmVideo.jsx` – Root Remotion composition
-- `src/video/SortingScene.jsx`, `PathfindingScene.jsx`, `GraphSearchingScene.jsx` – Frame-based scenes with `interpolate()` / `interpolateColors()` for smooth transitions; **searching** routes via `SearchingVideoScene` (array steps → `SortingScene`, graph steps → `GraphSearchingScene`)
-- `src/video/ComplexityScene.jsx` – 10-second complexity segment at end
+- `src/registry/videoSceneRegistry.jsx` – Category → scene routing
+- Scenes: `SortingScene`, `PathfindingScene`, `SearchingVideoScene`, `GraphSearchingScene`, `TreeTraversalScene`, `GraphAlgorithmVideoScene`, `GraphAlgorithmScene`, `GraphAlgorithmMatrixScene`, `ComplexityScene`
 - `src/components/ExportProgressModal.jsx` – Orientation, progress, preview (RTL-aware)
+- `src/video/audio/buildExportSoundCues.js` – Schedules cues from `getSoundEventsForStep()`
 
-**Constants** (`src/video/constants.js`): `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_WIDTH_VERTICAL`, `VIDEO_HEIGHT_VERTICAL`, `COMPLEXITY_DURATION_FRAMES`
+**Constants** (`src/video/constants.js`): dimensions, `VIDEO_FPS`, `VIDEO_EXPORT_FRAMES_PER_STEP`, `COMPLEXITY_DURATION_FRAMES`
 
 ### 11. Testing Approach
 
@@ -525,6 +534,14 @@ In all language files (`src/i18n/locales/*/translation.json`):
 }
 ```
 
+**Step 6b: Add pseudocode strings**
+
+In `src/algorithms/pseudocode/strings.en.js`, `strings.fr.js`, and `strings.ar.js`.
+
+**Step 6c: Add insight metadata (optional but recommended)**
+
+In `src/constants/algorithmKnowledge.js` plus `insight_panel.algorithms.<key>.*` keys in all locale files.
+
 **Step 7: Write Tests**
 
 In `src/algorithms/sorting/algorithms.test.js`:
@@ -621,6 +638,53 @@ Searching is **one category** with two **substrates** (`SEARCHING_SUBSTRATES` in
 8. **Tests** — pure graph DFS, substrate registry, hook graph payload, Remotion routing if you add coverage.
 
 **Shared for any searching algorithm:** `complexityDataset: 'searching'`, **`videoSceneRegistry`** still points at the searching entry (internal router handles array vs graph). Run **`pnpm lint`**, **`format:check`**, **`test:run`**, **`build`** before merge.
+
+### Adding a Tree Traversal Algorithm
+
+1. **Implement** in `src/algorithms/treeTraversal/yourTraversal.js` with visualization steps and a `*Pure` test function.
+2. **Register** in `src/algorithms/treeTraversal/index.js`.
+3. **Category config** — add key to `algorithmKeys` and appropriate `groupDefs` in `categoryConfig.js` under `TREE_TRAVERSAL`.
+4. **Constants** — `TREE_TRAVERSAL_ALGORITHMS`, `TREE_TRAVERSAL_COMPLEXITY` in `src/constants/index.js`.
+5. **Translations**, **pseudocode** (all three string files), **Python** + **`testCases.js`**, **insight metadata** in `algorithmKnowledge.js`.
+6. **Sound** — update `src/utils/soundEvents.js` if new visual states are introduced.
+7. **Video** — `TreeTraversalScene` (registered in `videoSceneRegistry.jsx`).
+8. **Tests** — algorithm logic, hook behavior, visualizer, export scene.
+
+Tree data comes from `generateTreeForTraversal()`; size is controlled via `treeNodeCount` (`sizeBinding: 'tree'`).
+
+### Adding a Graph Algorithm
+
+Graph algorithms use `src/registry/graphAlgorithmRegistry.js` profiles:
+
+1. **Implement** in `src/algorithms/graphAlgorithm/yourAlgorithm.js`.
+2. **Export** from `src/algorithms/graphAlgorithm/index.js`.
+3. **Profile** — add to `GRAPH_ALGORITHM_PROFILES` with representation (`nodeLink` or `matrix`), directed/weighted flags, scenario IDs, and `createInput()`.
+4. **Groups** — ensure the key appears in `GRAPH_ALGORITHM_GROUPS` (or is picked up by `buildGroupDefs()`).
+5. **Category config** — `algorithmKeys` uses `GRAPH_ALGORITHM_KEYS`; no manual list duplication needed if profile is registered.
+6. **Constants**, **i18n**, **pseudocode**, **Python**, **insight**, **sound events** — same checklist as other categories.
+7. **Video** — `GraphAlgorithmVideoScene` routes node–link steps to `GraphAlgorithmScene` and matrix steps to `GraphAlgorithmMatrixScene`.
+8. **Tests** — JS logic, profile/scenario wiring, hook, visualizers (both representations if matrix), export, sound events.
+
+Keep generators deterministic in tests (pass `rng`). Preset scenarios in `graphTestScenarios.js` are fixed — when a scenario is active, `graphNodeCount` must not change the graph.
+
+### CI and deployment
+
+Pull requests and pushes to `develop`/`main` run `.github/workflows/ci.yml`:
+
+| Job | Command |
+| --- | ------- |
+| Quality | `pnpm lint`, `pnpm format:check` |
+| Test | `pnpm test:coverage` |
+| Build | `pnpm build` |
+| Deploy | Netlify (`main` → production, `develop` → dev) |
+
+Before opening a PR, run locally:
+
+```bash
+pnpm test:run && pnpm build && pnpm lint && pnpm format:check
+```
+
+Registry changes should also pass targeted tests listed in **[AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md)** (Testing Workflow section).
 
 ### Adding a New Language
 
@@ -914,48 +978,19 @@ export default React.memo(Component, (prevProps, nextProps) => {
 
 ## Sound System Integration
 
-### Adding Sound to New Algorithms
+Sound is derived from **`getSoundEventsForStep()`** in `src/utils/soundEvents.js`, not from localized step descriptions. **`useVisualization`** emits events during forward playback and manual stepping only.
 
-**Step 1: Identify Sound Events**
-```javascript
-// In your algorithm implementation
-if (hasSwapping) {
-  soundManager.playSwap(elementValue);
-} else if (hasComparing) {
-  soundManager.playCompare(elementValue);
-}
-```
+### Adding Sound for New Visual States
 
-**Step 2: Update Hook Integration**
-```javascript
-const executeStep = useCallback((step) => {
-  // Update visual state
-  setArray(step.array);
-  setStates(step.states);
-  
-  // Add sound logic
-  const hasNewState = step.states.includes(NEW_STATE);
-  if (hasNewState) {
-    soundManager.playNewSound();
-  }
-}, []);
-```
+**Step 1:** Map the new state in `getSoundEventsForStep()` (and add a kind to `SOUND_EVENT_KINDS` if needed).
 
-**Step 3: Add New Sound Methods**
-```javascript
-// In soundManager.js
-playNewSound() {
-  if (!this.isEnabled) return;
-  this.synth.triggerAttackRelease('C4', '8n');
-}
-```
+**Step 2:** Ensure `soundManager.playEvent()` handles the kind (see `toneInstrumentPresets.js`).
 
-### Sound Design Guidelines
+**Step 3:** Update `src/utils/soundEvents.test.js` and `src/video/audio/buildExportSoundCues.test.js`.
 
-- **Frequency Mapping**: Map element values to frequencies for intuitive audio feedback
-- **Duration**: Keep sounds brief (64n to 8n note values) to avoid overlap
-- **Volume**: Use moderate levels to prevent fatigue
-- **Fallback**: Always check `isEnabled` before playing sounds
+**Step 4:** If export WAV assets change, run `pnpm run generate:export-sfx`.
+
+Do not add sounds for UI clicks, panel toggles, export buttons, or regeneration — visualization steps only.
 
 ## Best Practices Checklist
 
@@ -963,6 +998,7 @@ playNewSound() {
 
 - [ ] Run `pnpm lint:fix`
 - [ ] Run `pnpm format`
+- [ ] Run `pnpm format:check`
 - [ ] Run `pnpm test:run` (full suite green)
 - [ ] Check console for warnings/errors
 - [ ] Test in light and dark mode
@@ -971,7 +1007,8 @@ playNewSound() {
 - [ ] Verify accessibility (keyboard navigation, ARIA labels)
 - [ ] Check performance (no janky animations)
 - [ ] Update relevant documentation
-- [ ] For new algorithms: Verify step translations work correctly
+- [ ] For new algorithms: Verify step translations, pseudocode, Python index, insight metadata, and sound events
+- [ ] For registry changes: Run targeted tests from [AGENTS_REFERENCE.md](./AGENTS_REFERENCE.md) (`categoryRuntimeCompleteness`, etc.)
 
 ### Code Review Checklist
 

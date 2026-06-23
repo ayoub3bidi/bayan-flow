@@ -1,26 +1,27 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Hand, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Play, Hand } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   ALGORITHM_TYPES,
-  ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPE_LIST,
   SEARCH_GRAPH_NODE_COUNT,
+  TREE_NODE_COUNT,
 } from '../constants';
-import { soundManager } from '../utils/soundManager';
 import { useAlgorithmConfig } from '../config/algorithmConfig';
 import { useSettingsConfig } from '../config/settingsConfig';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+import { getGraphAlgorithmNodeCountRange } from '../registry/graphAlgorithmRegistry.js';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import AlgorithmDropdown from './AlgorithmDropdown';
+import GraphScenarioDropdown from './GraphScenarioDropdown';
 
 function SettingsPanel({
   algorithmType,
@@ -35,14 +36,22 @@ function SettingsPanel({
   onGridSizeChange,
   searchGraphNodeCount,
   onSearchGraphNodeCountChange,
+  treeNodeCount,
+  onTreeNodeCountChange,
+  graphNodeCount,
+  onGraphNodeCountChange,
+  selectedGraphScenario,
+  onGraphScenarioChange,
+  graphScenarioOptions = [],
   isPlaying,
   mode,
   onModeChange,
 }) {
   const { t } = useTranslation();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const dropdownRef = useRef(null);
+  const [isAlgorithmDropdownOpen, setIsAlgorithmDropdownOpen] = useState(false);
+  const [isScenarioDropdownOpen, setIsScenarioDropdownOpen] = useState(false);
+  const algorithmDropdownRef = useRef(null);
+  const scenarioDropdownRef = useRef(null);
 
   const { byType } = useAlgorithmConfig();
   const { speedOptions } = useSettingsConfig();
@@ -50,6 +59,8 @@ function SettingsPanel({
   const { algorithms, groups } = byType[algorithmType];
 
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
+  const graphNodeCountRange =
+    getGraphAlgorithmNodeCountRange(selectedAlgorithm);
   const effectiveSizeBinding =
     algorithmType === ALGORITHM_TYPES.SEARCHING &&
     isNodeLinkSearchingAlgorithm(selectedAlgorithm)
@@ -65,20 +76,47 @@ function SettingsPanel({
           max: SEARCH_GRAPH_NODE_COUNT.max,
           step: SEARCH_GRAPH_NODE_COUNT.step,
         }
-      : categoryConfig.sizeControl;
+      : effectiveSizeBinding === 'tree'
+        ? {
+            type: 'slider',
+            i18nKey: 'settings.treeNodeCount',
+            min: TREE_NODE_COUNT.min,
+            max: TREE_NODE_COUNT.max,
+            step: TREE_NODE_COUNT.step,
+          }
+        : effectiveSizeBinding === 'graph'
+          ? {
+              type: 'slider',
+              i18nKey: 'settings.graphNodeCount',
+              min: graphNodeCountRange.min,
+              max: graphNodeCountRange.max,
+              step: graphNodeCountRange.step,
+            }
+          : categoryConfig.sizeControl;
+  const isPresetGraphScenarioSelected =
+    algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM &&
+    Boolean(selectedGraphScenario);
 
   const sizeValue =
     effectiveSizeBinding === 'array'
       ? arraySize
       : effectiveSizeBinding === 'searchGraph'
         ? searchGraphNodeCount
-        : gridSize;
+        : effectiveSizeBinding === 'tree'
+          ? treeNodeCount
+          : effectiveSizeBinding === 'graph'
+            ? graphNodeCount
+            : gridSize;
   const onSizeChange =
     effectiveSizeBinding === 'array'
       ? onArraySizeChange
       : effectiveSizeBinding === 'searchGraph'
         ? onSearchGraphNodeCountChange
-        : onGridSizeChange;
+        : effectiveSizeBinding === 'tree'
+          ? onTreeNodeCountChange
+          : effectiveSizeBinding === 'graph'
+            ? onGraphNodeCountChange
+            : onGridSizeChange;
 
   const currentSpeedIndex = Math.max(
     0,
@@ -87,25 +125,23 @@ function SettingsPanel({
 
   useEffect(() => {
     const handleClickOutside = event => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
+      if (
+        algorithmDropdownRef.current &&
+        !algorithmDropdownRef.current.contains(event.target)
+      ) {
+        setIsAlgorithmDropdownOpen(false);
+      }
+      if (
+        scenarioDropdownRef.current &&
+        !scenarioDropdownRef.current.contains(event.target)
+      ) {
+        setIsScenarioDropdownOpen(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handleSoundToggle = async () => {
-    if (isSoundEnabled) {
-      soundManager.disable();
-      setIsSoundEnabled(false);
-    } else {
-      await soundManager.enable();
-      setIsSoundEnabled(true);
-      soundManager.playUIClick();
-    }
-  };
 
   return (
     <motion.div
@@ -126,10 +162,13 @@ function SettingsPanel({
           role="group"
           aria-labelledby="settings-algorithm-mode-label"
         >
-          {ALGORITHM_TYPE_LIST.map(type => {
+          {ALGORITHM_TYPE_LIST.map((type, index) => {
             const cfg = CATEGORY_CONFIG[type];
             const Icon = cfg.icon;
             const isActive = algorithmType === type;
+            const isLoneLastItem =
+              ALGORITHM_TYPE_LIST.length % 2 === 1 &&
+              index === ALGORITHM_TYPE_LIST.length - 1;
             return (
               <button
                 key={type}
@@ -137,35 +176,25 @@ function SettingsPanel({
                 onClick={() => !isPlaying && onAlgorithmTypeChange(type)}
                 disabled={isPlaying}
                 className={`min-h-touch flex flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-3 text-center transition-all duration-200 touch-manipulation leading-tight-consistent disabled:cursor-not-allowed ${
+                  isLoneLastItem ? 'col-span-2' : ''
+                } ${
                   isActive
                     ? 'bg-theme-primary-consistent text-white shadow-md'
                     : 'bg-surface-elevated text-text-primary shadow-sm hover:bg-bg hover:shadow'
                 } ${isPlaying ? 'opacity-50' : ''}`}
               >
-                <Icon size={20} className="shrink-0" aria-hidden />
+                <Icon
+                  size={20}
+                  weight="bold"
+                  className="shrink-0"
+                  aria-hidden
+                />
                 <span className="text-xs sm:text-sm font-semibold">
                   {t(cfg.i18nTabKey)}
                 </span>
               </button>
             );
           })}
-          <div
-            className="flex min-h-touch flex-col items-center justify-center gap-1 rounded-xl bg-bg/50 px-2 py-3 text-center text-text-secondary shadow-sm"
-            role="note"
-            aria-label={t('settings.mysteryCategoryAria')}
-          >
-            <Sparkles
-              size={20}
-              className="shrink-0 text-amber-500/90 dark:text-amber-400/90"
-              aria-hidden
-            />
-            <span className="text-xs font-semibold text-text-primary">
-              {t('settings.mysteryCategory')}
-            </span>
-            <span className="text-[10px] font-medium uppercase tracking-wide text-text-secondary">
-              {t('settings.mysteryCategoryHint')}
-            </span>
-          </div>
         </div>
       </div>
 
@@ -178,12 +207,30 @@ function SettingsPanel({
           algorithmGroups={groups}
           selectedAlgorithm={selectedAlgorithm}
           onAlgorithmSelect={onAlgorithmChange}
-          isDropdownOpen={isDropdownOpen}
-          setIsDropdownOpen={setIsDropdownOpen}
+          isDropdownOpen={isAlgorithmDropdownOpen}
+          setIsDropdownOpen={setIsAlgorithmDropdownOpen}
           isPlaying={isPlaying}
-          dropdownRef={dropdownRef}
+          dropdownRef={algorithmDropdownRef}
         />
       </div>
+
+      {algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM &&
+      graphScenarioOptions.length > 0 ? (
+        <div>
+          <label className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent">
+            {t('controls.graphScenario')}
+          </label>
+          <GraphScenarioDropdown
+            scenarioOptions={graphScenarioOptions}
+            selectedScenario={selectedGraphScenario}
+            onScenarioSelect={onGraphScenarioChange}
+            isDropdownOpen={isScenarioDropdownOpen}
+            setIsDropdownOpen={setIsScenarioDropdownOpen}
+            isPlaying={isPlaying}
+            dropdownRef={scenarioDropdownRef}
+          />
+        </div>
+      ) : null}
 
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
@@ -201,7 +248,7 @@ function SettingsPanel({
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
-            <Play size={16} />
+            <Play size={16} weight="bold" />
             <span className="hidden sm:inline">{t('modes.autoplay')}</span>
           </button>
           <button
@@ -215,7 +262,7 @@ function SettingsPanel({
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
             } ${isPlaying ? 'opacity-50' : ''}`}
           >
-            <Hand size={16} />
+            <Hand size={16} weight="bold" />
             <span className="hidden sm:inline">{t('modes.manual')}</span>
           </button>
         </div>
@@ -255,30 +302,7 @@ function SettingsPanel({
         </div>
       </div>
 
-      {/* Sound Toggle */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <label className="block text-sm font-semibold text-text-primary">
-            {t('settings.sound')}
-          </label>
-          <span className="px-2.5 py-1 bg-amber-500/10 text-amber-500 text-xs font-semibold rounded-full border border-amber-500/20 whitespace-nowrap shadow-sm">
-            {t('settings.experimental')}
-          </span>
-        </div>
-        <button
-          onClick={handleSoundToggle}
-          className={`flex items-center justify-center gap-2 w-full px-4 py-3 min-h-[44px] text-sm font-medium rounded-lg transition-all duration-200 touch-manipulation ${
-            isSoundEnabled
-              ? 'bg-theme-primary-consistent text-white shadow-md'
-              : 'bg-surface-elevated text-text-primary hover:bg-border'
-          }`}
-        >
-          {isSoundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          {isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')}
-        </button>
-      </div>
-
-      {sizeControl.type === 'slider' && (
+      {sizeControl.type === 'slider' && !isPresetGraphScenarioSelected && (
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-2">
             {t(sizeControl.i18nKey)}: {sizeValue}
@@ -299,6 +323,12 @@ function SettingsPanel({
           </div>
         </div>
       )}
+
+      {isPresetGraphScenarioSelected ? (
+        <p className="text-xs text-text-secondary">
+          {t('settings.graphScenarioNodeCountLocked')}
+        </p>
+      ) : null}
 
       {sizeControl.type === 'buttons' && (
         <div>

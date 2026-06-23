@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -8,16 +8,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen } from '../../test/testUtils';
 import { BrowserRouter } from 'react-router-dom';
 import Hero from './Hero';
-
-// Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    h1: ({ children, ...props }) => <h1 {...props}>{children}</h1>,
-    p: ({ children, ...props }) => <p {...props}>{children}</p>,
-  },
-}));
-
 // Mock UI components
 vi.mock('../ui/Container', () => ({
   default: ({ children, className = '' }) => (

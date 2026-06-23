@@ -1,21 +1,19 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { VISUALIZATION_MODES } from '../constants/index.js';
+import { ALGORITHM_TYPES, VISUALIZATION_MODES } from '../constants/index.js';
 import { binarySearch } from '../algorithms/searching/binarySearch.js';
 import { jumpSearch } from '../algorithms/searching/jumpSearch.js';
 import { useSearchingVisualization } from './useSearchingVisualization.js';
 
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
-    playCompare: vi.fn(),
-    playNodeVisit: vi.fn(),
-    playPathFound: vi.fn(),
+    playEvents: vi.fn(),
   },
 }));
 
@@ -254,7 +252,7 @@ describe('useSearchingVisualization', () => {
     expect(result.current.currentStep).toBe(1);
   });
 
-  it('calls playCompare when applied step includes COMPARING', async () => {
+  it('emits a compare sound event when applied step includes COMPARING', async () => {
     const values = [1, 3, 5, 7, 9];
     const { result } = renderHook(() =>
       useSearchingVisualization(
@@ -277,7 +275,15 @@ describe('useSearchingVisualization', () => {
     });
 
     const midValue = values[Math.floor((0 + (values.length - 1)) / 2)];
-    expect(soundManager.playCompare).toHaveBeenCalledWith(midValue);
+    expect(soundManager.playEvents).toHaveBeenCalledWith(
+      [{ kind: 'compare', value: midValue }],
+      expect.objectContaining({
+        algorithmType: ALGORITHM_TYPES.SEARCHING,
+        algorithmKey: 'binarySearch',
+        stepIndex: 1,
+        speed: 100,
+      })
+    );
   });
 
   it('updates targetValue when stepping through steps that include targetValue', async () => {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -7,18 +7,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen } from '../../test/testUtils';
 import Features from './Features';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    },
-  };
-});
-
 // Mock UI components
 vi.mock('../ui/Container', () => ({
   default: ({ children }) => <div>{children}</div>,
@@ -30,14 +18,14 @@ vi.mock('../ui/Section', () => ({
   ),
 }));
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
-  Sliders: () => <svg data-testid="sliders-icon" />,
+// Mock @phosphor-icons/react
+vi.mock('@phosphor-icons/react', () => ({
+  SlidersHorizontal: () => <svg data-testid="sliders-icon" />,
   Code: () => <svg data-testid="code-icon" />,
-  Volume2: () => <svg data-testid="volume-icon" />,
-  Maximize: () => <svg data-testid="maximize-icon" />,
+  SpeakerHigh: () => <svg data-testid="volume-icon" />,
+  ArrowsOut: () => <svg data-testid="maximize-icon" />,
   Lightbulb: () => <svg data-testid="lightbulb-icon" />,
-  Video: () => <svg data-testid="video-icon" />,
+  VideoCamera: () => <svg data-testid="video-icon" />,
 }));
 
 describe('Features', () => {

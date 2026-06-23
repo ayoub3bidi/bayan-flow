@@ -1,11 +1,26 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { ThemeContext } from './ThemeContextDefinition';
+
+function getMatchMedia() {
+  if (
+    typeof window === 'undefined' ||
+    typeof window.matchMedia !== 'function'
+  ) {
+    return null;
+  }
+
+  try {
+    return window.matchMedia('(prefers-color-scheme: dark)');
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Theme Provider Component
@@ -20,9 +35,8 @@ export function ThemeProvider({ children }) {
         return savedTheme;
       }
       // Check system preference
-      const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      ).matches;
+      const mediaQuery = getMatchMedia();
+      const prefersDark = mediaQuery?.matches ?? false;
       return prefersDark ? 'dark' : 'light';
     } catch (e) {
       console.error('Failed to read theme from localStorage:', e);
@@ -31,11 +45,7 @@ export function ThemeProvider({ children }) {
   });
 
   const [isSystemDark, setIsSystemDark] = useState(() => {
-    try {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch {
-      return false;
-    }
+    return getMatchMedia()?.matches ?? false;
   });
 
   // Apply theme to document
@@ -75,33 +85,34 @@ export function ThemeProvider({ children }) {
 
   // Listen for system theme changes
   useEffect(() => {
-    try {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-      const handleChange = e => {
-        setIsSystemDark(e.matches);
-        // Only auto-switch if user hasn't set a preference
-        const savedTheme = localStorage.getItem('theme');
-        if (!savedTheme) {
-          const newTheme = e.matches ? 'dark' : 'light';
-          setThemeState(newTheme);
-          applyTheme(newTheme);
-        }
-      };
-
-      // Modern browsers
-      if (mediaQuery.addEventListener) {
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
-      }
-      // Legacy browsers
-      else if (mediaQuery.addListener) {
-        mediaQuery.addListener(handleChange);
-        return () => mediaQuery.removeListener(handleChange);
-      }
-    } catch (e) {
-      console.error('Failed to setup system theme listener:', e);
+    const mediaQuery = getMatchMedia();
+    if (!mediaQuery) {
+      return undefined;
     }
+
+    const handleChange = e => {
+      setIsSystemDark(e.matches);
+      // Only auto-switch if user hasn't set a preference
+      const savedTheme = localStorage.getItem('theme');
+      if (!savedTheme) {
+        const newTheme = e.matches ? 'dark' : 'light';
+        setThemeState(newTheme);
+        applyTheme(newTheme);
+      }
+    };
+
+    // Modern browsers
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+    // Legacy browsers
+    if (mediaQuery.addListener) {
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
+
+    return undefined;
   }, [applyTheme]);
 
   // Apply theme on mount and when it changes

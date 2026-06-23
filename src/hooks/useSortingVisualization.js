@@ -1,22 +1,21 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ELEMENT_STATES,
   ALGORITHM_TYPES,
   VISUALIZATION_MODES,
 } from '../constants/index.js';
-import { soundManager } from '../utils/soundManager.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 
 /**
  * Thin adapter around useVisualization for sorting algorithms.
- * Owns array + element-states domain state and sorting-specific sound effects.
+ * Owns array + element-states domain state for sorting visualization.
  * All playback logic (play, pause, reset, step navigation, autoplay loop)
  * lives in useVisualization.
  *
@@ -40,36 +39,14 @@ export function useSortingVisualization(
   const executeStep = useCallback(step => {
     setArray(step.array);
     setStates(step.states);
-
-    // Sound effects based on element states
-    const hasComparing = step.states.includes(ELEMENT_STATES.COMPARING);
-    const hasSwapping = step.states.includes(ELEMENT_STATES.SWAPPING);
-    const hasPivot = step.states.includes(ELEMENT_STATES.PIVOT);
-    const hasSorted = step.states.includes(ELEMENT_STATES.SORTED);
-
-    if (hasSwapping) {
-      const swapIndex = step.states.indexOf(ELEMENT_STATES.SWAPPING);
-      soundManager.playSwap(step.array[swapIndex]);
-    } else if (hasPivot) {
-      const pivotIndex = step.states.indexOf(ELEMENT_STATES.PIVOT);
-      soundManager.playPivot(step.array[pivotIndex]);
-    } else if (hasComparing) {
-      const compareIndex = step.states.indexOf(ELEMENT_STATES.COMPARING);
-      soundManager.playCompare(step.array[compareIndex]);
-    }
-
-    if (
-      hasSorted &&
-      step.states.every(
-        s => s === ELEMENT_STATES.SORTED || s === ELEMENT_STATES.DEFAULT
-      )
-    ) {
-      soundManager.playSorted();
-    }
   }, []);
 
   // ── Shared playback engine ──────────────────────────────────────────────────
-  const engine = useVisualization({ executeStep, speed, mode });
+  const soundContext = useMemo(
+    () => ({ algorithmType: ALGORITHM_TYPES.SORTING, algorithmKey }),
+    [algorithmKey]
+  );
+  const engine = useVisualization({ executeStep, speed, mode, soundContext });
 
   // ── Step loading — owned by this hook ──────────────────────────────────────
   /**

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -12,10 +12,7 @@ import { useSortingVisualization } from './useSortingVisualization';
 
 const { soundManager } = vi.hoisted(() => ({
   soundManager: {
-    playSwap: vi.fn(),
-    playPivot: vi.fn(),
-    playCompare: vi.fn(),
-    playSorted: vi.fn(),
+    playEvents: vi.fn(),
   },
 }));
 

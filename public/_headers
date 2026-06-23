@@ -1,0 +1,10 @@
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is 'unsafe-inline'; connect-src 'self' https://cloud.umami.is https://api.github.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://api.producthunt.com; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; frame-src https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'
+
+https://:worker_host.workers.dev/*
+  X-Robots-Tag: noindex

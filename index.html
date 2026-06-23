@@ -3,25 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <!-- Primary Meta Tags -->
     <title>Bayan Flow - Interactive Algorithm Visualizer</title>
     <meta name="title" content="Bayan Flow - Interactive Algorithm Visualizer" />
-    <meta name="description" content="Bayan Flow: Learn algorithms with clarity through interactive step-by-step animations. Visualize sorting algorithms (Bubble, Quick, Merge) and pathfinding algorithms (BFS, Dijkstra, A*) with real-time complexity analysis. Bayan (بيان) means clarity in Arabic." />
-    <meta name="keywords" content="bayan flow, algorithm visualizer, sorting algorithms, pathfinding algorithms, computer science, education, interactive learning, bubble sort, quick sort, merge sort, dijkstra, bfs, a star, clarity" />
+    <meta
+      name="description"
+      content="Bayan Flow: Learn 45 algorithms with clarity through interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph algorithms. Free educational web app with Python examples and complexity analysis. Bayan (بيان) means clarity in Arabic."
+    />
+    <meta
+      name="keywords"
+      content="bayan flow, algorithm visualizer, sorting algorithms, pathfinding, graph algorithms, tree traversal, searching algorithms, computer science, education, interactive learning, dijkstra, bfs, merge sort, clarity"
+    />
     <meta name="author" content="Ayoub Abidi" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://bayanflow.netlify.app/" />
+    <link rel="canonical" href="https://bayanflow.com/" />
+
+    <!-- Non-production hostnames: noindex at runtime (deploy previews, dev, Netlify URLs) -->
+    <script>
+      (function () {
+        var hostname = window.location.hostname;
+        var shouldNoIndex =
+          hostname === 'dev.bayanflow.com' ||
+          hostname === 'localhost' ||
+          hostname === '127.0.0.1' ||
+          hostname.indexOf('deploy-preview') !== -1 ||
+          hostname.slice(-12) === '.workers.dev' ||
+          (hostname.slice(-12) === '.netlify.app' &&
+            hostname !== 'bayanflow.com' &&
+            hostname !== 'www.bayanflow.com');
+
+        if (shouldNoIndex) {
+          var robots = document.querySelector('meta[name="robots"]');
+          if (robots) {
+            robots.setAttribute('content', 'noindex, nofollow');
+          }
+        }
+      })();
+    </script>
 
     <!-- Umami Analytics - Dynamically loaded based on environment -->
     <script>
-      (function() {
+      (function () {
         const hostname = window.location.hostname;
         let websiteId;
-        if (hostname === 'dev-bayanflow.netlify.app' || hostname.includes('deploy-preview')) {
+        if (
+          hostname === 'dev.bayanflow.com' ||
+          hostname === 'dev-bayanflow.netlify.app' ||
+          hostname.slice(-12) === '.workers.dev' ||
+          hostname.includes('deploy-preview')
+        ) {
           // Develop
           websiteId = 'b21ffc5d-66c1-4bfc-9e54-e05dbbe26852';
-        } else if (hostname === 'bayanflow.netlify.app' || hostname === 'www.bayanflow.netlify.app') {
+        } else if (
+          hostname === 'bayanflow.com' ||
+          hostname === 'www.bayanflow.com' ||
+          hostname === 'bayanflow.netlify.app' ||
+          hostname === 'www.bayanflow.netlify.app'
+        ) {
           // main
           websiteId = 'c096589e-f026-47e9-b458-aeb6850d5d5c';
         }
@@ -37,62 +76,86 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bayanflow.netlify.app/" />
-    <meta property="og:title" content="Bayan Flow - Interactive Algorithm Visualizer" />
-    <meta property="og:description" content="Learn algorithms with clarity through interactive step-by-step animations. Explore sorting and pathfinding algorithms with real-time complexity analysis." />
-    <meta property="og:image" content="https://bayanflow.netlify.app/logo.png" />
+    <meta property="og:url" content="https://bayanflow.com/" />
+    <meta
+      property="og:title"
+      content="Bayan Flow - Interactive Algorithm Visualizer"
+    />
+    <meta
+      property="og:description"
+      content="Interactive step-by-step visualizations for sorting, pathfinding, searching, tree traversal, and graph algorithms — with Python examples and complexity analysis."
+    />
+    <meta property="og:image" content="https://bayanflow.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Bayan Flow — interactive algorithm visualizer for sorting, pathfinding, searching, trees, and graphs"
+    />
     <meta property="og:site_name" content="Bayan Flow" />
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://bayanflow.netlify.app/" />
-    <meta property="twitter:title" content="Bayan Flow - Interactive Algorithm Visualizer" />
-    <meta property="twitter:description" content="Learn algorithms with clarity through interactive step-by-step animations. Explore sorting and pathfinding algorithms." />
-    <meta property="twitter:image" content="https://bayanflow.netlify.app/logo.png" />
-    
+    <meta property="twitter:url" content="https://bayanflow.com/" />
+    <meta
+      property="twitter:title"
+      content="Bayan Flow - Interactive Algorithm Visualizer"
+    />
+    <meta
+      property="twitter:description"
+      content="Interactive step-by-step visualizations for sorting, pathfinding, searching, tree traversal, and graph algorithms — with Python examples and complexity analysis."
+    />
+    <meta
+      property="twitter:image"
+      content="https://bayanflow.com/og-image.png"
+    />
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="apple-touch-icon" href="/logo.png" />
     <link rel="manifest" href="/manifest.json" />
-    
+
     <!-- Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Bayan Flow",
-      "description": "Bayan Flow: Interactive educational tool for learning sorting and pathfinding algorithms through step-by-step visual animations with clarity. Bayan (بيان) means clarity in Arabic.",
-      "url": "https://bayanflow.netlify.app/",
-      "applicationCategory": "EducationalApplication",
-      "operatingSystem": "Web Browser",
-      "author": {
-        "@type": "Person",
-        "name": "Ayoub Abidi",
-        "url": "https://github.com/ayoub3bidi"
-      },
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "featureList": [
-        "Interactive sorting algorithm visualization",
-        "Pathfinding algorithm demonstrations",
-        "Real-time complexity analysis",
-        "Step-by-step algorithm execution",
-        "Educational content with Python code examples"
-      ]
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Bayan Flow",
+        "description": "Bayan Flow: Interactive educational tool for learning sorting, pathfinding, searching, tree traversal, and graph algorithms through step-by-step visual animations with clarity. Bayan (بيان) means clarity in Arabic.",
+        "url": "https://bayanflow.com/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "author": {
+          "@type": "Person",
+          "name": "Ayoub Abidi",
+          "url": "https://github.com/ayoub3bidi"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "45 interactive algorithm visualizations",
+          "Sorting, pathfinding, searching, tree traversal, and graph algorithms",
+          "Real-time complexity analysis",
+          "Step-by-step algorithm execution",
+          "Editable Python code examples in the browser",
+          "HD video export with optional sound"
+        ]
+      }
     </script>
-    
+
     <!-- Theme Script -->
     <script>
-      (function() {
+      (function () {
         try {
           const savedTheme = localStorage.getItem('theme');
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const prefersDark = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+          ).matches;
           const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-          
+
           if (theme === 'dark') {
             document.documentElement.classList.add('dark');
           } else {

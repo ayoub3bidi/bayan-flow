@@ -6,7 +6,7 @@ The Bayan Flow source code is available under a dual-license:
 * **Commercial License** — for organizations that require additional rights (white-labeling, hosting as a paid SaaS, indemnity, or a custom agreement).
 
 If you want to obtain a commercial license, please contact:
-Ayoub Abidi — [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
+Ayoub Abidi — [contact@bayanflow.com](mailto:contact@bayanflow.com)
 
 Typical commercial license options:
 

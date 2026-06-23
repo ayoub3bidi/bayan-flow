@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -11,19 +11,34 @@
 export const TONE_INSTRUMENT_PRESETS = {
   softSynth: {
     oscillator: { type: 'triangle' },
-    envelope: { attack: 0.05, decay: 0.2, sustain: 0.1, release: 0.3 },
+    envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.5 },
   },
   pluckSynth: {
-    attackNoise: 0.5,
-    dampening: 4000,
-    resonance: 0.9,
+    attackNoise: 0.18,
+    dampening: 4800,
+    resonance: 0.88,
   },
-  metallicSynth: {
-    frequency: 200,
-    envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
-    harmonicity: 5.1,
-    modulationIndex: 32,
-    resonance: 4000,
-    octaves: 1.5,
+  kalimbaSynth: {
+    harmonicity: 8,
+    modulationIndex: 2,
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.001, decay: 0.4, sustain: 0, release: 0.6 },
+    modulation: { type: 'square' },
+    modulationEnvelope: { attack: 0.002, decay: 0.2, sustain: 0, release: 0.4 },
+  },
+  bellSynth: {
+    harmonicity: 3.5,
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.003, decay: 0.6, sustain: 0, release: 0.8 },
+    modulation: { type: 'triangle' },
+    modulationEnvelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.5 },
+  },
+  polySynthVoice: {
+    harmonicity: 3,
+    modulationIndex: 1.5,
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.01, decay: 0.3, sustain: 0.1, release: 0.6 },
+    modulation: { type: 'triangle' },
+    modulationEnvelope: { attack: 0.02, decay: 0.2, sustain: 0, release: 0.4 },
   },
 };

@@ -1,13 +1,14 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
+import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
+import { soundManager } from '../utils/soundManager';
 
 const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
   vi.hoisted(() => {
@@ -20,6 +21,7 @@ const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
       exportState: 'idle',
       exportProgress: 0,
       exportBlobUrl: null,
+      exportErrorMessage: null,
       cancelExport: vi.fn(),
       closePreview: vi.fn(),
       downloadVideo: vi.fn(),
@@ -93,22 +95,58 @@ const searchingVisualization = {
   steps: [{ description: 'search step', array: [1, 2, 3], states: [] }],
 };
 
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }) => <>{children}</>,
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      whileHover: _whileHover,
-      whileTap: _whileTap,
-      initial: _initial,
-      animate: _animate,
-      exit: _exit,
-      transition: _transition,
-      ...props
-    }) => <button {...props}>{children}</button>,
-  },
-}));
+const treeTraversalVisualization = {
+  treeNodes: [],
+  treeEdges: [],
+  treeNodeStates: {},
+  visitOrder: [],
+  states: [],
+  description: 'Tree description',
+  isComplete: false,
+  stepForward: vi.fn(),
+  stepBackward: vi.fn(),
+  play: vi.fn(),
+  pause: vi.fn(),
+  reset: vi.fn(),
+  regenerateTree: vi.fn(),
+  reloadSteps: vi.fn(),
+  isPlaying: false,
+  currentStep: 0,
+  totalSteps: 1,
+  steps: [{ description: 'tree step' }],
+};
+
+const graphAlgorithmVisualization = {
+  graphNodes: [],
+  graphEdges: [],
+  graphNodeStates: {},
+  graphEdgeStates: {},
+  graphStackOrder: [],
+  graphOutputOrder: [],
+  graphArtifacts: { badges: [] },
+  graphMatrix: null,
+  representation: 'nodeLink',
+  directed: true,
+  weighted: false,
+  scenarioOptions: [
+    { id: 'linearChain', i18nKey: 'graphScenarios.linearChain' },
+    { id: 'diamond', i18nKey: 'graphScenarios.diamond' },
+  ],
+  states: [],
+  description: 'Graph description',
+  isComplete: false,
+  stepForward: vi.fn(),
+  stepBackward: vi.fn(),
+  play: vi.fn(),
+  pause: vi.fn(),
+  reset: vi.fn(),
+  regenerateGraph: vi.fn(),
+  reloadSteps: vi.fn(),
+  isPlaying: false,
+  currentStep: 0,
+  totalSteps: 1,
+  steps: [{ description: 'graph step' }],
+};
 
 vi.mock('../components/Header', () => ({
   default: () => <div data-testid="header">Header</div>,
@@ -156,15 +194,24 @@ vi.mock('../components/SettingsPanel', () => ({
   default: ({
     algorithmType,
     selectedAlgorithm,
+    selectedGraphScenario,
+    graphNodeCount,
     onAlgorithmTypeChange,
     onAlgorithmChange,
   }) => (
     <div data-testid="settings-panel">
       <div data-testid="algorithm-type">{algorithmType}</div>
       <div data-testid="selected-algorithm">{selectedAlgorithm}</div>
+      <div data-testid="selected-graph-scenario">
+        {String(selectedGraphScenario)}
+      </div>
+      <div data-testid="graph-node-count">{String(graphNodeCount)}</div>
       <button onClick={() => onAlgorithmTypeChange('sorting')}>sorting</button>
       <button onClick={() => onAlgorithmTypeChange('pathfinding')}>
         pathfinding
+      </button>
+      <button onClick={() => onAlgorithmTypeChange('graphAlgorithm')}>
+        graphAlgorithm
       </button>
       <button onClick={() => onAlgorithmChange('dijkstra')}>
         select-dijkstra
@@ -172,19 +219,51 @@ vi.mock('../components/SettingsPanel', () => ({
       <button onClick={() => onAlgorithmChange('quickSort')}>
         select-quick-sort
       </button>
+      <button onClick={() => onAlgorithmChange('floydWarshallAlgorithm')}>
+        select-floyd-warshall
+      </button>
     </div>
   ),
 }));
 
 vi.mock('../components/ControlPanel', () => ({
-  default: ({ totalSteps, algorithmType, onExportVideo, onGenerateArray }) => (
+  default: ({
+    totalSteps,
+    algorithmType,
+    onExportVideo,
+    onGenerateInput,
+    isSoundEnabled,
+    isSoundTogglePending,
+    onToggleSound,
+    sortOrder,
+    onSortOrderChange,
+  }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
       <span data-testid="control-algorithm-type">{algorithmType}</span>
-      <button type="button" onClick={onGenerateArray}>
+      <span data-testid="control-sort-order">{String(sortOrder)}</span>
+      <span data-testid="sound-enabled">{String(isSoundEnabled)}</span>
+      <span data-testid="sound-pending">{String(isSoundTogglePending)}</span>
+      <button type="button" onClick={onGenerateInput}>
         generate-data
       </button>
       <button onClick={onExportVideo}>export</button>
+      <button type="button" onClick={onToggleSound}>
+        toggle-sound
+      </button>
+      {algorithmType === 'sorting' && (
+        <button
+          type="button"
+          data-testid="toggle-sort-order"
+          onClick={() =>
+            onSortOrderChange(
+              sortOrder === 'ascending' ? 'descending' : 'ascending'
+            )
+          }
+        >
+          toggle-sort-order
+        </button>
+      )}
     </div>
   ),
 }));
@@ -205,8 +284,26 @@ vi.mock('../components/GridVisualizer', () => ({
   ),
 }));
 
+vi.mock('../components/TreeVisualizer', () => ({
+  default: ({ algorithm }) => (
+    <div data-testid="tree-visualizer">{algorithm}</div>
+  ),
+}));
+
+vi.mock('../components/GraphVisualizer', () => ({
+  default: ({ algorithm }) => (
+    <div data-testid="graph-visualizer">{algorithm}</div>
+  ),
+}));
+
 vi.mock('../hooks/useSortingVisualization', () => ({
-  useSortingVisualization: () => sortingVisualization,
+  /** Forward input array from VisualizerApp so sort-order and generate handlers affect the mock visualizer. */
+  useSortingVisualization: (_algorithmKey, initialArray, _speed, _mode) => ({
+    ...sortingVisualization,
+    array: Array.isArray(initialArray)
+      ? [...initialArray]
+      : sortingVisualization.array,
+  }),
 }));
 
 vi.mock('../hooks/usePathfindingVisualization', () => ({
@@ -215,6 +312,14 @@ vi.mock('../hooks/usePathfindingVisualization', () => ({
 
 vi.mock('../hooks/useSearchingVisualization', () => ({
   useSearchingVisualization: () => searchingVisualization,
+}));
+
+vi.mock('../hooks/useTreeTraversalVisualization', () => ({
+  useTreeTraversalVisualization: () => treeTraversalVisualization,
+}));
+
+vi.mock('../hooks/useGraphAlgorithmVisualization', () => ({
+  useGraphAlgorithmVisualization: () => graphAlgorithmVisualization,
 }));
 
 vi.mock('../hooks/useFullScreen', () => ({
@@ -231,6 +336,7 @@ vi.mock('../video/useVideoExporter', () => ({
     exportState: videoExporterMock.exportState,
     exportProgress: videoExporterMock.exportProgress,
     exportBlobUrl: videoExporterMock.exportBlobUrl,
+    exportErrorMessage: videoExporterMock.exportErrorMessage,
     cancelExport: videoExporterMock.cancelExport,
     closePreview: videoExporterMock.closePreview,
     downloadVideo: videoExporterMock.downloadVideo,
@@ -240,6 +346,8 @@ vi.mock('../video/useVideoExporter', () => ({
 
 describe('VisualizerApp', () => {
   beforeEach(() => {
+    window.localStorage.clear();
+    soundManager.disable();
     vi.clearAllMocks();
     fullScreenMock.isFullScreen = false;
     videoExporterMock.exportState = 'idle';
@@ -260,10 +368,34 @@ describe('VisualizerApp', () => {
   it('renders the registered visualizer for the active category', async () => {
     await renderApp();
 
-    expect(screen.getByTestId('array-visualizer')).toHaveTextContent(
-      'bubbleSort:3,1,2'
-    );
+    const sortingText =
+      screen.getByTestId('array-visualizer').textContent ?? '';
+    expect(sortingText).toMatch(/^bubbleSort:\d+(,\d+)+$/);
     expect(screen.queryByTestId('grid-visualizer')).not.toBeInTheDocument();
+  });
+
+  it('defaults graph algorithms to the first supported preset scenario', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('graphAlgorithm'));
+
+    expect(screen.getByTestId('selected-graph-scenario')).toHaveTextContent(
+      'linearChain'
+    );
+  });
+
+  it('clamps graph node count when switching to Floyd-Warshall', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('graphAlgorithm'));
+    expect(screen.getByTestId('graph-node-count')).toHaveTextContent('10');
+
+    fireEvent.click(screen.getByText('select-floyd-warshall'));
+
+    expect(screen.getByTestId('selected-algorithm')).toHaveTextContent(
+      'floydWarshallAlgorithm'
+    );
+    expect(screen.getByTestId('graph-node-count')).toHaveTextContent('6');
   });
 
   it('preserves selected algorithms per category when switching tabs', async () => {
@@ -324,11 +456,21 @@ describe('VisualizerApp', () => {
 
   it('renders fullscreen layout when useFullScreen reports true', async () => {
     fullScreenMock.isFullScreen = true;
+    window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
     await renderApp();
 
     expect(screen.queryByTestId('header')).not.toBeInTheDocument();
     expect(screen.getByTestId('array-visualizer')).toBeInTheDocument();
     expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
+  });
+
+  it('opens export modal when export enters the error phase', async () => {
+    videoExporterMock.exportState = 'error';
+    videoExporterMock.exportErrorMessage = 'Codec unavailable';
+    await renderApp();
+
+    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
   });
 
   it('calls exportVideo with algorithm metadata when orientation is chosen', async () => {
@@ -347,5 +489,136 @@ describe('VisualizerApp', () => {
         exportLanguage: expect.any(String),
       })
     );
+  });
+
+  it('reorders the sorting array when sort order is toggled on sorting category', async () => {
+    await renderApp();
+
+    const parseNums = raw => {
+      const payload = raw.replace(/^bubbleSort:/, '');
+      return payload.split(',').map(Number);
+    };
+
+    const initialNums = parseNums(
+      screen.getByTestId('array-visualizer').textContent ?? ''
+    );
+
+    fireEvent.click(screen.getByTestId('toggle-sort-order'));
+    await waitFor(() => {
+      const descending = parseNums(
+        screen.getByTestId('array-visualizer').textContent ?? ''
+      );
+      expect(descending).toEqual([...initialNums].sort((a, b) => b - a));
+    });
+
+    fireEvent.click(screen.getByTestId('toggle-sort-order'));
+    await waitFor(() => {
+      const ascending = parseNums(
+        screen.getByTestId('array-visualizer').textContent ?? ''
+      );
+      expect(ascending).toEqual([...initialNums].sort((a, b) => a - b));
+    });
+  });
+
+  it('updates sort order ref when switching away from sorting without applying reorder logic to other categories', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByTestId('toggle-sort-order'));
+    expect(screen.getByTestId('control-sort-order')).toHaveTextContent(
+      'descending'
+    );
+
+    fireEvent.click(screen.getByText('pathfinding'));
+    expect(screen.getByTestId('control-algorithm-type')).toHaveTextContent(
+      'pathfinding'
+    );
+
+    fireEvent.click(screen.getByText('sorting'));
+    expect(screen.getByTestId('control-sort-order')).toHaveTextContent(
+      'descending'
+    );
+  });
+
+  it('hydrates the sound preference from localStorage', async () => {
+    window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
+
+    await renderApp();
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
+  });
+
+  it('falls back safely when reading the stored sound preference throws', async () => {
+    const getItemSpy = vi
+      .spyOn(Storage.prototype, 'getItem')
+      .mockImplementation(() => {
+        throw new Error('storage read failed');
+      });
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await renderApp();
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+
+    getItemSpy.mockRestore();
+    consoleSpy.mockRestore();
+  });
+
+  it('keeps rendering when persisting the sound preference throws', async () => {
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('storage write failed');
+      });
+
+    await renderApp();
+
+    expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+
+    setItemSpy.mockRestore();
+  });
+
+  it('toggles sound through the shared control-panel state and persists it', async () => {
+    await renderApp();
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+
+    fireEvent.click(screen.getByText('toggle-sound'));
+
+    await waitFor(() => {
+      expect(soundManager.enable).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('true');
+      expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
+        'true'
+      );
+    });
+
+    fireEvent.click(screen.getByText('toggle-sound'));
+
+    await waitFor(() => {
+      expect(soundManager.disable).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+      expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
+        'false'
+      );
+    });
+  });
+
+  it('turns sound off when resume-on-interaction fails', async () => {
+    window.localStorage.setItem('bayan-flow:sound-enabled', 'true');
+    soundManager.enable.mockRejectedValueOnce(new Error('resume failed'));
+
+    await renderApp();
+    fireEvent.pointerDown(document.body);
+
+    await waitFor(() => {
+      expect(soundManager.enable).toHaveBeenCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+      expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
+        'false'
+      );
+    });
   });
 });

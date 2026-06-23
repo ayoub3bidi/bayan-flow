@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import SwipeTutorial from './SwipeTutorial';
 import i18n from '../i18n';
@@ -36,5 +36,23 @@ describe('SwipeTutorial', () => {
     fireEvent.click(overlay);
 
     expect(mockDismiss).toHaveBeenCalledOnce();
+  });
+
+  it('renders RTL swipe arrows when language is Arabic', async () => {
+    await act(async () => {
+      await i18n.changeLanguage('ar');
+    });
+    const { container } = render(
+      <SwipeTutorial show={true} onDismiss={vi.fn()} />
+    );
+
+    expect(screen.getByText('اسحب للتنقل')).toBeInTheDocument();
+    expect(screen.getByText('الخطوة السابقة')).toBeInTheDocument();
+    expect(screen.getByText('الخطوة التالية')).toBeInTheDocument();
+    expect(container.querySelectorAll('svg').length).toBeGreaterThanOrEqual(2);
+
+    await act(async () => {
+      await i18n.changeLanguage('en');
+    });
   });
 });

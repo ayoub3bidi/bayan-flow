@@ -1,27 +1,13 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { renderWithI18n, screen } from '../test/testUtils';
+import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
 import ControlPanel from './ControlPanel';
 import { ALGORITHM_TYPES } from '../constants';
-import i18n from '../i18n';
-
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-  },
-}));
-
-vi.mock('../utils/soundManager', () => ({
-  soundManager: {
-    playUIClick: vi.fn(),
-    playArrayGenerate: vi.fn(),
-  },
-}));
 
 function getBaseProps(overrides = {}) {
   return {
@@ -35,25 +21,28 @@ function getBaseProps(overrides = {}) {
     onStepBackward: vi.fn(),
     currentStep: 0,
     totalSteps: 5,
-    onGenerateArray: vi.fn(),
+    onGenerateInput: vi.fn(),
     algorithmType: ALGORITHM_TYPES.SORTING,
     isFullScreen: false,
     onToggleFullScreen: vi.fn(),
     onExportVideo: vi.fn(),
     onCancelExport: vi.fn(),
     exportState: 'idle',
+    isSoundEnabled: false,
+    isSoundTogglePending: false,
+    onToggleSound: vi.fn(),
     ...overrides,
   };
 }
 
 describe('ControlPanel', () => {
-  const shuffleLabel = () => i18n.t('controls.generateArray');
+  const refreshLabel = () => 'Generate New Input';
 
   it('shows data refresh shuffle when category has hasDataRefresh true (sorting)', () => {
     renderWithI18n(<ControlPanel {...getBaseProps()} />);
 
     expect(
-      screen.getByRole('button', { name: shuffleLabel() })
+      screen.getByRole('button', { name: refreshLabel() })
     ).toBeInTheDocument();
   });
 
@@ -65,7 +54,7 @@ describe('ControlPanel', () => {
     );
 
     expect(
-      screen.getByRole('button', { name: shuffleLabel() })
+      screen.getByRole('button', { name: refreshLabel() })
     ).toBeInTheDocument();
   });
 
@@ -79,6 +68,37 @@ describe('ControlPanel', () => {
       />
     );
 
-    expect(screen.getByRole('button', { name: shuffleLabel() })).toBeDisabled();
+    expect(screen.getByRole('button', { name: refreshLabel() })).toBeDisabled();
+  });
+
+  it('renders the sound toggle with pressed-state semantics', () => {
+    renderWithI18n(
+      <ControlPanel {...getBaseProps({ isSoundEnabled: true })} />
+    );
+
+    const toggle = screen.getByRole('button', { name: 'Sound On' });
+
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(toggle).toHaveAttribute('title', 'Sound On');
+  });
+
+  it('forwards sound toggle clicks and respects pending state', () => {
+    const onToggleSound = vi.fn();
+    renderWithI18n(<ControlPanel {...getBaseProps({ onToggleSound })} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sound Off' }));
+    expect(onToggleSound).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables the sound toggle while the audio state is pending', () => {
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({
+          isSoundTogglePending: true,
+        })}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Sound Off' })).toBeDisabled();
   });
 });

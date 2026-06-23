@@ -21,10 +21,13 @@ tests:
   - changed-files:
     - any-glob-to-any-file: ['**/*.test.js', '**/*.test.jsx', 'src/test/**/*']
 
-# CI/CD
+# CI/CD (narrowed: avoid tagging every *.yml in the repo as ci)
 ci:
   - changed-files:
-    - any-glob-to-any-file: ['.github/**/*', 'netlify.toml', '**/*.yml', '**/*.yaml']
+    - any-glob-to-any-file:
+        - '.github/**/*'
+        - 'netlify.toml'
+        - 'wrangler.jsonc'
 
 # Dependencies
 dependencies:

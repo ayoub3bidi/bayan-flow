@@ -7,8 +7,8 @@
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarity in Algorithms",
-    "starOnGithub": "Star on GitHub",
-    "viewOnGithub": "View on GitHub"
+    "openGithubRepo": "Open {{repo}} on GitHub — version {{version}}, {{stars}} stars, {{forks}} forks",
+    "goToRepository": "Go to repository"
   },
   "settings": {
     "title": "Settings",
@@ -29,14 +29,16 @@
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
     "autoplayOnly": "only",
-    "mysteryCategory": "Mystery",
-    "mysteryCategoryHint": "Coming soon",
-    "mysteryCategoryAria": "Upcoming algorithm category, not yet available"
+    "treeNodeCount": "Tree nodes",
+    "graphNodeCount": "Graph vertices",
+    "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it."
   },
   "modes": {
     "sorting": "Sorting",
     "pathfinding": "Pathfinding",
     "searching": "Searching",
+    "treeTraversal": "Tree Traversals",
+    "graphAlgorithm": "Graph Algorithms",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },
@@ -79,6 +81,23 @@
       "depthFirstSearch": "Depth-First Search (graph)",
       "breadthFirstSearchGraph": "Breadth-First Search (graph)"
     },
+    "treeTraversal": {
+      "inorderTraversal": "Inorder Traversal",
+      "levelOrderTraversal": "Level-order Traversal",
+      "zigzagLevelOrderTraversal": "Zigzag Level-order Traversal",
+      "preorderTraversal": "Preorder Traversal",
+      "postorderTraversal": "Postorder Traversal",
+      "morrisTraversal": "Morris Traversal"
+    },
+    "graphAlgorithm": {
+      "topologicalSort": "Topological Sort (DFS)",
+      "kahnAlgorithm": "Kahn's Algorithm",
+      "kruskalAlgorithm": "Kruskal's Algorithm",
+      "primAlgorithm": "Prim's Algorithm",
+      "tarjanAlgorithm": "Tarjan's Algorithm",
+      "kosarajuAlgorithm": "Kosaraju's Algorithm",
+      "floydWarshallAlgorithm": "Floyd-Warshall Algorithm"
+    },
     "descriptions": {
       "bubbleSort": "Starting Bubble Sort",
       "quickSort": "Starting Quick Sort",
@@ -111,7 +130,20 @@
       "exponentialSearch": "Starting Exponential Search",
       "fibonacciSearch": "Starting Fibonacci Search",
       "depthFirstSearch": "Starting depth-first search on the node–link graph",
-      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph"
+      "breadthFirstSearchGraph": "Starting breadth-first search on the node–link graph",
+      "inorderTraversal": "Starting inorder traversal",
+      "levelOrderTraversal": "Starting level-order traversal",
+      "zigzagLevelOrderTraversal": "Starting zigzag level-order traversal",
+      "preorderTraversal": "Starting preorder traversal",
+      "postorderTraversal": "Starting postorder traversal",
+      "morrisTraversal": "Starting Morris traversal",
+      "topologicalSort": "Starting DFS-based topological sort",
+      "kahnAlgorithm": "Starting Kahn's topological sort",
+      "kruskalAlgorithm": "Starting Kruskal's minimum spanning tree algorithm",
+      "primAlgorithm": "Starting Prim's minimum spanning tree algorithm",
+      "tarjanAlgorithm": "Starting Tarjan's strongly connected components algorithm",
+      "kosarajuAlgorithm": "Starting Kosaraju's strongly connected components algorithm",
+      "floydWarshallAlgorithm": "Starting Floyd-Warshall all-pairs shortest paths"
     }
   },
   "complexity": {
@@ -146,7 +178,20 @@
     "exponentialSearch": "O(log n)",
     "fibonacciSearch": "O(log n)",
     "depthFirstSearch": "O(V + E)",
-    "breadthFirstSearchGraph": "O(V + E)"
+    "breadthFirstSearchGraph": "O(V + E)",
+    "inorderTraversal": "O(n)",
+    "levelOrderTraversal": "O(n)",
+    "zigzagLevelOrderTraversal": "O(n)",
+    "preorderTraversal": "O(n)",
+    "postorderTraversal": "O(n)",
+    "morrisTraversal": "O(n)",
+    "topologicalSort": "O(V + E)",
+    "kahnAlgorithm": "O(V + E)",
+    "kruskalAlgorithm": "O(E log E)",
+    "primAlgorithm": "O((V + E) log V)",
+    "tarjanAlgorithm": "O(V + E)",
+    "kosarajuAlgorithm": "O(V + E)",
+    "floydWarshallAlgorithm": "O(V³)"
   },
   "speeds": {
     "slow": "Slow",
@@ -166,7 +211,7 @@
     "stepForward": "Step Forward",
     "stepBackward": "Step Backward",
     "reset": "Reset",
-    "generateArray": "Generate New Array",
+    "generateInput": "Generate New Input",
     "exportVideo": "Export Video",
     "rendering": "Rendering video…",
     "exportDone": "Video downloaded",
@@ -188,7 +233,12 @@
     "downloadVideo": "Download",
     "closePreview": "Close",
     "goFullScreen": "Go Full Screen (F)",
-    "exitFullScreen": "Exit Full Screen (Esc)"
+    "exitFullScreen": "Exit Full Screen (Esc)",
+    "ascending": "Random input order (tap for descending input)",
+    "descending": "Descending input order (tap for random input)",
+    "sortOrder": "Toggle initial array order for sorting",
+    "graphScenario": "Graph scenario",
+    "randomGraph": "Random graph"
   },
   "info": {
     "step": "Step {{current}} of {{total}}",
@@ -232,6 +282,9 @@
   },
   "python_code": {
     "title": "Python Implementation",
+    "tabPython": "Python",
+    "tabPseudocode": "Pseudocode",
+    "noPseudocode": "Pseudocode is not available for this algorithm.",
     "close": "Close",
     "loading": "Loading...",
     "not_available": "No Python Implementation Available",
@@ -625,8 +678,183 @@
         "facts_1": "BFS guarantees a shortest (minimum-hop) path on unweighted graphs; DFS does not.",
         "facts_2": "The queue front is shown at the top of the canvas — the next node to be dequeued.",
         "facts_3": "The same tree layout used for DFS is reused here, so you can compare both algorithms side by side on re-generation."
+      },
+      "topologicalSort": {
+        "history": "Topological sorting grew from early work on partial orders and dependency graphs. The DFS completion-stack formulation is now a standard companion to depth-first search in algorithms courses and build-system discussions.",
+        "intuition": "A vertex can appear in the final order only after every vertex reachable through its outgoing edges has been handled. DFS naturally gives this: when a call finishes, push that vertex to a stack. Reversing the finish stack puts prerequisites before dependents.",
+        "realWorldUses_0": "Build systems that compile dependencies before dependents",
+        "realWorldUses_1": "Course prerequisite planning",
+        "realWorldUses_2": "Package manager dependency ordering",
+        "realWorldUses_3": "Scheduling tasks with one-way prerequisite edges",
+        "facts_0": "A topological ordering exists if and only if the directed graph is acyclic.",
+        "facts_1": "Multiple valid orders may exist for the same DAG.",
+        "facts_2": "DFS temporary marks detect back edges, which prove a cycle.",
+        "facts_3": "The algorithm runs in O(V + E) time because each vertex and edge is processed once."
+      },
+      "kahnAlgorithm": {
+        "history": "Arthur B. Kahn published this queue-based topological sorting method in 1962. It became the classic iterative counterpart to DFS topological sort because it frames the same problem through in-degrees instead of recursion and finish times.",
+        "intuition": "Count how many incoming prerequisites each vertex still has. Any vertex with in-degree 0 is ready now, so put it in a queue. Remove one such vertex at a time, subtract its outgoing edges from neighbors, and enqueue every neighbor whose in-degree drops to 0.",
+        "realWorldUses_0": "Dependency resolution with explicit cycle detection",
+        "realWorldUses_1": "Task scheduling where ready work should be surfaced immediately",
+        "realWorldUses_2": "Build graph validation before compilation starts",
+        "realWorldUses_3": "Teaching topological sort without recursion",
+        "facts_0": "If the queue becomes empty before every vertex is output, some cycle still supplies incoming edges.",
+        "facts_1": "The algorithm is O(V + E) because each vertex is queued once and each edge is removed once.",
+        "facts_2": "Different queue tie-break rules can produce different valid topological orders.",
+        "facts_3": "This implementation keeps the ready queue sorted for deterministic educational output."
+      },
+      "kruskalAlgorithm": {
+        "history": "Joseph Kruskal introduced this minimum spanning tree algorithm in 1956. Its elegance comes from a simple greedy idea: process edges in nondecreasing weight order and keep only those that connect different components.",
+        "intuition": "Sort every weighted edge from lightest to heaviest. If an edge connects two different components, keep it because it is the cheapest available way to merge them right now. If it connects vertices already joined, reject it because adding it would only form a cycle.",
+        "realWorldUses_0": "Minimum-cost network design",
+        "realWorldUses_1": "Hierarchical clustering and segmentation",
+        "realWorldUses_2": "Teaching Union-Find with a concrete greedy algorithm",
+        "realWorldUses_3": "Building minimum spanning forests on disconnected graphs",
+        "facts_0": "Kruskal works on disconnected graphs too; the result is then a minimum spanning forest.",
+        "facts_1": "Union-Find makes cycle detection nearly constant-time per edge after sorting.",
+        "facts_2": "If all edge weights are distinct, the minimum spanning tree is unique.",
+        "facts_3": "The O(E log E) cost is dominated by sorting the weighted edges."
+      },
+      "primAlgorithm": {
+        "history": "Robert C. Prim published this minimum spanning tree algorithm in 1957, building on earlier work by Vojtěch Jarník. Instead of sorting every edge globally, it grows one tree outward from a chosen start vertex.",
+        "intuition": "Start from one vertex and treat the current tree as a connected island. Among all edges leaving that island, choose the lightest one and pull its unvisited endpoint into the tree. Repeating that greedy frontier step eventually spans the whole connected graph.",
+        "realWorldUses_0": "Incrementally growing low-cost infrastructure from a seed location",
+        "realWorldUses_1": "Comparing vertex-centric MST growth against Kruskal's edge-centric approach",
+        "realWorldUses_2": "Teaching greedy frontier expansion with a priority queue",
+        "realWorldUses_3": "Dense weighted graph preprocessing",
+        "facts_0": "Prim and Kruskal always produce the same total MST weight on a connected graph, though they may pick different edges when ties exist.",
+        "facts_1": "A heap-based implementation reaches O((V + E) log V).",
+        "facts_2": "The algorithm only needs the lightest edge leaving the current tree, not a global sort of all edges.",
+        "facts_3": "Changing the start vertex can change the exact edge order while keeping the optimal total weight."
+      },
+      "tarjanAlgorithm": {
+        "history": "Robert Tarjan introduced this SCC algorithm in 1972. Its appeal is that one DFS traversal is enough to identify every strongly connected component, using discovery indices, low-link values, and a stack of active vertices.",
+        "intuition": "Give each vertex an index when first discovered, then keep track of the smallest index reachable from that vertex while the DFS is still active. When a vertex's low-link equals its own index, it is the root of a complete SCC, so pop the stack until that root appears.",
+        "realWorldUses_0": "Condensing directed graphs into SCC super-nodes",
+        "realWorldUses_1": "Detecting mutually reachable modules in dependency graphs",
+        "realWorldUses_2": "Analyzing cycles in control-flow and circuit graphs",
+        "realWorldUses_3": "Teaching advanced DFS invariants and low-link reasoning",
+        "facts_0": "Tarjan runs in O(V + E) time because each vertex and edge is processed a constant number of times.",
+        "facts_1": "Only vertices still on the active stack can lower a low-link through a back edge.",
+        "facts_2": "Every SCC is popped exactly once, at the moment its root vertex finishes.",
+        "facts_3": "Compared with Kosaraju, Tarjan avoids building an explicit transpose graph."
+      },
+      "kosarajuAlgorithm": {
+        "history": "S. Rao Kosaraju described this two-pass SCC method in 1978. It became a standard teaching alternative to Tarjan because the main ideas are concrete: record finish order, reverse the graph, then sweep again in reverse finish order.",
+        "intuition": "The first DFS pass tells you which vertices finish last, which exposes the right order to enter SCCs. After reversing every edge, a DFS started from the largest remaining finish time stays inside exactly one SCC, so each second-pass traversal peels off one component.",
+        "realWorldUses_0": "Teaching SCCs with an explicit transpose graph",
+        "realWorldUses_1": "Comparing one-pass and two-pass SCC approaches",
+        "realWorldUses_2": "Grouping mutually reachable pages, modules, or accounts",
+        "realWorldUses_3": "Building SCC condensation graphs after a reverse-edge preprocessing step",
+        "facts_0": "Kosaraju is O(V + E): one pass on the original graph, one pass on the transpose, plus linear-time transpose construction.",
+        "facts_1": "The transpose keeps SCC membership unchanged, but reverses the edges between SCCs.",
+        "facts_2": "Processing vertices in reverse finish order is what isolates one SCC at a time in the second pass.",
+        "facts_3": "This approach is often easier to explain than Tarjan, though it needs the extra transpose graph."
+      },
+      "floydWarshallAlgorithm": {
+        "history": "Robert Floyd and Stephen Warshall published closely related dynamic-programming formulations in 1962. Floyd-Warshall became the classic all-pairs shortest-path algorithm for dense or small graphs because its triple-loop structure is simple and systematic.",
+        "intuition": "Start with the best direct edge between every pair of vertices. Then allow one intermediate vertex at a time: if going from i to k and then k to j is cheaper than the current i to j distance, update it. Repeating that for every k gradually builds the final shortest-path matrix.",
+        "realWorldUses_0": "All-pairs shortest paths on small weighted directed graphs",
+        "realWorldUses_1": "Teaching dynamic programming on graph problems",
+        "realWorldUses_2": "Reachability and transitive-closure style reasoning",
+        "realWorldUses_3": "Detecting negative cycles through diagonal entries",
+        "facts_0": "Negative edge weights are allowed, but a negative cycle means shortest paths are not well-defined.",
+        "facts_1": "If any diagonal distance becomes negative, the graph contains a negative cycle.",
+        "facts_2": "The algorithm uses O(V²) memory for its distance matrix.",
+        "facts_3": "Compared with repeated Dijkstra runs, Floyd-Warshall is usually preferred only on smaller or denser graphs."
+      },
+      "inorderTraversal": {
+        "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
+        "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
+        "realWorldUses_0": "BST range queries and sorted enumeration without maintaining a separate sorted array",
+        "realWorldUses_1": "Recovering infix notation from expression trees",
+        "realWorldUses_2": "Teaching depth-first patterns before preorder and postorder",
+        "realWorldUses_3": "Foundation for Euler tours and tree iterators in standard libraries",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for an explicit stack with tree height h.",
+        "facts_1": "Random trees here assign values by inorder indexing so inorder produces 1…n — a valid BST.",
+        "facts_2": "Recursive formulation matches the iterative stack behavior shown step by step.",
+        "facts_3": "Unlike graph DFS with a goal, traversal visits every node exactly once."
+      },
+      "levelOrderTraversal": {
+        "history": "Level-order traversal is breadth-first search specialized to trees: process the root, then every node one edge away, then every node two edges away, and so on. As a tree algorithm it is the queue-based counterpoint to the stack/recursion style used by inorder, preorder, and postorder.",
+        "intuition": "Start by enqueuing the root. Repeatedly dequeue the front node, visit it, then enqueue its children from left to right. Because the queue preserves discovery order, all nodes at depth d are processed before any node at depth d + 1.",
+        "realWorldUses_0": "Tree serialization formats that need level-by-level output",
+        "realWorldUses_1": "Finding the nearest node that matches a condition",
+        "realWorldUses_2": "Printing or analyzing trees by layers instead of by branches",
+        "realWorldUses_3": "Teaching queue-based breadth-first thinking before moving to graph BFS",
+        "facts_0": "Time is Θ(n) on n nodes; auxiliary space is O(w), where w is the maximum width of the tree.",
+        "facts_1": "Unlike the depth-first traversals, level-order depends on a queue rather than a stack or recursion.",
+        "facts_2": "On the same tree shape, level-order highlights horizontal layers rather than root-to-leaf depth.",
+        "facts_3": "This traversal is also the standard BFS pattern on trees because each edge has equal weight."
+      },
+      "zigzagLevelOrderTraversal": {
+        "history": "Zigzag (spiral) level-order is breadth-first layering with an interview-favorite twist: within each depth, the visit direction alternates. It appears in textbooks and contests as “binary tree zigzag traversal” layered on ordinary BFS batching.",
+        "intuition": "Like level-order, gather all nodes of the next depth together. Snapshot them in spatial left-to-right order for building the queue, but visit odd depths in reverse to create the zigzag effect. Toggle a single Boolean (or parity) instead of rewriting the breadth-first scaffold.",
+        "realWorldUses_0": "LeetCode-style tree traversal exercises and directional pretty-print layouts",
+        "realWorldUses_1": "Contrasting vanilla level-order with a tiny state-machine change",
+        "realWorldUses_2": "Teaching deque / reverse patterns while keeping overall BFS guarantees",
+        "realWorldUses_3": "Serialization puzzles that require alternating row direction",
+        "facts_0": "Still Θ(n) time; space remains O(w) for the widest level when you enqueue one layer at a time.",
+        "facts_1": "The zigzag permutation does not reorder children for the next level—spatial left-to-right must be preserved.",
+        "facts_2": "The breadcrumb badges show scan direction separately from remaining frontier nodes.",
+        "facts_3": "Odd-sized levels still zigzag—you simply reverse single-node rows with no visible change."
+      },
+      "preorderTraversal": {
+        "history": "Preorder (prefix) order—node, then left subtree, then right subtree—is standard in textbooks on trees and expression evaluation. Together with inorder it is one half of the classic pair used to reconstruct a binary tree when node values are unique.",
+        "intuition": "Always record the current node before going deeper: visit the node, then explore the entire left branch, then the entire right branch. The visualization uses an explicit stack (push right before left so left is processed first), mirroring recursive calls without unbounded recursion depth in the UI runner.",
+        "realWorldUses_0": "Copying or serializing a tree structure (save node, then children)",
+        "realWorldUses_1": "Prefix (Polish) notation from expression trees",
+        "realWorldUses_2": "Tree reconstruction when combined with inorder traversal",
+        "realWorldUses_3": "Teaching parent-first depth-first thinking before postorder",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for the explicit stack with tree height h.",
+        "facts_1": "The same random binary trees as inorder use BST-shaped labels (inorder yields 1…n); preorder order depends on shape, not sorted labels.",
+        "facts_2": "The Python panel includes both recursive and iterative implementations with identical visit order.",
+        "facts_3": "Preorder alone does not yield sorted keys on a BST—inorder does."
+      },
+      "postorderTraversal": {
+        "history": "Postorder (suffix/postfix) order—left subtree, right subtree, then node—is the third member of the classic traversal trio. It is the natural order for recursive tree deletion and dependency resolution, where you must finish children before handling the parent.",
+        "intuition": "Process both children entirely before handling the current node: descend left, then right, then visit. Unlike preorder's 'node-first' approach, postorder processes leaf nodes before their ancestors. This matches deletion logic (delete subtrees before deleting the node) and topological sorting of DAGs.",
+        "realWorldUses_0": "Deleting or destroying a tree structure (delete children before parent, avoiding dangling pointers)",
+        "realWorldUses_1": "Computing tree height, size, or aggregate values bottom-up",
+        "realWorldUses_2": "Postfix (Reverse Polish) notation and expression evaluation",
+        "realWorldUses_3": "Dependency resolution in build systems and task scheduling (tasks done before their dependents)",
+        "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for the explicit stack with tree height h.",
+        "facts_1": "Two-stack iterative approach: first stack processes nodes; second stack collects result in reverse postorder.",
+        "facts_2": "Recursively matches the iterative version: recurse left, recurse right, then visit.",
+        "facts_3": "Postorder + inorder uniquely determine a tree (assuming unique node values); postorder alone does not."
+      },
+      "morrisTraversal": {
+        "history": "Joseph M. Morris published the threaded inorder walk in 1979—an elegant answer to “inorder without recursion or a stack.” Temporary right-child links (threads) encode the same push/pop information a stack would hold, then the tree is repaired in place.",
+        "intuition": "For each node with a left child, find its inorder predecessor (rightmost in the left subtree). If that predecessor’s right is null, wire it to the current node as a return link and go left. If the right already points back to the current node, you’ve finished the left subtree—remove the wire, visit the node, go right. No extra structures—only clever pointer surgery.",
+        "realWorldUses_0": "Interview and exam questions on space-bounded tree algorithms",
+        "realWorldUses_1": "Very small embedded systems where stack depth is risky or unavailable",
+        "realWorldUses_2": "Teaching how tree structure can double as navigation state",
+        "realWorldUses_3": "Contrasting with iterative inorder that needs O(h) stack space",
+        "facts_0": "Time Θ(n): each real edge is crossed a constant number of times; same visit order as classic inorder.",
+        "facts_1": "Extra space is O(1) pointers only—no recursion stack, no explicit stack, no queue.",
+        "facts_2": "Threads are removed before the walk ends; the tree ends with the same shape it started with.",
+        "facts_3": "The visualization draws each temporary thread as an extra edge for that step."
       }
     }
+  },
+  "graphScenarios": {
+    "linearChain": "Linear Chain (A→B→C→D)",
+    "diamond": "Diamond Pattern (merge point)",
+    "complex": "Complex DAG (realistic dependencies)",
+    "disconnected": "Disconnected Components",
+    "singleNode": "Single Node (trivial case)",
+    "wide": "Wide Graph (no dependencies)",
+    "directedCycle": "Directed Cycle (cycle detection)",
+    "weightedTriangle": "Weighted Triangle",
+    "weightedBridge": "Weighted Connected Graph",
+    "weightedDisconnected": "Weighted Disconnected Graph",
+    "sccCycle": "Single SCC Cycle",
+    "multiScc": "Multiple SCCs",
+    "selfLoop": "Self-loop SCC",
+    "weightedDirectedPositive": "Weighted Directed Graph",
+    "weightedDirectedNegative": "Negative Edge Graph",
+    "weightedDirectedNegativeCycle": "Negative Cycle Graph",
+    "weightedDirectedSingle": "Single Vertex Matrix"
   },
   "footer": {
     "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
@@ -637,11 +865,28 @@
     "viewDocs": "View Documentation",
     "reportIssue": "Report Issue",
     "contribute": "Contribute",
-    "quickLinks": "Quick Links",
+    "forDevelopers": "For Developers",
+    "followUs": "Follow us",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "tikTok": "TikTok",
     "support": "Support",
+    "contact": "Contact",
+    "contactEmailAria": "Email the Bayan Flow founder at contact@bayanflow.com",
     "enjoying": "Enjoying this project? Support my work!",
     "allRightsReserved": "All rights reserved",
-    "youtubeAria": "Bayan Flow on YouTube — open channel in a new tab"
+    "youtubeAria": "Bayan Flow on YouTube — open channel in a new tab",
+    "instagramAria": "Bayan Flow on Instagram — open profile in a new tab",
+    "tikTokAria": "Bayan Flow on TikTok — open profile in a new tab",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
+  },
+  "legal": {
+    "privacyTitle": "Privacy Policy",
+    "termsTitle": "Terms of Use",
+    "privacyDescription": "How Bayan Flow handles analytics, local preferences, and third-party services.",
+    "termsDescription": "Terms of Use for the Bayan Flow educational web application."
   },
   "legend": {
     "title": "Legend",
@@ -675,6 +920,22 @@
       "stackFrontier": "Stack / frontier",
       "visited": "Visited",
       "discoveryPath": "Discovery path"
+    },
+    "treeTraversal": {
+      "pending": "Not visited",
+      "visiting": "Visiting",
+      "visited": "Visited",
+      "visitOrder": "Visit order"
+    },
+    "graphAlgorithm": {
+      "unvisited": "Unvisited",
+      "recursionStack": "Recursion stack",
+      "frontier": "Frontier / active set",
+      "current": "Current vertex",
+      "completed": "Completed",
+      "outputOrder": "Topological order",
+      "result": "Result / selected set",
+      "cycle": "Cycle detected"
     }
   },
   "visualization": {
@@ -686,7 +947,30 @@
     "graphAriaEmpty": "Empty graph",
     "stackTop": "Stack top: {{top}}",
     "queueFront": "Queue front: {{front}}",
-    "graphSubstrate": "Graph visualization"
+    "graphSubstrate": "Graph visualization",
+    "graphMatrix": "Matrix visualization",
+    "matrixCorner": "i / j",
+    "treeAria": "Tree with {{count}} nodes",
+    "treeAriaEmpty": "Empty tree",
+    "queueBadge": "Queue: {{order}}",
+    "inDegreeBadge": "In-degrees: {{pairs}}",
+    "edgeQueueBadge": "Remaining edges: {{order}}",
+    "frontierEdgeBadge": "Next frontier edge: {{edge}}",
+    "totalWeightBadge": "Total weight: {{weight}}",
+    "visitOrderBadge": "Visited: {{order}}",
+    "levelScanLtr": "This level: left to right",
+    "levelScanRtl": "This level: right to left",
+    "outputOrderBadge": "Order: {{order}}",
+    "recursionStackBadge": "Recursion stack: {{order}}",
+    "topologicalOrderBadge": "Topological order: {{order}}",
+    "sccStackBadge": "SCC stack: {{order}}",
+    "lowLinkBadge": "Index/low: {{pairs}}",
+    "sccListBadge": "SCCs: {{components}}",
+    "finishStackBadge": "Finish stack: {{order}}",
+    "passBadge": "Pass {{pass}}",
+    "matrixIntermediateBadge": "Intermediate: {{node}}",
+    "pathUpdateBadge": "Updated path: {{path}}",
+    "negativeCycleBadge": "Negative cycle detected"
   },
   "languages": {
     "en": "English",
@@ -711,6 +995,76 @@
     "dfsGraphVisiting": "Exploring node {{node}}",
     "bfsGraphDequeue": "Dequeued node {{node}} — examining neighbors level by level",
     "bfsGraphEnqueue": "Enqueued {{count}} neighbor(s); queue front is next",
+    "inorderStart": "Inorder traversal: left subtree, node, right subtree (LNR).",
+    "inorderVisiting": "Visiting node {{node}}",
+    "inorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "inorderComplete": "Inorder complete. Final order: {{order}}",
+    "inorderEmpty": "Tree is empty — nothing to traverse.",
+    "levelOrderStart": "Level-order traversal: visit the tree one layer at a time using a queue.",
+    "levelOrderVisiting": "Visiting node {{node}}",
+    "levelOrderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "levelOrderComplete": "Level-order complete. Final order: {{order}}",
+    "levelOrderEmpty": "Tree is empty — nothing to traverse.",
+    "zigzagLevelStart": "Zigzag level-order: same layers as BFS, but scan left-to-right on even depths and right-to-left on odd depths (starting at the root).",
+    "zigzagLevelVisiting": "Visiting node {{node}}",
+    "zigzagLevelVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "zigzagLevelComplete": "Zigzag level-order complete. Final order: {{order}}",
+    "zigzagLevelEmpty": "Tree is empty — nothing to traverse.",
+    "preorderStart": "Preorder traversal: node, then left subtree, then right subtree (NLR).",
+    "preorderVisiting": "Visiting node {{node}}",
+    "preorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "preorderComplete": "Preorder complete. Final order: {{order}}",
+    "preorderEmpty": "Tree is empty — nothing to traverse.",
+    "postorderStart": "Postorder traversal: left subtree, then right subtree, then node (LRN).",
+    "postorderVisiting": "Visiting node {{node}}",
+    "postorderVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "postorderComplete": "Postorder complete. Final order: {{order}}",
+    "postorderEmpty": "Tree is empty — nothing to traverse.",
+    "morrisStart": "Morris traversal: inorder (LNR) with O(1) extra space — temporary threads replace a stack.",
+    "morrisThreading": "Thread: link predecessor {{from}} → {{to}} so we can return after the left subtree.",
+    "morrisUnthreading": "Unthread: restore {{from}}'s right pointer; left subtree of {{to}} is done — visit {{to}}.",
+    "morrisVisiting": "Visiting node {{node}}",
+    "morrisVisited": "Recorded {{node}}. Order so far: {{order}}",
+    "morrisComplete": "Morris traversal complete. Final order: {{order}}",
+    "morrisEmpty": "Tree is empty — nothing to traverse.",
+    "topologicalStart": "Topological sort: run DFS and record each vertex after all outgoing edges finish.",
+    "topologicalEnter": "Enter {{node}} and add it to the recursion stack.",
+    "topologicalExploreEdge": "Explore dependency edge {{from}} → {{to}}.",
+    "topologicalCompleteNode": "All outgoing edges from {{node}} are done. Push it onto the finish stack: {{stack}}.",
+    "topologicalCycle": "Cycle detected on edge {{from}} → {{to}}. A topological order only exists for DAGs.",
+    "topologicalFinish": "Reverse the finish stack to get a valid topological order: {{order}}.",
+    "kahnStart": "Kahn's algorithm: compute in-degrees and enqueue every vertex with in-degree 0. Initial queue: {{queue}}.",
+    "kahnDequeue": "Dequeue {{node}} and append it to the topological order. Order so far: {{order}}.",
+    "kahnRelaxEdge": "Remove edge {{from}} → {{to}}. The in-degree of {{to}} drops to {{inDegree}}.",
+    "kahnEnqueue": "Removing {{from}} → {{node}} makes {{node}} ready. Enqueue it.",
+    "kahnCycle": "The queue is empty after ordering {{count}} of {{total}} vertices. Remaining incoming edges prove a cycle.",
+    "kahnFinish": "All vertices were removed successfully. Final topological order: {{order}}.",
+    "kruskalStart": "Kruskal's algorithm: sort all weighted edges from lightest to heaviest and test them one by one.",
+    "kruskalSelectEdge": "Select edge {{from}}-{{to}} with weight {{weight}}. It connects two different components, so the total weight becomes {{totalWeight}}.",
+    "kruskalRejectEdge": "Reject edge {{from}}-{{to}} with weight {{weight}} because its endpoints are already connected, so it would create a cycle.",
+    "kruskalFinish": "Kruskal is complete. Selected edges form a minimum spanning forest with total weight {{totalWeight}} across {{components}} component(s).",
+    "primStart": "Prim's algorithm: start the tree at vertex {{node}} and inspect the lightest edges leaving the current tree.",
+    "primFrontier": "The lightest edge on the frontier is {{edge}}.",
+    "primSelectEdge": "Add edge {{from}}-{{to}} with weight {{weight}} to grow the tree. Total weight is now {{totalWeight}}.",
+    "primFinish": "Prim is complete. The tree uses {{count}} edge(s) with total weight {{totalWeight}}.",
+    "tarjanStart": "Tarjan's algorithm: run one DFS, assigning each vertex an index and low-link while active vertices stay on a stack.",
+    "tarjanVisit": "Visit {{node}}, assign discovery index {{index}}, and push it onto the SCC stack.",
+    "tarjanExploreEdge": "Explore directed edge {{from}} → {{to}}.",
+    "tarjanLowLinkUpdate": "Return to {{node}} and lower its low-link to {{lowLink}} using descendant {{via}}.",
+    "tarjanBackEdge": "Back edge {{from}} → {{to}} reaches an active vertex, so {{from}} lowers its low-link to {{lowLink}}.",
+    "tarjanSccFound": "Low-link matches the root. Pop one strongly connected component: {{component}}.",
+    "tarjanFinish": "Tarjan complete. Found {{count}} strongly connected component(s).",
+    "kosarajuStart": "Kosaraju's algorithm: first run DFS on the original graph to build a finish stack.",
+    "kosarajuVisit": "Pass {{pass}} visits {{node}}.",
+    "kosarajuFinishOrder": "{{node}} finishes in pass 1. Push it onto the finish stack: {{stack}}.",
+    "kosarajuTranspose": "Build the transpose graph, then process vertices in reverse finish order: {{order}}.",
+    "kosarajuCollectScc": "Pass 2 starts from {{node}} on the transpose and discovers one SCC: {{component}}.",
+    "kosarajuFinish": "Kosaraju complete. Found {{count}} strongly connected component(s).",
+    "floydWarshallStart": "Floyd-Warshall: initialize the distance matrix with direct edges, zeros on the diagonal, and ∞ where no path is known yet.",
+    "floydWarshallIntermediate": "Allow {{node}} as a new intermediate vertex for every pair of vertices.",
+    "floydWarshallUpdate": "Path {{from}} → {{to}} improves by routing through {{via}}. New distance: {{distance}}.",
+    "floydWarshallNegativeCycle": "A negative cycle is detected because the diagonal becomes negative at: {{nodes}}.",
+    "floydWarshallFinish": "Floyd-Warshall complete. The matrix now stores the shortest known distance between every pair of vertices.",
     "pathFoundGraph": "Path found! {{length}} nodes on the discovery path",
     "exploring": "Exploring cell ({{row}}, {{col}})",
     "exploringForward": "Forward search exploring cell ({{row}}, {{col}})",
@@ -829,7 +1183,8 @@
     },
     "clarity": {
       "heading": "No Clutter, Just Clarity",
-      "description": "Bayan Flow strips away complexity to reveal the beauty of algorithms. Clean interface, clear explanations, and vivid animations help you see what's really happening."
+      "description": "Bayan Flow strips away complexity to reveal the beauty of algorithms. Clean interface, clear explanations, and vivid animations help you see what's really happening.",
+      "videoTitle": "Product Demo Video"
     },
     "algorithmTypes": {
       "heading": "Explore Algorithm Types",
@@ -849,6 +1204,16 @@
         "title": "Searching Algorithms",
         "description": "Follow lookups on sorted data step by step. See how each probe narrows the range until the target is found or ruled out.",
         "algorithms": "Binary Search, Jump Search, Interpolation Search, Exponential Search"
+      },
+      "treeTraversal": {
+        "title": "Tree Traversals",
+        "description": "Explore classic tree traversal orders and learn how each visit order explores a tree structure.",
+        "algorithms": "Inorder Traversal, Level-order Traversal, Zigzag Level-order Traversal, Preorder Traversal, Postorder Traversal, Morris Traversal"
+      },
+      "graphAlgorithm": {
+        "title": "Graph Algorithms",
+        "description": "Study dependency ordering, strongly connected components, minimum spanning trees, and all-pairs shortest paths through interactive graph and matrix visualizations.",
+        "algorithms": "Topological Sort, Tarjan, Kosaraju, Floyd-Warshall"
       }
     },
     "features": {
@@ -860,7 +1225,8 @@
       },
       "pythonCode": {
         "title": "Interactive Python",
-        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code."
+        "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code.",
+        "badge": "Experimental"
       },
       "sound": {
         "title": "Interactive Sound",
@@ -905,7 +1271,14 @@
     "logarithmicSearch": "Logarithmic search",
     "blockJumpSearch": "Block / jump search",
     "distributionAwareSearch": "Distribution-aware search",
-    "graphTraversalSearch": "Graph traversal (node–link)"
+    "graphTraversalSearch": "Graph traversal (node–link)",
+    "depthFirstTraversal": "Depth-first traversals",
+    "breadthFirstTraversal": "Breadth-first traversals",
+    "spaceOptimizedTraversal": "Space-optimized traversals",
+    "topologicalOrdering": "Topological ordering",
+    "minimumSpanningTree": "Minimum spanning tree",
+    "stronglyConnectedComponents": "Strongly connected components",
+    "allPairsShortestPath": "All-pairs shortest path"
   },
   "roadmap": {
     "hero": {

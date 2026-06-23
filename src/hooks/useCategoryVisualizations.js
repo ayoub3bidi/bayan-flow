@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -20,13 +20,23 @@ export function useCategoryVisualizations({
   sortingVisualization,
   pathfindingVisualization,
   searchingVisualization,
+  treeTraversalVisualization,
+  graphAlgorithmVisualization,
 }) {
   return useMemo(
     () => ({
       [ALGORITHM_TYPES.SORTING]: sortingVisualization,
       [ALGORITHM_TYPES.PATHFINDING]: pathfindingVisualization,
       [ALGORITHM_TYPES.SEARCHING]: searchingVisualization,
+      [ALGORITHM_TYPES.TREE_TRAVERSAL]: treeTraversalVisualization,
+      [ALGORITHM_TYPES.GRAPH_ALGORITHM]: graphAlgorithmVisualization,
     }),
-    [sortingVisualization, pathfindingVisualization, searchingVisualization]
+    [
+      sortingVisualization,
+      pathfindingVisualization,
+      searchingVisualization,
+      treeTraversalVisualization,
+      graphAlgorithmVisualization,
+    ]
   );
 }

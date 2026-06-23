@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -9,12 +9,15 @@ import { vi, describe, it, expect } from 'vitest';
 // Unmock constants so we test the real module (setup.js mocks it globally)
 vi.unmock('../constants');
 vi.unmock('../constants/index.js');
+vi.unmock('../registry/graphAlgorithmRegistry.js');
 
 import {
   ALGORITHM_TYPES,
   SORTING_ALGORITHMS,
   PATHFINDING_ALGORITHMS,
   SEARCHING_ALGORITHMS,
+  TREE_TRAVERSAL_ALGORITHMS,
+  GRAPH_ALGORITHMS,
   ANIMATION_SPEEDS,
   ELEMENT_STATES,
   STATE_COLORS,
@@ -28,7 +31,10 @@ import {
   DEFAULT_GRID_SIZE,
   PATHFINDING_COMPLEXITY,
   SEARCHING_COMPLEXITY,
+  TREE_TRAVERSAL_COMPLEXITY,
+  GRAPH_ALGORITHM_COMPLEXITY,
 } from './index.js';
+import { GRAPH_ALGORITHM_KEYS } from '../registry/graphAlgorithmRegistry.js';
 
 describe('Constants', () => {
   describe('ALGORITHM_TYPES', () => {
@@ -37,6 +43,8 @@ describe('Constants', () => {
         SORTING: 'sorting',
         PATHFINDING: 'pathfinding',
         SEARCHING: 'searching',
+        TREE_TRAVERSAL: 'treeTraversal',
+        GRAPH_ALGORITHM: 'graphAlgorithm',
       });
     });
   });
@@ -100,6 +108,29 @@ describe('Constants', () => {
         'breadthFirstSearchGraph',
       ]);
       expect(Object.keys(SEARCHING_ALGORITHMS)).toHaveLength(9);
+    });
+  });
+
+  describe('TREE_TRAVERSAL_ALGORITHMS', () => {
+    it('should contain tree traversal algorithm keys', () => {
+      expect(Object.values(TREE_TRAVERSAL_ALGORITHMS)).toEqual([
+        'inorderTraversal',
+        'preorderTraversal',
+        'postorderTraversal',
+        'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
+        'morrisTraversal',
+      ]);
+      expect(Object.keys(TREE_TRAVERSAL_ALGORITHMS)).toHaveLength(6);
+    });
+  });
+
+  describe('GRAPH_ALGORITHMS', () => {
+    it('should contain graph algorithm keys', () => {
+      expect(Object.values(GRAPH_ALGORITHMS)).toEqual(GRAPH_ALGORITHM_KEYS);
+      expect(Object.keys(GRAPH_ALGORITHMS)).toHaveLength(
+        GRAPH_ALGORITHM_KEYS.length
+      );
     });
   });
 
@@ -290,6 +321,53 @@ describe('Constants', () => {
     it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
       keys.forEach(algoKey => {
         const meta = SEARCHING_COMPLEXITY[algoKey];
+        expect(meta).toHaveProperty('name');
+        expect(meta).toHaveProperty('timeComplexity');
+        expect(meta).toHaveProperty('spaceComplexity');
+        expect(meta).toHaveProperty('description');
+        expect(meta).toHaveProperty('useCases');
+        expect(Array.isArray(meta.useCases)).toBe(true);
+      });
+    });
+  });
+
+  describe('TREE_TRAVERSAL_COMPLEXITY', () => {
+    const keys = Object.keys(TREE_TRAVERSAL_COMPLEXITY);
+
+    it('should have metadata for all tree traversal algorithms', () => {
+      expect(keys).toEqual([
+        'inorderTraversal',
+        'preorderTraversal',
+        'postorderTraversal',
+        'levelOrderTraversal',
+        'zigzagLevelOrderTraversal',
+        'morrisTraversal',
+      ]);
+    });
+
+    it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
+      keys.forEach(algoKey => {
+        const meta = TREE_TRAVERSAL_COMPLEXITY[algoKey];
+        expect(meta).toHaveProperty('name');
+        expect(meta).toHaveProperty('timeComplexity');
+        expect(meta).toHaveProperty('spaceComplexity');
+        expect(meta).toHaveProperty('description');
+        expect(meta).toHaveProperty('useCases');
+        expect(Array.isArray(meta.useCases)).toBe(true);
+      });
+    });
+  });
+
+  describe('GRAPH_ALGORITHM_COMPLEXITY', () => {
+    const keys = Object.keys(GRAPH_ALGORITHM_COMPLEXITY);
+
+    it('should have metadata for graph algorithms', () => {
+      expect(keys).toEqual(GRAPH_ALGORITHM_KEYS);
+    });
+
+    it('each algorithm should have name, timeComplexity, spaceComplexity, description, useCases', () => {
+      keys.forEach(algoKey => {
+        const meta = GRAPH_ALGORITHM_COMPLEXITY[algoKey];
         expect(meta).toHaveProperty('name');
         expect(meta).toHaveProperty('timeComplexity');
         expect(meta).toHaveProperty('spaceComplexity');

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -237,6 +237,111 @@ export const ALGORITHM_KNOWLEDGE = {
     inventor:
       'Classic graph traversal; stack-based explicit graph formulation standard in CS curricula',
     year: 1950,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  breadthFirstSearchGraph: {
+    inventor: 'Konrad Zuse',
+    year: 1945,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  topologicalSort: {
+    inventor:
+      'Classic DFS finishing-time formulation for partially ordered directed acyclic graphs',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  kahnAlgorithm: {
+    inventor: 'Arthur B. Kahn',
+    year: 1962,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  kruskalAlgorithm: {
+    inventor: 'Joseph Kruskal',
+    year: 1956,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  primAlgorithm: {
+    inventor: 'Robert C. Prim',
+    year: 1957,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  tarjanAlgorithm: {
+    inventor: 'Robert Tarjan',
+    year: 1972,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  kosarajuAlgorithm: {
+    inventor: 'S. Rao Kosaraju',
+    year: 1978,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  floydWarshallAlgorithm: {
+    inventor: 'Robert Floyd / Stephen Warshall',
+    year: 1962,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+
+  // ── Tree traversals ───────────────────────────────────────────────────────
+  inorderTraversal: {
+    inventor:
+      'Foundational tree-walk pattern in CS curricula and compiler design',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  levelOrderTraversal: {
+    inventor:
+      'Konrad Zuse / classic breadth-first traversal formulation applied to trees',
+    year: 1945,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  zigzagLevelOrderTraversal: {
+    inventor:
+      'Breadth-first level-by-level pattern extended with alternating scan direction — common textbook and interview formulation',
+    year: 1990,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  preorderTraversal: {
+    inventor: 'Foundational tree-walk pattern in CS curricula',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  postorderTraversal: {
+    inventor:
+      'Foundational tree-walk pattern in CS curricula and compiler design',
+    year: 1960,
+    realWorldUsesCount: 4,
+    factsCount: 4,
+    youtubeVideoId: null,
+  },
+  morrisTraversal: {
+    inventor: 'Joseph M. Morris',
+    year: 1979,
     realWorldUsesCount: 4,
     factsCount: 4,
     youtubeVideoId: null,

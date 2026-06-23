@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -8,18 +8,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen } from '../../test/testUtils';
 import { BrowserRouter } from 'react-router-dom';
 import RoadmapCTA from './RoadmapCTA';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    },
-  };
-});
-
 // Mock UI components
 vi.mock('../ui/Container', () => ({
   default: ({ children }) => <div>{children}</div>,
@@ -40,9 +28,9 @@ vi.mock('../ui/Button', () => ({
   ),
 }));
 
-// Mock Sparkles icon
-vi.mock('lucide-react', () => ({
-  Sparkles: () => <svg data-testid="sparkles-icon" />,
+// Mock Sparkle icon
+vi.mock('@phosphor-icons/react', () => ({
+  Sparkle: () => <svg data-testid="sparkles-icon" />,
 }));
 
 const renderComponent = () => {

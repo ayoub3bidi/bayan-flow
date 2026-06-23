@@ -1,6 +1,6 @@
 {
   "name": "bayan-flow",
-  "description": "Bayan Flow - Interactive algorithm visualizer with step-by-step animations for sorting and pathfinding algorithms. Bayan (بيان) means clarity in Arabic.",
+  "description": "Bayan Flow - Interactive algorithm visualizer with step-by-step animations for sorting, searching, pathfinding, and tree traversal algorithms. Bayan (بيان) means clarity in Arabic.",
   "keywords": [
     "algorithms",
     "visualization",
@@ -15,7 +15,7 @@
   ],
   "author": {
     "name": "Ayoub Abidi",
-    "email": "contact@ayoub3bidi.me",
+    "email": "contact@bayanflow.com",
     "url": "https://github.com/ayoub3bidi"
   },
   "license": "Elastic-2.0 OR Commercial",
@@ -26,9 +26,9 @@
   "bugs": {
     "url": "https://github.com/ayoub3bidi/bayan-flow/issues"
   },
-  "homepage": "https://bayanflow.netlify.app",
+  "homepage": "https://bayanflow.com",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": ">=24.11.1",
@@ -46,20 +46,26 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "generate:export-sfx": "node scripts/render-tone-export-sfx.mjs"
+    "generate:export-sfx": "node scripts/render-tone-export-sfx.mjs",
+    "fetch:youtube-thumbnails": "node scripts/fetch-youtube-thumbnails.mjs",
+    "deploy:cf:staging": "wrangler deploy --env staging",
+    "deploy:cf:production": "wrangler deploy --env production",
+    "preview:cf:upload": "wrangler versions upload --env staging"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
     "@monaco-editor/react": "^4.7.0",
     "@octokit/rest": "^22.0.1",
+    "@phosphor-icons/react": "^2.1.10",
     "@remotion/media": "4.0.436",
     "@remotion/web-renderer": "^4.0.436",
     "i18next": "^25.7.1",
     "i18next-browser-languagedetector": "^8.2.0",
-    "lucide-react": "^0.555.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-i18next": "^15.7.4",
-    "react-router-dom": "^7.10.1",
+    "react-icons": "^5.6.0",
+    "react-router-dom": "^7.12.0",
     "remotion": "^4.0.436",
     "tone": "^15.1.22"
   },
@@ -71,8 +77,8 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/coverage-v8": "^3.2.4",
-    "@vitest/ui": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.6",
+    "@vitest/ui": "^3.2.6",
     "autoprefixer": "^10.4.22",
     "d3": "^7.9.0",
     "eslint": "^9.39.1",
@@ -83,12 +89,13 @@
     "framer-motion": "^12.23.24",
     "globals": "^16.5.0",
     "jsdom": "^27.2.0",
-    "playwright": "1.52.0",
+    "playwright": "^1.55.1",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
     "tailwindcss": "^4.1.17",
     "vite": "npm:rolldown-vite@7.2.10",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.6",
+    "wrangler": "^4.104.0"
   },
   "pnpm": {
     "overrides": {

@@ -1,8 +1,10 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
+
+import { SORT_ORDERS } from '../constants';
 
 /**
  * Generates a random array of specified size with values between min and max
@@ -27,6 +29,37 @@ export const generateRandomArray = (size, min = 5, max = 500) => {
 export const generateSortedRandomArray = (size, min = 5, max = 500) => {
   return [...generateRandomArray(size, min, max)].sort((a, b) => a - b);
 };
+
+/**
+ * Prepare sorting visualization input after random generation.
+ * Descending mode sorts values high-to-low (reverse-sorted input).
+ *
+ * @param {number[]} arr
+ * @param {string} sortOrder - SORT_ORDERS.ASCENDING | SORT_ORDERS.DESCENDING
+ * @returns {number[]}
+ */
+export function finalizeSortingInputArray(arr, sortOrder) {
+  if (!Array.isArray(arr) || arr.length === 0) return arr;
+  if (sortOrder === SORT_ORDERS.DESCENDING) {
+    return [...arr].sort((a, b) => b - a);
+  }
+  return [...arr];
+}
+
+/**
+ * Reorder the current multiset when the user toggles sort order (no new random draw).
+ *
+ * @param {number[]} arr
+ * @param {string} sortOrder
+ * @returns {number[]}
+ */
+export function reorderArrayForSortOrder(arr, sortOrder) {
+  if (!Array.isArray(arr) || arr.length === 0) return arr;
+  if (sortOrder === SORT_ORDERS.DESCENDING) {
+    return [...arr].sort((a, b) => b - a);
+  }
+  return [...arr].sort((a, b) => a - b);
+}
 
 /**
  * Generates a nearly sorted array (useful for testing)

@@ -1,31 +1,21 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import TechPattern from './TechPattern';
-
-// Mock framer-motion
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    },
-  };
-});
-
 describe('TechPattern', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
 
   afterEach(() => {
-    vi.runOnlyPendingTimers();
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
     vi.useRealTimers();
   });
 
@@ -189,7 +179,9 @@ describe('TechPattern', () => {
 
     it('should become visible after timer', () => {
       render(<TechPattern />);
-      vi.advanceTimersByTime(1000);
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
       // Pattern should become visible after 1000ms
       expect(vi.runOnlyPendingTimers).toBeDefined();
     });

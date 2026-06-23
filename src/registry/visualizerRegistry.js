@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import ArrayVisualizer from '../components/ArrayVisualizer';
 import GridVisualizer from '../components/GridVisualizer';
+import GraphAlgorithmCategoryVisualizer from '../components/GraphAlgorithmCategoryVisualizer';
 import SearchingCategoryVisualizer from '../components/SearchingCategoryVisualizer';
+import TreeVisualizer from '../components/TreeVisualizer';
 import { ALGORITHM_TYPES } from '../constants';
 
 /**
@@ -22,4 +24,6 @@ export const VISUALIZER_REGISTRY = {
   [ALGORITHM_TYPES.SORTING]: ArrayVisualizer,
   [ALGORITHM_TYPES.PATHFINDING]: GridVisualizer,
   [ALGORITHM_TYPES.SEARCHING]: SearchingCategoryVisualizer,
+  [ALGORITHM_TYPES.TREE_TRAVERSAL]: TreeVisualizer,
+  [ALGORITHM_TYPES.GRAPH_ALGORITHM]: GraphAlgorithmCategoryVisualizer,
 };

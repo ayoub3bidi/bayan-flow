@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -26,7 +26,7 @@ import { normalizeExportLanguage } from './exportLanguage.js';
 
 /**
  * Root Remotion composition: title bar, step counter + description, then full-frame visualization.
- * Shows complexity analysis for the last 10 seconds.
+ * Shows complexity analysis for the last 5 seconds.
  * Receives inputProps: steps, algorithmType, algorithmName, algorithmKey, framesPerStep, gridSize,
  * watermark (partial), includeExportAudio, exportAudioVolume, exportTheme ('light' | 'dark'),
  * exportLanguage ('en' | 'fr' | 'ar') for step label and description keys.
@@ -225,7 +225,13 @@ function AlgorithmVideo({
           }}
         >
           {renderMainScene
-            ? renderMainScene({ steps, framesPerStep, gridSize, exportTheme })
+            ? renderMainScene({
+                steps,
+                framesPerStep,
+                gridSize,
+                exportTheme,
+                algorithmKey,
+              })
             : null}
         </div>
       </AbsoluteFill>

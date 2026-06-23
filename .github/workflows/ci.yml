@@ -11,19 +11,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Required permissions for Netlify action to comment on PRs/commits
-permissions:
-  contents: read
-  pull-requests: write
-  deployments: write
-  statuses: write
-
 jobs:
   # Job 1: Code quality checks (fast feedback)
   quality:
     name: Code Quality
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -48,15 +43,17 @@ jobs:
       - name: Check code formatting
         run: pnpm format:check
 
-      - name: Type check (if using TypeScript)
-        run: echo "Add 'pnpm typecheck' when you migrate to TypeScript"
-        continue-on-error: true
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level high
 
   # Job 2: Unit tests with coverage
   # Node 24.x matches package.json engines and the Quality / Build jobs (tests failed on 20.x + Vitest forks).
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # lcov-reporter-action comments on PRs
 
     steps:
       - name: Checkout code
@@ -76,14 +73,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run tests
-        run: pnpm test:run
+      - name: Run tests with coverage
+        run: pnpm test:coverage
         env:
           NODE_OPTIONS: --max-old-space-size=4096
-
-      - name: Generate coverage report
-        run: pnpm test:coverage
-        continue-on-error: true
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -111,7 +104,9 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: [quality, test] # Only build if quality and tests pass
-    
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -134,7 +129,7 @@ jobs:
         run: pnpm build
         env:
           VITE_GIT_BRANCH: ${{ github.ref_name }}
-          VITE_DEV_SITE_URL: 'https://dev-bayanflow.netlify.app'
+          VITE_DEV_SITE_URL: 'https://dev.bayanflow.com'
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
@@ -143,74 +138,15 @@ jobs:
           path: dist/
           retention-days: 7
 
-  # Job 4: Deploy to Netlify
-  deploy:
-    name: Deploy to Netlify
-    runs-on: ubuntu-latest
-    needs: [quality, test, build] # Only deploy if all checks pass
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
-    permissions:
-      contents: read
-      pull-requests: write
-      deployments: write
-      statuses: write
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.11.1
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build project
-        run: pnpm build
-        env:
-          # embed branch name into Vite build so the frontend can read it at runtime
-          VITE_GIT_BRANCH: ${{ github.ref_name }}
-          # optional: clickable dev site URL to use in the badge
-          VITE_DEV_SITE_URL: 'https://dev-bayanflow.netlify.app'
-
-      - name: Deploy to Netlify
-        id: netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './dist'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions (${{ github.ref_name }})"
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-          github-deployment-environment: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/develop' && 'beta' || 'preview' }}
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          # Use the dev site ID when building from develop, otherwise production site ID
-          NETLIFY_SITE_ID: ${{ github.ref == 'refs/heads/develop' && secrets.NETLIFY_SITE_ID_DEV || secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 10
-
-      - name: Output deployment URL
-        if: always()
-        run: |
-          echo "Netlify deploy URL: ${{ steps.netlify.outputs.deploy-url }}"
-
-  # Job 5: All checks passed (optional but useful for branch protection)
+  # Job 4: All checks passed (optional but useful for branch protection)
   all-checks-pass:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [quality, test, build, deploy]
+    needs: [quality, test, build]
     if: always()
-    
+    permissions:
+      contents: read
+
     steps:
       - name: Check if all jobs succeeded
         run: |

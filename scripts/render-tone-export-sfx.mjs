@@ -16,6 +16,13 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { TONE_INSTRUMENT_PRESETS } from '../src/utils/toneInstrumentPresets.js';
 import { getCompareFrequency, getPivotFrequency } from '../src/utils/soundFrequencies.js';
+import { SOUND_EVENT_KINDS } from '../src/utils/soundEvents.js';
+import {
+  MILESTONE_CHORDS,
+  NEGATIVE_CHORDS,
+  PASS_COMPLETE_CHORD,
+} from '../src/utils/categoryPalettes.js';
+import { MASTER_INPUT_GAIN } from '../src/utils/masterChain.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -43,10 +50,49 @@ await page.goto('about:blank');
 await page.addScriptTag({ path: toneBundle });
 
 const base64ByName = await page.evaluate(
-  async ({ presets, compareFreq: cf, pivotFreq: pf }) => {
+  async ({
+    presets,
+    compareFreq: cf,
+    pivotFreq: pf,
+    SOUND_EVENT_KINDS,
+    milestoneChords,
+    negativeChords,
+    passCompleteChord,
+    masterInputGain,
+  }) => {
     const Tone = window.Tone;
     if (!Tone) {
       throw new Error('Tone not found on window');
+    }
+
+    async function createOfflineBus() {
+      const inputGain = new Tone.Gain(masterInputGain);
+      const filter = new Tone.Filter({
+        frequency: 5000,
+        type: 'lowpass',
+        rolloff: -12,
+      });
+      const compressor = new Tone.Compressor({ threshold: -24, ratio: 3 });
+      const reverb = new Tone.Reverb({ decay: 1.2, wet: 0.12 });
+      await reverb.ready;
+
+      inputGain.connect(filter);
+      filter.connect(compressor);
+      compressor.connect(reverb);
+      reverb.toDestination();
+
+      return inputGain;
+    }
+
+    function connectToBus(node, bus) {
+      return node.connect(bus);
+    }
+
+    function arpeggiate(synth, notes, startTime, ascending = true) {
+      const ordered = ascending ? notes : [...notes].reverse();
+      ordered.forEach((note, index) => {
+        synth.triggerAttackRelease(note, '4n', startTime + 0.05 + index * 0.08);
+      });
     }
 
     function interleavedWavFromBuffer(audioBuffer) {
@@ -103,35 +149,130 @@ const base64ByName = await page.evaluate(
 
     const results = {};
 
-    results.compare = await toB64(() => {
-      const pluck = new Tone.PluckSynth(presets.pluckSynth).toDestination();
-      pluck.triggerAttackRelease(cf, '16n', 0.02);
-    }, 0.45);
+    results.compare = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.volume.value = 2;
+      kalimba.triggerAttackRelease(cf, '8n', 0.02);
+    }, 0.55);
 
-    results.swap = await toB64(() => {
-      const m = new Tone.MetalSynth(presets.metallicSynth).toDestination();
-      m.triggerAttackRelease('32n', 0.02);
+    results.swap = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.volume.value = 3;
+      kalimba.triggerAttackRelease('G4', '16n', 0.02);
     }, 0.4);
 
-    results.pivot = await toB64(() => {
-      const s = new Tone.Synth(presets.softSynth).toDestination();
+    results.passComplete = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.volume.value = 3;
+      arpeggiate(kalimba, passCompleteChord, 0);
+    }, 0.55);
+
+    results.pivot = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const s = connectToBus(new Tone.Synth(presets.softSynth), bus);
       s.triggerAttackRelease(pf, '8n', 0.02);
     }, 0.65);
 
-    results.sorted = await toB64(() => {
-      const p = new Tone.PolySynth().toDestination();
-      p.triggerAttackRelease(['C4', 'E4', 'G4'], '2n', 0.05);
-    }, 2.6);
+    results[SOUND_EVENT_KINDS.COMPLETE] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const p = connectToBus(
+        new Tone.PolySynth(Tone.FMSynth, presets.polySynthVoice),
+        bus
+      );
+      p.volume.value = 1;
+      arpeggiate(p, milestoneChords.complete, 0);
+    }, 1.4);
 
-    results.nodeVisit = await toB64(() => {
-      const s = new Tone.Synth(presets.softSynth).toDestination();
-      s.triggerAttackRelease(220, '64n', 0.02);
-    }, 0.3);
+    results[SOUND_EVENT_KINDS.VISIT] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const bell = connectToBus(new Tone.AMSynth(presets.bellSynth), bus);
+      bell.volume.value = 1;
+      bell.triggerAttackRelease('D4', '8n', 0.02);
+    }, 0.55);
 
-    results.pathFound = await toB64(() => {
-      const p = new Tone.PolySynth().toDestination();
-      p.triggerAttackRelease(['C3', 'E3', 'G3', 'C4'], '1n', 0.05);
-    }, 3.2);
+    results[SOUND_EVENT_KINDS.FRONTIER] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const s = connectToBus(new Tone.Synth(presets.softSynth), bus);
+      s.volume.value = 1;
+      s.triggerAttackRelease('A3', '8n', 0.02);
+    }, 0.55);
+
+    results[SOUND_EVENT_KINDS.TARGET_FOUND] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const p = connectToBus(
+        new Tone.PolySynth(Tone.FMSynth, presets.polySynthVoice),
+        bus
+      );
+      arpeggiate(p, milestoneChords.targetFound, 0);
+    }, 1.2);
+
+    results[SOUND_EVENT_KINDS.PATH_FOUND] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const p = connectToBus(
+        new Tone.PolySynth(Tone.FMSynth, presets.polySynthVoice),
+        bus
+      );
+      arpeggiate(p, milestoneChords.pathFound, 0);
+    }, 1.6);
+
+    results[SOUND_EVENT_KINDS.NO_RESULT] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const p = connectToBus(
+        new Tone.PolySynth(Tone.FMSynth, presets.polySynthVoice),
+        bus
+      );
+      arpeggiate(p, negativeChords.noResult, 0, false);
+    }, 1.2);
+
+    results[SOUND_EVENT_KINDS.EDGE_CONSIDER] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.triggerAttackRelease('G3', '8n', 0.02);
+    }, 0.55);
+
+    results[SOUND_EVENT_KINDS.EDGE_SELECT] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.volume.value = 3;
+      kalimba.triggerAttackRelease('E4', '16n', 0.02);
+    }, 0.4);
+
+    results[SOUND_EVENT_KINDS.CYCLE] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const p = connectToBus(
+        new Tone.PolySynth(Tone.FMSynth, presets.polySynthVoice),
+        bus
+      );
+      arpeggiate(p, negativeChords.cycle, 0, false);
+    }, 0.9);
+
+    results[SOUND_EVENT_KINDS.MATRIX_CONSIDER] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const s = connectToBus(new Tone.Synth(presets.softSynth), bus);
+      s.triggerAttackRelease('D4', '8n', 0.02);
+    }, 0.55);
+
+    results[SOUND_EVENT_KINDS.MATRIX_UPDATE] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const kalimba = connectToBus(new Tone.FMSynth(presets.kalimbaSynth), bus);
+      kalimba.volume.value = 3;
+      kalimba.triggerAttackRelease('E4', '16n', 0.02);
+    }, 0.4);
+
+    results[SOUND_EVENT_KINDS.COMPONENT_COMPLETE] = await toB64(async () => {
+      const bus = await createOfflineBus();
+      const p = connectToBus(
+        new Tone.PolySynth(Tone.FMSynth, presets.polySynthVoice),
+        bus
+      );
+      arpeggiate(p, milestoneChords.componentComplete, 0);
+    }, 1.2);
+
+    results.sorted = results[SOUND_EVENT_KINDS.COMPLETE];
+    results.nodeVisit = results[SOUND_EVENT_KINDS.VISIT];
 
     return results;
   },
@@ -139,6 +280,11 @@ const base64ByName = await page.evaluate(
     presets: TONE_INSTRUMENT_PRESETS,
     compareFreq,
     pivotFreq,
+    SOUND_EVENT_KINDS,
+    milestoneChords: MILESTONE_CHORDS,
+    negativeChords: NEGATIVE_CHORDS,
+    passCompleteChord: PASS_COMPLETE_CHORD,
+    masterInputGain: MASTER_INPUT_GAIN,
   }
 );
 

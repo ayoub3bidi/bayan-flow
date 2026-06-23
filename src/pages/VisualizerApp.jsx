@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
@@ -22,16 +22,21 @@ const AlgorithmInsightPanel = lazy(
 import { useSortingVisualization } from '../hooks/useSortingVisualization';
 import { usePathfindingVisualization } from '../hooks/usePathfindingVisualization';
 import { useSearchingVisualization } from '../hooks/useSearchingVisualization';
+import { useTreeTraversalVisualization } from '../hooks/useTreeTraversalVisualization';
+import { useGraphAlgorithmVisualization } from '../hooks/useGraphAlgorithmVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
 import { useVideoExporter } from '../video/useVideoExporter';
 import { soundManager } from '../utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
+  DEFAULT_GRAPH_NODE_COUNT,
   DEFAULT_GRID_SIZE,
   DEFAULT_SEARCH_GRAPH_NODE_COUNT,
+  DEFAULT_TREE_NODE_COUNT,
   ANIMATION_SPEEDS,
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
+  SORT_ORDERS,
 } from '../constants';
 import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
@@ -39,6 +44,17 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
+import {
+  clampGraphAlgorithmNodeCount,
+  getGraphAlgorithmScenarioOptions,
+  isGraphScenarioSupported,
+} from '../registry/graphAlgorithmRegistry.js';
+import {
+  finalizeSortingInputArray,
+  reorderArrayForSortOrder,
+} from '../utils/arrayHelpers';
+
+const SOUND_PREFERENCE_STORAGE_KEY = 'bayan-flow:sound-enabled';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -54,6 +70,33 @@ function buildDefaultSelectedAlgorithms() {
       CATEGORY_CONFIG[type].defaultAlgorithm,
     ])
   );
+}
+
+function getDefaultGraphScenario(algorithmKey) {
+  return getGraphAlgorithmScenarioOptions(algorithmKey)[0]?.id ?? null;
+}
+
+function readStoredSoundPreference() {
+  if (typeof window === 'undefined') return false;
+
+  try {
+    return window.localStorage.getItem(SOUND_PREFERENCE_STORAGE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function writeStoredSoundPreference(isEnabled) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(
+      SOUND_PREFERENCE_STORAGE_KEY,
+      String(isEnabled)
+    );
+  } catch {
+    // Ignore storage failures and keep the in-memory preference.
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -76,13 +119,31 @@ function App() {
   const [searchGraphNodeCount, setSearchGraphNodeCount] = useState(
     DEFAULT_SEARCH_GRAPH_NODE_COUNT
   );
+  const [treeNodeCount, setTreeNodeCount] = useState(DEFAULT_TREE_NODE_COUNT);
+  const [graphNodeCount, setGraphNodeCount] = useState(
+    DEFAULT_GRAPH_NODE_COUNT
+  );
+  const [sortOrder, setSortOrder] = useState(SORT_ORDERS.ASCENDING);
+  const prevSortOrderRef = useRef(sortOrder);
   const [array, setArray] = useState(() =>
-    CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(DEFAULT_ARRAY_SIZE)
+    finalizeSortingInputArray(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].generateData(DEFAULT_ARRAY_SIZE),
+      SORT_ORDERS.ASCENDING
+    )
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(
+    readStoredSoundPreference
+  );
+  const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
+  const [selectedGraphScenario, setSelectedGraphScenario] = useState(() =>
+    getDefaultGraphScenario(
+      CATEGORY_CONFIG[ALGORITHM_TYPES.GRAPH_ALGORITHM].defaultAlgorithm
+    )
+  );
 
   // ── Active Algorithm Key / Name ───────────────────────────────────────────
   const activeAlgorithmKey = selectedAlgorithms[algorithmType];
@@ -112,6 +173,19 @@ function App() {
     mode,
     searchGraphNodeCount
   );
+  const treeTraversalVisualization = useTreeTraversalVisualization(
+    selectedAlgorithms[ALGORITHM_TYPES.TREE_TRAVERSAL],
+    speed,
+    mode,
+    treeNodeCount
+  );
+  const graphAlgorithmVisualization = useGraphAlgorithmVisualization(
+    selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM],
+    speed,
+    mode,
+    graphNodeCount,
+    selectedGraphScenario
+  );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
   const {
@@ -120,6 +194,7 @@ function App() {
     exportState,
     exportProgress,
     exportBlobUrl,
+    exportErrorMessage,
     cancelExport,
     closePreview,
     downloadVideo,
@@ -132,9 +207,75 @@ function App() {
     sortingVisualization,
     pathfindingVisualization,
     searchingVisualization,
+    treeTraversalVisualization,
+    graphAlgorithmVisualization,
   });
 
   const visualization = visualizationMap[algorithmType];
+
+  useEffect(() => {
+    const graphAlgorithmKey =
+      selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
+
+    if (
+      selectedGraphScenario &&
+      !isGraphScenarioSupported(graphAlgorithmKey, selectedGraphScenario)
+    ) {
+      setSelectedGraphScenario(getDefaultGraphScenario(graphAlgorithmKey));
+    }
+  }, [selectedAlgorithms, selectedGraphScenario, setSelectedGraphScenario]);
+
+  useEffect(() => {
+    const graphAlgorithmKey =
+      selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
+    setGraphNodeCount(prev =>
+      clampGraphAlgorithmNodeCount(graphAlgorithmKey, prev)
+    );
+  }, [selectedAlgorithms]);
+
+  useEffect(() => {
+    if (algorithmType !== ALGORITHM_TYPES.SORTING) {
+      prevSortOrderRef.current = sortOrder;
+      return;
+    }
+    if (prevSortOrderRef.current !== sortOrder) {
+      setArray(prev => reorderArrayForSortOrder(prev, sortOrder));
+      prevSortOrderRef.current = sortOrder;
+    }
+  }, [sortOrder, algorithmType]);
+
+  useEffect(() => {
+    writeStoredSoundPreference(isSoundEnabled);
+
+    if (!isSoundEnabled && soundManager.getIsEnabled()) {
+      soundManager.disable();
+    }
+  }, [isSoundEnabled]);
+
+  useEffect(() => {
+    if (!isSoundEnabled || soundManager.getIsEnabled()) {
+      return undefined;
+    }
+
+    const resumeOnInteraction = async () => {
+      cleanup();
+      try {
+        await soundManager.enable();
+      } catch {
+        setIsSoundEnabled(false);
+      }
+    };
+
+    const cleanup = () => {
+      document.removeEventListener('pointerdown', resumeOnInteraction, true);
+      document.removeEventListener('keydown', resumeOnInteraction, true);
+    };
+
+    document.addEventListener('pointerdown', resumeOnInteraction, true);
+    document.addEventListener('keydown', resumeOnInteraction, true);
+
+    return cleanup;
+  }, [isSoundEnabled]);
 
   // ── Registry: visualizer component ───────────────────────────────────────
   const VisualizerComponent = VISUALIZER_REGISTRY[algorithmType];
@@ -151,9 +292,13 @@ function App() {
   // ── Handlers ───────────────────────────────────────────────────────────────
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
-  const handleGenerateArray = () => {
+  const handleGenerateInput = () => {
     const cfg = CATEGORY_CONFIG[algorithmType];
-    if (
+    if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
+      treeTraversalVisualization.regenerateTree();
+    } else if (algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM) {
+      graphAlgorithmVisualization.regenerateGraph();
+    } else if (
       algorithmType === ALGORITHM_TYPES.SEARCHING &&
       isNodeLinkSearchingAlgorithm(
         selectedAlgorithms[ALGORITHM_TYPES.SEARCHING]
@@ -161,11 +306,38 @@ function App() {
     ) {
       searchingVisualization.regenerateGraphStructure();
     } else if (cfg.sizeBinding === 'array') {
-      setArray(cfg.generateData(arraySize));
+      const raw = cfg.generateData(arraySize);
+      setArray(
+        algorithmType === ALGORITHM_TYPES.SORTING
+          ? finalizeSortingInputArray(raw, sortOrder)
+          : raw
+      );
     } else {
       pathfindingVisualization.regenerateGrid();
     }
-    soundManager.playArrayGenerate();
+  };
+
+  const handleSoundToggle = async () => {
+    if (isSoundTogglePending) return;
+
+    if (isSoundEnabled) {
+      soundManager.disable();
+      setIsSoundEnabled(false);
+      return;
+    }
+
+    setIsSoundTogglePending(true);
+
+    try {
+      await soundManager.enable();
+      const nextEnabledState = soundManager.getIsEnabled();
+      setIsSoundEnabled(nextEnabledState);
+    } catch (error) {
+      console.error('[Sound Toggle]', error);
+      setIsSoundEnabled(false);
+    } finally {
+      setIsSoundTogglePending(false);
+    }
   };
 
   const handleAlgorithmChange = algorithmName => {
@@ -180,7 +352,12 @@ function App() {
     setArraySize(newSize);
     const cfg = CATEGORY_CONFIG[algorithmType];
     if (cfg.sizeBinding === 'array') {
-      setArray(cfg.generateData(newSize));
+      const raw = cfg.generateData(newSize);
+      setArray(
+        algorithmType === ALGORITHM_TYPES.SORTING
+          ? finalizeSortingInputArray(raw, sortOrder)
+          : raw
+      );
     }
   };
 
@@ -190,6 +367,14 @@ function App() {
 
   const handleSearchGraphNodeCountChange = newCount => {
     setSearchGraphNodeCount(newCount);
+  };
+
+  const handleTreeNodeCountChange = newCount => {
+    setTreeNodeCount(newCount);
+  };
+
+  const handleGraphNodeCountChange = newCount => {
+    setGraphNodeCount(newCount);
   };
 
   const handleExportVideo = () => {
@@ -206,6 +391,7 @@ function App() {
       speed,
       gridSize,
       orientation,
+      includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
     });
@@ -219,7 +405,12 @@ function App() {
         newType !== ALGORITHM_TYPES.SEARCHING ||
         !isNodeLinkSearchingAlgorithm(searchingKey)
       ) {
-        setArray(cfg.generateData(arraySize));
+        const raw = cfg.generateData(arraySize);
+        setArray(
+          newType === ALGORITHM_TYPES.SORTING
+            ? finalizeSortingInputArray(raw, sortOrder)
+            : raw
+        );
       }
     }
     setAlgorithmType(newType);
@@ -241,6 +432,8 @@ function App() {
   const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
     sortingVisualization,
     searchingVisualization,
+    treeTraversalVisualization,
+    graphAlgorithmVisualization,
     gridSize,
     activeAlgorithmKey,
   });
@@ -288,8 +481,10 @@ function App() {
               onStepBackward={visualization.stepBackward}
               currentStep={visualization.currentStep}
               totalSteps={visualization.totalSteps}
-              onGenerateArray={handleGenerateArray}
+              onGenerateInput={handleGenerateInput}
               algorithmType={algorithmType}
+              sortOrder={sortOrder}
+              onSortOrderChange={setSortOrder}
               isFullScreen={isFullScreen}
               onToggleFullScreen={toggleFullScreen}
               onExportVideo={handleExportVideo}
@@ -297,6 +492,9 @@ function App() {
               exportState={exportState}
               exportProgress={exportProgress}
               canRenderOnWeb={canRenderOnWeb}
+              isSoundEnabled={isSoundEnabled}
+              isSoundTogglePending={isSoundTogglePending}
+              onToggleSound={handleSoundToggle}
             />
           </motion.div>
         ) : (
@@ -337,6 +535,15 @@ function App() {
                       onSearchGraphNodeCountChange={
                         handleSearchGraphNodeCountChange
                       }
+                      treeNodeCount={treeNodeCount}
+                      onTreeNodeCountChange={handleTreeNodeCountChange}
+                      graphNodeCount={graphNodeCount}
+                      onGraphNodeCountChange={handleGraphNodeCountChange}
+                      selectedGraphScenario={selectedGraphScenario}
+                      onGraphScenarioChange={setSelectedGraphScenario}
+                      graphScenarioOptions={
+                        graphAlgorithmVisualization.scenarioOptions
+                      }
                       isPlaying={visualization.isPlaying}
                       mode={mode}
                       onModeChange={setMode}
@@ -373,8 +580,10 @@ function App() {
                       onStepBackward={visualization.stepBackward}
                       currentStep={visualization.currentStep}
                       totalSteps={visualization.totalSteps}
-                      onGenerateArray={handleGenerateArray}
+                      onGenerateInput={handleGenerateInput}
                       algorithmType={algorithmType}
+                      sortOrder={sortOrder}
+                      onSortOrderChange={setSortOrder}
                       isFullScreen={isFullScreen}
                       onToggleFullScreen={toggleFullScreen}
                       onExportVideo={handleExportVideo}
@@ -382,6 +591,9 @@ function App() {
                       exportState={exportState}
                       exportProgress={exportProgress}
                       canRenderOnWeb={canRenderOnWeb}
+                      isSoundEnabled={isSoundEnabled}
+                      isSoundTogglePending={isSoundTogglePending}
+                      onToggleSound={handleSoundToggle}
                     />
                   </section>
                 </div>
@@ -413,7 +625,8 @@ function App() {
           exportState === 'orientation' ||
           exportState === 'checking' ||
           exportState === 'rendering' ||
-          exportState === 'preview'
+          exportState === 'preview' ||
+          exportState === 'error'
         }
         progress={exportProgress}
         phase={
@@ -421,10 +634,13 @@ function App() {
             ? 'orientation'
             : exportState === 'preview'
               ? 'preview'
-              : exportState === 'checking'
-                ? 'checking'
-                : 'rendering'
+              : exportState === 'error'
+                ? 'error'
+                : exportState === 'checking'
+                  ? 'checking'
+                  : 'rendering'
         }
+        errorMessage={exportErrorMessage}
         blobUrl={exportBlobUrl}
         onStop={cancelExport}
         onClose={closePreview}

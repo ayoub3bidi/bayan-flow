@@ -56,7 +56,7 @@ For general questions, discussions, or help:
 
 For sensitive issues or private inquiries:
 
-- **Email**: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
+- **Email**: [contact@bayanflow.com](mailto:contact@bayanflow.com)
 - **Subject**: Include "Bayan Flow" in the subject line
 
 ## 🚀 Contributing
@@ -76,7 +76,6 @@ We provide several issue templates to help you provide the right information:
 - **✨ Feature Request** - For suggesting new features
 - **🔍 Algorithm Request** - For requesting new algorithms
 - **❓ Question** - For asking questions
-- **📚 Documentation** - For documentation improvements
 
 ## ⏱️ Response Times
 
@@ -103,7 +102,7 @@ When seeking support, please:
 
 For security-related issues, please **do not** create public issues. Instead:
 
-- **Email**: [contact@ayoub3bidi.me](mailto:contact@ayoub3bidi.me)
+- **Email**: [contact@bayanflow.com](mailto:contact@bayanflow.com)
 - **Subject**: "Bayan Flow Security"
 - **Follow our [Security Policy](../SECURITY.md)**
 

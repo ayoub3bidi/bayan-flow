@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -119,6 +119,85 @@ export const ALGORITHM_STEPS = {
   DFS_GRAPH_VISITING: 'dfsGraphVisiting',
   BFS_GRAPH_DEQUEUE: 'bfsGraphDequeue',
   BFS_GRAPH_ENQUEUE: 'bfsGraphEnqueue',
+
+  // Tree traversals (inorder)
+  INORDER_START: 'inorderStart',
+  INORDER_VISITING: 'inorderVisiting',
+  INORDER_VISITED: 'inorderVisited',
+  INORDER_COMPLETE: 'inorderComplete',
+  INORDER_EMPTY: 'inorderEmpty',
+
+  LEVEL_ORDER_START: 'levelOrderStart',
+  LEVEL_ORDER_VISITING: 'levelOrderVisiting',
+  LEVEL_ORDER_VISITED: 'levelOrderVisited',
+  LEVEL_ORDER_COMPLETE: 'levelOrderComplete',
+  LEVEL_ORDER_EMPTY: 'levelOrderEmpty',
+
+  ZIGZAG_LEVEL_START: 'zigzagLevelStart',
+  ZIGZAG_LEVEL_VISITING: 'zigzagLevelVisiting',
+  ZIGZAG_LEVEL_VISITED: 'zigzagLevelVisited',
+  ZIGZAG_LEVEL_COMPLETE: 'zigzagLevelComplete',
+  ZIGZAG_LEVEL_EMPTY: 'zigzagLevelEmpty',
+
+  PREORDER_START: 'preorderStart',
+  PREORDER_VISITING: 'preorderVisiting',
+  PREORDER_VISITED: 'preorderVisited',
+  PREORDER_COMPLETE: 'preorderComplete',
+  PREORDER_EMPTY: 'preorderEmpty',
+
+  POSTORDER_START: 'postorderStart',
+  POSTORDER_VISITING: 'postorderVisiting',
+  POSTORDER_VISITED: 'postorderVisited',
+  POSTORDER_COMPLETE: 'postorderComplete',
+  POSTORDER_EMPTY: 'postorderEmpty',
+
+  MORRIS_START: 'morrisStart',
+  MORRIS_THREADING: 'morrisThreading',
+  MORRIS_UNTHREADING: 'morrisUnthreading',
+  MORRIS_VISITING: 'morrisVisiting',
+  MORRIS_VISITED: 'morrisVisited',
+  MORRIS_COMPLETE: 'morrisComplete',
+  MORRIS_EMPTY: 'morrisEmpty',
+
+  // Graph algorithms
+  TOPOLOGICAL_START: 'topologicalStart',
+  TOPOLOGICAL_ENTER: 'topologicalEnter',
+  TOPOLOGICAL_EXPLORE_EDGE: 'topologicalExploreEdge',
+  TOPOLOGICAL_COMPLETE_NODE: 'topologicalCompleteNode',
+  TOPOLOGICAL_CYCLE: 'topologicalCycle',
+  TOPOLOGICAL_FINISH: 'topologicalFinish',
+  KAHN_START: 'kahnStart',
+  KAHN_DEQUEUE: 'kahnDequeue',
+  KAHN_RELAX_EDGE: 'kahnRelaxEdge',
+  KAHN_ENQUEUE: 'kahnEnqueue',
+  KAHN_CYCLE: 'kahnCycle',
+  KAHN_FINISH: 'kahnFinish',
+  KRUSKAL_START: 'kruskalStart',
+  KRUSKAL_SELECT_EDGE: 'kruskalSelectEdge',
+  KRUSKAL_REJECT_EDGE: 'kruskalRejectEdge',
+  KRUSKAL_FINISH: 'kruskalFinish',
+  PRIM_START: 'primStart',
+  PRIM_FRONTIER: 'primFrontier',
+  PRIM_SELECT_EDGE: 'primSelectEdge',
+  PRIM_FINISH: 'primFinish',
+  TARJAN_START: 'tarjanStart',
+  TARJAN_VISIT: 'tarjanVisit',
+  TARJAN_EXPLORE_EDGE: 'tarjanExploreEdge',
+  TARJAN_LOW_LINK_UPDATE: 'tarjanLowLinkUpdate',
+  TARJAN_BACK_EDGE: 'tarjanBackEdge',
+  TARJAN_SCC_FOUND: 'tarjanSccFound',
+  TARJAN_FINISH: 'tarjanFinish',
+  KOSARAJU_START: 'kosarajuStart',
+  KOSARAJU_VISIT: 'kosarajuVisit',
+  KOSARAJU_FINISH_ORDER: 'kosarajuFinishOrder',
+  KOSARAJU_TRANSPOSE: 'kosarajuTranspose',
+  KOSARAJU_COLLECT_SCC: 'kosarajuCollectScc',
+  KOSARAJU_FINISH: 'kosarajuFinish',
+  FLOYD_WARSHALL_START: 'floydWarshallStart',
+  FLOYD_WARSHALL_INTERMEDIATE: 'floydWarshallIntermediate',
+  FLOYD_WARSHALL_UPDATE: 'floydWarshallUpdate',
+  FLOYD_WARSHALL_NEGATIVE_CYCLE: 'floydWarshallNegativeCycle',
+  FLOYD_WARSHALL_FINISH: 'floydWarshallFinish',
 
   // Pathfinding
   EXPLORING: 'exploring',

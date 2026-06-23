@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -14,8 +14,5 @@ export function getAlgorithmTypesGridColsClass(modeCount) {
   if (modeCount === 2) {
     return 'md:grid-cols-2';
   }
-  if (modeCount === 3) {
-    return 'md:grid-cols-2 lg:grid-cols-3';
-  }
-  return 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+  return 'md:grid-cols-2 lg:grid-cols-3';
 }

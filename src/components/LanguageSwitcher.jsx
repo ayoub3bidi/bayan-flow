@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check } from 'lucide-react';
+import { CaretDown, Check } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -19,9 +19,9 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
   const dropdownRef = useRef(null);
 
   const allLanguages = [
-    { code: 'en', name: t('languages.en'), flag: '🇬🇧' },
-    { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' },
-    { code: 'ar', name: t('languages.ar'), flag: '🇸🇦' },
+    { code: 'en', name: t('languages.en') },
+    { code: 'fr', name: t('languages.fr') },
+    { code: 'ar', name: t('languages.ar') },
   ];
 
   // Filter out excluded languages
@@ -58,23 +58,22 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
         aria-label={t('settings.language')}
         data-language-switcher
       >
-        {/* Desktop: Show flag + chevron */}
-        <span className="text-sm font-medium text-text-primary hidden sm:inline">
-          {currentLanguage.flag}
+        <span className="text-xs sm:text-sm font-semibold uppercase text-text-primary">
+          {currentLanguage.code}
         </span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
           className="hidden sm:block shrink-0"
         >
-          <ChevronDown
+          <CaretDown
             size={12}
+            weight="bold"
             className={`${
               isOpen ? 'text-accent-primary' : 'text-text-secondary'
             }`}
           />
         </motion.div>
-        <span className="text-sm sm:hidden">{currentLanguage.flag}</span>
       </motion.button>
 
       <AnimatePresence>
@@ -96,14 +95,9 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
                   transition={{ delay: index * 0.03 }}
                   className="w-full flex items-center justify-between px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-md hover:bg-interactive-hover transition-colors duration-150 text-left"
                 >
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <span className="text-base sm:text-lg">
-                      {language.flag}
-                    </span>
-                    <span className="text-text-primary font-medium">
-                      {language.name}
-                    </span>
-                  </div>
+                  <span className="text-text-primary font-medium">
+                    {language.name}
+                  </span>
                   {i18n.language === language.code && (
                     <motion.div
                       initial={{ scale: 0 }}
@@ -114,7 +108,11 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
                         damping: 25,
                       }}
                     >
-                      <Check size={14} className="text-accent-primary" />
+                      <Check
+                        size={14}
+                        weight="bold"
+                        className="text-accent-primary"
+                      />
                     </motion.div>
                   )}
                 </motion.button>

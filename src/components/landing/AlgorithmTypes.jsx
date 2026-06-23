@@ -1,57 +1,56 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpDown, Route, Search } from 'lucide-react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
-import {
-  SORTING_ALGORITHMS,
-  PATHFINDING_ALGORITHMS,
-  SEARCHING_ALGORITHMS,
-} from '../../constants';
+import { ALGORITHM_TYPE_LIST } from '../../constants';
+import { CATEGORY_CONFIG } from '../../registry/categoryConfig';
 import { getAlgorithmTypesGridColsClass } from './algorithmTypesGridCols.js';
+
+const ALGORITHM_TYPE_GRADIENTS = {
+  sorting: 'from-blue-500 via-cyan-500 to-blue-600',
+  pathfinding: 'from-purple-500 via-pink-500 to-purple-600',
+  searching: 'from-emerald-500 via-teal-500 to-emerald-600',
+  treeTraversal: 'from-orange-500 via-amber-500 to-orange-600',
+  graphAlgorithm: 'from-sky-500 via-indigo-500 to-slate-700',
+};
 
 function AlgorithmTypes() {
   const { t } = useTranslation();
 
-  // Generate dynamic algorithm lists from constants using translations
-  const getAlgorithmList = (algorithms, algorithmType) => {
-    return Object.values(algorithms)
-      .map(algoKey => {
-        // Use translation key for algorithm names
-        return t(`algorithms.${algorithmType}.${algoKey}`);
-      })
+  const getAlgorithmList = cfg => {
+    return cfg.algorithmKeys
+      .map(algoKey => t(`${cfg.i18nPrefix}.${algoKey}`))
       .join(', ');
   };
 
-  const modes = [
-    {
-      icon: ArrowUpDown,
-      title: t('landing.algorithmTypes.sorting.title'),
-      description: t('landing.algorithmTypes.sorting.description'),
-      algorithms: getAlgorithmList(SORTING_ALGORITHMS, 'sorting'),
-      gradient: 'from-blue-500 via-cyan-500 to-blue-600',
-    },
-    {
-      icon: Route,
-      title: t('landing.algorithmTypes.pathfinding.title'),
-      description: t('landing.algorithmTypes.pathfinding.description'),
-      algorithms: getAlgorithmList(PATHFINDING_ALGORITHMS, 'pathfinding'),
-      gradient: 'from-purple-500 via-pink-500 to-purple-600',
-    },
-    {
-      icon: Search,
-      title: t('landing.algorithmTypes.searching.title'),
-      description: t('landing.algorithmTypes.searching.description'),
-      algorithms: getAlgorithmList(SEARCHING_ALGORITHMS, 'searching'),
-      gradient: 'from-emerald-500 via-teal-500 to-emerald-600',
-    },
-  ];
+  const getCardSpanClass = (index, count) => {
+    return count === 4 && index === count - 1 ? 'lg:col-span-3' : '';
+  };
+
+  const modes = ALGORITHM_TYPE_LIST.map(type => {
+    const cfg = CATEGORY_CONFIG[type];
+    if (!cfg) return null;
+
+    const Icon = cfg.icon;
+    return {
+      type,
+      icon: Icon,
+      title: t(`landing.algorithmTypes.${type}.title`, {
+        defaultValue: t(`modes.${type}`),
+      }),
+      description: t(`landing.algorithmTypes.${type}.description`),
+      algorithms: getAlgorithmList(cfg),
+      gradient:
+        ALGORITHM_TYPE_GRADIENTS[type] ??
+        'from-slate-500 via-slate-600 to-slate-700',
+    };
+  }).filter(Boolean);
 
   return (
     <Section className="relative overflow-hidden">
@@ -90,7 +89,7 @@ function AlgorithmTypes() {
                 scale: 1.02,
                 transition: { type: 'spring', stiffness: 300 },
               }}
-              className="group relative h-full min-h-0 self-stretch"
+              className={`group relative h-full min-h-0 self-stretch ${getCardSpanClass(index, modes.length)}`}
               style={{ perspective: '1000px' }}
             >
               {/* Glass morphism card — parent must fill grid row so inner 1fr + footer align across columns */}

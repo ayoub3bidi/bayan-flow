@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -8,14 +8,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ComplexityPanel from './ComplexityPanel';
 import '../test/setup';
-
-// Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-  },
-}));
-
 // Mock constants
 vi.mock('../constants', () => ({
   ALGORITHM_COMPLEXITY: {
@@ -49,6 +41,37 @@ vi.mock('../constants', () => ({
         worst: 'O(log n)',
       },
       spaceComplexity: 'O(1)',
+    },
+  },
+  TREE_TRAVERSAL_COMPLEXITY: {
+    inorderTraversal: {
+      name: 'Inorder Traversal',
+      timeComplexity: {
+        best: 'O(n)',
+        average: 'O(n)',
+        worst: 'O(n)',
+      },
+      spaceComplexity: 'O(h)',
+    },
+    preorderTraversal: {
+      name: 'Preorder Traversal',
+      timeComplexity: {
+        best: 'O(n)',
+        average: 'O(n)',
+        worst: 'O(n)',
+      },
+      spaceComplexity: 'O(h)',
+    },
+  },
+  GRAPH_ALGORITHM_COMPLEXITY: {
+    topologicalSort: {
+      name: 'Topological Sort (DFS)',
+      timeComplexity: {
+        best: 'O(V + E)',
+        average: 'O(V + E)',
+        worst: 'O(V + E)',
+      },
+      spaceComplexity: 'O(V)',
     },
   },
   COMPLEXITY_FUNCTIONS: {

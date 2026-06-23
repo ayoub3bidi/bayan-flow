@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -8,11 +8,19 @@ export const ALGORITHM_TYPES = {
   SORTING: 'sorting',
   PATHFINDING: 'pathfinding',
   SEARCHING: 'searching',
+  TREE_TRAVERSAL: 'treeTraversal',
+  GRAPH_ALGORITHM: 'graphAlgorithm',
 };
 
 // Ordered list for UI tab rendering and registry iteration.
 // Add new category values to ALGORITHM_TYPES; this list auto-updates.
 export const ALGORITHM_TYPE_LIST = Object.values(ALGORITHM_TYPES);
+
+/** Initial array ordering for sorting visualizations (ControlPanel toggle). */
+export const SORT_ORDERS = {
+  ASCENDING: 'ascending',
+  DESCENDING: 'descending',
+};
 
 export const SORTING_ALGORITHMS = {
   BUBBLE_SORT: 'bubbleSort',
@@ -53,6 +61,25 @@ export const SEARCHING_ALGORITHMS = {
   FIBONACCI_SEARCH: 'fibonacciSearch',
   DEPTH_FIRST_SEARCH: 'depthFirstSearch',
   BREADTH_FIRST_SEARCH_GRAPH: 'breadthFirstSearchGraph',
+};
+
+export const TREE_TRAVERSAL_ALGORITHMS = {
+  INORDER_TRAVERSAL: 'inorderTraversal',
+  PREORDER_TRAVERSAL: 'preorderTraversal',
+  POSTORDER_TRAVERSAL: 'postorderTraversal',
+  LEVEL_ORDER_TRAVERSAL: 'levelOrderTraversal',
+  ZIGZAG_LEVEL_ORDER_TRAVERSAL: 'zigzagLevelOrderTraversal',
+  MORRIS_TRAVERSAL: 'morrisTraversal',
+};
+
+export const GRAPH_ALGORITHMS = {
+  TOPOLOGICAL_SORT: 'topologicalSort',
+  KAHN_ALGORITHM: 'kahnAlgorithm',
+  KRUSKAL_ALGORITHM: 'kruskalAlgorithm',
+  PRIM_ALGORITHM: 'primAlgorithm',
+  TARJAN_ALGORITHM: 'tarjanAlgorithm',
+  KOSARAJU_ALGORITHM: 'kosarajuAlgorithm',
+  FLOYD_WARSHALL_ALGORITHM: 'floydWarshallAlgorithm',
 };
 
 export const ANIMATION_SPEEDS = {
@@ -113,6 +140,7 @@ export const GRAPH_NODE_STATES = {
   CURRENT: 'current',
   VISITED: 'visited',
   PATH: 'path',
+  CYCLE: 'cycle',
 };
 
 export const GRAPH_NODE_STATE_COLORS = {
@@ -123,6 +151,45 @@ export const GRAPH_NODE_STATE_COLORS = {
   [GRAPH_NODE_STATES.CURRENT]: '#f97316',
   [GRAPH_NODE_STATES.VISITED]: '#60a5fa',
   [GRAPH_NODE_STATES.PATH]: '#10b981',
+  [GRAPH_NODE_STATES.CYCLE]: '#ef4444',
+};
+
+export const GRAPH_EDGE_STATES = {
+  DEFAULT: 'default',
+  ACTIVE: 'active',
+  VISITED: 'visited',
+  SELECTED: 'selected',
+  CYCLE: 'cycle',
+};
+
+export const GRAPH_EDGE_STATE_COLORS = {
+  [GRAPH_EDGE_STATES.DEFAULT]: '#9ca3af',
+  [GRAPH_EDGE_STATES.ACTIVE]: '#f97316',
+  [GRAPH_EDGE_STATES.VISITED]: '#60a5fa',
+  [GRAPH_EDGE_STATES.SELECTED]: '#10b981',
+  [GRAPH_EDGE_STATES.CYCLE]: '#ef4444',
+};
+
+/** Tree traversal visualization (inorder / future traversals). */
+export const TREE_NODE_STATES = {
+  DEFAULT: 'default',
+  VISITING: 'visiting',
+  VISITED: 'visited',
+};
+
+export const TREE_NODE_STATE_COLORS = {
+  [TREE_NODE_STATES.DEFAULT]: '#e5e7eb',
+  [TREE_NODE_STATES.VISITING]: '#f97316',
+  [TREE_NODE_STATES.VISITED]: '#10b981',
+};
+
+/** Default node count for tree traversal (SettingsPanel slider). */
+export const DEFAULT_TREE_NODE_COUNT = 15;
+
+export const TREE_NODE_COUNT = {
+  min: 3,
+  max: 31,
+  step: 1,
 };
 
 /** Default node count for searching graph algorithms (SettingsPanel slider). */
@@ -131,6 +198,14 @@ export const DEFAULT_SEARCH_GRAPH_NODE_COUNT = 12;
 export const SEARCH_GRAPH_NODE_COUNT = {
   min: 5,
   max: 24,
+  step: 1,
+};
+
+export const DEFAULT_GRAPH_NODE_COUNT = 10;
+
+export const GRAPH_NODE_COUNT = {
+  min: 3,
+  max: 18,
   step: 1,
 };
 
@@ -504,6 +579,232 @@ export const SEARCHING_COMPLEXITY = {
   },
 };
 
+export const TREE_TRAVERSAL_COMPLEXITY = {
+  inorderTraversal: {
+    name: 'Inorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Inorder traversal visits the left subtree, then the node, then the right subtree (LNR). On a binary search tree this visits keys in sorted order. This implementation uses an explicit stack—space is proportional to tree height.',
+    useCases: [
+      'BST in-sorted-order output',
+      'Expression trees (recreate infix notation)',
+      'Teaching left–root–right before preorder and postorder',
+    ],
+  },
+  preorderTraversal: {
+    name: 'Preorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Preorder traversal visits the node, then the left subtree, then the right subtree (NLR). Useful for copying a tree, prefix (Polish) expression evaluation, and serialization. This visualization uses an explicit stack—space is proportional to tree height.',
+    useCases: [
+      'Tree duplication and serialization',
+      'Prefix (Polish) notation from expression trees',
+      'Reconstruction with inorder when both traversals are known',
+      'Teaching parent-before-children depth-first order',
+    ],
+  },
+  postorderTraversal: {
+    name: 'Postorder Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(h)',
+    description:
+      'Postorder traversal visits the left subtree, then the right subtree, then the node (LRN). It is ideal for bottom-up operations such as tree deletion, dependency resolution, and postfix expression evaluation.',
+    useCases: [
+      'Deleting a tree safely (children before parent)',
+      'Evaluating postfix (Reverse Polish) expression trees',
+      'Computing tree aggregates bottom-up (height, size, checksums)',
+      'Dependency-style processing where prerequisites must finish first',
+    ],
+  },
+  levelOrderTraversal: {
+    name: 'Level-order Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(w)',
+    description:
+      'Level-order traversal visits the tree breadth-first: root first, then every node on depth 1, then depth 2, and so on. It uses a queue, so its auxiliary space depends on the maximum number of nodes stored from one level at a time.',
+    useCases: [
+      'Tree serialization and reconstruction formats',
+      'Printing or analyzing a tree level by level',
+      'Finding the nearest node that satisfies a property',
+      'Teaching queue-based breadth-first traversal vs. stack-based DFS',
+    ],
+  },
+  zigzagLevelOrderTraversal: {
+    name: 'Zigzag Level-order Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(w)',
+    description:
+      'Zigzag (spiral) level-order traversal visits the tree breadth-first like level-order, but alternates scanning direction each depth: typically left-to-right on even levels and right-to-left on odd levels. Auxiliary space grows with the maximum width of one level.',
+    useCases: [
+      'Interview-style breadth-first variants and serialization puzzles',
+      'Pretty-printing or exporting trees with alternating row direction',
+      'Contrasting plain level-order with a simple directional state machine',
+      'Teaching BFS level batching with reversed visit order on every other level',
+    ],
+  },
+  morrisTraversal: {
+    name: 'Morris Traversal',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n)',
+      worst: 'O(n)',
+    },
+    spaceComplexity: 'O(1)',
+    description:
+      "Morris traversal produces the same visit order as inorder (LNR) but uses only O(1) extra space. It temporarily redirects a predecessor's null right child into a back-link (a thread) to the current node, then restores the tree—no explicit stack or recursion.",
+    useCases: [
+      'Interview problems on space-bounded tree walks',
+      'Memory-constrained embedded or stream processing over trees',
+      'Teaching pointer threading and in-place tree tricks',
+      'Contrasting O(h) stack inorder with constant auxiliary space',
+    ],
+  },
+};
+
+export const GRAPH_ALGORITHM_COMPLEXITY = {
+  topologicalSort: {
+    name: 'Topological Sort (DFS)',
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      'DFS-based topological sort orders vertices in a directed acyclic graph so every dependency edge u -> v places u before v. It uses temporary marks to detect cycles and a completion stack to build the final order.',
+    useCases: [
+      'Task scheduling with prerequisites',
+      'Build systems and dependency resolution',
+      'Course prerequisite ordering',
+      'Instruction scheduling and dependency graphs',
+    ],
+  },
+  kahnAlgorithm: {
+    name: "Kahn's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kahn's algorithm builds a topological order by repeatedly removing vertices whose in-degree is zero. It is iterative, queue-based, and detects cycles when the queue empties before every vertex is output.",
+    useCases: [
+      'Dependency resolution with explicit cycle detection',
+      'Task scheduling and prerequisite planning',
+      'Build graph validation',
+      'Teaching in-degree based reasoning on DAGs',
+    ],
+  },
+  kruskalAlgorithm: {
+    name: "Kruskal's Algorithm",
+    timeComplexity: {
+      best: 'O(E log E)',
+      average: 'O(E log E)',
+      worst: 'O(E log E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kruskal's algorithm sorts weighted edges from lightest to heaviest, then adds each edge only if it connects two different components. A Union-Find structure keeps the selected edges cycle-free while still producing an optimal minimum spanning tree or forest.",
+    useCases: [
+      'Network design with minimum total cable cost',
+      'Clustering and image segmentation',
+      'Teaching greedy algorithms with Union-Find',
+      'Building minimum spanning forests on disconnected graphs',
+    ],
+  },
+  primAlgorithm: {
+    name: "Prim's Algorithm",
+    timeComplexity: {
+      best: 'O((V + E) log V)',
+      average: 'O((V + E) log V)',
+      worst: 'O((V + E) log V)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Prim's algorithm grows a minimum spanning tree from a chosen start vertex. At each step it adds the lightest edge that connects the current tree to an unvisited vertex.",
+    useCases: [
+      'Minimum-cost network expansion from a seed node',
+      'Dense-graph MST teaching and comparison with Kruskal',
+      'Incrementally growing a spanning backbone',
+      'Demonstrating greedy frontier expansion on weighted graphs',
+    ],
+  },
+  tarjanAlgorithm: {
+    name: "Tarjan's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Tarjan's algorithm finds strongly connected components in a directed graph with one depth-first search. It assigns each vertex a discovery index and a low-link value, then uses a stack to identify exactly when a full SCC has been completed.",
+    useCases: [
+      'Cycle analysis in directed dependency graphs',
+      'Graph condensation before higher-level analysis',
+      'Teaching low-link reasoning beyond bridges and articulation points',
+      'Community and circuit structure discovery in directed networks',
+    ],
+  },
+  kosarajuAlgorithm: {
+    name: "Kosaraju's Algorithm",
+    timeComplexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+    },
+    spaceComplexity: 'O(V)',
+    description:
+      "Kosaraju's algorithm finds strongly connected components with two DFS passes: first to compute finish order, then on the transposed graph to collect each component. It is especially useful pedagogically because the transpose and reverse-finish-order ideas are explicit.",
+    useCases: [
+      'Teaching SCC discovery with a simpler two-pass mental model',
+      'Condensing directed graphs after an explicit transpose build',
+      'Comparing single-pass and two-pass SCC strategies',
+      'Analyzing mutually reachable clusters in directed networks',
+    ],
+  },
+  floydWarshallAlgorithm: {
+    name: 'Floyd-Warshall Algorithm',
+    timeComplexity: {
+      best: 'O(V³)',
+      average: 'O(V³)',
+      worst: 'O(V³)',
+    },
+    spaceComplexity: 'O(V²)',
+    description:
+      'Floyd-Warshall computes all-pairs shortest paths by progressively allowing more intermediate vertices. It supports negative edge weights and detects negative cycles when any diagonal distance becomes negative.',
+    useCases: [
+      'All-pairs shortest paths on small directed graphs',
+      'Teaching dynamic programming on graphs',
+      'Transitive closure and reachability-style reasoning',
+      'Negative-cycle detection in weighted directed networks',
+    ],
+  },
+};
+
 export const COMPLEXITY_FUNCTIONS = {
   // eslint-disable-next-line no-unused-vars
   'O(1)': n => 1,
@@ -519,6 +820,7 @@ export const COMPLEXITY_FUNCTIONS = {
   'O(2^n)': n => Math.pow(2, n),
   'O(V + E)': n => n + n * 4, // Approximation: V vertices + E edges (grid has ~4 edges per vertex)
   'O((V + E) log V)': n => (n + n * 4) * Math.log2(n),
+  'O(E log E)': n => n * 4 * Math.log2(Math.max(2, n * 4)),
   'O(E)': n => n * 4, // Approximation for grid edges
   'O(VE)': n => n * n * 4, // Approximation: V vertices × E edges per vertex (~4)
   'O(b^d)': n => Math.pow(4, Math.log2(n)), // Approximation: branching factor 4, depth log(n)

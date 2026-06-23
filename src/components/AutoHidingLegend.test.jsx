@@ -1,23 +1,12 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { motion } from 'framer-motion';
 import AutoHidingLegend from './AutoHidingLegend';
-
-// Mock framer-motion to avoid animation issues in tests
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }) => <button {...props}>{children}</button>,
-  },
-  AnimatePresence: ({ children }) => <>{children}</>,
-}));
-
 // Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

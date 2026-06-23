@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Info, X } from 'lucide-react';
+import { Info, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 function AutoHidingLegend({ legendItems, isComplete }) {
@@ -46,7 +46,7 @@ function AutoHidingLegend({ legendItems, isComplete }) {
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors touch-manipulation"
                 aria-label={t('legend.close')}
               >
-                <X size={14} className="text-text-secondary" />
+                <X size={14} weight="bold" className="text-text-secondary" />
               </button>
             </div>
             <div className="space-y-1.5">
@@ -74,7 +74,7 @@ function AutoHidingLegend({ legendItems, isComplete }) {
             className="bg-surface-elevated/90 backdrop-blur-sm p-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-surface-elevated hover:scale-105 transition-all touch-manipulation"
             aria-label={t('legend.show')}
           >
-            <Info size={18} className="text-primary" />
+            <Info size={18} weight="bold" className="text-primary" />
           </motion.button>
         )}
       </AnimatePresence>

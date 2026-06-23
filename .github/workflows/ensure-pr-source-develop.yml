@@ -64,7 +64,7 @@ jobs:
           fi
 
           echo "allowed=$allowed"
-          echo "::set-output name=allowed::$allowed"
+          echo "allowed=$allowed" >> "$GITHUB_OUTPUT"
 
       - name: Fail if not allowed
         if: steps.check.outputs.allowed != 'true'

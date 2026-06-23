@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -14,12 +14,16 @@ describe('useCategoryVisualizations', () => {
     const sorting = { id: 'sort' };
     const pathfinding = { id: 'path' };
     const searching = { id: 'search' };
+    const treeTraversal = { id: 'tree' };
+    const graphAlgorithm = { id: 'graph' };
 
     const { result } = renderHook(() =>
       useCategoryVisualizations({
         sortingVisualization: sorting,
         pathfindingVisualization: pathfinding,
         searchingVisualization: searching,
+        treeTraversalVisualization: treeTraversal,
+        graphAlgorithmVisualization: graphAlgorithm,
       })
     );
 
@@ -29,5 +33,9 @@ describe('useCategoryVisualizations', () => {
     expect(result.current[ALGORITHM_TYPES.SORTING]).toBe(sorting);
     expect(result.current[ALGORITHM_TYPES.PATHFINDING]).toBe(pathfinding);
     expect(result.current[ALGORITHM_TYPES.SEARCHING]).toBe(searching);
+    expect(result.current[ALGORITHM_TYPES.TREE_TRAVERSAL]).toBe(treeTraversal);
+    expect(result.current[ALGORITHM_TYPES.GRAPH_ALGORITHM]).toBe(
+      graphAlgorithm
+    );
   });
 });

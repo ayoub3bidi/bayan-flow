@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -7,16 +7,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
 import AlgorithmDropdown from './AlgorithmDropdown';
-
-// Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }) => <button {...props}>{children}</button>,
-  },
-  AnimatePresence: ({ children }) => <>{children}</>,
-}));
-
 const mockAlgorithms = [
   { value: 'bubbleSort', label: 'Bubble Sort', complexity: 'O(n²)' },
   { value: 'quickSort', label: 'Quick Sort', complexity: 'O(n log n)' },
@@ -115,6 +105,22 @@ describe('AlgorithmDropdown', () => {
       fireEvent.click(quickSortButton);
 
       expect(onAlgorithmSelect).toHaveBeenCalledWith('quickSort');
+    });
+
+    it('should show a check icon for the selected algorithm when dropdown is open', () => {
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          selectedAlgorithm="bubbleSort"
+        />
+      );
+
+      const bubbleSortButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.textContent?.includes('Bubble Sort'));
+      expect(bubbleSortButton).toBeTruthy();
+      expect(bubbleSortButton.querySelector('svg')).toBeTruthy();
     });
   });
 });

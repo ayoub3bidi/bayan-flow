@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
 
 /**
- * Deployment context derived from Vite env (set at build time on Netlify).
- * @see netlify.toml [context.production.environment] VITE_GIT_BRANCH
+ * Deployment context derived from Vite env (set at build time in CI).
+ * @see wrangler.jsonc / GitHub Actions deploy workflows (VITE_GIT_BRANCH)
  */
 
 /**

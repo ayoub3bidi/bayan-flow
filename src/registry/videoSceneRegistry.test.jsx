@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -27,6 +27,22 @@ const minimalGridStep = {
   description: '',
 };
 
+const minimalTreeStep = {
+  nodes: [{ id: '0', x: 0.5, y: 0.5, label: '1' }],
+  edges: [],
+  nodeStates: {},
+  description: '',
+};
+
+const minimalGraphStep = {
+  nodes: [{ id: '0', x: 0.5, y: 0.5, label: 'A' }],
+  edges: [],
+  nodeStates: {},
+  edgeStates: {},
+  outputOrder: [],
+  description: '',
+};
+
 describe('VIDEO_SCENE_RENDERERS', () => {
   it('has a renderer for every ALGORITHM_TYPE', () => {
     Object.values(ALGORITHM_TYPES).forEach(type => {
@@ -48,10 +64,22 @@ describe('VIDEO_SCENE_RENDERERS', () => {
               framesPerStep: 1,
               gridSize: 1,
             }
-          : {
-              steps: [minimalArrayStep],
-              framesPerStep: 1,
-            };
+          : type === ALGORITHM_TYPES.TREE_TRAVERSAL
+            ? {
+                steps: [minimalTreeStep],
+                framesPerStep: 1,
+                exportTheme: 'dark',
+              }
+            : type === ALGORITHM_TYPES.GRAPH_ALGORITHM
+              ? {
+                  steps: [minimalGraphStep],
+                  framesPerStep: 1,
+                  exportTheme: 'dark',
+                }
+              : {
+                  steps: [minimalArrayStep],
+                  framesPerStep: 1,
+                };
       const node = renderer(props);
       expect(node).toBeDefined();
       expect(node.type).toBeDefined();

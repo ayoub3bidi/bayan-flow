@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -22,9 +22,9 @@ export const DEFAULT_FRAMES_PER_STEP = 6;
 export const VIDEO_EXPORT_FRAMES_PER_STEP = 45;
 
 /**
- * Duration of the complexity analysis segment at the end of the video (10 seconds).
+ * Duration of the complexity analysis segment at the end of the video (5 seconds).
  */
-export const COMPLEXITY_DURATION_FRAMES = 10 * VIDEO_FPS;
+export const COMPLEXITY_DURATION_FRAMES = 5 * VIDEO_FPS;
 
 /**
  * Map app animation speed (ms delay) to video frames per step.
@@ -59,9 +59,22 @@ export const EXPORT_SFX_DURATION_FRAMES_BY_KIND = {
   compare: 14,
   swap: 14,
   pivot: 20,
+  complete: 80,
+  passComplete: 24,
+  visit: 10,
+  frontier: 10,
+  targetFound: 40,
+  pathFound: 100,
+  noResult: 35,
+  edgeConsider: 10,
+  edgeSelect: 16,
+  cycle: 24,
+  matrixConsider: 10,
+  matrixUpdate: 16,
+  componentComplete: 40,
+  // Legacy names for old bundled inputs/tests.
   sorted: 80,
   nodeVisit: 10,
-  pathFound: 100,
 };
 
 export const DEFAULT_EXPORT_AUDIO_VOLUME = 0.85;

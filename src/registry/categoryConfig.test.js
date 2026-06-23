@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Ayoub Abidi
+ * Copyright (c) 2025 Bayan Flow
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
@@ -55,16 +55,20 @@ describe('CATEGORY_CONFIG', () => {
           expect(data).toBeDefined();
         });
 
-        it('has sizeBinding "array" or "grid"', () => {
-          expect(['array', 'grid']).toContain(
+        it('has a supported sizeBinding', () => {
+          expect(['array', 'grid', 'tree', 'graph']).toContain(
             CATEGORY_CONFIG[type].sizeBinding
           );
         });
 
         it('has complexityDataset registered in COMPLEXITY_DATASETS', () => {
-          expect(['sorting', 'pathfinding', 'searching']).toContain(
-            CATEGORY_CONFIG[type].complexityDataset
-          );
+          expect([
+            'sorting',
+            'pathfinding',
+            'searching',
+            'treeTraversal',
+            'graphAlgorithm',
+          ]).toContain(CATEGORY_CONFIG[type].complexityDataset);
         });
       });
     });
