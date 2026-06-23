@@ -1,12 +1,9 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   // Bayan Flow — static Vite SPA on Cloudflare Workers (not Pages).
-  // Migration phases:
-  //   1. Deploy to *.workers.dev only (no custom domains in routes below).
-  //   2. Smoke-test on workers.dev URLs.
-  //   3. Uncomment staging routes → repoint dev.bayanflow.com in Cloudflare dashboard.
-  //   4. Uncomment production routes → repoint bayanflow.com.
-  // Keep Netlify projects alive as rollback until both domains are stable.
+  // Phases 1–2 complete (workers.dev smoke-tested).
+  // Phase 3–4: custom domains below — deploy then repoint DNS in Cloudflare dashboard.
+  // Keep Netlify projects alive as rollback until both domains are stable ~2 weeks.
   "name": "bayan-flow",
   "compatibility_date": "2026-06-23",
   "workers_dev": true,
@@ -19,14 +16,17 @@
     "staging": {
       "name": "bayan-flow-staging",
       "workers_dev": true,
-      "preview_urls": true
-      // "routes": [{ "pattern": "dev.bayanflow.com", "custom_domain": true }]
+      "preview_urls": true,
+      "routes": [{ "pattern": "dev.bayanflow.com", "custom_domain": true }]
     },
     "production": {
       "name": "bayan-flow",
       "workers_dev": true,
-      "preview_urls": true
-      // "routes": [{ "pattern": "bayanflow.com", "custom_domain": true }]
+      "preview_urls": true,
+      "routes": [
+        { "pattern": "bayanflow.com", "custom_domain": true },
+        { "pattern": "www.bayanflow.com", "custom_domain": true }
+      ]
     }
   }
 }
