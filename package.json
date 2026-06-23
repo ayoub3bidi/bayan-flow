@@ -47,7 +47,10 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "generate:export-sfx": "node scripts/render-tone-export-sfx.mjs",
-    "fetch:youtube-thumbnails": "node scripts/fetch-youtube-thumbnails.mjs"
+    "fetch:youtube-thumbnails": "node scripts/fetch-youtube-thumbnails.mjs",
+    "deploy:cf:staging": "wrangler deploy --env staging",
+    "deploy:cf:production": "wrangler deploy --env production",
+    "preview:cf:upload": "wrangler versions upload --env staging"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -91,7 +94,8 @@
     "prettier": "^3.7.4",
     "tailwindcss": "^4.1.17",
     "vite": "npm:rolldown-vite@7.2.10",
-    "vitest": "^3.2.6"
+    "vitest": "^3.2.6",
+    "wrangler": "^4.104.0"
   },
   "pnpm": {
     "overrides": {

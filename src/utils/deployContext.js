@@ -5,8 +5,8 @@
  */
 
 /**
- * Deployment context derived from Vite env (set at build time on Netlify).
- * @see netlify.toml [context.production.environment] VITE_GIT_BRANCH
+ * Deployment context derived from Vite env (set at build time in CI).
+ * @see wrangler.jsonc / GitHub Actions deploy workflows (VITE_GIT_BRANCH)
  */
 
 /**

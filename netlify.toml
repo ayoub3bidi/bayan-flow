@@ -1,3 +1,6 @@
+# Kept for rollback during Netlify → Cloudflare migration.
+# CI no longer deploys here; remove this file after Netlify projects are deleted (~2 weeks post cutover).
+
 [build]
   command = "pnpm build"
   publish = "dist"
@@ -15,7 +18,7 @@
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cloud.umami.is 'unsafe-inline'; connect-src 'self' https://cloud.umami.is https://api.github.com https://cdn.jsdelivr.net; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; frame-src https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cloud.umami.is 'unsafe-inline'; connect-src 'self' https://cloud.umami.is https://api.github.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://api.producthunt.com; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:; frame-src https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'"
 
 # SPA routing: rewrite all non-file requests to index.html
 [[redirects]]

@@ -31,6 +31,10 @@ describe('siteSeo', () => {
       true
     );
     expect(isNoIndexHostname('bayanflow.netlify.app')).toBe(true);
+    expect(isNoIndexHostname('pr-42-bayan-flow-staging.workers.dev')).toBe(
+      true
+    );
+    expect(isNoIndexHostname('bayan-flow.workers.dev')).toBe(true);
     expect(isNoIndexHostname('localhost')).toBe(true);
     expect(isNoIndexHostname('bayanflow.com')).toBe(false);
   });

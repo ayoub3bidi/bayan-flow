@@ -28,6 +28,7 @@
           hostname === 'localhost' ||
           hostname === '127.0.0.1' ||
           hostname.indexOf('deploy-preview') !== -1 ||
+          hostname.slice(-12) === '.workers.dev' ||
           (hostname.slice(-12) === '.netlify.app' &&
             hostname !== 'bayanflow.com' &&
             hostname !== 'www.bayanflow.com');
@@ -49,6 +50,7 @@
         if (
           hostname === 'dev.bayanflow.com' ||
           hostname === 'dev-bayanflow.netlify.app' ||
+          hostname.slice(-12) === '.workers.dev' ||
           hostname.includes('deploy-preview')
         ) {
           // Develop

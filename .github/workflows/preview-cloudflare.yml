@@ -1,0 +1,131 @@
+name: Preview (Cloudflare Workers)
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: cloudflare-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Upload PR preview
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24.11.1
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm lint
+
+      - name: Check code formatting
+        run: pnpm format:check
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Build project
+        run: pnpm build
+        env:
+          VITE_GIT_BRANCH: ${{ github.head_ref }}
+          VITE_DEV_SITE_URL: https://dev.bayanflow.com
+
+      - name: Upload preview version
+        id: deploy
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          packageManager: pnpm
+          command: >-
+            versions upload --env staging
+            --preview-alias pr-${{ github.event.pull_request.number }}
+            --tag pr-${{ github.event.pull_request.number }}
+            --message "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}"
+
+      - name: Comment PR with preview URL
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        env:
+          DEPLOY_OUTPUT: ${{ steps.deploy.outputs['command-output'] }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            const output = process.env.DEPLOY_OUTPUT || '';
+            const urlRegex = /Version Preview Alias URL:\s+(https:\/\/[^\s]+)/;
+            const match = output.match(urlRegex);
+            const prNumber = context.payload.pull_request.number;
+            const fallbackUrl = `https://pr-${prNumber}-bayan-flow-staging.workers.dev`;
+            const previewUrl = match ? match[1] : fallbackUrl;
+            const runUrl = process.env.RUN_URL;
+            const headSha = process.env.HEAD_SHA;
+            const qrUrl = `https://quickchart.io/qr?size=200&text=${encodeURIComponent(previewUrl)}`;
+            const marker = '<!-- cloudflare-preview:bayan-flow-staging -->';
+            const body = [
+              '### <span aria-hidden="true">✅</span> Cloudflare Workers preview for *bayan-flow-staging* ready!',
+              '',
+              '| Name | Link |',
+              '|:-:|------------------------|',
+              `| <span aria-hidden="true">🔨</span> Latest commit | ${headSha} |`,
+              `| <span aria-hidden="true">🔍</span> Latest deploy log | ${runUrl} |`,
+              `| <span aria-hidden="true">😎</span> Deploy Preview | [${previewUrl}](${previewUrl}) |`,
+              `| <span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](${qrUrl})<br /><br />_Use your smartphone camera to open QR code link._</details> |`,
+              '',
+              '---',
+              marker,
+              `_Preview alias \`pr-${prNumber}\` on the staging worker. Updates automatically with new commits._`,
+            ].join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (comment) =>
+                comment.body?.includes(marker) ||
+                comment.body?.includes('<!-- cloudflare-preview -->')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
