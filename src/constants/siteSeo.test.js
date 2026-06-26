@@ -27,10 +27,6 @@ describe('siteSeo', () => {
 
   it('treats dev and preview hostnames as noindex', () => {
     expect(isNoIndexHostname('dev.bayanflow.com')).toBe(true);
-    expect(isNoIndexHostname('deploy-preview-123--bayanflow.netlify.app')).toBe(
-      true
-    );
-    expect(isNoIndexHostname('bayanflow.netlify.app')).toBe(true);
     expect(isNoIndexHostname('pr-42-bayan-flow-staging.workers.dev')).toBe(
       true
     );

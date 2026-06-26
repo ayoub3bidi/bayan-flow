@@ -56,12 +56,16 @@ __test_results_json = json.dumps(__test_results)
 }
 
 self.onmessage = async e => {
-  const { type, code, version = '0.27.5' } = e.data || {};
+  const { type, code, version = '0.27.5', cdnBase } = e.data || {};
 
   if (type === 'init') {
     try {
       self.postMessage({ type: 'loading' });
-      const pyodideUrl = `https://cdn.jsdelivr.net/pyodide/v${version}/full/pyodide.js`;
+      const base =
+        typeof cdnBase === 'string' && cdnBase.trim()
+          ? cdnBase.trim().replace(/\/$/, '')
+          : `https://cdn.jsdelivr.net/pyodide/v${version}/full`;
+      const pyodideUrl = `${base}/pyodide.js`;
       importScripts(pyodideUrl);
       pyodide = await loadPyodide({
         stdout: text => self.postMessage({ type: 'stdout', text: text + '\n' }),

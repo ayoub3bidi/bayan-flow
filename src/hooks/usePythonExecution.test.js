@@ -15,8 +15,8 @@ describe('usePythonExecution', () => {
     mockWorker = {
       postMessage: vi.fn(),
       terminate: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
+      onmessage: null,
+      onerror: null,
     };
 
     vi.stubGlobal(
@@ -143,5 +143,98 @@ describe('usePythonExecution', () => {
     expect(result.current.testResults).toEqual([]);
     expect(result.current.testStatus).toBe('idle');
     expect(result.current.testError).toBeNull();
+  });
+
+  it('should recreate worker after runtime init failure', () => {
+    const { result } = renderHook(() => usePythonExecution());
+
+    act(() => {
+      result.current.runCode('print(1)');
+    });
+
+    expect(Worker).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      mockWorker.onmessage?.({
+        data: {
+          type: 'error',
+          error: 'Failed to load Python runtime: bad cdn',
+        },
+      });
+    });
+
+    expect(mockWorker.terminate).toHaveBeenCalled();
+    expect(result.current.status).toBe('error');
+
+    act(() => {
+      result.current.runCode('print(2)');
+    });
+
+    expect(Worker).toHaveBeenCalledTimes(2);
+  });
+
+  it('should recreate worker after worker crash before runtime is ready', () => {
+    const { result } = renderHook(() => usePythonExecution());
+
+    act(() => {
+      result.current.runCode('print(1)');
+    });
+
+    act(() => {
+      mockWorker.onerror?.(new ErrorEvent('error'));
+    });
+
+    expect(mockWorker.terminate).toHaveBeenCalled();
+    expect(result.current.status).toBe('error');
+
+    act(() => {
+      result.current.runCode('print(2)');
+    });
+
+    expect(Worker).toHaveBeenCalledTimes(2);
+  });
+
+  it('should fail active test run when worker errors during runTests', () => {
+    const { result } = renderHook(() => usePythonExecution());
+    const testCases = [
+      { id: 'tc1', name: 'Test', input: '[1]', expected: '[1]' },
+    ];
+
+    act(() => {
+      result.current.runTests('code', 'func', testCases);
+    });
+
+    expect(result.current.testStatus).toBe('running');
+
+    act(() => {
+      mockWorker.onmessage?.({
+        data: { type: 'error', error: 'Python execution failed' },
+      });
+    });
+
+    expect(result.current.testStatus).toBe('error');
+    expect(result.current.testError).toBe('Python execution failed');
+    expect(result.current.status).not.toBe('error');
+    expect(mockWorker.terminate).toHaveBeenCalled();
+  });
+
+  it('should not mark code-run status as error for test-only worker failures', () => {
+    const { result } = renderHook(() => usePythonExecution());
+    const testCases = [
+      { id: 'tc1', name: 'Test', input: '[1]', expected: '[1]' },
+    ];
+
+    act(() => {
+      result.current.runTests('code', 'func', testCases);
+    });
+
+    act(() => {
+      mockWorker.onerror?.(new ErrorEvent('error'));
+    });
+
+    expect(result.current.testStatus).toBe('error');
+    expect(result.current.testError).toBe('Worker crashed unexpectedly');
+    expect(result.current.status).not.toBe('error');
+    expect(mockWorker.terminate).toHaveBeenCalled();
   });
 });

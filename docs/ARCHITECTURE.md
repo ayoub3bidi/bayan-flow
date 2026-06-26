@@ -989,14 +989,15 @@ GitHub Actions (`.github/workflows/ci.yml`) runs on push/PR to `main` and `devel
 1. **Quality** — ESLint + Prettier check
 2. **Test** — Vitest with coverage (Codecov upload; PR lcov comment)
 3. **Build** — production build with `VITE_GIT_BRANCH` embedded
-4. **Deploy** — Netlify (`main` → production, `develop` → dev site, PRs → preview)
+4. **Deploy** — Cloudflare Workers (`main` → production, `develop` → staging); PR previews via `preview-cloudflare.yml`
 
 Build-time env:
 
 - `VITE_GIT_BRANCH` — branch name for deploy context (`src/utils/deployContext.js`)
 - `VITE_DEV_SITE_URL` — optional dev site link in CI builds
+- `VITE_PYODIDE_CDN_BASE` — optional Pyodide CDN base URL override; defaults to jsDelivr
 
-Netlify config: `netlify.toml` (SPA redirects, branch contexts).
+Cloudflare config: `wrangler.jsonc` (static Vite SPA on Workers assets).
 
 PRs to `main` must originate from `develop` (or allowed mergers) via `ensure-pr-source-develop.yml`.
 

@@ -676,7 +676,7 @@ Pull requests and pushes to `develop`/`main` run `.github/workflows/ci.yml`:
 | Quality | `pnpm lint`, `pnpm format:check` |
 | Test | `pnpm test:coverage` |
 | Build | `pnpm build` |
-| Deploy | Netlify (`main` → production, `develop` → dev) |
+| Deploy | Cloudflare Workers (`main` → production, `develop` → staging); PR previews via `preview-cloudflare.yml` |
 
 Before opening a PR, run locally:
 

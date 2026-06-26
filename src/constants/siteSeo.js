@@ -62,10 +62,5 @@ export function isNoIndexHostname(hostname) {
     return true;
   }
 
-  return (
-    hostname === 'dev.bayanflow.com' ||
-    hostname.endsWith('.netlify.app') ||
-    hostname.endsWith('.workers.dev') ||
-    hostname.includes('deploy-preview')
-  );
+  return hostname === 'dev.bayanflow.com' || hostname.endsWith('.workers.dev');
 }

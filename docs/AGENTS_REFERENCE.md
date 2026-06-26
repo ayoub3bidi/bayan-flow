@@ -203,14 +203,14 @@
 ### Public static assets
 
 - `public/manifest.json`, `public/sitemap.xml`, `public/robots.txt`, `public/logo.svg`
-- `public/_redirects` — Netlify SPA fallback (alongside `netlify.toml` redirects)
+- `public/_headers` — security headers, cache rules, and `workers.dev` noindex for Cloudflare Workers static assets
 
 ### Build, CI, and repo config
 
 - `vite.config.js`, `vitest.config.js` (`@/` alias, jsdom, sequential forks for memory)
-- `eslint.config.js`, `netlify.toml`, `codecov.yml`
+- `eslint.config.js`, `wrangler.jsonc`, `codecov.yml`
 - `scripts/render-tone-export-sfx.mjs` — Playwright + Tone.Offline WAV generation
-- `.github/workflows/ci.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `labeler.yml`
+- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `.github/labeler.yml`
 
 ## Runtime Pattern
 
@@ -353,14 +353,16 @@
   1. **Quality** — `pnpm lint`, `pnpm format:check`
   2. **Test** — `pnpm test:coverage` (Codecov upload via `codecov.yml`, PR lcov comment)
   3. **Build** — `pnpm build` with `VITE_GIT_BRANCH`, `VITE_DEV_SITE_URL`
-  4. **Deploy** — Netlify (`main` → production site, `develop` → dev site, PRs → preview)
+  4. **Deploy** — Cloudflare Workers (`main` → production, `develop` → staging); PR previews via `preview-cloudflare.yml` (separate workflow)
   5. **All-checks-pass** — aggregate gate for branch protection
 - Other workflows:
+  - `deploy-cloudflare.yml` — production/staging deploy after CI succeeds on `main`/`develop`
+  - `preview-cloudflare.yml` — PR preview URLs on `bayan-flow-staging`
   - `ensure-pr-source-develop.yml` — blocks PRs to `main` unless head is `develop` or author is in `ALLOWED_MERGERS` secret
   - `release.yml` — GitHub release on `v*` tags
   - `stale.yml`, `labeler.yml` — repo hygiene
-- Netlify SPA redirects in `netlify.toml`; branch context sets `VITE_GIT_BRANCH`.
-- Note: `netlify.toml` lists `NODE_VERSION = "20"` but GitHub Actions deploy/build uses Node 24.11.1 per `package.json` engines — treat CI as authoritative.
+- Cloudflare SPA routing in `wrangler.jsonc` (`not_found_handling: single-page-application`); branch context sets `VITE_GIT_BRANCH` at build time.
+- Optional `VITE_PYODIDE_CDN_BASE` overrides the default jsDelivr Pyodide CDN (`src/constants/pyodideCdn.js`).
 - `src/utils/deployContext.js` — `isProductionMainBranch()` gates production-only UI (e.g. certain landing content).
 - GitHub repo constants: `src/constants/githubRepo.js`.
 
