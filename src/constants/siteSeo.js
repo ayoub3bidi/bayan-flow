@@ -62,7 +62,5 @@ export function isNoIndexHostname(hostname) {
     return true;
   }
 
-  return (
-    hostname === 'dev.bayanflow.com' || hostname.endsWith('.workers.dev')
-  );
+  return hostname === 'dev.bayanflow.com' || hostname.endsWith('.workers.dev');
 }

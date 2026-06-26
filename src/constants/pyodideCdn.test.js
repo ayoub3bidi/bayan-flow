@@ -39,6 +39,8 @@ describe('pyodideCdn', () => {
   it('pyodideScriptUrl appends pyodide.js to the CDN base', async () => {
     vi.stubEnv('VITE_PYODIDE_CDN_BASE', 'https://cdn.example.com/pyodide/full');
     const { pyodideScriptUrl } = await import('./pyodideCdn.js');
-    expect(pyodideScriptUrl()).toBe('https://cdn.example.com/pyodide/full/pyodide.js');
+    expect(pyodideScriptUrl()).toBe(
+      'https://cdn.example.com/pyodide/full/pyodide.js'
+    );
   });
 });
