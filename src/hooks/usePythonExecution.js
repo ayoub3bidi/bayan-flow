@@ -13,6 +13,11 @@ import { getPyodideCdnBase, PYODIDE_VERSION } from '../constants/pyodideCdn';
 const DEFAULT_TIMEOUT = 10_000;
 const OUTPUT_CAP = 10_000;
 
+/**
+ * Client-side Python execution via Pyodide in a Web Worker.
+ * @param {{ timeout?: number }} [options]
+ * @returns Python execution and test-run controls for the code panel.
+ */
 export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
   const [status, setStatus] = useState('idle');
   const [output, setOutput] = useState('');
@@ -69,14 +74,19 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
           setStatus('success');
           break;
         case 'error': {
+          const hadActiveCode = timeoutRef.current != null;
           const hadActiveTests = testTimeoutRef.current != null;
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
           clearTimeout(testTimeoutRef.current);
           testTimeoutRef.current = null;
           const message = errText ?? 'Unknown error';
-          setError(message);
-          setStatus('error');
+          if (hadActiveCode) {
+            setError(message);
+            setStatus('error');
+          } else if (!runtimeReadyRef.current) {
+            setStatus('idle');
+          }
           if (hadActiveTests) {
             setTestStatus('error');
             setTestError(message);
@@ -101,14 +111,19 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     };
 
     worker.onerror = () => {
+      const hadActiveCode = timeoutRef.current != null;
       const hadActiveTests = testTimeoutRef.current != null;
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
       clearTimeout(testTimeoutRef.current);
       testTimeoutRef.current = null;
       const message = 'Worker crashed unexpectedly';
-      setStatus('error');
-      setError(message);
+      if (hadActiveCode) {
+        setStatus('error');
+        setError(message);
+      } else {
+        setStatus('idle');
+      }
       if (hadActiveTests) {
         setTestStatus('error');
         setTestError(message);

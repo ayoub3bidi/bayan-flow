@@ -214,9 +214,11 @@ describe('usePythonExecution', () => {
 
     expect(result.current.testStatus).toBe('error');
     expect(result.current.testError).toBe('Python execution failed');
+    expect(result.current.status).not.toBe('error');
+    expect(mockWorker.terminate).toHaveBeenCalled();
   });
 
-  it('should fail active test run when worker crashes during runTests', () => {
+  it('should not mark code-run status as error for test-only worker failures', () => {
     const { result } = renderHook(() => usePythonExecution());
     const testCases = [
       { id: 'tc1', name: 'Test', input: '[1]', expected: '[1]' },
@@ -232,6 +234,7 @@ describe('usePythonExecution', () => {
 
     expect(result.current.testStatus).toBe('error');
     expect(result.current.testError).toBe('Worker crashed unexpectedly');
+    expect(result.current.status).not.toBe('error');
     expect(mockWorker.terminate).toHaveBeenCalled();
   });
 });

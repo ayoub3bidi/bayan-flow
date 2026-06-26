@@ -8,22 +8,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const JSDELIVR_ORIGIN = 'https://cdn.jsdelivr.net';
 
 /**
- * Resolve a custom Pyodide CDN origin for CSP patching, or null when default jsDelivr applies.
+ * Collect Pyodide CDN origins that must appear in the generated CSP.
  * @param {string | undefined} configuredBase
- * @returns {string | null}
+ * @returns {string[]}
  */
-function resolvePyodideCspOrigin(configuredBase) {
+function collectPyodideCspOrigins(configuredBase) {
+  const origins = new Set([JSDELIVR_ORIGIN]);
   const configured = (configuredBase ?? '').trim().replace(/\/$/, '');
-  if (!configured) {
-    return null;
+
+  if (configured) {
+    try {
+      origins.add(new URL(configured).origin);
+    } catch {
+      // Ignore invalid override; default jsDelivr remains in the policy.
+    }
   }
 
-  try {
-    const origin = new URL(configured).origin;
-    return origin === JSDELIVR_ORIGIN ? null : origin;
-  } catch {
-    return null;
-  }
+  return [...origins];
 }
 
 /**
@@ -84,19 +85,20 @@ export default defineConfig(({ mode }) => {
         name: 'headers-pyodide-csp',
         apply: 'build',
         closeBundle() {
-          const origin = resolvePyodideCspOrigin(pyodideCdnBase);
-          if (!origin) {
-            return;
-          }
-
           const headersPath = path.join(__dirname, 'dist', '_headers');
           if (!fs.existsSync(headersPath)) {
             return;
           }
 
           let content = fs.readFileSync(headersPath, 'utf8');
-          content = appendOriginToCspDirective(content, 'connect-src', origin);
-          content = appendOriginToCspDirective(content, 'script-src', origin);
+          for (const origin of collectPyodideCspOrigins(pyodideCdnBase)) {
+            content = appendOriginToCspDirective(
+              content,
+              'connect-src',
+              origin
+            );
+            content = appendOriginToCspDirective(content, 'script-src', origin);
+          }
           fs.writeFileSync(headersPath, content);
         },
       },
