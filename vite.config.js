@@ -20,7 +20,9 @@ function collectPyodideCspOrigins(configuredBase) {
     try {
       origins.add(new URL(configured).origin);
     } catch {
-      // Ignore invalid override; default jsDelivr remains in the policy.
+      throw new Error(
+        `VITE_PYODIDE_CDN_BASE must be an absolute URL; received "${configuredBase}".`
+      );
     }
   }
 
@@ -64,6 +66,8 @@ export default defineConfig(({ mode }) => {
   const gitBranch = readBuildEnv(env, 'VITE_GIT_BRANCH') ?? '';
   const isProductionMainBuild = gitBranch === 'main';
   const pyodideCdnBase = readBuildEnv(env, 'VITE_PYODIDE_CDN_BASE');
+  // Fail fast so CSP and runtime Pyodide CDN stay aligned.
+  collectPyodideCspOrigins(pyodideCdnBase);
 
   return {
     plugins: [

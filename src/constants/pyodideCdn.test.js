@@ -36,6 +36,14 @@ describe('pyodideCdn', () => {
     );
   });
 
+  it('getPyodideCdnBase falls back to jsDelivr when override URL is invalid', async () => {
+    vi.stubEnv('VITE_PYODIDE_CDN_BASE', 'not-a-valid-url');
+    const { getPyodideCdnBase } = await import('./pyodideCdn.js');
+    expect(getPyodideCdnBase()).toBe(
+      'https://cdn.jsdelivr.net/pyodide/v0.27.5/full'
+    );
+  });
+
   it('pyodideScriptUrl appends pyodide.js to the CDN base', async () => {
     vi.stubEnv('VITE_PYODIDE_CDN_BASE', 'https://cdn.example.com/pyodide/full');
     const { pyodideScriptUrl } = await import('./pyodideCdn.js');

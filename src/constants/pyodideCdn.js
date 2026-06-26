@@ -19,7 +19,16 @@ export function getPyodideCdnBase() {
   const configured = (import.meta.env.VITE_PYODIDE_CDN_BASE ?? '')
     .trim()
     .replace(/\/$/, '');
-  return configured || DEFAULT_PYODIDE_CDN_BASE;
+  if (!configured) {
+    return DEFAULT_PYODIDE_CDN_BASE;
+  }
+
+  try {
+    new URL(configured);
+    return configured;
+  } catch {
+    return DEFAULT_PYODIDE_CDN_BASE;
+  }
 }
 
 /**
