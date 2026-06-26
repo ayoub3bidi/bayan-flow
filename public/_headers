@@ -18,5 +18,8 @@
 /logo.svg
   Cache-Control: public, max-age=86400
 
+https://dev.bayanflow.com/*
+  X-Robots-Tag: noindex
+
 https://:worker_host.workers.dev/*
   X-Robots-Tag: noindex

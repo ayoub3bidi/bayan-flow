@@ -210,7 +210,7 @@
 - `vite.config.js`, `vitest.config.js` (`@/` alias, jsdom, sequential forks for memory)
 - `eslint.config.js`, `wrangler.jsonc`, `codecov.yml`
 - `scripts/render-tone-export-sfx.mjs` — Playwright + Tone.Offline WAV generation
-- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `labeler.yml`
+- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `.github/labeler.yml`
 
 ## Runtime Pattern
 

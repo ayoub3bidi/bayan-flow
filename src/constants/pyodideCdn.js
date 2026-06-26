@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+/** Pinned Pyodide release loaded by the Python execution worker. */
 export const PYODIDE_VERSION = '0.27.5';
 
 const DEFAULT_PYODIDE_CDN_BASE = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full`;
@@ -11,6 +12,7 @@ const DEFAULT_PYODIDE_CDN_BASE = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VE
 /**
  * Base URL for Pyodide assets (no trailing slash).
  * Override with VITE_PYODIDE_CDN_BASE when using a custom Pyodide CDN.
+ * Custom origins are appended to CSP in `dist/_headers` at build time (see vite.config.js).
  * @returns {string}
  */
 export function getPyodideCdnBase() {

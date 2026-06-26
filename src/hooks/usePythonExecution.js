@@ -21,6 +21,7 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
   const [testStatus, setTestStatus] = useState('idle');
   const [testError, setTestError] = useState(null);
   const workerRef = useRef(null);
+  const runtimeReadyRef = useRef(false);
   const timeoutRef = useRef(null);
   const testTimeoutRef = useRef(null);
 
@@ -34,7 +35,14 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     });
   }, []);
 
+  const disposeWorker = useCallback(() => {
+    workerRef.current?.terminate();
+    workerRef.current = null;
+    runtimeReadyRef.current = false;
+  }, []);
+
   const createWorker = useCallback(() => {
+    runtimeReadyRef.current = false;
     const worker = new Worker(
       new URL('../workers/pyodide.worker.js', import.meta.url)
     );
@@ -46,6 +54,7 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
           setStatus('loading');
           break;
         case 'ready':
+          runtimeReadyRef.current = true;
           setStatus('ready');
           break;
         case 'stdout':
@@ -62,8 +71,13 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
         case 'error':
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
+          clearTimeout(testTimeoutRef.current);
+          testTimeoutRef.current = null;
           setError(errText ?? 'Unknown error');
           setStatus('error');
+          if (!runtimeReadyRef.current) {
+            disposeWorker();
+          }
           break;
         case 'test-results': {
           clearTimeout(testTimeoutRef.current);
@@ -82,12 +96,15 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     worker.onerror = () => {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
+      clearTimeout(testTimeoutRef.current);
+      testTimeoutRef.current = null;
       setStatus('error');
       setError('Worker crashed unexpectedly');
+      disposeWorker();
     };
 
     return worker;
-  }, [appendOutput]);
+  }, [appendOutput, disposeWorker]);
 
   const runCode = useCallback(
     code => {
@@ -107,14 +124,13 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
       workerRef.current.postMessage({ type: 'run', code });
 
       timeoutRef.current = setTimeout(() => {
-        workerRef.current?.terminate();
-        workerRef.current = null;
+        disposeWorker();
         setStatus('timeout');
         setError(`Execution timed out after ${timeout / 1000}s`);
         timeoutRef.current = null;
       }, timeout);
     },
-    [createWorker, timeout]
+    [createWorker, disposeWorker, timeout]
   );
 
   const cancelExecution = useCallback(() => {
@@ -128,6 +144,7 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     }
     workerRef.current?.terminate();
     workerRef.current = null;
+    runtimeReadyRef.current = false;
     setStatus('idle');
     setTestStatus('idle');
   }, []);
@@ -160,14 +177,13 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
       });
 
       testTimeoutRef.current = setTimeout(() => {
-        workerRef.current?.terminate();
-        workerRef.current = null;
+        disposeWorker();
         setTestStatus('error');
         setTestError(`Tests timed out after ${timeout / 1000}s`);
         testTimeoutRef.current = null;
       }, timeout);
     },
-    [createWorker, timeout]
+    [createWorker, disposeWorker, timeout]
   );
 
   const clearTestResults = useCallback(() => {

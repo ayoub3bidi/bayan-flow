@@ -45,6 +45,7 @@ describe('privacy.en', () => {
 
     expect(body).toMatch(/Umami/i);
     expect(body).toMatch(/Cloudflare/i);
+    expect(body).toMatch(/GitHub.*IP address|api\.github\.com.*IP address/i);
     expect(body).toMatch(/localStorage/i);
     expect(body).toMatch(/no user accounts|no registration/i);
     expect(body).toMatch(/contact@bayanflow\.com/);
