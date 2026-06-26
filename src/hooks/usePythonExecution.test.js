@@ -193,4 +193,45 @@ describe('usePythonExecution', () => {
 
     expect(Worker).toHaveBeenCalledTimes(2);
   });
+
+  it('should fail active test run when worker errors during runTests', () => {
+    const { result } = renderHook(() => usePythonExecution());
+    const testCases = [
+      { id: 'tc1', name: 'Test', input: '[1]', expected: '[1]' },
+    ];
+
+    act(() => {
+      result.current.runTests('code', 'func', testCases);
+    });
+
+    expect(result.current.testStatus).toBe('running');
+
+    act(() => {
+      mockWorker.onmessage?.({
+        data: { type: 'error', error: 'Python execution failed' },
+      });
+    });
+
+    expect(result.current.testStatus).toBe('error');
+    expect(result.current.testError).toBe('Python execution failed');
+  });
+
+  it('should fail active test run when worker crashes during runTests', () => {
+    const { result } = renderHook(() => usePythonExecution());
+    const testCases = [
+      { id: 'tc1', name: 'Test', input: '[1]', expected: '[1]' },
+    ];
+
+    act(() => {
+      result.current.runTests('code', 'func', testCases);
+    });
+
+    act(() => {
+      mockWorker.onerror?.(new ErrorEvent('error'));
+    });
+
+    expect(result.current.testStatus).toBe('error');
+    expect(result.current.testError).toBe('Worker crashed unexpectedly');
+    expect(mockWorker.terminate).toHaveBeenCalled();
+  });
 });

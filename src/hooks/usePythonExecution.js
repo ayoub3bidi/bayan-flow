@@ -68,17 +68,24 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
           timeoutRef.current = null;
           setStatus('success');
           break;
-        case 'error':
+        case 'error': {
+          const hadActiveTests = testTimeoutRef.current != null;
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
           clearTimeout(testTimeoutRef.current);
           testTimeoutRef.current = null;
-          setError(errText ?? 'Unknown error');
+          const message = errText ?? 'Unknown error';
+          setError(message);
           setStatus('error');
+          if (hadActiveTests) {
+            setTestStatus('error');
+            setTestError(message);
+          }
           if (!runtimeReadyRef.current) {
             disposeWorker();
           }
           break;
+        }
         case 'test-results': {
           clearTimeout(testTimeoutRef.current);
           testTimeoutRef.current = null;
@@ -94,12 +101,18 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
     };
 
     worker.onerror = () => {
+      const hadActiveTests = testTimeoutRef.current != null;
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
       clearTimeout(testTimeoutRef.current);
       testTimeoutRef.current = null;
+      const message = 'Worker crashed unexpectedly';
       setStatus('error');
-      setError('Worker crashed unexpectedly');
+      setError(message);
+      if (hadActiveTests) {
+        setTestStatus('error');
+        setTestError(message);
+      }
       disposeWorker();
     };
 

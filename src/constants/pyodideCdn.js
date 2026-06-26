@@ -23,6 +23,7 @@ export function getPyodideCdnBase() {
 }
 
 /**
+ * Full URL to the Pyodide bootstrap script for the configured CDN base.
  * @returns {string}
  */
 export function pyodideScriptUrl() {
