@@ -8,8 +8,8 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { getPyodideCdnBase, PYODIDE_VERSION } from '../constants/pyodideCdn';
 
-const PYODIDE_VERSION = '0.27.5';
 const DEFAULT_TIMEOUT = 10_000;
 const OUTPUT_CAP = 10_000;
 
@@ -99,6 +99,7 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
         workerRef.current.postMessage({
           type: 'init',
           version: PYODIDE_VERSION,
+          cdnBase: getPyodideCdnBase(),
         });
       }
 
@@ -147,6 +148,7 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
         workerRef.current.postMessage({
           type: 'init',
           version: PYODIDE_VERSION,
+          cdnBase: getPyodideCdnBase(),
         });
       }
 

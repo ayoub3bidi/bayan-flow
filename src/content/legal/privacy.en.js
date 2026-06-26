@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-export const PRIVACY_POLICY_LAST_UPDATED = '2026-06-21';
+export const PRIVACY_POLICY_LAST_UPDATED = '2026-06-25';
 
 export const PRIVACY_POLICY_SECTIONS = [
   {
@@ -23,10 +23,10 @@ export const PRIVACY_POLICY_SECTIONS = [
       'We designed Bayan Flow to minimize data collection. Depending on how you use the Service, the following may apply:',
     ],
     list: [
-      'Website analytics (Umami): We use Umami, a privacy-oriented analytics tool, on production and development deployments. It collects aggregate usage metrics such as pages visited, referrer, browser type, and device type. Umami does not use advertising cookies. Umami may assign a hashed visitor identifier for counting unique visits; we treat this as pseudonymous data and disclose it for transparency. We do not use a cookie consent banner for Umami because it is configured for privacy-friendly, non-advertising analytics.',
-      'Server logs (Netlify): Our hosting provider automatically records standard server access logs, which may include your IP address, browser user agent, requested URL, and timestamp. See Netlify’s privacy documentation at https://www.netlify.com/privacy/.',
+      'Website analytics (Umami): We use Umami, a privacy-oriented analytics tool, on production and development deployments. A small inline script in the page selects the correct Umami website ID for each hostname. Umami collects aggregate usage metrics such as pages visited, referrer, browser type, and device type. Umami does not use advertising cookies. Umami may assign a hashed visitor identifier for counting unique visits; we treat this as pseudonymous data and disclose it for transparency. We do not use a cookie consent banner for Umami because it is configured for privacy-friendly, non-advertising analytics.',
+      'Server logs (Cloudflare): Our hosting provider, Cloudflare Workers, automatically records standard edge access logs, which may include your IP address, browser user agent, requested URL, and timestamp. See Cloudflare’s privacy documentation at https://www.cloudflare.com/privacypolicy/.',
       'Local storage on your device: Preferences such as theme, language, sound settings, Python panel layout, custom Python test cases, swipe tutorial state, and full-screen mode are stored in your browser’s localStorage. This data stays on your device and is not transmitted to our servers.',
-      'GitHub API: The footer may request public release metadata and repository statistics from GitHub. These requests do not include your identity.',
+      'GitHub API: The header badge and footer may request public release metadata and repository statistics from GitHub (api.github.com). These requests do not include your identity.',
       'Python execution (Pyodide): If you open the Python code panel and run code, the Service loads Pyodide and related packages from jsDelivr (cdn.jsdelivr.net). This happens only after you explicitly use that feature.',
       'YouTube videos: Embedded videos use a click-to-load facade. No YouTube content loads until you choose to play a video. After you click play, Google/YouTube may process data according to their own policies.',
     ],
@@ -55,7 +55,7 @@ export const PRIVACY_POLICY_SECTIONS = [
     title: 'Retention',
     paragraphs: [
       'Analytics data retention follows Umami’s configuration for our project.',
-      'Server logs are retained according to Netlify’s policies (typically on the order of weeks).',
+      'Server logs are retained according to Cloudflare’s policies.',
       'localStorage data remains on your device until you clear it through your browser settings.',
     ],
   },
@@ -63,7 +63,7 @@ export const PRIVACY_POLICY_SECTIONS = [
     id: 'sharing',
     title: 'Sharing and Processors',
     paragraphs: [
-      'We do not sell personal data. We use service providers to host and measure the Service, including Netlify (hosting) and Umami (analytics). Third-party resources (GitHub, jsDelivr, YouTube/Google) are loaded only as described above.',
+      'We do not sell personal data. We use service providers to host and measure the Service, including Cloudflare (hosting) and Umami (analytics). Third-party resources (GitHub, jsDelivr, YouTube/Google) are loaded only as described above.',
     ],
   },
   {

@@ -19,7 +19,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://bayanflow.com/" />
 
-    <!-- Non-production hostnames: noindex at runtime (deploy previews, dev, Netlify URLs) -->
+    <!-- Non-production hostnames: noindex at runtime (dev, Workers previews) -->
     <script>
       (function () {
         var hostname = window.location.hostname;
@@ -27,11 +27,7 @@
           hostname === 'dev.bayanflow.com' ||
           hostname === 'localhost' ||
           hostname === '127.0.0.1' ||
-          hostname.indexOf('deploy-preview') !== -1 ||
-          hostname.slice(-12) === '.workers.dev' ||
-          (hostname.slice(-12) === '.netlify.app' &&
-            hostname !== 'bayanflow.com' &&
-            hostname !== 'www.bayanflow.com');
+          hostname.slice(-12) === '.workers.dev';
 
         if (shouldNoIndex) {
           var robots = document.querySelector('meta[name="robots"]');
@@ -49,17 +45,13 @@
         let websiteId;
         if (
           hostname === 'dev.bayanflow.com' ||
-          hostname === 'dev-bayanflow.netlify.app' ||
-          hostname.slice(-12) === '.workers.dev' ||
-          hostname.includes('deploy-preview')
+          hostname.slice(-12) === '.workers.dev'
         ) {
           // Develop
           websiteId = 'b21ffc5d-66c1-4bfc-9e54-e05dbbe26852';
         } else if (
           hostname === 'bayanflow.com' ||
-          hostname === 'www.bayanflow.com' ||
-          hostname === 'bayanflow.netlify.app' ||
-          hostname === 'www.bayanflow.netlify.app'
+          hostname === 'www.bayanflow.com'
         ) {
           // main
           websiteId = 'c096589e-f026-47e9-b458-aeb6850d5d5c';
