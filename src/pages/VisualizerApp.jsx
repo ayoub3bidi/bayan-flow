@@ -25,6 +25,7 @@ import { useSearchingVisualization } from '../hooks/useSearchingVisualization';
 import { useTreeTraversalVisualization } from '../hooks/useTreeTraversalVisualization';
 import { useGraphAlgorithmVisualization } from '../hooks/useGraphAlgorithmVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { useVideoExporter } from '../video/useVideoExporter';
 import { soundManager } from '../utils/soundManager';
 import {
@@ -139,6 +140,9 @@ function App() {
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
+
+  useBodyScrollLock(isPythonPanelOpen || isInsightPanelOpen);
+
   const [selectedGraphScenario, setSelectedGraphScenario] = useState(() =>
     getDefaultGraphScenario(
       CATEGORY_CONFIG[ALGORITHM_TYPES.GRAPH_ALGORITHM].defaultAlgorithm

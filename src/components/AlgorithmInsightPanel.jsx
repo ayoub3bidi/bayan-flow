@@ -99,7 +99,7 @@ function AlgorithmInsightPanel({
               fixed top-14 bottom-0 ${isRTL ? 'left-0' : 'right-0'}
               w-full max-w-2xl
               bg-surface border-${isRTL ? 'r' : 'l'} border-panel-border
-              shadow-2xl z-50 overflow-hidden
+              shadow-2xl z-50 overflow-hidden overscroll-contain
             `}
             custom={isRTL}
             variants={panelVariants}
@@ -129,7 +129,7 @@ function AlgorithmInsightPanel({
           {/* ── Mobile full-screen ──────────────────────────────────────── */}
           <motion.div
             key="insight-panel-mobile"
-            className="flex md:hidden flex-col fixed inset-0 bg-surface shadow-2xl z-50 overflow-hidden"
+            className="flex md:hidden flex-col fixed inset-0 bg-surface shadow-2xl z-50 overflow-hidden overscroll-contain"
             variants={mobileVariants}
             initial="hidden"
             animate="visible"

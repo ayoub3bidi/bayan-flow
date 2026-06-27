@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, ArrowCounterClockwise } from '@phosphor-icons/react';
+import { X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   getPythonCode,
@@ -391,10 +391,13 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
           <motion.div
             ref={panelRef}
             className={`
-              fixed z-[60] bg-surface shadow-xl
-              ${isMobile ? 'inset-0' : `${isRTL ? 'left-0' : 'right-0'} w-full max-w-2xl h-full`}
+              fixed z-[60] bg-surface shadow-xl overscroll-contain
+              ${
+                isMobile
+                  ? 'inset-0'
+                  : `${isRTL ? 'left-0' : 'right-0'} w-full max-w-2xl top-14 bottom-0`
+              }
             `}
-            style={!isMobile ? { top: '56px' } : {}}
             variants={isMobile ? mobileVariants : panelVariants}
             initial="hidden"
             animate="visible"
@@ -492,83 +495,25 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                 </div>
               ) : (
                 <>
-                  {/* Toolbar — LTR so Run stays visually right in RTL app */}
-                  <div
-                    className="flex items-center justify-end gap-2 p-2 shrink-0"
-                    dir="ltr"
-                  >
-                    {isModified && (
-                      <button
-                        type="button"
-                        onClick={() => setCode(pythonCode)}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated rounded-lg transition-colors"
-                        aria-label={t('python_code.reset', {
-                          defaultValue: 'Reset',
-                        })}
-                      >
-                        <ArrowCounterClockwise size={16} weight="bold" />
-                        {t('python_code.reset', { defaultValue: 'Reset' })}
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={handleRun}
-                      disabled={status === 'loading' || status === 'running'}
-                      className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-90 rounded-lg transition-colors min-w-[5.5rem] justify-center"
-                      aria-label={
-                        status === 'loading'
-                          ? t('python_code.loading_runtime', {
-                              defaultValue: 'Loading Python...',
-                            })
-                          : status === 'running'
-                            ? t('python_code.running', {
-                                defaultValue: 'Running...',
-                              })
-                            : output || error
-                              ? t('python_code.rerun', {
-                                  defaultValue: 'Rerun',
-                                })
-                              : t('python_code.run', { defaultValue: 'Run' })
-                      }
-                    >
-                      {status === 'loading' || status === 'running' ? (
-                        <span
-                          className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
-                          aria-hidden
-                        />
-                      ) : (
-                        <Play size={16} weight="bold" />
-                      )}
-                      {status === 'loading'
-                        ? t('python_code.loading_runtime', {
-                            defaultValue: 'Loading Python...',
-                          })
-                        : status === 'running'
-                          ? t('python_code.running', {
-                              defaultValue: 'Running...',
-                            })
-                          : output || error
-                            ? t('python_code.rerun', { defaultValue: 'Rerun' })
-                            : t('python_code.run', { defaultValue: 'Run' })}
-                    </button>
-                  </div>
-
                   {/* Code Editor + Output (resizable on desktop) */}
                   <div
-                    ref={resizeContainerRef}
-                    className="flex-1 min-h-0 flex flex-col overflow-hidden relative"
+                    className="flex-1 min-h-0 flex flex-col p-2"
                     dir="ltr"
                   >
                     <div
-                      className={`min-h-0 overflow-hidden ${isMobile ? 'touch-pan-y' : ''}`}
-                      style={{
-                        flex:
-                          isMobile || !isOutputExpanded
-                            ? '1 1 0'
-                            : `0 0 calc(${100 - outputHeightPercent}% - 2px)`,
-                        minHeight: isMobile ? 100 : 80,
-                      }}
+                      ref={resizeContainerRef}
+                      className="min-h-0 flex flex-col overflow-hidden flex-1"
                     >
+                      <div
+                        className={`min-h-0 overflow-hidden ${isMobile ? 'touch-pan-y' : ''}`}
+                        style={{
+                          flex:
+                            isMobile || !isOutputExpanded
+                              ? '1 1 0'
+                              : `0 0 calc(${100 - outputHeightPercent}% - 2px)`,
+                          minHeight: isMobile ? 100 : 80,
+                        }}
+                      >
                       <Editor
                         height="100%"
                         defaultLanguage="python"
@@ -648,37 +593,67 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                         <div className="w-12 h-0.5 rounded-full bg-gray-400 group-hover:bg-blue-500 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100" />
                       </div>
                     )}
-                    <div
-                      className="min-h-0 overflow-hidden flex flex-col"
-                      style={{
-                        flex:
-                          isMobile || !isOutputExpanded
+                    {isOutputExpanded && (
+                      <div
+                        className="min-h-0 overflow-hidden flex flex-col shrink-0"
+                        style={{
+                          flex: isMobile
                             ? '0 0 auto'
                             : `0 0 calc(${outputHeightPercent}% - 2px)`,
-                        minHeight:
-                          isOutputExpanded && !isMobile ? 80 : undefined,
-                      }}
-                    >
-                      <OutputConsole
-                        status={status}
-                        output={output}
-                        error={error}
-                        onClear={clearOutput}
-                        isExpanded={isOutputExpanded}
-                        onToggleExpand={() =>
-                          setIsOutputExpanded(prev => !prev)
-                        }
-                        testCases={testCases}
-                        testResults={testResults}
-                        testStatus={testStatus}
-                        testError={testError}
-                        onRunTests={handleRunTests}
-                        onAddTestCase={handleAddTestCase}
-                        onEditTestCase={handleEditTestCase}
-                        onDeleteTestCase={handleDeleteTestCase}
-                        onClearTestResults={clearTestResults}
-                      />
+                          minHeight: !isMobile ? 80 : undefined,
+                        }}
+                      >
+                        <OutputConsole
+                          status={status}
+                          output={output}
+                          error={error}
+                          onClear={clearOutput}
+                          isExpanded={isOutputExpanded}
+                          onToggleExpand={() =>
+                            setIsOutputExpanded(prev => !prev)
+                          }
+                          onRun={handleRun}
+                          onReset={() => setCode(pythonCode)}
+                          isModified={isModified}
+                          testCases={testCases}
+                          testResults={testResults}
+                          testStatus={testStatus}
+                          testError={testError}
+                          onRunTests={handleRunTests}
+                          onAddTestCase={handleAddTestCase}
+                          onEditTestCase={handleEditTestCase}
+                          onDeleteTestCase={handleDeleteTestCase}
+                          onClearTestResults={clearTestResults}
+                        />
+                      </div>
+                    )}
                     </div>
+                    {!isOutputExpanded && (
+                      <div className="shrink-0 z-10">
+                        <OutputConsole
+                          status={status}
+                          output={output}
+                          error={error}
+                          onClear={clearOutput}
+                          isExpanded={isOutputExpanded}
+                          onToggleExpand={() =>
+                            setIsOutputExpanded(prev => !prev)
+                          }
+                          onRun={handleRun}
+                          onReset={() => setCode(pythonCode)}
+                          isModified={isModified}
+                          testCases={testCases}
+                          testResults={testResults}
+                          testStatus={testStatus}
+                          testError={testError}
+                          onRunTests={handleRunTests}
+                          onAddTestCase={handleAddTestCase}
+                          onEditTestCase={handleEditTestCase}
+                          onDeleteTestCase={handleDeleteTestCase}
+                          onClearTestResults={clearTestResults}
+                        />
+                      </div>
+                    )}
                   </div>
                 </>
               )}
