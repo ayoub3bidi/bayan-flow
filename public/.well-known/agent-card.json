@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "v1",
+  "name": "Bayan Flow",
+  "description": "Interactive educational tool for learning algorithms through step-by-step visual animations with clarity (بيان). Features sorting, pathfinding, searching, tree traversal, and graph algorithms with Python code examples and real-time complexity analysis.",
+  "url": "https://bayanflow.com",
+  "capabilities": ["visualization", "education", "code-execution", "video-export"],
+  "category": "education",
+  "features": [
+    "45 interactive algorithm visualizations",
+    "Real-time complexity analysis",
+    "Step-by-step algorithm execution",
+    "Editable Python code examples (in-browser Pyodide)",
+    "HD video export with optional sound",
+    "Multi-language support (English, French, Arabic)"
+  ]
+}

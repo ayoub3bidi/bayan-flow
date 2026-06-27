@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "v1",
+  "name": "Bayan Flow",
+  "description": "Interactive algorithm visualizer — 45+ algorithms across sorting, pathfinding, searching, tree traversal, and graph categories with step-by-step animation, Python code editing, and complexity analysis.",
+  "homepageUrl": "https://bayanflow.com",
+  "capabilities": {
+    "tools": [
+      {
+        "name": "get_algorithm_categories",
+        "description": "List all algorithm categories and their descriptions available on Bayan Flow"
+      },
+      {
+        "name": "get_algorithm_info",
+        "description": "Get detailed information about a specific algorithm including complexity, use cases, and associated visualizations"
+      },
+      {
+        "name": "search_algorithms",
+        "description": "Search through the algorithm library by name or keyword"
+      }
+    ]
+  },
+  "provider": {
+    "name": "Bayan Flow",
+    "url": "https://bayanflow.com"
+  }
+}
