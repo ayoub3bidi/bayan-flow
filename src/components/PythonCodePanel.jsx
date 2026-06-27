@@ -206,7 +206,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
     testResults,
     testStatus,
     testError,
-  } = usePythonExecution({ timeout: 10_000 });
+  } = usePythonExecution();
 
   const predefined = getTestCases(algorithm);
   const [customTests, setCustomTests] = useState(() => {
@@ -516,9 +516,19 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                       disabled={status === 'loading' || status === 'running'}
                       className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-90 rounded-lg transition-colors min-w-[5.5rem] justify-center"
                       aria-label={
-                        output || error
-                          ? t('python_code.rerun', { defaultValue: 'Rerun' })
-                          : t('python_code.run', { defaultValue: 'Run' })
+                        status === 'loading'
+                          ? t('python_code.loading_runtime', {
+                              defaultValue: 'Loading Python...',
+                            })
+                          : status === 'running'
+                            ? t('python_code.running', {
+                                defaultValue: 'Running...',
+                              })
+                            : output || error
+                              ? t('python_code.rerun', {
+                                  defaultValue: 'Rerun',
+                                })
+                              : t('python_code.run', { defaultValue: 'Run' })
                       }
                     >
                       {status === 'loading' || status === 'running' ? (
@@ -529,13 +539,17 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                       ) : (
                         <Play size={16} weight="bold" />
                       )}
-                      {status === 'loading' || status === 'running'
-                        ? t('python_code.running', {
-                            defaultValue: 'Running...',
+                      {status === 'loading'
+                        ? t('python_code.loading_runtime', {
+                            defaultValue: 'Loading Python...',
                           })
-                        : output || error
-                          ? t('python_code.rerun', { defaultValue: 'Rerun' })
-                          : t('python_code.run', { defaultValue: 'Run' })}
+                        : status === 'running'
+                          ? t('python_code.running', {
+                              defaultValue: 'Running...',
+                            })
+                          : output || error
+                            ? t('python_code.rerun', { defaultValue: 'Rerun' })
+                            : t('python_code.run', { defaultValue: 'Run' })}
                     </button>
                   </div>
 

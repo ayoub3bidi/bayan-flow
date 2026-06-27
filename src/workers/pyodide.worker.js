@@ -67,10 +67,19 @@ self.onmessage = async e => {
           : `https://cdn.jsdelivr.net/pyodide/v${version}/full`;
       const pyodideUrl = `${base}/pyodide.js`;
       importScripts(pyodideUrl);
-      pyodide = await loadPyodide({
-        stdout: text => self.postMessage({ type: 'stdout', text: text + '\n' }),
-        stderr: text => self.postMessage({ type: 'stderr', text: text + '\n' }),
-      });
+      const progressInterval = setInterval(() => {
+        self.postMessage({ type: 'init-progress' });
+      }, 4000);
+      try {
+        pyodide = await loadPyodide({
+          stdout: text =>
+            self.postMessage({ type: 'stdout', text: text + '\n' }),
+          stderr: text =>
+            self.postMessage({ type: 'stderr', text: text + '\n' }),
+        });
+      } finally {
+        clearInterval(progressInterval);
+      }
       self.postMessage({ type: 'ready' });
       if (pendingRun) {
         const codeToRun = pendingRun;

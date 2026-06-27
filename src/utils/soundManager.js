@@ -4,12 +4,11 @@
  * See LICENSE for details.
  */
 
-import * as Tone from 'tone';
 import { ANIMATION_SPEEDS } from '../constants/index.js';
 import { getCompareFrequency, getPivotFrequency } from './soundFrequencies.js';
 import { TONE_INSTRUMENT_PRESETS } from './toneInstrumentPresets.js';
 import { SOUND_EVENT_KINDS } from './soundEvents.js';
-import { createMasterChain } from './masterChain.js';
+import { createMasterChain, getTone, _Tone } from './masterChain.js';
 import { getPentatonicNoteName } from './scaleQuantizer.js';
 import {
   getPaletteForCategory,
@@ -47,6 +46,7 @@ class SoundManager {
   }
 
   async _buildInstruments() {
+    const Tone = await getTone();
     const { input: busInput } = await createMasterChain();
 
     const softSynth = new Tone.Synth(TONE_INSTRUMENT_PRESETS.softSynth);
@@ -100,13 +100,20 @@ class SoundManager {
   }
 
   async enable() {
+    const Tone = await getTone();
     if (Tone.context.state !== 'running') {
       await Tone.start();
     }
-    this.isEnabled = true;
     this.microEventCounters = {};
     this.melodicStepCounter = 0;
-    await this.ensureInstrumentsAsync();
+    try {
+      await this.ensureInstrumentsAsync();
+    } catch (err) {
+      this.initPromise = null;
+      this.instruments = null;
+      throw err;
+    }
+    this.isEnabled = true;
   }
 
   disable() {
@@ -170,7 +177,7 @@ class SoundManager {
     { ascending = true, noteDuration = MILESTONE_NOTE_DURATION } = {}
   ) {
     const ordered = ascending ? notes : [...notes].reverse();
-    const now = Tone.now();
+    const now = _Tone.now();
     ordered.forEach((note, index) => {
       synth.triggerAttackRelease(
         note,

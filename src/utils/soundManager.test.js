@@ -17,10 +17,20 @@ const createChainableMock = () => ({
   volume: { value: 0 },
 });
 
+const sharedTone = { now: () => 0 };
+
 vi.mock('./masterChain.js', () => ({
   createMasterChain: vi.fn(async () => ({
     input: createChainableMock(),
   })),
+  _Tone: sharedTone,
+  getTone: vi.fn(async () => {
+    if (!sharedTone.Synth) {
+      const Tone = await import('tone');
+      Object.assign(sharedTone, Tone);
+    }
+    return sharedTone;
+  }),
 }));
 
 describe('soundManager', () => {
