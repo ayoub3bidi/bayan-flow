@@ -294,4 +294,8 @@ expect.extend(matchers);
 afterEach(() => {
   cleanup();
   vi.clearAllTimers();
+  soundManagerState.isEnabled = false;
+  if (typeof document !== 'undefined') {
+    document.body.style.cssText = '';
+  }
 });

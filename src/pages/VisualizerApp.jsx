@@ -134,8 +134,8 @@ function App() {
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(
-    readStoredSoundPreference
+  const [isSoundEnabled, setIsSoundEnabled] = useState(() =>
+    readStoredSoundPreference()
   );
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);

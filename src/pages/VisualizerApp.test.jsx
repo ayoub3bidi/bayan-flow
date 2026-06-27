@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
@@ -329,6 +329,10 @@ vi.mock('../hooks/useFullScreen', () => ({
   }),
 }));
 
+vi.mock('../hooks/useBodyScrollLock', () => ({
+  useBodyScrollLock: vi.fn(),
+}));
+
 vi.mock('../video/useVideoExporter', () => ({
   useVideoExporter: () => ({
     beginExportFlow: videoExporterMock.beginExportFlow,
@@ -346,13 +350,20 @@ vi.mock('../video/useVideoExporter', () => ({
 
 describe('VisualizerApp', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     window.localStorage.clear();
+    document.body.style.cssText = '';
     soundManager.disable();
     vi.clearAllMocks();
     fullScreenMock.isFullScreen = false;
     videoExporterMock.exportState = 'idle';
     videoExporterMock.exportProgress = 0;
     videoExporterMock.exportBlobUrl = null;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    document.body.style.cssText = '';
   });
 
   async function renderApp() {
@@ -555,12 +566,14 @@ describe('VisualizerApp', () => {
       });
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await renderApp();
+    try {
+      await renderApp();
 
-    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
-
-    getItemSpy.mockRestore();
-    consoleSpy.mockRestore();
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+    } finally {
+      getItemSpy.mockRestore();
+      consoleSpy.mockRestore();
+    }
   });
 
   it('keeps rendering when persisting the sound preference throws', async () => {
@@ -570,11 +583,13 @@ describe('VisualizerApp', () => {
         throw new Error('storage write failed');
       });
 
-    await renderApp();
+    try {
+      await renderApp();
 
-    expect(screen.getByTestId('control-panel')).toBeInTheDocument();
-
-    setItemSpy.mockRestore();
+      expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+    } finally {
+      setItemSpy.mockRestore();
+    }
   });
 
   it('toggles sound through the shared control-panel state and persists it', async () => {
