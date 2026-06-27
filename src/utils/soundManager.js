@@ -104,10 +104,16 @@ class SoundManager {
     if (Tone.context.state !== 'running') {
       await Tone.start();
     }
-    this.isEnabled = true;
     this.microEventCounters = {};
     this.melodicStepCounter = 0;
-    await this.ensureInstrumentsAsync();
+    try {
+      await this.ensureInstrumentsAsync();
+    } catch (err) {
+      this.initPromise = null;
+      this.instruments = null;
+      throw err;
+    }
+    this.isEnabled = true;
   }
 
   disable() {
