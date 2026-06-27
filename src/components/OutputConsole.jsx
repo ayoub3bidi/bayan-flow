@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Trash, CaretDown, CaretUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import TestCasesPanel from './TestCasesPanel';
@@ -129,10 +130,6 @@ function OutputConsole({
             <>
               {isLoading && (
                 <span className="flex items-center gap-1.5 text-xs text-amber-400 shrink-0">
-                  <span
-                    className="inline-block w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"
-                    aria-hidden
-                  />
                   {t('python_code.loading_runtime', {
                     defaultValue: 'Loading Python runtime...',
                   })}
@@ -214,6 +211,18 @@ function OutputConsole({
           )}
         </div>
       </div>
+
+      {/* Indeterminate progress bar shown during Pyodide initialization */}
+      {isLoading && (
+        <div className="h-1 w-full overflow-hidden bg-transparent shrink-0">
+          <motion.div
+            className="h-full bg-gradient-to-r from-amber-400 to-yellow-500"
+            animate={{ x: ['-100%', '400%'] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            style={{ width: '30%' }}
+          />
+        </div>
+      )}
 
       {/* Content */}
       {isExpanded && (

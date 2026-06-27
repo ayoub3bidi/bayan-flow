@@ -10,15 +10,11 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { getPyodideCdnBase, PYODIDE_VERSION } from '../constants/pyodideCdn';
 
-const DEFAULT_TIMEOUT = 10_000;
+const INIT_TIMEOUT = 60_000;
+const EXECUTION_TIMEOUT = 10_000;
 const OUTPUT_CAP = 10_000;
 
-/**
- * Client-side Python execution via Pyodide in a Web Worker.
- * @param {{ timeout?: number }} [options]
- * @returns Python execution and test-run controls for the code panel.
- */
-export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
+export function usePythonExecution() {
   const [status, setStatus] = useState('idle');
   const [output, setOutput] = useState('');
   const [error, setError] = useState(null);
@@ -57,6 +53,19 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
       switch (type) {
         case 'loading':
           setStatus('loading');
+          break;
+        case 'init-progress':
+          if (timeoutRef.current && !runtimeReadyRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = setTimeout(() => {
+              disposeWorker();
+              setStatus('timeout');
+              setError(
+                'Python runtime initialization timed out. Check your network connection.'
+              );
+              timeoutRef.current = null;
+            }, INIT_TIMEOUT);
+          }
           break;
         case 'ready':
           runtimeReadyRef.current = true;
@@ -139,6 +148,11 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
       setOutput('');
       setError(null);
 
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+
       if (!workerRef.current) {
         workerRef.current = createWorker();
         workerRef.current.postMessage({
@@ -151,14 +165,18 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
       setStatus('running');
       workerRef.current.postMessage({ type: 'run', code });
 
+      const effective = runtimeReadyRef.current
+        ? EXECUTION_TIMEOUT
+        : INIT_TIMEOUT;
+
       timeoutRef.current = setTimeout(() => {
         disposeWorker();
         setStatus('timeout');
-        setError(`Execution timed out after ${timeout / 1000}s`);
+        setError(`Execution timed out after ${effective / 1000}s`);
         timeoutRef.current = null;
-      }, timeout);
+      }, effective);
     },
-    [createWorker, disposeWorker, timeout]
+    [createWorker, disposeWorker]
   );
 
   const cancelExecution = useCallback(() => {
@@ -188,6 +206,11 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
       setTestError(null);
       setTestStatus('running');
 
+      if (testTimeoutRef.current) {
+        clearTimeout(testTimeoutRef.current);
+        testTimeoutRef.current = null;
+      }
+
       if (!workerRef.current) {
         workerRef.current = createWorker();
         workerRef.current.postMessage({
@@ -204,14 +227,18 @@ export function usePythonExecution({ timeout = DEFAULT_TIMEOUT } = {}) {
         testCases,
       });
 
+      const effective = runtimeReadyRef.current
+        ? EXECUTION_TIMEOUT
+        : INIT_TIMEOUT;
+
       testTimeoutRef.current = setTimeout(() => {
         disposeWorker();
         setTestStatus('error');
-        setTestError(`Tests timed out after ${timeout / 1000}s`);
+        setTestError(`Tests timed out after ${effective / 1000}s`);
         testTimeoutRef.current = null;
-      }, timeout);
+      }, effective);
     },
-    [createWorker, disposeWorker, timeout]
+    [createWorker, disposeWorker]
   );
 
   const clearTestResults = useCallback(() => {

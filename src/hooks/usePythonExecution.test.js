@@ -218,6 +218,29 @@ describe('usePythonExecution', () => {
     expect(mockWorker.terminate).toHaveBeenCalled();
   });
 
+  it('should keep status as loading when init-progress heartbeat is received', () => {
+    const { result } = renderHook(() => usePythonExecution());
+
+    act(() => {
+      result.current.runCode('print(1)');
+    });
+
+    expect(result.current.status).toBe('running');
+
+    act(() => {
+      mockWorker.onmessage?.({ data: { type: 'loading' } });
+    });
+
+    expect(result.current.status).toBe('loading');
+
+    act(() => {
+      mockWorker.onmessage?.({ data: { type: 'init-progress' } });
+    });
+
+    expect(result.current.status).toBe('loading');
+    expect(result.current.isRuntimeLoaded).toBe(false);
+  });
+
   it('should not mark code-run status as error for test-only worker failures', () => {
     const { result } = renderHook(() => usePythonExecution());
     const testCases = [

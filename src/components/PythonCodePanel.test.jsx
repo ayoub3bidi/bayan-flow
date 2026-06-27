@@ -521,6 +521,27 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
       });
     });
 
+    it('shows Loading Python label when execution status is loading', async () => {
+      usePythonExecutionMock.mockImplementation(() =>
+        buildPythonExec({ status: 'loading' })
+      );
+      localStorageMock.getItem.mockReturnValue('light');
+
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(/loading python/i)).toBeInTheDocument();
+      });
+    });
+
     it('shows Running label and spinner when execution status is running', async () => {
       usePythonExecutionMock.mockImplementation(() =>
         buildPythonExec({ status: 'running' })
