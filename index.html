@@ -158,6 +158,87 @@
         }
       })();
     </script>
+
+    <!-- WebMCP: register site tools for AI agent discovery -->
+    <script>
+      (function () {
+        if (
+          typeof navigator === 'undefined' ||
+          !('modelContext' in navigator) ||
+          !navigator.modelContext
+        ) {
+          return;
+        }
+        try {
+          navigator.modelContext.registerTool({
+            name: 'bayan_flow_info',
+            description:
+              'Get information about Bayan Flow, an interactive algorithm visualizer with 45+ algorithms across sorting, pathfinding, searching, tree traversal, and graph categories.',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                category: {
+                  type: 'string',
+                  description:
+                    'Optional algorithm category name (sorting, pathfinding, searching, tree, graph)',
+                },
+              },
+            },
+            execute: async function (args) {
+              const categories = [
+                {
+                  name: 'sorting',
+                  description:
+                    'Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort, Counting Sort, Radix Sort, Shell Sort, Cocktail Shaker Sort, Gnome Sort, Comb Sort, Tim Sort, Bitonic Sort, Pancake Sort, Bogo Sort, Stooge Sort',
+                  count: 17,
+                },
+                {
+                  name: 'pathfinding',
+                  description:
+                    'Dijkstra, A*, BFS, DFS, Greedy BFS, Bidirectional BFS, Jump Point Search, GBFS',
+                  count: 8,
+                },
+                {
+                  name: 'searching',
+                  description:
+                    'Linear Search, Binary Search, Jump Search, Exponential Search, Ternary Search, Fibonacci Search',
+                  count: 6,
+                },
+                {
+                  name: 'tree',
+                  description:
+                    'Pre-order, In-order, Post-order, Level-order, BFS on Tree, DFS on Tree, Morris In-order',
+                  count: 7,
+                },
+                {
+                  name: 'graph',
+                  description:
+                    'BFS, DFS, Topological Sort (Kahn), Bellman-Ford, Floyd-Warshall, Kruskal, Prim, Tarjan, Kosaraju, Ford-Fulkerson',
+                  count: 10,
+                },
+              ];
+              return {
+                name: 'Bayan Flow',
+                description:
+                  'Interactive algorithm visualizer with 45+ algorithms across sorting, pathfinding, searching, tree traversal, and graph categories.',
+                url: 'https://bayanflow.com',
+                categories: args && args.category
+                  ? categories.filter(
+                      (c) =>
+                        c.name === args.category ||
+                        (args.category === 'tree' && c.name === 'tree') ||
+                        (args.category === 'graph' && c.name === 'graph'),
+                    )
+                  : categories,
+              };
+            },
+            annotations: { readOnlyHint: true },
+          });
+        } catch (_) {
+          /* WebMCP not available */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
