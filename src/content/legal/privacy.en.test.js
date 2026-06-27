@@ -21,7 +21,7 @@ describe('privacy.en', () => {
       expect.arrayContaining([
         'introduction',
         'data-we-process',
-        'no-accounts',
+        'accounts',
         'rights',
         'children',
         'changes',
@@ -37,7 +37,7 @@ describe('privacy.en', () => {
     }
   });
 
-  it('discloses Umami, localStorage, and no accounts', () => {
+  it('discloses Umami, localStorage, and optional Google sign-in', () => {
     const body = PRIVACY_POLICY_SECTIONS.flatMap(section => [
       ...section.paragraphs,
       ...(section.list ?? []),
@@ -47,7 +47,8 @@ describe('privacy.en', () => {
     expect(body).toMatch(/Cloudflare/i);
     expect(body).toMatch(/GitHub.*IP address|api\.github\.com.*IP address/i);
     expect(body).toMatch(/localStorage/i);
-    expect(body).toMatch(/no user accounts|no registration/i);
+    expect(body).toMatch(/Supabase/i);
+    expect(body).toMatch(/Google sign-in|sign in with Google/i);
     expect(body).toMatch(/contact@bayanflow\.com/);
   });
 });

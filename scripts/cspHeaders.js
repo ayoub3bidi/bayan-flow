@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-/** @typedef {{ mediaSrc: string; connectSrc: string }} CspDirectives */
+/** @typedef {{ mediaSrc: string; connectSrc: string; imgSrc: string }} CspDirectives */
 
 /**
  * Parse semicolon-delimited CSP directives into a map.
@@ -76,4 +76,30 @@ export function assertVideoExportCspDirectives(csp, source) {
   }
 
   return { mediaSrc, connectSrc: connectSrc ?? '' };
+}
+
+/**
+ * Assert CSP directives required for Supabase auth and Google profile avatars.
+ * @param {string} csp
+ * @param {string} source - Label for error messages (e.g. "public/_headers")
+ * @returns {{ connectSrc: string; imgSrc: string }}
+ */
+export function assertAuthCspDirectives(csp, source) {
+  const directives = parseCspDirectives(csp);
+
+  const connectSrc = directives.get('connect-src');
+  if (!connectSrc?.includes('https://qketsapzqpzmccljfjcm.supabase.co')) {
+    throw new Error(
+      `${source}: connect-src must include https://qketsapzqpzmccljfjcm.supabase.co (Supabase auth)`
+    );
+  }
+
+  const imgSrc = directives.get('img-src');
+  if (!imgSrc?.includes('https://lh3.googleusercontent.com')) {
+    throw new Error(
+      `${source}: img-src must include https://lh3.googleusercontent.com (Google profile photos)`
+    );
+  }
+
+  return { connectSrc: connectSrc ?? '', imgSrc: imgSrc ?? '' };
 }

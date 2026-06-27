@@ -104,6 +104,7 @@ export function createFramerMotionMock(overrides = {}) {
     }),
     useMotionValue: initial => ({ get: () => initial, set: vi.fn() }),
     useTransform: () => ({ get: () => 0 }),
+    useReducedMotion: () => false,
     ...overrides,
   };
 }

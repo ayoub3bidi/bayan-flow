@@ -11,6 +11,7 @@ import { useTheme } from '../hooks/useTheme';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import GitHubRepoBadge from './GitHubRepoBadge';
+import UserMenu from './UserMenu';
 
 function Header() {
   const { t } = useTranslation();
@@ -134,6 +135,7 @@ function Header() {
             <GitHubRepoBadge />
             <LanguageSwitcher />
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
+            <UserMenu variant="compact" />
           </div>
         </nav>
       </div>

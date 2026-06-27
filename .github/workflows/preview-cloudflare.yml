@@ -55,6 +55,8 @@ jobs:
         env:
           VITE_GIT_BRANCH: ${{ github.head_ref }}
           VITE_DEV_SITE_URL: https://dev.bayanflow.com
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: Upload preview version
         id: deploy

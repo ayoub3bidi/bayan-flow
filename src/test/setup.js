@@ -277,6 +277,9 @@ const gridHelpersMock = {
 vi.mock('../utils/gridHelpers', () => gridHelpersMock);
 vi.mock('../utils/gridHelpers.js', () => gridHelpersMock);
 
+vi.mock('../lib/supabaseClient', () => import('./supabaseMock.js'));
+vi.mock('../lib/supabaseClient.js', () => import('./supabaseMock.js'));
+
 expect.extend(matchers);
 
 const originalLocalStorage = globalThis.localStorage;

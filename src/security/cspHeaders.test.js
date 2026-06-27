@@ -9,6 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it, expect } from 'vitest';
 import {
+  assertAuthCspDirectives,
   assertVideoExportCspDirectives,
   extractCspFromHeadersFile,
   extractCspFromNetlifyToml,
@@ -24,6 +25,7 @@ describe('CSP security headers', () => {
     const headersPath = path.join(repoRoot, 'public', '_headers');
     const csp = extractCspFromHeadersFile(fs.readFileSync(headersPath, 'utf8'));
     assertVideoExportCspDirectives(csp, 'public/_headers');
+    assertAuthCspDirectives(csp, 'public/_headers');
   });
 
   it('netlify.toml CSP matches public/_headers video-export directives', () => {
@@ -38,6 +40,7 @@ describe('CSP security headers', () => {
     );
 
     assertVideoExportCspDirectives(netlifyCsp, 'netlify.toml');
+    assertAuthCspDirectives(netlifyCsp, 'netlify.toml');
     expect(netlifyCsp).toBe(headersCsp);
   });
 });

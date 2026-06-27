@@ -1,15 +1,22 @@
 # Authentication
 
-Bayan Flow is a fully client-side educational web application. No authentication or API keys are required to use the site.
+Bayan Flow offers optional sign-in with Google. You can use all algorithm visualizations, the code panel, insight panel, and video export without an account.
 
-## Usage
+## Sign in
 
-All features — algorithm visualizations, step-by-step execution, Python code editing, complexity analysis, and HD video export — are available without authentication.
+When you choose **Sign in with Google**, a small popup opens for Google account selection. After you approve access, the popup closes and you stay on the same page (or are taken to the visualizer if you signed in from the landing page). Authentication is handled by Supabase Auth using OpenID Connect (OIDC). We receive your Google account email, display name, and profile photo URL to show your account in the app header and to create a minimal profile row in our database.
 
-## Data Privacy
+**Supabase redirect URL:** your project must allow `{origin}/auth/callback` (for example `https://bayanflow.com/auth/callback` and `http://localhost:5173/auth/callback` for local development).
 
-Since there is no backend server or user accounts, no personal data is collected, stored, or transmitted by the application itself. The site uses Umami analytics (a privacy-preserving analytics service) for aggregate usage statistics; no personal identification data is tracked.
+## Data stored
+
+- **Session tokens** are stored in your browser by the Supabase client library so you stay signed in across visits.
+- **Profile row** (`email`, display name, avatar URL, provider, plan tier) is stored in Supabase PostgreSQL. See the [Privacy Policy](/privacy) for full details.
+
+## Sign out
+
+Use **Sign out** from the account menu in the header at any time. This clears the local session.
 
 ## Contact
 
-For questions or feedback, please open an issue at https://github.com/ayoub3bidi/bayan-flow
+For questions or feedback, email contact@bayanflow.com or open an issue at https://github.com/ayoub3bidi/bayan-flow

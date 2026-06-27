@@ -10,6 +10,13 @@
     "openGithubRepo": "فتح {{repo}} على GitHub — الإصدار {{version}}، {{stars}} نجمة، {{forks}} fork",
     "goToRepository": "الانتقال إلى المستودع"
   },
+  "auth": {
+    "sign_in_google": "تسجيل الدخول عبر Google",
+    "sign_out": "تسجيل الخروج",
+    "signed_in_as": "مسجّل الدخول باسم {{name}}",
+    "account_menu_label": "قائمة الحساب لـ {{name}}",
+    "completing_sign_in": "جارٍ إتمام تسجيل الدخول…"
+  },
   "settings": {
     "title": "الإعدادات",
     "mode": "الوضع",
