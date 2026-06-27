@@ -21,6 +21,8 @@ vi.mock('./masterChain.js', () => ({
   createMasterChain: vi.fn(async () => ({
     input: createChainableMock(),
   })),
+  _Tone: { now: () => 0 },
+  getTone: vi.fn(() => import('tone')),
 }));
 
 describe('soundManager', () => {

@@ -8,21 +8,12 @@ import { ANIMATION_SPEEDS } from '../constants/index.js';
 import { getCompareFrequency, getPivotFrequency } from './soundFrequencies.js';
 import { TONE_INSTRUMENT_PRESETS } from './toneInstrumentPresets.js';
 import { SOUND_EVENT_KINDS } from './soundEvents.js';
-import { createMasterChain } from './masterChain.js';
+import { createMasterChain, getTone, _Tone } from './masterChain.js';
 import { getPentatonicNoteName } from './scaleQuantizer.js';
 import {
   getPaletteForCategory,
   getChordForCategory,
 } from './categoryPalettes.js';
-
-let _Tone = null;
-
-async function getTone() {
-  if (!_Tone) {
-    _Tone = await import('tone');
-  }
-  return _Tone;
-}
 
 const MAX_EVENTS_PER_STEP = 3;
 

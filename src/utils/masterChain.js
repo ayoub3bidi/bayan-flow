@@ -10,9 +10,9 @@
  */
 export const MASTER_INPUT_GAIN = 0.45;
 
-let _Tone = null;
+export let _Tone = null;
 
-async function getTone() {
+export async function getTone() {
   if (!_Tone) {
     _Tone = await import('tone');
   }
