@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { isSupabaseConfigured } from '@/lib/supabaseClient';
+import { isAuthConfigured } from '@/services/authService';
 import * as authService from '@/services/authService';
 import { getProfile } from '@/services/profileService';
 import {
@@ -43,7 +43,7 @@ function buildProfileView(user, profileRow, avatarSize) {
 }
 
 export function AuthProvider({ children }) {
-  const isConfigured = isSupabaseConfigured();
+  const isConfigured = isAuthConfigured();
   const [session, setSession] = useState(null);
   const [profileRow, setProfileRow] = useState(null);
   const [isLoading, setIsLoading] = useState(isConfigured);

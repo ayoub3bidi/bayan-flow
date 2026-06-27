@@ -18,6 +18,7 @@ describe('pyodideCdn', () => {
   });
 
   it('getPyodideCdnBase defaults to jsDelivr when env is unset', async () => {
+    vi.resetModules();
     vi.stubEnv('VITE_PYODIDE_CDN_BASE', '');
     const { getPyodideCdnBase } = await import('./pyodideCdn.js');
     expect(getPyodideCdnBase()).toBe(
@@ -26,6 +27,7 @@ describe('pyodideCdn', () => {
   });
 
   it('getPyodideCdnBase uses VITE_PYODIDE_CDN_BASE when set', async () => {
+    vi.resetModules();
     vi.stubEnv(
       'VITE_PYODIDE_CDN_BASE',
       'https://cdn.example.com/pyodide/v0.27.5/full/'
@@ -37,6 +39,7 @@ describe('pyodideCdn', () => {
   });
 
   it('getPyodideCdnBase falls back to jsDelivr when override URL is invalid', async () => {
+    vi.resetModules();
     vi.stubEnv('VITE_PYODIDE_CDN_BASE', 'not-a-valid-url');
     const { getPyodideCdnBase } = await import('./pyodideCdn.js');
     expect(getPyodideCdnBase()).toBe(
@@ -45,6 +48,7 @@ describe('pyodideCdn', () => {
   });
 
   it('pyodideScriptUrl appends pyodide.js to the CDN base', async () => {
+    vi.resetModules();
     vi.stubEnv('VITE_PYODIDE_CDN_BASE', 'https://cdn.example.com/pyodide/full');
     const { pyodideScriptUrl } = await import('./pyodideCdn.js');
     expect(pyodideScriptUrl()).toBe(

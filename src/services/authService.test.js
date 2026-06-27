@@ -10,71 +10,86 @@ import {
   resetSupabaseMocks,
   supabaseAuthMock,
 } from '../test/supabaseMock.js';
+
+vi.mock('../lib/googleIdentity.js', () => ({
+  disableGoogleAutoSelect: vi.fn(),
+  isGoogleAuthConfigured: vi.fn(() => true),
+  requestGoogleSignInPopup: vi.fn(async () => ({
+    idToken: 'google-id-token',
+  })),
+}));
+
 import * as authService from './authService';
+import { requestGoogleSignInPopup } from '../lib/googleIdentity.js';
 
 describe('authService', () => {
   beforeEach(() => {
     resetSupabaseMocks();
     mockSupabaseConfigured(true);
-    vi.stubGlobal('location', {
-      ...window.location,
-      origin: 'http://localhost:5173',
-      pathname: '/',
-      search: '',
+    vi.mocked(requestGoogleSignInPopup).mockResolvedValue({
+      idToken: 'google-id-token',
     });
   });
 
-  it('signInWithGoogle opens a popup and completes after auth message', async () => {
-    supabaseAuthMock.signInWithOAuth.mockResolvedValue({
-      data: { url: 'https://oauth.example.com/auth' },
-      error: null,
-    });
-    supabaseAuthMock.getSession.mockResolvedValue({
-      data: { session: { user: { id: 'user-1' } } },
-      error: null,
-    });
-
-    const popup = { closed: false, close: vi.fn() };
-    vi.stubGlobal(
-      'open',
-      vi.fn(() => popup)
+  it('signInWithGoogleIdToken calls Supabase signInWithIdToken', async () => {
+    await authService.signInWithGoogleIdToken(
+      'token-123',
+      'nonce-123',
+      'access-123'
     );
 
-    const signInPromise = authService.signInWithGoogle();
-
-    await vi.waitFor(() => {
-      expect(window.open).toHaveBeenCalledWith(
-        'https://oauth.example.com/auth',
-        expect.any(String),
-        expect.stringContaining('popup=yes')
-      );
-    });
-
-    window.dispatchEvent(
-      new MessageEvent('message', {
-        data: { type: authService.AUTH_COMPLETE_MESSAGE },
-        origin: 'http://localhost:5173',
-      })
-    );
-
-    await signInPromise;
-
-    expect(supabaseAuthMock.signInWithOAuth).toHaveBeenCalledWith({
+    expect(supabaseAuthMock.signInWithIdToken).toHaveBeenCalledWith({
       provider: 'google',
-      options: {
-        redirectTo: 'http://localhost:5173/auth/callback',
-        skipBrowserRedirect: true,
+      token: 'token-123',
+      nonce: 'nonce-123',
+      access_token: 'access-123',
+    });
+    expect(supabaseAuthMock.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('signInWithGoogleIdToken syncs picture from JWT claims', async () => {
+    const payload = btoa(JSON.stringify({ picture: 'https://lh3.googleusercontent.com/a/test' }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    const idToken = `header.${payload}.signature`;
+
+    await authService.signInWithGoogleIdToken(idToken);
+
+    expect(supabaseAuthMock.updateUser).toHaveBeenCalledWith({
+      data: {
+        picture: 'https://lh3.googleusercontent.com/a/test',
+        avatar_url: 'https://lh3.googleusercontent.com/a/test',
       },
     });
   });
 
-  it('signOut delegates to Supabase auth', async () => {
+  it('signInWithGoogle uses GIS button then Supabase signInWithIdToken', async () => {
+    await authService.signInWithGoogle();
+
+    expect(requestGoogleSignInPopup).toHaveBeenCalled();
+    expect(supabaseAuthMock.signInWithIdToken).toHaveBeenCalledWith({
+      provider: 'google',
+      token: 'google-id-token',
+      nonce: undefined,
+      access_token: undefined,
+    });
+  });
+
+  it('signOut disables Google auto-select and delegates to Supabase auth', async () => {
+    const { disableGoogleAutoSelect } =
+      await import('../lib/googleIdentity.js');
     await authService.signOut();
+    expect(disableGoogleAutoSelect).toHaveBeenCalled();
     expect(supabaseAuthMock.signOut).toHaveBeenCalled();
   });
 
   it('getSession returns null when client is not configured', async () => {
     mockSupabaseConfigured(false);
     await expect(authService.getSession()).resolves.toBeNull();
+  });
+
+  it('isAuthConfigured requires Supabase and Google client ID', () => {
+    expect(authService.isAuthConfigured()).toBe(true);
   });
 });

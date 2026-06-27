@@ -9,7 +9,10 @@ import { vi } from 'vitest';
 export const authStateChangeCallbackRef = { current: null };
 
 export const supabaseAuthMock = {
-  signInWithOAuth: vi.fn(async () => ({ data: {}, error: null })),
+  signInWithIdToken: vi.fn(async () => ({
+    data: { session: null },
+    error: null,
+  })),
   signOut: vi.fn(async () => ({ error: null })),
   getSession: vi.fn(async () => ({ data: { session: null }, error: null })),
   onAuthStateChange: vi.fn(callback => {
@@ -22,6 +25,7 @@ export const supabaseAuthMock = {
       },
     };
   }),
+  updateUser: vi.fn(async () => ({ data: { user: null }, error: null })),
 };
 
 export const supabaseFromMock = vi.fn(() => ({
@@ -48,10 +52,11 @@ export function resetSupabaseMocks() {
   isSupabaseConfigured.mockReturnValue(false);
   getSupabaseClient.mockReset();
   getSupabaseClient.mockReturnValue(null);
-  supabaseAuthMock.signInWithOAuth.mockClear();
+  supabaseAuthMock.signInWithIdToken.mockClear();
   supabaseAuthMock.signOut.mockClear();
   supabaseAuthMock.getSession.mockClear();
   supabaseAuthMock.onAuthStateChange.mockClear();
+  supabaseAuthMock.updateUser.mockClear();
   supabaseFromMock.mockClear();
   authStateChangeCallbackRef.current = null;
 }

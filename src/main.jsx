@@ -20,10 +20,11 @@ import VisualizerApp from './pages/VisualizerApp.jsx';
 import Roadmap from './pages/Roadmap.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfUse from './pages/TermsOfUse.jsx';
-import AuthCallback from './pages/AuthCallback.jsx';
+import GoogleAuthCallback from './pages/GoogleAuthCallback.jsx';
 
 // Components
 import DocumentTitle from './components/DocumentTitle.jsx';
+import GoogleOneTap from './components/GoogleOneTap.jsx';
 
 initRTL(i18n);
 
@@ -33,11 +34,15 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <BrowserRouter>
           <DocumentTitle />
+          <GoogleOneTap />
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/app" element={<VisualizerApp />} />
             <Route path="/roadmap" element={<Roadmap />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route
+              path="/auth/google/callback"
+              element={<GoogleAuthCallback />}
+            />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfUse />} />
           </Routes>

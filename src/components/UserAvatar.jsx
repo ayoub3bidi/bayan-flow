@@ -49,6 +49,7 @@ function UserAvatar({ profile, size = 'sm', className = '' }) {
       src={imageSrc}
       alt=""
       aria-hidden="true"
+      referrerPolicy="no-referrer"
       onError={handleError}
       className={`${SIZE_CLASSES[size]} shrink-0 rounded-full border border-(--color-glass-border) object-cover bg-surface-elevated ${className}`}
     />

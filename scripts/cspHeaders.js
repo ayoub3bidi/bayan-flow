@@ -101,5 +101,31 @@ export function assertAuthCspDirectives(csp, source) {
     );
   }
 
+  const scriptSrc = directives.get('script-src');
+  if (!scriptSrc?.includes('https://accounts.google.com')) {
+    throw new Error(
+      `${source}: script-src must include https://accounts.google.com (Google Identity Services)`
+    );
+  }
+
+  if (!connectSrc?.includes('https://accounts.google.com')) {
+    throw new Error(
+      `${source}: connect-src must include https://accounts.google.com (Google Identity Services)`
+    );
+  }
+
+  if (!connectSrc?.includes('https://oauth2.googleapis.com')) {
+    throw new Error(
+      `${source}: connect-src must include https://oauth2.googleapis.com (Google OAuth token exchange)`
+    );
+  }
+
+  const frameSrc = directives.get('frame-src');
+  if (!frameSrc?.includes('https://accounts.google.com')) {
+    throw new Error(
+      `${source}: frame-src must include https://accounts.google.com (Google One Tap)`
+    );
+  }
+
   return { connectSrc: connectSrc ?? '', imgSrc: imgSrc ?? '' };
 }

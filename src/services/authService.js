@@ -4,15 +4,12 @@
  * See LICENSE for details.
  */
 
-import { getSupabaseClient } from '@/lib/supabaseClient';
-
-export const AUTH_CALLBACK_PATH = '/auth/callback';
-export const AUTH_COMPLETE_MESSAGE = 'bayan-flow-auth-complete';
-
-const POPUP_NAME = 'bayan-flow-google-auth';
-const POPUP_FEATURES =
-  'popup=yes,width=500,height=680,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes';
-const POPUP_TIMEOUT_MS = 5 * 60 * 1000;
+import { isSupabaseConfigured, getSupabaseClient } from '@/lib/supabaseClient';
+import {
+  disableGoogleAutoSelect,
+  isGoogleAuthConfigured,
+  requestGoogleSignInPopup,
+} from '@/lib/googleIdentity';
 
 function requireClient() {
   const supabase = getSupabaseClient();
@@ -23,124 +20,87 @@ function requireClient() {
 }
 
 /**
- * @returns {string}
+ * @returns {boolean}
  */
-export function getOAuthCallbackUrl() {
-  if (typeof window === 'undefined') {
-    return AUTH_CALLBACK_PATH;
+export function isAuthConfigured() {
+  return isSupabaseConfigured() && isGoogleAuthConfigured();
+}
+
+function parseGoogleIdTokenClaims(idToken) {
+  try {
+    const segment = idToken.split('.')[1];
+    if (!segment) {
+      return {};
+    }
+    const base64 = segment.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(base64));
+  } catch {
+    return {};
   }
-  return `${window.location.origin}${AUTH_CALLBACK_PATH}`;
 }
 
 /**
- * @param {string} oauthUrl
- * @returns {Promise<void>}
+ * Supabase signInWithIdToken may omit picture in user_metadata; sync from JWT claims.
+ * @param {string} idToken
  */
-function openOAuthPopupAndWait(oauthUrl) {
-  return new Promise((resolve, reject) => {
-    const popup = window.open(oauthUrl, POPUP_NAME, POPUP_FEATURES);
-    if (!popup) {
-      reject(
-        new Error(
-          'Popup blocked. Allow popups for this site to sign in with Google.'
-        )
-      );
-      return;
-    }
+async function syncGoogleProfileMetadata(idToken) {
+  const claims = parseGoogleIdTokenClaims(idToken);
+  const data = {};
 
-    let settled = false;
+  if (typeof claims.picture === 'string' && claims.picture.trim()) {
+    data.picture = claims.picture.trim();
+    data.avatar_url = data.picture;
+  }
 
-    const cleanup = () => {
-      window.removeEventListener('message', onMessage);
-      clearInterval(pollTimer);
-      clearTimeout(timeoutTimer);
-    };
+  if (typeof claims.name === 'string' && claims.name.trim()) {
+    data.full_name = claims.name.trim();
+    data.name = data.full_name;
+  }
 
-    const finish = () => {
-      if (settled) {
-        return;
-      }
-      settled = true;
-      cleanup();
-      resolve();
-    };
+  if (Object.keys(data).length === 0) {
+    return;
+  }
 
-    const fail = error => {
-      if (settled) {
-        return;
-      }
-      settled = true;
-      cleanup();
-      reject(error);
-    };
-
-    const onMessage = async event => {
-      if (event.origin !== window.location.origin) {
-        return;
-      }
-      if (event.data?.type !== AUTH_COMPLETE_MESSAGE) {
-        return;
-      }
-
-      const session = await getSession();
-      if (session) {
-        finish();
-      }
-    };
-
-    window.addEventListener('message', onMessage);
-
-    const pollTimer = setInterval(async () => {
-      if (!popup.closed) {
-        return;
-      }
-
-      const session = await getSession();
-      if (session) {
-        finish();
-        return;
-      }
-
-      fail(new Error('Sign-in was cancelled'));
-    }, 400);
-
-    const timeoutTimer = setTimeout(() => {
-      try {
-        popup.close();
-      } catch {
-        /* ignore */
-      }
-      fail(new Error('Sign-in timed out'));
-    }, POPUP_TIMEOUT_MS);
-  });
+  const supabase = requireClient();
+  const { error } = await supabase.auth.updateUser({ data });
+  if (error) {
+    console.warn('Failed to sync Google profile metadata:', error);
+  }
 }
 
-export async function signInWithGoogle() {
+/**
+ * @param {string} idToken
+ * @param {string} [nonce]
+ * @param {string} [accessToken]
+ * @returns {Promise<void>}
+ */
+export async function signInWithGoogleIdToken(idToken, nonce, accessToken) {
   const supabase = requireClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const { error } = await supabase.auth.signInWithIdToken({
     provider: 'google',
-    options: {
-      redirectTo: getOAuthCallbackUrl(),
-      skipBrowserRedirect: true,
-    },
+    token: idToken,
+    nonce,
+    access_token: accessToken,
   });
 
   if (error) {
     throw error;
   }
 
-  if (!data?.url) {
-    throw new Error('OAuth URL was not returned');
+  await syncGoogleProfileMetadata(idToken);
+}
+
+export async function signInWithGoogle() {
+  if (!isGoogleAuthConfigured()) {
+    throw new Error('Google auth is not configured');
   }
 
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  await openOAuthPopupAndWait(data.url);
+  const { idToken } = await requestGoogleSignInPopup();
+  await signInWithGoogleIdToken(idToken);
 }
 
 export async function signOut() {
+  disableGoogleAutoSelect();
   const supabase = requireClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
