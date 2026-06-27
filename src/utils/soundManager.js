@@ -174,14 +174,13 @@ class SoundManager {
     return note;
   }
 
-  async arpeggiate(
+  arpeggiate(
     synth,
     notes,
     { ascending = true, noteDuration = MILESTONE_NOTE_DURATION } = {}
   ) {
-    const Tone = await getTone();
     const ordered = ascending ? notes : [...notes].reverse();
-    const now = Tone.now();
+    const now = _Tone.now();
     ordered.forEach((note, index) => {
       synth.triggerAttackRelease(
         note,
