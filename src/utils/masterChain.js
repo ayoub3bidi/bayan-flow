@@ -4,21 +4,29 @@
  * See LICENSE for details.
  */
 
-import * as Tone from 'tone';
-
 /**
  * Master bus input gain (~-7 dB). Kept below 0 dB to stay pleasant, but loud
  * enough for laptop speakers and small device outputs.
  */
 export const MASTER_INPUT_GAIN = 0.45;
 
+let _Tone = null;
+
+async function getTone() {
+  if (!_Tone) {
+    _Tone = await import('tone');
+  }
+  return _Tone;
+}
+
 /**
  * Shared effects bus: Gain -> LowPass -> Compressor -> Reverb -> Destination.
  * All instruments connect to `input` (the input Gain node).
  *
- * @returns {Promise<{ input: Tone.Gain }>}
+ * @returns {Promise<{ input: import('tone').Gain }>}
  */
 export async function createMasterChain() {
+  const Tone = await getTone();
   const inputGain = new Tone.Gain(MASTER_INPUT_GAIN);
   const filter = new Tone.Filter({
     frequency: 5000,

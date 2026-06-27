@@ -4,7 +4,6 @@
  * See LICENSE for details.
  */
 
-import * as Tone from 'tone';
 import { ANIMATION_SPEEDS } from '../constants/index.js';
 import { getCompareFrequency, getPivotFrequency } from './soundFrequencies.js';
 import { TONE_INSTRUMENT_PRESETS } from './toneInstrumentPresets.js';
@@ -15,6 +14,15 @@ import {
   getPaletteForCategory,
   getChordForCategory,
 } from './categoryPalettes.js';
+
+let _Tone = null;
+
+async function getTone() {
+  if (!_Tone) {
+    _Tone = await import('tone');
+  }
+  return _Tone;
+}
 
 const MAX_EVENTS_PER_STEP = 3;
 
@@ -47,6 +55,7 @@ class SoundManager {
   }
 
   async _buildInstruments() {
+    const Tone = await getTone();
     const { input: busInput } = await createMasterChain();
 
     const softSynth = new Tone.Synth(TONE_INSTRUMENT_PRESETS.softSynth);
@@ -100,6 +109,7 @@ class SoundManager {
   }
 
   async enable() {
+    const Tone = await getTone();
     if (Tone.context.state !== 'running') {
       await Tone.start();
     }
@@ -164,11 +174,12 @@ class SoundManager {
     return note;
   }
 
-  arpeggiate(
+  async arpeggiate(
     synth,
     notes,
     { ascending = true, noteDuration = MILESTONE_NOTE_DURATION } = {}
   ) {
+    const Tone = await getTone();
     const ordered = ascending ? notes : [...notes].reverse();
     const now = Tone.now();
     ordered.forEach((note, index) => {
