@@ -496,10 +496,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
               ) : (
                 <>
                   {/* Code Editor + Output (resizable on desktop) */}
-                  <div
-                    className="flex-1 min-h-0 flex flex-col p-2"
-                    dir="ltr"
-                  >
+                  <div className="flex-1 min-h-0 flex flex-col p-2" dir="ltr">
                     <div
                       ref={resizeContainerRef}
                       className="min-h-0 flex flex-col overflow-hidden flex-1"
@@ -514,119 +511,120 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                           minHeight: isMobile ? 100 : 80,
                         }}
                       >
-                      <Editor
-                        height="100%"
-                        defaultLanguage="python"
-                        value={code}
-                        onChange={value => setCode(value ?? '')}
-                        theme={isDark ? 'vs-dark' : 'vs-light'}
-                        onMount={(editor, monaco) => {
-                          editorRef.current = editor;
-                          monacoRef.current = monaco;
-                          editor.addAction({
-                            id: 'run-python',
-                            label: 'Run Python',
-                            keybindings: [
-                              monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-                            ],
-                            run: () => runHandlerRef.current?.(),
-                          });
-                          if (isMobile) {
-                            const container = editor.getContainerDomNode?.();
-                            if (container) {
-                              container.style.touchAction = 'pan-y';
-                              const scrollable =
-                                container.querySelector(
-                                  '.monaco-scrollable-element'
-                                ) ??
-                                container.querySelector(
-                                  '[class*="scrollable"]'
-                                );
-                              if (scrollable) {
-                                scrollable.style.webkitOverflowScrolling =
-                                  'touch';
+                        <Editor
+                          height="100%"
+                          defaultLanguage="python"
+                          value={code}
+                          onChange={value => setCode(value ?? '')}
+                          theme={isDark ? 'vs-dark' : 'vs-light'}
+                          onMount={(editor, monaco) => {
+                            editorRef.current = editor;
+                            monacoRef.current = monaco;
+                            editor.addAction({
+                              id: 'run-python',
+                              label: 'Run Python',
+                              keybindings: [
+                                monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+                              ],
+                              run: () => runHandlerRef.current?.(),
+                            });
+                            if (isMobile) {
+                              const container = editor.getContainerDomNode?.();
+                              if (container) {
+                                container.style.touchAction = 'pan-y';
+                                const scrollable =
+                                  container.querySelector(
+                                    '.monaco-scrollable-element'
+                                  ) ??
+                                  container.querySelector(
+                                    '[class*="scrollable"]'
+                                  );
+                                if (scrollable) {
+                                  scrollable.style.webkitOverflowScrolling =
+                                    'touch';
+                                }
                               }
                             }
-                          }
-                        }}
-                        options={{
-                          readOnly: false,
-                          minimap: { enabled: !isMobile },
-                          scrollBeyondLastLine: false,
-                          fontSize: isMobile ? 12 : 14,
-                          lineNumbers: 'on',
-                          folding: true,
-                          wordWrap: 'on',
-                          automaticLayout: true,
-                          padding: { top: 16, bottom: 16 },
-                          scrollbar: {
-                            vertical: 'auto',
-                            horizontal: 'auto',
-                          },
-                        }}
-                        loading={
-                          <div className="flex items-center justify-center h-full bg-surface">
-                            <div className="text-text-secondary">
-                              {t('python_code.loading') || 'Loading editor...'}
+                          }}
+                          options={{
+                            readOnly: false,
+                            minimap: { enabled: !isMobile },
+                            scrollBeyondLastLine: false,
+                            fontSize: isMobile ? 12 : 14,
+                            lineNumbers: 'on',
+                            folding: true,
+                            wordWrap: 'on',
+                            automaticLayout: true,
+                            padding: { top: 16, bottom: 16 },
+                            scrollbar: {
+                              vertical: 'auto',
+                              horizontal: 'auto',
+                            },
+                          }}
+                          loading={
+                            <div className="flex items-center justify-center h-full bg-surface">
+                              <div className="text-text-secondary">
+                                {t('python_code.loading') ||
+                                  'Loading editor...'}
+                              </div>
                             </div>
-                          </div>
-                        }
-                      />
-                    </div>
-                    {!isMobile && isOutputExpanded && (
-                      <div
-                        role="separator"
-                        aria-orientation="horizontal"
-                        aria-valuenow={outputHeightPercent}
-                        aria-valuemin={MIN_OUTPUT_PERCENT}
-                        aria-valuemax={MAX_OUTPUT_PERCENT}
-                        aria-label={t('python_code.resize_output', {
-                          defaultValue: 'Resize output panel',
-                        })}
-                        onMouseDown={handleResizeStart}
-                        className={`shrink-0 h-1 flex items-center justify-center cursor-row-resize hover:bg-blue-500/30 active:bg-blue-500/50 transition-colors group ${
-                          isResizing
-                            ? 'bg-blue-500/50'
-                            : 'bg-gray-200 dark:bg-gray-700'
-                        }`}
-                      >
-                        <div className="w-12 h-0.5 rounded-full bg-gray-400 group-hover:bg-blue-500 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100" />
-                      </div>
-                    )}
-                    {isOutputExpanded && (
-                      <div
-                        className="min-h-0 overflow-hidden flex flex-col shrink-0"
-                        style={{
-                          flex: isMobile
-                            ? '0 0 auto'
-                            : `0 0 calc(${outputHeightPercent}% - 2px)`,
-                          minHeight: !isMobile ? 80 : undefined,
-                        }}
-                      >
-                        <OutputConsole
-                          status={status}
-                          output={output}
-                          error={error}
-                          onClear={clearOutput}
-                          isExpanded={isOutputExpanded}
-                          onToggleExpand={() =>
-                            setIsOutputExpanded(prev => !prev)
                           }
-                          onRun={handleRun}
-                          onReset={() => setCode(pythonCode)}
-                          isModified={isModified}
-                          testCases={testCases}
-                          testResults={testResults}
-                          testStatus={testStatus}
-                          testError={testError}
-                          onRunTests={handleRunTests}
-                          onAddTestCase={handleAddTestCase}
-                          onEditTestCase={handleEditTestCase}
-                          onDeleteTestCase={handleDeleteTestCase}
-                          onClearTestResults={clearTestResults}
                         />
                       </div>
-                    )}
+                      {!isMobile && isOutputExpanded && (
+                        <div
+                          role="separator"
+                          aria-orientation="horizontal"
+                          aria-valuenow={outputHeightPercent}
+                          aria-valuemin={MIN_OUTPUT_PERCENT}
+                          aria-valuemax={MAX_OUTPUT_PERCENT}
+                          aria-label={t('python_code.resize_output', {
+                            defaultValue: 'Resize output panel',
+                          })}
+                          onMouseDown={handleResizeStart}
+                          className={`shrink-0 h-1 flex items-center justify-center cursor-row-resize hover:bg-blue-500/30 active:bg-blue-500/50 transition-colors group ${
+                            isResizing
+                              ? 'bg-blue-500/50'
+                              : 'bg-gray-200 dark:bg-gray-700'
+                          }`}
+                        >
+                          <div className="w-12 h-0.5 rounded-full bg-gray-400 group-hover:bg-blue-500 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100" />
+                        </div>
+                      )}
+                      {isOutputExpanded && (
+                        <div
+                          className="min-h-0 overflow-hidden flex flex-col shrink-0"
+                          style={{
+                            flex: isMobile
+                              ? '0 0 auto'
+                              : `0 0 calc(${outputHeightPercent}% - 2px)`,
+                            minHeight: !isMobile ? 80 : undefined,
+                          }}
+                        >
+                          <OutputConsole
+                            status={status}
+                            output={output}
+                            error={error}
+                            onClear={clearOutput}
+                            isExpanded={isOutputExpanded}
+                            onToggleExpand={() =>
+                              setIsOutputExpanded(prev => !prev)
+                            }
+                            onRun={handleRun}
+                            onReset={() => setCode(pythonCode)}
+                            isModified={isModified}
+                            testCases={testCases}
+                            testResults={testResults}
+                            testStatus={testStatus}
+                            testError={testError}
+                            onRunTests={handleRunTests}
+                            onAddTestCase={handleAddTestCase}
+                            onEditTestCase={handleEditTestCase}
+                            onDeleteTestCase={handleDeleteTestCase}
+                            onClearTestResults={clearTestResults}
+                          />
+                        </div>
+                      )}
                     </div>
                     {!isOutputExpanded && (
                       <div className="shrink-0 z-10">

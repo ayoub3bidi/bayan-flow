@@ -176,7 +176,6 @@ function OutputConsole({
                   </>
                 )}
               </button>
-              
             </div>
           )}
         </div>
