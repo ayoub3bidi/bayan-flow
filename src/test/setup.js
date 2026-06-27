@@ -4,9 +4,10 @@
  * See LICENSE for details.
  */
 
-import { expect, afterEach, vi } from 'vitest';
+import { expect, afterEach, beforeEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
+import { resetSoundManagerMock, soundManagerMock } from './soundManagerMock.js';
 import '../i18n';
 
 // Mock constants globally to prevent import issues
@@ -253,19 +254,6 @@ vi.mock('tone', () => ({
 }));
 
 // Mock soundManager globally - prevents file execution
-const soundManagerState = {
-  isEnabled: false,
-};
-const soundManagerMock = {
-  playEvents: vi.fn(),
-  enable: vi.fn(async () => {
-    soundManagerState.isEnabled = true;
-  }),
-  disable: vi.fn(() => {
-    soundManagerState.isEnabled = false;
-  }),
-  getIsEnabled: vi.fn(() => soundManagerState.isEnabled),
-};
 vi.mock('../utils/soundManager', () => ({
   soundManager: soundManagerMock,
 }));
@@ -291,11 +279,29 @@ vi.mock('../utils/gridHelpers.js', () => gridHelpersMock);
 
 expect.extend(matchers);
 
+const originalLocalStorage = globalThis.localStorage;
+
+function restoreRealLocalStorage() {
+  if (globalThis.localStorage !== originalLocalStorage) {
+    globalThis.localStorage = originalLocalStorage;
+  }
+  try {
+    originalLocalStorage.clear();
+  } catch {
+    // Ignore storage failures in teardown.
+  }
+}
+
+beforeEach(() => {
+  restoreRealLocalStorage();
+});
+
 afterEach(() => {
   cleanup();
   vi.clearAllTimers();
-  soundManagerState.isEnabled = false;
+  resetSoundManagerMock();
   if (typeof document !== 'undefined') {
     document.body.style.cssText = '';
   }
+  restoreRealLocalStorage();
 });

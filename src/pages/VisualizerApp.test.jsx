@@ -9,6 +9,7 @@ import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
 import { soundManager } from '../utils/soundManager';
+import { resetSoundManagerMock } from '../test/soundManagerMock.js';
 
 const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
   vi.hoisted(() => {
@@ -350,11 +351,9 @@ vi.mock('../video/useVideoExporter', () => ({
 
 describe('VisualizerApp', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    resetSoundManagerMock();
     window.localStorage.clear();
     document.body.style.cssText = '';
-    soundManager.disable();
-    vi.clearAllMocks();
     fullScreenMock.isFullScreen = false;
     videoExporterMock.exportState = 'idle';
     videoExporterMock.exportProgress = 0;
@@ -364,6 +363,7 @@ describe('VisualizerApp', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     document.body.style.cssText = '';
+    resetSoundManagerMock();
   });
 
   async function renderApp() {
