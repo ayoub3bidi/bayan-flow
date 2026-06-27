@@ -6,16 +6,8 @@
   "capabilities": {
     "tools": [
       {
-        "name": "get_algorithm_categories",
-        "description": "List all algorithm categories and their descriptions available on Bayan Flow"
-      },
-      {
-        "name": "get_algorithm_info",
-        "description": "Get detailed information about a specific algorithm including complexity, use cases, and associated visualizations"
-      },
-      {
-        "name": "search_algorithms",
-        "description": "Search through the algorithm library by name or keyword"
+        "name": "bayan_flow_info",
+        "description": "Get information about Bayan Flow, an interactive algorithm visualizer with 45+ algorithms across sorting, pathfinding, searching, tree traversal, and graph categories. Optionally filter by category name."
       }
     ]
   },

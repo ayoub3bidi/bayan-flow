@@ -20,6 +20,9 @@
 /logo.svg
   Cache-Control: public, max-age=86400
 
+/.well-known/api-catalog
+  Content-Type: application/json
+
 https://dev.bayanflow.com/*
   X-Robots-Tag: noindex
 

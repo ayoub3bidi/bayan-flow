@@ -4,28 +4,12 @@
     {
       "name": "algorithm-visualization",
       "description": "Browse and explore interactive algorithm visualizations across sorting, pathfinding, searching, tree traversal, and graph categories.",
-      "url": "https://bayanflow.com/app",
-      "tools": [
-        {
-          "name": "browse_categories",
-          "description": "View all algorithm categories and their visualizations"
-        },
-        {
-          "name": "view_algorithm",
-          "description": "Access a specific algorithm visualization with step-by-step execution"
-        }
-      ]
+      "url": "https://bayanflow.com/app"
     },
     {
       "name": "complexity-analysis",
       "description": "View time and space complexity information for any algorithm.",
-      "url": "https://bayanflow.com/app",
-      "tools": [
-        {
-          "name": "view_complexity",
-          "description": "View time and space complexity details for an algorithm"
-        }
-      ]
+      "url": "https://bayanflow.com/app"
     }
   ]
 }
