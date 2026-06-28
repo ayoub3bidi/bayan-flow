@@ -37,7 +37,7 @@ export const PRIVACY_POLICY_SECTIONS = [
     title: 'Optional User Accounts',
     paragraphs: [
       'You can use Bayan Flow without signing in. Core algorithm visualizations and playback controls remain available without an account.',
-      'Some enhanced features — including the interactive code panel, algorithm insight panel, video export, sound effects, and fullscreen mode — require signing in with Google. When you sign in, we process the account data described above. We do not offer email/password registration.',
+      'Some additional free features — including the interactive code panel, algorithm insight panel, video export, sound effects, and fullscreen mode — require signing in with Google. When you sign in, we process the account data described above. We do not offer email/password registration.',
     ],
   },
   {

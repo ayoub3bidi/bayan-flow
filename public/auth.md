@@ -1,6 +1,6 @@
 # Authentication
 
-Bayan Flow offers optional sign-in with Google. All algorithm visualizations are **free to use** without an account. The following features require signing in:
+Bayan Flow offers optional sign-in with Google. All algorithm visualizations are **free to use** without an account. The following additional free features require signing in:
 
 - **Code Panel** — view and edit algorithm Python/pseudocode
 - **Insight Panel** — algorithm intuition, history, and facts
