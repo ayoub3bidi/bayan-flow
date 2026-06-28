@@ -4,6 +4,9 @@
     "backToHome": "Retour à l'Accueil",
     "save": "Enregistrer"
   },
+  "app": {
+    "pageTitle": "Visualiseur Interactif d'Algorithmes"
+  },
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarté dans les Algorithmes",

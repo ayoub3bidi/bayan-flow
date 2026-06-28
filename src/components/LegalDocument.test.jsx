@@ -50,6 +50,7 @@ const renderLegalDocument = () =>
 describe('LegalDocument', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('en');
+    window.scrollTo = vi.fn();
   });
 
   it('renders title, last updated, and section content', () => {
@@ -65,6 +66,18 @@ describe('LegalDocument', () => {
     expect(screen.getByText('First paragraph.')).toBeInTheDocument();
     expect(screen.getByText('Bullet one')).toBeInTheDocument();
     expect(screen.getByTestId('legal-footer')).toBeInTheDocument();
+  });
+
+  it('scrolls to top when no hash fragment is present', () => {
+    renderLegalDocument();
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('preserves scroll position when a hash fragment is present', () => {
+    window.location.hash = '#intro';
+    renderLegalDocument();
+    expect(window.scrollTo).not.toHaveBeenCalled();
+    window.location.hash = '';
   });
 
   it('links back to the home page', () => {
