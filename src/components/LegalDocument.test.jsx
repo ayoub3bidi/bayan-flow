@@ -50,6 +50,7 @@ const renderLegalDocument = () =>
 describe('LegalDocument', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('en');
+    window.scrollTo = vi.fn();
   });
 
   it('renders title, last updated, and section content', () => {

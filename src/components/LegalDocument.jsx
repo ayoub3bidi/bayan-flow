@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
 import ThemeToggle from './ThemeToggle';
@@ -16,6 +17,10 @@ import LanguageSwitcher from './LanguageSwitcher';
  * @param {Array<{ id: string, title: string, paragraphs: string[], list?: string[] }>} props.sections
  */
 function LegalDocument({ title, lastUpdated, sections }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="min-h-screen relative overflow-x-hidden flex flex-col">
       <div className="fixed inset-0 bg-linear-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
