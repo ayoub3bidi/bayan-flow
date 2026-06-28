@@ -18,7 +18,9 @@ import LanguageSwitcher from './LanguageSwitcher';
  */
 function LegalDocument({ title, lastUpdated, sections }) {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
   }, []);
 
   return (

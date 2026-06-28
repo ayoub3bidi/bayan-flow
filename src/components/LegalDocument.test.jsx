@@ -68,6 +68,18 @@ describe('LegalDocument', () => {
     expect(screen.getByTestId('legal-footer')).toBeInTheDocument();
   });
 
+  it('scrolls to top when no hash fragment is present', () => {
+    renderLegalDocument();
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('preserves scroll position when a hash fragment is present', () => {
+    window.location.hash = '#intro';
+    renderLegalDocument();
+    expect(window.scrollTo).not.toHaveBeenCalled();
+    window.location.hash = '';
+  });
+
   it('links back to the home page', () => {
     renderLegalDocument();
 
