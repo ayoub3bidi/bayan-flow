@@ -67,7 +67,7 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 - **Session** — `getSession()`, `onAuthStateChange()`; `AuthProvider` in `src/main.jsx`
 - **OAuth UX** — Google Identity Services (PKCE popup on `/auth/google/callback`); web uses `signInWithIdToken`, not `signInWithOAuth`
 - **i18n** — sign-in/out strings and legal copy in en/fr/ar; audit RTL for Header auth control
-- **Free by default** — unauthenticated users keep full access; auth PRs must not gate existing features
+- **Free by default** — core visualization is free; Code Panel, Insight Panel, Video Export, Sound, and Fullscreen require sign-in; auth PRs must not reduce free functionality
 - **Secrets** — publishable anon key via `VITE_*` only; service role key never in repo or client bundle
 - **CSP** — Supabase origin in `connect-src`; Google profile photos in `img-src`; assert via `scripts/cspHeaders.js`
 - **Tests** — mock Supabase in Vitest (`src/test/supabaseMock.js`, wired in `src/test/setup.js`)

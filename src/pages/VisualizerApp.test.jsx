@@ -40,6 +40,23 @@ const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
     };
   });
 
+const authMock = vi.hoisted(() => ({
+  isAuthenticated: true,
+  isLoading: false,
+  isConfigured: true,
+  user: { id: 'test-user', email: 'test@example.com' },
+  signInWithGoogle: vi.fn(),
+  signOut: vi.fn(),
+  session: {},
+  profile: {
+    displayName: 'Test User',
+    email: 'test@example.com',
+    avatarSrc: '',
+    avatarSource: 'google',
+    plan: 'free',
+  },
+}));
+
 const sortingVisualization = {
   array: [3, 1, 2],
   states: ['sorting-state'],
@@ -172,8 +189,8 @@ vi.mock('../components/ExportProgressModal', () => ({
 }));
 
 vi.mock('../components/FloatingActionButton', () => ({
-  default: ({ disabled }) => (
-    <button data-testid="code-fab" disabled={disabled}>
+  default: ({ disabled, onClick }) => (
+    <button data-testid="code-fab" disabled={disabled} onClick={onClick}>
       Code
     </button>
   ),
@@ -238,6 +255,7 @@ vi.mock('../components/ControlPanel', () => ({
     onToggleSound,
     sortOrder,
     onSortOrderChange,
+    onToggleFullScreen,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -251,6 +269,9 @@ vi.mock('../components/ControlPanel', () => ({
       <button onClick={onExportVideo}>export</button>
       <button type="button" onClick={onToggleSound}>
         toggle-sound
+      </button>
+      <button type="button" onClick={onToggleFullScreen}>
+        toggle-fullscreen
       </button>
       {algorithmType === 'sorting' && (
         <button
@@ -330,6 +351,22 @@ vi.mock('../hooks/useFullScreen', () => ({
   }),
 }));
 
+vi.mock('../hooks/useAuth', () => ({
+  useAuth: () => authMock,
+}));
+
+vi.mock('../components/SignInPromptModal', () => ({
+  default: ({ feature, isOpen, onClose }) =>
+    isOpen ? (
+      <div data-testid="sign-in-prompt-modal">
+        <span data-testid="gated-feature">{feature}</span>
+        <button type="button" onClick={onClose}>
+          maybe-later
+        </button>
+      </div>
+    ) : null,
+}));
+
 vi.mock('../hooks/useBodyScrollLock', () => ({
   useBodyScrollLock: vi.fn(),
 }));
@@ -358,6 +395,7 @@ describe('VisualizerApp', () => {
     videoExporterMock.exportState = 'idle';
     videoExporterMock.exportProgress = 0;
     videoExporterMock.exportBlobUrl = null;
+    authMock.isAuthenticated = true;
   });
 
   afterEach(() => {
@@ -634,6 +672,76 @@ describe('VisualizerApp', () => {
       expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
         'false'
       );
+    });
+  });
+
+  describe('feature gating', () => {
+    function expectGatedFeatureModal(featureKey) {
+      const modal = screen.getByTestId('sign-in-prompt-modal');
+      expect(modal).toBeInTheDocument();
+      expect(screen.getByTestId('gated-feature')).toHaveTextContent(featureKey);
+    }
+
+    it('gates code panel when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      const codeFab = screen.getByTestId('code-fab');
+      fireEvent.click(codeFab);
+
+      expectGatedFeatureModal('code');
+    });
+
+    it('gates insight panel when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(
+        screen.getAllByRole('button', { name: /View Algorithm Insight/i })[0]
+      );
+
+      expectGatedFeatureModal('insight');
+    });
+
+    it('gates video export when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('pathfinding'));
+      fireEvent.click(screen.getByText('export'));
+
+      expectGatedFeatureModal('export');
+    });
+
+    it('gates sound toggle when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('toggle-sound'));
+
+      expectGatedFeatureModal('sound');
+    });
+
+    it('gates fullscreen when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('toggle-fullscreen'));
+
+      expectGatedFeatureModal('fullscreen');
+    });
+
+    it('does not gate features when authenticated', async () => {
+      authMock.isAuthenticated = true;
+      await renderApp();
+
+      const codeFab = screen.getByTestId('code-fab');
+      fireEvent.click(codeFab);
+
+      expect(
+        screen.queryByTestId('sign-in-prompt-modal')
+      ).not.toBeInTheDocument();
+      expect(screen.getByTestId('python-panel')).toBeInTheDocument();
     });
   });
 });

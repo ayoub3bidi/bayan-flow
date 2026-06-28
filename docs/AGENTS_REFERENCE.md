@@ -82,6 +82,7 @@
 - Roadmap page driven by `src/data/roadmapData.js`
 - Document title syncs with route/i18n (`DocumentTitle`)
 - Side FABs: `FloatingActionButton` (code/pseudocode panel), `InsightFloatingActionButton` (insight panel)
+- Feature gating: `SignInPromptModal` blocks Code Panel, Insight Panel, Video Export, Sound, and Fullscreen until the user signs in with Google
 
 ## Architecture Map
 
@@ -136,6 +137,7 @@
 - `src/components/ExportProgressModal.jsx`
 - `src/components/OutputConsole.jsx`, `src/components/TestCasesPanel.jsx`
 - `src/components/AutoHidingLegend.jsx`, `src/components/SwipeTutorial.jsx`
+- `src/components/SignInPromptModal.jsx`
 - `src/components/LanguageSwitcher.jsx`, `src/components/ThemeToggle.jsx`, `src/components/DocumentTitle.jsx`
 - `src/components/GitHubRepoBadge.jsx`
 
@@ -222,6 +224,7 @@
   - sorting order (`SORT_ORDERS`)
   - speed, playback mode (`VISUALIZATION_MODES`), sound preference, full-screen state
   - export flow, lazy panel visibility (`PythonCodePanel`, `AlgorithmInsightPanel`)
+  - gated feature state (`gatedFeature`, `pendingFeatureRef`) for sign-in gating
 - All category hooks are called unconditionally in `VisualizerApp` to preserve React Rules of Hooks.
 - `CATEGORY_CONFIG` is the central registry for:
   - default algorithm
@@ -298,6 +301,7 @@
   - `src/algorithms/python/*.py`
   - `src/algorithms/python/index.js`
   - `src/algorithms/python/testCases.js`
+- `featureGate` i18n namespace: feature labels and sign-in prompt strings in all three locale files
 - Insight copy: `insight_panel.algorithms.<key>.*` keys in all three locale files; metadata in `algorithmKnowledge.js`
 - User-facing category labels are reused in multiple places. If you rename one, audit:
   - all locale files
@@ -467,6 +471,7 @@
 - `pnpm vitest run src/components/AutoHidingLegend.test.jsx`
 - `pnpm vitest run src/components/TestCasesPanel.test.jsx`
 - `pnpm vitest run src/components/ExportProgressModal.test.jsx`
+- `pnpm vitest run src/components/SignInPromptModal.test.jsx`
 
 **Video export:**
 

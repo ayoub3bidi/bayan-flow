@@ -14,6 +14,7 @@ import SettingsPanel from '../components/SettingsPanel';
 import FloatingActionButton from '../components/FloatingActionButton';
 import InsightFloatingActionButton from '../components/InsightFloatingActionButton';
 import ExportProgressModal from '../components/ExportProgressModal';
+import SignInPromptModal from '../components/SignInPromptModal';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
 const AlgorithmInsightPanel = lazy(
@@ -44,6 +45,7 @@ import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
+import { useAuth } from '../hooks/useAuth';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import {
   clampGraphAlgorithmNodeCount,
@@ -192,6 +194,11 @@ function App() {
   );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
+  const { isAuthenticated } = useAuth();
+
+  const [gatedFeature, setGatedFeature] = useState(null);
+  const pendingFeatureRef = useRef(null);
+
   const {
     beginExportFlow,
     exportVideo,
@@ -293,6 +300,36 @@ function App() {
     );
   }
 
+  // ── Feature Gating ──────────────────────────────────────────────────────────
+
+  const openFeature = feature => {
+    switch (feature) {
+      case 'code':
+        setIsPythonPanelOpen(true);
+        break;
+      case 'insight':
+        setIsInsightPanelOpen(true);
+        break;
+      case 'export':
+        beginExportFlow();
+        break;
+      case 'sound':
+        handleSoundToggle();
+        break;
+      case 'fullscreen':
+        toggleFullScreen();
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && pendingFeatureRef.current) {
+      openFeature(pendingFeatureRef.current);
+      pendingFeatureRef.current = null;
+      setGatedFeature(null);
+    }
+  }, [isAuthenticated]);
+
   // ── Handlers ───────────────────────────────────────────────────────────────
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
@@ -344,6 +381,24 @@ function App() {
     }
   };
 
+  const handleGatedSoundToggle = () => {
+    if (isAuthenticated) {
+      handleSoundToggle();
+    } else {
+      pendingFeatureRef.current = 'sound';
+      setGatedFeature('sound');
+    }
+  };
+
+  const handleGatedFullscreenToggle = () => {
+    if (isAuthenticated) {
+      toggleFullScreen();
+    } else {
+      pendingFeatureRef.current = 'fullscreen';
+      setGatedFeature('fullscreen');
+    }
+  };
+
   const handleAlgorithmChange = algorithmName => {
     setSelectedAlgorithms(prev => ({
       ...prev,
@@ -383,7 +438,12 @@ function App() {
 
   const handleExportVideo = () => {
     if (visualization.totalSteps === 0) return;
-    beginExportFlow();
+    if (isAuthenticated) {
+      beginExportFlow();
+    } else {
+      pendingFeatureRef.current = 'export';
+      setGatedFeature('export');
+    }
   };
 
   const handleOrientationSelected = orientation => {
@@ -490,7 +550,7 @@ function App() {
               sortOrder={sortOrder}
               onSortOrderChange={setSortOrder}
               isFullScreen={isFullScreen}
-              onToggleFullScreen={toggleFullScreen}
+              onToggleFullScreen={handleGatedFullscreenToggle}
               onExportVideo={handleExportVideo}
               onCancelExport={cancelExport}
               exportState={exportState}
@@ -498,7 +558,8 @@ function App() {
               canRenderOnWeb={canRenderOnWeb}
               isSoundEnabled={isSoundEnabled}
               isSoundTogglePending={isSoundTogglePending}
-              onToggleSound={handleSoundToggle}
+              onToggleSound={handleGatedSoundToggle}
+              isGated={!isAuthenticated}
             />
           </motion.div>
         ) : (
@@ -589,7 +650,7 @@ function App() {
                       sortOrder={sortOrder}
                       onSortOrderChange={setSortOrder}
                       isFullScreen={isFullScreen}
-                      onToggleFullScreen={toggleFullScreen}
+                      onToggleFullScreen={handleGatedFullscreenToggle}
                       onExportVideo={handleExportVideo}
                       onCancelExport={cancelExport}
                       exportState={exportState}
@@ -597,7 +658,8 @@ function App() {
                       canRenderOnWeb={canRenderOnWeb}
                       isSoundEnabled={isSoundEnabled}
                       isSoundTogglePending={isSoundTogglePending}
-                      onToggleSound={handleSoundToggle}
+                      onToggleSound={handleGatedSoundToggle}
+                      isGated={!isAuthenticated}
                     />
                   </section>
                 </div>
@@ -609,13 +671,29 @@ function App() {
             {!isPythonPanelOpen && !isInsightPanelOpen && (
               <>
                 <FloatingActionButton
-                  onClick={() => setIsPythonPanelOpen(true)}
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setIsPythonPanelOpen(true);
+                    } else {
+                      pendingFeatureRef.current = 'code';
+                      setGatedFeature('code');
+                    }
+                  }}
                   disabled={!activeAlgorithmKey}
+                  isGated={!isAuthenticated}
                 />
                 <InsightFloatingActionButton
-                  onClick={() => setIsInsightPanelOpen(true)}
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setIsInsightPanelOpen(true);
+                    } else {
+                      pendingFeatureRef.current = 'insight';
+                      setGatedFeature('insight');
+                    }
+                  }}
                   disabled={!activeAlgorithmKey}
                   label={t('insight_panel.viewInsight')}
+                  isGated={!isAuthenticated}
                 />
               </>
             )}
@@ -676,6 +754,16 @@ function App() {
           algorithmName={activeAlgorithmName}
         />
       </Suspense>
+
+      {/* Sign-in prompt for gated features */}
+      <SignInPromptModal
+        feature={gatedFeature}
+        isOpen={gatedFeature !== null}
+        onClose={() => {
+          pendingFeatureRef.current = null;
+          setGatedFeature(null);
+        }}
+      />
     </div>
   );
 }

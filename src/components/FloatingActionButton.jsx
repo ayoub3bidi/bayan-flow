@@ -13,7 +13,12 @@ import { useTranslation } from 'react-i18next';
  * @param {boolean} props.disabled - Whether the button is disabled
  * @param {string} props.className - Additional CSS classes
  */
-function FloatingActionButton({ onClick, disabled = false, className = '' }) {
+function FloatingActionButton({
+  onClick,
+  disabled = false,
+  className = '',
+  isGated = false,
+}) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
 
@@ -32,12 +37,17 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
           flex-col items-center justify-center gap-2
           transition-all duration-200
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+          ${isGated ? 'opacity-60 hover:opacity-80' : ''}
           ${className}
         `}
         initial={{ [isRTL ? 'x' : 'x']: isRTL ? -48 : 48, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
+        animate={{ x: 0, opacity: isGated ? 0.6 : 1 }}
         exit={{ [isRTL ? 'x' : 'x']: isRTL ? -48 : 48, opacity: 0 }}
-        whileHover={{ x: disabled ? 0 : isRTL ? 4 : -4 }}
+        whileHover={
+          disabled
+            ? {}
+            : { x: isRTL ? 4 : -4, ...(isGated ? { opacity: 0.8 } : {}) }
+        }
         whileTap={{ scale: disabled ? 1 : 0.98 }}
         transition={{
           type: 'spring',
@@ -69,9 +79,11 @@ function FloatingActionButton({ onClick, disabled = false, className = '' }) {
           ${className}
         `}
         initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        animate={{ scale: 1, opacity: isGated ? 0.6 : 1 }}
         exit={{ scale: 0, opacity: 0 }}
-        whileHover={{ scale: disabled ? 1 : 1.05 }}
+        whileHover={
+          disabled ? {} : { scale: 1.05, ...(isGated ? { opacity: 0.8 } : {}) }
+        }
         whileTap={{ scale: disabled ? 1 : 0.95 }}
         transition={{
           type: 'spring',
