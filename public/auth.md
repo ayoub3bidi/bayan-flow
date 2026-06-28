@@ -1,10 +1,16 @@
 # Authentication
 
-Bayan Flow offers optional sign-in with Google. You can use all algorithm visualizations, the code panel, insight panel, and video export without an account.
+Bayan Flow offers optional sign-in with Google. All algorithm visualizations are **free to use** without an account. The following features require signing in:
+
+- **Code Panel** — view and edit algorithm Python/pseudocode
+- **Insight Panel** — algorithm intuition, history, and facts
+- **Video Export** — download MP4 recordings of visualizations
+- **Sound** — audio cues during visualization playback
+- **Fullscreen** — expanded visualization view
 
 ## Sign in
 
-Use the **Sign in with Google** control in the header at any time. This opens a Google sign-in popup where you choose your account.
+Use the **Sign in with Google** control in the header at any time. This opens a Google sign-in popup where you choose your account. After signing in, all gated features become available.
 
 Sign-in uses [Google Identity Services](https://developers.google.com/identity) on **bayanflow.com** — Google shows our domain, not a third-party auth host. After you choose an account, Bayan Flow receives an ID token and creates a Supabase session. We store your Google account email, display name, and profile photo URL to show your account in the app and to maintain a minimal profile row in our database.
 
