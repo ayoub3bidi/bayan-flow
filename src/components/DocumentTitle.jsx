@@ -13,7 +13,7 @@ const ROUTE_TITLE_KEYS = {
   '/privacy': 'legal.privacyTitle',
   '/terms': 'legal.termsTitle',
   '/roadmap': 'roadmap.hero.title',
-  '/app': 'header.title',
+  '/app': 'app.pageTitle',
 };
 
 function getRouteDescriptions(pathname, t) {

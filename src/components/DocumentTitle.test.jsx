@@ -193,6 +193,20 @@ describe('DocumentTitle', () => {
     );
   });
 
+  it('should set app route title', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/app']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    const baseTitle = i18n.t('header.title');
+    const appTitle = i18n.t('app.pageTitle');
+    expect(document.title).toBe(`${baseTitle} - ${appTitle}`);
+  });
+
   it('should set canonical and og:url for the active route', () => {
     render(
       <I18nextProvider i18n={i18n}>

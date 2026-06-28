@@ -4,6 +4,9 @@
     "backToHome": "Back to Home",
     "save": "Save"
   },
+  "app": {
+    "pageTitle": "Interactive Algorithm Visualizer"
+  },
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarity in Algorithms",
