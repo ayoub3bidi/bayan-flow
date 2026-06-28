@@ -1304,5 +1304,16 @@
     "timeline": {
       "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route."
     }
+  },
+  "featureGate": {
+    "title": "Débloquez {{feature}}",
+    "description": "Connectez-vous avec Google pour accéder à {{feature}} et profiter pleinement de Bayan Flow.",
+    "signIn": "Se connecter avec Google",
+    "dismiss": "Plus tard",
+    "code": "Panneau de code",
+    "insight": "Aperçu de l'algorithme",
+    "export": "Exportation vidéo",
+    "sound": "Son",
+    "fullscreen": "Mode plein écran"
   }
 }

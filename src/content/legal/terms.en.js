@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-export const TERMS_OF_USE_LAST_UPDATED = '2026-06-21';
+export const TERMS_OF_USE_LAST_UPDATED = '2026-06-28';
 
 export const TERMS_OF_USE_SECTIONS = [
   {
@@ -18,7 +18,7 @@ export const TERMS_OF_USE_SECTIONS = [
     id: 'service',
     title: 'The Service',
     paragraphs: [
-      'Bayan Flow is a free, client-side educational web application for visualizing algorithms. The Service is provided for learning and demonstration purposes.',
+      'Bayan Flow is a free, client-side educational web application for visualizing algorithms. Core visualization features are available without an account. Some optional features — including the code panel, algorithm insight panel, video export, sound effects, and fullscreen mode — require signing in with a Google account. The Service is provided for learning and demonstration purposes.',
       'We may modify, suspend, or discontinue any part of the Service at any time without notice.',
     ],
   },

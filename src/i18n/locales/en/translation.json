@@ -1304,5 +1304,16 @@
     "timeline": {
       "sampleNote": "Timeline items are samples. Replace with actual roadmap content."
     }
+  },
+  "featureGate": {
+    "title": "Unlock {{feature}}",
+    "description": "Sign in with Google to access the {{feature}} and get the full Bayan Flow experience.",
+    "signIn": "Sign in with Google",
+    "dismiss": "Maybe later",
+    "code": "Code Panel",
+    "insight": "Algorithm Insight",
+    "export": "Video Export",
+    "sound": "Sound",
+    "fullscreen": "Fullscreen Mode"
   }
 }

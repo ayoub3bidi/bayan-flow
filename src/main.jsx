@@ -25,7 +25,6 @@ import GoogleAuthCallback from './pages/GoogleAuthCallback.jsx';
 
 // Components
 import DocumentTitle from './components/DocumentTitle.jsx';
-import GoogleOneTap from './components/GoogleOneTap.jsx';
 
 initRTL(i18n);
 
@@ -35,7 +34,6 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <BrowserRouter>
           <DocumentTitle />
-          <GoogleOneTap />
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/app" element={<VisualizerApp />} />

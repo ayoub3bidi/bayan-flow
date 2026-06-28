@@ -1,10 +1,16 @@
 # Authentication
 
-Bayan Flow offers optional sign-in with Google. You can use all algorithm visualizations, the code panel, insight panel, and video export without an account.
+Bayan Flow offers optional sign-in with Google. All algorithm visualizations are **free to use** without an account. The following additional free features require signing in:
+
+- **Code Panel** — view and edit algorithm Python/pseudocode
+- **Insight Panel** — algorithm intuition, history, and facts
+- **Video Export** — download MP4 recordings of visualizations
+- **Sound** — audio cues during visualization playback
+- **Fullscreen** — expanded visualization view
 
 ## Sign in
 
-When you visit the site while signed into Google in your browser, a **Google One Tap** prompt may appear automatically so you can sign in with one click. You can also use the **Sign in with Google** control in the header at any time.
+Use the **Sign in with Google** control in the header at any time. This opens a Google sign-in popup where you choose your account. After signing in, all gated features become available.
 
 Sign-in uses [Google Identity Services](https://developers.google.com/identity) on **bayanflow.com** — Google shows our domain, not a third-party auth host. After you choose an account, Bayan Flow receives an ID token and creates a Supabase session. We store your Google account email, display name, and profile photo URL to show your account in the app and to maintain a minimal profile row in our database.
 
@@ -16,11 +22,9 @@ Sign-in uses [Google Identity Services](https://developers.google.com/identity) 
 | Dev deploy | `https://dev.bayanflow.com` |
 | Production | `https://bayanflow.com` |
 
-The `VITE_GOOGLE_WEB_CLIENT_ID` in `.env.local` must match this same Web client. Redirect URIs are **not** required for One Tap or the header sign-in button. If sign-in fails with `origin_mismatch` or `403` on `accounts.google.com/gsi/`, the current browser origin is missing from that list — open DevTools and compare `window.location.origin` to the Console entries exactly.
+The `VITE_GOOGLE_WEB_CLIENT_ID` in `.env.local` must match this same Web client. If sign-in fails with `origin_mismatch` or `403` on `accounts.google.com/gsi/`, the current browser origin is missing from that list — open DevTools and compare `window.location.origin` to the Console entries exactly.
 
 **Supabase:** Authentication → Providers → Google — use the same Web Client ID and Client Secret from that OAuth client.
-
-**Browser:** Chrome may block FedCM / third-party sign-in for a site. If One Tap fails, use the header **Sign in with Google** button, or re-enable third-party sign-in via the icon left of the address bar → Site settings.
 
 ## Data stored
 
@@ -29,7 +33,7 @@ The `VITE_GOOGLE_WEB_CLIENT_ID` in `.env.local` must match this same Web client.
 
 ## Sign out
 
-Use **Sign out** from the account menu in the header at any time. This clears the local session and disables Google automatic sign-in for this browser until you sign in again.
+Use **Sign out** from the account menu in the header at any time. This clears the local Supabase session.
 
 ## Contact
 

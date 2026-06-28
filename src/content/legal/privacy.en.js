@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-export const PRIVACY_POLICY_LAST_UPDATED = '2026-06-27';
+export const PRIVACY_POLICY_LAST_UPDATED = '2026-06-28';
 
 export const PRIVACY_POLICY_SECTIONS = [
   {
@@ -36,8 +36,8 @@ export const PRIVACY_POLICY_SECTIONS = [
     id: 'accounts',
     title: 'Optional User Accounts',
     paragraphs: [
-      'You can use Bayan Flow without signing in. All algorithm visualizations and educational tooling remain available without an account.',
-      'When you sign in with Google, we process the account data described above. We do not offer email/password registration.',
+      'You can use Bayan Flow without signing in. Core algorithm visualizations and playback controls remain available without an account.',
+      'Some additional free features — including the interactive code panel, algorithm insight panel, video export, sound effects, and fullscreen mode — require signing in with Google. When you sign in, we process the account data described above. We do not offer email/password registration.',
     ],
   },
   {
