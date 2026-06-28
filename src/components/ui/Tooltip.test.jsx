@@ -50,10 +50,13 @@ describe('Tooltip', () => {
       </Tooltip>
     );
 
-    fireEvent.focus(screen.getByRole('button', { name: 'Hover' }));
+    fireEvent.mouseEnter(screen.getByRole('button', { name: 'Hover' }));
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
 
-    fireEvent.blur(screen.getByRole('button', { name: 'Hover' }));
+    fireEvent.mouseLeave(screen.getByRole('button', { name: 'Hover' }));
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 

@@ -128,6 +128,7 @@ describe('UserMenu', () => {
     await waitFor(() => {
       expect(signInWithGoogle).toHaveBeenCalled();
     });
+    expect(navigateMock).not.toHaveBeenCalled();
   });
 
   it('handles sign-out error gracefully', async () => {

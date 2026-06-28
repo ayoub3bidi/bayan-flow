@@ -32,7 +32,7 @@ function getNotionistsStyle() {
  * @returns {boolean}
  */
 function isHttpUrl(url) {
-  return typeof url === 'string' && /^https?:\/\//.test(url.trim());
+  return typeof url === 'string' && /^https:\/\//.test(url.trim());
 }
 
 /**

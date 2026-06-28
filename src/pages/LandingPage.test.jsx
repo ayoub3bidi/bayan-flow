@@ -68,6 +68,7 @@ describe('LandingPage', () => {
       expect(screen.getByTestId('features')).toBeInTheDocument();
       expect(screen.getByTestId('clarity-section')).toBeInTheDocument();
       expect(screen.getByTestId('roadmap-cta')).toBeInTheDocument();
+      expect(screen.getByTestId('user-menu')).toBeInTheDocument();
       expect(screen.getByTestId('footer')).toBeInTheDocument();
     });
 

@@ -31,13 +31,19 @@ export async function exchangeGoogleAuthCode(
     }),
   });
 
-  const payload = await response.json();
-
   if (!response.ok) {
-    throw new Error(
-      payload.error_description ?? payload.error ?? 'Token exchange failed'
-    );
+    let reason = 'Token exchange failed';
+    try {
+      const payload = await response.json();
+      reason = payload.error_description ?? payload.error ?? reason;
+    } catch {
+      const text = await response.text().catch(() => '');
+      if (text) reason = text;
+    }
+    throw new Error(reason);
   }
+
+  const payload = await response.json();
 
   if (!payload.id_token) {
     throw new Error('Google did not return an ID token');

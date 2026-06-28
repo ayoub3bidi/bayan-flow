@@ -33,7 +33,9 @@ function parseGoogleIdTokenClaims(idToken) {
       return {};
     }
     const base64 = segment.replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(base64));
+    const binary = atob(base64);
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
   } catch {
     return {};
   }
