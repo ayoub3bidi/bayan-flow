@@ -6,7 +6,6 @@
 
 import { isSupabaseConfigured, getSupabaseClient } from '@/lib/supabaseClient';
 import {
-  disableGoogleAutoSelect,
   isGoogleAuthConfigured,
   requestGoogleSignInPopup,
 } from '@/lib/googleIdentity';
@@ -104,7 +103,6 @@ export async function signInWithGoogle() {
 }
 
 export async function signOut() {
-  disableGoogleAutoSelect();
   const supabase = requireClient();
   const { error } = await supabase.auth.signOut();
   if (error) {

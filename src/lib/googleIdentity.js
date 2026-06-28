@@ -90,13 +90,6 @@ export function loadGoogleIdentityScript() {
   return scriptLoadPromise;
 }
 
-export function cancelGoogleOneTap() {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  window.google?.accounts?.id?.cancel?.();
-}
-
 /**
  * @returns {string}
  */
@@ -122,7 +115,7 @@ export async function hashNonce(nonce) {
 }
 
 /**
- * GIS allows one initialize() per page — shared callback dispatcher for One Tap + button.
+ * GIS allows one initialize() per page — shared callback dispatcher for sign-in button.
  * @returns {Promise<void>}
  */
 async function ensureGisInitialized() {
@@ -146,42 +139,9 @@ async function ensureGisInitialized() {
       }
       await handler(response.credential);
     },
-    use_fedcm_for_prompt: true,
-    auto_select: false,
-    cancel_on_tap_outside: true,
-    context: 'signin',
-    itp_support: true,
   });
 
   gisInitialized = true;
-}
-
-/**
- * @param {Object} options
- * @param {(credential: string) => void | Promise<void>} options.onCredential
- * @returns {Promise<{ cancel: () => void }>}
- */
-export async function initOneTap({ onCredential }) {
-  await ensureGisInitialized();
-  cancelGoogleOneTap();
-
-  let cancelled = false;
-
-  credentialHandler = async credential => {
-    if (!cancelled) {
-      await onCredential(credential);
-    }
-  };
-
-  window.google.accounts.id.prompt();
-
-  return {
-    cancel: () => {
-      cancelled = true;
-      credentialHandler = null;
-      cancelGoogleOneTap();
-    },
-  };
 }
 
 /**
@@ -230,7 +190,6 @@ function openGoogleSignInButton(reject) {
  */
 export async function requestGoogleSignInPopup() {
   await ensureGisInitialized();
-  cancelGoogleOneTap();
 
   return new Promise((resolve, reject) => {
     let settled = false;
@@ -258,16 +217,6 @@ export async function requestGoogleSignInPopup() {
 
     openGoogleSignInButton(reason => finish(reject, reason));
   });
-}
-
-export function disableGoogleAutoSelect() {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  if (window.google?.accounts?.id?.disableAutoSelect) {
-    window.google.accounts.id.disableAutoSelect();
-  }
 }
 
 /** @internal Test-only reset for GIS singleton state. */

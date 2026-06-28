@@ -12,7 +12,6 @@ import {
 
 vi.mock('../lib/googleIdentity', () => ({
   requestGoogleSignInPopup: vi.fn(async () => ({ idToken: 'test-token' })),
-  disableGoogleAutoSelect: vi.fn(),
   isGoogleAuthConfigured: vi.fn(() => true),
 }));
 

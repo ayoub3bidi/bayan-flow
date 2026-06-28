@@ -65,7 +65,7 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 - **Service layer** — `src/services/authService.js`, `profileService.js`; components use `AuthContext` / `useAuth`, never import Supabase directly
 - **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client never writes `plan` (service role / webhook only, future)
 - **Session** — `getSession()`, `onAuthStateChange()`; `AuthProvider` in `src/main.jsx`
-- **OAuth UX** — Google Identity Services (One Tap + PKCE popup on `/auth/google/callback`); web uses `signInWithIdToken`, not `signInWithOAuth`
+- **OAuth UX** — Google Identity Services (PKCE popup on `/auth/google/callback`); web uses `signInWithIdToken`, not `signInWithOAuth`
 - **i18n** — sign-in/out strings and legal copy in en/fr/ar; audit RTL for Header auth control
 - **Free by default** — unauthenticated users keep full access; auth PRs must not gate existing features
 - **Secrets** — publishable anon key via `VITE_*` only; service role key never in repo or client bundle

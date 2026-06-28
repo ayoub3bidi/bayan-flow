@@ -6,7 +6,6 @@ import {
 } from '../test/supabaseMock.js';
 
 vi.mock('../lib/googleIdentity.js', () => ({
-  disableGoogleAutoSelect: vi.fn(),
   isGoogleAuthConfigured: vi.fn(() => true),
   requestGoogleSignInPopup: vi.fn(async () => ({
     idToken: 'google-id-token',
@@ -90,11 +89,8 @@ describe('authService', () => {
     });
   });
 
-  it('signOut disables Google auto-select and delegates to Supabase auth', async () => {
-    const { disableGoogleAutoSelect } =
-      await import('../lib/googleIdentity.js');
+  it('signOut delegates to Supabase auth', async () => {
     await authService.signOut();
-    expect(disableGoogleAutoSelect).toHaveBeenCalled();
     expect(supabaseAuthMock.signOut).toHaveBeenCalled();
   });
 
