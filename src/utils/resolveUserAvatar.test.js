@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2025 Bayan Flow
- * Licensed under Elastic License 2.0 OR Commercial
- * See LICENSE for details.
- */
-
 import { describe, it, expect } from 'vitest';
 import {
   generateAvatarDataUri,
@@ -42,8 +36,19 @@ describe('resolveUserAvatar', () => {
     expect(first.src.startsWith('data:image/svg+xml')).toBe(true);
   });
 
+  it('generates DiceBear fallback when no inputs provided', () => {
+    const result = resolveUserAvatar({});
+    expect(result.source).toBe('generated');
+    expect(result.src.startsWith('data:image/svg+xml')).toBe(true);
+  });
+
   it('generateAvatarDataUri returns data URI', () => {
     const uri = generateAvatarDataUri('seed@example.com', 48);
+    expect(uri.startsWith('data:image/svg+xml')).toBe(true);
+  });
+
+  it('generateAvatarDataUri handles empty seed', () => {
+    const uri = generateAvatarDataUri('', 64);
     expect(uri.startsWith('data:image/svg+xml')).toBe(true);
   });
 
@@ -55,6 +60,18 @@ describe('resolveUserAvatar', () => {
     ).toBe('https://lh3.googleusercontent.com/pic');
   });
 
+  it('getMetadataAvatarUrl returns null for missing metadata', () => {
+    expect(getMetadataAvatarUrl({})).toBeNull();
+  });
+
+  it('getMetadataAvatarUrl returns null for invalid URL', () => {
+    expect(
+      getMetadataAvatarUrl({
+        user_metadata: { picture: 'not-a-url' },
+      })
+    ).toBeNull();
+  });
+
   it('resolveDisplayName prefers metadata full_name', () => {
     expect(
       resolveDisplayName(
@@ -62,5 +79,36 @@ describe('resolveUserAvatar', () => {
         null
       )
     ).toBe('Ayoub Abidi');
+  });
+
+  it('resolveDisplayName prefers metadata name when full_name absent', () => {
+    expect(
+      resolveDisplayName(
+        { email: 'a@b.com', user_metadata: { name: 'John' } },
+        null
+      )
+    ).toBe('John');
+  });
+
+  it('resolveDisplayName falls back to profile display_name', () => {
+    expect(
+      resolveDisplayName(
+        { email: 'a@b.com', user_metadata: {} },
+        { display_name: 'Profile Name', email: 'a@b.com' }
+      )
+    ).toBe('Profile Name');
+  });
+
+  it('resolveDisplayName falls back to email local part', () => {
+    expect(
+      resolveDisplayName(
+        { email: 'john.doe@example.com', user_metadata: {} },
+        null
+      )
+    ).toBe('john.doe');
+  });
+
+  it('resolveDisplayName defaults to User when nothing is available', () => {
+    expect(resolveDisplayName({ user_metadata: {} }, null)).toBe('User');
   });
 });

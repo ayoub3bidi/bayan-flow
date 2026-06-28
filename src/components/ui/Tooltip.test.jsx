@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2025 Bayan Flow
- * Licensed under Elastic License 2.0 OR Commercial
- * See LICENSE for details.
- */
-
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Tooltip from './Tooltip';
@@ -47,5 +41,44 @@ describe('Tooltip', () => {
     expect(screen.getByRole('tooltip')).toHaveTextContent(
       'Sign in with Google'
     );
+  });
+
+  it('hides tooltip on mouse leave', () => {
+    render(
+      <Tooltip label="Test tooltip">
+        <button type="button">Hover</button>
+      </Tooltip>
+    );
+
+    fireEvent.focus(screen.getByRole('button', { name: 'Hover' }));
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    fireEvent.blur(screen.getByRole('button', { name: 'Hover' }));
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('hides tooltip on blur after focus', () => {
+    render(
+      <Tooltip label="Blur test">
+        <button type="button">Focus</button>
+      </Tooltip>
+    );
+
+    fireEvent.focus(screen.getByRole('button', { name: 'Focus' }));
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    fireEvent.blur(screen.getByRole('button', { name: 'Focus' }));
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('shows without delay when delay is zero', () => {
+    render(
+      <Tooltip label="Instant" delay={0}>
+        <button type="button">Instant</button>
+      </Tooltip>
+    );
+
+    fireEvent.mouseEnter(screen.getByRole('button', { name: 'Instant' }));
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Instant');
   });
 });

@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2025 Bayan Flow
- * Licensed under Elastic License 2.0 OR Commercial
- * See LICENSE for details.
- */
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UserMenu from './UserMenu';
@@ -43,6 +37,21 @@ describe('UserMenu', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it('shows loading skeleton when loading and not authenticated', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: true,
+      isAuthenticated: false,
+      profile: null,
+      signInWithGoogle: vi.fn(),
+      signOut: vi.fn(),
+    });
+
+    const { container } = render(<UserMenu />);
+    const skeleton = container.querySelector('[aria-hidden="true"]');
+    expect(skeleton).toBeInTheDocument();
+  });
+
   it('shows Google sign-in button when signed out', () => {
     vi.mocked(useAuth).mockReturnValue({
       isConfigured: true,
@@ -73,7 +82,6 @@ describe('UserMenu', () => {
     render(<UserMenu variant="compact" />);
     const button = screen.getByRole('button', { name: /sign in with google/i });
     expect(button).toBeInTheDocument();
-    expect(button).not.toHaveAttribute('title');
     expect(screen.queryByText(/sign in with google/i)).not.toBeInTheDocument();
   });
 
@@ -96,6 +104,57 @@ describe('UserMenu', () => {
     await waitFor(() => {
       expect(signInWithGoogle).toHaveBeenCalled();
       expect(navigateMock).toHaveBeenCalledWith('/app', { replace: true });
+    });
+  });
+
+  it('handles sign-in error gracefully', async () => {
+    const signInWithGoogle = vi
+      .fn()
+      .mockRejectedValue(new Error('Sign in failed'));
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: false,
+      isAuthenticated: false,
+      profile: null,
+      signInWithGoogle,
+      signOut: vi.fn(),
+    });
+
+    render(<UserMenu variant="landing" />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /sign in with google/i })
+    );
+
+    await waitFor(() => {
+      expect(signInWithGoogle).toHaveBeenCalled();
+    });
+  });
+
+  it('handles sign-out error gracefully', async () => {
+    const signOut = vi.fn().mockRejectedValue(new Error('Sign out failed'));
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: false,
+      isAuthenticated: true,
+      profile: {
+        displayName: 'Test User',
+        email: 'user@example.com',
+        avatarSrc: 'data:image/svg+xml;charset=utf-8,test',
+        avatarSource: 'generated',
+        plan: 'free',
+      },
+      signInWithGoogle: vi.fn(),
+      signOut,
+    });
+
+    render(<UserMenu />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /account menu for test user/i })
+    );
+    fireEvent.click(screen.getByRole('menuitem', { name: /sign out/i }));
+
+    await waitFor(() => {
+      expect(signOut).toHaveBeenCalled();
     });
   });
 

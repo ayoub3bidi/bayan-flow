@@ -17,8 +17,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
     env: {
-      VITE_GOOGLE_WEB_CLIENT_ID:
-        '123456789-test.apps.googleusercontent.com',
+      VITE_GOOGLE_WEB_CLIENT_ID: '123456789-test.apps.googleusercontent.com',
     },
     css: true,
     //? Run tests sequentially to reduce memory pressure

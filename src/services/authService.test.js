@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2025 Bayan Flow
- * Licensed under Elastic License 2.0 OR Commercial
- * See LICENSE for details.
- */
-
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   mockSupabaseConfigured,
@@ -21,6 +15,7 @@ vi.mock('../lib/googleIdentity.js', () => ({
 
 import * as authService from './authService';
 import { requestGoogleSignInPopup } from '../lib/googleIdentity.js';
+import { isGoogleAuthConfigured } from '../lib/googleIdentity.js';
 
 describe('authService', () => {
   beforeEach(() => {
@@ -48,7 +43,9 @@ describe('authService', () => {
   });
 
   it('signInWithGoogleIdToken syncs picture from JWT claims', async () => {
-    const payload = btoa(JSON.stringify({ picture: 'https://lh3.googleusercontent.com/a/test' }))
+    const payload = btoa(
+      JSON.stringify({ picture: 'https://lh3.googleusercontent.com/a/test' })
+    )
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=+$/, '');
@@ -60,6 +57,23 @@ describe('authService', () => {
       data: {
         picture: 'https://lh3.googleusercontent.com/a/test',
         avatar_url: 'https://lh3.googleusercontent.com/a/test',
+      },
+    });
+  });
+
+  it('signInWithGoogleIdToken syncs full_name from JWT claims', async () => {
+    const payload = btoa(JSON.stringify({ name: 'John Doe' }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    const idToken = `header.${payload}.signature`;
+
+    await authService.signInWithGoogleIdToken(idToken);
+
+    expect(supabaseAuthMock.updateUser).toHaveBeenCalledWith({
+      data: {
+        full_name: 'John Doe',
+        name: 'John Doe',
       },
     });
   });
@@ -89,7 +103,19 @@ describe('authService', () => {
     await expect(authService.getSession()).resolves.toBeNull();
   });
 
+  it('getSession throws on error', async () => {
+    supabaseAuthMock.getSession.mockRejectedValueOnce(
+      new Error('Network error')
+    );
+    await expect(authService.getSession()).rejects.toThrow('Network error');
+  });
+
   it('isAuthConfigured requires Supabase and Google client ID', () => {
     expect(authService.isAuthConfigured()).toBe(true);
+  });
+
+  it('isAuthConfigured returns false when google is not configured', () => {
+    vi.mocked(isGoogleAuthConfigured).mockReturnValueOnce(false);
+    expect(authService.isAuthConfigured()).toBe(false);
   });
 });

@@ -79,6 +79,24 @@ export function assertVideoExportCspDirectives(csp, source) {
 }
 
 /**
+ * Read the configured Supabase project URL from the environment.
+ * @returns {string}
+ */
+function getSupabaseOrigin() {
+  const url = process.env.VITE_SUPABASE_URL;
+  if (!url) {
+    throw new Error(
+      'VITE_SUPABASE_URL must be set in the environment to validate CSP connect-src'
+    );
+  }
+  try {
+    return new URL(url).origin;
+  } catch {
+    throw new Error(`VITE_SUPABASE_URL is not a valid URL: "${url}"`);
+  }
+}
+
+/**
  * Assert CSP directives required for Supabase auth and Google profile avatars.
  * @param {string} csp
  * @param {string} source - Label for error messages (e.g. "public/_headers")
@@ -87,10 +105,11 @@ export function assertVideoExportCspDirectives(csp, source) {
 export function assertAuthCspDirectives(csp, source) {
   const directives = parseCspDirectives(csp);
 
+  const supabaseOrigin = getSupabaseOrigin();
   const connectSrc = directives.get('connect-src');
-  if (!connectSrc?.includes('https://qketsapzqpzmccljfjcm.supabase.co')) {
+  if (!connectSrc?.includes(supabaseOrigin)) {
     throw new Error(
-      `${source}: connect-src must include https://qketsapzqpzmccljfjcm.supabase.co (Supabase auth)`
+      `${source}: connect-src must include ${supabaseOrigin} (Supabase auth)`
     );
   }
 
