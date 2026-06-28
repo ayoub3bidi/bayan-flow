@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GoogleLogo } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,20 +14,37 @@ function SignInPromptModal({ feature, isOpen, onClose }) {
   const { t } = useTranslation();
   const { signInWithGoogle } = useAuth();
   const featureLabel = t(`featureGate.${feature}`, { defaultValue: feature });
+  const dialogRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const prevFocus = document.activeElement;
+    dialogRef.current?.querySelector('button')?.focus();
+
+    return () => {
+      if (prevFocus && typeof prevFocus.focus === 'function') {
+        prevFocus.focus();
+      }
+    };
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          ref={dialogRef}
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
+          onKeyDown={e => e.key === 'Escape' && onClose()}
           role="dialog"
           aria-modal="true"
           aria-label={t('featureGate.title', { feature: featureLabel })}
+          tabIndex={-1}
         >
           <motion.div
             className="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-8"

@@ -16,6 +16,14 @@ vi.mock('../hooks/useAuth', () => ({
 
 const FEATURES = ['code', 'insight', 'export', 'sound', 'fullscreen'];
 
+const FEATURE_LABELS = {
+  code: 'Code Panel',
+  insight: 'Algorithm Insight',
+  export: 'Video Export',
+  sound: 'Sound',
+  fullscreen: 'Fullscreen Mode',
+};
+
 describe('SignInPromptModal', () => {
   beforeEach(() => {
     signInWithGoogle.mockClear();
@@ -27,7 +35,11 @@ describe('SignInPromptModal', () => {
         <SignInPromptModal feature={featureKey} isOpen onClose={vi.fn()} />
       );
 
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      const dialog = screen.getByRole('dialog');
+      expect(dialog).toBeInTheDocument();
+      expect(dialog).toHaveAccessibleName(
+        `Unlock ${FEATURE_LABELS[featureKey]}`
+      );
       expect(screen.getByText('Sign in with Google')).toBeInTheDocument();
       expect(screen.getByText('Maybe later')).toBeInTheDocument();
     });
@@ -69,5 +81,25 @@ describe('SignInPromptModal', () => {
     const overlay = screen.getByRole('dialog');
     fireEvent.click(overlay);
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes on Escape key', () => {
+    const onClose = vi.fn();
+    renderWithI18n(
+      <SignInPromptModal feature="code" isOpen onClose={onClose} />
+    );
+
+    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not close on other keys', () => {
+    const onClose = vi.fn();
+    renderWithI18n(
+      <SignInPromptModal feature="code" isOpen onClose={onClose} />
+    );
+
+    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Enter' });
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

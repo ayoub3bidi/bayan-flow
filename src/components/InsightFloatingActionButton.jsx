@@ -69,7 +69,7 @@ export default function InsightFloatingActionButton({
           text-white rounded-full shadow-lg hover:shadow-xl
           items-center justify-center
           transition-all duration-200
-          focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-off-2
+          focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2
           touch-manipulation
         `}
         initial={{ scale: 0, opacity: 0 }}
