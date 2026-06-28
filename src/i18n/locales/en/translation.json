@@ -10,6 +10,13 @@
     "openGithubRepo": "Open {{repo}} on GitHub — version {{version}}, {{stars}} stars, {{forks}} forks",
     "goToRepository": "Go to repository"
   },
+  "auth": {
+    "sign_in_google": "Sign in with Google",
+    "sign_out": "Sign out",
+    "signed_in_as": "Signed in as {{name}}",
+    "account_menu_label": "Account menu for {{name}}",
+    "completing_sign_in": "Completing sign-in…"
+  },
   "settings": {
     "title": "Settings",
     "mode": "Mode",

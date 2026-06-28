@@ -7,11 +7,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
+  assertAuthCspDirectives,
   assertVideoExportCspDirectives,
   extractCspFromHeadersFile,
   extractCspFromNetlifyToml,
+  parseCspDirectives,
 } from '../../scripts/cspHeaders.js';
 
 const repoRoot = path.resolve(
@@ -20,24 +22,34 @@ const repoRoot = path.resolve(
 );
 
 describe('CSP security headers', () => {
+  const headersPath = path.join(repoRoot, 'public', '_headers');
+  const netlifyPath = path.join(repoRoot, 'netlify.toml');
+  let headersCsp;
+
+  beforeEach(() => {
+    headersCsp = extractCspFromHeadersFile(
+      fs.readFileSync(headersPath, 'utf8')
+    );
+    const directives = parseCspDirectives(headersCsp);
+    const connectSrc = directives.get('connect-src') ?? '';
+    const match = connectSrc.match(/https:\/\/[a-zA-Z0-9.-]+\.supabase\.co/);
+    if (match) {
+      vi.stubEnv('VITE_SUPABASE_URL', match[0]);
+    }
+  });
+
   it('public/_headers allows blob media for export preview and Remotion telemetry', () => {
-    const headersPath = path.join(repoRoot, 'public', '_headers');
-    const csp = extractCspFromHeadersFile(fs.readFileSync(headersPath, 'utf8'));
-    assertVideoExportCspDirectives(csp, 'public/_headers');
+    assertVideoExportCspDirectives(headersCsp, 'public/_headers');
+    assertAuthCspDirectives(headersCsp, 'public/_headers');
   });
 
   it('netlify.toml CSP matches public/_headers video-export directives', () => {
-    const headersPath = path.join(repoRoot, 'public', '_headers');
-    const netlifyPath = path.join(repoRoot, 'netlify.toml');
-
-    const headersCsp = extractCspFromHeadersFile(
-      fs.readFileSync(headersPath, 'utf8')
-    );
     const netlifyCsp = extractCspFromNetlifyToml(
       fs.readFileSync(netlifyPath, 'utf8')
     );
 
     assertVideoExportCspDirectives(netlifyCsp, 'netlify.toml');
+    assertAuthCspDirectives(netlifyCsp, 'netlify.toml');
     expect(netlifyCsp).toBe(headersCsp);
   });
 });

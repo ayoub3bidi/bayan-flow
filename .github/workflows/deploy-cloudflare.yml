@@ -48,6 +48,9 @@ jobs:
         env:
           VITE_GIT_BRANCH: ${{ github.event.workflow_run.head_branch }}
           VITE_DEV_SITE_URL: https://dev.bayanflow.com
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_GOOGLE_WEB_CLIENT_ID: ${{ secrets.VITE_GOOGLE_WEB_CLIENT_ID }}
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3

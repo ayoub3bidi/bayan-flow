@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-/** @typedef {{ mediaSrc: string; connectSrc: string }} CspDirectives */
+/** @typedef {{ mediaSrc: string; connectSrc: string; imgSrc: string }} CspDirectives */
 
 /**
  * Parse semicolon-delimited CSP directives into a map.
@@ -76,4 +76,72 @@ export function assertVideoExportCspDirectives(csp, source) {
   }
 
   return { mediaSrc, connectSrc: connectSrc ?? '' };
+}
+
+/**
+ * Read the configured Supabase project URL from the environment.
+ * Returns null when the env var is not set (CI builds skip Supabase CSP validation).
+ * @returns {string|null}
+ */
+function getSupabaseOrigin() {
+  const url = process.env.VITE_SUPABASE_URL;
+  if (!url) return null;
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Assert CSP directives required for Supabase auth and Google profile avatars.
+ * @param {string} csp
+ * @param {string} source - Label for error messages (e.g. "public/_headers")
+ * @returns {{ connectSrc: string; imgSrc: string }}
+ */
+export function assertAuthCspDirectives(csp, source) {
+  const directives = parseCspDirectives(csp);
+
+  const supabaseOrigin = getSupabaseOrigin();
+  const connectSrc = directives.get('connect-src');
+  if (supabaseOrigin && !connectSrc?.includes(supabaseOrigin)) {
+    throw new Error(
+      `${source}: connect-src must include ${supabaseOrigin} (Supabase auth)`
+    );
+  }
+
+  const imgSrc = directives.get('img-src');
+  if (!imgSrc?.includes('https://lh3.googleusercontent.com')) {
+    throw new Error(
+      `${source}: img-src must include https://lh3.googleusercontent.com (Google profile photos)`
+    );
+  }
+
+  const scriptSrc = directives.get('script-src');
+  if (!scriptSrc?.includes('https://accounts.google.com')) {
+    throw new Error(
+      `${source}: script-src must include https://accounts.google.com (Google Identity Services)`
+    );
+  }
+
+  if (!connectSrc?.includes('https://accounts.google.com')) {
+    throw new Error(
+      `${source}: connect-src must include https://accounts.google.com (Google Identity Services)`
+    );
+  }
+
+  if (!connectSrc?.includes('https://oauth2.googleapis.com')) {
+    throw new Error(
+      `${source}: connect-src must include https://oauth2.googleapis.com (Google OAuth token exchange)`
+    );
+  }
+
+  const frameSrc = directives.get('frame-src');
+  if (!frameSrc?.includes('https://accounts.google.com')) {
+    throw new Error(
+      `${source}: frame-src must include https://accounts.google.com (Google One Tap)`
+    );
+  }
+
+  return { connectSrc: connectSrc ?? '', imgSrc: imgSrc ?? '' };
 }

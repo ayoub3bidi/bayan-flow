@@ -6,10 +6,12 @@
 
 ## Project Snapshot
 
-- Product: **Bayan Flow** · client-side React SPA (`/`, `/app`, `/roadmap`)
+- Product: **Bayan Flow** · client-side React SPA (`/`, `/app`, `/roadmap`, `/privacy`, `/terms`)
 - Repo: `https://github.com/ayoub3bidi/bayan-flow` · prod `main` → bayanflow.com · dev `develop` → dev.bayanflow.com
+- Hosting: **Cloudflare Workers** (static SPA via `wrangler.jsonc`); `netlify.toml` kept for rollback only — CI deploys through `.github/workflows/deploy-cloudflare.yml`
 - Tooling: React 19, Vite 7, Tailwind 4, Vitest 3, Remotion 4, i18next (en/fr/ar RTL), Pyodide 0.27.5 in worker
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
+- Version: `0.5.0` in `package.json` — algorithm categories (45 algos, 5 categories) shipped; optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
 
 ## Source Of Truth (registries)
@@ -56,6 +58,19 @@ Audit all three locales + pseudocode strings + export fallbacks when renaming ca
 ## Adding algorithms or categories
 
 See reference doc for full checklists (JS, Python, pseudocode, sound, insight, tests, registries). Keep graph algorithm commits scoped to one algorithm when possible.
+
+## Auth contracts (non-negotiable)
+
+- **OIDC only** — Google sign-in via Supabase Auth; no email/password flows in v0.5.0
+- **Service layer** — `src/services/authService.js`, `profileService.js`; components use `AuthContext` / `useAuth`, never import Supabase directly
+- **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client never writes `plan` (service role / webhook only, future)
+- **Session** — `getSession()`, `onAuthStateChange()`; `AuthProvider` in `src/main.jsx`
+- **OAuth UX** — Google Identity Services (One Tap + PKCE popup on `/auth/google/callback`); web uses `signInWithIdToken`, not `signInWithOAuth`
+- **i18n** — sign-in/out strings and legal copy in en/fr/ar; audit RTL for Header auth control
+- **Free by default** — unauthenticated users keep full access; auth PRs must not gate existing features
+- **Secrets** — publishable anon key via `VITE_*` only; service role key never in repo or client bundle
+- **CSP** — Supabase origin in `connect-src`; Google profile photos in `img-src`; assert via `scripts/cspHeaders.js`
+- **Tests** — mock Supabase in Vitest (`src/test/supabaseMock.js`, wired in `src/test/setup.js`)
 
 ## Workflow rules
 

@@ -14,6 +14,7 @@ import TechPattern from '../components/landing/TechPattern';
 import Footer from '../components/Footer';
 import ThemeToggle from '../components/ThemeToggle';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import UserMenu from '../components/UserMenu';
 
 function LandingPage() {
   return (
@@ -28,6 +29,7 @@ function LandingPage() {
 
       {/* Theme Toggle & Language Switcher */}
       <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
+        <UserMenu variant="landing" />
         <LanguageSwitcher />
         <ThemeToggle />
       </div>

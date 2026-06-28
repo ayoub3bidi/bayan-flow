@@ -49,6 +49,10 @@ vi.mock('../components/LanguageSwitcher', () => ({
   default: () => <div data-testid="language-switcher">LanguageSwitcher</div>,
 }));
 
+vi.mock('../components/UserMenu', () => ({
+  default: () => <div data-testid="user-menu">UserMenu</div>,
+}));
+
 const renderComponent = () => {
   return renderWithI18n(<LandingPage />);
 };
@@ -64,6 +68,7 @@ describe('LandingPage', () => {
       expect(screen.getByTestId('features')).toBeInTheDocument();
       expect(screen.getByTestId('clarity-section')).toBeInTheDocument();
       expect(screen.getByTestId('roadmap-cta')).toBeInTheDocument();
+      expect(screen.getByTestId('user-menu')).toBeInTheDocument();
       expect(screen.getByTestId('footer')).toBeInTheDocument();
     });
 
