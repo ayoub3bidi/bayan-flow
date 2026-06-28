@@ -15,6 +15,9 @@ let gisInitialized = false;
 /** @type {((credential: string) => void | Promise<void>) | null} */
 let credentialHandler = null;
 
+/** @type {HTMLElement | null} */
+let signInHost = null;
+
 /**
  * @returns {boolean}
  */
@@ -184,6 +187,13 @@ export async function initOneTap({ onCredential }) {
 /**
  * @param {(reason?: unknown) => void} reject
  */
+function cleanupSignInHost() {
+  if (signInHost) {
+    signInHost.remove();
+    signInHost = null;
+  }
+}
+
 function openGoogleSignInButton(reject) {
   const host = document.createElement('div');
   host.setAttribute('aria-hidden', 'true');
@@ -210,6 +220,7 @@ function openGoogleSignInButton(reject) {
   }
 
   document.body.appendChild(host);
+  signInHost = host;
   googleButton.click();
 }
 
@@ -230,6 +241,7 @@ export async function requestGoogleSignInPopup() {
       }
       settled = true;
       clearTimeout(timeoutId);
+      cleanupSignInHost();
       if (handler === reject) {
         credentialHandler = null;
       }

@@ -7,13 +7,34 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getSession } from '@/services/authService';
 
 function GoogleAuthCallback() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate('/app', { replace: true });
+    let cancelled = false;
+
+    getSession()
+      .then(session => {
+        if (!cancelled) {
+          if (session) {
+            navigate('/app', { replace: true });
+          } else {
+            navigate('/', { replace: true });
+          }
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          navigate('/', { replace: true });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [navigate]);
 
   return (

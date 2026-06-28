@@ -4,11 +4,20 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({ mock: true, auth: {} })),
 }));
+
+beforeEach(() => {
+  vi.stubEnv('VITE_SUPABASE_URL', 'https://test-project.supabase.co');
+  vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-anon-key');
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 describe('supabaseClient', () => {
   it('isSupabaseConfigured returns true when env vars are set', async () => {

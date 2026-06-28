@@ -36,7 +36,7 @@ function GoogleOneTap() {
       onCredential: async credential => {
         try {
           await authService.signInWithGoogleIdToken(credential);
-          if (location.pathname === '/') {
+          if (isMounted && location.pathname === '/') {
             navigate('/app', { replace: true });
           }
         } catch (error) {

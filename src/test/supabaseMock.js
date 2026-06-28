@@ -52,11 +52,39 @@ export function resetSupabaseMocks() {
   isSupabaseConfigured.mockReturnValue(false);
   getSupabaseClient.mockReset();
   getSupabaseClient.mockReturnValue(null);
-  supabaseAuthMock.signInWithIdToken.mockClear();
-  supabaseAuthMock.signOut.mockClear();
-  supabaseAuthMock.getSession.mockClear();
-  supabaseAuthMock.onAuthStateChange.mockClear();
-  supabaseAuthMock.updateUser.mockClear();
-  supabaseFromMock.mockClear();
+  supabaseAuthMock.signInWithIdToken.mockReset();
+  supabaseAuthMock.signOut.mockReset();
+  supabaseAuthMock.getSession.mockReset();
+  supabaseAuthMock.onAuthStateChange.mockReset();
+  supabaseAuthMock.updateUser.mockReset();
+  supabaseFromMock.mockReset();
   authStateChangeCallbackRef.current = null;
+  supabaseAuthMock.signInWithIdToken.mockResolvedValue({
+    data: { session: null },
+    error: null,
+  });
+  supabaseAuthMock.signOut.mockResolvedValue({ error: null });
+  supabaseAuthMock.getSession.mockResolvedValue({
+    data: { session: null },
+    error: null,
+  });
+  supabaseAuthMock.onAuthStateChange.mockImplementation(callback => {
+    authStateChangeCallbackRef.current = callback;
+    return {
+      data: {
+        subscription: {
+          unsubscribe: vi.fn(),
+        },
+      },
+    };
+  });
+  supabaseAuthMock.updateUser.mockResolvedValue({
+    data: { user: null },
+    error: null,
+  });
+  supabaseFromMock.mockReturnValue({
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    maybeSingle: vi.fn(async () => ({ data: null, error: null })),
+  });
 }

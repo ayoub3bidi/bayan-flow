@@ -27,15 +27,20 @@ function UserAvatar({ profile, size = 'sm', className = '' }) {
   const [imageSrc, setImageSrc] = useState(profile.avatarSrc);
   const [usedFallback, setUsedFallback] = useState(false);
 
-  useEffect(() => {
-    setImageSrc(profile.avatarSrc);
-    setUsedFallback(false);
-  }, [profile.avatarSrc]);
-
   const fallbackSrc = useMemo(
     () => generateAvatarDataUri(profile.email, SIZE_PX[size]),
     [profile.email, size]
   );
+
+  useEffect(() => {
+    if (profile.avatarSrc) {
+      setImageSrc(profile.avatarSrc);
+      setUsedFallback(false);
+    } else {
+      setImageSrc(fallbackSrc);
+      setUsedFallback(true);
+    }
+  }, [profile.avatarSrc, fallbackSrc]);
 
   const handleError = () => {
     if (!usedFallback) {

@@ -118,4 +118,9 @@ describe('authService', () => {
     vi.mocked(isGoogleAuthConfigured).mockReturnValueOnce(false);
     expect(authService.isAuthConfigured()).toBe(false);
   });
+
+  it('isAuthConfigured returns false when Supabase is not configured', () => {
+    mockSupabaseConfigured(false);
+    expect(authService.isAuthConfigured()).toBe(false);
+  });
 });

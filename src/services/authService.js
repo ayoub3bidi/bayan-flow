@@ -11,6 +11,8 @@ import {
   requestGoogleSignInPopup,
 } from '@/lib/googleIdentity';
 
+export const AUTH_CALLBACK_PATH = '/auth/google/callback';
+
 function requireClient() {
   const supabase = getSupabaseClient();
   if (!supabase) {
@@ -93,8 +95,8 @@ export async function signInWithGoogleIdToken(idToken, nonce, accessToken) {
 }
 
 export async function signInWithGoogle() {
-  if (!isGoogleAuthConfigured()) {
-    throw new Error('Google auth is not configured');
+  if (!isAuthConfigured()) {
+    throw new Error('Auth is not fully configured');
   }
 
   const { idToken } = await requestGoogleSignInPopup();

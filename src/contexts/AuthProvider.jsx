@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isAuthConfigured } from '@/services/authService';
 import * as authService from '@/services/authService';
 import { getProfile } from '@/services/profileService';
@@ -49,16 +49,24 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(isConfigured);
 
   const user = session?.user ?? null;
+  const requestRef = useRef(0);
 
   const refreshProfile = useCallback(async activeUser => {
+    const requestId = ++requestRef.current;
     if (!activeUser) {
       setProfileRow(null);
       return;
     }
     try {
       const row = await getProfile(activeUser.id);
+      if (requestRef.current !== requestId) {
+        return;
+      }
       setProfileRow(row);
     } catch (error) {
+      if (requestRef.current !== requestId) {
+        return;
+      }
       console.error('Failed to load user profile:', error);
       setProfileRow(null);
     }

@@ -4,7 +4,14 @@
  * See LICENSE for details.
  */
 
-import { Children, cloneElement, useId, useRef, useState } from 'react';
+import {
+  Children,
+  cloneElement,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 const POSITION_CLASSES = {
@@ -39,6 +46,15 @@ function Tooltip({
   const showTimeoutRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    return () => {
+      if (showTimeoutRef.current) {
+        clearTimeout(showTimeoutRef.current);
+        showTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   const clearShowTimeout = () => {
     if (showTimeoutRef.current) {
