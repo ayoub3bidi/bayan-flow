@@ -18,6 +18,8 @@ export default defineConfig({
     setupFiles: './src/test/setup.js',
     env: {
       VITE_GOOGLE_WEB_CLIENT_ID: '123456789-test.apps.googleusercontent.com',
+      VITE_SUPABASE_URL: 'https://test-project.supabase.co',
+      VITE_SUPABASE_ANON_KEY: 'test-anon-key',
     },
     css: true,
     //? Run tests sequentially to reduce memory pressure
