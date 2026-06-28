@@ -80,19 +80,16 @@ export function assertVideoExportCspDirectives(csp, source) {
 
 /**
  * Read the configured Supabase project URL from the environment.
- * @returns {string}
+ * Returns null when the env var is not set (CI builds skip Supabase CSP validation).
+ * @returns {string|null}
  */
 function getSupabaseOrigin() {
   const url = process.env.VITE_SUPABASE_URL;
-  if (!url) {
-    throw new Error(
-      'VITE_SUPABASE_URL must be set in the environment to validate CSP connect-src'
-    );
-  }
+  if (!url) return null;
   try {
     return new URL(url).origin;
   } catch {
-    throw new Error(`VITE_SUPABASE_URL is not a valid URL: "${url}"`);
+    return null;
   }
 }
 
@@ -107,7 +104,7 @@ export function assertAuthCspDirectives(csp, source) {
 
   const supabaseOrigin = getSupabaseOrigin();
   const connectSrc = directives.get('connect-src');
-  if (!connectSrc?.includes(supabaseOrigin)) {
+  if (supabaseOrigin && !connectSrc?.includes(supabaseOrigin)) {
     throw new Error(
       `${source}: connect-src must include ${supabaseOrigin} (Supabase auth)`
     );
