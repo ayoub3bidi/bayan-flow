@@ -22,11 +22,11 @@
 
 ## What it is
 
-Bayan Flow is a an open source educational tool with **45 algorithms** across five categories. Choose an algorithm and step through or autoplay the visualization. Optional **Python** implementations run in the browser (Pyodide `0.27.5`), with a **complexity** panel after completion and **video export** (horizontal or vertical MP4) when you want to share or study offline.
+Bayan Flow is an open source educational tool with **45 algorithms** across five categories. Choose an algorithm and step through or autoplay the visualization. Optional **Python** implementations run in the browser (Pyodide `0.27.5`), with a **complexity** panel after completion and **video export** (horizontal or vertical MP4) when you want to share or study offline.
 
 ## Features (overview)
 
-| Mode                 | Algorithms | What you get |
+| Category             | Algorithms | What you get |
 | -------------------- | ---------- | ------------ |
 | **Sorting**          | 14         | Random array, color-coded bars, ascending/descending order, comparison and non-comparison families |
 | **Pathfinding**      | 9          | Grid-based search on configurable presets; start/end, walls, open/closed/path highlighting |
