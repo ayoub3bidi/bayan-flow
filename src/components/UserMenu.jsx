@@ -6,7 +6,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CaretDown, SignOut, UserCircleGear } from '@phosphor-icons/react';
+import { CaretDown, Gear, SignOut } from '@phosphor-icons/react';
 import { SiGoogle } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -197,8 +197,8 @@ function UserMenu({ variant = 'landing' }) {
               }}
               className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-text-primary hover:bg-interactive-bg transition-colors cursor-pointer touch-manipulation min-h-11"
             >
-              <UserCircleGear size={18} weight="regular" className="shrink-0" />
-              {t('auth.account_settings')}
+              <Gear size={18} weight="regular" className="shrink-0" />
+              {t('auth.settings')}
             </button>
 
             <button

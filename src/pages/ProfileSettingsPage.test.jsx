@@ -59,6 +59,30 @@ describe('ProfileSettingsPage', () => {
     updateProfileMock.mockReset();
   });
 
+  it('renders Settings heading and tab bar with Profile active', async () => {
+    getProfileMock.mockResolvedValue({
+      display_name: 'Ada',
+      avatar_url: null,
+      avatar_preference: 'google',
+      plan: 'free',
+      email: 'ada@example.com',
+    });
+
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /profile/i })).toHaveAttribute(
+        'aria-selected',
+        'true'
+      );
+    });
+
+    expect(screen.getByRole('tab', { name: /notifications/i })).toBeDisabled();
+    expect(
+      screen.getByRole('tab', { name: /connected accounts/i })
+    ).toBeDisabled();
+  });
+
   it('prefills display name from profile row', async () => {
     getProfileMock.mockResolvedValue({
       display_name: 'Saved Name',
@@ -118,7 +142,7 @@ describe('ProfileSettingsPage', () => {
     fireEvent.change(screen.getByLabelText(/display name/i), {
       target: { value: 'Ada Lovelace' },
     });
-    fireEvent.click(screen.getByRole('radio', { name: /generated avatar/i }));
+    fireEvent.click(screen.getByRole('switch', { name: /profile picture/i }));
     fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
     await waitFor(() => {
@@ -131,7 +155,7 @@ describe('ProfileSettingsPage', () => {
     });
   });
 
-  it('shows inline error when save fails', async () => {
+  it('shows error toast when save fails', async () => {
     getProfileMock.mockResolvedValue({
       display_name: 'Ada',
       avatar_url: null,
@@ -150,9 +174,9 @@ describe('ProfileSettingsPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent(
-        /could not save your profile/i
-      );
+      expect(
+        screen.getByText(/could not save your profile/i)
+      ).toBeInTheDocument();
     });
   });
 });

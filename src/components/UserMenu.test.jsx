@@ -184,7 +184,7 @@ describe('UserMenu', () => {
     expect(screen.getByText('Test User')).toBeInTheDocument();
     expect(screen.getByText('user@example.com')).toBeInTheDocument();
     expect(
-      screen.getByRole('menuitem', { name: /account settings/i })
+      screen.getByRole('menuitem', { name: /settings/i })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('menuitem', { name: /sign out/i })
@@ -212,9 +212,7 @@ describe('UserMenu', () => {
     fireEvent.click(
       screen.getByRole('button', { name: /account menu for test user/i })
     );
-    fireEvent.click(
-      screen.getByRole('menuitem', { name: /account settings/i })
-    );
+    fireEvent.click(screen.getByRole('menuitem', { name: /settings/i }));
 
     expect(navigateMock).toHaveBeenCalledWith('/settings/profile');
   });

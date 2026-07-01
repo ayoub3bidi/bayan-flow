@@ -1,8 +1,10 @@
 {
   "common": {
     "back": "Retour",
-    "backToHome": "Retour à l'Accueil",
-    "save": "Enregistrer"
+    "backToHome": "Retour à l'accueil",
+    "save": "Enregistrer",
+    "close": "Fermer",
+    "coming_soon": "Bientôt disponible…"
   },
   "app": {
     "pageTitle": "Visualiseur Interactif d'Algorithmes"
@@ -19,13 +21,17 @@
     "signed_in_as": "Connecté en tant que {{name}}",
     "account_menu_label": "Menu du compte pour {{name}}",
     "completing_sign_in": "Finalisation de la connexion…",
-    "account_settings": "Paramètres du compte"
+    "account_settings": "Paramètres du compte",
+    "settings": "Paramètres"
   },
   "profile": {
     "pageTitle": "Paramètres du profil",
     "title": "Paramètres du profil",
     "displayName": "Nom affiché",
     "displayNamePlaceholder": "Comment vous apparaissez dans Bayan Flow",
+    "email": "E-mail",
+    "description": "Bio",
+    "descriptionPlaceholder": "Parlez-nous de vous",
     "avatarTitle": "Photo de profil",
     "avatarGoogle": "Compte Google",
     "avatarGenerated": "Avatar généré",
@@ -34,6 +40,11 @@
     "saved": "Profil mis à jour",
     "error": "Impossible d'enregistrer votre profil. Veuillez réessayer.",
     "loading": "Chargement du profil…"
+  },
+  "settings_tabs": {
+    "profile": "Profil",
+    "notifications": "Notifications",
+    "connections": "Comptes connectés"
   },
   "settings": {
     "title": "Paramètres",
