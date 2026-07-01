@@ -12,10 +12,23 @@ describe('resolveUserAvatar', () => {
       metadataUrl: 'https://lh3.googleusercontent.com/a/example',
       profileUrl: 'https://example.com/other.jpg',
       email: 'user@example.com',
+      avatarPreference: 'google',
     });
 
     expect(result.source).toBe('google');
     expect(result.src).toBe('https://lh3.googleusercontent.com/a/example');
+  });
+
+  it('uses generated avatar when preference is generated', () => {
+    const result = resolveUserAvatar({
+      metadataUrl: 'https://lh3.googleusercontent.com/a/example',
+      profileUrl: 'https://example.com/other.jpg',
+      email: 'user@example.com',
+      avatarPreference: 'generated',
+    });
+
+    expect(result.source).toBe('generated');
+    expect(result.src.startsWith('data:image/svg+xml')).toBe(true);
   });
 
   it('falls back to profile URL when metadata is missing', () => {
@@ -72,7 +85,19 @@ describe('resolveUserAvatar', () => {
     ).toBeNull();
   });
 
-  it('resolveDisplayName prefers metadata full_name', () => {
+  it('resolveDisplayName prefers saved profile display_name over metadata', () => {
+    expect(
+      resolveDisplayName(
+        {
+          email: 'a@b.com',
+          user_metadata: { full_name: 'OAuth Name' },
+        },
+        { display_name: 'Saved Name', email: 'a@b.com' }
+      )
+    ).toBe('Saved Name');
+  });
+
+  it('resolveDisplayName prefers metadata full_name when profile name is empty', () => {
     expect(
       resolveDisplayName(
         { email: 'a@b.com', user_metadata: { full_name: 'Ayoub Abidi' } },

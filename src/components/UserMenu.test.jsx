@@ -173,6 +173,7 @@ describe('UserMenu', () => {
       },
       signInWithGoogle: vi.fn(),
       signOut: vi.fn(),
+      refreshProfile: vi.fn(),
     });
 
     render(<UserMenu />);
@@ -183,7 +184,38 @@ describe('UserMenu', () => {
     expect(screen.getByText('Test User')).toBeInTheDocument();
     expect(screen.getByText('user@example.com')).toBeInTheDocument();
     expect(
+      screen.getByRole('menuitem', { name: /account settings/i })
+    ).toBeInTheDocument();
+    expect(
       screen.getByRole('menuitem', { name: /sign out/i })
     ).toBeInTheDocument();
+  });
+
+  it('navigates to profile settings from account menu', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: false,
+      isAuthenticated: true,
+      profile: {
+        displayName: 'Test User',
+        email: 'user@example.com',
+        avatarSrc: 'data:image/svg+xml;charset=utf-8,test',
+        avatarSource: 'generated',
+        plan: 'free',
+      },
+      signInWithGoogle: vi.fn(),
+      signOut: vi.fn(),
+      refreshProfile: vi.fn(),
+    });
+
+    render(<UserMenu />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /account menu for test user/i })
+    );
+    fireEvent.click(
+      screen.getByRole('menuitem', { name: /account settings/i })
+    );
+
+    expect(navigateMock).toHaveBeenCalledWith('/settings/profile');
   });
 });

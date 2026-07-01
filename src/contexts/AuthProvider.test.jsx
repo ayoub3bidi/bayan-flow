@@ -78,6 +78,7 @@ describe('AuthProvider', () => {
         data: {
           display_name: 'Test User',
           avatar_url: null,
+          avatar_preference: 'google',
           plan: 'free',
           email: 'user@example.com',
         },
@@ -97,6 +98,50 @@ describe('AuthProvider', () => {
     expect(screen.getByTestId('display-name')).toHaveTextContent('Test User');
     expect(screen.getByTestId('avatar-source')).toHaveTextContent('google');
     expect(screen.getByTestId('plan')).toHaveTextContent('free');
+  });
+
+  it('uses generated avatar when profile preference is generated', async () => {
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: {
+        session: {
+          user: {
+            id: 'user-1',
+            email: 'user@example.com',
+            user_metadata: {
+              picture: 'https://lh3.googleusercontent.com/a/test',
+            },
+          },
+        },
+      },
+      error: null,
+    });
+
+    supabaseFromMock.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({
+        data: {
+          display_name: 'Test User',
+          avatar_url: 'https://lh3.googleusercontent.com/a/test',
+          avatar_preference: 'generated',
+          plan: 'free',
+          email: 'user@example.com',
+        },
+        error: null,
+      })),
+    });
+
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('avatar-source')).toHaveTextContent(
+        'generated'
+      );
+    });
   });
 
   it('handles session hydration error gracefully', async () => {
@@ -164,6 +209,7 @@ describe('AuthProvider', () => {
         data: {
           display_name: 'Pro User',
           avatar_url: null,
+          avatar_preference: 'google',
           plan: 'pro',
           email: 'pro@example.com',
         },
@@ -203,6 +249,7 @@ describe('AuthProvider', () => {
         data: {
           display_name: 'Test User',
           avatar_url: null,
+          avatar_preference: 'google',
           plan: 'free',
           email: 'user@example.com',
         },

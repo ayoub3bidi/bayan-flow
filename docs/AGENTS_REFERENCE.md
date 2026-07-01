@@ -7,7 +7,7 @@
 
 - Product: `Bayan Flow` (Bayan / بيان = clarity in Arabic)
 - Package name: `bayan-flow`
-- App type: client-side React SPA with routes `/`, `/app`, `/roadmap`
+- App type: client-side React SPA with routes `/`, `/app`, `/roadmap`, `/settings/profile`, `/privacy`, `/terms`
 - Version target in `package.json`: `0.5.0`
 - License: `Elastic-2.0 OR Commercial` (see `LICENSE`, `COMMERCIAL_LICENSE.md`, `TRADEMARK.md`, `NOTICE`)
 - Repository/homepage:
@@ -83,6 +83,49 @@
 - Document title syncs with route/i18n (`DocumentTitle`)
 - Side FABs: `FloatingActionButton` (code/pseudocode panel), `InsightFloatingActionButton` (insight panel)
 - Feature gating: `SignInPromptModal` blocks Code Panel, Insight Panel, Video Export, Sound, and Fullscreen until the user signs in with Google
+- Profile settings (signed-in): `/settings/profile` — edit `display_name`, toggle `avatar_preference` (`google` \| `generated`); `RequireAuth` guard; `profileService.updateProfile()`
+
+## Auth and Supabase
+
+- Supabase project: `bayan-flow` (`eu-central-1`); migrations in `supabase/migrations/`
+- Client: `src/lib/supabaseClient.js` (anon key via `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` only)
+- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`
+- Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
+- Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
+- Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
+- Page: `src/pages/ProfileSettingsPage.jsx`
+
+### `public.profiles` schema
+
+| Column | Client writable | Notes |
+|--------|-----------------|-------|
+| `id` | no | PK, FK → `auth.users` |
+| `email` | no | Set by `handle_new_user` trigger |
+| `plan` | no | `free` \| `pro`; service role / webhook only |
+| `provider` | no | Set on signup |
+| `created_at` | no | |
+| `display_name` | yes | Editable on profile settings page |
+| `avatar_url` | no | OAuth / trigger-populated HTTPS URL |
+| `avatar_preference` | yes | `google` (default) \| `generated` |
+
+Future (v0.6.0, not shipped): `username` (unique, set-once RLS), public `/u/:username` route; referral/billing columns (`referral_code`, `referred_by`, `referral_count`, `pro_months_earned`, `pro_expires_at`) — service role only.
+
+### RLS and column grants
+
+- `profiles_select_own` — `SELECT` where `auth.uid() = id`
+- `profiles_update_own` — `UPDATE` where `auth.uid() = id`
+- `REVOKE UPDATE` on table for `authenticated`; `GRANT UPDATE (display_name, avatar_preference)` only
+
+### Profile service API
+
+- `getProfile(userId)` → `{ display_name, avatar_url, avatar_preference, plan, email }` or null
+- `updateProfile(userId, { displayName, avatarPreference })` — trims display name; validates `avatarPreference`; never touches `plan`, `avatar_url`, etc.
+
+### Profile-related tests
+
+- `pnpm vitest run src/services/profileService.test.js`
+- `pnpm vitest run src/pages/ProfileSettingsPage.test.jsx`
+- `pnpm vitest run src/contexts/AuthProvider.test.jsx src/utils/resolveUserAvatar.test.js src/components/UserMenu.test.jsx`
 
 ## Architecture Map
 
@@ -97,6 +140,7 @@
 - `src/pages/LandingPage.jsx`
 - `src/pages/VisualizerApp.jsx` — main visualizer shell and top-level state
 - `src/pages/Roadmap.jsx`
+- `src/pages/ProfileSettingsPage.jsx` — signed-in display name + avatar preference
 
 ### Category registry and runtime wiring
 

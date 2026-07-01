@@ -6,7 +6,7 @@
 
 ## Project Snapshot
 
-- Product: **Bayan Flow** · client-side React SPA (`/`, `/app`, `/roadmap`, `/privacy`, `/terms`)
+- Product: **Bayan Flow** · client-side React SPA (`/`, `/app`, `/roadmap`, `/settings/profile`, `/privacy`, `/terms`)
 - Repo: `https://github.com/ayoub3bidi/bayan-flow` · prod `main` → bayanflow.com · dev `develop` → dev.bayanflow.com
 - Hosting: **Cloudflare Workers** (static SPA via `wrangler.jsonc`); `netlify.toml` kept for rollback only — CI deploys through `.github/workflows/deploy-cloudflare.yml`
 - Tooling: React 19, Vite 7, Tailwind 4, Vitest 3, Remotion 4, i18next (en/fr/ar RTL), Pyodide 0.27.5 in worker
@@ -63,7 +63,8 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 
 - **OIDC only** — Google sign-in via Supabase Auth; no email/password flows in v0.5.0
 - **Service layer** — `src/services/authService.js`, `profileService.js`; components use `AuthContext` / `useAuth`, never import Supabase directly
-- **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client never writes `plan` (service role / webhook only, future)
+- **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client-writable columns: `display_name`, `avatar_preference` only; `avatar_url` is OAuth/trigger-populated (not client-writable); `plan` and future `referral_*` / `pro_*` columns are service role / webhook only
+- **Profile settings** — private route `/settings/profile` (`RequireAuth`); `updateProfile()` in `profileService.js`; security boundary = RLS row scope + `REVOKE UPDATE` + `GRANT UPDATE (display_name, avatar_preference)`; no public profile route or `username` in v0.5.x
 - **Session** — `getSession()`, `onAuthStateChange()`; `AuthProvider` in `src/main.jsx`
 - **OAuth UX** — Google Identity Services (PKCE popup on `/auth/google/callback`); web uses `signInWithIdToken`, not `signInWithOAuth`
 - **i18n** — sign-in/out strings and legal copy in en/fr/ar; audit RTL for Header auth control

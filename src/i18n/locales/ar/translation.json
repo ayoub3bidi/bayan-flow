@@ -18,7 +18,22 @@
     "sign_out": "تسجيل الخروج",
     "signed_in_as": "مسجّل الدخول باسم {{name}}",
     "account_menu_label": "قائمة الحساب لـ {{name}}",
-    "completing_sign_in": "جارٍ إتمام تسجيل الدخول…"
+    "completing_sign_in": "جارٍ إتمام تسجيل الدخول…",
+    "account_settings": "إعدادات الحساب"
+  },
+  "profile": {
+    "pageTitle": "إعدادات الملف الشخصي",
+    "title": "إعدادات الملف الشخصي",
+    "displayName": "الاسم المعروض",
+    "displayNamePlaceholder": "كيف يظهر اسمك في Bayan Flow",
+    "avatarTitle": "صورة الملف الشخصي",
+    "avatarGoogle": "حساب Google",
+    "avatarGenerated": "صورة مُولَّدة",
+    "save": "حفظ التغييرات",
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم تحديث الملف الشخصي",
+    "error": "تعذّر حفظ ملفك الشخصي. يُرجى المحاولة مرة أخرى.",
+    "loading": "جارٍ تحميل الملف الشخصي…"
   },
   "settings": {
     "title": "الإعدادات",
