@@ -187,7 +187,7 @@ function ProfileSettingsPage() {
     <div className="min-h-screen bg-bg flex flex-col">
       <Header />
 
-      <main className="flex-1 pt-20 sm:pt-24 pb-20">
+      <main className="flex-1 pt-20 sm:pt-24 pb-120">
         <Container className="max-w-4xl">
           <Link
             to="/app"
@@ -246,9 +246,25 @@ function ProfileSettingsPage() {
           </div>
 
           {isLoadingProfile ? (
-            <p className="text-sm text-text-secondary">
-              {t('profile.loading')}
-            </p>
+            <div className="flex flex-col items-center gap-6 mt-6 animate-pulse" aria-hidden="true">
+              <div className="h-32 w-32 rounded-full bg-interactive-bg" />
+              <div className="flex items-center gap-3 w-full max-w-sm mx-auto">
+                <div className="h-4 flex-1 rounded bg-interactive-bg" />
+                <div className="h-7 w-12 shrink-0 rounded-full bg-interactive-bg" />
+                <div className="h-4 flex-1 rounded bg-interactive-bg" />
+              </div>
+              <div className="mx-20 w-full border-t border-interactive-border/10" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                <div className="h-[3.25rem] rounded-lg bg-interactive-bg" />
+                <div className="h-[3.25rem] rounded-lg bg-interactive-bg" />
+              </div>
+              <div className="w-full">
+                <div className="h-[5.5rem] rounded-lg bg-interactive-bg" />
+              </div>
+              <div className="flex justify-end w-full">
+                <div className="h-11 w-32 rounded-lg bg-interactive-bg" />
+              </div>
+            </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="flex flex-col items-center gap-4 mt-6">
@@ -264,9 +280,9 @@ function ProfileSettingsPage() {
                   className="h-32 w-32 rounded-full border-2 border-(--color-glass-border) object-cover bg-surface-elevated shadow-md"
                 />
 
-                <div className="flex items-center gap-3">
+                <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center w-full max-w-sm mx-auto">
                   <span
-                    className={`text-sm font-medium transition-colors ${
+                    className={`text-sm font-medium transition-colors text-end ${
                       avatarPreference === 'generated'
                         ? 'text-text-primary'
                         : 'text-text-secondary'
@@ -297,7 +313,7 @@ function ProfileSettingsPage() {
                       aria-hidden="true"
                       className={`pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out ${
                         avatarPreference === 'google'
-                          ? 'translate-x-5'
+                          ? 'ltr:translate-x-5 rtl:-translate-x-5'
                           : 'translate-x-0'
                       }`}
                     />
@@ -312,9 +328,12 @@ function ProfileSettingsPage() {
                     {t('profile.avatarGoogle')}
                   </span>
                 </div>
+                <p className="text-xs text-text-secondary/40 dark:text-text-secondary/30 text-center opacity-70">
+                  {t('profile.avatarCustomizationComingSoon')}
+                </p>
               </div>
 
-              <div className="mx-12 border-t border-interactive-border/20" />
+              <div className="mx-20 border-t border-gray-300/60 dark:border-gray-600/60" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -374,9 +393,24 @@ function ProfileSettingsPage() {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="inline-flex items-center justify-center rounded-lg bg-theme-primary px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-theme-primary-hover disabled:opacity-60 disabled:cursor-not-allowed min-h-11 dark:bg-blue-600 dark:hover:bg-blue-500"
+                  className="inline-flex items-center justify-center rounded-lg bg-theme-primary px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-theme-primary-hover disabled:opacity-60 disabled:cursor-not-allowed min-h-11 cursor-pointer"
                 >
-                  {isSaving ? t('profile.saving') : t('profile.save')}
+                  <span className="grid justify-items-center">
+                    <span
+                      className={`col-start-1 row-start-1 ${
+                        isSaving ? 'invisible' : ''
+                      }`}
+                    >
+                      {t('profile.save')}
+                    </span>
+                    <span
+                      className={`col-start-1 row-start-1 ${
+                        isSaving ? '' : 'invisible'
+                      }`}
+                    >
+                      {t('profile.saving')}
+                    </span>
+                  </span>
                 </button>
               </div>
             </form>
@@ -389,10 +423,10 @@ function ProfileSettingsPage() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                 transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg ${
+                className={`fixed bottom-20 right-6 z-50 flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg ${
                   toastType === 'success'
-                    ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200'
-                    : 'border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200'
+                    ? 'border-emerald-200 bg-bg text-emerald-600 dark:border-emerald-700/50 dark:bg-emerald-950/60 dark:text-emerald-300'
+                    : 'border-red-200 bg-bg text-red-600 dark:border-red-700/50 dark:bg-red-950/60 dark:text-red-300'
                 }`}
               >
                 {toastType === 'success' ? (
@@ -411,8 +445,8 @@ function ProfileSettingsPage() {
                   }}
                   className={`ml-1 shrink-0 rounded p-0.5 ${
                     toastType === 'success'
-                      ? 'text-green-600/60 hover:text-green-800 dark:text-green-400/60 dark:hover:text-green-200'
-                      : 'text-red-600/60 hover:text-red-800 dark:text-red-400/60 dark:hover:text-red-200'
+                    ? 'text-emerald-500/60 hover:text-emerald-600 dark:text-emerald-400/60 dark:hover:text-emerald-200'
+                    : 'text-red-500/60 hover:text-red-600 dark:text-red-400/60 dark:hover:text-red-200'
                   }`}
                   aria-label={t('common.close')}
                 >

@@ -220,8 +220,8 @@ pre.pseudocode-view .pc-line {
   --color-border-strong: #374151;
 
   /* Primary brand colors */
-  --color-primary: #60a5fa;
-  --color-primary-hover: #2b7fff;
+  --color-primary: #2563eb;
+  --color-primary-hover: #3b82f6;
   --color-primary-light: #1e3a8a;
   --color-primary-consistent: #2b7fff;
 
