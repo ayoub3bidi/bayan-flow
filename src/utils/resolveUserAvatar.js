@@ -22,6 +22,10 @@ function getNotionistsStyle() {
  */
 
 /**
+ * @typedef {'google' | 'generated'} AvatarPreference
+ */
+
+/**
  * @typedef {Object} ResolvedAvatar
  * @property {string} src
  * @property {AvatarSource} source
@@ -50,8 +54,17 @@ export function generateAvatarDataUri(seed, size = 64) {
 }
 
 /**
- * Resolve avatar URL: Google/session metadata → DB profile → DiceBear fallback.
- * @param {{ metadataUrl?: string | null, profileUrl?: string | null, email?: string | null, size?: number }} params
+ * Deterministic seed for DiceBear avatars.
+ * @param {string | null | undefined} email
+ * @returns {string}
+ */
+function resolveAvatarSeed(email) {
+  return (email ?? 'bayan-flow').trim() || 'bayan-flow';
+}
+
+/**
+ * Resolve avatar URL: preference → Google/session metadata → DB profile → DiceBear fallback.
+ * @param {{ metadataUrl?: string | null, profileUrl?: string | null, email?: string | null, size?: number, avatarPreference?: AvatarPreference | null }} params
  * @returns {ResolvedAvatar}
  */
 export function resolveUserAvatar({
@@ -59,7 +72,15 @@ export function resolveUserAvatar({
   profileUrl,
   email,
   size = 64,
+  avatarPreference = 'google',
 }) {
+  if (avatarPreference === 'generated') {
+    return {
+      src: generateAvatarDataUri(resolveAvatarSeed(email), size),
+      source: 'generated',
+    };
+  }
+
   if (isHttpUrl(metadataUrl)) {
     return { src: metadataUrl.trim(), source: 'google' };
   }
@@ -68,9 +89,8 @@ export function resolveUserAvatar({
     return { src: profileUrl.trim(), source: 'profile' };
   }
 
-  const seed = (email ?? 'bayan-flow').trim() || 'bayan-flow';
   return {
-    src: generateAvatarDataUri(seed, size),
+    src: generateAvatarDataUri(resolveAvatarSeed(email), size),
     source: 'generated',
   };
 }
@@ -91,14 +111,16 @@ export function getMetadataAvatarUrl(user) {
  * @returns {string}
  */
 export function resolveDisplayName(user, profileRow) {
+  if (profileRow?.display_name?.trim()) {
+    return profileRow.display_name.trim();
+  }
+
   const metadata = user?.user_metadata ?? {};
   const fromMetadata = metadata.full_name ?? metadata.name;
   if (typeof fromMetadata === 'string' && fromMetadata.trim()) {
     return fromMetadata.trim();
   }
-  if (profileRow?.display_name?.trim()) {
-    return profileRow.display_name.trim();
-  }
+
   const email = user?.email ?? profileRow?.email ?? '';
   const localPart = email.split('@')[0]?.trim();
   if (localPart) {

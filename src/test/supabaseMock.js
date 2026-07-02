@@ -32,6 +32,8 @@ export const supabaseFromMock = vi.fn(() => ({
   select: vi.fn().mockReturnThis(),
   eq: vi.fn().mockReturnThis(),
   maybeSingle: vi.fn(async () => ({ data: null, error: null })),
+  update: vi.fn().mockReturnThis(),
+  single: vi.fn(async () => ({ data: null, error: null })),
 }));
 
 export const supabaseClientMock = {
@@ -86,5 +88,7 @@ export function resetSupabaseMocks() {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     maybeSingle: vi.fn(async () => ({ data: null, error: null })),
+    update: vi.fn().mockReturnThis(),
+    single: vi.fn(async () => ({ data: null, error: null })),
   });
 }

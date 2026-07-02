@@ -1,8 +1,10 @@
 {
   "common": {
-    "back": "عودة",
-    "backToHome": "عودة إلى الرئيسية",
-    "save": "حفظ"
+    "back": "رجوع",
+    "backToHome": "العودة للرئيسية",
+    "save": "حفظ",
+    "close": "إغلاق",
+    "coming_soon": "قريباً…"
   },
   "app": {
     "pageTitle": "مُصوِّر الخوارزميات التفاعلي"
@@ -18,7 +20,31 @@
     "sign_out": "تسجيل الخروج",
     "signed_in_as": "مسجّل الدخول باسم {{name}}",
     "account_menu_label": "قائمة الحساب لـ {{name}}",
-    "completing_sign_in": "جارٍ إتمام تسجيل الدخول…"
+    "completing_sign_in": "جارٍ إتمام تسجيل الدخول…",
+    "account_settings": "إعدادات الحساب",
+    "settings": "الإعدادات"
+  },
+  "profile": {
+    "pageTitle": "إعدادات الملف الشخصي",
+    "title": "إعدادات الملف الشخصي",
+    "displayName": "الاسم المعروض",
+    "displayNamePlaceholder": "كيف يظهر اسمك في Bayan Flow",
+    "email": "البريد الإلكتروني",
+
+    "avatarTitle": "صورة الملف الشخصي",
+    "avatarGoogle": "صورة الملف الشخصي",
+    "avatarGenerated": "صورة مُولَّدة",
+    "avatarCustomizationComingSoon": "ستتمكن قريباً من تغيير صورة ملفك الشخصي وتخصيص الصورة الرمزية",
+    "save": "حفظ التغييرات",
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم تحديث الملف الشخصي",
+    "error": "تعذّر حفظ ملفك الشخصي. يُرجى المحاولة مرة أخرى.",
+    "loading": "جارٍ تحميل الملف الشخصي…"
+  },
+  "settings_tabs": {
+    "profile": "الملف الشخصي",
+    "notifications": "الإشعارات",
+    "connections": "الحسابات المتصلة"
   },
   "settings": {
     "title": "الإعدادات",

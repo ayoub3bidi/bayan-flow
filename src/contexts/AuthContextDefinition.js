@@ -28,6 +28,7 @@ import { createContext } from 'react';
  * @property {boolean} isConfigured
  * @property {() => Promise<void>} signInWithGoogle
  * @property {() => Promise<void>} signOut
+ * @property {() => Promise<void>} refreshProfile
  */
 
 export const AuthContext = createContext(

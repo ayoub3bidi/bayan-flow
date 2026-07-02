@@ -1,18 +1,21 @@
 # AGENTS
 
-> Algorithm inventories, architecture map, and full test command catalog: [`docs/AGENTS_REFERENCE.md`](docs/AGENTS_REFERENCE.md)
+> Full architecture map, algorithm inventory, route list, and test command catalog: [`docs/AGENTS_REFERENCE.md`](docs/AGENTS_REFERENCE.md)
 >
 > **Doc maintenance:** When counts, file paths, or test commands change, update the reference doc only. Update this file only for new non-negotiable rules or contracts.
 
 ## Project Snapshot
 
-- Product: **Bayan Flow** · client-side React SPA (`/`, `/app`, `/roadmap`, `/privacy`, `/terms`)
+- Product: **Bayan Flow** · client-side React SPA (routes in REFERENCE)
 - Repo: `https://github.com/ayoub3bidi/bayan-flow` · prod `main` → bayanflow.com · dev `develop` → dev.bayanflow.com
+- License: `Elastic-2.0 OR Commercial` (dual-license)
 - Hosting: **Cloudflare Workers** (static SPA via `wrangler.jsonc`); `netlify.toml` kept for rollback only — CI deploys through `.github/workflows/deploy-cloudflare.yml`
-- Tooling: React 19, Vite 7, Tailwind 4, Vitest 3, Remotion 4, i18next (en/fr/ar RTL), Pyodide 0.27.5 in worker
+- Tooling: React 19, Vite 7 (`rolldown-vite`), Tailwind 4, Vitest 3, Remotion 4, i18next `^25.7.1` (en/fr/ar RTL), Pyodide `0.27.5` in worker, Tone.js `^15.1.22`, DiceBear `^10.3.0`, Phosphor Icons, Monaco Editor
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
-- Version: `0.5.0` in `package.json` — algorithm categories (45 algos, 5 categories) shipped; optional Google sign-in when Supabase env vars are set
+- Version: `0.5.0` in `package.json` — 45 algorithms across 5 categories; optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
+- **Tests**: 135 test files, ~1,673 tests
+- **Source**: 217 `.js`, 132 `.jsx`, 48 `.py`, 1 `.css`
 
 ## Source Of Truth (registries)
 
@@ -63,7 +66,8 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 
 - **OIDC only** — Google sign-in via Supabase Auth; no email/password flows in v0.5.0
 - **Service layer** — `src/services/authService.js`, `profileService.js`; components use `AuthContext` / `useAuth`, never import Supabase directly
-- **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client never writes `plan` (service role / webhook only, future)
+- **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client-writable columns: `display_name`, `avatar_preference` only; `avatar_url` is OAuth/trigger-populated (not client-writable); `plan` and future `referral_*` / `pro_*` columns are service role / webhook only
+- **Profile settings** — private route `/settings/profile` (`RequireAuth`); `updateProfile()` in `profileService.js`; security boundary = RLS row scope + `REVOKE UPDATE` + `GRANT UPDATE (display_name, avatar_preference)`; no public profile route or `username` in v0.5.x
 - **Session** — `getSession()`, `onAuthStateChange()`; `AuthProvider` in `src/main.jsx`
 - **OAuth UX** — Google Identity Services (PKCE popup on `/auth/google/callback`); web uses `signInWithIdToken`, not `signInWithOAuth`
 - **i18n** — sign-in/out strings and legal copy in en/fr/ar; audit RTL for Header auth control

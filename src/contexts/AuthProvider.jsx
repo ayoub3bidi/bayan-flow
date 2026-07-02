@@ -26,11 +26,14 @@ function buildProfileView(user, profileRow, avatarSize) {
   }
 
   const email = user.email ?? profileRow?.email ?? '';
+  const avatarPreference =
+    profileRow?.avatar_preference === 'generated' ? 'generated' : 'google';
   const { src, source } = resolveUserAvatar({
     metadataUrl: getMetadataAvatarUrl(user),
     profileUrl: profileRow?.avatar_url,
     email,
     size: avatarSize,
+    avatarPreference,
   });
 
   return {
@@ -136,6 +139,10 @@ export function AuthProvider({ children }) {
     [user, profileRow]
   );
 
+  const refreshProfileForUser = useCallback(async () => {
+    await refreshProfile(user);
+  }, [refreshProfile, user]);
+
   const value = useMemo(
     () => ({
       user,
@@ -146,8 +153,18 @@ export function AuthProvider({ children }) {
       isConfigured,
       signInWithGoogle,
       signOut,
+      refreshProfile: refreshProfileForUser,
     }),
-    [user, session, profile, isLoading, isConfigured, signInWithGoogle, signOut]
+    [
+      user,
+      session,
+      profile,
+      isLoading,
+      isConfigured,
+      signInWithGoogle,
+      signOut,
+      refreshProfileForUser,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

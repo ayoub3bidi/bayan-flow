@@ -2,7 +2,9 @@
   "common": {
     "back": "Back",
     "backToHome": "Back to Home",
-    "save": "Save"
+    "save": "Save",
+    "close": "Close",
+    "coming_soon": "Coming soon…"
   },
   "app": {
     "pageTitle": "Interactive Algorithm Visualizer"
@@ -18,7 +20,31 @@
     "sign_out": "Sign out",
     "signed_in_as": "Signed in as {{name}}",
     "account_menu_label": "Account menu for {{name}}",
-    "completing_sign_in": "Completing sign-in…"
+    "completing_sign_in": "Completing sign-in…",
+    "account_settings": "Account settings",
+    "settings": "Settings"
+  },
+  "profile": {
+    "pageTitle": "Profile settings",
+    "title": "Profile settings",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "How you appear in Bayan Flow",
+    "email": "Email",
+
+    "avatarTitle": "Profile picture",
+    "avatarGoogle": "Profile Picture",
+    "avatarGenerated": "Generated avatar",
+    "avatarCustomizationComingSoon": "You will be able to change your profile picture and customize your avatar very soon",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Profile updated",
+    "error": "Could not save your profile. Please try again.",
+    "loading": "Loading profile…"
+  },
+  "settings_tabs": {
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "connections": "Connected Accounts"
   },
   "settings": {
     "title": "Settings",

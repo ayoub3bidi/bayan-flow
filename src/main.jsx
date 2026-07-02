@@ -22,6 +22,8 @@ import Roadmap from './pages/Roadmap.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfUse from './pages/TermsOfUse.jsx';
 import GoogleAuthCallback from './pages/GoogleAuthCallback.jsx';
+import ProfileSettingsPage from './pages/ProfileSettingsPage.jsx';
+import RequireAuth from './components/RequireAuth.jsx';
 
 // Components
 import DocumentTitle from './components/DocumentTitle.jsx';
@@ -41,6 +43,14 @@ createRoot(document.getElementById('root')).render(
             <Route path={AUTH_CALLBACK_PATH} element={<GoogleAuthCallback />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfUse />} />
+            <Route
+              path="/settings/profile"
+              element={
+                <RequireAuth>
+                  <ProfileSettingsPage />
+                </RequireAuth>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

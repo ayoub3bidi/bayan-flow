@@ -14,6 +14,7 @@ const ROUTE_TITLE_KEYS = {
   '/terms': 'legal.termsTitle',
   '/roadmap': 'roadmap.hero.title',
   '/app': 'app.pageTitle',
+  '/settings/profile': 'profile.pageTitle',
 };
 
 function getRouteDescriptions(pathname, t) {
