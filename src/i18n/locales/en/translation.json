@@ -30,8 +30,7 @@
     "displayName": "Display name",
     "displayNamePlaceholder": "How you appear in Bayan Flow",
     "email": "Email",
-    "description": "Bio",
-    "descriptionPlaceholder": "Tell us something about yourself",
+
     "avatarTitle": "Profile picture",
     "avatarGoogle": "Profile Picture",
     "avatarGenerated": "Generated avatar",

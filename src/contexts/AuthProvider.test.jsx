@@ -16,8 +16,14 @@ vi.mock('../lib/googleIdentity', () => ({
 }));
 
 function AuthProbe() {
-  const { isLoading, isAuthenticated, profile, signOut, signInWithGoogle } =
-    useAuth();
+  const {
+    isLoading,
+    isAuthenticated,
+    profile,
+    signOut,
+    signInWithGoogle,
+    refreshProfile,
+  } = useAuth();
   return (
     <div>
       <span data-testid="loading">{String(isLoading)}</span>
@@ -30,6 +36,9 @@ function AuthProbe() {
       </button>
       <button data-testid="sign-in" onClick={signInWithGoogle}>
         Sign In
+      </button>
+      <button data-testid="refresh-profile" onClick={refreshProfile}>
+        Refresh Profile
       </button>
     </div>
   );
@@ -304,5 +313,72 @@ describe('AuthProvider', () => {
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
     });
     expect(screen.getByTestId('display-name')).toHaveTextContent('New User');
+  });
+
+  it('refreshProfile re-fetches profile for the current user', async () => {
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: {
+        session: {
+          user: {
+            id: 'user-1',
+            email: 'user@example.com',
+            user_metadata: { full_name: 'Test User' },
+          },
+        },
+      },
+      error: null,
+    });
+
+    supabaseFromMock.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({
+        data: {
+          display_name: 'Test User',
+          avatar_url: null,
+          avatar_preference: 'google',
+          plan: 'free',
+          email: 'user@example.com',
+        },
+        error: null,
+      })),
+    });
+
+    const { unmount } = render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
+    });
+
+    supabaseFromMock.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({
+        data: {
+          display_name: 'Refreshed Name',
+          avatar_url: null,
+          avatar_preference: 'google',
+          plan: 'pro',
+          email: 'user@example.com',
+        },
+        error: null,
+      })),
+    });
+
+    await act(async () => {
+      screen.getByTestId('refresh-profile').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('display-name')).toHaveTextContent(
+        'Refreshed Name'
+      );
+    });
+    expect(screen.getByTestId('plan')).toHaveTextContent('pro');
+    unmount();
   });
 });

@@ -77,7 +77,7 @@ function ProfileSettingsPage() {
   }, []);
 
   const autoSaveAvatar = useCallback(
-    async preference => {
+    async (preference, previousPreference) => {
       if (!user) {
         return;
       }
@@ -86,6 +86,7 @@ function ProfileSettingsPage() {
         await refreshProfile();
         showToast(t('profile.saved'));
       } catch {
+        setAvatarPreference(previousPreference);
         showToast(t('profile.error'), 'error');
       }
     },
@@ -299,11 +300,11 @@ function ProfileSettingsPage() {
                     aria-checked={avatarPreference === 'google'}
                     aria-label={t('profile.avatarTitle')}
                     onClick={() => {
-                      const next =
-                        avatarPreference === 'google' ? 'generated' : 'google';
+                      const prev = avatarPreference;
+                      const next = prev === 'google' ? 'generated' : 'google';
                       setAvatarPreference(next);
                       if (hasLoadedRef.current) {
-                        autoSaveAvatar(next);
+                        autoSaveAvatar(next, prev);
                       }
                     }}
                     className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent-primary/40 focus:ring-offset-2 focus:ring-offset-bg ${

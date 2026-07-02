@@ -1,18 +1,21 @@
 # AGENTS
 
-> Algorithm inventories, architecture map, and full test command catalog: [`docs/AGENTS_REFERENCE.md`](docs/AGENTS_REFERENCE.md)
+> Full architecture map, algorithm inventory, route list, and test command catalog: [`docs/AGENTS_REFERENCE.md`](docs/AGENTS_REFERENCE.md)
 >
 > **Doc maintenance:** When counts, file paths, or test commands change, update the reference doc only. Update this file only for new non-negotiable rules or contracts.
 
 ## Project Snapshot
 
-- Product: **Bayan Flow** · client-side React SPA (`/`, `/app`, `/roadmap`, `/settings/profile`, `/privacy`, `/terms`)
+- Product: **Bayan Flow** · client-side React SPA (routes in REFERENCE)
 - Repo: `https://github.com/ayoub3bidi/bayan-flow` · prod `main` → bayanflow.com · dev `develop` → dev.bayanflow.com
+- License: `Elastic-2.0 OR Commercial` (dual-license)
 - Hosting: **Cloudflare Workers** (static SPA via `wrangler.jsonc`); `netlify.toml` kept for rollback only — CI deploys through `.github/workflows/deploy-cloudflare.yml`
-- Tooling: React 19, Vite 7, Tailwind 4, Vitest 3, Remotion 4, i18next (en/fr/ar RTL), Pyodide 0.27.5 in worker
+- Tooling: React 19, Vite 7 (`rolldown-vite`), Tailwind 4, Vitest 3, Remotion 4, i18next `^25.7.1` (en/fr/ar RTL), Pyodide `0.27.5` in worker, Tone.js `^15.1.22`, DiceBear `^10.3.0`, Phosphor Icons, Monaco Editor
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
-- Version: `0.5.0` in `package.json` — algorithm categories (45 algos, 5 categories) shipped; optional Google sign-in when Supabase env vars are set
+- Version: `0.5.0` in `package.json` — 45 algorithms across 5 categories; optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
+- **Tests**: 135 test files, ~1,673 tests
+- **Source**: 217 `.js`, 132 `.jsx`, 48 `.py`, 1 `.css`
 
 ## Source Of Truth (registries)
 

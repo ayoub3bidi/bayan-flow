@@ -146,11 +146,15 @@ describe('ProfileSettingsPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
     await waitFor(() => {
-      expect(updateProfileMock).toHaveBeenCalledWith('user-1', {
+      expect(updateProfileMock).toHaveBeenCalledTimes(2);
+      expect(updateProfileMock).toHaveBeenNthCalledWith(1, 'user-1', {
+        avatarPreference: 'generated',
+      });
+      expect(updateProfileMock).toHaveBeenNthCalledWith(2, 'user-1', {
         displayName: 'Ada Lovelace',
         avatarPreference: 'generated',
       });
-      expect(refreshProfileMock).toHaveBeenCalled();
+      expect(refreshProfileMock).toHaveBeenCalledTimes(2);
       expect(screen.getByText(/profile updated/i)).toBeInTheDocument();
     });
   });

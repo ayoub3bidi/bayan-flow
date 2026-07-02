@@ -54,6 +54,15 @@ export function generateAvatarDataUri(seed, size = 64) {
 }
 
 /**
+ * Deterministic seed for DiceBear avatars.
+ * @param {string | null | undefined} email
+ * @returns {string}
+ */
+function resolveAvatarSeed(email) {
+  return (email ?? 'bayan-flow').trim() || 'bayan-flow';
+}
+
+/**
  * Resolve avatar URL: preference → Google/session metadata → DB profile → DiceBear fallback.
  * @param {{ metadataUrl?: string | null, profileUrl?: string | null, email?: string | null, size?: number, avatarPreference?: AvatarPreference | null }} params
  * @returns {ResolvedAvatar}
@@ -66,9 +75,8 @@ export function resolveUserAvatar({
   avatarPreference = 'google',
 }) {
   if (avatarPreference === 'generated') {
-    const seed = (email ?? 'bayan-flow').trim() || 'bayan-flow';
     return {
-      src: generateAvatarDataUri(seed, size),
+      src: generateAvatarDataUri(resolveAvatarSeed(email), size),
       source: 'generated',
     };
   }
@@ -81,9 +89,8 @@ export function resolveUserAvatar({
     return { src: profileUrl.trim(), source: 'profile' };
   }
 
-  const seed = (email ?? 'bayan-flow').trim() || 'bayan-flow';
   return {
-    src: generateAvatarDataUri(seed, size),
+    src: generateAvatarDataUri(resolveAvatarSeed(email), size),
     source: 'generated',
   };
 }

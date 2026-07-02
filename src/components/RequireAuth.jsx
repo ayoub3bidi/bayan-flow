@@ -16,12 +16,16 @@ function RequireAuth({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoading && isConfigured && !isAuthenticated) {
+    if (!isConfigured || (!isLoading && !isAuthenticated)) {
       navigate('/', { replace: true });
     }
   }, [isAuthenticated, isLoading, isConfigured, navigate]);
 
-  if (!isConfigured || isLoading) {
+  if (!isConfigured) {
+    return null;
+  }
+
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg px-4">
         <div
