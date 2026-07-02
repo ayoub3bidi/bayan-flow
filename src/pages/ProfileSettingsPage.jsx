@@ -134,7 +134,7 @@ function ProfileSettingsPage() {
     return () => {
       cancelled = true;
     };
-  }, [user, t]);
+  }, [user, t, showToast]);
 
   const email = user?.email ?? '';
   const metadataUrl = getMetadataAvatarUrl(user);
@@ -246,7 +246,10 @@ function ProfileSettingsPage() {
           </div>
 
           {isLoadingProfile ? (
-            <div className="flex flex-col items-center gap-6 mt-6 animate-pulse" aria-hidden="true">
+            <div
+              className="flex flex-col items-center gap-6 mt-6 animate-pulse"
+              aria-hidden="true"
+            >
               <div className="h-32 w-32 rounded-full bg-interactive-bg" />
               <div className="flex items-center gap-3 w-full max-w-sm mx-auto">
                 <div className="h-4 flex-1 rounded bg-interactive-bg" />
@@ -445,8 +448,8 @@ function ProfileSettingsPage() {
                   }}
                   className={`ml-1 shrink-0 rounded p-0.5 ${
                     toastType === 'success'
-                    ? 'text-emerald-500/60 hover:text-emerald-600 dark:text-emerald-400/60 dark:hover:text-emerald-200'
-                    : 'text-red-500/60 hover:text-red-600 dark:text-red-400/60 dark:hover:text-red-200'
+                      ? 'text-emerald-500/60 hover:text-emerald-600 dark:text-emerald-400/60 dark:hover:text-emerald-200'
+                      : 'text-red-500/60 hover:text-red-600 dark:text-red-400/60 dark:hover:text-red-200'
                   }`}
                   aria-label={t('common.close')}
                 >
