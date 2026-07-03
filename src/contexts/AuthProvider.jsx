@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isAuthConfigured } from '@/services/authService';
 import * as authService from '@/services/authService';
 import { getProfile } from '@/services/profileService';
+import { resetAllSessionCounters } from '@/services/entitlementService';
 import {
   getMetadataAvatarUrl,
   resolveDisplayName,
@@ -103,10 +104,15 @@ export function AuthProvider({ children }) {
     hydrate();
 
     const unsubscribe = authService.onAuthStateChange(
-      async (_event, nextSession) => {
+      async (event, nextSession) => {
         if (!isMounted) {
           return;
         }
+
+        if (event === 'SIGNED_IN' && nextSession?.user != null) {
+          resetAllSessionCounters();
+        }
+
         setSession(nextSession);
         setIsLoading(true);
         try {

@@ -5,8 +5,9 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, CaretDown } from '@phosphor-icons/react';
+import { Check, CaretDown, Lock } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { canAccessAlgorithm } from '@/services/entitlementService';
 
 function AlgorithmDropdown({
   algorithms,
@@ -17,6 +18,9 @@ function AlgorithmDropdown({
   setIsDropdownOpen,
   isPlaying,
   dropdownRef,
+  user,
+  categoryType,
+  onLockedAlgorithmClick,
 }) {
   const { t } = useTranslation();
 
@@ -72,26 +76,49 @@ function AlgorithmDropdown({
                       .slice(0, groupIndex)
                       .reduce((acc, g) => acc + g.algorithms.length, 0) + index;
 
+                  const isLocked =
+                    categoryType &&
+                    !canAccessAlgorithm(algo.value, categoryType, user);
+                  const isSelected = selectedAlgorithm === algo.value;
+
                   return (
                     <motion.button
                       key={algo.value}
-                      onClick={() => onAlgorithmSelect(algo.value)}
+                      onClick={() => {
+                        if (isLocked) {
+                          onLockedAlgorithmClick?.(algo);
+                        } else {
+                          onAlgorithmSelect(algo.value);
+                        }
+                      }}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: itemIndex * 0.03 }}
                       className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
-                        selectedAlgorithm === algo.value
-                          ? 'bg-theme-primary-light text-theme-primary'
-                          : 'text-text-primary'
+                        isSelected
+                          ? 'bg-theme-primary-light text-theme-primary dark:text-white'
+                          : isLocked
+                            ? 'text-text-primary opacity-60'
+                            : 'text-text-primary'
                       }`}
                     >
-                      <div className="flex flex-col">
-                        <span className="font-medium">{algo.label}</span>
-                        <span className="text-xs text-text-secondary mt-0.5">
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span
+                          className={`font-medium ${isSelected ? 'text-theme-primary dark:text-white' : ''}`}
+                        >
+                          {algo.label}
+                        </span>
+                        <span
+                          className={`text-xs mt-0.5 ${
+                            isSelected
+                              ? 'text-text-secondary dark:text-white/80'
+                              : 'text-text-secondary'
+                          }`}
+                        >
                           {t('settings.time')}: {algo.complexity}
                         </span>
                       </div>
-                      {selectedAlgorithm === algo.value && (
+                      {isSelected ? (
                         <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
@@ -100,14 +127,22 @@ function AlgorithmDropdown({
                             stiffness: 500,
                             damping: 25,
                           }}
+                          className="shrink-0"
                         >
                           <Check
                             size={18}
                             weight="bold"
-                            className="text-[#3b82f6]"
+                            className="text-[#3b82f6] dark:text-white"
                           />
                         </motion.div>
-                      )}
+                      ) : isLocked ? (
+                        <Lock
+                          size={18}
+                          weight="bold"
+                          className="shrink-0 text-text-tertiary"
+                          aria-hidden="true"
+                        />
+                      ) : null}
                     </motion.button>
                   );
                 })}

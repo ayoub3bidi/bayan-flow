@@ -10,10 +10,31 @@ import { GoogleLogo } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 
-function SignInPromptModal({ feature, isOpen, onClose }) {
+const LEGACY_FEATURES = new Set([
+  'code',
+  'insight',
+  'export',
+  'sound',
+  'fullscreen',
+]);
+
+function SignInPromptModal({ feature, isOpen, onClose, metadata = {} }) {
   const { t } = useTranslation();
   const { signInWithGoogle } = useAuth();
-  const featureLabel = t(`featureGate.${feature}`, { defaultValue: feature });
+  const featureLabel = t(`featureGate.${feature}`, {
+    defaultValue: feature,
+    ...metadata,
+  });
+  const isLegacyFeature = LEGACY_FEATURES.has(feature);
+  const modalTitle = isLegacyFeature
+    ? t('featureGate.title', { feature: featureLabel })
+    : featureLabel;
+  const modalDescription = isLegacyFeature
+    ? t('featureGate.description', { feature: featureLabel })
+    : t(`featureGate.${feature}_description`, {
+        defaultValue: '',
+        ...metadata,
+      });
   const dialogRef = useRef(null);
 
   useEffect(() => {
@@ -43,7 +64,7 @@ function SignInPromptModal({ feature, isOpen, onClose }) {
           onKeyDown={e => e.key === 'Escape' && onClose()}
           role="dialog"
           aria-modal="true"
-          aria-label={t('featureGate.title', { feature: featureLabel })}
+          aria-label={modalTitle}
           tabIndex={-1}
         >
           <motion.div
@@ -55,10 +76,10 @@ function SignInPromptModal({ feature, isOpen, onClose }) {
             onClick={e => e.stopPropagation()}
           >
             <h2 className="text-2xl font-bold text-text-primary mb-3">
-              {t('featureGate.title', { feature: featureLabel })}
+              {modalTitle}
             </h2>
             <p className="text-text-secondary mb-8 leading-relaxed">
-              {t('featureGate.description', { feature: featureLabel })}
+              {modalDescription}
             </p>
 
             <div className="flex flex-col gap-3">

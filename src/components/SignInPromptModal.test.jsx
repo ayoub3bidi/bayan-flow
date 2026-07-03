@@ -30,7 +30,7 @@ describe('SignInPromptModal', () => {
   });
 
   FEATURES.forEach(featureKey => {
-    it(`renders correctly for "${featureKey}" feature`, () => {
+    it(`renders legacy unlock copy for "${featureKey}" feature`, () => {
       renderWithI18n(
         <SignInPromptModal feature={featureKey} isOpen onClose={vi.fn()} />
       );
@@ -40,9 +40,32 @@ describe('SignInPromptModal', () => {
       expect(dialog).toHaveAccessibleName(
         `Unlock ${FEATURE_LABELS[featureKey]}`
       );
+      expect(
+        screen.getByText(
+          `Sign in with Google to access the ${FEATURE_LABELS[featureKey]} and get the full Bayan Flow experience.`
+        )
+      ).toBeInTheDocument();
       expect(screen.getByText('Sign in with Google')).toBeInTheDocument();
       expect(screen.getByText('Maybe later')).toBeInTheDocument();
     });
+  });
+
+  it('renders custom gate copy for algorithm_lock with metadata', () => {
+    renderWithI18n(
+      <SignInPromptModal
+        feature="algorithm_lock"
+        isOpen
+        onClose={vi.fn()}
+        metadata={{ algorithmName: 'Quick Sort' }}
+      />
+    );
+
+    expect(screen.getByText('Unlock Quick Sort')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Sign in to access all 45 algorithms across 5 categories.'
+      )
+    ).toBeInTheDocument();
   });
 
   it('calls signInWithGoogle when the sign-in button is clicked', () => {

@@ -7,6 +7,7 @@
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import { ThemeContext } from '../contexts/ThemeContextDefinition';
+import { playThemeSwitchSound } from '../utils/themeSwitchSound';
 
 /**
  * @param {Object} props
@@ -28,6 +29,11 @@ function ThemeToggle({
 
   const isDark = theme === 'dark';
 
+  const handleToggle = () => {
+    playThemeSwitchSound(isDark ? 'light' : 'dark');
+    onToggle();
+  };
+
   return (
     <label
       className={`inline-flex items-center relative cursor-pointer ${className}`}
@@ -35,7 +41,7 @@ function ThemeToggle({
       <input
         type="checkbox"
         checked={isDark}
-        onChange={onToggle}
+        onChange={handleToggle}
         className="sr-only peer"
         aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
         role="switch"

@@ -11,34 +11,42 @@ import { ThemeProvider } from '../contexts/ThemeContext.jsx';
 import { soundManager } from '../utils/soundManager';
 import { resetSoundManagerMock } from '../test/soundManagerMock.js';
 
-const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
-  vi.hoisted(() => {
-    const beginExportFlowInner = vi.fn();
-    const exportVideoInner = vi.fn();
-    const toggleFullScreenInner = vi.fn();
-    const videoExporterMockInner = {
-      beginExportFlow: beginExportFlowInner,
-      exportVideo: exportVideoInner,
-      exportState: 'idle',
-      exportProgress: 0,
-      exportBlobUrl: null,
-      exportErrorMessage: null,
-      cancelExport: vi.fn(),
-      closePreview: vi.fn(),
-      downloadVideo: vi.fn(),
-    };
-    const fullScreenMockInner = {
-      isFullScreen: false,
-      toggleFullScreen: toggleFullScreenInner,
-    };
-    return {
-      beginExportFlow: beginExportFlowInner,
-      exportVideo: exportVideoInner,
-      toggleFullScreen: toggleFullScreenInner,
-      videoExporterMock: videoExporterMockInner,
-      fullScreenMock: fullScreenMockInner,
-    };
-  });
+const {
+  beginExportFlow,
+  reportExportError,
+  exportVideo,
+  videoExporterMock,
+  fullScreenMock,
+} = vi.hoisted(() => {
+  const beginExportFlowInner = vi.fn();
+  const reportExportErrorInner = vi.fn();
+  const exportVideoInner = vi.fn();
+  const toggleFullScreenInner = vi.fn();
+  const videoExporterMockInner = {
+    beginExportFlow: beginExportFlowInner,
+    reportExportError: reportExportErrorInner,
+    exportVideo: exportVideoInner,
+    exportState: 'idle',
+    exportProgress: 0,
+    exportBlobUrl: null,
+    exportErrorMessage: null,
+    cancelExport: vi.fn(),
+    closePreview: vi.fn(),
+    downloadVideo: vi.fn(),
+  };
+  const fullScreenMockInner = {
+    isFullScreen: false,
+    toggleFullScreen: toggleFullScreenInner,
+  };
+  return {
+    beginExportFlow: beginExportFlowInner,
+    reportExportError: reportExportErrorInner,
+    exportVideo: exportVideoInner,
+    toggleFullScreen: toggleFullScreenInner,
+    videoExporterMock: videoExporterMockInner,
+    fullScreenMock: fullScreenMockInner,
+  };
+});
 
 const authMock = vi.hoisted(() => ({
   isAuthenticated: true,
@@ -175,9 +183,12 @@ vi.mock('../components/Footer', () => ({
 }));
 
 vi.mock('../components/ExportProgressModal', () => ({
-  default: ({ open, onOrientationSelect }) =>
+  default: ({ open, onOrientationSelect, errorMessage }) =>
     open ? (
       <div data-testid="export-modal">
+        {errorMessage ? (
+          <span data-testid="export-error-message">{errorMessage}</span>
+        ) : null}
         <button
           type="button"
           onClick={() => onOrientationSelect?.('horizontal')}
@@ -371,23 +382,43 @@ vi.mock('../hooks/useBodyScrollLock', () => ({
   useBodyScrollLock: vi.fn(),
 }));
 
-vi.mock('../video/useVideoExporter', () => ({
-  useVideoExporter: () => ({
-    beginExportFlow: videoExporterMock.beginExportFlow,
-    exportVideo: videoExporterMock.exportVideo,
-    exportState: videoExporterMock.exportState,
-    exportProgress: videoExporterMock.exportProgress,
-    exportBlobUrl: videoExporterMock.exportBlobUrl,
-    exportErrorMessage: videoExporterMock.exportErrorMessage,
-    cancelExport: videoExporterMock.cancelExport,
-    closePreview: videoExporterMock.closePreview,
-    downloadVideo: videoExporterMock.downloadVideo,
-    canRenderOnWeb: true,
-  }),
-}));
+vi.mock('../video/useVideoExporter', async () => {
+  const React = await vi.importActual('react');
+
+  return {
+    useVideoExporter: () => {
+      const [exportState, setExportState] = React.useState(
+        videoExporterMock.exportState
+      );
+      const [exportErrorMessage, setExportErrorMessage] = React.useState(
+        videoExporterMock.exportErrorMessage
+      );
+
+      return {
+        beginExportFlow: videoExporterMock.beginExportFlow,
+        reportExportError: message => {
+          videoExporterMock.reportExportError(message);
+          videoExporterMock.exportErrorMessage = message;
+          setExportErrorMessage(message);
+          setExportState('error');
+        },
+        exportVideo: videoExporterMock.exportVideo,
+        exportState,
+        exportProgress: videoExporterMock.exportProgress,
+        exportBlobUrl: videoExporterMock.exportBlobUrl,
+        exportErrorMessage,
+        cancelExport: videoExporterMock.cancelExport,
+        closePreview: videoExporterMock.closePreview,
+        downloadVideo: videoExporterMock.downloadVideo,
+        canRenderOnWeb: true,
+      };
+    },
+  };
+});
 
 describe('VisualizerApp', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     resetSoundManagerMock();
     window.localStorage.clear();
     document.body.style.cssText = '';
@@ -395,7 +426,9 @@ describe('VisualizerApp', () => {
     videoExporterMock.exportState = 'idle';
     videoExporterMock.exportProgress = 0;
     videoExporterMock.exportBlobUrl = null;
+    videoExporterMock.exportErrorMessage = null;
     authMock.isAuthenticated = true;
+    authMock.user = { id: 'test-user', email: 'test@example.com' };
   });
 
   afterEach(() => {
@@ -489,6 +522,32 @@ describe('VisualizerApp', () => {
     fireEvent.click(screen.getByText('export'));
 
     expect(beginExportFlow).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByTestId('sign-in-prompt-modal')
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the export error modal when a free user reaches the private daily guard', async () => {
+    window.localStorage.setItem(
+      'free_export_daily_test-user',
+      JSON.stringify({
+        date: new Date().toISOString().slice(0, 10),
+        count: 50,
+      })
+    );
+    await renderApp();
+
+    fireEvent.click(screen.getByText('pathfinding'));
+    fireEvent.click(screen.getByText('export'));
+
+    expect(beginExportFlow).not.toHaveBeenCalled();
+    expect(reportExportError).toHaveBeenCalledWith(
+      'Export unavailable right now. Please try again later.'
+    );
+    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('export-error-message')).toHaveTextContent(
+      'Export unavailable right now. Please try again later.'
+    );
   });
 
   it('dispatches new data by category: array config vs grid regenerateGrid', async () => {
@@ -534,6 +593,10 @@ describe('VisualizerApp', () => {
         algorithmKey: 'bubbleSort',
         orientation: 'horizontal',
         steps: sortingVisualization.steps,
+        watermark: expect.objectContaining({
+          enabled: true,
+          text: 'Bayan Flow',
+        }),
         exportTheme: expect.stringMatching(/^(light|dark)$/),
         exportLanguage: expect.any(String),
       })
@@ -742,6 +805,37 @@ describe('VisualizerApp', () => {
         screen.queryByTestId('sign-in-prompt-modal')
       ).not.toBeInTheDocument();
       expect(screen.getByTestId('python-panel')).toBeInTheDocument();
+    });
+
+    it('shows remaining visualizations counter for anonymous users', async () => {
+      authMock.isAuthenticated = false;
+      authMock.user = null;
+      window.localStorage.setItem('anon_viz_count', '5');
+
+      await renderApp();
+
+      expect(
+        screen.getByText(/7 visualizations remaining/i)
+      ).toBeInTheDocument();
+    });
+
+    it('hides remaining visualizations counter for authenticated users', async () => {
+      await renderApp();
+
+      expect(
+        screen.queryByText(/visualizations remaining/i)
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows remaining visualizations as 12 for anon with zero usage', async () => {
+      authMock.isAuthenticated = false;
+      authMock.user = null;
+
+      await renderApp();
+
+      expect(
+        screen.getByText(/12 visualizations remaining/i)
+      ).toBeInTheDocument();
     });
   });
 });

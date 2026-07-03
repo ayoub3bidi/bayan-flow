@@ -5,10 +5,15 @@
  */
 
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ComplexityPanel from './ComplexityPanel';
 import { getGraphMatrixLayout } from '../utils/graphMatrixLayout.js';
+import { useAuth } from '../hooks/useAuth';
+import {
+  canViewComplexityPanel,
+  incrementComplexityViewCount,
+} from '../services/entitlementService';
 
 const INTERACTIVE_MATRIX_VIEWPORT = Object.freeze({
   width: 960,
@@ -47,9 +52,13 @@ function GraphAlgorithmMatrixVisualizer({
   isComplete,
   algorithm,
   complexityDataset = 'graphAlgorithm',
+  onGatedFeatureClick,
 }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
+  const [isComplexityGated, setIsComplexityGated] = useState(false);
+  const hasCountedThisCompletion = useRef(false);
 
   useEffect(() => {
     if (isComplete) {
@@ -57,16 +66,48 @@ function GraphAlgorithmMatrixVisualizer({
         setShowComplexityPanel(true);
       }, 1000);
       return () => clearTimeout(timer);
+    } else {
+      setShowComplexityPanel(false);
+      setIsComplexityGated(false);
+      hasCountedThisCompletion.current = false;
     }
-    setShowComplexityPanel(false);
   }, [isComplete]);
+
+  useEffect(() => {
+    if (user) {
+      setIsComplexityGated(false);
+    }
+  }, [user]);
+
+  // Increment complexity view count once per completion for anonymous users
+  useEffect(() => {
+    if (isComplete && !hasCountedThisCompletion.current && !user) {
+      if (canViewComplexityPanel(user)) {
+        incrementComplexityViewCount();
+      } else {
+        setIsComplexityGated(true);
+        onGatedFeatureClick?.('complexity_limit');
+      }
+      hasCountedThisCompletion.current = true;
+    }
+  }, [isComplete, user, onGatedFeatureClick]);
 
   if (showComplexityPanel) {
     return (
-      <ComplexityPanel
-        algorithm={algorithm}
-        complexityDataset={complexityDataset}
-      />
+      <div className="relative w-full h-full">
+        <ComplexityPanel
+          algorithm={algorithm}
+          complexityDataset={complexityDataset}
+        />
+        {isComplexityGated && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 backdrop-blur-md bg-black/30 z-10"
+            aria-hidden="true"
+          />
+        )}
+      </div>
     );
   }
 

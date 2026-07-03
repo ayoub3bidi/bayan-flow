@@ -5,6 +5,8 @@
  */
 
 @import 'tailwindcss';
+@config "../tailwind.config.js";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Theme Color Tokens */
 :root {
@@ -421,7 +423,7 @@ body {
   background-color: var(--color-primary-light);
 }
 
-.text-theme-primary {
+@utility text-theme-primary {
   color: var(--color-primary);
 }
 

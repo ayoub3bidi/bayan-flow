@@ -101,4 +101,24 @@ describe('ControlPanel', () => {
 
     expect(screen.getByRole('button', { name: 'Sound Off' })).toBeDisabled();
   });
+
+  it('opens category_controls gate when anonymous user clicks sort order', () => {
+    const onGatedFeatureClick = vi.fn();
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({
+          isGated: true,
+          onGatedFeatureClick,
+        })}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Toggle initial array order for sorting',
+      })
+    );
+
+    expect(onGatedFeatureClick).toHaveBeenCalledWith('category_controls');
+  });
 });

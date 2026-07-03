@@ -39,6 +39,7 @@ import {
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
   SORT_ORDERS,
+  GRID_SIZES,
 } from '../constants';
 import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
@@ -46,6 +47,17 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../hooks/useAuth';
+import {
+  canRunVisualization,
+  incrementVisualizationCount,
+  getRemainingVisualizations,
+  canUseManualControls,
+  canUseCategoryControls,
+  canRunVideoExport,
+  incrementVideoExportCount,
+  getExportWatermarkConfig,
+  ANONYMOUS_VISUALIZATION_LIMIT,
+} from '../services/entitlementService';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import {
   clampGraphAlgorithmNodeCount,
@@ -194,13 +206,26 @@ function App() {
   );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [gatedFeature, setGatedFeature] = useState(null);
+  const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
   const pendingFeatureRef = useRef(null);
+
+  const openGatedFeature = (feature, metadata = {}) => {
+    setGatedFeature(feature);
+    setGatedFeatureMetadata(metadata);
+  };
+
+  const closeGatedFeature = () => {
+    pendingFeatureRef.current = null;
+    setGatedFeature(null);
+    setGatedFeatureMetadata({});
+  };
 
   const {
     beginExportFlow,
+    reportExportError,
     exportVideo,
     exportState,
     exportProgress,
@@ -262,6 +287,20 @@ function App() {
       soundManager.disable();
     }
   }, [isSoundEnabled]);
+
+  // Force autoplay mode for anonymous users
+  useEffect(() => {
+    if (!canUseManualControls(user) && mode === VISUALIZATION_MODES.MANUAL) {
+      setMode(VISUALIZATION_MODES.AUTOPLAY);
+    }
+  }, [user, mode]);
+
+  // Force medium grid for anonymous pathfinding users
+  useEffect(() => {
+    if (!canUseCategoryControls(user) && gridSize !== GRID_SIZES.MEDIUM) {
+      setGridSize(GRID_SIZES.MEDIUM);
+    }
+  }, [user, gridSize]);
 
   useEffect(() => {
     if (!isSoundEnabled || soundManager.getIsEnabled()) {
@@ -326,11 +365,42 @@ function App() {
     if (isAuthenticated && pendingFeatureRef.current) {
       openFeature(pendingFeatureRef.current);
       pendingFeatureRef.current = null;
-      setGatedFeature(null);
+      closeGatedFeature();
     }
+    // openFeature is not a dependency since it's defined above and stable within this scope
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // ── Handlers ───────────────────────────────────────────────────────────────
+
+  /** Play handler with session limit check for anonymous users */
+  const handlePlay = () => {
+    if (!canRunVisualization(user)) {
+      openGatedFeature('session_limit', {
+        limit: ANONYMOUS_VISUALIZATION_LIMIT,
+      });
+      return;
+    }
+    // Increment viz count for anonymous users on each play
+    if (!user) {
+      incrementVisualizationCount();
+    }
+    visualization.play();
+  };
+
+  /** Handler for locked algorithm clicks (anonymous tier) */
+  const handleLockedAlgorithmClick = algo => {
+    openGatedFeature('algorithm_lock', { algorithmName: algo.label });
+  };
+
+  /** Handler for gated feature clicks from SettingsPanel and visualizers */
+  const handleGatedFeatureClick = feature => {
+    const metadata =
+      feature === 'session_limit'
+        ? { limit: ANONYMOUS_VISUALIZATION_LIMIT }
+        : {};
+    openGatedFeature(feature, metadata);
+  };
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
   const handleGenerateInput = () => {
@@ -386,7 +456,7 @@ function App() {
       handleSoundToggle();
     } else {
       pendingFeatureRef.current = 'sound';
-      setGatedFeature('sound');
+      openGatedFeature('sound');
     }
   };
 
@@ -395,7 +465,7 @@ function App() {
       toggleFullScreen();
     } else {
       pendingFeatureRef.current = 'fullscreen';
-      setGatedFeature('fullscreen');
+      openGatedFeature('fullscreen');
     }
   };
 
@@ -438,15 +508,27 @@ function App() {
 
   const handleExportVideo = () => {
     if (visualization.totalSteps === 0) return;
-    if (isAuthenticated) {
-      beginExportFlow();
-    } else {
+    if (!isAuthenticated) {
       pendingFeatureRef.current = 'export';
-      setGatedFeature('export');
+      openGatedFeature('export');
+      return;
     }
+
+    if (!canRunVideoExport(user)) {
+      reportExportError(t('controls.exportTemporarilyUnavailable'));
+      return;
+    }
+
+    beginExportFlow();
   };
 
   const handleOrientationSelected = orientation => {
+    if (!canRunVideoExport(user)) {
+      reportExportError(t('controls.exportTemporarilyUnavailable'));
+      return;
+    }
+
+    incrementVideoExportCount(user);
     exportVideo({
       steps: visualization.steps,
       algorithmType,
@@ -455,6 +537,7 @@ function App() {
       speed,
       gridSize,
       orientation,
+      watermark: getExportWatermarkConfig(user),
       includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
@@ -491,6 +574,7 @@ function App() {
     onStepForward: visualization.stepForward,
     onStepBackward: visualization.stepBackward,
     mode,
+    onGatedFeatureClick: handleGatedFeatureClick,
   };
 
   const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
@@ -538,7 +622,7 @@ function App() {
               isPlaying={visualization.isPlaying}
               isComplete={visualization.isComplete}
               mode={mode}
-              onPlay={visualization.play}
+              onPlay={handlePlay}
               onPause={visualization.pause}
               onReset={visualization.reset}
               onStepForward={visualization.stepForward}
@@ -612,6 +696,9 @@ function App() {
                       isPlaying={visualization.isPlaying}
                       mode={mode}
                       onModeChange={setMode}
+                      user={user}
+                      onLockedAlgorithmClick={handleLockedAlgorithmClick}
+                      onGatedFeatureClick={handleGatedFeatureClick}
                     />
                   </aside>
 
@@ -638,7 +725,7 @@ function App() {
                       isPlaying={visualization.isPlaying}
                       isComplete={visualization.isComplete}
                       mode={mode}
-                      onPlay={visualization.play}
+                      onPlay={handlePlay}
                       onPause={visualization.pause}
                       onReset={visualization.reset}
                       onStepForward={visualization.stepForward}
@@ -660,12 +747,27 @@ function App() {
                       isSoundTogglePending={isSoundTogglePending}
                       onToggleSound={handleGatedSoundToggle}
                       isGated={!isAuthenticated}
+                      onGatedFeatureClick={handleGatedFeatureClick}
                     />
                   </section>
                 </div>
               </div>
             </main>
             <Footer />
+
+            {/* Remaining Visualizations Counter (anonymous users only) */}
+            {!user && getRemainingVisualizations(user) < Infinity && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="fixed bottom-4 right-4 z-40 text-xs sm:text-sm text-text-secondary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
+              >
+                {t('info.visualizationsRemaining', {
+                  count: getRemainingVisualizations(user),
+                })}
+              </motion.div>
+            )}
 
             {/* Floating Action Buttons */}
             {!isPythonPanelOpen && !isInsightPanelOpen && (
@@ -676,7 +778,7 @@ function App() {
                       setIsPythonPanelOpen(true);
                     } else {
                       pendingFeatureRef.current = 'code';
-                      setGatedFeature('code');
+                      openGatedFeature('code');
                     }
                   }}
                   disabled={!activeAlgorithmKey}
@@ -688,7 +790,7 @@ function App() {
                       setIsInsightPanelOpen(true);
                     } else {
                       pendingFeatureRef.current = 'insight';
-                      setGatedFeature('insight');
+                      openGatedFeature('insight');
                     }
                   }}
                   disabled={!activeAlgorithmKey}
@@ -759,10 +861,8 @@ function App() {
       <SignInPromptModal
         feature={gatedFeature}
         isOpen={gatedFeature !== null}
-        onClose={() => {
-          pendingFeatureRef.current = null;
-          setGatedFeature(null);
-        }}
+        metadata={gatedFeatureMetadata}
+        onClose={closeGatedFeature}
       />
     </div>
   );

@@ -67,7 +67,10 @@
     "autoplayOnly": "only",
     "treeNodeCount": "Tree nodes",
     "graphNodeCount": "Graph vertices",
-    "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it."
+    "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it.",
+    "signInForManual": "Sign in for manual mode",
+    "signInForSpeed": "Sign in to adjust speed",
+    "signInForCategoryControls": "Sign in for advanced controls"
   },
   "modes": {
     "sorting": "Sorting",
@@ -252,6 +255,7 @@
     "rendering": "Rendering video…",
     "exportDone": "Video downloaded",
     "exportError": "Export failed",
+    "exportTemporarilyUnavailable": "Export unavailable right now. Please try again later.",
     "browserNotSupported": "Video export is not supported in this browser. Use Chrome 94+, Firefox 130+, or Safari 26+.",
     "exportingTitle": "Exporting video",
     "exportingChecking": "Checking browser support…",
@@ -282,7 +286,8 @@
     "completed": "Algorithm completed!",
     "ready": "Ready to start",
     "pathFound": "Path found!",
-    "noPath": "No path exists"
+    "noPath": "No path exists",
+    "visualizationsRemaining": "{{count}} visualizations remaining"
   },
   "videoExport": {
     "noSteps": "No steps to display"
@@ -1343,6 +1348,18 @@
     "insight": "Algorithm Insight",
     "export": "Video Export",
     "sound": "Sound",
-    "fullscreen": "Fullscreen Mode"
+    "fullscreen": "Fullscreen Mode",
+    "algorithm_lock": "Unlock {{algorithmName}}",
+    "algorithm_lock_description": "Sign in to access all 45 algorithms across 5 categories.",
+    "session_limit": "Continue Learning",
+    "session_limit_description": "You've explored {{limit}} visualizations. Sign in to continue with unlimited access.",
+    "speed_control": "Adjust Speed",
+    "speed_control_description": "Sign in to control animation speed from slow to lightning-fast.",
+    "complexity_limit": "Complexity Analysis",
+    "complexity_limit_description": "Sign in to see interactive complexity charts for every algorithm.",
+    "manual_controls": "Manual Step Control",
+    "manual_controls_description": "Sign in to step through algorithms at your own pace.",
+    "category_controls": "Advanced Controls",
+    "category_controls_description": "Sign in to customize grid sizes, sort order, graph scenarios, and more."
   }
 }
