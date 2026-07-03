@@ -90,7 +90,7 @@ function GraphScenarioDropdown({
                   transition={{ delay: index * 0.03 }}
                   className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
                     isSelected
-                      ? 'bg-theme-primary-light'
+                      ? 'bg-theme-primary-light text-theme-primary dark:text-white'
                       : isLocked
                         ? 'text-text-primary opacity-60'
                         : 'text-text-primary'
@@ -99,7 +99,7 @@ function GraphScenarioDropdown({
                   aria-selected={isSelected}
                 >
                   <span
-                    className={`font-medium min-w-0 flex-1 ${isSelected ? 'algo-dropdown-selected-label' : ''}`}
+                    className={`font-medium min-w-0 flex-1 ${isSelected ? 'text-theme-primary dark:text-white' : ''}`}
                   >
                     {t(option.i18nKey)}
                   </span>
@@ -117,7 +117,7 @@ function GraphScenarioDropdown({
                       <Check
                         size={18}
                         weight="bold"
-                        className="algo-dropdown-selected-check"
+                        className="text-[#3b82f6] dark:text-white"
                       />
                     </motion.div>
                   ) : isLocked ? (

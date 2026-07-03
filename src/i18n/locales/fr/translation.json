@@ -254,6 +254,7 @@
     "rendering": "Génération de la vidéo…",
     "exportDone": "Vidéo téléchargée",
     "exportError": "Échec de l'export",
+    "exportTemporarilyUnavailable": "Export indisponible pour le moment. Veuillez réessayer plus tard.",
     "browserNotSupported": "L'export vidéo n'est pas pris en charge dans ce navigateur. Utilisez Chrome 94+, Firefox 130+ ou Safari 26+.",
     "exportingTitle": "Export en vidéo",
     "exportingChecking": "Vérification du navigateur…",

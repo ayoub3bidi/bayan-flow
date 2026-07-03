@@ -104,7 +104,7 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
   - Manual controls, all 4 speed presets
   - Full complexity panel access, all category-specific controls
   - Code Panel, Insight Panel, Sound, Fullscreen
-  - Video Export (unlimited in v0.5.0; future Pro tier will add free-tier limit + watermark removal)
+  - Video Export: unlimited for Free tier with mandatory watermark; Pro tier adds watermark customization/removal; internal daily abuse guard exists (not user-facing)
 - **Auth PRs must not reduce Free tier functionality** — only Anonymous tier can be further restricted
 - **Secrets** — publishable anon key via `VITE_*` only; service role key never in repo or client bundle
 - **CSP** — Supabase origin in `connect-src`; Google profile photos in `img-src` (lh3.googleusercontent.com); GIS scripts/connect/frame in respective directives; asserted via `scripts/cspHeaders.js` at build time

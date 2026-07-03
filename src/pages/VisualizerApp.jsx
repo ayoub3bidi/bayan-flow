@@ -53,6 +53,9 @@ import {
   getRemainingVisualizations,
   canUseManualControls,
   canUseCategoryControls,
+  canRunVideoExport,
+  incrementVideoExportCount,
+  getExportWatermarkConfig,
   ANONYMOUS_VISUALIZATION_LIMIT,
 } from '../services/entitlementService';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
@@ -222,6 +225,7 @@ function App() {
 
   const {
     beginExportFlow,
+    reportExportError,
     exportVideo,
     exportState,
     exportProgress,
@@ -504,15 +508,27 @@ function App() {
 
   const handleExportVideo = () => {
     if (visualization.totalSteps === 0) return;
-    if (isAuthenticated) {
-      beginExportFlow();
-    } else {
+    if (!isAuthenticated) {
       pendingFeatureRef.current = 'export';
       openGatedFeature('export');
+      return;
     }
+
+    if (!canRunVideoExport(user)) {
+      reportExportError(t('controls.exportTemporarilyUnavailable'));
+      return;
+    }
+
+    beginExportFlow();
   };
 
   const handleOrientationSelected = orientation => {
+    if (!canRunVideoExport(user)) {
+      reportExportError(t('controls.exportTemporarilyUnavailable'));
+      return;
+    }
+
+    incrementVideoExportCount(user);
     exportVideo({
       steps: visualization.steps,
       algorithmType,
@@ -521,6 +537,7 @@ function App() {
       speed,
       gridSize,
       orientation,
+      watermark: getExportWatermarkConfig(user),
       includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,

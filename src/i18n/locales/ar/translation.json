@@ -254,6 +254,7 @@
     "rendering": "جاري إنشاء الفيديو…",
     "exportDone": "تم تنزيل الفيديو",
     "exportError": "فشل التصدير",
+    "exportTemporarilyUnavailable": "التصدير غير متاح حالياً. يرجى المحاولة مرة أخرى لاحقاً.",
     "browserNotSupported": "تصدير الفيديو غير مدعوم في هذا المتصفح. استخدم Chrome 94+ أو Firefox 130+ أو Safari 26+.",
     "exportingTitle": "جاري تصدير الفيديو",
     "exportingChecking": "التحقق من دعم المتصفح…",

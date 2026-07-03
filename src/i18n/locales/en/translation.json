@@ -255,6 +255,7 @@
     "rendering": "Rendering video…",
     "exportDone": "Video downloaded",
     "exportError": "Export failed",
+    "exportTemporarilyUnavailable": "Export unavailable right now. Please try again later.",
     "browserNotSupported": "Video export is not supported in this browser. Use Chrome 94+, Firefox 130+, or Safari 26+.",
     "exportingTitle": "Exporting video",
     "exportingChecking": "Checking browser support…",

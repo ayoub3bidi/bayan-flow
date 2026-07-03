@@ -8,14 +8,72 @@ import {
   PLAN_TIERS,
   isAlgorithmFreeForAnonymous,
 } from '@/constants/algorithmEntitlements';
+import { DEFAULT_VIDEO_WATERMARK } from '@/video/constants';
 
 // Session limits for anonymous users
 export const ANONYMOUS_VISUALIZATION_LIMIT = 12;
 const ANONYMOUS_COMPLEXITY_VIEW_LIMIT = 2;
+const FREE_TIER_DAILY_EXPORT_LIMIT = 50;
 
 // localStorage keys
 const STORAGE_KEY_VIZ_COUNT = 'anon_viz_count';
 const STORAGE_KEY_COMPLEXITY_COUNT = 'anon_complexity_views';
+const FREE_EXPORT_DAILY_KEY_PREFIX = 'free_export_daily';
+
+function getUtcDateKey(date = new Date()) {
+  return date.toISOString().slice(0, 10);
+}
+
+function hashString(value) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+function getUserStorageId(user) {
+  if (!user) return null;
+  if (user.id) return String(user.id);
+  if (user.email) return `email_${hashString(String(user.email))}`;
+  return null;
+}
+
+function getDailyExportStorageKey(user) {
+  const userStorageId = getUserStorageId(user);
+  if (!userStorageId) return null;
+  return `${FREE_EXPORT_DAILY_KEY_PREFIX}_${userStorageId}`;
+}
+
+function readDailyExportCount(user) {
+  const storageKey = getDailyExportStorageKey(user);
+  if (!storageKey) return FREE_TIER_DAILY_EXPORT_LIMIT;
+
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return 0;
+
+    const parsed = JSON.parse(raw);
+    if (parsed?.date !== getUtcDateKey()) {
+      return 0;
+    }
+
+    return Number.isFinite(parsed.count) ? parsed.count : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function writeDailyExportCount(user, count) {
+  const storageKey = getDailyExportStorageKey(user);
+  if (!storageKey) return;
+
+  localStorage.setItem(
+    storageKey,
+    JSON.stringify({ date: getUtcDateKey(), count })
+  );
+}
 
 /**
  * Get the user's plan tier from the user object.
@@ -26,7 +84,12 @@ export function getUserPlan(user) {
   if (!user) {
     return PLAN_TIERS.ANONYMOUS;
   }
-  // Future: check user.plan for 'pro' once Pro tier is implemented
+  if (
+    user.plan === PLAN_TIERS.PRO ||
+    user.app_metadata?.plan === PLAN_TIERS.PRO
+  ) {
+    return PLAN_TIERS.PRO;
+  }
   return PLAN_TIERS.FREE;
 }
 
@@ -141,6 +204,58 @@ export function canViewComplexityPanel(user) {
     10
   );
   return count < ANONYMOUS_COMPLEXITY_VIEW_LIMIT;
+}
+
+/**
+ * Check if the user can begin a video export.
+ * Anonymous users must sign in. Free users have an internal daily abuse guard.
+ * @param {object | null} user
+ * @returns {boolean}
+ */
+export function canRunVideoExport(user) {
+  const plan = getUserPlan(user);
+  if (plan === PLAN_TIERS.ANONYMOUS) {
+    return false;
+  }
+  if (plan === PLAN_TIERS.PRO) {
+    return true;
+  }
+  return readDailyExportCount(user) < FREE_TIER_DAILY_EXPORT_LIMIT;
+}
+
+/**
+ * Increment the signed-in user's daily export count.
+ * Called after the user confirms orientation and an export begins.
+ * @param {object | null} user
+ */
+export function incrementVideoExportCount(user) {
+  const plan = getUserPlan(user);
+  if (plan !== PLAN_TIERS.FREE) {
+    return;
+  }
+  writeDailyExportCount(user, readDailyExportCount(user) + 1);
+}
+
+/**
+ * Free users must keep the default Bayan Flow watermark. Pro will be able to
+ * customize or remove it once the Pro tier exists.
+ * @param {object | null} user
+ * @returns {typeof DEFAULT_VIDEO_WATERMARK}
+ */
+export function getExportWatermarkConfig(user) {
+  if (!canCustomizeExportWatermark(user)) {
+    return { ...DEFAULT_VIDEO_WATERMARK, enabled: true };
+  }
+  return { ...DEFAULT_VIDEO_WATERMARK, ...(user?.exportWatermark ?? {}) };
+}
+
+/**
+ * Check whether the user can customize or remove video export watermarks.
+ * @param {object | null} user
+ * @returns {boolean}
+ */
+export function canCustomizeExportWatermark(user) {
+  return getUserPlan(user) === PLAN_TIERS.PRO;
 }
 
 /**

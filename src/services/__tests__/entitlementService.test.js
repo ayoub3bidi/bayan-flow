@@ -14,6 +14,10 @@ import {
   getRemainingVisualizations,
   canViewComplexityPanel,
   incrementComplexityViewCount,
+  canRunVideoExport,
+  incrementVideoExportCount,
+  getExportWatermarkConfig,
+  canCustomizeExportWatermark,
   resetAllSessionCounters,
 } from '@/services/entitlementService';
 import { PLAN_TIERS } from '@/constants/algorithmEntitlements';
@@ -61,6 +65,11 @@ describe('entitlementService', () => {
     it('should return free for signed-in user (pro tier not yet implemented)', () => {
       const user = { id: '123', email: 'test@example.com', plan: 'free' };
       expect(getUserPlan(user)).toBe(PLAN_TIERS.FREE);
+    });
+
+    it('should return pro for signed-in users with a pro plan', () => {
+      const user = { id: '123', email: 'test@example.com', plan: 'pro' };
+      expect(getUserPlan(user)).toBe(PLAN_TIERS.PRO);
     });
   });
 
@@ -196,6 +205,72 @@ describe('entitlementService', () => {
     it('should persist count in localStorage', () => {
       incrementComplexityViewCount();
       expect(localStorage.getItem('anon_complexity_views')).toBe('1');
+    });
+  });
+
+  describe('video export entitlements', () => {
+    it('should block anonymous users from video export', () => {
+      expect(canRunVideoExport(null)).toBe(false);
+    });
+
+    it('should allow free users under the daily export guard', () => {
+      const user = { id: '123' };
+
+      expect(canRunVideoExport(user)).toBe(true);
+
+      for (let i = 0; i < 49; i += 1) {
+        incrementVideoExportCount(user);
+      }
+
+      expect(canRunVideoExport(user)).toBe(true);
+    });
+
+    it('should block free users at the daily export guard', () => {
+      const user = { id: '123' };
+
+      for (let i = 0; i < 50; i += 1) {
+        incrementVideoExportCount(user);
+      }
+
+      expect(canRunVideoExport(user)).toBe(false);
+    });
+
+    it('should reset the free export guard on a new UTC day', () => {
+      const user = { id: '123' };
+      localStorage.setItem(
+        'free_export_daily_123',
+        JSON.stringify({ date: '2025-01-01', count: 50 })
+      );
+
+      expect(canRunVideoExport(user)).toBe(true);
+    });
+
+    it('should not limit pro users with the free export guard', () => {
+      const user = { id: '123', plan: 'pro' };
+
+      for (let i = 0; i < 60; i += 1) {
+        incrementVideoExportCount(user);
+      }
+
+      expect(canRunVideoExport(user)).toBe(true);
+    });
+
+    it('should require the default watermark for free users', () => {
+      const watermark = getExportWatermarkConfig({ id: '123' });
+
+      expect(watermark).toEqual(
+        expect.objectContaining({
+          enabled: true,
+          text: 'Bayan Flow',
+        })
+      );
+    });
+
+    it('should allow watermark customization only for pro users', () => {
+      expect(canCustomizeExportWatermark({ id: 'free-user' })).toBe(false);
+      expect(canCustomizeExportWatermark({ id: 'pro-user', plan: 'pro' })).toBe(
+        true
+      );
     });
   });
 

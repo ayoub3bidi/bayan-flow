@@ -5,6 +5,8 @@
  */
 
 @import 'tailwindcss';
+@config "../tailwind.config.js";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Theme Color Tokens */
 :root {
@@ -421,33 +423,8 @@ body {
   background-color: var(--color-primary-light);
 }
 
-.text-theme-primary {
+@utility text-theme-primary {
   color: var(--color-primary);
-}
-
-/* Selected dropdown option text on primary-light row highlight */
-.algo-dropdown-selected-label {
-  color: var(--color-primary);
-}
-
-.dark .algo-dropdown-selected-label {
-  color: #ffffff;
-}
-
-.algo-dropdown-selected-meta {
-  color: var(--color-text-secondary);
-}
-
-.dark .algo-dropdown-selected-meta {
-  color: rgb(255 255 255 / 0.8);
-}
-
-.algo-dropdown-selected-check {
-  color: #3b82f6;
-}
-
-.dark .algo-dropdown-selected-check {
-  color: #ffffff;
 }
 
 /* Cross-platform layout utilities */

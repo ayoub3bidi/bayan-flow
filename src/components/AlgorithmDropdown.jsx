@@ -96,7 +96,7 @@ function AlgorithmDropdown({
                       transition={{ delay: itemIndex * 0.03 }}
                       className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
                         isSelected
-                          ? 'bg-theme-primary-light'
+                          ? 'bg-theme-primary-light text-theme-primary dark:text-white'
                           : isLocked
                             ? 'text-text-primary opacity-60'
                             : 'text-text-primary'
@@ -104,14 +104,14 @@ function AlgorithmDropdown({
                     >
                       <div className="flex flex-col min-w-0 flex-1">
                         <span
-                          className={`font-medium ${isSelected ? 'algo-dropdown-selected-label' : ''}`}
+                          className={`font-medium ${isSelected ? 'text-theme-primary dark:text-white' : ''}`}
                         >
                           {algo.label}
                         </span>
                         <span
                           className={`text-xs mt-0.5 ${
                             isSelected
-                              ? 'algo-dropdown-selected-meta'
+                              ? 'text-text-secondary dark:text-white/80'
                               : 'text-text-secondary'
                           }`}
                         >
@@ -132,7 +132,7 @@ function AlgorithmDropdown({
                           <Check
                             size={18}
                             weight="bold"
-                            className="algo-dropdown-selected-check"
+                            className="text-[#3b82f6] dark:text-white"
                           />
                         </motion.div>
                       ) : isLocked ? (
