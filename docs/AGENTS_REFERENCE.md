@@ -250,6 +250,8 @@ Future (v0.6.0, not shipped): `username` (unique, set-once RLS), public `/u/:use
 
 - `public/manifest.json`, `public/sitemap.xml`, `public/robots.txt`, `public/logo.svg`
 - `public/_headers` — security headers, cache rules, and `workers.dev` noindex for Cloudflare Workers static assets
+- `public/ui/sfx/` — interactive UI one-shot sounds (e.g. theme toggle); loaded via Web Audio in `src/utils/themeSwitchSound.js`
+- `public/video-export/sfx/` — 18 pre-rendered Remotion export WAV files (see Export sound contract)
 
 ### Build, CI, and repo config
 
