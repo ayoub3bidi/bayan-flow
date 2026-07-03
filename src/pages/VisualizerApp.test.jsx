@@ -806,5 +806,36 @@ describe('VisualizerApp', () => {
       ).not.toBeInTheDocument();
       expect(screen.getByTestId('python-panel')).toBeInTheDocument();
     });
+
+    it('shows remaining visualizations counter for anonymous users', async () => {
+      authMock.isAuthenticated = false;
+      authMock.user = null;
+      window.localStorage.setItem('anon_viz_count', '5');
+
+      await renderApp();
+
+      expect(
+        screen.getByText(/7 visualizations remaining/i)
+      ).toBeInTheDocument();
+    });
+
+    it('hides remaining visualizations counter for authenticated users', async () => {
+      await renderApp();
+
+      expect(
+        screen.queryByText(/visualizations remaining/i)
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows remaining visualizations as 12 for anon with zero usage', async () => {
+      authMock.isAuthenticated = false;
+      authMock.user = null;
+
+      await renderApp();
+
+      expect(
+        screen.getByText(/12 visualizations remaining/i)
+      ).toBeInTheDocument();
+    });
   });
 });

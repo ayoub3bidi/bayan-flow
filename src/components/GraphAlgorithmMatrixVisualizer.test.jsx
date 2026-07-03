@@ -95,6 +95,39 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
     expect(frame.className).not.toContain('overflow-auto');
   });
 
+  it('shows blurred overlay when anonymous user exceeds complexity view limit', () => {
+    vi.useFakeTimers();
+
+    try {
+      localStorage.setItem('anon_complexity_views', '2');
+
+      renderWithProviders(
+        <GraphAlgorithmMatrixVisualizer
+          matrix={{
+            rowLabels: ['A'],
+            columnLabels: ['A'],
+            cells: [['0']],
+            cellStates: [['default']],
+          }}
+          graphArtifacts={{ badges: [] }}
+          description=""
+          isComplete
+          algorithm="floydWarshallAlgorithm"
+        />
+      );
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      const blurOverlay = document.querySelector('.backdrop-blur-md');
+      expect(blurOverlay).toBeInTheDocument();
+      expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('renders state-specific matrix cell colors and the description pill', () => {
     const { container } = renderWithProviders(
       <GraphAlgorithmMatrixVisualizer

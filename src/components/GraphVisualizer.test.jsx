@@ -180,6 +180,29 @@ describe('GraphVisualizer', () => {
     }
   });
 
+  it('shows blurred overlay when anonymous user exceeds complexity view limit', () => {
+    vi.useFakeTimers();
+
+    try {
+      localStorage.setItem('anon_complexity_views', '2');
+
+      renderGraph({
+        weighted: false,
+        isComplete: true,
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      const blurOverlay = document.querySelector('.backdrop-blur-md');
+      expect(blurOverlay).toBeInTheDocument();
+      expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('shows the swipe tutorial after scrolling on mobile manual mode', () => {
     Object.defineProperty(window, 'innerWidth', {
       configurable: true,

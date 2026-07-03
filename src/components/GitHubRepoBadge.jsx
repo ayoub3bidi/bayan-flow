@@ -146,9 +146,9 @@ function GitHubRepoBadge() {
             {repoData.fullName}
           </span>
           <span className="flex items-center gap-2 sm:gap-2.5">
-            {repoData.versionTag ? (
+            {repoData.versionTag && (
               <Metric icon={Tag} value={repoData.versionTag} />
-            ) : null}
+            )}
             <Metric icon={Star} value={starsLabel} />
             <Metric icon={GitFork} value={forksLabel} />
           </span>
