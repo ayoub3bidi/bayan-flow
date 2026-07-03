@@ -14,6 +14,7 @@ import {
   GITHUB_REPO_URL,
 } from '../constants/githubRepo';
 import { formatGitHubCount } from '../utils/formatGitHubCount';
+import Tooltip from './ui/Tooltip';
 
 const parseReleaseTag = tagName => {
   if (typeof tagName !== 'string' || !tagName.trim()) {
@@ -131,28 +132,29 @@ function GitHubRepoBadge() {
   });
 
   return (
-    <a
-      href={repoData.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1.5 sm:gap-2 py-0.5 text-text-secondary hover:text-text-primary transition-colors duration-200 shrink-0 no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      title={t('header.goToRepository')}
-      aria-label={ariaLabel}
-    >
-      <GitHubIcon className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0 opacity-70" />
-      <span className="flex flex-col items-start gap-0.5 min-w-0 leading-tight">
-        <span className="hidden sm:block text-[11px] font-medium truncate max-w-[10rem] md:max-w-none">
-          {repoData.fullName}
+    <Tooltip label={t('header.goToRepository')} side="bottom" align="end">
+      <a
+        href={repoData.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 sm:gap-2 py-0.5 text-text-secondary hover:text-text-primary transition-colors duration-200 shrink-0 no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        aria-label={ariaLabel}
+      >
+        <GitHubIcon className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0 opacity-70" />
+        <span className="flex flex-col items-start gap-0.5 min-w-0 leading-tight">
+          <span className="hidden sm:block text-[11px] font-medium truncate max-w-[10rem] md:max-w-none">
+            {repoData.fullName}
+          </span>
+          <span className="flex items-center gap-2 sm:gap-2.5">
+            {repoData.versionTag ? (
+              <Metric icon={Tag} value={repoData.versionTag} />
+            ) : null}
+            <Metric icon={Star} value={starsLabel} />
+            <Metric icon={GitFork} value={forksLabel} />
+          </span>
         </span>
-        <span className="flex items-center gap-2 sm:gap-2.5">
-          {repoData.versionTag ? (
-            <Metric icon={Tag} value={repoData.versionTag} />
-          ) : null}
-          <Metric icon={Star} value={starsLabel} />
-          <Metric icon={GitFork} value={forksLabel} />
-        </span>
-      </span>
-    </a>
+      </a>
+    </Tooltip>
   );
 }
 

@@ -67,7 +67,10 @@
     "autoplayOnly": "uniquement",
     "treeNodeCount": "Nœuds de l'arbre",
     "graphNodeCount": "Sommets du graphe",
-    "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier."
+    "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier.",
+    "signInForManual": "Connectez-vous pour le mode manuel",
+    "signInForSpeed": "Connectez-vous pour régler la vitesse",
+    "signInForCategoryControls": "Connectez-vous pour les contrôles avancés"
   },
   "modes": {
     "sorting": "Tri",
@@ -281,7 +284,8 @@
     "completed": "Algorithme terminé !",
     "ready": "Prêt à commencer",
     "pathFound": "Chemin trouvé !",
-    "noPath": "Aucun chemin n'existe"
+    "noPath": "Aucun chemin n'existe",
+    "visualizationsRemaining": "{{count}} visualisations restantes"
   },
   "videoExport": {
     "noSteps": "Aucune étape à afficher"
@@ -1343,6 +1347,18 @@
     "insight": "Aperçu de l'algorithme",
     "export": "Exportation vidéo",
     "sound": "Son",
-    "fullscreen": "Mode plein écran"
+    "fullscreen": "Mode plein écran",
+    "algorithm_lock": "Débloquer {{algorithmName}}",
+    "algorithm_lock_description": "Connectez-vous pour accéder aux 45 algorithmes répartis dans 5 catégories.",
+    "session_limit": "Continuer à apprendre",
+    "session_limit_description": "Vous avez exploré {{limit}} visualisations. Connectez-vous pour continuer avec un accès illimité.",
+    "speed_control": "Régler la vitesse",
+    "speed_control_description": "Connectez-vous pour contrôler la vitesse d'animation, du plus lent au plus rapide.",
+    "complexity_limit": "Analyse de complexité",
+    "complexity_limit_description": "Connectez-vous pour accéder aux graphiques de complexité interactifs pour chaque algorithme.",
+    "manual_controls": "Contrôle manuel pas à pas",
+    "manual_controls_description": "Connectez-vous pour avancer dans les algorithmes à votre propre rythme.",
+    "category_controls": "Contrôles avancés",
+    "category_controls_description": "Connectez-vous pour personnaliser la taille de la grille, l'ordre de tri, les scénarios de graphe et bien plus."
   }
 }

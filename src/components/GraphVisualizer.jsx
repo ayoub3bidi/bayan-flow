@@ -5,11 +5,16 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
 import AutoHidingLegend from './AutoHidingLegend';
+import { useAuth } from '../hooks/useAuth';
+import {
+  canViewComplexityPanel,
+  incrementComplexityViewCount,
+} from '../services/entitlementService';
 import {
   GRAPH_EDGE_STATES,
   GRAPH_EDGE_STATE_COLORS,
@@ -80,15 +85,19 @@ function GraphVisualizer({
   directed = false,
   weighted = false,
   graphVariant = 'searching',
+  onGatedFeatureClick,
 }) {
   const { t } = useTranslation();
   const { isDark } = useTheme();
+  const { user } = useAuth();
 
   // BFS uses a queue (FIFO); DFS/topological sort use stack-like frontiers.
   const isBfsGraph = algorithm === 'breadthFirstSearchGraph';
   const isGraphAlgorithm = graphVariant === 'graphAlgorithm';
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
+  const [isComplexityGated, setIsComplexityGated] = useState(false);
+  const hasCountedThisCompletion = useRef(false);
 
   const nodeCount = nodes.length;
   const nodeRadius = useMemo(
@@ -148,7 +157,28 @@ function GraphVisualizer({
       return () => clearTimeout(timer);
     }
     setShowComplexityPanel(false);
+    setIsComplexityGated(false);
+    hasCountedThisCompletion.current = false;
   }, [isComplete]);
+
+  useEffect(() => {
+    if (user) {
+      setIsComplexityGated(false);
+    }
+  }, [user]);
+
+  // Increment complexity view count once per completion for anonymous users
+  useEffect(() => {
+    if (isComplete && !hasCountedThisCompletion.current && !user) {
+      if (canViewComplexityPanel(user)) {
+        incrementComplexityViewCount();
+      } else {
+        setIsComplexityGated(true);
+        onGatedFeatureClick?.('complexity_limit');
+      }
+      hasCountedThisCompletion.current = true;
+    }
+  }, [isComplete, user, onGatedFeatureClick]);
 
   const posById = useMemo(() => {
     const m = new Map();
@@ -282,10 +312,20 @@ function GraphVisualizer({
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
       <AnimatePresence mode="wait">
         {showComplexityPanel ? (
-          <ComplexityPanel
-            algorithm={algorithm}
-            complexityDataset={complexityDataset}
-          />
+          <div className="relative w-full h-full">
+            <ComplexityPanel
+              algorithm={algorithm}
+              complexityDataset={complexityDataset}
+            />
+            {isComplexityGated && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 backdrop-blur-md bg-black/30 z-10"
+                aria-hidden="true"
+              />
+            )}
+          </div>
         ) : (
           <motion.div
             initial={{ opacity: 1 }}

@@ -81,6 +81,7 @@ function ControlPanel({
   isSoundTogglePending = false,
   onToggleSound,
   isGated = false,
+  onGatedFeatureClick,
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
@@ -183,6 +184,10 @@ function ControlPanel({
             <button
               type="button"
               onClick={() => {
+                if (isGated) {
+                  onGatedFeatureClick?.('category_controls');
+                  return;
+                }
                 onSortOrderChange?.(
                   sortOrder === SORT_ORDERS.ASCENDING
                     ? SORT_ORDERS.DESCENDING
@@ -190,7 +195,7 @@ function ControlPanel({
                 );
               }}
               disabled={isPlaying}
-              className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white`}
+              className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white ${isGated ? 'opacity-60' : ''}`}
               title={
                 sortOrder === SORT_ORDERS.DESCENDING
                   ? t('controls.descending')

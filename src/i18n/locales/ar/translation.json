@@ -67,7 +67,10 @@
     "autoplayOnly": "فقط",
     "treeNodeCount": "عقد الشجرة",
     "graphNodeCount": "رؤوس الرسم البياني",
-    "graphScenarioNodeCountLocked": "تستخدم السيناريوهات الجاهزة عدداً ثابتاً من العقد. اختر رسماً عشوائياً لتغييره."
+    "graphScenarioNodeCountLocked": "تستخدم السيناريوهات الجاهزة عدداً ثابتاً من العقد. اختر رسماً عشوائياً لتغييره.",
+    "signInForManual": "سجّل دخولك للتحكم اليدوي",
+    "signInForSpeed": "سجّل دخولك لضبط السرعة",
+    "signInForCategoryControls": "سجّل دخولك للوصول إلى عناصر التحكم المتقدمة"
   },
   "modes": {
     "sorting": "الترتيب",
@@ -281,7 +284,8 @@
     "completed": "اكتملت الخوارزمية!",
     "ready": "جاهز للبدء",
     "pathFound": "تم العثور على المسار!",
-    "noPath": "لا يوجد مسار"
+    "noPath": "لا يوجد مسار",
+    "visualizationsRemaining": "تبقّى {{count}} تصوّر"
   },
   "videoExport": {
     "noSteps": "لا توجد خطوات لعرضها"
@@ -1343,6 +1347,18 @@
     "insight": "نظرة الخوارزمية",
     "export": "تصدير الفيديو",
     "sound": "الصوت",
-    "fullscreen": "وضع ملء الشاشة"
+    "fullscreen": "وضع ملء الشاشة",
+    "algorithm_lock": "فتح {{algorithmName}}",
+    "algorithm_lock_description": "سجّل دخولك للوصول إلى جميع الخوارزميات الـ 45 عبر 5 فئات.",
+    "session_limit": "واصل التعلم",
+    "session_limit_description": "لقد استكشفت {{limit}} تصوّرات. سجّل دخولك للمتابعة بوصول غير محدود.",
+    "speed_control": "ضبط السرعة",
+    "speed_control_description": "سجّل دخولك بـ Google للتحكم في سرعة الرسوم المتحركة من البطيء إلى فائق السرعة.",
+    "complexity_limit": "تحليل التعقيد",
+    "complexity_limit_description": "سجّل دخولك بـ Google لعرض رسوم التعقيد التفاعلية لكل خوارزمية.",
+    "manual_controls": "التحكم اليدوي في الخطوات",
+    "manual_controls_description": "سجّل دخولك بـ Google للتنقل بين خطوات الخوارزميات بالسرعة التي تناسبك.",
+    "category_controls": "عناصر التحكم المتقدمة",
+    "category_controls_description": "سجّل دخولك بـ Google لتخصيص أحجام الشبكة وترتيب الفرز وسيناريوهات الرسم البياني والمزيد."
   }
 }

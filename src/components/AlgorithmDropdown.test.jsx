@@ -96,6 +96,8 @@ describe('AlgorithmDropdown', () => {
           {...defaultProps}
           isDropdownOpen={true}
           onAlgorithmSelect={onAlgorithmSelect}
+          user={{ id: 'user-1' }}
+          categoryType="sorting"
         />
       );
 
@@ -105,6 +107,29 @@ describe('AlgorithmDropdown', () => {
       fireEvent.click(quickSortButton);
 
       expect(onAlgorithmSelect).toHaveBeenCalledWith('quickSort');
+    });
+
+    it('calls onLockedAlgorithmClick for locked algorithms when anonymous', () => {
+      const onLockedAlgorithmClick = vi.fn();
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={null}
+          categoryType="sorting"
+          onLockedAlgorithmClick={onLockedAlgorithmClick}
+        />
+      );
+
+      const quickSortButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.textContent?.includes('Quick Sort'));
+      fireEvent.click(quickSortButton);
+
+      expect(onLockedAlgorithmClick).toHaveBeenCalledWith(
+        expect.objectContaining({ value: 'quickSort', label: 'Quick Sort' })
+      );
+      expect(onLockedAlgorithmClick).toHaveBeenCalledTimes(1);
     });
 
     it('should show a check icon for the selected algorithm when dropdown is open', () => {

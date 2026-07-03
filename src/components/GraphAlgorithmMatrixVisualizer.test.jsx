@@ -4,13 +4,13 @@
  * See LICENSE for details.
  */
 
-import { act, render, screen } from '@testing-library/react';
+import { act, renderWithProviders, screen } from '../test/testUtils';
 import { describe, expect, it, vi } from 'vitest';
 import GraphAlgorithmMatrixVisualizer from './GraphAlgorithmMatrixVisualizer.jsx';
 
 describe('GraphAlgorithmMatrixVisualizer', () => {
   it('renders matrix badges when graphArtifacts are provided', () => {
-    render(
+    renderWithProviders(
       <GraphAlgorithmMatrixVisualizer
         matrix={{
           rowLabels: ['A'],
@@ -35,7 +35,7 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
     vi.useFakeTimers();
 
     try {
-      render(
+      renderWithProviders(
         <GraphAlgorithmMatrixVisualizer
           matrix={{
             rowLabels: ['A'],
@@ -64,7 +64,7 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
   });
 
   it('renders larger matrices in a fit-first frame without scroll containers', () => {
-    const { getByTestId } = render(
+    const { getByTestId } = renderWithProviders(
       <GraphAlgorithmMatrixVisualizer
         matrix={{
           rowLabels: ['A', 'B', 'C', 'D', 'E', 'F'],
@@ -96,7 +96,7 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
   });
 
   it('renders state-specific matrix cell colors and the description pill', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <GraphAlgorithmMatrixVisualizer
         matrix={{
           rowLabels: ['A', 'B'],

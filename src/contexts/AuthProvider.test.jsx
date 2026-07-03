@@ -10,6 +10,18 @@ import {
   authStateChangeCallbackRef,
 } from '../test/supabaseMock.js';
 
+const { resetAllSessionCounters } = vi.hoisted(() => ({
+  resetAllSessionCounters: vi.fn(),
+}));
+
+vi.mock('../services/entitlementService.js', async importOriginal => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    resetAllSessionCounters,
+  };
+});
+
 vi.mock('../lib/googleIdentity', () => ({
   requestGoogleSignInPopup: vi.fn(async () => ({ idToken: 'test-token' })),
   isGoogleAuthConfigured: vi.fn(() => true),
@@ -48,6 +60,7 @@ describe('AuthProvider', () => {
   beforeEach(() => {
     resetSupabaseMocks();
     mockSupabaseConfigured(true);
+    resetAllSessionCounters.mockClear();
   });
 
   it('hydrates unauthenticated state', async () => {
@@ -313,6 +326,59 @@ describe('AuthProvider', () => {
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
     });
     expect(screen.getByTestId('display-name')).toHaveTextContent('New User');
+    expect(resetAllSessionCounters).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reset session counters on INITIAL_SESSION hydrate', async () => {
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: {
+        session: {
+          user: {
+            id: 'user-1',
+            email: 'user@example.com',
+            user_metadata: { full_name: 'Test User' },
+          },
+        },
+      },
+      error: null,
+    });
+
+    supabaseFromMock.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({
+        data: {
+          display_name: 'Test User',
+          avatar_url: null,
+          avatar_preference: 'google',
+          plan: 'free',
+          email: 'user@example.com',
+        },
+        error: null,
+      })),
+    });
+
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
+    });
+
+    act(() => {
+      authStateChangeCallbackRef.current?.('INITIAL_SESSION', {
+        user: {
+          id: 'user-1',
+          email: 'user@example.com',
+          user_metadata: { full_name: 'Test User' },
+        },
+      });
+    });
+
+    expect(resetAllSessionCounters).not.toHaveBeenCalled();
   });
 
   it('refreshProfile re-fetches profile for the current user', async () => {

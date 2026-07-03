@@ -127,7 +127,17 @@ const constantsMockValue = {
     SWAPPING: 'swapping',
     SORTED: 'sorted',
     PIVOT: 'pivot',
+    AUXILIARY: 'auxiliary',
   },
+  STATE_COLORS: {
+    default: '#e5e7eb',
+    comparing: '#fbbf24',
+    swapping: '#f97316',
+    sorted: '#10b981',
+    pivot: '#8b5cf6',
+    auxiliary: '#9ca3af',
+  },
+  SEARCH_TARGET_RING_COLOR: '#f97316',
   GRID_ELEMENT_STATES: {
     DEFAULT: 'default',
     START: 'start',

@@ -9,6 +9,7 @@
 import { ReactNode } from 'react';
 import { render } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
+import { AuthProvider } from '../contexts/AuthProvider';
 import i18n from '../i18n';
 
 /**
@@ -20,6 +21,21 @@ import i18n from '../i18n';
 export function renderWithI18n(component, options = {}) {
   return render(
     <I18nextProvider i18n={i18n}>{component}</I18nextProvider>,
+    options
+  );
+}
+
+/**
+ * Custom render function that wraps components with Auth and i18n providers
+ * @param {ReactNode} component - Component to render
+ * @param {Object} options - Additional render options
+ * @returns {Object} Render result
+ */
+export function renderWithProviders(component, options = {}) {
+  return render(
+    <AuthProvider>
+      <I18nextProvider i18n={i18n}>{component}</I18nextProvider>
+    </AuthProvider>,
     options
   );
 }

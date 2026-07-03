@@ -5,7 +5,7 @@
  */
 
 import { act } from '@testing-library/react';
-import { renderWithI18n, screen } from '../test/testUtils';
+import { renderWithProviders, screen } from '../test/testUtils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import GraphVisualizer from './GraphVisualizer.jsx';
 
@@ -58,7 +58,7 @@ const baseNodes = [
 ];
 
 function renderGraph(props = {}) {
-  return renderWithI18n(
+  return renderWithProviders(
     <GraphVisualizer
       nodes={baseNodes}
       edges={[{ id: '0<->1', from: '0', to: '1', weight: 11 }]}
