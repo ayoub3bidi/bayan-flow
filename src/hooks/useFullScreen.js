@@ -6,6 +6,19 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
+function isTypingTarget(target) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  const tag = target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+    return true;
+  }
+  return Boolean(
+    target.isContentEditable || target.closest('[contenteditable="true"]')
+  );
+}
+
 export function useFullScreen() {
   const [isFullScreen, setIsFullScreen] = useState(() => {
     return localStorage.getItem('flowModeEnabled') === 'true';
@@ -24,13 +37,20 @@ export function useFullScreen() {
     localStorage.setItem('flowModeEnabled', 'false');
   }, []);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts (ignored while typing in inputs / rich-text editors)
   useEffect(() => {
     const handleKeyDown = event => {
+      if (isTypingTarget(event.target)) {
+        return;
+      }
+
       if (event.key === 'f' || event.key === 'F') {
+        if (event.metaKey || event.ctrlKey || event.altKey) {
+          return;
+        }
         event.preventDefault();
         toggleFullScreen();
-      } else if (event.key === 'Escape') {
+      } else if (event.key === 'Escape' && isFullScreen) {
         event.preventDefault();
         exitFullScreen();
       }
@@ -38,7 +58,7 @@ export function useFullScreen() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleFullScreen, exitFullScreen]);
+  }, [toggleFullScreen, exitFullScreen, isFullScreen]);
 
   return {
     isFullScreen,

@@ -39,7 +39,16 @@
     "saving": "Enregistrement…",
     "saved": "Profil mis à jour",
     "error": "Impossible d'enregistrer votre profil. Veuillez réessayer.",
-    "loading": "Chargement du profil…"
+    "loading": "Chargement du profil…",
+    "dangerZoneTitle": "Zone de danger",
+    "dangerZoneDescription": "Supprime définitivement votre compte ainsi que vos favoris et notes d'étude. Cette action est irréversible.",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountConfirmLabel": "Tapez DELETE pour confirmer",
+    "deleteAccountConfirmPlaceholder": "DELETE",
+    "deleteAccountConfirmWord": "DELETE",
+    "deleteAccountInProgress": "Suppression du compte…",
+    "deleteAccountSuccess": "Votre compte a été supprimé.",
+    "deleteAccountError": "Impossible de supprimer votre compte. Réessayez ou écrivez à contact@bayanflow.com."
   },
   "settings_tabs": {
     "profile": "Profil",
@@ -70,7 +79,15 @@
     "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier.",
     "signInForManual": "Connectez-vous pour le mode manuel",
     "signInForSpeed": "Connectez-vous pour régler la vitesse",
-    "signInForCategoryControls": "Connectez-vous pour les contrôles avancés"
+    "signInForCategoryControls": "Connectez-vous pour les contrôles avancés",
+    "favoriteAlgorithms": "Algorithmes favoris",
+    "favoriteAlgorithmsEmpty": "Aucun favori pour l'instant",
+    "favoriteAlgorithmsCount": "{{count}} enregistrés",
+    "favoriteAlgorithmsHint": "Ajoutez une étoile aux algorithmes ci-dessous pour les retrouver ici.",
+    "favoriteSlotsUsed": "{{count}} / {{limit}}",
+    "favoriteSlotsFull": "Limite de favoris atteinte ({{limit}}). Retirez-en un pour en ajouter un autre.",
+    "addFavorite": "Ajouter {{name}} aux favoris",
+    "removeFavorite": "Retirer {{name}} des favoris"
   },
   "modes": {
     "sorting": "Tri",
@@ -360,8 +377,21 @@
     "error_label": "Erreur :",
     "actual_label": "Obtenu :"
   },
+  "notes_panel": {
+    "placeholder": "Qu'avez-vous appris sur {{algorithmName}} ?",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "unsaved": "Modifications non enregistrées",
+    "saveError": "Échec de l'enregistrement — nouvelle tentative…",
+    "loading": "Chargement de votre note…",
+    "loadingEditor": "Chargement de l'éditeur…",
+    "signInRequired": "Connectez-vous pour enregistrer vos notes d'étude."
+  },
   "insight_panel": {
     "title": "Aperçu de l'Algorithme",
+    "learnTitle": "Apprendre",
+    "tabList": "Sections du panneau d'apprentissage",
+    "tabNotes": "Mes notes",
     "close": "Fermer",
     "viewInsight": "Voir l'Aperçu de l'Algorithme",
     "insightLabel": "Aperçu",
@@ -1360,6 +1390,8 @@
     "manual_controls": "Contrôle manuel pas à pas",
     "manual_controls_description": "Connectez-vous pour avancer dans les algorithmes à votre propre rythme.",
     "category_controls": "Contrôles avancés",
-    "category_controls_description": "Connectez-vous pour personnaliser la taille de la grille, l'ordre de tri, les scénarios de graphe et bien plus."
+    "category_controls_description": "Connectez-vous pour personnaliser la taille de la grille, l'ordre de tri, les scénarios de graphe et bien plus.",
+    "favorite": "Algorithmes favoris",
+    "favorite_description": "Connectez-vous pour marquer des algorithmes et y revenir rapidement depuis vos favoris."
   }
 }

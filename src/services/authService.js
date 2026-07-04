@@ -110,6 +110,23 @@ export async function signOut() {
   }
 }
 
+/**
+ * Permanently delete the signed-in user's account via Edge Function.
+ * @returns {Promise<void>}
+ */
+export async function deleteAccount() {
+  const supabase = requireClient();
+  const { error } = await supabase.functions.invoke('delete-account', {
+    method: 'POST',
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  await signOut();
+}
+
 export async function getSession() {
   const supabase = getSupabaseClient();
   if (!supabase) {

@@ -17,6 +17,12 @@ vi.mock('../services/profileService', () => ({
   updateProfile: (...args) => updateProfileMock(...args),
 }));
 
+const deleteAccountMock = vi.fn();
+
+vi.mock('../services/authService', () => ({
+  deleteAccount: (...args) => deleteAccountMock(...args),
+}));
+
 vi.mock('../components/Header', () => ({
   default: () => <div data-testid="header" />,
 }));
@@ -57,6 +63,7 @@ describe('ProfileSettingsPage', () => {
     refreshProfileMock.mockReset();
     getProfileMock.mockReset();
     updateProfileMock.mockReset();
+    deleteAccountMock.mockReset();
   });
 
   it('renders Settings heading and tab bar with Profile active', async () => {
@@ -181,6 +188,37 @@ describe('ProfileSettingsPage', () => {
       expect(
         screen.getByText(/could not save your profile/i)
       ).toBeInTheDocument();
+    });
+  });
+
+  it('deletes account after typing DELETE confirmation', async () => {
+    getProfileMock.mockResolvedValue({
+      display_name: 'Ada',
+      avatar_url: null,
+      avatar_preference: 'google',
+      plan: 'free',
+      email: 'ada@example.com',
+    });
+    deleteAccountMock.mockResolvedValue(undefined);
+
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/display name/i)).toBeInTheDocument();
+    });
+
+    const confirmInput = screen.getByLabelText(/type delete to confirm/i);
+    fireEvent.change(confirmInput, { target: { value: 'DELETE' } });
+
+    const deleteButton = screen.getByRole('button', {
+      name: /delete account/i,
+    });
+    expect(deleteButton).not.toBeDisabled();
+    fireEvent.click(deleteButton);
+
+    await waitFor(() => {
+      expect(deleteAccountMock).toHaveBeenCalledTimes(1);
+      expect(screen.getByText(/account has been deleted/i)).toBeInTheDocument();
     });
   });
 });

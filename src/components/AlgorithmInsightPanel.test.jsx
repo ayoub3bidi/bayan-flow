@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
 import AlgorithmInsightPanel from './AlgorithmInsightPanel';
 import i18n from '../i18n';
+import { ALGORITHM_TYPES } from '@/constants';
 
 describe('AlgorithmInsightPanel', () => {
   beforeEach(async () => {
@@ -21,10 +22,17 @@ describe('AlgorithmInsightPanel', () => {
         onClose={vi.fn()}
         algorithmKey="bubbleSort"
         algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
       />
     );
 
-    expect(screen.getAllByText('Algorithm Insight').length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('tablist').length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('tab', { name: 'Learn' })[0]).toHaveAttribute(
+      'aria-selected',
+      'true'
+    );
+    expect(screen.getAllByText('My Notes').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Bubble Sort').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Video coming soon').length).toBeGreaterThan(0);
     expect(container.querySelectorAll('svg').length).toBeGreaterThanOrEqual(3);
@@ -38,6 +46,8 @@ describe('AlgorithmInsightPanel', () => {
         onClose={onClose}
         algorithmKey="bubbleSort"
         algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
       />
     );
 

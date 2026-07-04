@@ -147,5 +147,47 @@ describe('AlgorithmDropdown', () => {
       expect(bubbleSortButton).toBeTruthy();
       expect(bubbleSortButton.querySelector('svg')).toBeTruthy();
     });
+
+    it('calls onFavoriteGatedClick when anonymous user clicks star', () => {
+      const onFavoriteGatedClick = vi.fn();
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={null}
+          isAuthenticated={false}
+          categoryType="sorting"
+          onFavoriteGatedClick={onFavoriteGatedClick}
+        />
+      );
+
+      const starButton = screen.getByRole('button', {
+        name: /add bubble sort to favorites/i,
+      });
+      fireEvent.click(starButton);
+
+      expect(onFavoriteGatedClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls onToggleFavorite when signed-in user clicks star', () => {
+      const onToggleFavorite = vi.fn();
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={{ id: 'user-1' }}
+          isAuthenticated={true}
+          categoryType="sorting"
+          onToggleFavorite={onToggleFavorite}
+        />
+      );
+
+      const starButton = screen.getByRole('button', {
+        name: /add bubble sort to favorites/i,
+      });
+      fireEvent.click(starButton);
+
+      expect(onToggleFavorite).toHaveBeenCalledWith('sorting', 'bubbleSort');
+    });
   });
 });

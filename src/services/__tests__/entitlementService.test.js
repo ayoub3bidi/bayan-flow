@@ -9,6 +9,7 @@ import {
   canUseManualControls,
   canChangeSpeed,
   canUseCategoryControls,
+  getFavoriteSlotLimit,
   canRunVisualization,
   incrementVisualizationCount,
   getRemainingVisualizations,
@@ -130,6 +131,20 @@ describe('entitlementService', () => {
     it('should return true for signed-in users', () => {
       const user = { id: '123' };
       expect(canUseCategoryControls(user)).toBe(true);
+    });
+  });
+
+  describe('getFavoriteSlotLimit', () => {
+    it('should return 0 for anonymous users', () => {
+      expect(getFavoriteSlotLimit(null)).toBe(0);
+    });
+
+    it('should return 20 for free users', () => {
+      expect(getFavoriteSlotLimit({ id: '123' })).toBe(20);
+    });
+
+    it('should return 100 for pro users', () => {
+      expect(getFavoriteSlotLimit({ id: '123', plan: 'pro' })).toBe(100);
     });
   });
 

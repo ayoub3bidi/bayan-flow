@@ -39,7 +39,16 @@
     "saving": "جارٍ الحفظ…",
     "saved": "تم تحديث الملف الشخصي",
     "error": "تعذّر حفظ ملفك الشخصي. يُرجى المحاولة مرة أخرى.",
-    "loading": "جارٍ تحميل الملف الشخصي…"
+    "loading": "جارٍ تحميل الملف الشخصي…",
+    "dangerZoneTitle": "منطقة الخطر",
+    "dangerZoneDescription": "يحذف حسابك نهائياً مع جميع المفضلات وملاحظات الدراسة. لا يمكن التراجع عن هذا الإجراء.",
+    "deleteAccount": "حذف الحساب",
+    "deleteAccountConfirmLabel": "اكتب DELETE للتأكيد",
+    "deleteAccountConfirmPlaceholder": "DELETE",
+    "deleteAccountConfirmWord": "DELETE",
+    "deleteAccountInProgress": "جارٍ حذف الحساب…",
+    "deleteAccountSuccess": "تم حذف حسابك.",
+    "deleteAccountError": "تعذّر حذف حسابك. حاول مرة أخرى أو راسل contact@bayanflow.com."
   },
   "settings_tabs": {
     "profile": "الملف الشخصي",
@@ -70,7 +79,15 @@
     "graphScenarioNodeCountLocked": "تستخدم السيناريوهات الجاهزة عدداً ثابتاً من العقد. اختر رسماً عشوائياً لتغييره.",
     "signInForManual": "سجّل دخولك للتحكم اليدوي",
     "signInForSpeed": "سجّل دخولك لضبط السرعة",
-    "signInForCategoryControls": "سجّل دخولك للوصول إلى عناصر التحكم المتقدمة"
+    "signInForCategoryControls": "سجّل دخولك للوصول إلى عناصر التحكم المتقدمة",
+    "favoriteAlgorithms": "الخوارزميات المفضلة",
+    "favoriteAlgorithmsEmpty": "لا توجد مفضلات بعد",
+    "favoriteAlgorithmsCount": "{{count}} محفوظة",
+    "favoriteAlgorithmsHint": "ضع نجمة على الخوارزميات أدناه لإضافتها هنا.",
+    "favoriteSlotsUsed": "{{count}} / {{limit}}",
+    "favoriteSlotsFull": "تم بلوغ حد المفضلات ({{limit}}). أزل واحدة لإضافة أخرى.",
+    "addFavorite": "إضافة {{name}} إلى المفضلة",
+    "removeFavorite": "إزالة {{name}} من المفضلة"
   },
   "modes": {
     "sorting": "الترتيب",
@@ -360,8 +377,21 @@
     "error_label": "الخطأ:",
     "actual_label": "الفعلي:"
   },
+  "notes_panel": {
+    "placeholder": "ماذا تعلّمت عن {{algorithmName}}؟",
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم الحفظ",
+    "unsaved": "تغييرات غير محفوظة",
+    "saveError": "تعذّر الحفظ — إعادة المحاولة…",
+    "loading": "جارٍ تحميل ملاحظتك…",
+    "loadingEditor": "جارٍ تحميل المحرر…",
+    "signInRequired": "سجّل دخولك لحفظ ملاحظات الدراسة."
+  },
   "insight_panel": {
     "title": "نظرة على الخوارزمية",
+    "learnTitle": "تعلّم",
+    "tabList": "أقسام لوحة التعلّم",
+    "tabNotes": "ملاحظاتي",
     "close": "إغلاق",
     "viewInsight": "عرض نظرة على الخوارزمية",
     "insightLabel": "نظرة",
@@ -1360,6 +1390,8 @@
     "manual_controls": "التحكم اليدوي في الخطوات",
     "manual_controls_description": "سجّل دخولك بـ Google للتنقل بين خطوات الخوارزميات بالسرعة التي تناسبك.",
     "category_controls": "عناصر التحكم المتقدمة",
-    "category_controls_description": "سجّل دخولك بـ Google لتخصيص أحجام الشبكة وترتيب الفرز وسيناريوهات الرسم البياني والمزيد."
+    "category_controls_description": "سجّل دخولك بـ Google لتخصيص أحجام الشبكة وترتيب الفرز وسيناريوهات الرسم البياني والمزيد.",
+    "favorite": "الخوارزميات المفضلة",
+    "favorite_description": "سجّل دخولك لتمييز الخوارزميات والعودة إليها بسرعة من قائمة المفضلة."
   }
 }

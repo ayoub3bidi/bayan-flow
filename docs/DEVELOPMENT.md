@@ -1027,6 +1027,20 @@ Do not add sounds for UI clicks, panel toggles, export buttons, or regeneration 
 - [ ] Python implementations and test cases included
 - [ ] Sound integration considered
 
+## Supabase Edge Functions
+
+The repo includes `supabase/functions/delete-account/` for self-service account deletion (JWT verification + `auth.admin.deleteUser`, CASCADE on `profiles`, `favorite_algorithms`, and `algorithm_notes`).
+
+### Deploy `delete-account`
+
+1. Install the [Supabase CLI](https://supabase.com/docs/guides/cli) and link the project (`supabase link --project-ref qketsapzqpzmccljfjcm`).
+2. Apply migrations if not yet applied: `supabase db push` (or run the SQL in `supabase/migrations/` from the dashboard).
+3. Set secrets for the function (service role key is injected automatically in hosted Supabase; for local invoke use `supabase secrets set`).
+4. Deploy: `supabase functions deploy delete-account --no-verify-jwt=false` (JWT verification enabled in `config.toml` / dashboard).
+5. Confirm the browser can reach the functions origin — CSP `connect-src` in `scripts/cspHeaders.js` must include your Supabase project URL.
+
+Manual smoke test: sign in → Profile Settings → Danger zone → type `DELETE` → confirm account is removed and session clears.
+
 ## Conclusion
 
 This project follows modern React best practices:

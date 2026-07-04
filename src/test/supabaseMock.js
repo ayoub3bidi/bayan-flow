@@ -28,17 +28,49 @@ export const supabaseAuthMock = {
   updateUser: vi.fn(async () => ({ data: { user: null }, error: null })),
 };
 
-export const supabaseFromMock = vi.fn(() => ({
-  select: vi.fn().mockReturnThis(),
-  eq: vi.fn().mockReturnThis(),
-  maybeSingle: vi.fn(async () => ({ data: null, error: null })),
-  update: vi.fn().mockReturnThis(),
-  single: vi.fn(async () => ({ data: null, error: null })),
+export const supabaseFunctionsInvokeMock = vi.fn(async () => ({
+  data: null,
+  error: null,
 }));
+
+/**
+ * @param {Record<string, unknown>} [overrides]
+ */
+export function createSupabaseQueryBuilder(overrides = {}) {
+  const builder = {
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    insert: vi.fn().mockReturnThis(),
+    update: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    upsert: vi.fn().mockReturnThis(),
+    maybeSingle: vi.fn(async () => ({ data: null, error: null })),
+    single: vi.fn(async () => ({ data: null, error: null })),
+    then(onFulfilled, onRejected) {
+      return Promise.resolve({ data: null, error: null }).then(
+        onFulfilled,
+        onRejected
+      );
+    },
+    ...overrides,
+  };
+
+  if (!overrides.delete) {
+    builder.delete = vi.fn(() => builder);
+  }
+
+  return builder;
+}
+
+export const supabaseFromMock = vi.fn(() => createSupabaseQueryBuilder());
 
 export const supabaseClientMock = {
   auth: supabaseAuthMock,
   from: supabaseFromMock,
+  functions: {
+    invoke: supabaseFunctionsInvokeMock,
+  },
 };
 
 export const isSupabaseConfigured = vi.fn(() => false);
@@ -60,6 +92,7 @@ export function resetSupabaseMocks() {
   supabaseAuthMock.onAuthStateChange.mockReset();
   supabaseAuthMock.updateUser.mockReset();
   supabaseFromMock.mockReset();
+  supabaseFunctionsInvokeMock.mockReset();
   authStateChangeCallbackRef.current = null;
   supabaseAuthMock.signInWithIdToken.mockResolvedValue({
     data: { session: null },
@@ -84,11 +117,6 @@ export function resetSupabaseMocks() {
     data: { user: null },
     error: null,
   });
-  supabaseFromMock.mockReturnValue({
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    maybeSingle: vi.fn(async () => ({ data: null, error: null })),
-    update: vi.fn().mockReturnThis(),
-    single: vi.fn(async () => ({ data: null, error: null })),
-  });
+  supabaseFunctionsInvokeMock.mockResolvedValue({ data: null, error: null });
+  supabaseFromMock.mockReturnValue(createSupabaseQueryBuilder());
 }

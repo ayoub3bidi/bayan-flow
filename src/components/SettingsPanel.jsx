@@ -26,6 +26,7 @@ import {
   canUseCategoryControls,
 } from '../services/entitlementService';
 import AlgorithmDropdown from './AlgorithmDropdown';
+import FavoritesDropdown from './FavoritesDropdown';
 import GraphScenarioDropdown from './GraphScenarioDropdown';
 
 function SettingsPanel({
@@ -54,6 +55,13 @@ function SettingsPanel({
   user,
   onLockedAlgorithmClick,
   onGatedFeatureClick,
+  favorites,
+  favoriteSlotLimit,
+  onFavoriteSelect,
+  isFavorite,
+  onToggleFavorite,
+  onFavoriteGatedClick,
+  isAuthenticated,
 }) {
   const { t } = useTranslation();
   const [isAlgorithmDropdownOpen, setIsAlgorithmDropdownOpen] = useState(false);
@@ -162,6 +170,15 @@ function SettingsPanel({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.1 }}
     >
+      {isAuthenticated && favorites && favoriteSlotLimit != null && (
+        <FavoritesDropdown
+          favorites={favorites}
+          slotLimit={favoriteSlotLimit}
+          onSelect={onFavoriteSelect}
+          isPlaying={isPlaying}
+        />
+      )}
+
       <div>
         <label
           id="settings-algorithm-mode-label"
@@ -226,6 +243,10 @@ function SettingsPanel({
           user={user}
           categoryType={algorithmType}
           onLockedAlgorithmClick={onLockedAlgorithmClick}
+          isFavorite={isFavorite}
+          onToggleFavorite={onToggleFavorite}
+          onFavoriteGatedClick={onFavoriteGatedClick}
+          isAuthenticated={isAuthenticated}
         />
       </div>
 
