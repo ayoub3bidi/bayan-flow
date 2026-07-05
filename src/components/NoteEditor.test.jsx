@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithI18n, screen } from '../test/testUtils';
 import NoteEditor from './NoteEditor';
 
-const { useEditor: mockUseEditor } = vi.hoisted(() => {
+const { useEditor: mockUseEditor, defaultEditor } = vi.hoisted(() => {
   const editor = {
     isActive: vi.fn(() => false),
     chain: vi.fn(() => ({
@@ -17,7 +17,7 @@ const { useEditor: mockUseEditor } = vi.hoisted(() => {
     getHTML: vi.fn(() => '<p>initial</p>'),
     commands: { setContent: vi.fn() },
   };
-  return { useEditor: vi.fn(() => editor) };
+  return { useEditor: vi.fn(() => editor), defaultEditor: editor };
 });
 
 vi.mock('@tiptap/react', () => ({
@@ -41,7 +41,8 @@ describe('NoteEditor', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
+    mockUseEditor.mockReturnValue(defaultEditor);
   });
 
   it('renders toolbar buttons', () => {
@@ -136,5 +137,50 @@ describe('NoteEditor', () => {
       />
     );
     expect(matchedEditor.commands.setContent).not.toHaveBeenCalled();
+  });
+
+  it('applies active styles when tool button is active', () => {
+    const activeEditor = {
+      isActive: vi.fn(() => true),
+      chain: vi.fn(() => ({
+        focus: vi.fn(() => ({
+          toggleBold: vi.fn(() => ({ run: vi.fn() })),
+          toggleItalic: vi.fn(() => ({ run: vi.fn() })),
+          toggleBulletList: vi.fn(() => ({ run: vi.fn() })),
+          toggleOrderedList: vi.fn(() => ({ run: vi.fn() })),
+          toggleHeading: vi.fn(() => ({ run: vi.fn() })),
+        })),
+      })),
+      getHTML: vi.fn(() => '<p>initial</p>'),
+      commands: { setContent: vi.fn() },
+    };
+    mockUseEditor.mockReturnValueOnce(activeEditor);
+    renderWithI18n(<NoteEditor {...defaultProps} />);
+    const boldButton = screen.getByLabelText('Bold');
+    expect(boldButton).toHaveAttribute('aria-pressed', 'true');
+    const className = boldButton.className;
+    expect(className).toContain('bg-theme-primary-light');
+  });
+
+  it('calls toggleHeading when heading button is clicked', () => {
+    const toggleHeadingMock = vi.fn(() => ({ run: vi.fn() }));
+    const headingEditor = {
+      isActive: vi.fn(() => false),
+      chain: vi.fn(() => ({
+        focus: vi.fn(() => ({
+          toggleBold: vi.fn(() => ({ run: vi.fn() })),
+          toggleItalic: vi.fn(() => ({ run: vi.fn() })),
+          toggleBulletList: vi.fn(() => ({ run: vi.fn() })),
+          toggleOrderedList: vi.fn(() => ({ run: vi.fn() })),
+          toggleHeading: toggleHeadingMock,
+        })),
+      })),
+      getHTML: vi.fn(() => '<p>initial</p>'),
+      commands: { setContent: vi.fn() },
+    };
+    mockUseEditor.mockReturnValueOnce(headingEditor);
+    renderWithI18n(<NoteEditor {...defaultProps} />);
+    screen.getByLabelText('Heading').click();
+    expect(toggleHeadingMock).toHaveBeenCalledWith({ level: 2 });
   });
 });

@@ -10,11 +10,11 @@ import AlgorithmNotesTab from './AlgorithmNotesTab';
 import { ALGORITHM_TYPES } from '@/constants';
 
 vi.mock('./NoteEditor', () => ({
-  default: ({ initialHtml, onChange }) => (
+  default: ({ content, onUpdate }) => (
     <textarea
       data-testid="note-editor"
-      defaultValue={initialHtml}
-      onChange={event => onChange(event.target.value)}
+      defaultValue={content}
+      onChange={event => onUpdate(event.target.value)}
     />
   ),
 }));

@@ -57,7 +57,6 @@ import {
   canRunVideoExport,
   incrementVideoExportCount,
   getExportWatermarkConfig,
-  getFavoriteSlotLimit,
   ANONYMOUS_VISUALIZATION_LIMIT,
 } from '../services/entitlementService';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
@@ -815,18 +814,23 @@ function App() {
             )}
 
             {/* Floating Action Buttons */}
-            {favoriteNotice && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-40 text-xs sm:text-sm text-text-primary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
-              >
-                {t('settings.favoriteSlotsFull', {
-                  limit: getFavoriteSlotLimit(user),
-                })}
-              </motion.div>
-            )}
+            <AnimatePresence>
+              {favoriteNotice && (
+                <motion.div
+                  key="favorite-notice"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-40 text-xs sm:text-sm text-text-primary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
+                  role="status"
+                  aria-live="polite"
+                >
+                  {t('settings.favoriteSlotsFull', {
+                    limit: favoriteSlotLimit,
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {!isPythonPanelOpen && !isInsightPanelOpen && (
               <>

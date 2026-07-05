@@ -107,6 +107,20 @@ describe('AlgorithmInsightPanel', () => {
         user={{ id: 'user-1' }}
       />
     );
+
+    rerender(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={vi.fn()}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    const reopenedLearnTab = screen.getAllByRole('tab', { name: 'Learn' })[0];
+    expect(reopenedLearnTab).toHaveAttribute('aria-selected', 'true');
   });
 
   it('shows no data message when algorithm has no insight content', () => {
@@ -143,5 +157,53 @@ describe('AlgorithmInsightPanel', () => {
     const nameElements = screen.getAllByText('Insertion Sort');
     expect(nameElements.length).toBeGreaterThan(0);
     expect(screen.getAllByRole('tablist').length).toBeGreaterThan(0);
+  });
+
+  it('flushes notes when closing from notes tab via backdrop', async () => {
+    const onClose = vi.fn();
+    const { container } = renderWithI18n(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={onClose}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    const notesTab = screen.getAllByText('My Notes')[0];
+    fireEvent.click(notesTab);
+
+    const backdrop = container.querySelector('[aria-hidden="true"]');
+    fireEvent.click(backdrop);
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+  });
+
+  it('flushes notes when switching from notes back to learn tab', async () => {
+    renderWithI18n(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={vi.fn()}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    const notesTab = screen.getAllByText('My Notes')[0];
+    fireEvent.click(notesTab);
+
+    const learnTab = screen.getAllByText('Learn')[0];
+    fireEvent.click(learnTab);
+
+    await waitFor(() => {
+      const learn = screen.getAllByRole('tab', { name: 'Learn' })[0];
+      expect(learn).toHaveAttribute('aria-selected', 'true');
+    });
   });
 });

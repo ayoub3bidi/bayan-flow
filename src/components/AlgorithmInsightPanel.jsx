@@ -68,15 +68,25 @@ function AlgorithmInsightPanel({
 
   const handleClose = useCallback(async () => {
     if (notesFlushRef.current) {
-      await notesFlushRef.current();
+      try {
+        await notesFlushRef.current();
+      } catch {
+        // flush errors should not block close
+      }
     }
     setActiveTab('insight');
     onClose();
   }, [onClose]);
 
   const handleTabChange = async nextTab => {
-    if (activeTab === 'notes' && nextTab !== 'notes' && notesFlushRef.current) {
-      await notesFlushRef.current();
+    if (activeTab === 'notes' && nextTab !== 'notes') {
+      if (notesFlushRef.current) {
+        try {
+          await notesFlushRef.current();
+        } catch {
+          // flush errors should not block tab change
+        }
+      }
     }
     setActiveTab(nextTab);
   };

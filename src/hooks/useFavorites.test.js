@@ -163,6 +163,38 @@ describe('useFavorites', () => {
     expect(result.current.favorites).toHaveLength(0);
   });
 
+  it('ignores stale listFavorites response from previous user', async () => {
+    let resolveFirst;
+    const firstPromise = new Promise(resolve => {
+      resolveFirst = resolve;
+    });
+    vi.mocked(listFavorites).mockResolvedValueOnce(firstPromise);
+    vi.mocked(listFavorites).mockResolvedValueOnce([]);
+
+    const firstUser = { id: 'user-1' };
+    const { result, rerender } = renderHook(
+      ({ currentUser }) => useFavorites(currentUser),
+      { initialProps: { currentUser: firstUser } }
+    );
+
+    expect(result.current.isLoading).toBe(true);
+
+    rerender({ currentUser: { id: 'user-2' } });
+
+    resolveFirst([
+      {
+        category: ALGORITHM_TYPES.SORTING,
+        algorithm_key: 'bubbleSort',
+        created_at: '2026-01-01',
+      },
+    ]);
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.favorites).toEqual([]);
+    });
+  });
+
   it('rolls back optimistic remove on error', async () => {
     vi.mocked(listFavorites).mockResolvedValue([
       {

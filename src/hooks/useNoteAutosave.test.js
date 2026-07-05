@@ -159,7 +159,9 @@ describe('useNoteAutosave', () => {
       result.current.scheduleSave();
     });
 
-    window.dispatchEvent(new Event('online'));
+    act(() => {
+      window.dispatchEvent(new Event('online'));
+    });
 
     await waitFor(() => {
       expect(upsertNote).toHaveBeenCalledWith(
@@ -211,6 +213,15 @@ describe('useNoteAutosave', () => {
     });
 
     rerender({ isActive: true, algorithmKey: 'selectionSort' });
+
+    await waitFor(() => {
+      expect(upsertNote).toHaveBeenCalledWith(
+        'user-1',
+        ALGORITHM_TYPES.SORTING,
+        'bubbleSort',
+        '<p>updated</p>'
+      );
+    });
 
     await waitFor(() => {
       expect(getNote).toHaveBeenCalledWith(

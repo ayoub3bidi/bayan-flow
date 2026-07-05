@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
 import AlgorithmDropdown from './AlgorithmDropdown';
 const mockAlgorithms = [

@@ -65,6 +65,16 @@ const authMock = vi.hoisted(() => ({
   },
 }));
 
+const useFavoritesMock = vi.hoisted(() => ({
+  useFavorites: vi.fn(() => ({
+    favorites: [],
+    favoriteSlotLimit: 20,
+    isLoading: false,
+    isFavorite: vi.fn(() => false),
+    toggleFavorite: vi.fn(() => Promise.resolve({ ok: true })),
+  })),
+}));
+
 const sortingVisualization = {
   array: [3, 1, 2],
   states: ['sorting-state'],
@@ -227,6 +237,7 @@ vi.mock('../components/SettingsPanel', () => ({
     graphNodeCount,
     onAlgorithmTypeChange,
     onAlgorithmChange,
+    onToggleFavorite,
   }) => (
     <div data-testid="settings-panel">
       <div data-testid="algorithm-type">{algorithmType}</div>
@@ -250,6 +261,12 @@ vi.mock('../components/SettingsPanel', () => ({
       </button>
       <button onClick={() => onAlgorithmChange('floydWarshallAlgorithm')}>
         select-floyd-warshall
+      </button>
+      <button
+        data-testid="trigger-favorite"
+        onClick={() => onToggleFavorite?.('sorting', 'bubbleSort')}
+      >
+        trigger-favorite
       </button>
     </div>
   ),
@@ -366,6 +383,10 @@ vi.mock('../hooks/useAuth', () => ({
   useAuth: () => authMock,
 }));
 
+vi.mock('../hooks/useFavorites', () => ({
+  useFavorites: useFavoritesMock.useFavorites,
+}));
+
 vi.mock('../components/SignInPromptModal', () => ({
   default: ({ feature, isOpen, onClose }) =>
     isOpen ? (
@@ -429,6 +450,13 @@ describe('VisualizerApp', () => {
     videoExporterMock.exportErrorMessage = null;
     authMock.isAuthenticated = true;
     authMock.user = { id: 'test-user', email: 'test@example.com' };
+    useFavoritesMock.useFavorites.mockImplementation(() => ({
+      favorites: [],
+      favoriteSlotLimit: 20,
+      isLoading: false,
+      isFavorite: vi.fn(() => false),
+      toggleFavorite: vi.fn(() => Promise.resolve({ ok: true })),
+    }));
   });
 
   afterEach(() => {
@@ -835,6 +863,26 @@ describe('VisualizerApp', () => {
 
       expect(
         screen.getByText(/12 visualizations remaining/i)
+      ).toBeInTheDocument();
+    });
+
+    it('shows slot limit notification when toggleFavorite returns slot_limit', async () => {
+      useFavoritesMock.useFavorites.mockReturnValue({
+        favorites: [],
+        favoriteSlotLimit: 20,
+        isLoading: false,
+        isFavorite: vi.fn(() => false),
+        toggleFavorite: vi.fn(() =>
+          Promise.resolve({ ok: false, reason: 'slot_limit' })
+        ),
+      });
+
+      await renderApp();
+
+      fireEvent.click(screen.getByTestId('trigger-favorite'));
+
+      expect(
+        await screen.findByText(/Favorite limit reached/)
       ).toBeInTheDocument();
     });
   });
