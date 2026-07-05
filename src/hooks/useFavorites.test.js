@@ -95,4 +95,98 @@ describe('useFavorites', () => {
 
     expect(removeFavorite).toHaveBeenCalled();
   });
+
+  it('returns unauthenticated reason when no user', async () => {
+    const { result } = renderHook(() => useFavorites(null));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    const outcome = await act(async () => {
+      return await result.current.toggleFavorite(
+        ALGORITHM_TYPES.SORTING,
+        'bubbleSort'
+      );
+    });
+
+    expect(outcome).toEqual({ ok: false, reason: 'unauthenticated' });
+  });
+
+  it('returns slot_limit when at max favorites', async () => {
+    const manyFavorites = Array.from({ length: 20 }, (_, i) => ({
+      category: ALGORITHM_TYPES.SORTING,
+      algorithm_key: `algo${i}`,
+      created_at: '2026-01-01',
+    }));
+    vi.mocked(listFavorites).mockResolvedValue(manyFavorites);
+
+    const { result } = renderHook(() => useFavorites(user));
+
+    await waitFor(() => {
+      expect(result.current.isAtSlotLimit).toBe(true);
+    });
+
+    const outcome = await act(async () => {
+      return await result.current.toggleFavorite(
+        ALGORITHM_TYPES.SORTING,
+        'bubbleSort'
+      );
+    });
+
+    expect(outcome).toEqual({ ok: false, reason: 'slot_limit' });
+  });
+
+  it('handles error when loading favorites', async () => {
+    vi.mocked(listFavorites).mockRejectedValue(new Error('Network error'));
+
+    const { result } = renderHook(() => useFavorites(user));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.favorites).toEqual([]);
+    });
+  });
+
+  it('rolls back optimistic add on error', async () => {
+    vi.mocked(addFavorite).mockRejectedValue(new Error('DB error'));
+
+    const { result } = renderHook(() => useFavorites(user));
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    const outcome = await act(async () => {
+      return await result.current.toggleFavorite(
+        ALGORITHM_TYPES.SORTING,
+        'bubbleSort'
+      );
+    });
+
+    expect(outcome).toEqual({ ok: false, reason: 'error' });
+    expect(result.current.favorites).toHaveLength(0);
+  });
+
+  it('rolls back optimistic remove on error', async () => {
+    vi.mocked(listFavorites).mockResolvedValue([
+      {
+        category: ALGORITHM_TYPES.SORTING,
+        algorithm_key: 'bubbleSort',
+        created_at: '2026-01-01',
+      },
+    ]);
+    vi.mocked(removeFavorite).mockRejectedValue(new Error('DB error'));
+
+    const { result } = renderHook(() => useFavorites(user));
+
+    await waitFor(() => {
+      expect(result.current.favorites).toHaveLength(1);
+    });
+
+    const outcome = await act(async () => {
+      return await result.current.toggleFavorite(
+        ALGORITHM_TYPES.SORTING,
+        'bubbleSort'
+      );
+    });
+
+    expect(outcome).toEqual({ ok: false, reason: 'error' });
+    expect(result.current.favorites).toHaveLength(1);
+  });
 });

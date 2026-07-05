@@ -36,6 +36,7 @@ export default defineConfig({
         'node_modules/',
         'src/test/',
         'scripts/**',
+        'supabase/functions/**',
         '**/*.test.js',
         '**/*.test.jsx',
       ],

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
 import AlgorithmDropdown from './AlgorithmDropdown';
 const mockAlgorithms = [
@@ -188,6 +188,42 @@ describe('AlgorithmDropdown', () => {
       fireEvent.click(starButton);
 
       expect(onToggleFavorite).toHaveBeenCalledWith('sorting', 'bubbleSort');
+    });
+
+    it('shows remove favorite label when algorithm is favorited', () => {
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={{ id: 'user-1' }}
+          isAuthenticated={true}
+          categoryType="sorting"
+          isFavorite={() => true}
+        />
+      );
+
+      const starButton = screen.getByRole('button', {
+        name: /remove bubble sort from favorites/i,
+      });
+      expect(starButton).toBeInTheDocument();
+      expect(starButton).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('does not render star button for locked algorithms', () => {
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={null}
+          categoryType="sorting"
+        />
+      );
+
+      expect(
+        screen.queryByRole('button', {
+          name: /add quick sort to favorites/i,
+        })
+      ).not.toBeInTheDocument();
     });
   });
 });

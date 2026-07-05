@@ -97,4 +97,114 @@ describe('AlgorithmNotesTab', () => {
       expect(screen.getByTestId('note-editor')).toBeInTheDocument();
     });
   });
+
+  it('shows loading state while fetching the note', () => {
+    vi.mocked(useNoteAutosave).mockReturnValue({
+      initialHtml: '',
+      isLoadingNote: true,
+      saveStatus: 'idle',
+      scheduleSave: vi.fn(),
+      flushSave: vi.fn(async () => {}),
+    });
+
+    renderWithI18n(
+      <AlgorithmNotesTab
+        user={user}
+        categoryType={ALGORITHM_TYPES.SORTING}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        isActive={true}
+      />
+    );
+
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+  });
+
+  it('shows saving status text when saving', () => {
+    vi.mocked(useNoteAutosave).mockReturnValue({
+      initialHtml: '<p>note</p>',
+      isLoadingNote: false,
+      saveStatus: 'saving',
+      scheduleSave: vi.fn(),
+      flushSave: vi.fn(async () => {}),
+    });
+
+    renderWithI18n(
+      <AlgorithmNotesTab
+        user={user}
+        categoryType={ALGORITHM_TYPES.SORTING}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        isActive={true}
+      />
+    );
+
+    expect(screen.getByText(/Saving/)).toBeInTheDocument();
+  });
+
+  it('shows saved status text when saved', () => {
+    vi.mocked(useNoteAutosave).mockReturnValue({
+      initialHtml: '<p>note</p>',
+      isLoadingNote: false,
+      saveStatus: 'saved',
+      scheduleSave: vi.fn(),
+      flushSave: vi.fn(async () => {}),
+    });
+
+    renderWithI18n(
+      <AlgorithmNotesTab
+        user={user}
+        categoryType={ALGORITHM_TYPES.SORTING}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        isActive={true}
+      />
+    );
+
+    expect(screen.getByText('Saved')).toBeInTheDocument();
+  });
+
+  it('shows error status text when save fails', () => {
+    vi.mocked(useNoteAutosave).mockReturnValue({
+      initialHtml: '<p>note</p>',
+      isLoadingNote: false,
+      saveStatus: 'error',
+      scheduleSave: vi.fn(),
+      flushSave: vi.fn(async () => {}),
+    });
+
+    renderWithI18n(
+      <AlgorithmNotesTab
+        user={user}
+        categoryType={ALGORITHM_TYPES.SORTING}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        isActive={true}
+      />
+    );
+
+    expect(screen.getByText(/retrying/)).toBeInTheDocument();
+  });
+
+  it('shows unsaved status text when dirty', () => {
+    vi.mocked(useNoteAutosave).mockReturnValue({
+      initialHtml: '<p>note</p>',
+      isLoadingNote: false,
+      saveStatus: 'dirty',
+      scheduleSave: vi.fn(),
+      flushSave: vi.fn(async () => {}),
+    });
+
+    renderWithI18n(
+      <AlgorithmNotesTab
+        user={user}
+        categoryType={ALGORITHM_TYPES.SORTING}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        isActive={true}
+      />
+    );
+
+    expect(screen.getByText('Unsaved changes')).toBeInTheDocument();
+  });
 });

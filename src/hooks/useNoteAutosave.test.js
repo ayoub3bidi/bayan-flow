@@ -103,4 +103,47 @@ describe('useNoteAutosave', () => {
 
     expect(upsertNote).not.toHaveBeenCalled();
   });
+
+  it('sets saveStatus to error when loading note fails', async () => {
+    vi.mocked(getNote).mockRejectedValue(new Error('Network error'));
+
+    const { result } = renderAutosave();
+
+    await waitFor(() => {
+      expect(result.current.saveStatus).toBe('error');
+    });
+  });
+
+  it('sets saveStatus to dirty after scheduleSave', async () => {
+    const { result } = renderAutosave();
+
+    await waitFor(() => {
+      expect(result.current.isLoadingNote).toBe(false);
+    });
+
+    act(() => {
+      result.current.scheduleSave();
+    });
+
+    expect(result.current.saveStatus).toBe('dirty');
+  });
+
+  it('loads empty note when no user id', async () => {
+    const { result } = renderHook(() =>
+      useNoteAutosave({
+        user: null,
+        categoryType: ALGORITHM_TYPES.SORTING,
+        algorithmKey: 'bubbleSort',
+        getContentHtml: () => '',
+        isActive: true,
+      })
+    );
+
+    await waitFor(() => {
+      expect(result.current.initialHtml).toBe('');
+      expect(result.current.isLoadingNote).toBe(false);
+    });
+
+    expect(getNote).not.toHaveBeenCalled();
+  });
 });

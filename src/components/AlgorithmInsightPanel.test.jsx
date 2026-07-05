@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
+import { fireEvent, renderWithI18n, screen, waitFor } from '../test/testUtils';
 import AlgorithmInsightPanel from './AlgorithmInsightPanel';
 import i18n from '../i18n';
 import { ALGORITHM_TYPES } from '@/constants';
@@ -55,5 +55,57 @@ describe('AlgorithmInsightPanel', () => {
     fireEvent.click(closeButtons[0]);
 
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('switches to My Notes tab when clicked', async () => {
+    renderWithI18n(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={vi.fn()}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    const notesTab = screen.getAllByText('My Notes')[0];
+    fireEvent.click(notesTab);
+
+    await waitFor(() => {
+      const tab = screen.getAllByRole('tab', { name: 'My Notes' })[0];
+      expect(tab).toHaveAttribute('aria-selected', 'true');
+    });
+  });
+
+  it('resets tab to insight when reopened', () => {
+    const { rerender } = renderWithI18n(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={vi.fn()}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    const notesTab = screen.getAllByText('My Notes')[0];
+    fireEvent.click(notesTab);
+
+    const learnTab = screen.getAllByText('Learn')[0];
+    expect(learnTab).toHaveAttribute('aria-selected', 'false');
+    expect(notesTab).toHaveAttribute('aria-selected', 'true');
+
+    rerender(
+      <AlgorithmInsightPanel
+        isOpen={false}
+        onClose={vi.fn()}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
   });
 });
