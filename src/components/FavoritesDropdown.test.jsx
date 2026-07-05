@@ -40,7 +40,7 @@ vi.mock('@/config/algorithmConfig', () => ({
 }));
 
 describe('FavoritesDropdown', () => {
-  it('shows empty state hint', async () => {
+  it('shows empty state hint when dropdown is opened', async () => {
     render(
       <FavoritesDropdown
         favorites={[]}
@@ -50,9 +50,28 @@ describe('FavoritesDropdown', () => {
       />
     );
 
+    fireEvent.click(screen.getByText('settings.favoriteAlgorithmsEmpty'));
+
     expect(
-      screen.getByText('settings.favoriteAlgorithmsEmpty')
+      screen.getByText('settings.favoriteAlgorithmsHint')
     ).toBeInTheDocument();
+  });
+
+  it('does not open when isPlaying is true', () => {
+    render(
+      <FavoritesDropdown
+        favorites={[]}
+        slotLimit={20}
+        onSelect={vi.fn()}
+        isPlaying={true}
+      />
+    );
+
+    fireEvent.click(screen.getByText('settings.favoriteAlgorithmsEmpty'));
+
+    expect(
+      screen.queryByText('settings.favoriteAlgorithmsHint')
+    ).not.toBeInTheDocument();
   });
 
   it('calls onSelect when favorite clicked', async () => {

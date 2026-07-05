@@ -102,4 +102,39 @@ describe('NoteEditor', () => {
     const { container } = renderWithI18n(<NoteEditor {...defaultProps} />);
     expect(container.innerHTML).toBe('');
   });
+
+  it('calls setContent on mount when prop content differs from editor HTML', () => {
+    renderWithI18n(<NoteEditor {...defaultProps} />);
+    const editorInstance = mockUseEditor.mock.results[0].value;
+    expect(editorInstance.commands.setContent).toHaveBeenCalledWith(
+      '<p>hello</p>',
+      { emitUpdate: false }
+    );
+  });
+
+  it('does not call setContent when prop content matches editor HTML', () => {
+    const matchedEditor = {
+      isActive: vi.fn(() => false),
+      chain: vi.fn(() => ({
+        focus: vi.fn(() => ({
+          toggleBold: vi.fn(() => ({ run: vi.fn() })),
+          toggleItalic: vi.fn(() => ({ run: vi.fn() })),
+          toggleBulletList: vi.fn(() => ({ run: vi.fn() })),
+          toggleOrderedList: vi.fn(() => ({ run: vi.fn() })),
+          toggleHeading: vi.fn(() => ({ run: vi.fn() })),
+        })),
+      })),
+      getHTML: vi.fn(() => '<p>hello</p>'),
+      commands: { setContent: vi.fn() },
+    };
+    mockUseEditor.mockReturnValueOnce(matchedEditor);
+    renderWithI18n(
+      <NoteEditor
+        content="<p>hello</p>"
+        placeholder="Write..."
+        onUpdate={vi.fn()}
+      />
+    );
+    expect(matchedEditor.commands.setContent).not.toHaveBeenCalled();
+  });
 });

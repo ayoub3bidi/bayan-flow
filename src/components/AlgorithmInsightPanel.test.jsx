@@ -108,4 +108,40 @@ describe('AlgorithmInsightPanel', () => {
       />
     );
   });
+
+  it('shows no data message when algorithm has no insight content', () => {
+    renderWithI18n(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={vi.fn()}
+        algorithmKey="nonexistent"
+        algorithmName="Unknown"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    expect(
+      screen.getAllByText(
+        'No additional insight available for this algorithm yet.'
+      ).length
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders MetaItem without year when algorithm year is null', () => {
+    renderWithI18n(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={vi.fn()}
+        algorithmKey="insertionSort"
+        algorithmName="Insertion Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    const nameElements = screen.getAllByText('Insertion Sort');
+    expect(nameElements.length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('tablist').length).toBeGreaterThan(0);
+  });
 });

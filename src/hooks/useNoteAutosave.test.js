@@ -29,11 +29,11 @@ describe('useNoteAutosave', () => {
 
   function renderAutosave(overrides = {}) {
     return renderHook(
-      ({ isActive }) =>
+      ({ isActive, algorithmKey: algoKey = 'bubbleSort' }) =>
         useNoteAutosave({
           user,
           categoryType: ALGORITHM_TYPES.SORTING,
-          algorithmKey: 'bubbleSort',
+          algorithmKey: algoKey,
           getContentHtml: () => contentHtml,
           isActive,
           ...overrides,
@@ -145,5 +145,79 @@ describe('useNoteAutosave', () => {
     });
 
     expect(getNote).not.toHaveBeenCalled();
+  });
+
+  it('triggers save on online event when dirty', async () => {
+    const { result } = renderAutosave();
+
+    await waitFor(() => {
+      expect(result.current.isLoadingNote).toBe(false);
+    });
+
+    contentHtml = '<p>updated</p>';
+    act(() => {
+      result.current.scheduleSave();
+    });
+
+    window.dispatchEvent(new Event('online'));
+
+    await waitFor(() => {
+      expect(upsertNote).toHaveBeenCalledWith(
+        'user-1',
+        ALGORITHM_TYPES.SORTING,
+        'bubbleSort',
+        '<p>updated</p>'
+      );
+    });
+  });
+
+  it('flushes dirty content on unmount', async () => {
+    const { result, unmount } = renderAutosave();
+
+    await waitFor(() => {
+      expect(result.current.isLoadingNote).toBe(false);
+    });
+
+    contentHtml = '<p>updated</p>';
+    act(() => {
+      result.current.scheduleSave();
+    });
+    expect(result.current.saveStatus).toBe('dirty');
+
+    unmount();
+
+    expect(upsertNote).toHaveBeenCalledWith(
+      'user-1',
+      ALGORITHM_TYPES.SORTING,
+      'bubbleSort',
+      '<p>updated</p>'
+    );
+  });
+
+  it('flushes and reloads when algorithmKey changes', async () => {
+    const { result, rerender } = renderAutosave();
+
+    await waitFor(() => {
+      expect(result.current.isLoadingNote).toBe(false);
+    });
+
+    contentHtml = '<p>updated</p>';
+    act(() => {
+      result.current.scheduleSave();
+    });
+
+    vi.mocked(getNote).mockResolvedValue({
+      body_html: '<p>new algorithm note</p>',
+    });
+
+    rerender({ isActive: true, algorithmKey: 'selectionSort' });
+
+    await waitFor(() => {
+      expect(getNote).toHaveBeenCalledWith(
+        'user-1',
+        ALGORITHM_TYPES.SORTING,
+        'selectionSort'
+      );
+    });
   });
 });
