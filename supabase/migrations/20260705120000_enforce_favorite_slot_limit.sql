@@ -17,7 +17,7 @@ language plpgsql
 set search_path = ''
 as $$
 begin
-  perform pg_advisory_xact_lock(hashtext('favorite_slot_' || new.user_id::text));
+  perform pg_advisory_xact_lock(hashtext('favorite_slot'), hashtext(new.user_id::text));
   if (select count(*) from public.favorite_algorithms where user_id = new.user_id) >= public.get_favorite_slot_limit() then
     raise exception 'Favorite slot limit reached'
       using hint = 'Remove an existing favorite before adding another.';
