@@ -21,6 +21,7 @@ import Footer from '@/components/Footer';
 import Container from '@/components/ui/Container';
 import { useAuth } from '@/hooks/useAuth';
 import { getProfile, updateProfile } from '@/services/profileService';
+import { deleteAccount } from '@/services/authService';
 import {
   getMetadataAvatarUrl,
   resolveUserAvatar,
@@ -66,6 +67,8 @@ function ProfileSettingsPage() {
   const [profileAvatarUrl, setProfileAvatarUrl] = useState(
     /** @type {string | null} */ (null)
   );
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const showToast = useCallback((message, type = 'success') => {
     if (toastTimeoutRef.current) {
@@ -181,6 +184,28 @@ function ProfileSettingsPage() {
       showToast(t('profile.error'), 'error');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (
+      !user ||
+      isDeletingAccount ||
+      deleteConfirmText !== t('profile.deleteAccountConfirmWord')
+    ) {
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    try {
+      await deleteAccount();
+      showToast(t('profile.deleteAccountSuccess'));
+      window.setTimeout(() => {
+        window.location.href = '/';
+      }, 800);
+    } catch {
+      showToast(t('profile.deleteAccountError'), 'error');
+      setIsDeletingAccount(false);
     }
   };
 
@@ -418,6 +443,45 @@ function ProfileSettingsPage() {
                 </button>
               </div>
             </form>
+          )}
+
+          {activeTab === 'profile' && user && (
+            <section className="mt-10 pt-8 border-t border-red-200 dark:border-red-900/40">
+              <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
+                {t('profile.dangerZoneTitle')}
+              </h2>
+              <p className="text-sm text-text-secondary mb-4 leading-relaxed">
+                {t('profile.dangerZoneDescription')}
+              </p>
+              <label
+                htmlFor="delete-account-confirm"
+                className="block text-sm font-medium text-text-primary mb-2"
+              >
+                {t('profile.deleteAccountConfirmLabel')}
+              </label>
+              <input
+                id="delete-account-confirm"
+                type="text"
+                value={deleteConfirmText}
+                onChange={event => setDeleteConfirmText(event.target.value)}
+                placeholder={t('profile.deleteAccountConfirmPlaceholder')}
+                className="w-full max-w-sm rounded-lg border border-red-200 dark:border-red-800 bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-red-400/40 mb-4"
+                autoComplete="off"
+              />
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                disabled={
+                  isDeletingAccount ||
+                  deleteConfirmText !== t('profile.deleteAccountConfirmWord')
+                }
+                className="inline-flex items-center justify-center rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40 px-5 py-3 text-sm font-semibold text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/60 disabled:opacity-50 disabled:cursor-not-allowed min-h-11"
+              >
+                {isDeletingAccount
+                  ? t('profile.deleteAccountInProgress')
+                  : t('profile.deleteAccount')}
+              </button>
+            </section>
           )}
 
           <AnimatePresence>

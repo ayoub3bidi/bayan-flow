@@ -16,7 +16,7 @@
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
 - **Tests**: 136 test files (~1,700+ tests)
 - **Source**: 201 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
-- **Supabase**: `eu-central-1` region, 4 migrations for `profiles` table + RLS; `keep-supabase-alive.yml` prevents free-tier pausing
+- **Supabase**: `eu-central-1` region, migrations for `profiles`, `favorite_algorithms`, `algorithm_notes` + RLS; `keep-supabase-alive.yml` prevents free-tier pausing
 
 ## Routes
 
@@ -103,7 +103,10 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
   - All 45 algorithms, unlimited visualizations
   - Manual controls, all 4 speed presets
   - Full complexity panel access, all category-specific controls
-  - Code Panel, Insight Panel, Sound, Fullscreen
+  - Code Panel, Insight Panel (with My Notes tab), Sound, Fullscreen
+  - Favorite algorithms: up to 20 slots (`FREE_TIER_FAVORITE_SLOT_LIMIT` in `src/constants/personalLearning.js`); stored in Supabase `favorite_algorithms`
+  - Per-algorithm study notes: stored in Supabase `algorithm_notes`; sanitized HTML via `notesService.js`
+  - Self-service account deletion: Profile Settings danger zone → Supabase Edge Function `delete-account` (CASCADE removes profile, favorites, notes)
   - Video Export: unlimited for Free tier with mandatory watermark; Pro tier adds watermark customization/removal; internal daily abuse guard exists (not user-facing)
 - **Auth PRs must not reduce Free tier functionality** — only Anonymous tier can be further restricted
 - **Secrets** — publishable anon key via `VITE_*` only; service role key never in repo or client bundle

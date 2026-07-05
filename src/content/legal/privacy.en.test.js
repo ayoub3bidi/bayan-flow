@@ -49,6 +49,8 @@ describe('privacy.en', () => {
     expect(body).toMatch(/localStorage/i);
     expect(body).toMatch(/Supabase/i);
     expect(body).toMatch(/Google sign-in|sign in with Google/i);
+    expect(body).toMatch(/favorite algorithms|study notes/i);
+    expect(body).toMatch(/Profile Settings|delete your account/i);
     expect(body).toMatch(/contact@bayanflow\.com/);
   });
 });

@@ -8,6 +8,10 @@ import {
   PLAN_TIERS,
   isAlgorithmFreeForAnonymous,
 } from '@/constants/algorithmEntitlements';
+import {
+  FREE_TIER_FAVORITE_SLOT_LIMIT,
+  PRO_TIER_FAVORITE_SLOT_LIMIT,
+} from '@/constants/personalLearning';
 import { DEFAULT_VIDEO_WATERMARK } from '@/video/constants';
 
 // Session limits for anonymous users
@@ -136,6 +140,22 @@ export function canChangeSpeed(user) {
  */
 export function canUseCategoryControls(user) {
   return getUserPlan(user) !== PLAN_TIERS.ANONYMOUS;
+}
+
+/**
+ * Maximum favorite algorithm slots for the user's plan tier.
+ * @param {object | null} user
+ * @returns {number}
+ */
+export function getFavoriteSlotLimit(user) {
+  const plan = getUserPlan(user);
+  if (plan === PLAN_TIERS.PRO) {
+    return PRO_TIER_FAVORITE_SLOT_LIMIT;
+  }
+  if (plan === PLAN_TIERS.FREE) {
+    return FREE_TIER_FAVORITE_SLOT_LIMIT;
+  }
+  return 0;
 }
 
 /**

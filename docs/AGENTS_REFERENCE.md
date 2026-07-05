@@ -89,7 +89,11 @@
 
 - Supabase project: `bayan-flow` (`eu-central-1`); migrations in `supabase/migrations/`
 - Client: `src/lib/supabaseClient.js` (anon key via `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` only)
-- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`
+- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`, `src/services/favoritesService.js`, `src/services/notesService.js`
+- Hooks: `src/hooks/useFavorites.js`, `src/hooks/useNoteAutosave.js`
+- Constants: `src/constants/personalLearning.js` (favorite slot limits, note length cap)
+- Components: `src/components/FavoritesDropdown.jsx`, `src/components/AlgorithmNotesTab.jsx`, `src/components/NoteEditor.jsx` (lazy TipTap)
+- Edge Function: `supabase/functions/delete-account/` — self-service account deletion
 - Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
 - Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
 - Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
@@ -110,6 +114,15 @@
 
 Future (v0.6.0, not shipped): `username` (unique, set-once RLS), public `/u/:username` route; referral/billing columns (`referral_code`, `referred_by`, `referral_count`, `pro_months_earned`, `pro_expires_at`) — service role only.
 
+### Personal learning tables
+
+| Table | PK | Client access |
+|-------|-----|---------------|
+| `favorite_algorithms` | `(user_id, category, algorithm_key)` | SELECT / INSERT / DELETE own rows |
+| `algorithm_notes` | `(user_id, category, algorithm_key)` | SELECT / INSERT / UPDATE own rows |
+
+Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free tier: 20 favorite slots (`getFavoriteSlotLimit` in `entitlementService.js`); notes unlimited per algorithm with HTML sanitization (`noteHtmlSanitizer.js`).
+
 ### RLS and column grants
 
 - `profiles_select_own` — `SELECT` where `auth.uid() = id`
@@ -124,6 +137,9 @@ Future (v0.6.0, not shipped): `username` (unique, set-once RLS), public `/u/:use
 ### Profile-related tests
 
 - `pnpm vitest run src/services/profileService.test.js`
+- `pnpm vitest run src/services/favoritesService.test.js src/services/notesService.test.js`
+- `pnpm vitest run src/hooks/useFavorites.test.js src/hooks/useNoteAutosave.test.js`
+- `pnpm vitest run src/components/FavoritesDropdown.test.jsx src/components/AlgorithmNotesTab.test.jsx`
 - `pnpm vitest run src/pages/ProfileSettingsPage.test.jsx`
 - `pnpm vitest run src/contexts/AuthProvider.test.jsx src/utils/resolveUserAvatar.test.js src/components/UserMenu.test.jsx`
 

@@ -94,6 +94,16 @@ describe('authService', () => {
     expect(supabaseAuthMock.signOut).toHaveBeenCalled();
   });
 
+  it('deleteAccount invokes edge function then signs out', async () => {
+    const { supabaseFunctionsInvokeMock } =
+      await import('../test/supabaseMock.js');
+    await authService.deleteAccount();
+    expect(supabaseFunctionsInvokeMock).toHaveBeenCalledWith('delete-account', {
+      method: 'POST',
+    });
+    expect(supabaseAuthMock.signOut).toHaveBeenCalled();
+  });
+
   it('getSession returns null when client is not configured', async () => {
     mockSupabaseConfigured(false);
     await expect(authService.getSession()).resolves.toBeNull();

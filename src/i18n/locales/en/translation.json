@@ -39,7 +39,16 @@
     "saving": "Saving…",
     "saved": "Profile updated",
     "error": "Could not save your profile. Please try again.",
-    "loading": "Loading profile…"
+    "loading": "Loading profile…",
+    "dangerZoneTitle": "Danger zone",
+    "dangerZoneDescription": "Permanently delete your account and all saved favorites and study notes. This cannot be undone.",
+    "deleteAccount": "Delete account",
+    "deleteAccountConfirmLabel": "Type DELETE to confirm",
+    "deleteAccountConfirmPlaceholder": "DELETE",
+    "deleteAccountConfirmWord": "DELETE",
+    "deleteAccountInProgress": "Deleting account…",
+    "deleteAccountSuccess": "Your account has been deleted.",
+    "deleteAccountError": "Could not delete your account. Please try again or email contact@bayanflow.com."
   },
   "settings_tabs": {
     "profile": "Profile",
@@ -70,7 +79,15 @@
     "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it.",
     "signInForManual": "Sign in for manual mode",
     "signInForSpeed": "Sign in to adjust speed",
-    "signInForCategoryControls": "Sign in for advanced controls"
+    "signInForCategoryControls": "Sign in for advanced controls",
+    "favoriteAlgorithms": "Favorite algorithms",
+    "favoriteAlgorithmsEmpty": "No favorites yet",
+    "favoriteAlgorithmsCount": "{{count}} saved",
+    "favoriteAlgorithmsHint": "Star algorithms in the list below to add them here.",
+    "favoriteSlotsUsed": "{{count}} / {{limit}}",
+    "favoriteSlotsFull": "Favorite limit reached ({{limit}}). Remove one to add another.",
+    "addFavorite": "Add {{name}} to favorites",
+    "removeFavorite": "Remove {{name}} from favorites"
   },
   "modes": {
     "sorting": "Sorting",
@@ -361,8 +378,21 @@
     "error_label": "Error:",
     "actual_label": "Actual:"
   },
+  "notes_panel": {
+    "placeholder": "What did you learn about {{algorithmName}}?",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "unsaved": "Unsaved changes",
+    "saveError": "Couldn't save — retrying…",
+    "loading": "Loading your note…",
+    "loadingEditor": "Loading editor…",
+    "signInRequired": "Sign in to save study notes."
+  },
   "insight_panel": {
     "title": "Algorithm Insight",
+    "learnTitle": "Learn",
+    "tabList": "Learning panel sections",
+    "tabNotes": "My Notes",
     "close": "Close",
     "viewInsight": "View Algorithm Insight",
     "insightLabel": "Insight",
@@ -1360,6 +1390,8 @@
     "manual_controls": "Manual Step Control",
     "manual_controls_description": "Sign in to step through algorithms at your own pace.",
     "category_controls": "Advanced Controls",
-    "category_controls_description": "Sign in to customize grid sizes, sort order, graph scenarios, and more."
+    "category_controls_description": "Sign in to customize grid sizes, sort order, graph scenarios, and more.",
+    "favorite": "Favorite Algorithms",
+    "favorite_description": "Sign in to star algorithms and jump back to them quickly from your favorites list."
   }
 }

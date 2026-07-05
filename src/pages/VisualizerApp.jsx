@@ -47,6 +47,7 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../hooks/useAuth';
+import { useFavorites } from '../hooks/useFavorites';
 import {
   canRunVisualization,
   incrementVisualizationCount,
@@ -207,6 +208,13 @@ function App() {
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
   const { isAuthenticated, user } = useAuth();
+  const {
+    favorites,
+    slotLimit: favoriteSlotLimit,
+    isFavorite,
+    toggleFavorite,
+  } = useFavorites(user);
+  const [favoriteNotice, setFavoriteNotice] = useState(null);
 
   const [gatedFeature, setGatedFeature] = useState(null);
   const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
@@ -545,6 +553,10 @@ function App() {
   };
 
   const handleAlgorithmTypeChange = newType => {
+    applyCategorySwitch(newType);
+  };
+
+  const applyCategorySwitch = newType => {
     const cfg = CATEGORY_CONFIG[newType];
     if (cfg.sizeBinding === 'array') {
       const searchingKey = selectedAlgorithms[ALGORITHM_TYPES.SEARCHING];
@@ -562,6 +574,29 @@ function App() {
     }
     setAlgorithmType(newType);
     visualizationMap[newType]?.reset();
+  };
+
+  const handleFavoriteNavigate = (category, algorithmKey) => {
+    if (category !== algorithmType) {
+      applyCategorySwitch(category);
+    }
+    setSelectedAlgorithms(prev => ({
+      ...prev,
+      [category]: algorithmKey,
+    }));
+    visualizationMap[category]?.reset();
+  };
+
+  const handleToggleFavorite = async (category, algorithmKey) => {
+    const result = await toggleFavorite(category, algorithmKey);
+    if (result.reason === 'slot_limit') {
+      setFavoriteNotice('slot_limit');
+      window.setTimeout(() => setFavoriteNotice(null), 4000);
+    }
+  };
+
+  const handleFavoriteGatedClick = () => {
+    openGatedFeature('favorite');
   };
 
   // ── Shared visualizer props ────────────────────────────────────────────────
@@ -699,6 +734,15 @@ function App() {
                       user={user}
                       onLockedAlgorithmClick={handleLockedAlgorithmClick}
                       onGatedFeatureClick={handleGatedFeatureClick}
+                      favorites={favorites}
+                      favoriteSlotLimit={
+                        isAuthenticated ? favoriteSlotLimit : null
+                      }
+                      onFavoriteSelect={handleFavoriteNavigate}
+                      isFavorite={isFavorite}
+                      onToggleFavorite={handleToggleFavorite}
+                      onFavoriteGatedClick={handleFavoriteGatedClick}
+                      isAuthenticated={isAuthenticated}
                     />
                   </aside>
 
@@ -770,6 +814,24 @@ function App() {
             )}
 
             {/* Floating Action Buttons */}
+            <AnimatePresence>
+              {favoriteNotice && (
+                <motion.div
+                  key="favorite-notice"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-40 text-xs sm:text-sm text-text-primary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
+                  role="status"
+                  aria-live="polite"
+                >
+                  {t('settings.favoriteSlotsFull', {
+                    limit: favoriteSlotLimit,
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {!isPythonPanelOpen && !isInsightPanelOpen && (
               <>
                 <FloatingActionButton
@@ -854,6 +916,8 @@ function App() {
           onClose={() => setIsInsightPanelOpen(false)}
           algorithmKey={activeAlgorithmKey}
           algorithmName={activeAlgorithmName}
+          categoryType={algorithmType}
+          user={user}
         />
       </Suspense>
 

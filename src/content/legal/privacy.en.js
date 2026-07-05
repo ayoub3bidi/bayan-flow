@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-export const PRIVACY_POLICY_LAST_UPDATED = '2026-06-28';
+export const PRIVACY_POLICY_LAST_UPDATED = '2026-07-04';
 
 export const PRIVACY_POLICY_SECTIONS = [
   {
@@ -29,7 +29,7 @@ export const PRIVACY_POLICY_SECTIONS = [
       'GitHub API: The header badge and footer may request public release metadata and repository statistics from GitHub (api.github.com). Those requests are made to GitHub and may expose standard network metadata such as your IP address and user agent to GitHub.',
       'Python execution (Pyodide): If you open the Python code panel and run code, the Service loads Pyodide and related packages from jsDelivr (cdn.jsdelivr.net). This happens only after you explicitly use that feature.',
       'YouTube videos: Embedded videos use a click-to-load facade. No YouTube content loads until you choose to play a video. After you click play, Google/YouTube may process data according to their own policies.',
-      'Optional Google sign-in (Supabase Auth): If you choose to sign in with Google, Supabase processes the OAuth flow and we receive your email address, display name, profile photo URL, and authentication provider. A minimal profile row is stored in Supabase PostgreSQL. Session tokens are stored locally in your browser by the Supabase client so you remain signed in. We use this data only to display your account in the app header and to support future signed-in features (such as saved favorites). You can sign out at any time from the account menu.',
+      'Optional Google sign-in (Supabase Auth): If you choose to sign in with Google, Supabase processes the OAuth flow and we receive your email address, display name, profile photo URL, and authentication provider. A profile row is stored in Supabase PostgreSQL. Session tokens are stored locally in your browser by the Supabase client so you remain signed in. Signed-in features include favorite algorithms (up to 20 slots on the free tier) and personal study notes you write in the app; this data is stored in Supabase PostgreSQL and linked to your account. You can sign out at any time from the account menu.',
     ],
   },
   {
@@ -37,7 +37,7 @@ export const PRIVACY_POLICY_SECTIONS = [
     title: 'Optional User Accounts',
     paragraphs: [
       'You can use Bayan Flow without signing in. Core algorithm visualizations and playback controls remain available without an account.',
-      'Some additional free features — including the interactive code panel, algorithm insight panel, video export, sound effects, and fullscreen mode — require signing in with Google. When you sign in, we process the account data described above. We do not offer email/password registration.',
+      'Some additional free features — including the interactive code panel, algorithm insight and notes panels, favorite algorithms, video export, sound effects, and fullscreen mode — require signing in with Google. When you sign in, we process the account data described above. We do not offer email/password registration.',
     ],
   },
   {
@@ -72,7 +72,7 @@ export const PRIVACY_POLICY_SECTIONS = [
     title: 'Your Rights and Contact',
     paragraphs: [
       'Depending on your location, you may have rights to access, rectify, erase, restrict, or object to certain processing, or to lodge a complaint with a supervisory authority.',
-      'If you have a signed-in account, you can sign out at any time and email contact@bayanflow.com to request deletion of your profile row. For other requests, email contact@bayanflow.com with enough detail for us to respond.',
+      'If you have a signed-in account, you can delete your account at any time from Profile Settings (/settings/profile), which permanently removes your profile, favorites, and study notes from Supabase. You can also email contact@bayanflow.com for assistance. For other requests, email contact@bayanflow.com with enough detail for us to respond.',
     ],
   },
   {
