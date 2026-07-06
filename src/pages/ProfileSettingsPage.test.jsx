@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ProfileSettingsPage from './ProfileSettingsPage';
 import { renderWithI18n } from '../test/testUtils.jsx';
@@ -191,7 +191,7 @@ describe('ProfileSettingsPage', () => {
     });
   });
 
-  it('deletes account after typing DELETE confirmation', async () => {
+  it('deletes account after typing DELETE confirmation via modal', async () => {
     getProfileMock.mockResolvedValue({
       display_name: 'Ada',
       avatar_url: null,
@@ -207,10 +207,19 @@ describe('ProfileSettingsPage', () => {
       expect(screen.getByLabelText(/display name/i)).toBeInTheDocument();
     });
 
-    const confirmInput = screen.getByLabelText(/type delete to confirm/i);
+    const triggerButton = screen.getByRole('button', {
+      name: /delete account/i,
+    });
+    fireEvent.click(triggerButton);
+
+    const dialog = await screen.findByRole('dialog');
+
+    const confirmInput = within(dialog).getByLabelText(
+      /type delete to confirm/i
+    );
     fireEvent.change(confirmInput, { target: { value: 'DELETE' } });
 
-    const deleteButton = screen.getByRole('button', {
+    const deleteButton = within(dialog).getByRole('button', {
       name: /delete account/i,
     });
     expect(deleteButton).not.toBeDisabled();

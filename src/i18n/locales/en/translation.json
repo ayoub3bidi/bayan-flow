@@ -4,7 +4,8 @@
     "backToHome": "Back to Home",
     "save": "Save",
     "close": "Close",
-    "coming_soon": "Coming soon…"
+    "coming_soon": "Coming soon…",
+    "cancel": "Cancel"
   },
   "app": {
     "pageTitle": "Interactive Algorithm Visualizer"
@@ -30,6 +31,8 @@
     "displayName": "Display name",
     "displayNamePlaceholder": "How you appear in Bayan Flow",
     "email": "Email",
+    "description": "Description",
+    "descriptionPlaceholder": "Tell others about yourself…",
 
     "avatarTitle": "Profile picture",
     "avatarGoogle": "Profile Picture",

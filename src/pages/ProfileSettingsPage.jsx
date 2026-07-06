@@ -68,6 +68,7 @@ function ProfileSettingsPage() {
     /** @type {string | null} */ (null)
   );
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const showToast = useCallback((message, type = 'success') => {
@@ -447,40 +448,117 @@ function ProfileSettingsPage() {
 
           {activeTab === 'profile' && user && (
             <section className="mt-10 pt-8 border-t border-red-200 dark:border-red-900/40">
-              <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
-                {t('profile.dangerZoneTitle')}
-              </h2>
-              <p className="text-sm text-text-secondary mb-4 leading-relaxed">
-                {t('profile.dangerZoneDescription')}
-              </p>
-              <label
-                htmlFor="delete-account-confirm"
-                className="block text-sm font-medium text-text-primary mb-2"
-              >
-                {t('profile.deleteAccountConfirmLabel')}
-              </label>
-              <input
-                id="delete-account-confirm"
-                type="text"
-                value={deleteConfirmText}
-                onChange={event => setDeleteConfirmText(event.target.value)}
-                placeholder={t('profile.deleteAccountConfirmPlaceholder')}
-                className="w-full max-w-sm rounded-lg border border-red-200 dark:border-red-800 bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-red-400/40 mb-4"
-                autoComplete="off"
-              />
-              <button
-                type="button"
-                onClick={handleDeleteAccount}
-                disabled={
-                  isDeletingAccount ||
-                  deleteConfirmText !== t('profile.deleteAccountConfirmWord')
-                }
-                className="inline-flex items-center justify-center rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40 px-5 py-3 text-sm font-semibold text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/60 disabled:opacity-50 disabled:cursor-not-allowed min-h-11"
-              >
-                {isDeletingAccount
-                  ? t('profile.deleteAccountInProgress')
-                  : t('profile.deleteAccount')}
-              </button>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">
+                    {t('profile.dangerZoneTitle')}
+                  </h2>
+                  <p className="text-sm text-text-secondary mt-1 leading-relaxed">
+                    {t('profile.dangerZoneDescription')}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(true)}
+                  className="shrink-0 inline-flex items-center justify-center rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40 px-5 py-3 text-sm font-semibold text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/60 min-h-11 cursor-pointer"
+                >
+                  {t('profile.deleteAccount')}
+                </button>
+              </div>
+
+              <AnimatePresence>
+                {showDeleteModal && (
+                  <motion.div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={() => {
+                      setShowDeleteModal(false);
+                      setDeleteConfirmText('');
+                    }}
+                    onKeyDown={e =>
+                      e.key === 'Escape' &&
+                      (() => {
+                        setShowDeleteModal(false);
+                        setDeleteConfirmText('');
+                      })()
+                    }
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={t('profile.deleteAccount')}
+                    tabIndex={-1}
+                  >
+                    <motion.div
+                      className="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-8"
+                      initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                      animate={{ scale: 1, opacity: 1, y: 0 }}
+                      exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 300,
+                        damping: 25,
+                      }}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <h2 className="text-xl font-bold text-text-primary mb-3">
+                        {t('profile.deleteAccount')}
+                      </h2>
+                      <p className="text-sm text-text-secondary mb-6 leading-relaxed">
+                        {t('profile.dangerZoneDescription')}
+                      </p>
+
+                      <label
+                        htmlFor="delete-account-confirm-modal"
+                        className="block text-sm font-medium text-text-primary mb-2"
+                      >
+                        {t('profile.deleteAccountConfirmLabel')}
+                      </label>
+                      <input
+                        id="delete-account-confirm-modal"
+                        type="text"
+                        value={deleteConfirmText}
+                        onChange={event =>
+                          setDeleteConfirmText(event.target.value)
+                        }
+                        placeholder={t(
+                          'profile.deleteAccountConfirmPlaceholder'
+                        )}
+                        className="w-full rounded-lg border border-red-200 dark:border-red-800 bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-red-400/40 mb-6"
+                        autoComplete="off"
+                      />
+
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowDeleteModal(false);
+                            setDeleteConfirmText('');
+                          }}
+                          className="flex-1 inline-flex items-center justify-center rounded-lg border border-interactive-border bg-surface px-5 py-3 text-sm font-semibold text-text-secondary hover:text-text-primary hover:bg-surface-elevated min-h-11"
+                        >
+                          {t('common.cancel')}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDeleteAccount}
+                          disabled={
+                            isDeletingAccount ||
+                            deleteConfirmText !==
+                              t('profile.deleteAccountConfirmWord')
+                          }
+                          className="flex-1 inline-flex items-center justify-center rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40 px-5 py-3 text-sm font-semibold text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/60 disabled:opacity-50 disabled:cursor-not-allowed min-h-11"
+                        >
+                          {isDeletingAccount
+                            ? t('profile.deleteAccountInProgress')
+                            : t('profile.deleteAccount')}
+                        </button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </section>
           )}
 

@@ -4,7 +4,8 @@
     "backToHome": "العودة للرئيسية",
     "save": "حفظ",
     "close": "إغلاق",
-    "coming_soon": "قريباً…"
+    "coming_soon": "قريباً…",
+    "cancel": "إلغاء"
   },
   "app": {
     "pageTitle": "مُصوِّر الخوارزميات التفاعلي"
@@ -30,6 +31,8 @@
     "displayName": "الاسم المعروض",
     "displayNamePlaceholder": "كيف يظهر اسمك في Bayan Flow",
     "email": "البريد الإلكتروني",
+    "description": "الوصف",
+    "descriptionPlaceholder": "أخبر الآخرين عن نفسك…",
 
     "avatarTitle": "صورة الملف الشخصي",
     "avatarGoogle": "صورة الملف الشخصي",
