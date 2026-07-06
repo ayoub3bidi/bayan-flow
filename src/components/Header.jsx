@@ -6,7 +6,7 @@
 import { motion } from 'framer-motion';
 import { GitBranch } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -16,6 +16,7 @@ import UserMenu from './UserMenu';
 function Header() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const branchName = (import.meta.env.VITE_GIT_BRANCH ?? '').trim();
   const isDevBranch =
@@ -24,7 +25,7 @@ function Header() {
     import.meta.env.VITE_DEV_SITE_URL || 'https://dev.bayanflow.com';
 
   const handleLogoClick = () => {
-    navigate('/');
+    navigate(location.pathname === '/app' ? '/' : '/app');
   };
 
   return (
@@ -101,7 +102,7 @@ function Header() {
                 </svg>
               </div>
               <div className="flex flex-col min-w-0">
-                <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-none truncate">
+                <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-tight truncate">
                   {t('header.title')}
                 </h1>
                 <p className="text-[9px] sm:text-[10px] text-text-secondary hidden sm:block leading-tight mt-0.5 truncate">
