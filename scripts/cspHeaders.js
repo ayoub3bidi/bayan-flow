@@ -40,19 +40,6 @@ export function extractCspFromHeadersFile(content) {
 }
 
 /**
- * Extract the CSP value from netlify.toml security headers.
- * @param {string} content
- * @returns {string}
- */
-export function extractCspFromNetlifyToml(content) {
-  const match = content.match(/Content-Security-Policy = "([^"]+)"/);
-  if (!match) {
-    throw new Error('Content-Security-Policy not found in netlify.toml');
-  }
-  return match[1].trim();
-}
-
-/**
  * Assert CSP directives required for in-browser video export preview and Remotion telemetry.
  * @param {string} csp
  * @param {string} source - Label for error messages (e.g. "public/_headers")

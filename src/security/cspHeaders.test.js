@@ -7,12 +7,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, vi, beforeEach } from 'vitest';
 import {
   assertAuthCspDirectives,
   assertVideoExportCspDirectives,
   extractCspFromHeadersFile,
-  extractCspFromNetlifyToml,
   parseCspDirectives,
 } from '../../scripts/cspHeaders.js';
 
@@ -23,7 +22,6 @@ const repoRoot = path.resolve(
 
 describe('CSP security headers', () => {
   const headersPath = path.join(repoRoot, 'public', '_headers');
-  const netlifyPath = path.join(repoRoot, 'netlify.toml');
   let headersCsp;
 
   beforeEach(() => {
@@ -41,15 +39,5 @@ describe('CSP security headers', () => {
   it('public/_headers allows blob media for export preview and Remotion telemetry', () => {
     assertVideoExportCspDirectives(headersCsp, 'public/_headers');
     assertAuthCspDirectives(headersCsp, 'public/_headers');
-  });
-
-  it('netlify.toml CSP matches public/_headers video-export directives', () => {
-    const netlifyCsp = extractCspFromNetlifyToml(
-      fs.readFileSync(netlifyPath, 'utf8')
-    );
-
-    assertVideoExportCspDirectives(netlifyCsp, 'netlify.toml');
-    assertAuthCspDirectives(netlifyCsp, 'netlify.toml');
-    expect(netlifyCsp).toBe(headersCsp);
   });
 });

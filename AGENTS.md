@@ -9,7 +9,7 @@
 - Product: **Bayan Flow** · client-side React SPA (routes in REFERENCE)
 - Repo: `https://github.com/ayoub3bidi/bayan-flow` · prod `main` → bayanflow.com · dev `develop` → dev.bayanflow.com
 - License: `Elastic-2.0 OR Commercial` (dual-license)
-- Hosting: **Cloudflare Workers** (static SPA via `wrangler.jsonc`); `netlify.toml` kept for rollback only — CI deploys through `.github/workflows/deploy-cloudflare.yml`
+- Hosting: **Cloudflare Workers** (static SPA via `wrangler.jsonc`) — CI deploys through `.github/workflows/deploy-cloudflare.yml`
 - Tooling: React 19, Vite 7 (`rolldown-vite`), Tailwind 4, Vitest 3, Remotion 4, i18next `^25.7.1` (en/fr/ar RTL), Pyodide `0.27.5` in worker, Tone.js `^15.1.22`, DiceBear `^10.3.0`, Phosphor Icons, Monaco Editor, Framer Motion, Playwright (SFX generation only)
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
 - Version: `0.5.0` in `package.json` — **45 algorithms** across **5 categories** (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph); optional Google sign-in when Supabase env vars are set
