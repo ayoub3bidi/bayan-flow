@@ -14,8 +14,8 @@
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
 - Version: `0.5.0` in `package.json` — **45 algorithms** across **5 categories** (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph); optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
-- **Tests**: 136 test files (~1,700+ tests)
-- **Source**: 201 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
+- **Tests**: 151 test files (~1,817 tests)
+- **Source**: 223 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
 - **Supabase**: `eu-central-1` region, migrations for `profiles`, `favorite_algorithms`, `algorithm_notes` + RLS; `keep-supabase-alive.yml` prevents free-tier pausing
 
 ## Routes
@@ -48,7 +48,7 @@ When docs drift, trust runtime config:
 - **Graph algorithms:** node-link vs matrix profiles; Floyd-Warshall matrix max 6 nodes; scenarios from `graphTestScenarios.js` (18 preset scenarios); `GraphScenarioDropdown` when scenario is active
 - **Pathfinding:** grid steps; walls/start/end in `usePathfindingVisualization`; grid size uses named presets (`GRID_SIZES.SMALL/MEDIUM/LARGE`)
 - **Tree:** `generateTreeForTraversal()`; `treeNodeCount` 3–31, default 15; BST values assigned inorder
-- **Sound:** semantic events in `soundEvents.js` only (16 event kinds) — not from localized descriptions; visualization-only (no UI click sounds); uses Tone.js singleton `soundManager` with 5 synths through master chain (gain → filter → compressor → reverb)
+- **Sound:** semantic events in `soundEvents.js` only (16 kinds in `SOUND_EVENT_KINDS`) — not from localized descriptions; visualization-only (no UI click sounds); uses Tone.js singleton `soundManager` with 5 synths through master chain (gain → filter → compressor → reverb)
 - **Export:** interactive + Remotion parity; `buildExportSoundCues()` from same sound events; WAV assets in `public/video-export/sfx/` (18 pre-rendered files)
 - **Feature gating:** Tiered access model — see Auth contracts for Anonymous vs Free tier access; `SignInPromptModal` blocks gated features; `entitlementService.js` is the single authority for all access checks; `src/constants/algorithmEntitlements.js` defines the anonymous-tier algorithm allowlist
 
@@ -79,6 +79,19 @@ When docs drift, trust runtime config:
 
 Audit all three locales (en/fr/ar) + pseudocode strings + export fallbacks when renaming categories or algorithms. Arabic is RTL — check app UI and Remotion export. Translation detection order: `localStorage` → `navigator` → `htmlTag`, cached in localStorage. Pseudocode is English source of truth, FR/AR generated via `localize.js`.
 
+## Design agent workflow
+
+Project-local skills in `.cursor/skills/` (use together on UI work):
+
+| Skill | Role |
+|-------|------|
+| `bayan-ui-constraints` | **Wins on conflicts** — keep `src/index.css` tokens, Inter, Phosphor icons, `ThemeContext`, RTL |
+| `ui-ux-pro-max` | UX checklists + design-system search (`--stack react`) |
+| `bayan-visual-qa` | Post-change browser QA on `/`, `/app`, `/roadmap` |
+| `bayan-i18n-rtl` | Locale + RTL audit after copy/layout changes |
+
+Optional add-on: **[Impeccable](https://github.com/pbakaus/impeccable)** — installed in `.cursor/skills/impeccable/` with pre-edit hook (`.cursor/hooks.json`). Root context: `PRODUCT.md`, `DESIGN.md`, `.impeccable/design.json`, `.impeccable/config.json`. Run `/impeccable <command>` in Cursor; `bayan-ui-constraints` wins on token conflicts. High-value commands: `audit`, `polish`, `harden`, `adapt`, `clarify`, `critique` (landing/roadmap). Skip `typeset` font swaps unless user requests rebrand.
+
 ## Adding algorithms or categories
 
 See reference doc for full checklists (JS, Python, pseudocode, sound, insight, tests, registries). Keep graph algorithm commits scoped to one algorithm when possible. Algorithms follow dual-export pattern: visualization function → `steps[]` array + `*Pure` function for testing.
@@ -87,7 +100,8 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 
 - **OIDC only** — Google sign-in via Supabase Auth; no email/password flows in v0.5.0
 - **OAuth UX** — Google Identity Services (PKCE popup on `/auth/google/callback`); web uses `signInWithIdToken`, not `signInWithOAuth`; `googleIdentity.js` manages GIS script loading, nonce creation, and popup flow
-- **Service layer** — `src/services/authService.js`, `profileService.js`, `entitlementService.js`, `googleTokenExchange.js`; components use `AuthContext` / `useAuth`, never import Supabase directly
+- **Service layer** — `src/services/authService.js`, `profileService.js`, `entitlementService.js`, `accessService.js`, `googleTokenExchange.js`; components use `AuthContext` / `useAuth`, never import Supabase directly
+- **Platform access** — signed-in users pass through `checkPlatformAccess()` → Supabase Edge Function `platform-access` (account ban gate); **fail-open** on transport/invoke errors, **fail-closed** only when `allowed: false` + `reason: account_banned`; signup path uses `before-signup` / `post-signup` hooks (ban logic fail-closed)
 - **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client-writable columns: `display_name`, `avatar_preference` only; `avatar_url` is OAuth/trigger-populated (not client-writable); `plan` and future `referral_*` / `pro_*` columns are service role / webhook only
 - **Profile settings** — private route `/settings/profile` (`RequireAuth`); `updateProfile()` in `profileService.js`; security boundary = RLS row scope + `REVOKE UPDATE` + `GRANT UPDATE (display_name, avatar_preference)`; tabbed UI with profile/notifications/connections tabs; DiceBear notionists avatar fallback
 - **Session** — `getSession()`, `onAuthStateChange()`; `AuthProvider` in `src/main.jsx`; request-dedup via `requestRef`
@@ -140,6 +154,7 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 
 - `ci.yml` — push/PR to main/develop: quality (lint + format + audit) → test (coverage + Codecov) → build (with `VITE_GIT_BRANCH` + `VITE_DEV_SITE_URL`)
 - `deploy-cloudflare.yml` — triggered by CI completion on main/develop: build + `wrangler deploy` (production/staging envs)
+- `deploy-supabase-functions.yml` — triggered by CI completion on main/develop: deploy `before-signup`, `post-signup`, `platform-access`, `delete-account` edge functions
 - `preview-cloudflare.yml` — PR to develop: lint → test → build → `wrangler versions upload` → comment PR with preview URL + QR code; cleanup on PR close
 - `ensure-pr-source-develop.yml` — blocks PRs to `main` unless head is `develop` or user in `ALLOWED_MERGERS`
 - `release.yml` — GitHub release on `v*` tags

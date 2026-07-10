@@ -21,7 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **107** `*.test.js` / `*.test.jsx` files under `src/`
+- Test surface: **151** `*.test.js` / `*.test.jsx` files under `src/` (~**1,817** tests)
+- Source surface: **223** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -89,11 +90,15 @@
 
 - Supabase project: `bayan-flow` (`eu-central-1`); migrations in `supabase/migrations/`
 - Client: `src/lib/supabaseClient.js` (anon key via `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` only)
-- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`, `src/services/favoritesService.js`, `src/services/notesService.js`
+- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`, `src/services/accessService.js`, `src/services/favoritesService.js`, `src/services/notesService.js`
 - Hooks: `src/hooks/useFavorites.js`, `src/hooks/useNoteAutosave.js`
 - Constants: `src/constants/personalLearning.js` (favorite slot limits, note length cap)
 - Components: `src/components/FavoritesDropdown.jsx`, `src/components/AlgorithmNotesTab.jsx`, `src/components/NoteEditor.jsx` (lazy TipTap)
-- Edge Function: `supabase/functions/delete-account/` — self-service account deletion
+- Edge Functions (deployed via `deploy-supabase-functions.yml` after green CI):
+  - `supabase/functions/before-signup/` — signup ban gate (fail-closed)
+  - `supabase/functions/post-signup/` — post-signup side effects
+  - `supabase/functions/platform-access/` — signed-in ban check (`accessService.checkPlatformAccess()`; fail-open on transport)
+  - `supabase/functions/delete-account/` — self-service account deletion
 - Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
 - Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
 - Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
@@ -274,7 +279,7 @@ Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free t
 - `vite.config.js`, `vitest.config.js` (`@/` alias, jsdom, sequential forks for memory)
 - `eslint.config.js`, `wrangler.jsonc`, `codecov.yml`
 - `scripts/render-tone-export-sfx.mjs` — Playwright + Tone.Offline WAV generation
-- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `.github/labeler.yml`
+- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `deploy-supabase-functions.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `semgrep.yml`, `.github/labeler.yml`
 
 ## Runtime Pattern
 

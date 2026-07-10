@@ -1,0 +1,7 @@
+{
+  "files": ["index.html"],
+  "insertBefore": "</body>",
+  "commentSyntax": "html",
+  "serverPort": 8400,
+  "cspChecked": true
+}
