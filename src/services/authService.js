@@ -9,6 +9,7 @@ import {
   isGoogleAuthConfigured,
   requestGoogleSignInPopup,
 } from '@/lib/googleIdentity';
+import { isAccountBannedError } from '@/utils/authBan';
 
 export const AUTH_CALLBACK_PATH = '/auth/google/callback';
 
@@ -137,6 +138,28 @@ export async function getSession() {
     throw error;
   }
   return data.session;
+}
+
+/**
+ * @returns {Promise<import('@supabase/supabase-js').User | null>}
+ */
+export async function getUser() {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return null;
+  }
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error) {
+    if (isAccountBannedError(error)) {
+      const banError = new Error('account_banned');
+      banError.name = 'AccountBannedError';
+      throw banError;
+    }
+    throw error;
+  }
+
+  return data.user;
 }
 
 /**

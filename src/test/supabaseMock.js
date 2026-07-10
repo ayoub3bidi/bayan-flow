@@ -15,6 +15,7 @@ export const supabaseAuthMock = {
   })),
   signOut: vi.fn(async () => ({ error: null })),
   getSession: vi.fn(async () => ({ data: { session: null }, error: null })),
+  getUser: vi.fn(async () => ({ data: { user: null }, error: null })),
   onAuthStateChange: vi.fn(callback => {
     authStateChangeCallbackRef.current = callback;
     return {
@@ -71,6 +72,7 @@ export const supabaseClientMock = {
   functions: {
     invoke: supabaseFunctionsInvokeMock,
   },
+  rpc: vi.fn(async () => ({ error: null })),
 };
 
 export const isSupabaseConfigured = vi.fn(() => false);
@@ -89,6 +91,7 @@ export function resetSupabaseMocks() {
   supabaseAuthMock.signInWithIdToken.mockReset();
   supabaseAuthMock.signOut.mockReset();
   supabaseAuthMock.getSession.mockReset();
+  supabaseAuthMock.getUser.mockReset();
   supabaseAuthMock.onAuthStateChange.mockReset();
   supabaseAuthMock.updateUser.mockReset();
   supabaseFromMock.mockReset();
@@ -101,6 +104,10 @@ export function resetSupabaseMocks() {
   supabaseAuthMock.signOut.mockResolvedValue({ error: null });
   supabaseAuthMock.getSession.mockResolvedValue({
     data: { session: null },
+    error: null,
+  });
+  supabaseAuthMock.getUser.mockResolvedValue({
+    data: { user: null },
     error: null,
   });
   supabaseAuthMock.onAuthStateChange.mockImplementation(callback => {

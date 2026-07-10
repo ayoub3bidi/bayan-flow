@@ -27,3 +27,6 @@ coverage/
 *.sw?
 .tmp
 .wrangler
+
+# Supabase CLI local link cache (created by `supabase link`)
+supabase/.temp/

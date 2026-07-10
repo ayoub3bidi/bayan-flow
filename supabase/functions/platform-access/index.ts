@@ -1,10 +1,7 @@
-/**
- * Self-service account deletion.
- * Verifies the caller JWT and deletes auth.users (CASCADE removes profile, favorites, notes).
- */
-
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { buildCorsHeaders } from '../_shared/cors.ts';
+
+const PERMANENT_BAN_DURATION = '876000h';
 
 function getServiceClient() {
   return createClient(
@@ -33,60 +30,68 @@ export async function handleRequest(req) {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
+      return new Response(JSON.stringify({ allowed: true }), {
+        status: 200,
         headers: corsHeaders,
       });
     }
 
     const jwt = authHeader.replace('Bearer ', '');
-    const supabaseAdmin = getServiceClient();
+    const supabase = getServiceClient();
 
     const {
       data: { user },
       error: userError,
-    } = await supabaseAdmin.auth.getUser(jwt);
+    } = await supabase.auth.getUser(jwt);
 
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
+      return new Response(JSON.stringify({ allowed: true }), {
+        status: 200,
         headers: corsHeaders,
       });
     }
 
-    await supabaseAdmin
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .update({ signup_ip: null })
-      .eq('id', user.id);
+      .select('is_banned')
+      .eq('id', user.id)
+      .maybeSingle();
 
-    await supabaseAdmin
-      .from('signup_events')
-      .delete()
-      .eq('user_id', user.id);
+    if (profileError) {
+      console.error('platform-access: profile lookup failed', profileError);
+      return new Response(JSON.stringify({ allowed: true }), {
+        status: 200,
+        headers: corsHeaders,
+      });
+    }
 
-    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
-      user.id
-    );
+    if (profile?.is_banned) {
+      const { error: banError } = await supabase.auth.admin.updateUserById(
+        user.id,
+        { ban_duration: PERMANENT_BAN_DURATION }
+      );
 
-    if (deleteError) {
-      console.error('delete-account: deleteUser failed', deleteError);
+      if (banError) {
+        console.error('platform-access: auth ban sync failed', banError);
+      }
+
       return new Response(
-        JSON.stringify({ error: 'Account deletion failed' }),
+        JSON.stringify({ allowed: false, reason: 'account_banned' }),
         {
-          status: 400,
+          status: 200,
           headers: corsHeaders,
         }
       );
     }
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ allowed: true }), {
       status: 200,
       headers: corsHeaders,
     });
   } catch (error) {
-    console.error('delete-account: unexpected error', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
-      status: 500,
+    console.error('platform-access: unexpected error', error);
+    return new Response(JSON.stringify({ allowed: true }), {
+      status: 200,
       headers: corsHeaders,
     });
   }

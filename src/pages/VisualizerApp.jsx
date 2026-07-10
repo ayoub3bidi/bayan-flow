@@ -47,6 +47,7 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../hooks/useAuth';
+import { touchLastActive } from '../services/profileService';
 import { useFavorites } from '../hooks/useFavorites';
 import {
   canRunVisualization,
@@ -219,6 +220,7 @@ function App() {
   const [gatedFeature, setGatedFeature] = useState(null);
   const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
   const pendingFeatureRef = useRef(null);
+  const hasTouchedActivityRef = useRef(false);
 
   const openGatedFeature = (feature, metadata = {}) => {
     setGatedFeature(feature);
@@ -370,6 +372,12 @@ function App() {
   };
 
   useEffect(() => {
+    if (!user) {
+      hasTouchedActivityRef.current = false;
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (isAuthenticated && pendingFeatureRef.current) {
       openFeature(pendingFeatureRef.current);
       pendingFeatureRef.current = null;
@@ -392,6 +400,9 @@ function App() {
     // Increment viz count for anonymous users on each play
     if (!user) {
       incrementVisualizationCount();
+    } else if (!hasTouchedActivityRef.current) {
+      hasTouchedActivityRef.current = true;
+      void touchLastActive();
     }
     visualization.play();
   };

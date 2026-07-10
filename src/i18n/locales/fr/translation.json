@@ -25,6 +25,13 @@
     "account_settings": "Paramètres du compte",
     "settings": "Paramètres"
   },
+  "accessBan": {
+    "title": "Compte suspendu",
+    "description": "L'accès à Bayan Flow est restreint pour ce compte. Si vous pensez qu'il s'agit d'une erreur, contactez-nous.",
+    "signedInAs": "Connecté en tant que {{email}}",
+    "contact": "Écrivez à contact@bayanflow.com pour obtenir de l'aide.",
+    "signInUnavailable": "La connexion est temporairement indisponible. Veuillez réessayer plus tard."
+  },
   "profile": {
     "pageTitle": "Paramètres du profil",
     "title": "Paramètres du profil",

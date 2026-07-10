@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isAuthConfigured } from '@/services/authService';
 import * as authService from '@/services/authService';
 import { getProfile } from '@/services/profileService';
+import { checkPlatformAccess } from '@/services/accessService';
 import { resetAllSessionCounters } from '@/services/entitlementService';
 import {
   getMetadataAvatarUrl,
@@ -15,6 +16,8 @@ import {
   resolveUserAvatar,
 } from '@/utils/resolveUserAvatar';
 import { AuthContext } from './AuthContextDefinition';
+
+/** @typedef {'account_banned' | null} AccessBlockReason */
 
 /**
  * @param {import('@supabase/supabase-js').User | null} user
@@ -51,30 +54,92 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profileRow, setProfileRow] = useState(null);
   const [isLoading, setIsLoading] = useState(isConfigured);
+  const [accessBlock, setAccessBlock] = useState(
+    /** @type {AccessBlockReason} */ (null)
+  );
 
   const user = session?.user ?? null;
   const requestRef = useRef(0);
+  const accessCheckRef = useRef(0);
+  const userRef = useRef(null);
+  userRef.current = user;
 
   const refreshProfile = useCallback(async activeUser => {
     const requestId = ++requestRef.current;
     if (!activeUser) {
       setProfileRow(null);
-      return;
+      return null;
     }
     try {
       const row = await getProfile(activeUser.id);
       if (requestRef.current !== requestId) {
-        return;
+        return null;
       }
       setProfileRow(row);
+      return row;
     } catch (error) {
       if (requestRef.current !== requestId) {
-        return;
+        return null;
       }
       console.error('Failed to load user profile:', error);
       setProfileRow(null);
+      return null;
     }
   }, []);
+
+  const evaluateAccess = useCallback(
+    async activeUser => {
+      const checkId = ++accessCheckRef.current;
+
+      if (!activeUser) {
+        setAccessBlock(null);
+        return;
+      }
+
+      try {
+        const row = await refreshProfile(activeUser);
+        if (accessCheckRef.current !== checkId) {
+          return;
+        }
+
+        if (row?.is_banned) {
+          setAccessBlock('account_banned');
+          return;
+        }
+
+        try {
+          await authService.getUser();
+        } catch (error) {
+          if (accessCheckRef.current !== checkId) {
+            return;
+          }
+          if (error instanceof Error && error.name === 'AccountBannedError') {
+            setAccessBlock('account_banned');
+            return;
+          }
+        }
+
+        const access = await checkPlatformAccess();
+        if (accessCheckRef.current !== checkId) {
+          return;
+        }
+
+        if (!access.allowed && access.reason === 'account_banned') {
+          setAccessBlock('account_banned');
+          return;
+        }
+
+        setAccessBlock(null);
+      } catch (error) {
+        if (accessCheckRef.current !== checkId) {
+          return;
+        }
+        console.error('Failed to evaluate platform access:', error);
+        setAccessBlock(null);
+      }
+    },
+    [refreshProfile]
+  );
 
   useEffect(() => {
     if (!isConfigured) {
@@ -91,7 +156,7 @@ export function AuthProvider({ children }) {
           return;
         }
         setSession(nextSession);
-        await refreshProfile(nextSession?.user ?? null);
+        await evaluateAccess(nextSession?.user ?? null);
       } catch (error) {
         console.error('Failed to hydrate auth session:', error);
       } finally {
@@ -116,7 +181,7 @@ export function AuthProvider({ children }) {
         setSession(nextSession);
         setIsLoading(true);
         try {
-          await refreshProfile(nextSession?.user ?? null);
+          await evaluateAccess(nextSession?.user ?? null);
         } finally {
           if (isMounted) {
             setIsLoading(false);
@@ -125,11 +190,20 @@ export function AuthProvider({ children }) {
       }
     );
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && userRef.current) {
+        evaluateAccess(userRef.current);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       isMounted = false;
       unsubscribe?.();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isConfigured, refreshProfile]);
+  }, [isConfigured, evaluateAccess]);
 
   const signInWithGoogle = useCallback(async () => {
     await authService.signInWithGoogle();
@@ -138,6 +212,7 @@ export function AuthProvider({ children }) {
   const signOut = useCallback(async () => {
     await authService.signOut();
     setProfileRow(null);
+    setAccessBlock(null);
   }, []);
 
   const profile = useMemo(
@@ -146,8 +221,8 @@ export function AuthProvider({ children }) {
   );
 
   const refreshProfileForUser = useCallback(async () => {
-    await refreshProfile(user);
-  }, [refreshProfile, user]);
+    await evaluateAccess(user);
+  }, [evaluateAccess, user]);
 
   const value = useMemo(
     () => ({
@@ -157,6 +232,7 @@ export function AuthProvider({ children }) {
       isLoading,
       isAuthenticated: Boolean(user),
       isConfigured,
+      accessBlock,
       signInWithGoogle,
       signOut,
       refreshProfile: refreshProfileForUser,
@@ -167,6 +243,7 @@ export function AuthProvider({ children }) {
       profile,
       isLoading,
       isConfigured,
+      accessBlock,
       signInWithGoogle,
       signOut,
       refreshProfileForUser,

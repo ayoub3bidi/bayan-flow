@@ -15,6 +15,7 @@ import { getSupabaseClient } from '@/lib/supabaseClient';
  * @property {AvatarPreference} avatar_preference
  * @property {'free' | 'pro'} plan
  * @property {string | null} email
+ * @property {boolean} is_banned
  */
 
 /**
@@ -29,7 +30,9 @@ export async function getProfile(userId) {
 
   const { data, error } = await supabase
     .from('profiles')
-    .select('display_name, avatar_url, avatar_preference, plan, email')
+    .select(
+      'display_name, avatar_url, avatar_preference, plan, email, is_banned'
+    )
     .eq('id', userId)
     .maybeSingle();
 
@@ -93,7 +96,9 @@ export async function updateProfile(userId, { displayName, avatarPreference }) {
     .from('profiles')
     .update(payload)
     .eq('id', userId)
-    .select('display_name, avatar_url, avatar_preference, plan, email')
+    .select(
+      'display_name, avatar_url, avatar_preference, plan, email, is_banned'
+    )
     .single();
 
   if (error) {
@@ -101,4 +106,20 @@ export async function updateProfile(userId, { displayName, avatarPreference }) {
   }
 
   return data;
+}
+
+/**
+ * Updates last_active_at once per session when a signed-in user starts playback.
+ * @returns {Promise<void>}
+ */
+export async function touchLastActive() {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return;
+  }
+
+  const { error } = await supabase.rpc('touch_last_active');
+  if (error) {
+    console.warn('Failed to touch last_active_at:', error);
+  }
 }

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-export const PRIVACY_POLICY_LAST_UPDATED = '2026-07-04';
+export const PRIVACY_POLICY_LAST_UPDATED = '2026-07-10';
 
 export const PRIVACY_POLICY_SECTIONS = [
   {
@@ -29,7 +29,7 @@ export const PRIVACY_POLICY_SECTIONS = [
       'GitHub API: The header badge and footer may request public release metadata and repository statistics from GitHub (api.github.com). Those requests are made to GitHub and may expose standard network metadata such as your IP address and user agent to GitHub.',
       'Python execution (Pyodide): If you open the Python code panel and run code, the Service loads Pyodide and related packages from jsDelivr (cdn.jsdelivr.net). This happens only after you explicitly use that feature.',
       'YouTube videos: Embedded videos use a click-to-load facade. No YouTube content loads until you choose to play a video. After you click play, Google/YouTube may process data according to their own policies.',
-      'Optional Google sign-in (Supabase Auth): If you choose to sign in with Google, Supabase processes the OAuth flow and we receive your email address, display name, profile photo URL, and authentication provider. A profile row is stored in Supabase PostgreSQL. Session tokens are stored locally in your browser by the Supabase client so you remain signed in. Signed-in features include favorite algorithms (up to 20 slots on the free tier) and personal study notes you write in the app; this data is stored in Supabase PostgreSQL and linked to your account. You can sign out at any time from the account menu.',
+      'Optional Google sign-in (Supabase Auth): If you choose to sign in with Google, Supabase processes the OAuth flow and we receive your email address, display name, profile photo URL, and authentication provider. A profile row is stored in Supabase PostgreSQL. Session tokens are stored locally in your browser by the Supabase client so you remain signed in. Signed-in features include favorite algorithms (up to 20 slots on the free tier) and personal study notes you write in the app; this data is stored in Supabase PostgreSQL and linked to your account. For abuse prevention, we may store your IP address at first sign-up and a last-activity timestamp when you use signed-in visualizations. You can sign out at any time from the account menu.',
     ],
   },
   {
@@ -57,6 +57,7 @@ export const PRIVACY_POLICY_SECTIONS = [
     paragraphs: [
       'Analytics data retention follows Umami’s configuration for our project.',
       'Server logs are retained according to Cloudflare’s policies.',
+      'Sign-up IP addresses on user profiles are retained for up to 90 days, then anonymized. Signup audit events used for rate limiting are deleted after 7 days. When you delete your account, sign-up IP data and related audit rows are removed.',
       'localStorage data remains on your device until you clear it through your browser settings.',
     ],
   },

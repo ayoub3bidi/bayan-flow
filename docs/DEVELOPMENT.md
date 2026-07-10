@@ -1029,17 +1029,110 @@ Do not add sounds for UI clicks, panel toggles, export buttons, or regeneration 
 
 ## Supabase Edge Functions
 
-The repo includes `supabase/functions/delete-account/` for self-service account deletion (JWT verification + `auth.admin.deleteUser`, CASCADE on `profiles`, `favorite_algorithms`, and `algorithm_notes`).
+The repo includes edge functions under `supabase/functions/`:
 
-### Deploy `delete-account`
+| Function | JWT | Purpose |
+|----------|-----|---------|
+| `delete-account` | yes | Self-service account deletion |
+| `before-signup` | no | Auth hook: signup rate limits + IP checks |
+| `post-signup` | no | Database webhook: record signup IP + progressive IP ban |
+| `platform-access` | yes | Account ban gate for signed-in users |
 
-1. Install the [Supabase CLI](https://supabase.com/docs/guides/cli) and link the project (`supabase link --project-ref qketsapzqpzmccljfjcm`).
-2. Apply migrations if not yet applied: `supabase db push` (or run the SQL in `supabase/migrations/` from the dashboard).
-3. Set secrets for the function (service role key is injected automatically in hosted Supabase; for local invoke use `supabase secrets set`).
-4. Deploy: `supabase functions deploy delete-account` (JWT verification is enabled by default).
-5. Confirm the browser can reach the functions origin — CSP `connect-src` in `scripts/cspHeaders.js` must include your Supabase project URL.
+### Deploy (CI or manual)
 
-Manual smoke test: sign in → Profile Settings → Danger zone → type `DELETE` → confirm account is removed and session clears.
+1. Install the [Supabase CLI](https://supabase.com/docs/guides/cli).
+2. Apply migrations: `supabase db push` (includes `20260710120000_platform_security_foundation.sql`).
+3. Add GitHub secret `SUPABASE_ACCESS_TOKEN` (personal access token from Supabase Account → Tokens). Project ref is derived from existing `VITE_SUPABASE_URL` in CI.
+4. Set project secrets (once per environment):
+
+   ```bash
+   supabase secrets set BEFORE_USER_CREATED_HOOK_SECRET="<openssl rand -hex 32>"
+   supabase secrets set POST_SIGNUP_WEBHOOK_SECRET="<openssl rand -hex 32>"
+   # optional alerts
+   supabase secrets set TELEGRAM_BOT_TOKEN="..."
+   supabase secrets set TELEGRAM_CHAT_ID="..."
+   ```
+
+5. Deploy functions:
+
+   ```bash
+   supabase link --project-ref qketsapzqpzmccljfjcm
+   supabase functions deploy before-signup --no-verify-jwt
+   supabase functions deploy post-signup --no-verify-jwt
+   supabase functions deploy platform-access
+   supabase functions deploy delete-account
+   ```
+
+6. Wire dashboard integrations (one-time):
+   - **Auth → Hooks → Before user created** → `https://qketsapzqpzmccljfjcm.supabase.co/functions/v1/before-signup` with the same `BEFORE_USER_CREATED_HOOK_SECRET` (`v1,whsec_<base64>` format).
+   - **Post-signup:** migration `20260710130000_post_signup_webhook_trigger.sql` installs a `pg_net` trigger on `profiles` INSERT. After first deploy, store the shared secret in Vault (must match `POST_SIGNUP_WEBHOOK_SECRET`):
+
+     ```sql
+     select vault.create_secret(
+       '<POST_SIGNUP_WEBHOOK_SECRET>',
+       'post_signup_webhook_secret',
+       'Shared secret for post-signup edge function webhook'
+     );
+     ```
+
+7. Enable **Integrations → Cron** if pg_cron jobs from the security migration do not appear.
+
+### IP spike (before production cutover)
+
+1. Deploy `before-signup` and wire the auth hook.
+2. Perform one first-time Google sign-in on dev (or use Dashboard hook tester).
+3. Confirm logs show non-null `metadata.ip_address` for production-like sign-ins. Localhost may be null (allowed; IP rules skipped).
+
+### Security admin runbook
+
+**Manual account ban (two-step):**
+
+```sql
+-- 1) Mark profile banned (blocks RLS writes + client gate)
+update public.profiles
+set is_banned = true, banned_at = now()
+where email = 'badactor@example.com';
+
+-- 2) Ban in Supabase Auth (Dashboard → Authentication → Users → Ban user)
+--    Or via Admin API: ban_duration on the user
+```
+
+**Unban (reverse both steps):**
+
+```sql
+update public.profiles
+set is_banned = false, banned_at = null
+where email = 'badactor@example.com';
+```
+
+Then remove Auth ban in Dashboard (or set `ban_duration` to `none`).
+
+**Block new signups from an IP (optional):**
+
+```sql
+insert into public.banned_ips (ip, reason, banned_by, expires_at)
+values ('203.0.113.10', 'manual', 'admin', now() + interval '7 days');
+```
+
+**Trusted IP (bootcamp / shared NAT false positive):**
+
+```sql
+insert into public.trusted_ips (ip, reason, added_by)
+values ('203.0.113.50', 'bootcamp wifi', 'admin');
+```
+
+**Notes:**
+
+- `banned_ips` blocks **new signups only** (before-user-created hook). Anonymous app use is unaffected.
+- `profiles.is_banned` is **manual admin only** — never auto-set from IP rules.
+- `signup_ip` is anonymized after 90 days; removed on account delete.
+- Client `platform-access` errors **fail open**; auth hook errors **fail closed** (signups blocked).
+
+Manual smoke tests:
+
+- Sign in → Profile Settings → Danger zone → delete account (CORS allowlist includes dev + prod).
+- Banned account sees suspension screen; sign-out still works.
+- Signup from banned IP shows generic “temporarily unavailable” message.
 
 ## Conclusion
 

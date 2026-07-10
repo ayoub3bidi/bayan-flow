@@ -25,6 +25,13 @@
     "account_settings": "إعدادات الحساب",
     "settings": "الإعدادات"
   },
+  "accessBan": {
+    "title": "تم تعليق الحساب",
+    "description": "تم تقييد الوصول إلى Bayan Flow لهذا الحساب. إذا كنت تعتقد أن هذا خطأ، تواصل معنا.",
+    "signedInAs": "مسجّل الدخول باسم {{email}}",
+    "contact": "راسلنا على contact@bayanflow.com للمساعدة.",
+    "signInUnavailable": "تسجيل الدخول غير متاح مؤقتًا. يُرجى المحاولة لاحقًا."
+  },
   "profile": {
     "pageTitle": "إعدادات الملف الشخصي",
     "title": "إعدادات الملف الشخصي",
