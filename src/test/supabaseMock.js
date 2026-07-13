@@ -126,4 +126,6 @@ export function resetSupabaseMocks() {
   });
   supabaseFunctionsInvokeMock.mockResolvedValue({ data: null, error: null });
   supabaseFromMock.mockReturnValue(createSupabaseQueryBuilder());
+  supabaseClientMock.rpc.mockReset();
+  supabaseClientMock.rpc.mockResolvedValue({ data: 0, error: null });
 }

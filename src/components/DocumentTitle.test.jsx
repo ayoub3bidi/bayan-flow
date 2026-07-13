@@ -232,4 +232,22 @@ describe('DocumentTitle', () => {
       i18n.t('roadmap.hero.subtitle')
     );
   });
+
+  it('should set pro route title and meta description', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/pro']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    const baseTitle = i18n.t('header.title');
+    const proTitle = i18n.t('pro.pageTitle');
+    expect(document.title).toBe(`${baseTitle} - ${proTitle}`);
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      i18n.t('pro.metaDescription')
+    );
+  });
 });

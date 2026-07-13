@@ -1037,6 +1037,7 @@ The repo includes edge functions under `supabase/functions/`:
 | `before-signup` | no | Auth hook: signup rate limits + IP checks |
 | `post-signup` | no | Database webhook: record signup IP + progressive IP ban |
 | `platform-access` | yes | Account ban gate for signed-in users |
+| `waitlist-welcome` | no | Pro waitlist confirmation email (Resend; fail-open) |
 
 ### Deploy (CI or manual)
 
@@ -1048,6 +1049,9 @@ The repo includes edge functions under `supabase/functions/`:
    ```bash
    supabase secrets set BEFORE_USER_CREATED_HOOK_SECRET="<openssl rand -hex 32>"
    supabase secrets set POST_SIGNUP_WEBHOOK_SECRET="<openssl rand -hex 32>"
+   # Pro waitlist welcome email (Resend)
+   supabase secrets set RESEND_API_KEY="re_..."
+   supabase secrets set FROM_EMAIL="Bayan Flow <contact@bayanflow.com>"
    # optional alerts
    supabase secrets set TELEGRAM_BOT_TOKEN="..."
    supabase secrets set TELEGRAM_CHAT_ID="..."
@@ -1061,6 +1065,7 @@ The repo includes edge functions under `supabase/functions/`:
    supabase functions deploy post-signup --no-verify-jwt
    supabase functions deploy platform-access
    supabase functions deploy delete-account
+   supabase functions deploy waitlist-welcome --no-verify-jwt
    ```
 
 6. Wire dashboard integrations (one-time):

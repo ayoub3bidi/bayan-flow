@@ -7,8 +7,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
-import ThemeToggle from './ThemeToggle';
-import LanguageSwitcher from './LanguageSwitcher';
+import Header from './Header';
 
 /**
  * @param {Object} props
@@ -27,10 +26,7 @@ function LegalDocument({ title, lastUpdated, sections }) {
     <div className="min-h-screen relative overflow-x-hidden flex flex-col">
       <div className="fixed inset-0 bg-linear-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
 
-      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
-        <LanguageSwitcher />
-        <ThemeToggle />
-      </div>
+      <Header hideLanguageSwitcher />
 
       <main className="relative z-10 flex-1 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 w-full">
         <p className="text-sm text-text-secondary mb-2">

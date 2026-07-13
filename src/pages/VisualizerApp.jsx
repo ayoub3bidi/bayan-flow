@@ -15,6 +15,7 @@ import FloatingActionButton from '../components/FloatingActionButton';
 import InsightFloatingActionButton from '../components/InsightFloatingActionButton';
 import ExportProgressModal from '../components/ExportProgressModal';
 import SignInPromptModal from '../components/SignInPromptModal';
+import ProWaitlistBanner from '../components/ProWaitlistBanner';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
 const AlgorithmInsightPanel = lazy(
@@ -635,6 +636,7 @@ function App() {
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-bg flex flex-col">
+      <ProWaitlistBanner source="app" />
       {/* Skip Navigation Link */}
       <a
         href="#main-content"

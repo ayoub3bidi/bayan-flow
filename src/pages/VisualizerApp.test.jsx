@@ -5,6 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
@@ -467,9 +468,11 @@ describe('VisualizerApp', () => {
 
   async function renderApp() {
     renderWithI18n(
-      <ThemeProvider>
-        <VisualizerApp />
-      </ThemeProvider>
+      <MemoryRouter initialEntries={['/app']}>
+        <ThemeProvider>
+          <VisualizerApp />
+        </ThemeProvider>
+      </MemoryRouter>
     );
     await screen.findByTestId('python-panel');
     await screen.findByTestId('insight-panel');

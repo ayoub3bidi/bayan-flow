@@ -3,7 +3,8 @@
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+
 import { GitBranch } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -12,12 +13,28 @@ import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import GitHubRepoBadge from './GitHubRepoBadge';
 import UserMenu from './UserMenu';
+import { WAITLIST_BANNER_DISMISSED_KEY } from '../constants/waitlist';
 
-function Header() {
+function Header({ hideLanguageSwitcher = false }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+
+  const [bannerDismissed, setBannerDismissed] = useState(() => {
+    try {
+      return sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const handleDismiss = () => setBannerDismissed(true);
+    window.addEventListener('bayan-flow:banner-dismissed', handleDismiss);
+    return () =>
+      window.removeEventListener('bayan-flow:banner-dismissed', handleDismiss);
+  }, []);
   const branchName = (import.meta.env.VITE_GIT_BRANCH ?? '').trim();
   const isDevBranch =
     !!branchName && !['main', 'master', 'production'].includes(branchName);
@@ -29,11 +46,12 @@ function Header() {
   };
 
   return (
-    <motion.header
-      className="relative sm:fixed sm:top-0 sm:left-0 sm:right-0 sm:z-50 w-full"
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+    <header
+      className={`w-full ${
+        bannerDismissed
+          ? 'sm:fixed sm:top-0 sm:left-0 sm:right-0 sm:z-40'
+          : 'relative z-40'
+      }`}
       role="banner"
     >
       {/* Glass morphism background */}
@@ -45,11 +63,8 @@ function Header() {
           aria-label="Main navigation"
         >
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
-            <motion.div
+            <div
               className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 cursor-pointer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 300 }}
               onClick={handleLogoClick}
               role="button"
               aria-label="Navigate to landing page"
@@ -109,7 +124,7 @@ function Header() {
                   {t('header.subtitle')}
                 </p>
               </div>
-            </motion.div>
+            </div>
 
             {isDevBranch && (
               <a
@@ -134,13 +149,13 @@ function Header() {
 
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
             <GitHubRepoBadge />
-            <LanguageSwitcher />
+            {!hideLanguageSwitcher && <LanguageSwitcher />}
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
             <UserMenu variant="compact" />
           </div>
         </nav>
       </div>
-    </motion.header>
+    </header>
   );
 }
 

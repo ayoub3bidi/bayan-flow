@@ -25,6 +25,7 @@
 | `/` | LandingPage | Public |
 | `/app` | VisualizerApp | Public |
 | `/roadmap` | Roadmap | Public |
+| `/pro` | ProComingSoonPage | Public |
 | `/privacy` | PrivacyPolicy (LegalDocument) | Public |
 | `/terms` | TermsOfUse (LegalDocument) | Public |
 | `/auth/google/callback` | GoogleAuthCallback | Public (OAuth redirect) |

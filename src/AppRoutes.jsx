@@ -15,6 +15,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfUse from './pages/TermsOfUse.jsx';
 import GoogleAuthCallback from './pages/GoogleAuthCallback.jsx';
 import ProfileSettingsPage from './pages/ProfileSettingsPage.jsx';
+import ProComingSoonPage from './pages/ProComingSoonPage.jsx';
 import RequireAuth from './components/RequireAuth.jsx';
 
 function AppRoutes() {
@@ -29,6 +30,7 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/app" element={<VisualizerApp />} />
       <Route path="/roadmap" element={<Roadmap />} />
+      <Route path="/pro" element={<ProComingSoonPage />} />
       <Route path={AUTH_CALLBACK_PATH} element={<GoogleAuthCallback />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsOfUse />} />

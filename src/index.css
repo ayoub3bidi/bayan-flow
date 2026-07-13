@@ -62,6 +62,17 @@
   --color-error: #ef4444;
   --color-info: #2b7fff;
 
+  /* Pro waitlist announcement bar */
+  --color-pro-banner-bg: #ca8a04;
+  --color-pro-banner-border: #a16207;
+  --color-pro-banner-text: #fffbeb;
+  --color-pro-banner-cta-bg: var(--color-surface);
+  --color-pro-banner-cta-text: #78350f;
+  --color-pro-banner-cta-hover: #fffbeb;
+  --color-pro-banner-cta-hover-text: #78350f;
+  --color-pro-banner-dismiss: #fef9c3;
+  --color-pro-banner-dismiss-hover-bg: #a16207;
+
   /* Glass morphism */
   --color-glass-bg: rgba(255, 255, 255, 0.7);
   --color-glass-border: rgba(255, 255, 255, 0.2);
@@ -253,6 +264,17 @@ pre.pseudocode-view .pc-line {
   --color-warning: #fbbf24;
   --color-error: #f87171;
   --color-info: #60a5fa;
+
+  /* Pro waitlist announcement bar */
+  --color-pro-banner-bg: #b45309;
+  --color-pro-banner-border: #92400e;
+  --color-pro-banner-text: #fffbeb;
+  --color-pro-banner-cta-bg: var(--color-surface);
+  --color-pro-banner-cta-text: #fef3c7;
+  --color-pro-banner-cta-hover: #fffbeb;
+  --color-pro-banner-cta-hover-text: #78350f;
+  --color-pro-banner-dismiss: #fde68a;
+  --color-pro-banner-dismiss-hover-bg: #92400e;
 
   /* Glass morphism */
   --color-glass-bg: rgba(15, 23, 36, 0.7);
@@ -542,4 +564,225 @@ body {
     transparent 100%
   );
   background-size: 200% 200%;
+}
+
+/* -- Pro sorting animation (decorative, /pro page) -- */
+
+/*
+ * 6 tiles, 48×48px, gap-3 (12px).
+ * Swap distance: 3 slots × (48+12) = 180px.
+ * Timeline (6s): compare sweep → swap → green sweep → reset.
+ */
+
+/* Tile 0: compare at 10%, sort at 15% */
+@keyframes proSort0 {
+  0%,
+  10% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0);
+  }
+  10%,
+  15% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translateY(-8px) scale(1.08);
+  }
+  15%,
+  80% {
+    background-color: var(--color-sorted);
+    border-color: var(--color-sorted);
+    transform: translateY(0) scale(1);
+  }
+  80%,
+  100% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tile 1: compare at 10%, swap right 180px, sort at 35% */
+@keyframes proSort1 {
+  0%,
+  10% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translate(0, 0) scale(1);
+  }
+  10%,
+  15% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translate(0, -8px) scale(1.08);
+  }
+  15%,
+  35% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translate(180px, -8px) scale(1.08);
+  }
+  35%,
+  80% {
+    background-color: var(--color-sorted);
+    border-color: var(--color-sorted);
+    transform: translate(180px, 0) scale(1);
+  }
+  80%,
+  100% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Tile 2: compare at 40%, sort at 45% */
+@keyframes proSort2 {
+  0%,
+  40% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0) scale(1);
+  }
+  40%,
+  45% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translateY(-8px) scale(1.08);
+  }
+  45%,
+  80% {
+    background-color: var(--color-sorted);
+    border-color: var(--color-sorted);
+    transform: translateY(0) scale(1);
+  }
+  80%,
+  100% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tile 3: compare at 50%, sort at 55% */
+@keyframes proSort3 {
+  0%,
+  50% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0) scale(1);
+  }
+  50%,
+  55% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translateY(-8px) scale(1.08);
+  }
+  55%,
+  80% {
+    background-color: var(--color-sorted);
+    border-color: var(--color-sorted);
+    transform: translateY(0) scale(1);
+  }
+  80%,
+  100% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tile 4: compare at 10%, swap left 180px, sort at 35% */
+@keyframes proSort4 {
+  0%,
+  10% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translate(0, 0) scale(1);
+  }
+  10%,
+  15% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translate(0, -8px) scale(1.08);
+  }
+  15%,
+  35% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translate(-180px, -8px) scale(1.08);
+  }
+  35%,
+  80% {
+    background-color: var(--color-sorted);
+    border-color: var(--color-sorted);
+    transform: translate(-180px, 0) scale(1);
+  }
+  80%,
+  100% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Tile 5: compare at 60%, sort at 65% */
+@keyframes proSort5 {
+  0%,
+  60% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0) scale(1);
+  }
+  60%,
+  65% {
+    background-color: var(--color-comparing);
+    border-color: var(--color-comparing);
+    transform: translateY(-8px) scale(1.08);
+  }
+  65%,
+  80% {
+    background-color: var(--color-sorted);
+    border-color: var(--color-sorted);
+    transform: translateY(0) scale(1);
+  }
+  80%,
+  100% {
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pro-sorting-tile {
+  will-change: transform, background-color, border-color;
+}
+
+.pro-sorting-tile-1 {
+  animation: proSort0 6s ease-in-out infinite;
+}
+.pro-sorting-tile-2 {
+  animation: proSort1 6s ease-in-out infinite;
+}
+.pro-sorting-tile-3 {
+  animation: proSort2 6s ease-in-out infinite;
+}
+.pro-sorting-tile-4 {
+  animation: proSort3 6s ease-in-out infinite;
+}
+.pro-sorting-tile-5 {
+  animation: proSort4 6s ease-in-out infinite;
+}
+.pro-sorting-tile-6 {
+  animation: proSort5 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pro-sorting-tile {
+    animation: none;
+    background-color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    transform: none;
+    will-change: auto;
+  }
 }
