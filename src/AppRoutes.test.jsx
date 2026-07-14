@@ -52,9 +52,7 @@ vi.mock('@/pages/ProfileSettingsPage', () => ({
 }));
 
 vi.mock('@/components/RequireAuth', () => ({
-  default: ({ children }) => (
-    <div data-testid="require-auth">{children}</div>
-  ),
+  default: ({ children }) => <div data-testid="require-auth">{children}</div>,
 }));
 
 import AppRoutes from './AppRoutes';
