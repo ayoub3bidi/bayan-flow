@@ -129,6 +129,34 @@ describe('UserMenu', () => {
       expect(signInWithGoogle).toHaveBeenCalled();
     });
     expect(navigateMock).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText(/sign-in is temporarily unavailable/i)
+    ).toBeInTheDocument();
+  });
+
+  it('shows unavailable message for Auth hook payload failures', async () => {
+    const signInWithGoogle = vi.fn().mockRejectedValue({
+      message: 'Invalid payload sent to hook',
+      code: 'unexpected_failure',
+    });
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: false,
+      isAuthenticated: false,
+      profile: null,
+      signInWithGoogle,
+      signOut: vi.fn(),
+    });
+
+    render(<UserMenu variant="landing" />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /sign in with google/i })
+    );
+
+    expect(
+      await screen.findByText(/sign-in is temporarily unavailable/i)
+    ).toBeInTheDocument();
+    expect(navigateMock).not.toHaveBeenCalled();
   });
 
   it('handles sign-out error gracefully', async () => {

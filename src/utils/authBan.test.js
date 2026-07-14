@@ -20,6 +20,10 @@ describe('authBan', () => {
         message: 'Sign-in is temporarily unavailable. Please try again later.',
       })
     ).toBe(true);
+    expect(
+      isSignInBlockedError({ message: 'Invalid payload sent to hook' })
+    ).toBe(true);
+    expect(isSignInBlockedError({ code: 'unexpected_failure' })).toBe(true);
     expect(isSignInBlockedError({ message: 'Network error' })).toBe(false);
   });
 });

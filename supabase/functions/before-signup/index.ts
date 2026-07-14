@@ -16,6 +16,16 @@ const GENERIC_REJECT = {
   },
 };
 
+/**
+ * GoTrue only parses hook response bodies on HTTP 200/202.
+ * Returning HTTP 400 is remapped to "Invalid payload sent to hook".
+ * Reject by sending 200 with an `error` object (http_code inside the body).
+ */
+function reject(reason: string, extra: Record<string, unknown> = {}) {
+  console.warn('before-signup: reject', { reason, ...extra });
+  return jsonResponse(GENERIC_REJECT, 200);
+}
+
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -32,7 +42,7 @@ function getServiceClient() {
 
 export async function handleRequest(req) {
   if (req.method !== 'POST') {
-    return jsonResponse(GENERIC_REJECT, 400);
+    return reject('method_not_allowed', { method: req.method });
   }
 
   try {
@@ -49,8 +59,7 @@ export async function handleRequest(req) {
     const ip = metadata.ip_address ?? null;
 
     if (!email) {
-      console.warn('before-signup: missing email');
-      return jsonResponse(GENERIC_REJECT, 400);
+      return reject('missing_email');
     }
 
     if (!isValidIp(ip)) {
@@ -79,8 +88,7 @@ export async function handleRequest(req) {
         .eq('ip', ip);
 
       if (isIpBanned(bannedRows ?? [], ip)) {
-        console.warn('before-signup: banned ip', { ip });
-        return jsonResponse(GENERIC_REJECT, 400);
+        return reject('banned_ip', { ip });
       }
 
       const { data: recentEvents } = await supabase
@@ -100,8 +108,7 @@ export async function handleRequest(req) {
       );
 
       if (shouldRejectSignupRateLimit(recentCount)) {
-        console.warn('before-signup: rate limited', { ip, recentCount });
-        return jsonResponse(GENERIC_REJECT, 400);
+        return reject('rate_limited', { ip, recentCount });
       }
     }
 
@@ -115,13 +122,18 @@ export async function handleRequest(req) {
 
     if (pendingError) {
       console.error('before-signup: signup_pending insert failed', pendingError);
-      return jsonResponse(GENERIC_REJECT, 400);
+      return reject('pending_insert', {
+        code: pendingError.code,
+        message: pendingError.message,
+      });
     }
 
     return jsonResponse({});
   } catch (error) {
     console.error('before-signup: verification or handler error', error);
-    return jsonResponse(GENERIC_REJECT, 400);
+    return reject('verify_or_handler', {
+      message: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 

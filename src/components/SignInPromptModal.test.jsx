@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
+import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import SignInPromptModal from './SignInPromptModal';
 
 const signInWithGoogle = vi.fn();
@@ -69,12 +69,31 @@ describe('SignInPromptModal', () => {
   });
 
   it('calls signInWithGoogle when the sign-in button is clicked', () => {
+    signInWithGoogle.mockResolvedValue(undefined);
     renderWithI18n(
       <SignInPromptModal feature="code" isOpen onClose={vi.fn()} />
     );
 
     fireEvent.click(screen.getByText('Sign in with Google'));
     expect(signInWithGoogle).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows unavailable message when sign-in fails', async () => {
+    signInWithGoogle.mockRejectedValue({
+      message: 'Invalid payload sent to hook',
+      code: 'unexpected_failure',
+    });
+    renderWithI18n(
+      <SignInPromptModal feature="code" isOpen onClose={vi.fn()} />
+    );
+
+    fireEvent.click(screen.getByText('Sign in with Google'));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/sign-in is temporarily unavailable/i)
+      ).toBeInTheDocument();
+    });
   });
 
   it('calls onClose when the dismiss button is clicked', () => {

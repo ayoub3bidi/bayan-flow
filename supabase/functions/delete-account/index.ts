@@ -54,18 +54,42 @@ export async function handleRequest(req) {
       });
     }
 
-    await supabaseAdmin
+    const { error: clearIpError } = await supabaseAdmin
       .from('profiles')
       .update({ signup_ip: null })
       .eq('id', user.id);
 
-    await supabaseAdmin
+    if (clearIpError) {
+      console.error('delete-account: clear signup_ip failed', clearIpError);
+    }
+
+    const { error: eventsError } = await supabaseAdmin
       .from('signup_events')
       .delete()
       .eq('user_id', user.id);
 
+    if (eventsError) {
+      console.error('delete-account: clear signup_events failed', eventsError);
+    }
+
+    if (user.email) {
+      const { error: pendingError } = await supabaseAdmin
+        .from('signup_pending')
+        .delete()
+        .eq('email', user.email);
+
+      if (pendingError) {
+        console.error(
+          'delete-account: clear signup_pending failed',
+          pendingError
+        );
+      }
+    }
+
+    // Explicit hard delete (false) so Google email can be reused immediately.
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
-      user.id
+      user.id,
+      false
     );
 
     if (deleteError) {

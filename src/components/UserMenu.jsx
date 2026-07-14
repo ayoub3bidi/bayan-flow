@@ -11,7 +11,6 @@ import { SiGoogle } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { isSignInBlockedError } from '@/utils/authBan';
 import UserAvatar from './UserAvatar';
 import Tooltip from './ui/Tooltip';
 
@@ -71,9 +70,8 @@ function UserMenu({ variant = 'landing' }) {
       }
     } catch (error) {
       console.error('Google sign-in failed:', error);
-      if (isSignInBlockedError(error)) {
-        setSignInError(true);
-      }
+      // Show feedback for any failure — silent catch hides Auth hook / network errors.
+      setSignInError(true);
     } finally {
       setIsSigningIn(false);
     }

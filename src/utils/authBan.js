@@ -42,9 +42,14 @@ export function isSignInBlockedError(error) {
       ? error.message
       : '';
 
+  const code =
+    'code' in error && typeof error.code === 'string' ? error.code : '';
+
   return (
     message.includes('Sign-in is temporarily unavailable') ||
     message.includes('signup is disabled') ||
-    message.includes('User not allowed')
+    message.includes('User not allowed') ||
+    message.includes('Invalid payload sent to hook') ||
+    code === 'unexpected_failure'
   );
 }

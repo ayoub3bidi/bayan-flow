@@ -42,22 +42,22 @@ function buildEmailHtml(
   const perkLine =
     'As a waitlist member, you will be eligible for 50% off your first year of Pro plan (annual plan) when we launch.';
 
-  const subject = 'You are on the Pro plan Waitlist!';
+  const subject = 'You are on the Pro Plan Waitlist!';
 
   const html = `<!DOCTYPE html>
 <html lang="en">
 <body style="font-family: Inter, system-ui, sans-serif; line-height: 1.6; color: #364153; max-width: 560px; margin: 0 auto; padding: 24px;">
   <h1 style="color: #2b7fff; font-size: 1.5rem;">Thank you for joining the Pro plan Waitlist!</h1>
-  <p>Thanks for joining the Pro plan waitlist.</p>
+  <p>Thanks for joining the Pro Plan waitlist.</p>
   <p>${perkLine}</p>
-  <p><strong>What Pro will unlock:</strong></p>
+  <p><strong>What the Pro Plan will unlock:</strong></p>
   <ul>
     <li>Custom algorithm inputs</li>
     <li>Side-by-side comparison mode</li>
     <li>Unlimited video export</li>
     <li>Presentation mode for teaching</li>
   </ul>
-  <p>We will email you at this address when Pro launches. No spam, just one launch note when it is ready.</p>
+  <p>We will email you at this address when the Pro Plan launches. No spam, just one launch note when it is ready.</p>
   <p style="color: #6b7280; font-size: 0.875rem;">Bayan Flow: Clarity in Algorithms · <a href="https://bayanflow.com">bayanflow.com</a></p>
 </body>
 </html>`;

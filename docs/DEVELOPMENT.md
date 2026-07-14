@@ -1069,7 +1069,7 @@ The repo includes edge functions under `supabase/functions/`:
    ```
 
 6. Wire dashboard integrations (one-time):
-   - **Auth → Hooks → Before user created** → `https://qketsapzqpzmccljfjcm.supabase.co/functions/v1/before-signup` with the same `BEFORE_USER_CREATED_HOOK_SECRET` (`v1,whsec_<base64>` format).
+   - **Auth → Hooks → Before user created** → `https://qketsapzqpzmccljfjcm.supabase.co/functions/v1/before-signup` with the same `BEFORE_USER_CREATED_HOOK_SECRET` (`v1,whsec_<base64>` format). The edge function strips the leading `v1,` before Standard Webhooks verification.
    - **Post-signup:** migration `20260710130000_post_signup_webhook_trigger.sql` installs a `pg_net` trigger on `profiles` INSERT. After first deploy, store the shared secret in Vault (must match `POST_SIGNUP_WEBHOOK_SECRET`):
 
      ```sql
@@ -1087,6 +1087,19 @@ The repo includes edge functions under `supabase/functions/`:
 1. Deploy `before-signup` and wire the auth hook.
 2. Perform one first-time Google sign-in on dev (or use Dashboard hook tester).
 3. Confirm logs show non-null `metadata.ip_address` for production-like sign-ins. Localhost may be null (allowed; IP rules skipped).
+
+**Before User Created reject contract (critical):** GoTrue only reads hook response bodies when the HTTP status is **200 or 202**. Returning HTTP **400** is treated as a failed hook invocation and surfaces to the client as `unexpected_failure` / `Invalid payload sent to hook` (no custom message). To reject signup, return **HTTP 200** with:
+
+```json
+{
+  "error": {
+    "message": "Sign-in is temporarily unavailable. Please try again later.",
+    "http_code": 400
+  }
+}
+```
+
+Allow signup with `{}` and HTTP 200. Check Edge Function logs for `before-signup: reject` + `reason` when diagnosing blocked signups.
 
 ### Security admin runbook
 
@@ -1136,8 +1149,9 @@ values ('203.0.113.50', 'bootcamp wifi', 'admin');
 Manual smoke tests:
 
 - Sign in → Profile Settings → Danger zone → delete account (CORS allowlist includes dev + prod).
+- After delete, Google sign-in with the **same** email must create a new account (hard delete + hook must allow).
 - Banned account sees suspension screen; sign-out still works.
-- Signup from banned IP shows generic “temporarily unavailable” message.
+- Signup from banned IP shows generic “temporarily unavailable” message (not “Invalid payload sent to hook”).
 
 ## Conclusion
 
