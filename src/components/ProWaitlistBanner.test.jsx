@@ -4,11 +4,14 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
 import ProWaitlistBanner from './ProWaitlistBanner';
-import { WAITLIST_BANNER_DISMISSED_KEY } from '@/constants/waitlist';
+import {
+  WAITLIST_BANNER_DISMISSED_KEY,
+  WAITLIST_EMAIL_STORAGE_KEY,
+} from '@/constants/waitlist';
 
 function renderBanner(source = 'landing', initialPath = '/') {
   return renderWithI18n(
@@ -21,6 +24,7 @@ function renderBanner(source = 'landing', initialPath = '/') {
 describe('ProWaitlistBanner', () => {
   beforeEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('renders banner with link to /pro and landing source', () => {
@@ -64,5 +68,22 @@ describe('ProWaitlistBanner', () => {
     expect(
       screen.queryByRole('link', { name: /join waitlist/i })
     ).not.toBeInTheDocument();
+  });
+
+  it('hides when user is already enrolled (email in localStorage)', () => {
+    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
+    renderBanner('landing');
+    expect(
+      screen.queryByRole('link', { name: /join waitlist/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it('dispatches banner-dismissed event when hidden due to enrollment', () => {
+    const spy = vi.fn();
+    window.addEventListener('bayan-flow:banner-dismissed', spy);
+    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
+    renderBanner('landing');
+    expect(spy).toHaveBeenCalledTimes(1);
+    window.removeEventListener('bayan-flow:banner-dismissed', spy);
   });
 });

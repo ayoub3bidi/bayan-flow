@@ -132,6 +132,7 @@ export async function joinWaitlist(
 
   if (error) {
     if (error.code === '23505') {
+      persistWaitlistEmail(normalized);
       return { status: 'already_joined' };
     }
     console.warn('waitlist insert failed:', error);

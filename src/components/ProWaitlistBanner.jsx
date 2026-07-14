@@ -12,6 +12,7 @@ import {
   WAITLIST_BANNER_DISMISSED_KEY,
   WAITLIST_SOURCES,
 } from '@/constants/waitlist';
+import { readStoredWaitlistEmail } from '@/services/waitlistService';
 import { isRTL } from '@/utils/rtlManager';
 
 /**
@@ -24,9 +25,13 @@ function ProWaitlistBannerContent({ source, pathname }) {
 
   useEffect(() => {
     try {
-      setDismissed(
-        sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY) === '1'
-      );
+      const isDismissed =
+        sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY) === '1';
+      const isEnrolled = !!readStoredWaitlistEmail();
+      setDismissed(isDismissed || isEnrolled);
+      if (isEnrolled && !isDismissed) {
+        window.dispatchEvent(new CustomEvent('bayan-flow:banner-dismissed'));
+      }
     } catch {
       setDismissed(false);
     }
