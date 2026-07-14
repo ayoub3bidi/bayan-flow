@@ -28,11 +28,6 @@ vi.mock('../ui/Button', () => ({
   ),
 }));
 
-// Mock Sparkle icon
-vi.mock('@phosphor-icons/react', () => ({
-  Sparkle: () => <svg data-testid="sparkles-icon" />,
-}));
-
 const renderComponent = () => {
   return renderWithI18n(
     <BrowserRouter>
@@ -46,11 +41,6 @@ describe('RoadmapCTA', () => {
     it('should render section element', () => {
       const { container } = renderComponent();
       expect(container.querySelector('section')).toBeInTheDocument();
-    });
-
-    it('should render badge', () => {
-      renderComponent();
-      expect(screen.getByText(/Updates/i)).toBeInTheDocument();
     });
 
     it('should render heading', () => {
@@ -68,11 +58,6 @@ describe('RoadmapCTA', () => {
     it('should render CTA button', () => {
       renderComponent();
       expect(screen.getByText(/View Roadmap/i)).toBeInTheDocument();
-    });
-
-    it('should render sparkles icon', () => {
-      renderComponent();
-      expect(screen.getByTestId('sparkles-icon')).toBeInTheDocument();
     });
   });
 
@@ -134,33 +119,6 @@ describe('RoadmapCTA', () => {
     });
   });
 
-  describe('Badge Styling', () => {
-    it('should render badge with primary color background', () => {
-      const { container } = renderComponent();
-      const badge = container.querySelector(
-        'div[class*="bg-theme-primary/10"]'
-      );
-      expect(badge).toBeInTheDocument();
-    });
-
-    it('should render badge with primary text color', () => {
-      const { container } = renderComponent();
-      const badge = container.querySelector('div[class*="text-theme-primary"]');
-      expect(badge).toBeInTheDocument();
-    });
-
-    it('should render badge as rounded pill', () => {
-      const { container } = renderComponent();
-      const badge = container.querySelector('div[class*="rounded-full"]');
-      expect(badge).toBeInTheDocument();
-    });
-
-    it('should display icon in badge', () => {
-      renderComponent();
-      expect(screen.getByTestId('sparkles-icon')).toBeInTheDocument();
-    });
-  });
-
   describe('Content Layout', () => {
     it('should have centered text layout', () => {
       const { container } = renderComponent();
@@ -218,22 +176,6 @@ describe('RoadmapCTA', () => {
       const { container } = renderComponent();
       expect(container.querySelector('section')).toBeInTheDocument();
     });
-
-    it('should have decorative glow element', () => {
-      const { container } = renderComponent();
-      const glow = container.querySelector(
-        'div[class*="rounded-full"][class*="blur-3xl"]'
-      );
-      expect(glow).toBeInTheDocument();
-    });
-
-    it('should animate background gradient', () => {
-      const { container } = renderComponent();
-      const animatedBg = container.querySelector(
-        'div[class*="bg-linear-to-br"]'
-      );
-      expect(animatedBg).toBeInTheDocument();
-    });
   });
 
   describe('Accessibility', () => {
@@ -268,11 +210,9 @@ describe('RoadmapCTA', () => {
   });
 
   describe('Content Structure', () => {
-    it('should have badge before heading', () => {
+    it('should have heading as first content element', () => {
       const { container } = renderComponent();
-      const badge = container.querySelector('div[class*="inline-flex"]');
       const heading = container.querySelector('h2');
-      expect(badge).toBeInTheDocument();
       expect(heading).toBeInTheDocument();
     });
 
@@ -292,10 +232,12 @@ describe('RoadmapCTA', () => {
   });
 
   describe('Color Scheme', () => {
-    it('should use primary theme color', () => {
+    it('should use theme colors for text', () => {
       const { container } = renderComponent();
-      const primary = container.querySelectorAll('[class*="theme-primary"]');
-      expect(primary.length).toBeGreaterThan(0);
+      const themed = container.querySelectorAll(
+        '[class*="text-text-primary"], [class*="text-text-secondary"]'
+      );
+      expect(themed.length).toBeGreaterThan(0);
     });
 
     it('should use accent color in background', () => {

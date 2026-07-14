@@ -24,8 +24,6 @@ function LegalDocument({ title, lastUpdated, sections }) {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden flex flex-col">
-      <div className="fixed inset-0 bg-linear-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
-
       <Header hideLanguageSwitcher />
 
       <main className="relative z-10 flex-1 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 w-full">

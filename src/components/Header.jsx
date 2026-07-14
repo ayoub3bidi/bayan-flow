@@ -3,8 +3,6 @@
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
-import { useState, useEffect } from 'react';
-
 import { GitBranch } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -13,7 +11,6 @@ import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import GitHubRepoBadge from './GitHubRepoBadge';
 import UserMenu from './UserMenu';
-import { WAITLIST_BANNER_DISMISSED_KEY } from '../constants/waitlist';
 
 function Header({ hideLanguageSwitcher = false }) {
   const { t } = useTranslation();
@@ -21,20 +18,6 @@ function Header({ hideLanguageSwitcher = false }) {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
 
-  const [bannerDismissed, setBannerDismissed] = useState(() => {
-    try {
-      return sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY) === '1';
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    const handleDismiss = () => setBannerDismissed(true);
-    window.addEventListener('bayan-flow:banner-dismissed', handleDismiss);
-    return () =>
-      window.removeEventListener('bayan-flow:banner-dismissed', handleDismiss);
-  }, []);
   const branchName = (import.meta.env.VITE_GIT_BRANCH ?? '').trim();
   const isDevBranch =
     !!branchName && !['main', 'master', 'production'].includes(branchName);
@@ -46,14 +29,7 @@ function Header({ hideLanguageSwitcher = false }) {
   };
 
   return (
-    <header
-      className={`w-full ${
-        bannerDismissed
-          ? 'sm:fixed sm:top-0 sm:left-0 sm:right-0 sm:z-40'
-          : 'relative z-40'
-      }`}
-      role="banner"
-    >
+    <header className="w-full relative z-40" role="banner">
       {/* Glass morphism background */}
       <div className="absolute inset-0 bg-(--color-glass-bg) backdrop-blur-lg border-b border-(--color-glass-border) shadow-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -151,7 +127,11 @@ function Header({ hideLanguageSwitcher = false }) {
             <GitHubRepoBadge />
             {!hideLanguageSwitcher && <LanguageSwitcher />}
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
-            <UserMenu variant="compact" />
+            <UserMenu
+              variant={
+                location.pathname.startsWith('/app') ? 'compact' : 'landing'
+              }
+            />
           </div>
         </nav>
       </div>

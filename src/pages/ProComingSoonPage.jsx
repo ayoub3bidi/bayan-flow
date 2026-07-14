@@ -124,8 +124,6 @@ function ProComingSoonPage() {
     <div className="min-h-screen bg-bg flex flex-col overflow-x-hidden">
       <DocumentTitle titleKey="pro.pageTitle" />
 
-      <div className="fixed inset-0 bg-linear-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
-
       <Header />
 
       <Section className="relative z-10 flex-1 pt-28 pb-20 md:pt-36 md:pb-28 lg:pb-32">

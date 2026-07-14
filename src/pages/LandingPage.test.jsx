@@ -94,14 +94,6 @@ describe('LandingPage', () => {
       const header = container.querySelector('header');
       expect(header).toBeInTheDocument();
     });
-
-    it('should have gradient background', () => {
-      const { container } = renderComponent();
-      const bgGradient = container.querySelector(
-        '.fixed.inset-0.bg-linear-to-b'
-      );
-      expect(bgGradient).toBeInTheDocument();
-    });
   });
 
   describe('Component Order', () => {
