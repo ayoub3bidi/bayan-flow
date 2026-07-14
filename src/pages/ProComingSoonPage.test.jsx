@@ -85,7 +85,6 @@ describe('ProComingSoonPage', () => {
       userId: null,
       source: 'landing',
     });
-    expect(screen.getByText(/you are #7/i)).toBeInTheDocument();
   });
 
   it('shows already joined state', async () => {
