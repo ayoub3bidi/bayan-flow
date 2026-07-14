@@ -53,7 +53,6 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-center gap-1.5 sm:gap-2 h-8 sm:h-9 px-2.5 sm:px-3 py-0 bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer touch-manipulation"
-
         aria-label={t('settings.language')}
         data-language-switcher
       >
