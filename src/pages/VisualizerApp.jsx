@@ -636,7 +636,6 @@ function App() {
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-bg flex flex-col">
-      <ProWaitlistBanner source="app" />
       {/* Skip Navigation Link */}
       <a
         href="#main-content"
@@ -644,6 +643,7 @@ function App() {
       >
         Skip to main content
       </a>
+      <ProWaitlistBanner source="app" />
 
       <AnimatePresence mode="wait">
         {isFullScreen ? (

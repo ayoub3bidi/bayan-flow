@@ -54,6 +54,22 @@ export async function handleRequest(req) {
       });
     }
 
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
+      user.id,
+      false
+    );
+
+    if (deleteError) {
+      console.error('delete-account: deleteUser failed', deleteError);
+      return new Response(
+        JSON.stringify({ error: 'Account deletion failed' }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
+    }
+
     const { error: clearIpError } = await supabaseAdmin
       .from('profiles')
       .update({ signup_ip: null })
@@ -84,23 +100,6 @@ export async function handleRequest(req) {
           pendingError
         );
       }
-    }
-
-    // Explicit hard delete (false) so Google email can be reused immediately.
-    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
-      user.id,
-      false
-    );
-
-    if (deleteError) {
-      console.error('delete-account: deleteUser failed', deleteError);
-      return new Response(
-        JSON.stringify({ error: 'Account deletion failed' }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        }
-      );
     }
 
     return new Response(JSON.stringify({ success: true }), {

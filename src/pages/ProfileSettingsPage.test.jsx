@@ -191,6 +191,33 @@ describe('ProfileSettingsPage', () => {
     });
   });
 
+  it('Escape key dismisses delete modal', async () => {
+    getProfileMock.mockResolvedValue({
+      display_name: 'Ada',
+      avatar_url: null,
+      avatar_preference: 'google',
+      plan: 'free',
+      email: 'ada@example.com',
+    });
+
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/display name/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /delete account/i }));
+
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+  });
+
   it('deletes account after typing DELETE confirmation via modal', async () => {
     getProfileMock.mockResolvedValue({
       display_name: 'Ada',

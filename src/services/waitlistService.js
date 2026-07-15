@@ -45,7 +45,7 @@ export function normalizeWaitlistEmail(email) {
  */
 export function persistWaitlistEmail(email) {
   try {
-    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, email);
+    sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, email);
   } catch {
     // ignore quota / private mode
   }
@@ -56,7 +56,7 @@ export function persistWaitlistEmail(email) {
  */
 export function readStoredWaitlistEmail() {
   try {
-    const value = localStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY);
+    const value = sessionStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY);
     return value ? normalizeWaitlistEmail(value) : null;
   } catch {
     return null;

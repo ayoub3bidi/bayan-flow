@@ -19,7 +19,7 @@ import { isRTL } from '@/utils/rtlManager';
  * @param {'landing' | 'app'} source
  * @param {string} pathname
  */
-function ProWaitlistBannerContent({ source, pathname }) {
+function ProWaitlistBannerContent({ source, pathname, inRouter }) {
   const { t, i18n } = useTranslation();
   const [dismissed, setDismissed] = useState(true);
 
@@ -46,6 +46,8 @@ function ProWaitlistBannerContent({ source, pathname }) {
       ? WAITLIST_SOURCES.APP
       : WAITLIST_SOURCES.LANDING;
   const CtaIcon = isRTL(i18n.language) ? ArrowLeft : ArrowRight;
+  const LinkComponent = inRouter ? Link : 'a';
+  const hrefProp = inRouter ? 'to' : 'href';
 
   const handleDismiss = () => {
     try {
@@ -68,13 +70,13 @@ function ProWaitlistBannerContent({ source, pathname }) {
           <p className="min-w-0 text-sm font-medium leading-snug text-(--color-pro-banner-text) sm:text-base">
             {t('pro.banner.message')}
           </p>
-          <Link
-            to={`/pro?source=${waitlistSource}`}
+          <LinkComponent
+            {...{ [hrefProp]: `/pro?source=${waitlistSource}` }}
             className="inline-flex min-h-touch shrink-0 items-center justify-center gap-1.5 rounded-lg bg-(--color-pro-banner-cta-bg) px-3.5 text-sm font-semibold text-(--color-pro-banner-cta-text) shadow-sm transition-colors hover:bg-(--color-pro-banner-cta-hover) hover:text-(--color-pro-banner-cta-hover-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
             {t('pro.banner.cta')}
             <CtaIcon size={15} weight="bold" aria-hidden />
-          </Link>
+          </LinkComponent>
         </div>
         <button
           type="button"
@@ -91,7 +93,9 @@ function ProWaitlistBannerContent({ source, pathname }) {
 
 function ProWaitlistBannerRouted({ source }) {
   const { pathname } = useLocation();
-  return <ProWaitlistBannerContent source={source} pathname={pathname} />;
+  return (
+    <ProWaitlistBannerContent source={source} pathname={pathname} inRouter />
+  );
 }
 
 /**
@@ -100,7 +104,9 @@ function ProWaitlistBannerRouted({ source }) {
 function ProWaitlistBanner({ source }) {
   const inRouter = useInRouterContext();
   if (!inRouter) {
-    return <ProWaitlistBannerContent source={source} pathname="" />;
+    return (
+      <ProWaitlistBannerContent source={source} pathname="" inRouter={false} />
+    );
   }
   return <ProWaitlistBannerRouted source={source} />;
 }

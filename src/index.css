@@ -575,7 +575,8 @@ body {
  */
 
 /* Tile 0: compare at 10%, sort at 15% */
-@keyframes proSort0 {
+/* stylelint-disable-next-line keyframe-block-no-duplicate-selectors -- intentional hold-then-jump frames */
+@keyframes pro-sort-0 {
   0%,
   10% {
     background-color: var(--color-primary);
@@ -603,7 +604,8 @@ body {
 }
 
 /* Tile 1: compare at 10%, swap right 180px, sort at 35% */
-@keyframes proSort1 {
+/* stylelint-disable-next-line keyframe-block-no-duplicate-selectors -- intentional hold-then-jump frames */
+@keyframes pro-sort-1 {
   0%,
   10% {
     background-color: var(--color-primary);
@@ -637,7 +639,8 @@ body {
 }
 
 /* Tile 2: compare at 40%, sort at 45% */
-@keyframes proSort2 {
+/* stylelint-disable-next-line keyframe-block-no-duplicate-selectors -- intentional hold-then-jump frames */
+@keyframes pro-sort-2 {
   0%,
   40% {
     background-color: var(--color-primary);
@@ -665,7 +668,8 @@ body {
 }
 
 /* Tile 3: compare at 50%, sort at 55% */
-@keyframes proSort3 {
+/* stylelint-disable-next-line keyframe-block-no-duplicate-selectors -- intentional hold-then-jump frames */
+@keyframes pro-sort-3 {
   0%,
   50% {
     background-color: var(--color-primary);
@@ -693,7 +697,8 @@ body {
 }
 
 /* Tile 4: compare at 10%, swap left 180px, sort at 35% */
-@keyframes proSort4 {
+/* stylelint-disable-next-line keyframe-block-no-duplicate-selectors -- intentional hold-then-jump frames */
+@keyframes pro-sort-4 {
   0%,
   10% {
     background-color: var(--color-primary);
@@ -727,7 +732,8 @@ body {
 }
 
 /* Tile 5: compare at 60%, sort at 65% */
-@keyframes proSort5 {
+/* stylelint-disable-next-line keyframe-block-no-duplicate-selectors -- intentional hold-then-jump frames */
+@keyframes pro-sort-5 {
   0%,
   60% {
     background-color: var(--color-primary);
@@ -759,22 +765,22 @@ body {
 }
 
 .pro-sorting-tile-1 {
-  animation: proSort0 6s ease-in-out infinite;
+  animation: pro-sort-0 6s ease-in-out infinite;
 }
 .pro-sorting-tile-2 {
-  animation: proSort1 6s ease-in-out infinite;
+  animation: pro-sort-1 6s ease-in-out infinite;
 }
 .pro-sorting-tile-3 {
-  animation: proSort2 6s ease-in-out infinite;
+  animation: pro-sort-2 6s ease-in-out infinite;
 }
 .pro-sorting-tile-4 {
-  animation: proSort3 6s ease-in-out infinite;
+  animation: pro-sort-3 6s ease-in-out infinite;
 }
 .pro-sorting-tile-5 {
-  animation: proSort4 6s ease-in-out infinite;
+  animation: pro-sort-4 6s ease-in-out infinite;
 }
 .pro-sorting-tile-6 {
-  animation: proSort5 6s ease-in-out infinite;
+  animation: pro-sort-5 6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

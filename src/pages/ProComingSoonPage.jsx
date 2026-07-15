@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Columns,
@@ -67,13 +67,16 @@ function ProComingSoonPage() {
   })();
 
   const [email, setEmail] = useState(defaultEmail);
+  const emailEditedRef = useRef(false);
   const [submitState, setSubmitState] = useState('idle');
   const [position, setPosition] = useState(null);
   const [errorKey, setErrorKey] = useState(null);
   const [waitlistCount, setWaitlistCount] = useState(0);
 
   useEffect(() => {
-    setEmail(defaultEmail);
+    if (!emailEditedRef.current) {
+      setEmail(defaultEmail);
+    }
   }, [defaultEmail]);
 
   useEffect(() => {
@@ -260,7 +263,10 @@ function ProComingSoonPage() {
                     autoComplete="email"
                     required
                     value={email}
-                    onChange={event => setEmail(event.target.value)}
+                    onChange={event => {
+                      emailEditedRef.current = true;
+                      setEmail(event.target.value);
+                    }}
                     placeholder={t('pro.form.emailPlaceholder')}
                     aria-describedby={
                       errorKey ? 'pro-waitlist-email-error' : undefined

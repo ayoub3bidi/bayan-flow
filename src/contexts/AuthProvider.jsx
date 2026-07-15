@@ -92,6 +92,7 @@ export function AuthProvider({ children }) {
       const checkId = ++accessCheckRef.current;
 
       if (!activeUser) {
+        setProfileRow(null);
         setAccessBlock(null);
         return;
       }

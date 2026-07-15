@@ -52,7 +52,7 @@ describe('waitlistService', () => {
   describe('persistWaitlistEmail / readStoredWaitlistEmail', () => {
     it('stores and reads normalized email', () => {
       persistWaitlistEmail('user@example.com');
-      expect(localStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY)).toBe(
+      expect(sessionStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY)).toBe(
         'user@example.com'
       );
       expect(readStoredWaitlistEmail()).toBe('user@example.com');

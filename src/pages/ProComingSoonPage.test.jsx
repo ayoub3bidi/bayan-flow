@@ -116,6 +116,26 @@ describe('ProComingSoonPage', () => {
     });
   });
 
+  it('does not clobber email after user starts typing', async () => {
+    const { useAuth } = await import('@/hooks/useAuth.js');
+    useAuth.mockReturnValue({
+      user: { id: 'u1', email: 'initial@example.com' },
+      profile: null,
+    });
+
+    renderPage('/pro');
+
+    const input = screen.getByLabelText(/email address/i);
+    expect(input).toHaveValue('initial@example.com');
+
+    fireEvent.change(input, { target: { value: 'typed@example.com' } });
+    expect(input).toHaveValue('typed@example.com');
+
+    await waitFor(() => {
+      expect(input).toHaveValue('typed@example.com');
+    });
+  });
+
   it('hides waitlist count when below threshold', async () => {
     vi.mocked(getWaitlistPublicCount).mockResolvedValue(30);
 

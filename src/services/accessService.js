@@ -28,6 +28,7 @@ export async function checkPlatformAccess() {
   try {
     const { data, error } = await supabase.functions.invoke('platform-access', {
       method: 'POST',
+      timeout: 10000,
     });
 
     if (error) {

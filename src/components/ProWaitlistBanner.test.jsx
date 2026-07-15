@@ -70,18 +70,27 @@ describe('ProWaitlistBanner', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('hides when user is already enrolled (email in localStorage)', () => {
-    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
+  it('hides when user is already enrolled (email in sessionStorage)', () => {
+    sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
     renderBanner('landing');
     expect(
       screen.queryByRole('link', { name: /join waitlist/i })
     ).not.toBeInTheDocument();
   });
 
+  it('renders anchor tag when outside Router context', () => {
+    const { container } = renderWithI18n(
+      <ProWaitlistBanner source="landing" />
+    );
+    const anchor = container.querySelector('a[href="/pro?source=landing"]');
+    expect(anchor).toBeInTheDocument();
+    expect(anchor.tagName).toBe('A');
+  });
+
   it('dispatches banner-dismissed event when hidden due to enrollment', () => {
     const spy = vi.fn();
     window.addEventListener('bayan-flow:banner-dismissed', spy);
-    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
+    sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
     renderBanner('landing');
     expect(spy).toHaveBeenCalledTimes(1);
     window.removeEventListener('bayan-flow:banner-dismissed', spy);

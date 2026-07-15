@@ -63,14 +63,10 @@ export async function handleRequest(req) {
     }
 
     if (!isValidIp(ip)) {
-      console.warn('before-signup: missing metadata.ip_address', { email });
-      const supabase = getServiceClient();
-      await supabase.from('signup_pending').upsert({
+      console.warn('before-signup: missing or invalid metadata.ip_address', {
         email,
-        ip: null,
-        created_at: new Date().toISOString(),
       });
-      return jsonResponse({});
+      return reject('missing_ip');
     }
 
     const supabase = getServiceClient();

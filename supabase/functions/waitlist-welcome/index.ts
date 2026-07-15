@@ -125,16 +125,27 @@ export async function handleRequest(req: Request): Promise<Response> {
     const supabase = getServiceClient();
     const { data: row, error: lookupError } = await supabase
       .from('waitlist')
-      .select('id')
+      .select('id, welcomed_at')
       .eq('email', email)
       .maybeSingle();
 
     if (lookupError || !row) {
-      return jsonResponse({ error: 'Email not on waitlist' }, 404, req);
+      return jsonResponse({ ok: true, sent: false }, 200, req);
+    }
+
+    if (row.welcomed_at) {
+      return jsonResponse({ ok: true, sent: false }, 200, req);
     }
 
     const { subject, html } = buildEmailHtml(position);
     const sent = await sendViaResend(email, subject, html);
+
+    if (sent) {
+      await supabase
+        .from('waitlist')
+        .update({ welcomed_at: new Date().toISOString() })
+        .eq('id', row.id);
+    }
 
     return jsonResponse({ ok: true, sent }, 200, req);
   } catch (error) {

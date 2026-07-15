@@ -1,3 +1,2 @@
--- Remove unused A/B pitch column; single discount pitch only.
-
-alter table public.waitlist drop column if exists pitch_variant;
+-- pitch_variant column retained for backward compatibility.
+-- Removal deferred until all deployed clients no longer reference it.

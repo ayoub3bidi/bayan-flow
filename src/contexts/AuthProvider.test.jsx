@@ -460,6 +460,57 @@ describe('AuthProvider', () => {
     unmount();
   });
 
+  it('clears profileRow on implicit sign-out via SIGNED_OUT event', async () => {
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: {
+        session: {
+          user: {
+            id: 'user-1',
+            email: 'user@example.com',
+            user_metadata: { full_name: 'Test User' },
+          },
+        },
+      },
+      error: null,
+    });
+
+    supabaseFromMock.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({
+        data: {
+          display_name: 'Test User',
+          avatar_url: null,
+          avatar_preference: 'google',
+          plan: 'free',
+          email: 'user@example.com',
+        },
+        error: null,
+      })),
+    });
+
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
+    });
+    expect(screen.getByTestId('display-name')).toHaveTextContent('Test User');
+
+    act(() => {
+      authStateChangeCallbackRef.current?.('SIGNED_OUT', null);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
+    });
+    expect(screen.getByTestId('display-name')).toHaveTextContent('');
+    expect(screen.getByTestId('access-block')).toHaveTextContent('');
+  });
+
   it('sets accessBlock when profile is banned', async () => {
     supabaseAuthMock.getSession.mockResolvedValueOnce({
       data: {

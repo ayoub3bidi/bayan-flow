@@ -102,7 +102,7 @@ comment on function public.is_active_profile() is
 create or replace function public.touch_last_active()
 returns void
 language sql
-security invoker
+security definer
 set search_path = public
 as $$
   update public.profiles
@@ -114,7 +114,7 @@ comment on function public.touch_last_active() is
   'Client-callable activity heartbeat for signed-in users.';
 
 revoke update on public.profiles from authenticated;
-grant update (display_name, avatar_preference, last_active_at) on public.profiles to authenticated;
+grant update (display_name, avatar_preference) on public.profiles to authenticated;
 grant execute on function public.touch_last_active() to authenticated;
 
 -- ---------------------------------------------------------------------------
