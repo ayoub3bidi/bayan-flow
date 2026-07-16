@@ -4,9 +4,10 @@
  * See LICENSE for details.
  */
 
-import { expect, afterEach, vi } from 'vitest';
+import { expect, afterEach, beforeEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
+import { resetSoundManagerMock, soundManagerMock } from './soundManagerMock.js';
 import '../i18n';
 
 // Mock constants globally to prevent import issues
@@ -126,7 +127,17 @@ const constantsMockValue = {
     SWAPPING: 'swapping',
     SORTED: 'sorted',
     PIVOT: 'pivot',
+    AUXILIARY: 'auxiliary',
   },
+  STATE_COLORS: {
+    default: '#e5e7eb',
+    comparing: '#fbbf24',
+    swapping: '#f97316',
+    sorted: '#10b981',
+    pivot: '#8b5cf6',
+    auxiliary: '#9ca3af',
+  },
+  SEARCH_TARGET_RING_COLOR: '#f97316',
   GRID_ELEMENT_STATES: {
     DEFAULT: 'default',
     START: 'start',
@@ -253,19 +264,6 @@ vi.mock('tone', () => ({
 }));
 
 // Mock soundManager globally - prevents file execution
-const soundManagerState = {
-  isEnabled: false,
-};
-const soundManagerMock = {
-  playEvents: vi.fn(),
-  enable: vi.fn(async () => {
-    soundManagerState.isEnabled = true;
-  }),
-  disable: vi.fn(() => {
-    soundManagerState.isEnabled = false;
-  }),
-  getIsEnabled: vi.fn(() => soundManagerState.isEnabled),
-};
 vi.mock('../utils/soundManager', () => ({
   soundManager: soundManagerMock,
 }));
@@ -289,9 +287,34 @@ const gridHelpersMock = {
 vi.mock('../utils/gridHelpers', () => gridHelpersMock);
 vi.mock('../utils/gridHelpers.js', () => gridHelpersMock);
 
+vi.mock('../lib/supabaseClient', () => import('./supabaseMock.js'));
+vi.mock('../lib/supabaseClient.js', () => import('./supabaseMock.js'));
+
 expect.extend(matchers);
+
+const originalLocalStorage = globalThis.localStorage;
+
+function restoreRealLocalStorage() {
+  if (globalThis.localStorage !== originalLocalStorage) {
+    globalThis.localStorage = originalLocalStorage;
+  }
+  try {
+    originalLocalStorage.clear();
+  } catch {
+    // Ignore storage failures in teardown.
+  }
+}
+
+beforeEach(() => {
+  restoreRealLocalStorage();
+});
 
 afterEach(() => {
   cleanup();
   vi.clearAllTimers();
+  resetSoundManagerMock();
+  if (typeof document !== 'undefined') {
+    document.body.style.cssText = '';
+  }
+  restoreRealLocalStorage();
 });

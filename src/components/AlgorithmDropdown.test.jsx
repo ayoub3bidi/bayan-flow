@@ -96,6 +96,8 @@ describe('AlgorithmDropdown', () => {
           {...defaultProps}
           isDropdownOpen={true}
           onAlgorithmSelect={onAlgorithmSelect}
+          user={{ id: 'user-1' }}
+          categoryType="sorting"
         />
       );
 
@@ -105,6 +107,29 @@ describe('AlgorithmDropdown', () => {
       fireEvent.click(quickSortButton);
 
       expect(onAlgorithmSelect).toHaveBeenCalledWith('quickSort');
+    });
+
+    it('calls onLockedAlgorithmClick for locked algorithms when anonymous', () => {
+      const onLockedAlgorithmClick = vi.fn();
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={null}
+          categoryType="sorting"
+          onLockedAlgorithmClick={onLockedAlgorithmClick}
+        />
+      );
+
+      const quickSortButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.textContent?.includes('Quick Sort'));
+      fireEvent.click(quickSortButton);
+
+      expect(onLockedAlgorithmClick).toHaveBeenCalledWith(
+        expect.objectContaining({ value: 'quickSort', label: 'Quick Sort' })
+      );
+      expect(onLockedAlgorithmClick).toHaveBeenCalledTimes(1);
     });
 
     it('should show a check icon for the selected algorithm when dropdown is open', () => {
@@ -121,6 +146,84 @@ describe('AlgorithmDropdown', () => {
         .find(btn => btn.textContent?.includes('Bubble Sort'));
       expect(bubbleSortButton).toBeTruthy();
       expect(bubbleSortButton.querySelector('svg')).toBeTruthy();
+    });
+
+    it('calls onFavoriteGatedClick when anonymous user clicks star', () => {
+      const onFavoriteGatedClick = vi.fn();
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={null}
+          isAuthenticated={false}
+          categoryType="sorting"
+          onFavoriteGatedClick={onFavoriteGatedClick}
+        />
+      );
+
+      const starButton = screen.getByRole('button', {
+        name: /add bubble sort to favorites/i,
+      });
+      fireEvent.click(starButton);
+
+      expect(onFavoriteGatedClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls onToggleFavorite when signed-in user clicks star', () => {
+      const onToggleFavorite = vi.fn();
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={{ id: 'user-1' }}
+          isAuthenticated={true}
+          categoryType="sorting"
+          onToggleFavorite={onToggleFavorite}
+        />
+      );
+
+      const starButton = screen.getByRole('button', {
+        name: /add bubble sort to favorites/i,
+      });
+      fireEvent.click(starButton);
+
+      expect(onToggleFavorite).toHaveBeenCalledWith('sorting', 'bubbleSort');
+    });
+
+    it('shows remove favorite label when algorithm is favorited', () => {
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={{ id: 'user-1' }}
+          isAuthenticated={true}
+          categoryType="sorting"
+          isFavorite={() => true}
+        />
+      );
+
+      const starButton = screen.getByRole('button', {
+        name: /remove bubble sort from favorites/i,
+      });
+      expect(starButton).toBeInTheDocument();
+      expect(starButton).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('does not render star button for locked algorithms', () => {
+      renderWithI18n(
+        <AlgorithmDropdown
+          {...defaultProps}
+          isDropdownOpen={true}
+          user={null}
+          categoryType="sorting"
+        />
+      );
+
+      expect(
+        screen.queryByRole('button', {
+          name: /add quick sort to favorites/i,
+        })
+      ).not.toBeInTheDocument();
     });
   });
 });

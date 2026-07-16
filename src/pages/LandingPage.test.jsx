@@ -5,6 +5,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { renderWithI18n, screen } from '../test/testUtils';
 import LandingPage from './LandingPage';
 
@@ -41,16 +42,16 @@ vi.mock('../components/Footer', () => ({
   default: () => <footer data-testid="footer">Footer</footer>,
 }));
 
-vi.mock('../components/ThemeToggle', () => ({
-  default: () => <button data-testid="theme-toggle">ThemeToggle</button>,
-}));
-
-vi.mock('../components/LanguageSwitcher', () => ({
-  default: () => <div data-testid="language-switcher">LanguageSwitcher</div>,
+vi.mock('../components/Header', () => ({
+  default: () => <header data-testid="header">Header</header>,
 }));
 
 const renderComponent = () => {
-  return renderWithI18n(<LandingPage />);
+  return renderWithI18n(
+    <MemoryRouter>
+      <LandingPage />
+    </MemoryRouter>
+  );
 };
 
 describe('LandingPage', () => {
@@ -64,6 +65,7 @@ describe('LandingPage', () => {
       expect(screen.getByTestId('features')).toBeInTheDocument();
       expect(screen.getByTestId('clarity-section')).toBeInTheDocument();
       expect(screen.getByTestId('roadmap-cta')).toBeInTheDocument();
+      expect(screen.getByTestId('header')).toBeInTheDocument();
       expect(screen.getByTestId('footer')).toBeInTheDocument();
     });
 
@@ -72,17 +74,9 @@ describe('LandingPage', () => {
       expect(screen.getByTestId('tech-pattern')).toBeInTheDocument();
     });
 
-    it('should render ThemeToggle', () => {
+    it('should render Header component', () => {
       renderComponent();
-      expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
-    });
-
-    it('should render LanguageSwitcher with correct props', () => {
-      renderComponent();
-      const languageSwitcher = screen.getByTestId('language-switcher');
-      expect(languageSwitcher).toBeInTheDocument();
-      // Arabic is now included, so no exclude attribute should be present
-      expect(languageSwitcher).not.toHaveAttribute('data-exclude');
+      expect(screen.getByTestId('header')).toBeInTheDocument();
     });
   });
 
@@ -95,18 +89,10 @@ describe('LandingPage', () => {
       expect(mainContainer).toHaveClass('overflow-x-hidden');
     });
 
-    it('should have fixed controls in top right', () => {
+    it('should have header below the banner', () => {
       const { container } = renderComponent();
-      const controlsContainer = container.querySelector('.fixed.top-4.right-4');
-      expect(controlsContainer).toBeInTheDocument();
-    });
-
-    it('should have gradient background', () => {
-      const { container } = renderComponent();
-      const bgGradient = container.querySelector(
-        '.fixed.inset-0.bg-linear-to-b'
-      );
-      expect(bgGradient).toBeInTheDocument();
+      const header = container.querySelector('header');
+      expect(header).toBeInTheDocument();
     });
   });
 
@@ -118,10 +104,10 @@ describe('LandingPage', () => {
         el.getAttribute('data-testid')
       );
 
-      // Check that Hero comes before other sections
+      // Check that Header comes before content sections
+      const headerIndex = testIds.indexOf('header');
       const heroIndex = testIds.indexOf('hero');
-      const learnIndex = testIds.indexOf('learn-your-way');
-      expect(heroIndex).toBeLessThan(learnIndex);
+      expect(headerIndex).toBeLessThan(heroIndex);
 
       // Check that Footer is last
       const footerIndex = testIds.indexOf('footer');

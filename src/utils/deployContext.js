@@ -11,7 +11,7 @@
 
 /**
  * True when this build targets the production site (main branch).
- * Used to show content that should not appear on dev/preview/deploy-preview builds.
+ * Used to show content that should not appear on dev or Workers preview builds.
  */
 export function isProductionMainBranch() {
   return (import.meta.env.VITE_GIT_BRANCH ?? '').trim() === 'main';

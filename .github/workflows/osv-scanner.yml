@@ -1,0 +1,45 @@
+name: OSV-Scanner
+
+on:
+  pull_request:
+    branches: [main, develop]
+  merge_group:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 6 * * 1' # Weekly Monday 06:00 UTC
+  workflow_dispatch: {}
+
+concurrency:
+  group: osv-scanner-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # PR/merge_group: incremental scan — only reports NEW vulnerabilities introduced by the branch
+  scan-pr:
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    # Track main — v2.3.8 (SHA 9a49870) lacks the export-results input,
+    # causing job outputs to exceed GitHub's 1MB limit for large repos.
+    # Pin to a specific SHA once a release ships with export-results support.
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@main"
+    with:
+      export-results: false
+
+  # push/schedule/dispatch: full scan — reports all known vulnerabilities
+  scan-scheduled:
+    if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@main"
+    with:
+      # Advisory on pushes — don't block on pre-existing vulns.
+      # Tighten to true once the backlog is triaged.
+      fail-on-vuln: false
+      export-results: false

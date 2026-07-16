@@ -13,7 +13,9 @@ const ROUTE_TITLE_KEYS = {
   '/privacy': 'legal.privacyTitle',
   '/terms': 'legal.termsTitle',
   '/roadmap': 'roadmap.hero.title',
-  '/app': 'header.title',
+  '/pro': 'pro.pageTitle',
+  '/app': 'app.pageTitle',
+  '/settings/profile': 'profile.pageTitle',
 };
 
 function getRouteDescriptions(pathname, t) {
@@ -35,6 +37,13 @@ function getRouteDescriptions(pathname, t) {
     return {
       meta: t('roadmap.hero.subtitle'),
       social: t('roadmap.hero.subtitle'),
+    };
+  }
+
+  if (pathname === '/pro') {
+    return {
+      meta: t('pro.metaDescription'),
+      social: t('pro.metaDescription'),
     };
   }
 

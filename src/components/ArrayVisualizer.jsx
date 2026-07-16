@@ -5,7 +5,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ArrayBar from './ArrayBar';
 import ComplexityPanel from './ComplexityPanel';
@@ -17,6 +17,11 @@ import {
   SEARCH_TARGET_RING_COLOR,
 } from '../constants';
 import useSwipe from '../hooks/useSwipe';
+import { useAuth } from '../hooks/useAuth';
+import {
+  canViewComplexityPanel,
+  incrementComplexityViewCount,
+} from '../services/entitlementService';
 
 /**
  * @param {number[]} array - The array to visualize
@@ -43,11 +48,15 @@ function ArrayVisualizer({
   targetValue = null,
   visualizerVariant = 'sorting',
   complexityDataset = 'sorting',
+  onGatedFeatureClick,
 }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const arrayLength = array.length;
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
+  const [isComplexityGated, setIsComplexityGated] = useState(false);
+  const hasCountedThisCompletion = useRef(false);
 
   // Show swipe tutorial on mobile when user scrolls to visualization area
   useEffect(() => {
@@ -89,8 +98,29 @@ function ArrayVisualizer({
       return () => clearTimeout(timer);
     } else {
       setShowComplexityPanel(false);
+      setIsComplexityGated(false);
+      hasCountedThisCompletion.current = false;
     }
   }, [isComplete]);
+
+  useEffect(() => {
+    if (user) {
+      setIsComplexityGated(false);
+    }
+  }, [user]);
+
+  // Increment complexity view count once per completion for anonymous users
+  useEffect(() => {
+    if (isComplete && !hasCountedThisCompletion.current && !user) {
+      if (canViewComplexityPanel(user)) {
+        incrementComplexityViewCount();
+      } else {
+        setIsComplexityGated(true);
+        onGatedFeatureClick?.('complexity_limit');
+      }
+      hasCountedThisCompletion.current = true;
+    }
+  }, [isComplete, user, onGatedFeatureClick]);
 
   const legendItems =
     visualizerVariant === 'searching'
@@ -142,10 +172,20 @@ function ArrayVisualizer({
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
       <AnimatePresence mode="wait">
         {showComplexityPanel ? (
-          <ComplexityPanel
-            algorithm={algorithm}
-            complexityDataset={complexityDataset}
-          />
+          <div className="relative w-full h-full">
+            <ComplexityPanel
+              algorithm={algorithm}
+              complexityDataset={complexityDataset}
+            />
+            {isComplexityGated && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 backdrop-blur-md bg-black/30 z-10"
+                aria-hidden="true"
+              />
+            )}
+          </div>
         ) : (
           <motion.div
             initial={{ opacity: 1 }}

@@ -173,6 +173,18 @@ describe('useVideoExporter hook', () => {
     expect(result.current.exportState).toBe('preview');
   });
 
+  it('reportExportError sets error state with the given message', () => {
+    const { result } = renderHook(() => useVideoExporter());
+
+    act(() => {
+      result.current.reportExportError('Something went wrong');
+    });
+
+    expect(result.current.exportState).toBe('error');
+    expect(result.current.exportErrorMessage).toBe('Something went wrong');
+    expect(result.current.exportProgress).toBe(0);
+  });
+
   it('cancelExport dismisses an in-flight export session', async () => {
     renderMediaOnWeb.mockImplementation(
       () =>

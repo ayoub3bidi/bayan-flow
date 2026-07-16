@@ -676,7 +676,7 @@ Pull requests and pushes to `develop`/`main` run `.github/workflows/ci.yml`:
 | Quality | `pnpm lint`, `pnpm format:check` |
 | Test | `pnpm test:coverage` |
 | Build | `pnpm build` |
-| Deploy | Netlify (`main` → production, `develop` → dev) |
+| Deploy | Cloudflare Workers (`main` → production, `develop` → staging); PR previews via `preview-cloudflare.yml` |
 
 Before opening a PR, run locally:
 
@@ -1026,6 +1026,132 @@ Do not add sounds for UI clicks, panel toggles, export buttons, or regeneration 
 - [ ] Algorithm step constants added for new algorithms
 - [ ] Python implementations and test cases included
 - [ ] Sound integration considered
+
+## Supabase Edge Functions
+
+The repo includes edge functions under `supabase/functions/`:
+
+| Function | JWT | Purpose |
+|----------|-----|---------|
+| `delete-account` | yes | Self-service account deletion |
+| `before-signup` | no | Auth hook: signup rate limits + IP checks |
+| `post-signup` | no | Database webhook: record signup IP + progressive IP ban |
+| `platform-access` | yes | Account ban gate for signed-in users |
+| `waitlist-welcome` | no | Pro waitlist confirmation email (Resend; fail-open) |
+
+### Deploy (CI or manual)
+
+1. Install the [Supabase CLI](https://supabase.com/docs/guides/cli).
+2. Apply migrations: `supabase db push` (includes `20260710120000_platform_security_foundation.sql`).
+3. Add GitHub secret `SUPABASE_ACCESS_TOKEN` (personal access token from Supabase Account → Tokens). Project ref is derived from existing `VITE_SUPABASE_URL` in CI.
+4. Set project secrets (once per environment):
+
+   ```bash
+   supabase secrets set BEFORE_USER_CREATED_HOOK_SECRET="<openssl rand -hex 32>"
+   supabase secrets set POST_SIGNUP_WEBHOOK_SECRET="<openssl rand -hex 32>"
+   # Pro waitlist welcome email (Resend)
+   supabase secrets set RESEND_API_KEY="re_..."
+   supabase secrets set FROM_EMAIL="Bayan Flow <contact@bayanflow.com>"
+   # optional alerts
+   supabase secrets set TELEGRAM_BOT_TOKEN="..."
+   supabase secrets set TELEGRAM_CHAT_ID="..."
+   ```
+
+5. Deploy functions:
+
+   ```bash
+   supabase link --project-ref qketsapzqpzmccljfjcm
+   supabase functions deploy before-signup --no-verify-jwt
+   supabase functions deploy post-signup --no-verify-jwt
+   supabase functions deploy platform-access
+   supabase functions deploy delete-account
+   supabase functions deploy waitlist-welcome --no-verify-jwt
+   ```
+
+6. Wire dashboard integrations (one-time):
+   - **Auth → Hooks → Before user created** → `https://qketsapzqpzmccljfjcm.supabase.co/functions/v1/before-signup` with the same `BEFORE_USER_CREATED_HOOK_SECRET` (`v1,whsec_<base64>` format). The edge function strips the leading `v1,` before Standard Webhooks verification.
+   - **Post-signup:** migration `20260710130000_post_signup_webhook_trigger.sql` installs a `pg_net` trigger on `profiles` INSERT. After first deploy, store the shared secret in Vault (must match `POST_SIGNUP_WEBHOOK_SECRET`):
+
+     ```sql
+     select vault.create_secret(
+       '<POST_SIGNUP_WEBHOOK_SECRET>',
+       'post_signup_webhook_secret',
+       'Shared secret for post-signup edge function webhook'
+     );
+     ```
+
+7. Enable **Integrations → Cron** if pg_cron jobs from the security migration do not appear.
+
+### IP spike (before production cutover)
+
+1. Deploy `before-signup` and wire the auth hook.
+2. Perform one first-time Google sign-in on dev (or use Dashboard hook tester).
+3. Confirm logs show non-null `metadata.ip_address` for production-like sign-ins. Localhost may be null (allowed; IP rules skipped).
+
+**Before User Created reject contract (critical):** GoTrue only reads hook response bodies when the HTTP status is **200 or 202**. Returning HTTP **400** is treated as a failed hook invocation and surfaces to the client as `unexpected_failure` / `Invalid payload sent to hook` (no custom message). To reject signup, return **HTTP 200** with:
+
+```json
+{
+  "error": {
+    "message": "Sign-in is temporarily unavailable. Please try again later.",
+    "http_code": 400
+  }
+}
+```
+
+Allow signup with `{}` and HTTP 200. Check Edge Function logs for `before-signup: reject` + `reason` when diagnosing blocked signups.
+
+### Security admin runbook
+
+**Manual account ban (two-step):**
+
+```sql
+-- 1) Mark profile banned (blocks RLS writes + client gate)
+update public.profiles
+set is_banned = true, banned_at = now()
+where email = 'badactor@example.com';
+
+-- 2) Ban in Supabase Auth (Dashboard → Authentication → Users → Ban user)
+--    Or via Admin API: ban_duration on the user
+```
+
+**Unban (reverse both steps):**
+
+```sql
+update public.profiles
+set is_banned = false, banned_at = null
+where email = 'badactor@example.com';
+```
+
+Then remove Auth ban in Dashboard (or set `ban_duration` to `none`).
+
+**Block new signups from an IP (optional):**
+
+```sql
+insert into public.banned_ips (ip, reason, banned_by, expires_at)
+values ('203.0.113.10', 'manual', 'admin', now() + interval '7 days');
+```
+
+**Trusted IP (bootcamp / shared NAT false positive):**
+
+```sql
+insert into public.trusted_ips (ip, reason, added_by)
+values ('203.0.113.50', 'bootcamp wifi', 'admin');
+```
+
+**Notes:**
+
+- `banned_ips` blocks **new signups only** (before-user-created hook). Anonymous app use is unaffected.
+- `profiles.is_banned` is **manual admin only** — never auto-set from IP rules.
+- `signup_ip` is anonymized after 90 days; removed on account delete.
+- Client `platform-access` errors **fail open**; auth hook errors **fail closed** (signups blocked).
+
+Manual smoke tests:
+
+- Sign in → Profile Settings → Danger zone → delete account (CORS allowlist includes dev + prod).
+- After delete, Google sign-in with the **same** email must create a new account (hard delete + hook must allow).
+- Banned account sees suspension screen; sign-out still works.
+- Signup from banned IP shows generic “temporarily unavailable” message (not “Invalid payload sent to hook”).
 
 ## Conclusion
 

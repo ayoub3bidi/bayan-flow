@@ -1,14 +1,129 @@
 {
   "common": {
     "back": "Retour",
-    "backToHome": "Retour à l'Accueil",
-    "save": "Enregistrer"
+    "backToHome": "Retour à l'accueil",
+    "save": "Enregistrer",
+    "close": "Fermer",
+    "coming_soon": "Bientôt disponible…",
+    "cancel": "Annuler"
+  },
+  "app": {
+    "pageTitle": "Visualiseur Interactif d'Algorithmes"
   },
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarté dans les Algorithmes",
     "openGithubRepo": "Ouvrir {{repo}} sur GitHub — version {{version}}, {{stars}} étoiles, {{forks}} forks",
     "goToRepository": "Aller au dépôt"
+  },
+  "auth": {
+    "sign_in_google": "Se connecter avec Google",
+    "sign_out": "Se déconnecter",
+    "signed_in_as": "Connecté en tant que {{name}}",
+    "account_menu_label": "Menu du compte pour {{name}}",
+    "completing_sign_in": "Finalisation de la connexion…",
+    "account_settings": "Paramètres du compte",
+    "settings": "Paramètres"
+  },
+  "accessBan": {
+    "title": "Compte suspendu",
+    "description": "L'accès à Bayan Flow est restreint pour ce compte. Si vous pensez qu'il s'agit d'une erreur, contactez-nous.",
+    "signedInAs": "Connecté en tant que {{email}}",
+    "contact": "Écrivez à contact@bayanflow.com pour obtenir de l'aide.",
+    "signInUnavailable": "La connexion est temporairement indisponible. Veuillez réessayer plus tard."
+  },
+  "profile": {
+    "pageTitle": "Paramètres du profil",
+    "title": "Paramètres du profil",
+    "displayName": "Nom affiché",
+    "displayNamePlaceholder": "Comment vous apparaissez dans Bayan Flow",
+    "email": "E-mail",
+    "description": "Description",
+    "descriptionPlaceholder": "Parlez de vous aux autres…",
+    "avatarTitle": "Photo de profil",
+    "avatarGoogle": "Photo de profil",
+    "avatarGenerated": "Avatar généré",
+    "avatarCustomizationComingSoon": "Vous pourrez bientôt changer votre photo de profil et personnaliser votre avatar",
+    "save": "Enregistrer les modifications",
+    "saving": "Enregistrement…",
+    "saved": "Profil mis à jour",
+    "error": "Impossible d'enregistrer votre profil. Veuillez réessayer.",
+    "loading": "Chargement du profil…",
+    "dangerZoneTitle": "Zone de danger",
+    "dangerZoneDescription": "Supprime définitivement votre compte ainsi que vos favoris et notes d'étude. Cette action est irréversible.",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountConfirmLabel": "Tapez DELETE pour confirmer",
+    "deleteAccountConfirmPlaceholder": "DELETE",
+    "deleteAccountConfirmWord": "DELETE",
+    "deleteAccountInProgress": "Suppression du compte…",
+    "deleteAccountSuccess": "Votre compte a été supprimé.",
+    "deleteAccountError": "Impossible de supprimer votre compte. Réessayez ou écrivez à contact@bayanflow.com."
+  },
+  "pro": {
+    "pageTitle": "Le Plan Pro",
+    "metaDescription": "Rejoignez la liste d'attente le Plan Pro et sécurisez 50 % de réduction sur votre première année au plan annuel.",
+    "banner": {
+      "message": "Le plan Pro arrive bientôt. Soyez les premiers.",
+      "cta": "Rejoindre la liste",
+      "linkLabel": "Découvrir le Plan Pro",
+      "dismiss": "Fermer"
+    },
+    "eyebrow": "Le Plan Pro",
+    "headline": "Allez plus loin avec le Plan Pro",
+    "subheadline": "La version payante à venir débloquera des fonctionnalités plus puissantes comme des entrées personnalisées, des comparaisons côte à côte, des exports illimités et plus encore.",
+    "featuresHeading": "Ce que le Plan Pro débloque",
+    "features": {
+      "customInput": {
+        "title": "Entrées personnalisées",
+        "body": "Importez vos tableaux, graphes, arbres et grilles dans des visualisations guidées."
+      },
+      "comparison": {
+        "title": "Comparaison côte à côte",
+        "body": "Lancez deux algorithmes sur le même scénario et inspectez chaque décision."
+      },
+      "export": {
+        "title": "Export vidéo illimité",
+        "body": "Créez des explications soignées sans watermark — ou personnalisez-le avec votre propre marque."
+      },
+      "presentation": {
+        "title": "Mode présentation",
+        "body": "Utilisez une vue d'enseignement plus ciblée avec moins de chrome et des états visuels plus grands."
+      }
+    },
+    "form": {
+      "title": "Obtenez 50 % de réduction la première année",
+      "helper": "Rejoignez la liste d'attente pour sécuriser la moitié du prix votre première année. Pas de spam, un seul e-mail quand le Plan Pro sera prêt.",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "vous@ecole.fr",
+      "submit": "Rejoindre la liste",
+      "submitting": "Inscription…",
+      "privacy": "Vous pourrez ignorer l'e-mail de lancement si le Plan Pro ne vous est pas utile."
+    },
+    "success": {
+      "title": "Vous êtes inscrit",
+      "position": "Vous êtes n°{{position}} sur la liste d'attente",
+      "nextStep": "Nous vous écrirons à {{email}} au lancement du Plan Pro.",
+      "backToApp": "Retour au visualiseur"
+    },
+    "alreadyJoined": {
+      "title": "Vous êtes déjà inscrit",
+      "body": "Nous avons déjà votre e-mail. Nous vous préviendrons au lancement de le plan pro ."
+    },
+    "errors": {
+      "invalidEmail": "Saisissez une adresse e-mail valide.",
+      "unavailable": "L'inscription à la liste est temporairement indisponible. Réessayez plus tard.",
+      "generic": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "featuresMore": {
+      "title": "Et bien plus à venir",
+      "body": "Ce ne sont que les premières fonctionnalités. Le Plan Pro continuera d'évoluer avec de nouveaux outils au fur et à mesure du lancement."
+    },
+    "waitlistCount": "{{count}} apprenants sur la liste d'attente"
+  },
+  "settings_tabs": {
+    "profile": "Profil",
+    "notifications": "Notifications",
+    "connections": "Comptes connectés"
   },
   "settings": {
     "title": "Paramètres",
@@ -31,7 +146,18 @@
     "autoplayOnly": "uniquement",
     "treeNodeCount": "Nœuds de l'arbre",
     "graphNodeCount": "Sommets du graphe",
-    "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier."
+    "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier.",
+    "signInForManual": "Connectez-vous pour le mode manuel",
+    "signInForSpeed": "Connectez-vous pour régler la vitesse",
+    "signInForCategoryControls": "Connectez-vous pour les contrôles avancés",
+    "favoriteAlgorithms": "Algorithmes favoris",
+    "favoriteAlgorithmsEmpty": "Aucun favori pour l'instant",
+    "favoriteAlgorithmsCount": "{{count}} enregistrés",
+    "favoriteAlgorithmsHint": "Ajoutez une étoile aux algorithmes ci-dessous pour les retrouver ici.",
+    "favoriteSlotsUsed": "{{count}} / {{limit}}",
+    "favoriteSlotsFull": "Limite de favoris atteinte ({{limit}}). Retirez-en un pour en ajouter un autre.",
+    "addFavorite": "Ajouter {{name}} aux favoris",
+    "removeFavorite": "Retirer {{name}} des favoris"
   },
   "modes": {
     "sorting": "Tri",
@@ -215,6 +341,7 @@
     "rendering": "Génération de la vidéo…",
     "exportDone": "Vidéo téléchargée",
     "exportError": "Échec de l'export",
+    "exportTemporarilyUnavailable": "Export indisponible pour le moment. Veuillez réessayer plus tard.",
     "browserNotSupported": "L'export vidéo n'est pas pris en charge dans ce navigateur. Utilisez Chrome 94+, Firefox 130+ ou Safari 26+.",
     "exportingTitle": "Export en vidéo",
     "exportingChecking": "Vérification du navigateur…",
@@ -245,7 +372,8 @@
     "completed": "Algorithme terminé !",
     "ready": "Prêt à commencer",
     "pathFound": "Chemin trouvé !",
-    "noPath": "Aucun chemin n'existe"
+    "noPath": "Aucun chemin n'existe",
+    "visualizationsRemaining": "{{count}} visualisations restantes"
   },
   "videoExport": {
     "noSteps": "Aucune étape à afficher"
@@ -296,6 +424,9 @@
     "output": "Sortie",
     "clear_output": "Effacer la sortie",
     "resize_output": "Redimensionner le panneau de sortie",
+    "expand_output": "Développer le panneau de sortie",
+    "collapse_output": "Réduire le panneau de sortie",
+    "output_dock_label": "Sortie et cas de test",
     "output_placeholder": "Exécutez le code pour voir la sortie ici.",
     "loading_runtime": "Chargement du runtime Python...",
     "timeout": "Délai dépassé",
@@ -316,8 +447,21 @@
     "error_label": "Erreur :",
     "actual_label": "Obtenu :"
   },
+  "notes_panel": {
+    "placeholder": "Qu'avez-vous appris sur {{algorithmName}} ?",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "unsaved": "Modifications non enregistrées",
+    "saveError": "Échec de l'enregistrement — nouvelle tentative…",
+    "loading": "Chargement de votre note…",
+    "loadingEditor": "Chargement de l'éditeur…",
+    "signInRequired": "Connectez-vous pour enregistrer vos notes d'étude."
+  },
   "insight_panel": {
     "title": "Aperçu de l'Algorithme",
+    "learnTitle": "Apprendre",
+    "tabList": "Sections du panneau d'apprentissage",
+    "tabNotes": "Mes notes",
     "close": "Fermer",
     "viewInsight": "Voir l'Aperçu de l'Algorithme",
     "insightLabel": "Aperçu",
@@ -1294,5 +1438,30 @@
     "timeline": {
       "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route."
     }
+  },
+  "featureGate": {
+    "title": "Débloquez {{feature}}",
+    "description": "Connectez-vous avec Google pour accéder à {{feature}} et profiter pleinement de Bayan Flow.",
+    "signIn": "Se connecter avec Google",
+    "dismiss": "Plus tard",
+    "code": "Panneau de code",
+    "insight": "Aperçu de l'algorithme",
+    "export": "Exportation vidéo",
+    "sound": "Son",
+    "fullscreen": "Mode plein écran",
+    "algorithm_lock": "Débloquer {{algorithmName}}",
+    "algorithm_lock_description": "Connectez-vous pour accéder aux 45 algorithmes répartis dans 5 catégories.",
+    "session_limit": "Continuer à apprendre",
+    "session_limit_description": "Vous avez exploré {{limit}} visualisations. Connectez-vous pour continuer avec un accès illimité.",
+    "speed_control": "Régler la vitesse",
+    "speed_control_description": "Connectez-vous pour contrôler la vitesse d'animation, du plus lent au plus rapide.",
+    "complexity_limit": "Analyse de complexité",
+    "complexity_limit_description": "Connectez-vous pour accéder aux graphiques de complexité interactifs pour chaque algorithme.",
+    "manual_controls": "Contrôle manuel pas à pas",
+    "manual_controls_description": "Connectez-vous pour avancer dans les algorithmes à votre propre rythme.",
+    "category_controls": "Contrôles avancés",
+    "category_controls_description": "Connectez-vous pour personnaliser la taille de la grille, l'ordre de tri, les scénarios de graphe et bien plus.",
+    "favorite": "Algorithmes favoris",
+    "favorite_description": "Connectez-vous pour marquer des algorithmes et y revenir rapidement depuis vos favoris."
   }
 }

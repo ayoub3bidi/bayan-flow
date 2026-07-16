@@ -1,14 +1,129 @@
 {
   "common": {
-    "back": "عودة",
-    "backToHome": "عودة إلى الرئيسية",
-    "save": "حفظ"
+    "back": "رجوع",
+    "backToHome": "العودة للرئيسية",
+    "save": "حفظ",
+    "close": "إغلاق",
+    "coming_soon": "قريباً…",
+    "cancel": "إلغاء"
+  },
+  "app": {
+    "pageTitle": "مُصوِّر الخوارزميات التفاعلي"
   },
   "header": {
     "title": "بيان Flow",
     "subtitle": "الوضوح في الخوارزميات",
     "openGithubRepo": "فتح {{repo}} على GitHub — الإصدار {{version}}، {{stars}} نجمة، {{forks}} fork",
     "goToRepository": "الانتقال إلى المستودع"
+  },
+  "auth": {
+    "sign_in_google": "تسجيل الدخول عبر Google",
+    "sign_out": "تسجيل الخروج",
+    "signed_in_as": "مسجّل الدخول باسم {{name}}",
+    "account_menu_label": "قائمة الحساب لـ {{name}}",
+    "completing_sign_in": "جارٍ إتمام تسجيل الدخول…",
+    "account_settings": "إعدادات الحساب",
+    "settings": "الإعدادات"
+  },
+  "accessBan": {
+    "title": "تم تعليق الحساب",
+    "description": "تم تقييد الوصول إلى Bayan Flow لهذا الحساب. إذا كنت تعتقد أن هذا خطأ، تواصل معنا.",
+    "signedInAs": "مسجّل الدخول باسم {{email}}",
+    "contact": "راسلنا على contact@bayanflow.com للمساعدة.",
+    "signInUnavailable": "تسجيل الدخول غير متاح مؤقتًا. يُرجى المحاولة لاحقًا."
+  },
+  "profile": {
+    "pageTitle": "إعدادات الملف الشخصي",
+    "title": "إعدادات الملف الشخصي",
+    "displayName": "الاسم المعروض",
+    "displayNamePlaceholder": "كيف يظهر اسمك في Bayan Flow",
+    "email": "البريد الإلكتروني",
+    "description": "الوصف",
+    "descriptionPlaceholder": "أخبر الآخرين عن نفسك…",
+    "avatarTitle": "صورة الملف الشخصي",
+    "avatarGoogle": "صورة الملف الشخصي",
+    "avatarGenerated": "صورة مُولَّدة",
+    "avatarCustomizationComingSoon": "ستتمكن قريباً من تغيير صورة ملفك الشخصي وتخصيص الصورة الرمزية",
+    "save": "حفظ التغييرات",
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم تحديث الملف الشخصي",
+    "error": "تعذّر حفظ ملفك الشخصي. يُرجى المحاولة مرة أخرى.",
+    "loading": "جارٍ تحميل الملف الشخصي…",
+    "dangerZoneTitle": "منطقة الخطر",
+    "dangerZoneDescription": "يحذف حسابك نهائياً مع جميع المفضلات وملاحظات الدراسة. لا يمكن التراجع عن هذا الإجراء.",
+    "deleteAccount": "حذف الحساب",
+    "deleteAccountConfirmLabel": "اكتب DELETE للتأكيد",
+    "deleteAccountConfirmPlaceholder": "DELETE",
+    "deleteAccountConfirmWord": "DELETE",
+    "deleteAccountInProgress": "جارٍ حذف الحساب…",
+    "deleteAccountSuccess": "تم حذف حسابك.",
+    "deleteAccountError": "تعذّر حذف حسابك. حاول مرة أخرى أو راسل contact@bayanflow.com."
+  },
+  "pro": {
+    "pageTitle": "الخطة الاحترافية",
+    "metaDescription": "سجّل اهتمامك بالخطة الاحترافية واحصل على خصم 50٪ على أول سنة في الخطة السنوية.",
+    "banner": {
+      "message": "الخطة الاحترافية قادمة قريبًا. كن أول من ينضم.",
+      "cta": "انضم للقائمة",
+      "linkLabel": "اكتشف الخطة الاحترافية",
+      "dismiss": "إغلاق"
+    },
+    "eyebrow": "الخطة الاحترافية",
+    "headline": "تقدّم أكثر مع الخطة الاحترافية",
+    "subheadline": "النسخة المدفوعة القادمة ستفتح ميزات أقوى مثل المدخلات المخصصة والمقارنات جنبًا إلى جنب والتصدير بلا حدود والمزيد.",
+    "featuresHeading": "ما تفتحه الخطة الاحترافية",
+    "features": {
+      "customInput": {
+        "title": "مدخلات خوارزمية مخصصة",
+        "body": "أدخل مصفوفاتك ورسومك وأشجارك وشبكاتك في تصورات موجهة."
+      },
+      "comparison": {
+        "title": "وضع المقارنة جنبًا إلى جنب",
+        "body": "شغّل خوارزميتين على السيناريو نفسه وافحص كل قرار."
+      },
+      "export": {
+        "title": "تصدير فيديو بلا حدود",
+        "body": "أنشئ شروحات مصقولة بدون علامة مائية — أو خصّصها بهوية الخاص بك."
+      },
+      "presentation": {
+        "title": "وضع العرض",
+        "body": "استخدم عرضًا تعليميًا أكثر تركيزًا مع واجهة أبسط وحالات مرئية أكبر."
+      }
+    },
+    "form": {
+      "title": "احصل على خصم 50٪ على أول سنة",
+      "helper": "سجّل في قائمة الانتظار لتأمين نصف السعر على خطتك السنوية الأولى.",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "you@school.edu",
+      "submit": "سجّل اهتمامك",
+      "submitting": "جارٍ التسجيل…",
+      "privacy": "يمكنك تجاهل رسالة الإطلاق إذا لم تكن الخطة الاحترافية مفيدة لك."
+    },
+    "success": {
+      "title": "أنت على القائمة",
+      "position": "أنت رقم {{position}} على قائمة الانتظار",
+      "nextStep": "سنراسلك على {{email}} عند إطلاق الخطة الاحترافية.",
+      "backToApp": "العودة إلى العارض"
+    },
+    "alreadyJoined": {
+      "title": "أنت مسجّل مسبقًا",
+      "body": "لدينا بريدك الإلكتروني. سنخبرك عند إطلاق الخطة الاحترافية."
+    },
+    "errors": {
+      "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
+      "unavailable": "التسجيل غير متاح مؤقتًا. حاول لاحقًا.",
+      "generic": "حدث خطأ. يُرجى المحاولة مرة أخرى."
+    },
+    "featuresMore": {
+      "title": "والمزيد قادم",
+      "body": "هذه فقط الميزات الأولى. الخطة الاحترافية ستستمر في النمو مع أدوات جديدة مع اقتراب الإطلاق."
+    },
+    "waitlistCount": "{{count}} متعلّم في قائمة الانتظار"
+  },
+  "settings_tabs": {
+    "profile": "الملف الشخصي",
+    "notifications": "الإشعارات",
+    "connections": "الحسابات المتصلة"
   },
   "settings": {
     "title": "الإعدادات",
@@ -31,7 +146,18 @@
     "autoplayOnly": "فقط",
     "treeNodeCount": "عقد الشجرة",
     "graphNodeCount": "رؤوس الرسم البياني",
-    "graphScenarioNodeCountLocked": "تستخدم السيناريوهات الجاهزة عدداً ثابتاً من العقد. اختر رسماً عشوائياً لتغييره."
+    "graphScenarioNodeCountLocked": "تستخدم السيناريوهات الجاهزة عدداً ثابتاً من العقد. اختر رسماً عشوائياً لتغييره.",
+    "signInForManual": "سجّل دخولك للتحكم اليدوي",
+    "signInForSpeed": "سجّل دخولك لضبط السرعة",
+    "signInForCategoryControls": "سجّل دخولك للوصول إلى عناصر التحكم المتقدمة",
+    "favoriteAlgorithms": "الخوارزميات المفضلة",
+    "favoriteAlgorithmsEmpty": "لا توجد مفضلات بعد",
+    "favoriteAlgorithmsCount": "{{count}} محفوظة",
+    "favoriteAlgorithmsHint": "ضع نجمة على الخوارزميات أدناه لإضافتها هنا.",
+    "favoriteSlotsUsed": "{{count}} / {{limit}}",
+    "favoriteSlotsFull": "تم بلوغ حد المفضلات ({{limit}}). أزل واحدة لإضافة أخرى.",
+    "addFavorite": "إضافة {{name}} إلى المفضلة",
+    "removeFavorite": "إزالة {{name}} من المفضلة"
   },
   "modes": {
     "sorting": "الترتيب",
@@ -215,6 +341,7 @@
     "rendering": "جاري إنشاء الفيديو…",
     "exportDone": "تم تنزيل الفيديو",
     "exportError": "فشل التصدير",
+    "exportTemporarilyUnavailable": "التصدير غير متاح حالياً. يرجى المحاولة مرة أخرى لاحقاً.",
     "browserNotSupported": "تصدير الفيديو غير مدعوم في هذا المتصفح. استخدم Chrome 94+ أو Firefox 130+ أو Safari 26+.",
     "exportingTitle": "جاري تصدير الفيديو",
     "exportingChecking": "التحقق من دعم المتصفح…",
@@ -245,7 +372,8 @@
     "completed": "اكتملت الخوارزمية!",
     "ready": "جاهز للبدء",
     "pathFound": "تم العثور على المسار!",
-    "noPath": "لا يوجد مسار"
+    "noPath": "لا يوجد مسار",
+    "visualizationsRemaining": "تبقّى {{count}} تصوّر"
   },
   "videoExport": {
     "noSteps": "لا توجد خطوات لعرضها"
@@ -296,6 +424,9 @@
     "output": "المخرجات",
     "clear_output": "مسح المخرجات",
     "resize_output": "تغيير حجم لوحة المخرجات",
+    "expand_output": "توسيع لوحة المخرجات",
+    "collapse_output": "طي لوحة المخرجات",
+    "output_dock_label": "المخرجات وحالات الاختبار",
     "output_placeholder": "شغّل الكود لرؤية المخرجات هنا.",
     "loading_runtime": "جاري تحميل بيئة بايثون...",
     "timeout": "انتهت المهلة",
@@ -316,8 +447,21 @@
     "error_label": "الخطأ:",
     "actual_label": "الفعلي:"
   },
+  "notes_panel": {
+    "placeholder": "ماذا تعلّمت عن {{algorithmName}}؟",
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم الحفظ",
+    "unsaved": "تغييرات غير محفوظة",
+    "saveError": "تعذّر الحفظ — إعادة المحاولة…",
+    "loading": "جارٍ تحميل ملاحظتك…",
+    "loadingEditor": "جارٍ تحميل المحرر…",
+    "signInRequired": "سجّل دخولك لحفظ ملاحظات الدراسة."
+  },
   "insight_panel": {
     "title": "نظرة على الخوارزمية",
+    "learnTitle": "تعلّم",
+    "tabList": "أقسام لوحة التعلّم",
+    "tabNotes": "ملاحظاتي",
     "close": "إغلاق",
     "viewInsight": "عرض نظرة على الخوارزمية",
     "insightLabel": "نظرة",
@@ -1294,5 +1438,30 @@
     "timeline": {
       "sampleNote": "عناصر الجدول الزمني هي أمثلة. استبدل بمحتوى خارطة الطريق الفعلية."
     }
+  },
+  "featureGate": {
+    "title": "افتح {{feature}}",
+    "description": "سجّل الدخول باستخدام Google للوصول إلى {{feature}} والاستمتاع بتجربة Bayan Flow الكاملة.",
+    "signIn": "تسجيل الدخول باستخدام Google",
+    "dismiss": "ربما لاحقاً",
+    "code": "لوحة الأكواد",
+    "insight": "نظرة الخوارزمية",
+    "export": "تصدير الفيديو",
+    "sound": "الصوت",
+    "fullscreen": "وضع ملء الشاشة",
+    "algorithm_lock": "فتح {{algorithmName}}",
+    "algorithm_lock_description": "سجّل دخولك للوصول إلى جميع الخوارزميات الـ 45 عبر 5 فئات.",
+    "session_limit": "واصل التعلم",
+    "session_limit_description": "لقد استكشفت {{limit}} تصوّرات. سجّل دخولك للمتابعة بوصول غير محدود.",
+    "speed_control": "ضبط السرعة",
+    "speed_control_description": "سجّل دخولك بـ Google للتحكم في سرعة الرسوم المتحركة من البطيء إلى فائق السرعة.",
+    "complexity_limit": "تحليل التعقيد",
+    "complexity_limit_description": "سجّل دخولك بـ Google لعرض رسوم التعقيد التفاعلية لكل خوارزمية.",
+    "manual_controls": "التحكم اليدوي في الخطوات",
+    "manual_controls_description": "سجّل دخولك بـ Google للتنقل بين خطوات الخوارزميات بالسرعة التي تناسبك.",
+    "category_controls": "عناصر التحكم المتقدمة",
+    "category_controls_description": "سجّل دخولك بـ Google لتخصيص أحجام الشبكة وترتيب الفرز وسيناريوهات الرسم البياني والمزيد.",
+    "favorite": "الخوارزميات المفضلة",
+    "favorite_description": "سجّل دخولك لتمييز الخوارزميات والعودة إليها بسرعة من قائمة المفضلة."
   }
 }

@@ -14,6 +14,7 @@ export default function InsightFloatingActionButton({
   onClick,
   disabled = false,
   label = 'Insight',
+  isGated = false,
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
@@ -39,9 +40,13 @@ export default function InsightFloatingActionButton({
         `}
         style={{ marginTop: '10rem' }}
         initial={{ x: isRTL ? -48 : 48, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
+        animate={{ x: 0, opacity: isGated ? 0.6 : 1 }}
         exit={{ x: isRTL ? -48 : 48, opacity: 0 }}
-        whileHover={{ x: disabled ? 0 : isRTL ? 4 : -4 }}
+        whileHover={
+          disabled
+            ? {}
+            : { x: isRTL ? 4 : -4, ...(isGated ? { opacity: 0.8 } : {}) }
+        }
         whileTap={{ scale: disabled ? 1 : 0.98 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         aria-label={label}
@@ -68,9 +73,11 @@ export default function InsightFloatingActionButton({
           touch-manipulation
         `}
         initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        animate={{ scale: 1, opacity: isGated ? 0.6 : 1 }}
         exit={{ scale: 0, opacity: 0 }}
-        whileHover={{ scale: disabled ? 1 : 1.05 }}
+        whileHover={
+          disabled ? {} : { scale: 1.05, ...(isGated ? { opacity: 0.8 } : {}) }
+        }
         whileTap={{ scale: disabled ? 1 : 0.95 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         aria-label={label}

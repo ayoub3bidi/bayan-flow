@@ -3,37 +3,35 @@
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  */
-import { motion } from 'framer-motion';
 import { GitBranch } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import GitHubRepoBadge from './GitHubRepoBadge';
+import UserMenu from './UserMenu';
 
-function Header() {
+function Header({ hideLanguageSwitcher = false }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+
   const branchName = (import.meta.env.VITE_GIT_BRANCH ?? '').trim();
   const isDevBranch =
     !!branchName && !['main', 'master', 'production'].includes(branchName);
   const devSiteUrl =
     import.meta.env.VITE_DEV_SITE_URL || 'https://dev.bayanflow.com';
 
+  const isAppPage = location.pathname.startsWith('/app');
+
   const handleLogoClick = () => {
-    navigate('/');
+    navigate(isAppPage ? '/' : '/app');
   };
 
   return (
-    <motion.header
-      className="relative sm:fixed sm:top-0 sm:left-0 sm:right-0 sm:z-50 w-full"
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      role="banner"
-    >
+    <header className="w-full relative z-40" role="banner">
       {/* Glass morphism background */}
       <div className="absolute inset-0 bg-(--color-glass-bg) backdrop-blur-lg border-b border-(--color-glass-border) shadow-lg" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,11 +41,8 @@ function Header() {
           aria-label="Main navigation"
         >
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
-            <motion.div
+            <div
               className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 cursor-pointer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 300 }}
               onClick={handleLogoClick}
               role="button"
               aria-label="Navigate to landing page"
@@ -100,14 +95,14 @@ function Header() {
                 </svg>
               </div>
               <div className="flex flex-col min-w-0">
-                <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-none truncate">
+                <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-tight truncate">
                   {t('header.title')}
                 </h1>
                 <p className="text-[9px] sm:text-[10px] text-text-secondary hidden sm:block leading-tight mt-0.5 truncate">
                   {t('header.subtitle')}
                 </p>
               </div>
-            </motion.div>
+            </div>
 
             {isDevBranch && (
               <a
@@ -131,13 +126,17 @@ function Header() {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
-            <GitHubRepoBadge />
-            <LanguageSwitcher />
-            <ThemeToggle theme={theme} onToggle={toggleTheme} />
+            {isAppPage && <GitHubRepoBadge />}
+            {isAppPage && !hideLanguageSwitcher && <LanguageSwitcher />}
+            {isAppPage && <ThemeToggle theme={theme} onToggle={toggleTheme} />}
+            <UserMenu
+              variant={isAppPage ? 'compact' : 'landing'}
+              hideAvatar={!isAppPage}
+            />
           </div>
         </nav>
       </div>
-    </motion.header>
+    </header>
   );
 }
 

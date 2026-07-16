@@ -26,7 +26,6 @@ ci:
   - changed-files:
     - any-glob-to-any-file:
         - '.github/**/*'
-        - 'netlify.toml'
         - 'wrangler.jsonc'
 
 # Dependencies

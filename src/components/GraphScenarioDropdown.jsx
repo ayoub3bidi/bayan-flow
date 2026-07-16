@@ -5,7 +5,7 @@
  */
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, CaretDown } from '@phosphor-icons/react';
+import { Check, CaretDown, Lock } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 function GraphScenarioDropdown({
@@ -16,6 +16,8 @@ function GraphScenarioDropdown({
   setIsDropdownOpen,
   isPlaying,
   dropdownRef,
+  areOptionsGated = false,
+  onLockedScenarioClick,
 }) {
   const { t } = useTranslation();
   const selectedOption =
@@ -69,12 +71,17 @@ function GraphScenarioDropdown({
           >
             {renderedOptions.map((option, index) => {
               const isSelected = (selectedScenario ?? '') === option.id;
+              const isLocked = areOptionsGated && index > 0;
 
               return (
                 <motion.button
                   key={option.id || 'random-graph'}
                   type="button"
                   onClick={() => {
+                    if (isLocked) {
+                      onLockedScenarioClick?.(option);
+                      return;
+                    }
                     onScenarioSelect(option.id || null);
                     setIsDropdownOpen(false);
                   }}
@@ -83,13 +90,19 @@ function GraphScenarioDropdown({
                   transition={{ delay: index * 0.03 }}
                   className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
                     isSelected
-                      ? 'bg-theme-primary-light text-theme-primary'
-                      : 'text-text-primary'
+                      ? 'bg-theme-primary-light text-theme-primary dark:text-white'
+                      : isLocked
+                        ? 'text-text-primary opacity-60'
+                        : 'text-text-primary'
                   }`}
                   role="option"
                   aria-selected={isSelected}
                 >
-                  <span className="font-medium">{t(option.i18nKey)}</span>
+                  <span
+                    className={`font-medium min-w-0 flex-1 ${isSelected ? 'text-theme-primary dark:text-white' : ''}`}
+                  >
+                    {t(option.i18nKey)}
+                  </span>
                   {isSelected ? (
                     <motion.div
                       initial={{ scale: 0 }}
@@ -99,13 +112,21 @@ function GraphScenarioDropdown({
                         stiffness: 500,
                         damping: 25,
                       }}
+                      className="shrink-0"
                     >
                       <Check
                         size={18}
                         weight="bold"
-                        className="text-[#3b82f6]"
+                        className="text-[#3b82f6] dark:text-white"
                       />
                     </motion.div>
+                  ) : isLocked ? (
+                    <Lock
+                      size={18}
+                      weight="bold"
+                      className="shrink-0 text-text-tertiary"
+                      aria-hidden="true"
+                    />
                   ) : null}
                 </motion.button>
               );

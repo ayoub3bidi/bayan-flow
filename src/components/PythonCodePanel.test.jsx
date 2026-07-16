@@ -115,12 +115,66 @@ vi.mock('../hooks/usePythonExecution', () => ({
 
 // Mock OutputConsole
 vi.mock('./OutputConsole', () => ({
-  default: ({ status, output, onClear }) => (
-    <div data-testid="output-console" data-status={status}>
+  default: ({
+    status,
+    output,
+    error,
+    onClear,
+    onRun,
+    onReset,
+    isModified,
+    isExpanded,
+    onToggleExpand,
+  }) => (
+    <div
+      data-testid="output-console"
+      data-status={status}
+      data-expanded={String(isExpanded)}
+    >
       <span data-testid="output-content">{output || 'empty'}</span>
+      {onRun && (
+        <button
+          type="button"
+          onClick={onRun}
+          aria-label={
+            status === 'loading'
+              ? 'Loading Python...'
+              : status === 'running'
+                ? 'Running...'
+                : output || error
+                  ? 'Rerun'
+                  : 'Run'
+          }
+        >
+          {status === 'loading'
+            ? 'Loading Python...'
+            : status === 'running'
+              ? 'Running...'
+              : output || error
+                ? 'Rerun'
+                : 'Run'}
+        </button>
+      )}
+      {isModified && onReset && (
+        <button type="button" onClick={onReset} aria-label="Reset">
+          Reset
+        </button>
+      )}
       <button type="button" onClick={onClear} data-testid="clear-output">
         Clear
       </button>
+      {onToggleExpand && (
+        <button
+          type="button"
+          onClick={onToggleExpand}
+          aria-expanded={isExpanded}
+          aria-label={
+            isExpanded ? 'Collapse output panel' : 'Expand output panel'
+          }
+        >
+          Toggle output
+        </button>
+      )}
     </div>
   ),
 }));
@@ -521,6 +575,29 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
       });
     });
 
+    it('shows Loading Python label when execution status is loading', async () => {
+      usePythonExecutionMock.mockImplementation(() =>
+        buildPythonExec({ status: 'loading' })
+      );
+      localStorageMock.getItem.mockReturnValue('light');
+
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /loading python/i })
+        ).toBeInTheDocument();
+      });
+    });
+
     it('shows Running label and spinner when execution status is running', async () => {
       usePythonExecutionMock.mockImplementation(() =>
         buildPythonExec({ status: 'running' })
@@ -538,7 +615,9 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/running/i)).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: /running/i })
+        ).toBeInTheDocument();
       });
     });
 
@@ -563,6 +642,71 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
           screen.getByRole('button', { name: /rerun/i })
         ).toBeInTheDocument();
       });
+    });
+
+    it('keeps output header visible after collapse and can expand again', async () => {
+      localStorageMock.getItem.mockReturnValue('light');
+
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => screen.getByTestId('output-console'));
+      expect(screen.getByTestId('output-console')).toHaveAttribute(
+        'data-expanded',
+        'true'
+      );
+
+      fireEvent.click(
+        screen.getByRole('button', { name: /collapse output panel/i })
+      );
+
+      expect(screen.getByTestId('output-console')).toHaveAttribute(
+        'data-expanded',
+        'false'
+      );
+      expect(
+        screen.getByRole('button', { name: /expand output panel/i })
+      ).toBeInTheDocument();
+
+      fireEvent.click(
+        screen.getByRole('button', { name: /expand output panel/i })
+      );
+
+      expect(screen.getByTestId('output-console')).toHaveAttribute(
+        'data-expanded',
+        'true'
+      );
+    });
+
+    it('places Monaco editor directly under code tabs without a run toolbar row', async () => {
+      localStorageMock.getItem.mockReturnValue('light');
+
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+          />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => screen.getByTestId('monaco-editor'));
+
+      const tablist = screen.getByRole('tablist');
+      const editor = screen.getByTestId('monaco-editor');
+      const tablistParent = tablist.parentElement;
+      const editorContainer = editor.parentElement?.parentElement;
+
+      expect(tablistParent).toContainElement(editorContainer);
+      expect(tablist.nextElementSibling).not.toHaveTextContent(/^Run$/);
     });
   });
 });

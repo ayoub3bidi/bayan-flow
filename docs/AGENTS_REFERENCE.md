@@ -7,7 +7,7 @@
 
 - Product: `Bayan Flow` (Bayan / بيان = clarity in Arabic)
 - Package name: `bayan-flow`
-- App type: client-side React SPA with routes `/`, `/app`, `/roadmap`
+- App type: client-side React SPA with routes `/`, `/app`, `/roadmap`, `/pro`, `/settings/profile`, `/privacy`, `/terms`
 - Version target in `package.json`: `0.5.0`
 - License: `Elastic-2.0 OR Commercial` (see `LICENSE`, `COMMERCIAL_LICENSE.md`, `TRADEMARK.md`, `NOTICE`)
 - Repository/homepage:
@@ -21,7 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **107** `*.test.js` / `*.test.jsx` files under `src/`
+- Test surface: **151** `*.test.js` / `*.test.jsx` files under `src/` (~**1,817** tests)
+- Source surface: **223** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -82,6 +83,85 @@
 - Roadmap page driven by `src/data/roadmapData.js`
 - Document title syncs with route/i18n (`DocumentTitle`)
 - Side FABs: `FloatingActionButton` (code/pseudocode panel), `InsightFloatingActionButton` (insight panel)
+- Feature gating: `SignInPromptModal` blocks Code Panel, Insight Panel, Video Export, Sound, and Fullscreen until the user signs in with Google
+- Profile settings (signed-in): `/settings/profile` — edit `display_name`, toggle `avatar_preference` (`google` \| `generated`); `RequireAuth` guard; `profileService.updateProfile()`
+
+## Auth and Supabase
+
+- Supabase project: `bayan-flow` (`eu-central-1`); migrations in `supabase/migrations/`
+- Client: `src/lib/supabaseClient.js` (anon key via `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` only)
+- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`, `src/services/accessService.js`, `src/services/waitlistService.js`, `src/services/favoritesService.js`, `src/services/notesService.js`
+- Hooks: `src/hooks/useFavorites.js`, `src/hooks/useNoteAutosave.js`
+- Constants: `src/constants/personalLearning.js` (favorite slot limits, note length cap)
+- Components: `src/components/FavoritesDropdown.jsx`, `src/components/AlgorithmNotesTab.jsx`, `src/components/NoteEditor.jsx` (lazy TipTap)
+- Edge Functions (deployed via `deploy-supabase-functions.yml` after green CI):
+  - `supabase/functions/before-signup/` — signup ban gate (fail-closed)
+  - `supabase/functions/post-signup/` — post-signup side effects
+  - `supabase/functions/platform-access/` — signed-in ban check (`accessService.checkPlatformAccess()`; fail-open on transport)
+  - `supabase/functions/waitlist-welcome/` — Pro waitlist confirmation email via Resend (fail-open; invoked after client insert)
+  - `supabase/functions/delete-account/` — self-service account deletion
+- Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
+- Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
+- Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
+- Page: `src/pages/ProfileSettingsPage.jsx`
+
+### `public.profiles` schema
+
+| Column | Client writable | Notes |
+|--------|-----------------|-------|
+| `id` | no | PK, FK → `auth.users` |
+| `email` | no | Set by `handle_new_user` trigger |
+| `plan` | no | `free` \| `pro`; service role / webhook only |
+| `provider` | no | Set on signup |
+| `created_at` | no | |
+| `display_name` | yes | Editable on profile settings page |
+| `avatar_url` | no | OAuth / trigger-populated HTTPS URL |
+| `avatar_preference` | yes | `google` (default) \| `generated` |
+
+Future (v0.6.0, not shipped): `username` (unique, set-once RLS), public `/u/:username` route; referral/billing columns (`referral_code`, `referred_by`, `referral_count`, `pro_months_earned`, `pro_expires_at`) — service role only.
+
+### Personal learning tables
+
+| Table | PK | Client access |
+|-------|-----|---------------|
+| `favorite_algorithms` | `(user_id, category, algorithm_key)` | SELECT / INSERT / DELETE own rows |
+| `algorithm_notes` | `(user_id, category, algorithm_key)` | SELECT / INSERT / UPDATE own rows |
+
+Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free tier: 20 favorite slots (`getFavoriteSlotLimit` in `entitlementService.js`); notes unlimited per algorithm with HTML sanitization (`noteHtmlSanitizer.js`).
+
+### `public.waitlist` (Pro demand validation)
+
+| Column | Client writable | Notes |
+|--------|-----------------|-------|
+| `id` | no | PK |
+| `user_id` | yes (on insert) | Nullable; FK → `profiles` when signed in |
+| `email` | yes (on insert) | Unique, normalized lowercase in service layer |
+| `source` | yes (on insert) | `landing` \| `app` \| `direct` |
+| `created_at` | no | |
+
+Insert-only RLS for `anon` + `authenticated`; no client SELECT. Public count via `waitlist_public_count()` RPC. Welcome email via `waitlist-welcome` edge function (Resend).
+
+Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attribution.sql` (if base table applied without attribution columns), `20260710160000_drop_waitlist_pitch_variant.sql`.
+
+### RLS and column grants
+
+- `profiles_select_own` — `SELECT` where `auth.uid() = id`
+- `profiles_update_own` — `UPDATE` where `auth.uid() = id`
+- `REVOKE UPDATE` on table for `authenticated`; `GRANT UPDATE (display_name, avatar_preference)` only
+
+### Profile service API
+
+- `getProfile(userId)` → `{ display_name, avatar_url, avatar_preference, plan, email }` or null
+- `updateProfile(userId, { displayName, avatarPreference })` — trims display name; validates `avatarPreference`; never touches `plan`, `avatar_url`, etc.
+
+### Profile-related tests
+
+- `pnpm vitest run src/services/profileService.test.js`
+- `pnpm vitest run src/services/favoritesService.test.js src/services/notesService.test.js`
+- `pnpm vitest run src/hooks/useFavorites.test.js src/hooks/useNoteAutosave.test.js`
+- `pnpm vitest run src/components/FavoritesDropdown.test.jsx src/components/AlgorithmNotesTab.test.jsx`
+- `pnpm vitest run src/pages/ProfileSettingsPage.test.jsx`
+- `pnpm vitest run src/contexts/AuthProvider.test.jsx src/utils/resolveUserAvatar.test.js src/components/UserMenu.test.jsx`
 
 ## Architecture Map
 
@@ -96,6 +176,8 @@
 - `src/pages/LandingPage.jsx`
 - `src/pages/VisualizerApp.jsx` — main visualizer shell and top-level state
 - `src/pages/Roadmap.jsx`
+- `src/pages/ProComingSoonPage.jsx` — Pro waitlist teaser + email capture (`/pro`)
+- `src/pages/ProfileSettingsPage.jsx` — signed-in display name + avatar preference
 
 ### Category registry and runtime wiring
 
@@ -136,6 +218,8 @@
 - `src/components/ExportProgressModal.jsx`
 - `src/components/OutputConsole.jsx`, `src/components/TestCasesPanel.jsx`
 - `src/components/AutoHidingLegend.jsx`, `src/components/SwipeTutorial.jsx`
+- `src/components/SignInPromptModal.jsx`
+- `src/components/ProWaitlistBanner.jsx` — dismissible Pro waitlist CTA (landing + app)
 - `src/components/LanguageSwitcher.jsx`, `src/components/ThemeToggle.jsx`, `src/components/DocumentTitle.jsx`
 - `src/components/GitHubRepoBadge.jsx`
 
@@ -203,14 +287,16 @@
 ### Public static assets
 
 - `public/manifest.json`, `public/sitemap.xml`, `public/robots.txt`, `public/logo.svg`
-- `public/_redirects` — Netlify SPA fallback (alongside `netlify.toml` redirects)
+- `public/_headers` — security headers, cache rules, and `workers.dev` noindex for Cloudflare Workers static assets
+- `public/ui/sfx/` — interactive UI one-shot sounds (e.g. theme toggle); loaded via Web Audio in `src/utils/themeSwitchSound.js`
+- `public/video-export/sfx/` — 18 pre-rendered Remotion export WAV files (see Export sound contract)
 
 ### Build, CI, and repo config
 
 - `vite.config.js`, `vitest.config.js` (`@/` alias, jsdom, sequential forks for memory)
-- `eslint.config.js`, `netlify.toml`, `codecov.yml`
+- `eslint.config.js`, `wrangler.jsonc`, `codecov.yml`
 - `scripts/render-tone-export-sfx.mjs` — Playwright + Tone.Offline WAV generation
-- `.github/workflows/ci.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `labeler.yml`
+- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `deploy-supabase-functions.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `semgrep.yml`, `.github/labeler.yml`
 
 ## Runtime Pattern
 
@@ -222,6 +308,7 @@
   - sorting order (`SORT_ORDERS`)
   - speed, playback mode (`VISUALIZATION_MODES`), sound preference, full-screen state
   - export flow, lazy panel visibility (`PythonCodePanel`, `AlgorithmInsightPanel`)
+  - gated feature state (`gatedFeature`, `pendingFeatureRef`) for sign-in gating
 - All category hooks are called unconditionally in `VisualizerApp` to preserve React Rules of Hooks.
 - `CATEGORY_CONFIG` is the central registry for:
   - default algorithm
@@ -298,6 +385,7 @@
   - `src/algorithms/python/*.py`
   - `src/algorithms/python/index.js`
   - `src/algorithms/python/testCases.js`
+- `featureGate` i18n namespace: feature labels and sign-in prompt strings in all three locale files
 - Insight copy: `insight_panel.algorithms.<key>.*` keys in all three locale files; metadata in `algorithmKnowledge.js`
 - User-facing category labels are reused in multiple places. If you rename one, audit:
   - all locale files
@@ -353,14 +441,16 @@
   1. **Quality** — `pnpm lint`, `pnpm format:check`
   2. **Test** — `pnpm test:coverage` (Codecov upload via `codecov.yml`, PR lcov comment)
   3. **Build** — `pnpm build` with `VITE_GIT_BRANCH`, `VITE_DEV_SITE_URL`
-  4. **Deploy** — Netlify (`main` → production site, `develop` → dev site, PRs → preview)
+  4. **Deploy** — Cloudflare Workers (`main` → production, `develop` → staging); PR previews via `preview-cloudflare.yml` (separate workflow)
   5. **All-checks-pass** — aggregate gate for branch protection
 - Other workflows:
+  - `deploy-cloudflare.yml` — production/staging deploy after CI succeeds on `main`/`develop`
+  - `preview-cloudflare.yml` — PR preview URLs on `bayan-flow-staging`
   - `ensure-pr-source-develop.yml` — blocks PRs to `main` unless head is `develop` or author is in `ALLOWED_MERGERS` secret
   - `release.yml` — GitHub release on `v*` tags
   - `stale.yml`, `labeler.yml` — repo hygiene
-- Netlify SPA redirects in `netlify.toml`; branch context sets `VITE_GIT_BRANCH`.
-- Note: `netlify.toml` lists `NODE_VERSION = "20"` but GitHub Actions deploy/build uses Node 24.11.1 per `package.json` engines — treat CI as authoritative.
+- Cloudflare SPA routing in `wrangler.jsonc` (`not_found_handling: single-page-application`); branch context sets `VITE_GIT_BRANCH` at build time.
+- Optional `VITE_PYODIDE_CDN_BASE` overrides the default jsDelivr Pyodide CDN (`src/constants/pyodideCdn.js`).
 - `src/utils/deployContext.js` — `isProductionMainBranch()` gates production-only UI (e.g. certain landing content).
 - GitHub repo constants: `src/constants/githubRepo.js`.
 
@@ -465,6 +555,7 @@
 - `pnpm vitest run src/components/AutoHidingLegend.test.jsx`
 - `pnpm vitest run src/components/TestCasesPanel.test.jsx`
 - `pnpm vitest run src/components/ExportProgressModal.test.jsx`
+- `pnpm vitest run src/components/SignInPromptModal.test.jsx`
 
 **Video export:**
 

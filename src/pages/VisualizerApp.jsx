@@ -14,6 +14,8 @@ import SettingsPanel from '../components/SettingsPanel';
 import FloatingActionButton from '../components/FloatingActionButton';
 import InsightFloatingActionButton from '../components/InsightFloatingActionButton';
 import ExportProgressModal from '../components/ExportProgressModal';
+import SignInPromptModal from '../components/SignInPromptModal';
+import ProWaitlistBanner from '../components/ProWaitlistBanner';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
 const AlgorithmInsightPanel = lazy(
@@ -25,6 +27,7 @@ import { useSearchingVisualization } from '../hooks/useSearchingVisualization';
 import { useTreeTraversalVisualization } from '../hooks/useTreeTraversalVisualization';
 import { useGraphAlgorithmVisualization } from '../hooks/useGraphAlgorithmVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { useVideoExporter } from '../video/useVideoExporter';
 import { soundManager } from '../utils/soundManager';
 import {
@@ -37,12 +40,27 @@ import {
   VISUALIZATION_MODES,
   ALGORITHM_TYPES,
   SORT_ORDERS,
+  GRID_SIZES,
 } from '../constants';
 import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
+import { useAuth } from '../hooks/useAuth';
+import { touchLastActive } from '../services/profileService';
+import { useFavorites } from '../hooks/useFavorites';
+import {
+  canRunVisualization,
+  incrementVisualizationCount,
+  getRemainingVisualizations,
+  canUseManualControls,
+  canUseCategoryControls,
+  canRunVideoExport,
+  incrementVideoExportCount,
+  getExportWatermarkConfig,
+  ANONYMOUS_VISUALIZATION_LIMIT,
+} from '../services/entitlementService';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import {
   clampGraphAlgorithmNodeCount,
@@ -133,12 +151,15 @@ function App() {
   );
   const [speed, setSpeed] = useState(ANIMATION_SPEEDS.MEDIUM);
   const [mode, setMode] = useState(VISUALIZATION_MODES.MANUAL);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(
-    readStoredSoundPreference
+  const [isSoundEnabled, setIsSoundEnabled] = useState(() =>
+    readStoredSoundPreference()
   );
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
+
+  useBodyScrollLock(isPythonPanelOpen || isInsightPanelOpen);
+
   const [selectedGraphScenario, setSelectedGraphScenario] = useState(() =>
     getDefaultGraphScenario(
       CATEGORY_CONFIG[ALGORITHM_TYPES.GRAPH_ALGORITHM].defaultAlgorithm
@@ -188,8 +209,34 @@ function App() {
   );
 
   const { isFullScreen, toggleFullScreen } = useFullScreen();
+  const { isAuthenticated, user } = useAuth();
+  const {
+    favorites,
+    slotLimit: favoriteSlotLimit,
+    isFavorite,
+    toggleFavorite,
+  } = useFavorites(user);
+  const [favoriteNotice, setFavoriteNotice] = useState(null);
+
+  const [gatedFeature, setGatedFeature] = useState(null);
+  const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
+  const pendingFeatureRef = useRef(null);
+  const hasTouchedActivityRef = useRef(false);
+
+  const openGatedFeature = (feature, metadata = {}) => {
+    setGatedFeature(feature);
+    setGatedFeatureMetadata(metadata);
+  };
+
+  const closeGatedFeature = () => {
+    pendingFeatureRef.current = null;
+    setGatedFeature(null);
+    setGatedFeatureMetadata({});
+  };
+
   const {
     beginExportFlow,
+    reportExportError,
     exportVideo,
     exportState,
     exportProgress,
@@ -252,6 +299,20 @@ function App() {
     }
   }, [isSoundEnabled]);
 
+  // Force autoplay mode for anonymous users
+  useEffect(() => {
+    if (!canUseManualControls(user) && mode === VISUALIZATION_MODES.MANUAL) {
+      setMode(VISUALIZATION_MODES.AUTOPLAY);
+    }
+  }, [user, mode]);
+
+  // Force medium grid for anonymous pathfinding users
+  useEffect(() => {
+    if (!canUseCategoryControls(user) && gridSize !== GRID_SIZES.MEDIUM) {
+      setGridSize(GRID_SIZES.MEDIUM);
+    }
+  }, [user, gridSize]);
+
   useEffect(() => {
     if (!isSoundEnabled || soundManager.getIsEnabled()) {
       return undefined;
@@ -289,7 +350,77 @@ function App() {
     );
   }
 
+  // ── Feature Gating ──────────────────────────────────────────────────────────
+
+  const openFeature = feature => {
+    switch (feature) {
+      case 'code':
+        setIsPythonPanelOpen(true);
+        break;
+      case 'insight':
+        setIsInsightPanelOpen(true);
+        break;
+      case 'export':
+        beginExportFlow();
+        break;
+      case 'sound':
+        handleSoundToggle();
+        break;
+      case 'fullscreen':
+        toggleFullScreen();
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (!user) {
+      hasTouchedActivityRef.current = false;
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (isAuthenticated && pendingFeatureRef.current) {
+      openFeature(pendingFeatureRef.current);
+      pendingFeatureRef.current = null;
+      closeGatedFeature();
+    }
+    // openFeature is not a dependency since it's defined above and stable within this scope
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
   // ── Handlers ───────────────────────────────────────────────────────────────
+
+  /** Play handler with session limit check for anonymous users */
+  const handlePlay = () => {
+    if (!canRunVisualization(user)) {
+      openGatedFeature('session_limit', {
+        limit: ANONYMOUS_VISUALIZATION_LIMIT,
+      });
+      return;
+    }
+    // Increment viz count for anonymous users on each play
+    if (!user) {
+      incrementVisualizationCount();
+    } else if (!hasTouchedActivityRef.current) {
+      hasTouchedActivityRef.current = true;
+      void touchLastActive();
+    }
+    visualization.play();
+  };
+
+  /** Handler for locked algorithm clicks (anonymous tier) */
+  const handleLockedAlgorithmClick = algo => {
+    openGatedFeature('algorithm_lock', { algorithmName: algo.label });
+  };
+
+  /** Handler for gated feature clicks from SettingsPanel and visualizers */
+  const handleGatedFeatureClick = feature => {
+    const metadata =
+      feature === 'session_limit'
+        ? { limit: ANONYMOUS_VISUALIZATION_LIMIT }
+        : {};
+    openGatedFeature(feature, metadata);
+  };
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
   const handleGenerateInput = () => {
@@ -340,6 +471,24 @@ function App() {
     }
   };
 
+  const handleGatedSoundToggle = () => {
+    if (isAuthenticated) {
+      handleSoundToggle();
+    } else {
+      pendingFeatureRef.current = 'sound';
+      openGatedFeature('sound');
+    }
+  };
+
+  const handleGatedFullscreenToggle = () => {
+    if (isAuthenticated) {
+      toggleFullScreen();
+    } else {
+      pendingFeatureRef.current = 'fullscreen';
+      openGatedFeature('fullscreen');
+    }
+  };
+
   const handleAlgorithmChange = algorithmName => {
     setSelectedAlgorithms(prev => ({
       ...prev,
@@ -379,10 +528,27 @@ function App() {
 
   const handleExportVideo = () => {
     if (visualization.totalSteps === 0) return;
+    if (!isAuthenticated) {
+      pendingFeatureRef.current = 'export';
+      openGatedFeature('export');
+      return;
+    }
+
+    if (!canRunVideoExport(user)) {
+      reportExportError(t('controls.exportTemporarilyUnavailable'));
+      return;
+    }
+
     beginExportFlow();
   };
 
   const handleOrientationSelected = orientation => {
+    if (!canRunVideoExport(user)) {
+      reportExportError(t('controls.exportTemporarilyUnavailable'));
+      return;
+    }
+
+    incrementVideoExportCount(user);
     exportVideo({
       steps: visualization.steps,
       algorithmType,
@@ -391,6 +557,7 @@ function App() {
       speed,
       gridSize,
       orientation,
+      watermark: getExportWatermarkConfig(user),
       includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
@@ -398,6 +565,10 @@ function App() {
   };
 
   const handleAlgorithmTypeChange = newType => {
+    applyCategorySwitch(newType);
+  };
+
+  const applyCategorySwitch = newType => {
     const cfg = CATEGORY_CONFIG[newType];
     if (cfg.sizeBinding === 'array') {
       const searchingKey = selectedAlgorithms[ALGORITHM_TYPES.SEARCHING];
@@ -417,6 +588,29 @@ function App() {
     visualizationMap[newType]?.reset();
   };
 
+  const handleFavoriteNavigate = (category, algorithmKey) => {
+    if (category !== algorithmType) {
+      applyCategorySwitch(category);
+    }
+    setSelectedAlgorithms(prev => ({
+      ...prev,
+      [category]: algorithmKey,
+    }));
+    visualizationMap[category]?.reset();
+  };
+
+  const handleToggleFavorite = async (category, algorithmKey) => {
+    const result = await toggleFavorite(category, algorithmKey);
+    if (result.reason === 'slot_limit') {
+      setFavoriteNotice('slot_limit');
+      window.setTimeout(() => setFavoriteNotice(null), 4000);
+    }
+  };
+
+  const handleFavoriteGatedClick = () => {
+    openGatedFeature('favorite');
+  };
+
   // ── Shared visualizer props ────────────────────────────────────────────────
   /** Props common to all visualizer components. */
   const sharedVisualizerProps = {
@@ -427,6 +621,7 @@ function App() {
     onStepForward: visualization.stepForward,
     onStepBackward: visualization.stepBackward,
     mode,
+    onGatedFeatureClick: handleGatedFeatureClick,
   };
 
   const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
@@ -448,6 +643,7 @@ function App() {
       >
         Skip to main content
       </a>
+      <ProWaitlistBanner source="app" />
 
       <AnimatePresence mode="wait">
         {isFullScreen ? (
@@ -474,7 +670,7 @@ function App() {
               isPlaying={visualization.isPlaying}
               isComplete={visualization.isComplete}
               mode={mode}
-              onPlay={visualization.play}
+              onPlay={handlePlay}
               onPause={visualization.pause}
               onReset={visualization.reset}
               onStepForward={visualization.stepForward}
@@ -486,7 +682,7 @@ function App() {
               sortOrder={sortOrder}
               onSortOrderChange={setSortOrder}
               isFullScreen={isFullScreen}
-              onToggleFullScreen={toggleFullScreen}
+              onToggleFullScreen={handleGatedFullscreenToggle}
               onExportVideo={handleExportVideo}
               onCancelExport={cancelExport}
               exportState={exportState}
@@ -494,7 +690,8 @@ function App() {
               canRenderOnWeb={canRenderOnWeb}
               isSoundEnabled={isSoundEnabled}
               isSoundTogglePending={isSoundTogglePending}
-              onToggleSound={handleSoundToggle}
+              onToggleSound={handleGatedSoundToggle}
+              isGated={!isAuthenticated}
             />
           </motion.div>
         ) : (
@@ -507,11 +704,7 @@ function App() {
             className="flex flex-col min-h-screen"
           >
             <Header />
-            <main
-              className="flex-1 pt-0 sm:pt-20 p-6 pb-32"
-              role="main"
-              id="main-content"
-            >
+            <main className="flex-1 p-6 pb-32" role="main" id="main-content">
               <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   {/* Settings Panel */}
@@ -547,6 +740,18 @@ function App() {
                       isPlaying={visualization.isPlaying}
                       mode={mode}
                       onModeChange={setMode}
+                      user={user}
+                      onLockedAlgorithmClick={handleLockedAlgorithmClick}
+                      onGatedFeatureClick={handleGatedFeatureClick}
+                      favorites={favorites}
+                      favoriteSlotLimit={
+                        isAuthenticated ? favoriteSlotLimit : null
+                      }
+                      onFavoriteSelect={handleFavoriteNavigate}
+                      isFavorite={isFavorite}
+                      onToggleFavorite={handleToggleFavorite}
+                      onFavoriteGatedClick={handleFavoriteGatedClick}
+                      isAuthenticated={isAuthenticated}
                     />
                   </aside>
 
@@ -573,7 +778,7 @@ function App() {
                       isPlaying={visualization.isPlaying}
                       isComplete={visualization.isComplete}
                       mode={mode}
-                      onPlay={visualization.play}
+                      onPlay={handlePlay}
                       onPause={visualization.pause}
                       onReset={visualization.reset}
                       onStepForward={visualization.stepForward}
@@ -585,7 +790,7 @@ function App() {
                       sortOrder={sortOrder}
                       onSortOrderChange={setSortOrder}
                       isFullScreen={isFullScreen}
-                      onToggleFullScreen={toggleFullScreen}
+                      onToggleFullScreen={handleGatedFullscreenToggle}
                       onExportVideo={handleExportVideo}
                       onCancelExport={cancelExport}
                       exportState={exportState}
@@ -593,7 +798,9 @@ function App() {
                       canRenderOnWeb={canRenderOnWeb}
                       isSoundEnabled={isSoundEnabled}
                       isSoundTogglePending={isSoundTogglePending}
-                      onToggleSound={handleSoundToggle}
+                      onToggleSound={handleGatedSoundToggle}
+                      isGated={!isAuthenticated}
+                      onGatedFeatureClick={handleGatedFeatureClick}
                     />
                   </section>
                 </div>
@@ -601,17 +808,65 @@ function App() {
             </main>
             <Footer />
 
+            {/* Remaining Visualizations Counter (anonymous users only) */}
+            {!user && getRemainingVisualizations(user) < Infinity && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="fixed bottom-4 right-4 z-40 text-xs sm:text-sm text-text-secondary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
+              >
+                {t('info.visualizationsRemaining', {
+                  count: getRemainingVisualizations(user),
+                })}
+              </motion.div>
+            )}
+
             {/* Floating Action Buttons */}
+            <AnimatePresence>
+              {favoriteNotice && (
+                <motion.div
+                  key="favorite-notice"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-40 text-xs sm:text-sm text-text-primary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
+                  role="status"
+                  aria-live="polite"
+                >
+                  {t('settings.favoriteSlotsFull', {
+                    limit: favoriteSlotLimit,
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {!isPythonPanelOpen && !isInsightPanelOpen && (
               <>
                 <FloatingActionButton
-                  onClick={() => setIsPythonPanelOpen(true)}
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setIsPythonPanelOpen(true);
+                    } else {
+                      pendingFeatureRef.current = 'code';
+                      openGatedFeature('code');
+                    }
+                  }}
                   disabled={!activeAlgorithmKey}
+                  isGated={!isAuthenticated}
                 />
                 <InsightFloatingActionButton
-                  onClick={() => setIsInsightPanelOpen(true)}
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setIsInsightPanelOpen(true);
+                    } else {
+                      pendingFeatureRef.current = 'insight';
+                      openGatedFeature('insight');
+                    }
+                  }}
                   disabled={!activeAlgorithmKey}
                   label={t('insight_panel.viewInsight')}
+                  isGated={!isAuthenticated}
                 />
               </>
             )}
@@ -670,8 +925,18 @@ function App() {
           onClose={() => setIsInsightPanelOpen(false)}
           algorithmKey={activeAlgorithmKey}
           algorithmName={activeAlgorithmName}
+          categoryType={algorithmType}
+          user={user}
         />
       </Suspense>
+
+      {/* Sign-in prompt for gated features */}
+      <SignInPromptModal
+        feature={gatedFeature}
+        isOpen={gatedFeature !== null}
+        metadata={gatedFeatureMetadata}
+        onClose={closeGatedFeature}
+      />
     </div>
   );
 }

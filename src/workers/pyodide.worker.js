@@ -56,17 +56,30 @@ __test_results_json = json.dumps(__test_results)
 }
 
 self.onmessage = async e => {
-  const { type, code, version = '0.27.5' } = e.data || {};
+  const { type, code, version = '0.27.5', cdnBase } = e.data || {};
 
   if (type === 'init') {
     try {
       self.postMessage({ type: 'loading' });
-      const pyodideUrl = `https://cdn.jsdelivr.net/pyodide/v${version}/full/pyodide.js`;
+      const base =
+        typeof cdnBase === 'string' && cdnBase.trim()
+          ? cdnBase.trim().replace(/\/$/, '')
+          : `https://cdn.jsdelivr.net/pyodide/v${version}/full`;
+      const pyodideUrl = `${base}/pyodide.js`;
       importScripts(pyodideUrl);
-      pyodide = await loadPyodide({
-        stdout: text => self.postMessage({ type: 'stdout', text: text + '\n' }),
-        stderr: text => self.postMessage({ type: 'stderr', text: text + '\n' }),
-      });
+      const progressInterval = setInterval(() => {
+        self.postMessage({ type: 'init-progress' });
+      }, 4000);
+      try {
+        pyodide = await loadPyodide({
+          stdout: text =>
+            self.postMessage({ type: 'stdout', text: text + '\n' }),
+          stderr: text =>
+            self.postMessage({ type: 'stderr', text: text + '\n' }),
+        });
+      } finally {
+        clearInterval(progressInterval);
+      }
       self.postMessage({ type: 'ready' });
       if (pendingRun) {
         const codeToRun = pendingRun;

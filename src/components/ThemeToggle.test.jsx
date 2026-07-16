@@ -9,6 +9,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ThemeToggle from './ThemeToggle';
 import { ThemeContext } from '../contexts/ThemeContextDefinition';
 
+vi.mock('../utils/themeSwitchSound', () => ({
+  playThemeSwitchSound: vi.fn(),
+}));
+
+import { playThemeSwitchSound } from '../utils/themeSwitchSound';
+
 describe('ThemeToggle', () => {
   describe('Rendering', () => {
     it('should render toggle button', () => {
@@ -80,6 +86,17 @@ describe('ThemeToggle', () => {
       const button = screen.getByRole('switch');
       fireEvent.click(button);
 
+      expect(playThemeSwitchSound).toHaveBeenCalledWith('dark');
+      expect(onToggle).toHaveBeenCalledTimes(1);
+    });
+
+    it('plays the light-switch sound for the target theme', () => {
+      const onToggle = vi.fn();
+      render(<ThemeToggle theme="dark" onToggle={onToggle} />);
+
+      fireEvent.click(screen.getByRole('switch'));
+
+      expect(playThemeSwitchSound).toHaveBeenCalledWith('light');
       expect(onToggle).toHaveBeenCalledTimes(1);
     });
 

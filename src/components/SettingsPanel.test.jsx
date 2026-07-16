@@ -75,6 +75,9 @@ function getBaseProps(overrides = {}) {
     isPlaying: false,
     mode: VISUALIZATION_MODES.MANUAL,
     onModeChange: vi.fn(),
+    user: { id: 'test-user' }, // Signed-in user by default for tests
+    onLockedAlgorithmClick: vi.fn(),
+    onGatedFeatureClick: vi.fn(),
     ...overrides,
   };
 }
@@ -174,5 +177,87 @@ describe('SettingsPanel', () => {
     expect(sliders[1]).toHaveAttribute('max', '6');
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('6')).toBeInTheDocument();
+  });
+
+  it('opens manual_controls gate for anonymous users clicking Manual', () => {
+    const onGatedFeatureClick = vi.fn();
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          user: null,
+          mode: VISUALIZATION_MODES.AUTOPLAY,
+          onGatedFeatureClick,
+        })}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /manual/i }));
+
+    expect(onGatedFeatureClick).toHaveBeenCalledWith('manual_controls');
+  });
+
+  it('opens speed_control gate for anonymous users adjusting speed', () => {
+    const onGatedFeatureClick = vi.fn();
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          user: null,
+          mode: VISUALIZATION_MODES.AUTOPLAY,
+          onGatedFeatureClick,
+        })}
+      />
+    );
+
+    fireEvent.click(screen.getAllByRole('slider')[0]);
+
+    expect(onGatedFeatureClick).toHaveBeenCalledWith('speed_control');
+  });
+
+  it('shows the graph scenario dropdown with locked options for anonymous users', () => {
+    const onGatedFeatureClick = vi.fn();
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          user: null,
+          selectedGraphScenario: '',
+          onGatedFeatureClick,
+        })}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Graph scenario' }));
+
+    // Dropdown opens (does not immediately gate) and the first option stays free.
+    expect(onGatedFeatureClick).not.toHaveBeenCalled();
+
+    // Clicking a locked (non-first) option opens the gate.
+    fireEvent.click(
+      screen.getByRole('option', { name: 'Diamond Pattern (merge point)' })
+    );
+
+    expect(onGatedFeatureClick).toHaveBeenCalledWith('category_controls');
+  });
+
+  it('lets anonymous users pick the first (free) graph scenario option', () => {
+    const onGatedFeatureClick = vi.fn();
+    const onGraphScenarioChange = vi.fn();
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          user: null,
+          selectedGraphScenario: '',
+          onGatedFeatureClick,
+          onGraphScenarioChange,
+        })}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Graph scenario' }));
+    fireEvent.click(
+      screen.getByRole('option', { name: 'Linear Chain (A→B→C→D)' })
+    );
+
+    expect(onGraphScenarioChange).toHaveBeenCalledWith('linearChain');
+    expect(onGatedFeatureClick).not.toHaveBeenCalled();
   });
 });

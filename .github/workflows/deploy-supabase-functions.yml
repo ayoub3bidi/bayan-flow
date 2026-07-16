@@ -1,0 +1,53 @@
+name: Deploy Supabase Edge Functions
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main, develop]
+
+concurrency:
+  group: supabase-functions-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy edge functions
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.head_branch == 'main' ||
+       github.event.workflow_run.head_branch == 'develop')
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link project and deploy functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+        run: |
+          PROJECT_REF="${VITE_SUPABASE_URL#https://}"
+          PROJECT_REF="${PROJECT_REF%%.supabase.co*}"
+          if [ -z "$PROJECT_REF" ]; then
+            echo "Could not derive project ref from VITE_SUPABASE_URL"
+            exit 1
+          fi
+          supabase link --project-ref "$PROJECT_REF"
+          supabase functions deploy before-signup --no-verify-jwt
+          supabase functions deploy post-signup --no-verify-jwt
+          supabase functions deploy platform-access
+          supabase functions deploy delete-account
+          supabase functions deploy waitlist-welcome --no-verify-jwt

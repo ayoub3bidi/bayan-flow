@@ -19,6 +19,7 @@ describe('terms.en', () => {
         'acceptance',
         'service',
         'acceptable-use',
+        'user-content',
         'software-license',
         'disclaimer',
         'privacy',

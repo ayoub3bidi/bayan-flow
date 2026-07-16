@@ -133,6 +133,12 @@ export function useVideoExporter() {
     setExportState('orientation');
   }, []);
 
+  const reportExportError = useCallback(message => {
+    setExportErrorMessage(message);
+    setExportState('error');
+    setExportProgress(0);
+  }, []);
+
   const closePreview = useCallback(() => {
     resetExportSession();
   }, [resetExportSession]);
@@ -320,6 +326,7 @@ export function useVideoExporter() {
 
   return {
     beginExportFlow,
+    reportExportError,
     exportVideo,
     exportState,
     exportProgress,

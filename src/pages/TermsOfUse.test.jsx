@@ -14,12 +14,8 @@ vi.mock('../components/Footer', () => ({
   default: () => <footer data-testid="footer">Footer</footer>,
 }));
 
-vi.mock('../components/ThemeToggle', () => ({
-  default: () => <button type="button">Theme</button>,
-}));
-
-vi.mock('../components/LanguageSwitcher', () => ({
-  default: () => <div>Language</div>,
+vi.mock('../components/Header', () => ({
+  default: () => <header data-testid="header">Header</header>,
 }));
 
 describe('TermsOfUse', () => {

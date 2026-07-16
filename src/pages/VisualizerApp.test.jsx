@@ -4,40 +4,77 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
 import { soundManager } from '../utils/soundManager';
+import { resetSoundManagerMock } from '../test/soundManagerMock.js';
 
-const { beginExportFlow, exportVideo, videoExporterMock, fullScreenMock } =
-  vi.hoisted(() => {
-    const beginExportFlowInner = vi.fn();
-    const exportVideoInner = vi.fn();
-    const toggleFullScreenInner = vi.fn();
-    const videoExporterMockInner = {
-      beginExportFlow: beginExportFlowInner,
-      exportVideo: exportVideoInner,
-      exportState: 'idle',
-      exportProgress: 0,
-      exportBlobUrl: null,
-      exportErrorMessage: null,
-      cancelExport: vi.fn(),
-      closePreview: vi.fn(),
-      downloadVideo: vi.fn(),
-    };
-    const fullScreenMockInner = {
-      isFullScreen: false,
-      toggleFullScreen: toggleFullScreenInner,
-    };
-    return {
-      beginExportFlow: beginExportFlowInner,
-      exportVideo: exportVideoInner,
-      toggleFullScreen: toggleFullScreenInner,
-      videoExporterMock: videoExporterMockInner,
-      fullScreenMock: fullScreenMockInner,
-    };
-  });
+const {
+  beginExportFlow,
+  reportExportError,
+  exportVideo,
+  videoExporterMock,
+  fullScreenMock,
+} = vi.hoisted(() => {
+  const beginExportFlowInner = vi.fn();
+  const reportExportErrorInner = vi.fn();
+  const exportVideoInner = vi.fn();
+  const toggleFullScreenInner = vi.fn();
+  const videoExporterMockInner = {
+    beginExportFlow: beginExportFlowInner,
+    reportExportError: reportExportErrorInner,
+    exportVideo: exportVideoInner,
+    exportState: 'idle',
+    exportProgress: 0,
+    exportBlobUrl: null,
+    exportErrorMessage: null,
+    cancelExport: vi.fn(),
+    closePreview: vi.fn(),
+    downloadVideo: vi.fn(),
+  };
+  const fullScreenMockInner = {
+    isFullScreen: false,
+    toggleFullScreen: toggleFullScreenInner,
+  };
+  return {
+    beginExportFlow: beginExportFlowInner,
+    reportExportError: reportExportErrorInner,
+    exportVideo: exportVideoInner,
+    toggleFullScreen: toggleFullScreenInner,
+    videoExporterMock: videoExporterMockInner,
+    fullScreenMock: fullScreenMockInner,
+  };
+});
+
+const authMock = vi.hoisted(() => ({
+  isAuthenticated: true,
+  isLoading: false,
+  isConfigured: true,
+  user: { id: 'test-user', email: 'test@example.com' },
+  signInWithGoogle: vi.fn(),
+  signOut: vi.fn(),
+  session: {},
+  profile: {
+    displayName: 'Test User',
+    email: 'test@example.com',
+    avatarSrc: '',
+    avatarSource: 'google',
+    plan: 'free',
+  },
+}));
+
+const useFavoritesMock = vi.hoisted(() => ({
+  useFavorites: vi.fn(() => ({
+    favorites: [],
+    favoriteSlotLimit: 20,
+    isLoading: false,
+    isFavorite: vi.fn(() => false),
+    toggleFavorite: vi.fn(() => Promise.resolve({ ok: true })),
+  })),
+}));
 
 const sortingVisualization = {
   array: [3, 1, 2],
@@ -157,9 +194,12 @@ vi.mock('../components/Footer', () => ({
 }));
 
 vi.mock('../components/ExportProgressModal', () => ({
-  default: ({ open, onOrientationSelect }) =>
+  default: ({ open, onOrientationSelect, errorMessage }) =>
     open ? (
       <div data-testid="export-modal">
+        {errorMessage ? (
+          <span data-testid="export-error-message">{errorMessage}</span>
+        ) : null}
         <button
           type="button"
           onClick={() => onOrientationSelect?.('horizontal')}
@@ -171,8 +211,8 @@ vi.mock('../components/ExportProgressModal', () => ({
 }));
 
 vi.mock('../components/FloatingActionButton', () => ({
-  default: ({ disabled }) => (
-    <button data-testid="code-fab" disabled={disabled}>
+  default: ({ disabled, onClick }) => (
+    <button data-testid="code-fab" disabled={disabled} onClick={onClick}>
       Code
     </button>
   ),
@@ -198,6 +238,7 @@ vi.mock('../components/SettingsPanel', () => ({
     graphNodeCount,
     onAlgorithmTypeChange,
     onAlgorithmChange,
+    onToggleFavorite,
   }) => (
     <div data-testid="settings-panel">
       <div data-testid="algorithm-type">{algorithmType}</div>
@@ -222,6 +263,12 @@ vi.mock('../components/SettingsPanel', () => ({
       <button onClick={() => onAlgorithmChange('floydWarshallAlgorithm')}>
         select-floyd-warshall
       </button>
+      <button
+        data-testid="trigger-favorite"
+        onClick={() => onToggleFavorite?.('sorting', 'bubbleSort')}
+      >
+        trigger-favorite
+      </button>
     </div>
   ),
 }));
@@ -237,6 +284,7 @@ vi.mock('../components/ControlPanel', () => ({
     onToggleSound,
     sortOrder,
     onSortOrderChange,
+    onToggleFullScreen,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -250,6 +298,9 @@ vi.mock('../components/ControlPanel', () => ({
       <button onClick={onExportVideo}>export</button>
       <button type="button" onClick={onToggleSound}>
         toggle-sound
+      </button>
+      <button type="button" onClick={onToggleFullScreen}>
+        toggle-fullscreen
       </button>
       {algorithmType === 'sorting' && (
         <button
@@ -329,37 +380,99 @@ vi.mock('../hooks/useFullScreen', () => ({
   }),
 }));
 
-vi.mock('../video/useVideoExporter', () => ({
-  useVideoExporter: () => ({
-    beginExportFlow: videoExporterMock.beginExportFlow,
-    exportVideo: videoExporterMock.exportVideo,
-    exportState: videoExporterMock.exportState,
-    exportProgress: videoExporterMock.exportProgress,
-    exportBlobUrl: videoExporterMock.exportBlobUrl,
-    exportErrorMessage: videoExporterMock.exportErrorMessage,
-    cancelExport: videoExporterMock.cancelExport,
-    closePreview: videoExporterMock.closePreview,
-    downloadVideo: videoExporterMock.downloadVideo,
-    canRenderOnWeb: true,
-  }),
+vi.mock('../hooks/useAuth', () => ({
+  useAuth: () => authMock,
 }));
+
+vi.mock('../hooks/useFavorites', () => ({
+  useFavorites: useFavoritesMock.useFavorites,
+}));
+
+vi.mock('../components/SignInPromptModal', () => ({
+  default: ({ feature, isOpen, onClose }) =>
+    isOpen ? (
+      <div data-testid="sign-in-prompt-modal">
+        <span data-testid="gated-feature">{feature}</span>
+        <button type="button" onClick={onClose}>
+          maybe-later
+        </button>
+      </div>
+    ) : null,
+}));
+
+vi.mock('../hooks/useBodyScrollLock', () => ({
+  useBodyScrollLock: vi.fn(),
+}));
+
+vi.mock('../video/useVideoExporter', async () => {
+  const React = await vi.importActual('react');
+
+  return {
+    useVideoExporter: () => {
+      const [exportState, setExportState] = React.useState(
+        videoExporterMock.exportState
+      );
+      const [exportErrorMessage, setExportErrorMessage] = React.useState(
+        videoExporterMock.exportErrorMessage
+      );
+
+      return {
+        beginExportFlow: videoExporterMock.beginExportFlow,
+        reportExportError: message => {
+          videoExporterMock.reportExportError(message);
+          videoExporterMock.exportErrorMessage = message;
+          setExportErrorMessage(message);
+          setExportState('error');
+        },
+        exportVideo: videoExporterMock.exportVideo,
+        exportState,
+        exportProgress: videoExporterMock.exportProgress,
+        exportBlobUrl: videoExporterMock.exportBlobUrl,
+        exportErrorMessage,
+        cancelExport: videoExporterMock.cancelExport,
+        closePreview: videoExporterMock.closePreview,
+        downloadVideo: videoExporterMock.downloadVideo,
+        canRenderOnWeb: true,
+      };
+    },
+  };
+});
 
 describe('VisualizerApp', () => {
   beforeEach(() => {
-    window.localStorage.clear();
-    soundManager.disable();
     vi.clearAllMocks();
+    resetSoundManagerMock();
+    window.localStorage.clear();
+    document.body.style.cssText = '';
     fullScreenMock.isFullScreen = false;
     videoExporterMock.exportState = 'idle';
     videoExporterMock.exportProgress = 0;
     videoExporterMock.exportBlobUrl = null;
+    videoExporterMock.exportErrorMessage = null;
+    authMock.isAuthenticated = true;
+    authMock.user = { id: 'test-user', email: 'test@example.com' };
+    useFavoritesMock.useFavorites.mockImplementation(() => ({
+      favorites: [],
+      favoriteSlotLimit: 20,
+      isLoading: false,
+      isFavorite: vi.fn(() => false),
+      toggleFavorite: vi.fn(() => Promise.resolve({ ok: true })),
+    }));
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    document.body.style.cssText = '';
+    resetSoundManagerMock();
   });
 
   async function renderApp() {
     renderWithI18n(
-      <ThemeProvider>
-        <VisualizerApp />
-      </ThemeProvider>
+      <MemoryRouter initialEntries={['/app']}>
+        <ThemeProvider>
+          <VisualizerApp />
+        </ThemeProvider>
+      </MemoryRouter>
     );
     await screen.findByTestId('python-panel');
     await screen.findByTestId('insight-panel');
@@ -440,6 +553,32 @@ describe('VisualizerApp', () => {
     fireEvent.click(screen.getByText('export'));
 
     expect(beginExportFlow).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByTestId('sign-in-prompt-modal')
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the export error modal when a free user reaches the private daily guard', async () => {
+    window.localStorage.setItem(
+      'free_export_daily_test-user',
+      JSON.stringify({
+        date: new Date().toISOString().slice(0, 10),
+        count: 50,
+      })
+    );
+    await renderApp();
+
+    fireEvent.click(screen.getByText('pathfinding'));
+    fireEvent.click(screen.getByText('export'));
+
+    expect(beginExportFlow).not.toHaveBeenCalled();
+    expect(reportExportError).toHaveBeenCalledWith(
+      'Export unavailable right now. Please try again later.'
+    );
+    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('export-error-message')).toHaveTextContent(
+      'Export unavailable right now. Please try again later.'
+    );
   });
 
   it('dispatches new data by category: array config vs grid regenerateGrid', async () => {
@@ -485,6 +624,10 @@ describe('VisualizerApp', () => {
         algorithmKey: 'bubbleSort',
         orientation: 'horizontal',
         steps: sortingVisualization.steps,
+        watermark: expect.objectContaining({
+          enabled: true,
+          text: 'Bayan Flow',
+        }),
         exportTheme: expect.stringMatching(/^(light|dark)$/),
         exportLanguage: expect.any(String),
       })
@@ -555,12 +698,14 @@ describe('VisualizerApp', () => {
       });
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await renderApp();
+    try {
+      await renderApp();
 
-    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
-
-    getItemSpy.mockRestore();
-    consoleSpy.mockRestore();
+      expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+    } finally {
+      getItemSpy.mockRestore();
+      consoleSpy.mockRestore();
+    }
   });
 
   it('keeps rendering when persisting the sound preference throws', async () => {
@@ -570,11 +715,13 @@ describe('VisualizerApp', () => {
         throw new Error('storage write failed');
       });
 
-    await renderApp();
+    try {
+      await renderApp();
 
-    expect(screen.getByTestId('control-panel')).toBeInTheDocument();
-
-    setItemSpy.mockRestore();
+      expect(screen.getByTestId('control-panel')).toBeInTheDocument();
+    } finally {
+      setItemSpy.mockRestore();
+    }
   });
 
   it('toggles sound through the shared control-panel state and persists it', async () => {
@@ -619,6 +766,127 @@ describe('VisualizerApp', () => {
       expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
         'false'
       );
+    });
+  });
+
+  describe('feature gating', () => {
+    function expectGatedFeatureModal(featureKey) {
+      const modal = screen.getByTestId('sign-in-prompt-modal');
+      expect(modal).toBeInTheDocument();
+      expect(screen.getByTestId('gated-feature')).toHaveTextContent(featureKey);
+    }
+
+    it('gates code panel when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      const codeFab = screen.getByTestId('code-fab');
+      fireEvent.click(codeFab);
+
+      expectGatedFeatureModal('code');
+    });
+
+    it('gates insight panel when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(
+        screen.getAllByRole('button', { name: /View Algorithm Insight/i })[0]
+      );
+
+      expectGatedFeatureModal('insight');
+    });
+
+    it('gates video export when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('pathfinding'));
+      fireEvent.click(screen.getByText('export'));
+
+      expectGatedFeatureModal('export');
+    });
+
+    it('gates sound toggle when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('toggle-sound'));
+
+      expectGatedFeatureModal('sound');
+    });
+
+    it('gates fullscreen when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('toggle-fullscreen'));
+
+      expectGatedFeatureModal('fullscreen');
+    });
+
+    it('does not gate features when authenticated', async () => {
+      authMock.isAuthenticated = true;
+      await renderApp();
+
+      const codeFab = screen.getByTestId('code-fab');
+      fireEvent.click(codeFab);
+
+      expect(
+        screen.queryByTestId('sign-in-prompt-modal')
+      ).not.toBeInTheDocument();
+      expect(screen.getByTestId('python-panel')).toBeInTheDocument();
+    });
+
+    it('shows remaining visualizations counter for anonymous users', async () => {
+      authMock.isAuthenticated = false;
+      authMock.user = null;
+      window.localStorage.setItem('anon_viz_count', '5');
+
+      await renderApp();
+
+      expect(
+        screen.getByText(/7 visualizations remaining/i)
+      ).toBeInTheDocument();
+    });
+
+    it('hides remaining visualizations counter for authenticated users', async () => {
+      await renderApp();
+
+      expect(
+        screen.queryByText(/visualizations remaining/i)
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows remaining visualizations as 12 for anon with zero usage', async () => {
+      authMock.isAuthenticated = false;
+      authMock.user = null;
+
+      await renderApp();
+
+      expect(
+        screen.getByText(/12 visualizations remaining/i)
+      ).toBeInTheDocument();
+    });
+
+    it('shows slot limit notification when toggleFavorite returns slot_limit', async () => {
+      useFavoritesMock.useFavorites.mockReturnValue({
+        favorites: [],
+        favoriteSlotLimit: 20,
+        isLoading: false,
+        isFavorite: vi.fn(() => false),
+        toggleFavorite: vi.fn(() =>
+          Promise.resolve({ ok: false, reason: 'slot_limit' })
+        ),
+      });
+
+      await renderApp();
+
+      fireEvent.click(screen.getByTestId('trigger-favorite'));
+
+      expect(
+        await screen.findByText(/Favorite limit reached/)
+      ).toBeInTheDocument();
     });
   });
 });

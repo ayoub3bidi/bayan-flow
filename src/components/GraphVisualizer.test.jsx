@@ -5,7 +5,7 @@
  */
 
 import { act } from '@testing-library/react';
-import { renderWithI18n, screen } from '../test/testUtils';
+import { renderWithProviders, screen } from '../test/testUtils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import GraphVisualizer from './GraphVisualizer.jsx';
 
@@ -58,7 +58,7 @@ const baseNodes = [
 ];
 
 function renderGraph(props = {}) {
-  return renderWithI18n(
+  return renderWithProviders(
     <GraphVisualizer
       nodes={baseNodes}
       edges={[{ id: '0<->1', from: '0', to: '1', weight: 11 }]}
@@ -174,6 +174,29 @@ describe('GraphVisualizer', () => {
         vi.advanceTimersByTime(1000);
       });
 
+      expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('shows blurred overlay when anonymous user exceeds complexity view limit', () => {
+    vi.useFakeTimers();
+
+    try {
+      localStorage.setItem('anon_complexity_views', '2');
+
+      renderGraph({
+        weighted: false,
+        isComplete: true,
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      const blurOverlay = document.querySelector('.backdrop-blur-md');
+      expect(blurOverlay).toBeInTheDocument();
       expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
     } finally {
       vi.useRealTimers();

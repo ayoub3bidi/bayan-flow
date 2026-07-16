@@ -2,13 +2,128 @@
   "common": {
     "back": "Back",
     "backToHome": "Back to Home",
-    "save": "Save"
+    "save": "Save",
+    "close": "Close",
+    "coming_soon": "Coming soon…",
+    "cancel": "Cancel"
+  },
+  "app": {
+    "pageTitle": "Interactive Algorithm Visualizer"
   },
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarity in Algorithms",
     "openGithubRepo": "Open {{repo}} on GitHub — version {{version}}, {{stars}} stars, {{forks}} forks",
     "goToRepository": "Go to repository"
+  },
+  "auth": {
+    "sign_in_google": "Sign in with Google",
+    "sign_out": "Sign out",
+    "signed_in_as": "Signed in as {{name}}",
+    "account_menu_label": "Account menu for {{name}}",
+    "completing_sign_in": "Completing sign-in…",
+    "account_settings": "Account settings",
+    "settings": "Settings"
+  },
+  "accessBan": {
+    "title": "Account suspended",
+    "description": "Access to Bayan Flow is restricted for this account. If you believe this is a mistake, contact us.",
+    "signedInAs": "Signed in as {{email}}",
+    "contact": "Email contact@bayanflow.com for assistance.",
+    "signInUnavailable": "Sign-in is temporarily unavailable. Please try again later."
+  },
+  "profile": {
+    "pageTitle": "Profile settings",
+    "title": "Profile settings",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "How you appear in Bayan Flow",
+    "email": "Email",
+    "description": "Description",
+    "descriptionPlaceholder": "Tell others about yourself…",
+    "avatarTitle": "Profile picture",
+    "avatarGoogle": "Profile Picture",
+    "avatarGenerated": "Generated avatar",
+    "avatarCustomizationComingSoon": "You will be able to change your profile picture and customize your avatar very soon",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Profile updated",
+    "error": "Could not save your profile. Please try again.",
+    "loading": "Loading profile…",
+    "dangerZoneTitle": "Danger zone",
+    "dangerZoneDescription": "Permanently delete your account and all saved favorites and study notes. This cannot be undone.",
+    "deleteAccount": "Delete account",
+    "deleteAccountConfirmLabel": "Type DELETE to confirm",
+    "deleteAccountConfirmPlaceholder": "DELETE",
+    "deleteAccountConfirmWord": "DELETE",
+    "deleteAccountInProgress": "Deleting account…",
+    "deleteAccountSuccess": "Your account has been deleted.",
+    "deleteAccountError": "Could not delete your account. Please try again or email contact@bayanflow.com."
+  },
+  "pro": {
+    "pageTitle": "The Pro Plan",
+    "metaDescription": "Join the Pro plan waitlist and lock in 50% off your first year on the annual plan.",
+    "banner": {
+      "message": "The Pro plan is coming soon. Be first in line.",
+      "cta": "Join waitlist",
+      "linkLabel": "Learn about the Pro plan",
+      "dismiss": "Dismiss"
+    },
+    "eyebrow": "The Pro Plan",
+    "headline": "Go further with the Pro plan",
+    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, unlimited exports, and more.",
+    "featuresHeading": "What the Pro plan unlocks",
+    "features": {
+      "customInput": {
+        "title": "Custom algorithm inputs",
+        "body": "Bring your own arrays, graphs, trees, and grids into guided visualizations."
+      },
+      "comparison": {
+        "title": "Side-by-side comparison mode",
+        "body": "Run two algorithms against the same scenario and inspect each decision."
+      },
+      "export": {
+        "title": "Unlimited video export",
+        "body": "Create polished walkthroughs with no watermark (or customize it to your own branding)."
+      },
+      "presentation": {
+        "title": "Presentation mode",
+        "body": "Use a focused teaching view with cleaner chrome and larger visual states."
+      }
+    },
+    "form": {
+      "title": "Get 50% off your first year",
+      "helper": "Join the waitlist and lock in half off your first annual plan. No spam, just one email when it is ready.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@school.edu",
+      "submit": "Join the waitlist",
+      "submitting": "Joining…",
+      "privacy": "You can ignore the launch email if the Pro plan is not useful for you."
+    },
+    "success": {
+      "title": "You are on the list",
+      "position": "You are #{{position}} on the waitlist",
+      "nextStep": "We will email you at {{email}} when the Pro plan launches.",
+      "backToApp": "Back to the visualizer"
+    },
+    "alreadyJoined": {
+      "title": "You are already on the waitlist",
+      "body": "We have your email on file. We will notify you when the Pro plan launches."
+    },
+    "errors": {
+      "invalidEmail": "Enter a valid email address.",
+      "unavailable": "Waitlist sign-up is temporarily unavailable. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "featuresMore": {
+      "title": "And more to come",
+      "body": "These are just the first features. The Pro plan will keep growing with more tools as we get closer to launch."
+    },
+    "waitlistCount": "{{count}} learners are on the waitlist"
+  },
+  "settings_tabs": {
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "connections": "Connected Accounts"
   },
   "settings": {
     "title": "Settings",
@@ -31,7 +146,18 @@
     "autoplayOnly": "only",
     "treeNodeCount": "Tree nodes",
     "graphNodeCount": "Graph vertices",
-    "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it."
+    "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it.",
+    "signInForManual": "Sign in for manual mode",
+    "signInForSpeed": "Sign in to adjust speed",
+    "signInForCategoryControls": "Sign in for advanced controls",
+    "favoriteAlgorithms": "Favorite algorithms",
+    "favoriteAlgorithmsEmpty": "No favorites yet",
+    "favoriteAlgorithmsCount": "{{count}} saved",
+    "favoriteAlgorithmsHint": "Star algorithms in the list below to add them here.",
+    "favoriteSlotsUsed": "{{count}} / {{limit}}",
+    "favoriteSlotsFull": "Favorite limit reached ({{limit}}). Remove one to add another.",
+    "addFavorite": "Add {{name}} to favorites",
+    "removeFavorite": "Remove {{name}} from favorites"
   },
   "modes": {
     "sorting": "Sorting",
@@ -216,6 +342,7 @@
     "rendering": "Rendering video…",
     "exportDone": "Video downloaded",
     "exportError": "Export failed",
+    "exportTemporarilyUnavailable": "Export unavailable right now. Please try again later.",
     "browserNotSupported": "Video export is not supported in this browser. Use Chrome 94+, Firefox 130+, or Safari 26+.",
     "exportingTitle": "Exporting video",
     "exportingChecking": "Checking browser support…",
@@ -246,7 +373,8 @@
     "completed": "Algorithm completed!",
     "ready": "Ready to start",
     "pathFound": "Path found!",
-    "noPath": "No path exists"
+    "noPath": "No path exists",
+    "visualizationsRemaining": "{{count}} visualizations remaining"
   },
   "videoExport": {
     "noSteps": "No steps to display"
@@ -297,6 +425,9 @@
     "output": "Output",
     "clear_output": "Clear output",
     "resize_output": "Resize output panel",
+    "expand_output": "Expand output panel",
+    "collapse_output": "Collapse output panel",
+    "output_dock_label": "Output & Test Cases",
     "output_placeholder": "Run the code to see output here.",
     "loading_runtime": "Loading Python runtime...",
     "timeout": "Timeout",
@@ -317,8 +448,21 @@
     "error_label": "Error:",
     "actual_label": "Actual:"
   },
+  "notes_panel": {
+    "placeholder": "What did you learn about {{algorithmName}}?",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "unsaved": "Unsaved changes",
+    "saveError": "Couldn't save — retrying…",
+    "loading": "Loading your note…",
+    "loadingEditor": "Loading editor…",
+    "signInRequired": "Sign in to save study notes."
+  },
   "insight_panel": {
     "title": "Algorithm Insight",
+    "learnTitle": "Learn",
+    "tabList": "Learning panel sections",
+    "tabNotes": "My Notes",
     "close": "Close",
     "viewInsight": "View Algorithm Insight",
     "insightLabel": "Insight",
@@ -1294,5 +1438,30 @@
     "timeline": {
       "sampleNote": "Timeline items are samples. Replace with actual roadmap content."
     }
+  },
+  "featureGate": {
+    "title": "Unlock {{feature}}",
+    "description": "Sign in with Google to access the {{feature}} and get the full Bayan Flow experience.",
+    "signIn": "Sign in with Google",
+    "dismiss": "Maybe later",
+    "code": "Code Panel",
+    "insight": "Algorithm Insight",
+    "export": "Video Export",
+    "sound": "Sound",
+    "fullscreen": "Fullscreen Mode",
+    "algorithm_lock": "Unlock {{algorithmName}}",
+    "algorithm_lock_description": "Sign in to access all 45 algorithms across 5 categories.",
+    "session_limit": "Continue Learning",
+    "session_limit_description": "You've explored {{limit}} visualizations. Sign in to continue with unlimited access.",
+    "speed_control": "Adjust Speed",
+    "speed_control_description": "Sign in to control animation speed from slow to lightning-fast.",
+    "complexity_limit": "Complexity Analysis",
+    "complexity_limit_description": "Sign in to see interactive complexity charts for every algorithm.",
+    "manual_controls": "Manual Step Control",
+    "manual_controls_description": "Sign in to step through algorithms at your own pace.",
+    "category_controls": "Advanced Controls",
+    "category_controls_description": "Sign in to customize grid sizes, sort order, graph scenarios, and more.",
+    "favorite": "Favorite Algorithms",
+    "favorite_description": "Sign in to star algorithms and jump back to them quickly from your favorites list."
   }
 }

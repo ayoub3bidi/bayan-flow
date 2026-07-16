@@ -54,4 +54,50 @@ describe('GraphScenarioDropdown', () => {
     expect(onScenarioSelect).toHaveBeenCalledWith('diamond');
     expect(setIsDropdownOpen).toHaveBeenCalledWith(false);
   });
+
+  it('locks non-first options when areOptionsGated is set', () => {
+    const onScenarioSelect = vi.fn();
+    const onLockedScenarioClick = vi.fn();
+
+    renderWithI18n(
+      <GraphScenarioDropdown
+        {...getBaseProps({
+          selectedScenario: '',
+          areOptionsGated: true,
+          onScenarioSelect,
+          onLockedScenarioClick,
+        })}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole('option', { name: 'Diamond Pattern (merge point)' })
+    );
+
+    expect(onLockedScenarioClick).toHaveBeenCalledTimes(1);
+    expect(onScenarioSelect).not.toHaveBeenCalled();
+  });
+
+  it('keeps the first option selectable when areOptionsGated is set', () => {
+    const onScenarioSelect = vi.fn();
+    const onLockedScenarioClick = vi.fn();
+
+    renderWithI18n(
+      <GraphScenarioDropdown
+        {...getBaseProps({
+          selectedScenario: '',
+          areOptionsGated: true,
+          onScenarioSelect,
+          onLockedScenarioClick,
+        })}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole('option', { name: 'Linear Chain (A→B→C→D)' })
+    );
+
+    expect(onScenarioSelect).toHaveBeenCalledWith('linearChain');
+    expect(onLockedScenarioClick).not.toHaveBeenCalled();
+  });
 });

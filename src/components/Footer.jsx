@@ -81,7 +81,7 @@ function Footer() {
     },
     {
       label: t('footer.tikTok'),
-      href: 'https://www.tiktok.com/@bayan.flow',
+      href: 'https://www.tiktok.com/@bayanflow.app',
       ariaLabel: t('footer.tikTokAria'),
       icon: <SiTiktok className="w-5 h-5" />,
       hoverClass: 'hover:text-[#8B5CF6]',
@@ -172,7 +172,7 @@ function Footer() {
               </span>
               {version ? (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                  v{version}
+                  {version}
                 </span>
               ) : null}
             </div>
@@ -190,7 +190,7 @@ function Footer() {
                     key={link.label}
                     type="button"
                     onClick={() => handleLinkClick(link.href)}
-                    className="flex cursor-pointer items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm text-left"
+                    className="flex cursor-pointer items-center gap-2 text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg backdrop-blur-sm text-left"
                     whileHover={{ scale: 1.02, x: 2 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
@@ -221,7 +221,7 @@ function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.ariaLabel}
-                    className={`flex items-center justify-center w-9 h-9 text-text-secondary ${item.hoverClass} transition-colors rounded-lg hover:bg-surface-elevated backdrop-blur-sm`}
+                    className={`flex items-center justify-center w-9 h-9 text-text-secondary ${item.hoverClass} transition-colors rounded-lg backdrop-blur-sm`}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
@@ -241,7 +241,7 @@ function Footer() {
                     key={item.href}
                     href={item.href}
                     aria-label={item.ariaLabel}
-                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg hover:bg-surface-elevated backdrop-blur-sm"
+                    className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors p-2 rounded-lg backdrop-blur-sm"
                     whileHover={{ scale: 1.02, x: 2 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}

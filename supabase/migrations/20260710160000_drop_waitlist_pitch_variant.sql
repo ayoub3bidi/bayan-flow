@@ -1,0 +1,2 @@
+-- pitch_variant column retained for backward compatibility.
+-- Removal deferred until all deployed clients no longer reference it.

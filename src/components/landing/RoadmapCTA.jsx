@@ -6,7 +6,6 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Sparkle } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
@@ -26,49 +25,10 @@ function RoadmapCTA() {
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, type: 'spring', stiffness: 100 }}
-          className="relative overflow-hidden"
+          className="relative"
         >
-          {/* Background Gradient */}
-          <motion.div
-            className="absolute inset-0 bg-linear-to-br from-theme-primary/10 via-accent/5 to-transparent rounded-3xl"
-            animate={{
-              backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
-            style={{ backgroundSize: '200% 200%' }}
-          />
-
-          {/* Decorative Elements */}
-          <motion.div
-            className="absolute top-0 right-0 w-64 h-64 bg-theme-primary/5 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-
           {/* Content */}
           <div className="relative px-8 py-12 md:px-12 md:py-16 text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary/10 text-theme-primary rounded-full text-sm font-semibold mb-6"
-            >
-              <Sparkle size={16} weight="bold" />
-              {t('landing.roadmapCTA.badge')}
-            </motion.div>
-
             <h2 className="landing-h2 text-text-primary mb-4">
               {t('landing.roadmapCTA.heading')}
             </h2>

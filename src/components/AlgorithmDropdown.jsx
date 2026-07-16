@@ -5,8 +5,9 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, CaretDown } from '@phosphor-icons/react';
+import { Check, CaretDown, Lock, Star } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { canAccessAlgorithm } from '@/services/entitlementService';
 
 function AlgorithmDropdown({
   algorithms,
@@ -17,12 +18,29 @@ function AlgorithmDropdown({
   setIsDropdownOpen,
   isPlaying,
   dropdownRef,
+  user,
+  categoryType,
+  onLockedAlgorithmClick,
+  isFavorite,
+  onToggleFavorite,
+  onFavoriteGatedClick,
+  isAuthenticated,
 }) {
   const { t } = useTranslation();
+
+  const handleStarClick = (event, algo) => {
+    event.stopPropagation();
+    if (!isAuthenticated) {
+      onFavoriteGatedClick?.();
+      return;
+    }
+    onToggleFavorite?.(categoryType, algo.value);
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
         disabled={isPlaying}
         className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)] touch-manipulation leading-consistent"
@@ -72,43 +90,110 @@ function AlgorithmDropdown({
                       .slice(0, groupIndex)
                       .reduce((acc, g) => acc + g.algorithms.length, 0) + index;
 
+                  const isLocked =
+                    categoryType &&
+                    !canAccessAlgorithm(algo.value, categoryType, user);
+                  const isSelected = selectedAlgorithm === algo.value;
+                  const favorited =
+                    isFavorite?.(categoryType, algo.value) ?? false;
+
                   return (
-                    <motion.button
+                    <motion.div
                       key={algo.value}
-                      onClick={() => onAlgorithmSelect(algo.value)}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: itemIndex * 0.03 }}
-                      className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
-                        selectedAlgorithm === algo.value
-                          ? 'bg-theme-primary-light text-theme-primary'
-                          : 'text-text-primary'
+                      className={`group flex items-center w-full transition-colors duration-150 hover:bg-surface-elevated focus-within:bg-surface-elevated ${
+                        isSelected
+                          ? 'bg-theme-primary-light text-theme-primary dark:text-white'
+                          : isLocked
+                            ? 'text-text-primary opacity-60'
+                            : 'text-text-primary'
                       }`}
                     >
-                      <div className="flex flex-col">
-                        <span className="font-medium">{algo.label}</span>
-                        <span className="text-xs text-text-secondary mt-0.5">
-                          {t('settings.time')}: {algo.complexity}
-                        </span>
-                      </div>
-                      {selectedAlgorithm === algo.value && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 500,
-                            damping: 25,
-                          }}
-                        >
-                          <Check
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isLocked) {
+                            onLockedAlgorithmClick?.(algo);
+                          } else {
+                            onAlgorithmSelect(algo.value);
+                          }
+                        }}
+                        className="flex-1 min-w-0 px-4 py-3 text-left flex items-center justify-between"
+                      >
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span
+                            className={`font-medium ${isSelected ? 'text-theme-primary dark:text-white' : ''}`}
+                          >
+                            {algo.label}
+                          </span>
+                          <span
+                            className={`text-xs mt-0.5 ${
+                              isSelected
+                                ? 'text-text-secondary dark:text-white/80'
+                                : 'text-text-secondary'
+                            }`}
+                          >
+                            {t('settings.time')}: {algo.complexity}
+                          </span>
+                        </div>
+                        {isSelected ? (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{
+                              type: 'spring',
+                              stiffness: 500,
+                              damping: 25,
+                            }}
+                            className="shrink-0 ms-2"
+                          >
+                            <Check
+                              size={18}
+                              weight="bold"
+                              className="text-[#3b82f6] dark:text-white"
+                            />
+                          </motion.div>
+                        ) : isLocked ? (
+                          <Lock
                             size={18}
                             weight="bold"
-                            className="text-[#3b82f6]"
+                            className="shrink-0 ms-2 text-text-tertiary"
+                            aria-hidden="true"
                           />
-                        </motion.div>
+                        ) : null}
+                      </button>
+                      {!isLocked && (
+                        <button
+                          type="button"
+                          onClick={event => handleStarClick(event, algo)}
+                          className={`shrink-0 p-2 me-2 rounded-lg touch-manipulation transition-opacity hover:bg-surface ${
+                            favorited
+                              ? 'opacity-100'
+                              : 'opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100'
+                          }`}
+                          aria-label={
+                            favorited
+                              ? t('settings.removeFavorite', {
+                                  name: algo.label,
+                                })
+                              : t('settings.addFavorite', { name: algo.label })
+                          }
+                          aria-pressed={favorited}
+                        >
+                          <Star
+                            size={18}
+                            weight={favorited ? 'fill' : 'regular'}
+                            className={
+                              favorited
+                                ? 'text-amber-500'
+                                : 'text-text-tertiary hover:text-amber-500'
+                            }
+                          />
+                        </button>
                       )}
-                    </motion.button>
+                    </motion.div>
                   );
                 })}
               </div>

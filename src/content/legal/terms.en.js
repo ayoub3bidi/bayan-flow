@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-export const TERMS_OF_USE_LAST_UPDATED = '2026-06-21';
+export const TERMS_OF_USE_LAST_UPDATED = '2026-07-04';
 
 export const TERMS_OF_USE_SECTIONS = [
   {
@@ -18,7 +18,7 @@ export const TERMS_OF_USE_SECTIONS = [
     id: 'service',
     title: 'The Service',
     paragraphs: [
-      'Bayan Flow is a free, client-side educational web application for visualizing algorithms. The Service is provided for learning and demonstration purposes.',
+      'Bayan Flow is a free, client-side educational web application for visualizing algorithms. Core visualization features are available without an account. Some optional features — including the code panel, algorithm insight and notes panels, favorite algorithms, video export, sound effects, and fullscreen mode — require signing in with a Google account. The Service is provided for learning and demonstration purposes.',
       'We may modify, suspend, or discontinue any part of the Service at any time without notice.',
     ],
   },
@@ -31,6 +31,14 @@ export const TERMS_OF_USE_SECTIONS = [
       'Attempt to disrupt, overload, scrape, or reverse-engineer the Service beyond what is permitted by the software license.',
       'Introduce malware or attempt unauthorized access to systems hosting the Service.',
       'Misrepresent your affiliation with Bayan Flow or use our trademarks except as permitted.',
+    ],
+  },
+  {
+    id: 'user-content',
+    title: 'Your Content',
+    paragraphs: [
+      'When you sign in, you may save personal study notes in the Service. You retain ownership of the content you write. You are responsible for your notes and agree not to store unlawful, harmful, or abusive material.',
+      'We may remove content or suspend access if we reasonably believe it violates these Terms or applicable law. Study notes are provided without warranty; we do not review notes for accuracy.',
     ],
   },
   {

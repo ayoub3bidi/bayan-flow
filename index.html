@@ -19,7 +19,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://bayanflow.com/" />
 
-    <!-- Non-production hostnames: noindex at runtime (deploy previews, dev, Netlify URLs) -->
+    <!-- Non-production hostnames: noindex at runtime (dev, Workers previews) -->
     <script>
       (function () {
         var hostname = window.location.hostname;
@@ -27,11 +27,7 @@
           hostname === 'dev.bayanflow.com' ||
           hostname === 'localhost' ||
           hostname === '127.0.0.1' ||
-          hostname.indexOf('deploy-preview') !== -1 ||
-          hostname.slice(-12) === '.workers.dev' ||
-          (hostname.slice(-12) === '.netlify.app' &&
-            hostname !== 'bayanflow.com' &&
-            hostname !== 'www.bayanflow.com');
+          hostname.slice(-12) === '.workers.dev';
 
         if (shouldNoIndex) {
           var robots = document.querySelector('meta[name="robots"]');
@@ -49,17 +45,13 @@
         let websiteId;
         if (
           hostname === 'dev.bayanflow.com' ||
-          hostname === 'dev-bayanflow.netlify.app' ||
-          hostname.slice(-12) === '.workers.dev' ||
-          hostname.includes('deploy-preview')
+          hostname.slice(-12) === '.workers.dev'
         ) {
           // Develop
           websiteId = 'b21ffc5d-66c1-4bfc-9e54-e05dbbe26852';
         } else if (
           hostname === 'bayanflow.com' ||
-          hostname === 'www.bayanflow.com' ||
-          hostname === 'bayanflow.netlify.app' ||
-          hostname === 'www.bayanflow.netlify.app'
+          hostname === 'www.bayanflow.com'
         ) {
           // main
           websiteId = 'c096589e-f026-47e9-b458-aeb6850d5d5c';
@@ -163,6 +155,87 @@
           }
         } catch (e) {
           console.error('Failed to initialize theme:', e);
+        }
+      })();
+    </script>
+
+    <!-- WebMCP: register site tools for AI agent discovery -->
+    <script>
+      (function () {
+        if (
+          typeof navigator === 'undefined' ||
+          !('modelContext' in navigator) ||
+          !navigator.modelContext
+        ) {
+          return;
+        }
+        try {
+          navigator.modelContext.registerTool({
+            name: 'bayan_flow_info',
+            description:
+              'Get information about Bayan Flow, an interactive algorithm visualizer with 45+ algorithms across sorting, pathfinding, searching, tree traversal, and graph categories.',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                category: {
+                  type: 'string',
+                  description:
+                    'Optional algorithm category name (sorting, pathfinding, searching, tree, graph)',
+                },
+              },
+            },
+            execute: async function (args) {
+              const categories = [
+                {
+                  name: 'sorting',
+                  description:
+                    'Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort, Counting Sort, Radix Sort, Shell Sort, Cocktail Shaker Sort, Gnome Sort, Comb Sort, Tim Sort, Bitonic Sort, Pancake Sort, Bogo Sort, Stooge Sort',
+                  count: 17,
+                },
+                {
+                  name: 'pathfinding',
+                  description:
+                    'Dijkstra, A*, BFS, DFS, Greedy BFS, Bidirectional BFS, Jump Point Search, GBFS',
+                  count: 8,
+                },
+                {
+                  name: 'searching',
+                  description:
+                    'Linear Search, Binary Search, Jump Search, Exponential Search, Ternary Search, Fibonacci Search',
+                  count: 6,
+                },
+                {
+                  name: 'tree',
+                  description:
+                    'Pre-order, In-order, Post-order, Level-order, BFS on Tree, DFS on Tree, Morris In-order',
+                  count: 7,
+                },
+                {
+                  name: 'graph',
+                  description:
+                    'BFS, DFS, Topological Sort (Kahn), Bellman-Ford, Floyd-Warshall, Kruskal, Prim, Tarjan, Kosaraju, Ford-Fulkerson',
+                  count: 10,
+                },
+              ];
+              return {
+                name: 'Bayan Flow',
+                description:
+                  'Interactive algorithm visualizer with 45+ algorithms across sorting, pathfinding, searching, tree traversal, and graph categories.',
+                url: 'https://bayanflow.com',
+                categories: args && args.category
+                  ? categories.filter(
+                      (c) =>
+                        c.name === args.category ||
+                        (args.category === 'tree' && c.name === 'tree') ||
+                        (args.category === 'graph' && c.name === 'graph'),
+                    )
+                  : categories,
+              };
+            },
+            annotations: { readOnlyHint: true },
+          });
+        } catch (_) {
+          /* WebMCP not available */
         }
       })();
     </script>

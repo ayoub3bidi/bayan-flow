@@ -80,6 +80,8 @@ function ControlPanel({
   isSoundEnabled = false,
   isSoundTogglePending = false,
   onToggleSound,
+  isGated = false,
+  onGatedFeatureClick,
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
@@ -182,6 +184,10 @@ function ControlPanel({
             <button
               type="button"
               onClick={() => {
+                if (isGated) {
+                  onGatedFeatureClick?.('category_controls');
+                  return;
+                }
                 onSortOrderChange?.(
                   sortOrder === SORT_ORDERS.ASCENDING
                     ? SORT_ORDERS.DESCENDING
@@ -189,7 +195,7 @@ function ControlPanel({
                 );
               }}
               disabled={isPlaying}
-              className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white`}
+              className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white ${isGated ? 'opacity-60' : ''}`}
               title={
                 sortOrder === SORT_ORDERS.DESCENDING
                   ? t('controls.descending')
@@ -215,7 +221,7 @@ function ControlPanel({
               isSoundEnabled
                 ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md'
                 : 'bg-surface-elevated hover:bg-border text-text-primary'
-            }`}
+            } ${isGated ? 'opacity-60 hover:opacity-80' : ''}`}
             title={
               isSoundEnabled ? t('settings.soundOn') : t('settings.soundOff')
             }
@@ -245,7 +251,7 @@ function ControlPanel({
             <button
               onClick={onExportVideo}
               disabled={totalSteps === 0}
-              className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed`}
+              className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed ${isGated ? 'opacity-60 hover:opacity-80' : ''}`}
               title={
                 canRenderOnWeb === false
                   ? t('controls.browserNotSupported')
@@ -264,7 +270,7 @@ function ControlPanel({
           {/* Full Screen Toggle */}
           <button
             onClick={onToggleFullScreen}
-            className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white`}
+            className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white ${isGated ? 'opacity-60 hover:opacity-80' : ''}`}
             title={
               isFullScreen
                 ? t('controls.exitFullScreen')
