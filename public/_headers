@@ -7,6 +7,11 @@
   # Pyodide CDN origins: jsDelivr below; custom VITE_PYODIDE_CDN_BASE origins appended at build (vite.config.js)
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cloud.umami.is https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://accounts.google.com; connect-src 'self' blob: https://cloud.umami.is https://gateway.umami.is https://cloudflareinsights.com https://api.github.com https://cdn.jsdelivr.net https://www.remotion.pro https://qketsapzqpzmccljfjcm.supabase.co https://accounts.google.com https://oauth2.googleapis.com; img-src 'self' data: blob: https://api.producthunt.com https://lh3.googleusercontent.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data:; worker-src 'self' blob:; media-src 'self' blob:; frame-src https://www.youtube-nocookie.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'
   Link: <https://bayanflow.com/sitemap.xml>; rel="sitemap"
+  Link: </.well-known/api-catalog>; rel="api-catalog"
+  Link: </.well-known/oauth-protected-resource>; rel="oauth-protected-resource"
+  Link: </.well-known/mcp/server-card.json>; rel="mcp-server-card"
+  Link: </auth.md>; rel="auth-md"
+  Link: </llms.txt>; rel="llms-txt"
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
@@ -20,8 +25,29 @@
 /logo.svg
   Cache-Control: public, max-age=86400
 
-/.well-known/api-catalog
+/.well-known/*
+  Access-Control-Allow-Origin: *
   Content-Type: application/json
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json
+
+/.well-known/mcp/server-card.json
+  Content-Type: application/json
+
+/.well-known/oauth-authorization-server
+  Content-Type: application/json
+
+/.well-known/oauth-protected-resource
+  Content-Type: application/json
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/auth.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
 
 https://dev.bayanflow.com/*
   X-Robots-Tag: noindex

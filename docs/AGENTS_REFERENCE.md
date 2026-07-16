@@ -615,3 +615,31 @@ Use focused tests first for registry/category changes, then broaden to the full 
 - If a shared helper is required, add it in the earliest commit that needs it.
 - Prefer existing hooks, registries, helpers, and component patterns over one-off branches.
 - Keep deterministic generators deterministic in tests by accepting/passing an `rng` where existing utilities do.
+
+## Agent-Readiness Endpoints
+
+### Static files (served from `public/`)
+
+| File | Content-Type | Purpose |
+|------|-------------|---------|
+| `/.well-known/api-catalog` | `application/linkset+json` | RFC 9727 API catalog with `linkset` array |
+| `/.well-known/mcp/server-card.json` | `application/json` | MCP Server Card (SEP-1649) with `serverInfo`, endpoint, capabilities |
+| `/.well-known/oauth-authorization-server` | `application/json` | OAuth discovery (Supabase issuer) with `agent_auth` block |
+| `/.well-known/oauth-protected-resource` | `application/json` | RFC 9728 Protected Resource Metadata |
+| `/.well-known/agent-card.json` | `application/json` | Agent card with capabilities and features |
+| `/.well-known/agent-skills/index.json` | `application/json` | Agent skills catalog |
+| `/auth.md` | `text/markdown` | Agent registration / authentication guide |
+| `/llms.txt` | `text/plain` | Machine-readable site description for AI agents |
+
+### Link headers (in `public/_headers`)
+
+The `/*` section includes `Link` headers pointing to:
+- `</.well-known/api-catalog>; rel="api-catalog"`
+- `</.well-known/oauth-protected-resource>; rel="oauth-protected-resource"`
+- `</.well-known/mcp/server-card.json>; rel="mcp-server-card"`
+- `</auth.md>; rel="auth-md"`
+- `</llms.txt>; rel="llms-txt"`
+
+### CORS
+
+All `/.well-known/*` paths include `Access-Control-Allow-Origin: *` for cross-origin agent discovery.

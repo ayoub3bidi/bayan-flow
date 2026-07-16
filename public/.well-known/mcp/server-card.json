@@ -1,0 +1,45 @@
+{
+  "serverInfo": {
+    "name": "Bayan Flow",
+    "version": "0.5.0"
+  },
+  "description": "Interactive algorithm visualizer — 45 algorithms across sorting, pathfinding, searching, tree traversal, and graph categories with step-by-step animation, Python code editing, and complexity analysis.",
+  "endpoint": "/mcp",
+  "homepageUrl": "https://bayanflow.com",
+  "capabilities": {
+    "tools": [
+      {
+        "name": "bayan_flow_info",
+        "description": "Get information about Bayan Flow, an interactive algorithm visualizer with 45 algorithms across sorting, pathfinding, searching, tree traversal, and graph categories. Optionally filter by category name.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "Optional algorithm category name (sorting, pathfinding, searching, tree, graph)"
+            }
+          }
+        }
+      },
+      {
+        "name": "list_algorithms",
+        "description": "List all available algorithms with their names, categories, and time/space complexity.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "Filter by category: sorting, pathfinding, searching, tree, graph"
+            }
+          }
+        }
+      }
+    ],
+    "resources": [
+      {
+        "name": "algorithm_catalog",
+        "description": "Full catalog of 45 algorithms with descriptions and complexity."
+      }
+    ]
+  }
+}
