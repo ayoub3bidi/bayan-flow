@@ -1,5 +1,45 @@
 {
-  "schemaVersion": 1,
-  "description": "Bayan Flow is a fully client-side single-page application. No public REST APIs are available. All algorithm execution, visualization rendering, and code interpretation happens in the user's browser via React and Pyodide (WebAssembly Python runtime).",
-  "endpoints": []
+  "linkset": [
+    {
+      "anchor": "https://bayanflow.com",
+      "service-desc": [
+        {
+          "href": "https://bayanflow.com/.well-known/agent-card.json",
+          "title": "Bayan Flow Agent Card",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://bayanflow.com/auth.md",
+          "title": "Bayan Flow Agent Authentication Guide",
+          "type": "text/markdown"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://bayanflow.com/llms.txt",
+          "title": "Bayan Flow — Machine-Readable Description",
+          "type": "text/plain"
+        }
+      ]
+    },
+    {
+      "anchor": "https://bayanflow.com/app",
+      "service-desc": [
+        {
+          "href": "https://bayanflow.com/.well-known/mcp/server-card.json",
+          "title": "Bayan Flow MCP Server Card",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://bayanflow.com/.well-known/agent-skills/index.json",
+          "title": "Bayan Flow Agent Skills",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
 }

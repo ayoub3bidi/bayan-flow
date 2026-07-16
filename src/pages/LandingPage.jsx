@@ -28,7 +28,7 @@ function LandingPage() {
       <Header />
 
       {/* Landing Sections */}
-      <div className="relative z-10">
+      <main className="relative z-10">
         <Hero />
         <LearnYourWay />
         <AlgorithmTypes />
@@ -36,7 +36,7 @@ function LandingPage() {
         <ClaritySection />
         <RoadmapCTA />
         <Footer />
-      </div>
+      </main>
     </div>
   );
 }

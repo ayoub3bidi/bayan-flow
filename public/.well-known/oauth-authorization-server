@@ -1,0 +1,38 @@
+{
+  "issuer": "https://qketsapzqpzmccljfjcm.supabase.co",
+  "authorization_endpoint": "https://qketsapzqpzmccljfjcm.supabase.co/auth/v1/authorize",
+  "token_endpoint": "https://qketsapzqpzmccljfjcm.supabase.co/auth/v1/token",
+  "jwks_uri": "https://qketsapzqpzmccljfjcm.supabase.co/auth/v1/.well-known/jwks.json",
+  "registration_endpoint": "https://qketsapzqpzmccljfjcm.supabase.co/auth/v1/signup",
+  "scopes_supported": [
+    "openid",
+    "profile",
+    "email"
+  ],
+  "response_types_supported": [
+    "code",
+    "token",
+    "id_token"
+  ],
+  "grant_types_supported": [
+    "authorization_code",
+    "implicit",
+    "password",
+    "refresh_token"
+  ],
+  "token_endpoint_auth_methods_supported": [
+    "client_secret_basic",
+    "client_secret_post",
+    "none"
+  ],
+  "service_documentation": "https://bayanflow.com/auth.md",
+  "agent_auth": {
+    "skill": "https://bayanflow.com/auth.md",
+    "register_uri": "https://bayanflow.com/auth.md",
+    "identity_types_supported": ["anonymous"],
+    "anonymous": {
+      "credential_types_supported": ["session"],
+      "claim_uri": "https://bayanflow.com/auth.md"
+    }
+  }
+}
