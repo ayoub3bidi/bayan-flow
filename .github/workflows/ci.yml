@@ -44,7 +44,7 @@ jobs:
         run: pnpm format:check
 
       - name: Audit production dependencies
-        run: pnpm audit --prod --audit-level high --ignore-registry-errors
+        run: pnpm audit --prod --audit-level high
 
   # Job 2: Unit tests with coverage
   # Node 24.x matches package.json engines and the Quality / Build jobs (tests failed on 20.x + Vitest forks).
