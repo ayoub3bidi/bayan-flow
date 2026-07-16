@@ -24,8 +24,10 @@ function Header({ hideLanguageSwitcher = false }) {
   const devSiteUrl =
     import.meta.env.VITE_DEV_SITE_URL || 'https://dev.bayanflow.com';
 
+  const isAppPage = location.pathname.startsWith('/app');
+
   const handleLogoClick = () => {
-    navigate(location.pathname === '/app' ? '/' : '/app');
+    navigate(isAppPage ? '/' : '/app');
   };
 
   return (
@@ -124,13 +126,12 @@ function Header({ hideLanguageSwitcher = false }) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
-            <GitHubRepoBadge />
-            {!hideLanguageSwitcher && <LanguageSwitcher />}
-            <ThemeToggle theme={theme} onToggle={toggleTheme} />
+            {isAppPage && <GitHubRepoBadge />}
+            {isAppPage && !hideLanguageSwitcher && <LanguageSwitcher />}
+            {isAppPage && <ThemeToggle theme={theme} onToggle={toggleTheme} />}
             <UserMenu
-              variant={
-                location.pathname.startsWith('/app') ? 'compact' : 'landing'
-              }
+              variant={isAppPage ? 'compact' : 'landing'}
+              hideAvatar={!isAppPage}
             />
           </div>
         </nav>

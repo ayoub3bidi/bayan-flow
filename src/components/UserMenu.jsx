@@ -17,8 +17,9 @@ import Tooltip from './ui/Tooltip';
 /**
  * @param {Object} props
  * @param {'landing' | 'compact'} [props.variant]
+ * @param {boolean} [props.hideAvatar] - When true, hide the menu if user is authenticated (used on non-/app pages)
  */
-function UserMenu({ variant = 'landing' }) {
+function UserMenu({ variant = 'landing', hideAvatar = false }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
@@ -95,6 +96,10 @@ function UserMenu({ variant = 'landing' }) {
         aria-hidden="true"
       />
     );
+  }
+
+  if (hideAvatar && isAuthenticated && profile) {
+    return null;
   }
 
   if (!isAuthenticated || !profile) {
