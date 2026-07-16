@@ -35,8 +35,8 @@ function LandingPage() {
         <Features />
         <ClaritySection />
         <RoadmapCTA />
-        <Footer />
       </main>
+      <Footer />
     </div>
   );
 }
