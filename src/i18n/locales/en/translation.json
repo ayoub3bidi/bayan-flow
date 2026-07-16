@@ -4,7 +4,8 @@
     "backToHome": "Back to Home",
     "save": "Save",
     "close": "Close",
-    "coming_soon": "Coming soon…"
+    "coming_soon": "Coming soon…",
+    "cancel": "Cancel"
   },
   "app": {
     "pageTitle": "Interactive Algorithm Visualizer"
@@ -24,13 +25,21 @@
     "account_settings": "Account settings",
     "settings": "Settings"
   },
+  "accessBan": {
+    "title": "Account suspended",
+    "description": "Access to Bayan Flow is restricted for this account. If you believe this is a mistake, contact us.",
+    "signedInAs": "Signed in as {{email}}",
+    "contact": "Email contact@bayanflow.com for assistance.",
+    "signInUnavailable": "Sign-in is temporarily unavailable. Please try again later."
+  },
   "profile": {
     "pageTitle": "Profile settings",
     "title": "Profile settings",
     "displayName": "Display name",
     "displayNamePlaceholder": "How you appear in Bayan Flow",
     "email": "Email",
-
+    "description": "Description",
+    "descriptionPlaceholder": "Tell others about yourself…",
     "avatarTitle": "Profile picture",
     "avatarGoogle": "Profile Picture",
     "avatarGenerated": "Generated avatar",
@@ -49,6 +58,67 @@
     "deleteAccountInProgress": "Deleting account…",
     "deleteAccountSuccess": "Your account has been deleted.",
     "deleteAccountError": "Could not delete your account. Please try again or email contact@bayanflow.com."
+  },
+  "pro": {
+    "pageTitle": "The Pro Plan",
+    "metaDescription": "Join the Pro plan waitlist and lock in 50% off your first year on the annual plan.",
+    "banner": {
+      "message": "The Pro plan is coming soon. Be first in line.",
+      "cta": "Join waitlist",
+      "linkLabel": "Learn about the Pro plan",
+      "dismiss": "Dismiss"
+    },
+    "eyebrow": "The Pro Plan",
+    "headline": "Go further with the Pro plan",
+    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, unlimited exports, and more.",
+    "featuresHeading": "What the Pro plan unlocks",
+    "features": {
+      "customInput": {
+        "title": "Custom algorithm inputs",
+        "body": "Bring your own arrays, graphs, trees, and grids into guided visualizations."
+      },
+      "comparison": {
+        "title": "Side-by-side comparison mode",
+        "body": "Run two algorithms against the same scenario and inspect each decision."
+      },
+      "export": {
+        "title": "Unlimited video export",
+        "body": "Create polished walkthroughs with no watermark (or customize it to your own branding)."
+      },
+      "presentation": {
+        "title": "Presentation mode",
+        "body": "Use a focused teaching view with cleaner chrome and larger visual states."
+      }
+    },
+    "form": {
+      "title": "Get 50% off your first year",
+      "helper": "Join the waitlist and lock in half off your first annual plan. No spam, just one email when it is ready.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@school.edu",
+      "submit": "Join the waitlist",
+      "submitting": "Joining…",
+      "privacy": "You can ignore the launch email if the Pro plan is not useful for you."
+    },
+    "success": {
+      "title": "You are on the list",
+      "position": "You are #{{position}} on the waitlist",
+      "nextStep": "We will email you at {{email}} when the Pro plan launches.",
+      "backToApp": "Back to the visualizer"
+    },
+    "alreadyJoined": {
+      "title": "You are already on the waitlist",
+      "body": "We have your email on file. We will notify you when the Pro plan launches."
+    },
+    "errors": {
+      "invalidEmail": "Enter a valid email address.",
+      "unavailable": "Waitlist sign-up is temporarily unavailable. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "featuresMore": {
+      "title": "And more to come",
+      "body": "These are just the first features. The Pro plan will keep growing with more tools as we get closer to launch."
+    },
+    "waitlistCount": "{{count}} learners are on the waitlist"
   },
   "settings_tabs": {
     "profile": "Profile",

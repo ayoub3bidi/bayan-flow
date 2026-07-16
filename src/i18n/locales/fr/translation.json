@@ -4,7 +4,8 @@
     "backToHome": "Retour à l'accueil",
     "save": "Enregistrer",
     "close": "Fermer",
-    "coming_soon": "Bientôt disponible…"
+    "coming_soon": "Bientôt disponible…",
+    "cancel": "Annuler"
   },
   "app": {
     "pageTitle": "Visualiseur Interactif d'Algorithmes"
@@ -24,13 +25,21 @@
     "account_settings": "Paramètres du compte",
     "settings": "Paramètres"
   },
+  "accessBan": {
+    "title": "Compte suspendu",
+    "description": "L'accès à Bayan Flow est restreint pour ce compte. Si vous pensez qu'il s'agit d'une erreur, contactez-nous.",
+    "signedInAs": "Connecté en tant que {{email}}",
+    "contact": "Écrivez à contact@bayanflow.com pour obtenir de l'aide.",
+    "signInUnavailable": "La connexion est temporairement indisponible. Veuillez réessayer plus tard."
+  },
   "profile": {
     "pageTitle": "Paramètres du profil",
     "title": "Paramètres du profil",
     "displayName": "Nom affiché",
     "displayNamePlaceholder": "Comment vous apparaissez dans Bayan Flow",
     "email": "E-mail",
-
+    "description": "Description",
+    "descriptionPlaceholder": "Parlez de vous aux autres…",
     "avatarTitle": "Photo de profil",
     "avatarGoogle": "Photo de profil",
     "avatarGenerated": "Avatar généré",
@@ -49,6 +58,67 @@
     "deleteAccountInProgress": "Suppression du compte…",
     "deleteAccountSuccess": "Votre compte a été supprimé.",
     "deleteAccountError": "Impossible de supprimer votre compte. Réessayez ou écrivez à contact@bayanflow.com."
+  },
+  "pro": {
+    "pageTitle": "Le Plan Pro",
+    "metaDescription": "Rejoignez la liste d'attente le Plan Pro et sécurisez 50 % de réduction sur votre première année au plan annuel.",
+    "banner": {
+      "message": "Le plan Pro arrive bientôt. Soyez les premiers.",
+      "cta": "Rejoindre la liste",
+      "linkLabel": "Découvrir le Plan Pro",
+      "dismiss": "Fermer"
+    },
+    "eyebrow": "Le Plan Pro",
+    "headline": "Allez plus loin avec le Plan Pro",
+    "subheadline": "La version payante à venir débloquera des fonctionnalités plus puissantes comme des entrées personnalisées, des comparaisons côte à côte, des exports illimités et plus encore.",
+    "featuresHeading": "Ce que le Plan Pro débloque",
+    "features": {
+      "customInput": {
+        "title": "Entrées personnalisées",
+        "body": "Importez vos tableaux, graphes, arbres et grilles dans des visualisations guidées."
+      },
+      "comparison": {
+        "title": "Comparaison côte à côte",
+        "body": "Lancez deux algorithmes sur le même scénario et inspectez chaque décision."
+      },
+      "export": {
+        "title": "Export vidéo illimité",
+        "body": "Créez des explications soignées sans watermark — ou personnalisez-le avec votre propre marque."
+      },
+      "presentation": {
+        "title": "Mode présentation",
+        "body": "Utilisez une vue d'enseignement plus ciblée avec moins de chrome et des états visuels plus grands."
+      }
+    },
+    "form": {
+      "title": "Obtenez 50 % de réduction la première année",
+      "helper": "Rejoignez la liste d'attente pour sécuriser la moitié du prix votre première année. Pas de spam, un seul e-mail quand le Plan Pro sera prêt.",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "vous@ecole.fr",
+      "submit": "Rejoindre la liste",
+      "submitting": "Inscription…",
+      "privacy": "Vous pourrez ignorer l'e-mail de lancement si le Plan Pro ne vous est pas utile."
+    },
+    "success": {
+      "title": "Vous êtes inscrit",
+      "position": "Vous êtes n°{{position}} sur la liste d'attente",
+      "nextStep": "Nous vous écrirons à {{email}} au lancement du Plan Pro.",
+      "backToApp": "Retour au visualiseur"
+    },
+    "alreadyJoined": {
+      "title": "Vous êtes déjà inscrit",
+      "body": "Nous avons déjà votre e-mail. Nous vous préviendrons au lancement de le plan pro ."
+    },
+    "errors": {
+      "invalidEmail": "Saisissez une adresse e-mail valide.",
+      "unavailable": "L'inscription à la liste est temporairement indisponible. Réessayez plus tard.",
+      "generic": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "featuresMore": {
+      "title": "Et bien plus à venir",
+      "body": "Ce ne sont que les premières fonctionnalités. Le Plan Pro continuera d'évoluer avec de nouveaux outils au fur et à mesure du lancement."
+    },
+    "waitlistCount": "{{count}} apprenants sur la liste d'attente"
   },
   "settings_tabs": {
     "profile": "Profil",

@@ -17,7 +17,7 @@ function Button({
   ...props
 }) {
   const baseClasses =
-    'inline-flex items-center justify-center px-8 py-4 rounded-lg font-semibold text-base transition-all duration-200 min-h-touch';
+    'inline-flex items-center justify-center px-8 py-4 rounded-lg font-semibold text-base transition-all duration-200 min-h-touch cursor-pointer disabled:cursor-not-allowed';
 
   const variants = {
     primary:

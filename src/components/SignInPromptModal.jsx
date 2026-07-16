@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GoogleLogo } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +21,8 @@ const LEGACY_FEATURES = new Set([
 function SignInPromptModal({ feature, isOpen, onClose, metadata = {} }) {
   const { t } = useTranslation();
   const { signInWithGoogle } = useAuth();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [signInError, setSignInError] = useState(false);
   const featureLabel = t(`featureGate.${feature}`, {
     defaultValue: feature,
     ...metadata,
@@ -38,7 +40,11 @@ function SignInPromptModal({ feature, isOpen, onClose, metadata = {} }) {
   const dialogRef = useRef(null);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setSignInError(false);
+      setIsSigningIn(false);
+      return;
+    }
 
     const prevFocus = document.activeElement;
     dialogRef.current?.querySelector('button')?.focus();
@@ -49,6 +55,19 @@ function SignInPromptModal({ feature, isOpen, onClose, metadata = {} }) {
       }
     };
   }, [isOpen]);
+
+  const handleSignIn = async () => {
+    setIsSigningIn(true);
+    setSignInError(false);
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error('Google sign-in failed:', error);
+      setSignInError(true);
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -85,12 +104,22 @@ function SignInPromptModal({ feature, isOpen, onClose, metadata = {} }) {
             <div className="flex flex-col gap-3">
               <button
                 type="button"
-                onClick={signInWithGoogle}
-                className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-gray-800 rounded-xl border border-gray-300 font-medium transition-all duration-200 hover:shadow-md active:scale-[0.98]"
+                onClick={handleSignIn}
+                disabled={isSigningIn}
+                className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-gray-800 rounded-xl border border-gray-300 font-medium transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <GoogleLogo size={22} weight="bold" />
                 {t('featureGate.signIn')}
               </button>
+
+              {signInError ? (
+                <p
+                  className="text-center text-sm text-text-secondary"
+                  role="alert"
+                >
+                  {t('accessBan.signInUnavailable')}
+                </p>
+              ) : null}
 
               <button
                 type="button"

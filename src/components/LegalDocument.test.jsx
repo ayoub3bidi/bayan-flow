@@ -14,12 +14,8 @@ vi.mock('./Footer', () => ({
   default: () => <footer data-testid="legal-footer">Footer</footer>,
 }));
 
-vi.mock('./ThemeToggle', () => ({
-  default: () => <button type="button">Theme</button>,
-}));
-
-vi.mock('./LanguageSwitcher', () => ({
-  default: () => <div>Language</div>,
+vi.mock('./Header', () => ({
+  default: () => <header data-testid="header">Header</header>,
 }));
 
 const sampleSections = [

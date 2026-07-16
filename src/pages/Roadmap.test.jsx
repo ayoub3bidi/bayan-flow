@@ -26,12 +26,8 @@ vi.mock('../components/Footer', () => ({
   default: () => <footer data-testid="footer">Footer</footer>,
 }));
 
-vi.mock('../components/ThemeToggle', () => ({
-  default: () => <button data-testid="theme-toggle">ThemeToggle</button>,
-}));
-
-vi.mock('../components/LanguageSwitcher', () => ({
-  default: () => <div data-testid="language-switcher">LanguageSwitcher</div>,
+vi.mock('../components/Header', () => ({
+  default: () => <header data-testid="header">Header</header>,
 }));
 
 const renderComponent = () => {
@@ -52,30 +48,10 @@ describe('Roadmap', () => {
     it('should render all main components', () => {
       renderComponent();
 
+      expect(screen.getByTestId('header')).toBeInTheDocument();
       expect(screen.getByTestId('roadmap-hero')).toBeInTheDocument();
       expect(screen.getByTestId('timeline')).toBeInTheDocument();
       expect(screen.getByTestId('footer')).toBeInTheDocument();
-    });
-
-    it('should render ThemeToggle', () => {
-      renderComponent();
-      expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
-    });
-
-    it('should render LanguageSwitcher with correct props', () => {
-      renderComponent();
-      const languageSwitcher = screen.getByTestId('language-switcher');
-      expect(languageSwitcher).toBeInTheDocument();
-      // Arabic is now included, so no exclude attribute should be present
-      expect(languageSwitcher).not.toHaveAttribute('data-exclude');
-    });
-
-    it('should render back to home link', () => {
-      renderComponent();
-      const backLink = screen.getByRole('link');
-      expect(backLink).toBeInTheDocument();
-      expect(backLink).toHaveAttribute('href', '/');
-      expect(backLink).toHaveTextContent(/back/i);
     });
   });
 
@@ -88,18 +64,6 @@ describe('Roadmap', () => {
       expect(mainContainer).toHaveClass('flex');
       expect(mainContainer).toHaveClass('flex-col');
       expect(mainContainer).toHaveClass('overflow-x-hidden');
-    });
-
-    it('should have fixed controls in top right', () => {
-      const { container } = renderComponent();
-      const controlsContainer = container.querySelector('.fixed.top-4.right-4');
-      expect(controlsContainer).toBeInTheDocument();
-    });
-
-    it('should have back link in top left', () => {
-      const { container } = renderComponent();
-      const backLinkContainer = container.querySelector('.fixed.top-4.left-4');
-      expect(backLinkContainer).toBeInTheDocument();
     });
   });
 
@@ -118,30 +82,10 @@ describe('Roadmap', () => {
     });
   });
 
-  describe('Back Link', () => {
-    it('should have correct href to home', () => {
-      renderComponent();
-      const backLink = screen.getByRole('link');
-      expect(backLink).toHaveAttribute('href', '/');
-    });
-
-    it('should display "Back to Home" text on desktop', () => {
-      renderComponent();
-      const backLink = screen.getByRole('link');
-      expect(backLink).toHaveTextContent(/back to home/i);
-    });
-
-    it('should have back navigation icon', () => {
-      const { container } = renderComponent();
-      const svg = container.querySelector('svg');
-      expect(svg).toBeInTheDocument();
-    });
-  });
-
   describe('Component Order', () => {
     it('should render components in correct order', () => {
       renderComponent();
-      const testIds = ['roadmap-hero', 'timeline', 'footer'];
+      const testIds = ['header', 'roadmap-hero', 'timeline', 'footer'];
 
       testIds.forEach(testId => {
         expect(screen.getByTestId(testId)).toBeInTheDocument();
@@ -154,12 +98,6 @@ describe('Roadmap', () => {
       renderComponent();
       const footer = screen.getByTestId('footer');
       expect(footer.tagName).toBe('FOOTER');
-    });
-
-    it('should have accessible navigation link', () => {
-      renderComponent();
-      const backLink = screen.getByRole('link');
-      expect(backLink).toBeInTheDocument();
     });
   });
 });

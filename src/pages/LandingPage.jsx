@@ -12,27 +12,20 @@ import ClaritySection from '../components/landing/ClaritySection';
 import RoadmapCTA from '../components/landing/RoadmapCTA';
 import TechPattern from '../components/landing/TechPattern';
 import Footer from '../components/Footer';
-import ThemeToggle from '../components/ThemeToggle';
-import LanguageSwitcher from '../components/LanguageSwitcher';
-import UserMenu from '../components/UserMenu';
+import Header from '../components/Header';
+import ProWaitlistBanner from '../components/ProWaitlistBanner';
 
 function LandingPage() {
   return (
     <div className="min-h-screen relative overflow-x-hidden">
-      {/* Unified smooth gradient background */}
-      <div className="fixed inset-0 bg-linear-to-b from-bg via-bg to-surface-elevated pointer-events-none" />
+      <ProWaitlistBanner source="landing" />
 
       {/* Animated Tech Pattern */}
       <div className="relative">
         <TechPattern />
       </div>
 
-      {/* Theme Toggle & Language Switcher */}
-      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
-        <UserMenu variant="landing" />
-        <LanguageSwitcher />
-        <ThemeToggle />
-      </div>
+      <Header />
 
       {/* Landing Sections */}
       <div className="relative z-10">

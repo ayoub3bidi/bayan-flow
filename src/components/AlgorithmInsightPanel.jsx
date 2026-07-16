@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play } from '@phosphor-icons/react';
@@ -44,10 +44,22 @@ function AlgorithmInsightPanel({
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
+  const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState('insight');
   const notesFlushRef = useRef(
     /** @type {null | (() => void | Promise<void>)} */ (null)
   );
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const meta = algorithmKey ? ALGORITHM_KNOWLEDGE[algorithmKey] : null;
   const i18nBase = `insight_panel.algorithms.${algorithmKey}`;
@@ -121,6 +133,7 @@ function AlgorithmInsightPanel({
           <motion.div
             key="insight-backdrop"
             className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            style={!isMobile ? { top: '56px' } : {}}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

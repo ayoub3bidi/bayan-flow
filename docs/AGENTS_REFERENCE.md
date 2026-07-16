@@ -7,7 +7,7 @@
 
 - Product: `Bayan Flow` (Bayan / بيان = clarity in Arabic)
 - Package name: `bayan-flow`
-- App type: client-side React SPA with routes `/`, `/app`, `/roadmap`, `/settings/profile`, `/privacy`, `/terms`
+- App type: client-side React SPA with routes `/`, `/app`, `/roadmap`, `/pro`, `/settings/profile`, `/privacy`, `/terms`
 - Version target in `package.json`: `0.5.0`
 - License: `Elastic-2.0 OR Commercial` (see `LICENSE`, `COMMERCIAL_LICENSE.md`, `TRADEMARK.md`, `NOTICE`)
 - Repository/homepage:
@@ -21,7 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **107** `*.test.js` / `*.test.jsx` files under `src/`
+- Test surface: **151** `*.test.js` / `*.test.jsx` files under `src/` (~**1,817** tests)
+- Source surface: **223** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -89,11 +90,16 @@
 
 - Supabase project: `bayan-flow` (`eu-central-1`); migrations in `supabase/migrations/`
 - Client: `src/lib/supabaseClient.js` (anon key via `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` only)
-- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`, `src/services/favoritesService.js`, `src/services/notesService.js`
+- Services: `src/services/authService.js`, `src/services/profileService.js`, `src/services/entitlementService.js`, `src/services/accessService.js`, `src/services/waitlistService.js`, `src/services/favoritesService.js`, `src/services/notesService.js`
 - Hooks: `src/hooks/useFavorites.js`, `src/hooks/useNoteAutosave.js`
 - Constants: `src/constants/personalLearning.js` (favorite slot limits, note length cap)
 - Components: `src/components/FavoritesDropdown.jsx`, `src/components/AlgorithmNotesTab.jsx`, `src/components/NoteEditor.jsx` (lazy TipTap)
-- Edge Function: `supabase/functions/delete-account/` — self-service account deletion
+- Edge Functions (deployed via `deploy-supabase-functions.yml` after green CI):
+  - `supabase/functions/before-signup/` — signup ban gate (fail-closed)
+  - `supabase/functions/post-signup/` — post-signup side effects
+  - `supabase/functions/platform-access/` — signed-in ban check (`accessService.checkPlatformAccess()`; fail-open on transport)
+  - `supabase/functions/waitlist-welcome/` — Pro waitlist confirmation email via Resend (fail-open; invoked after client insert)
+  - `supabase/functions/delete-account/` — self-service account deletion
 - Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
 - Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
 - Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
@@ -122,6 +128,20 @@ Future (v0.6.0, not shipped): `username` (unique, set-once RLS), public `/u/:use
 | `algorithm_notes` | `(user_id, category, algorithm_key)` | SELECT / INSERT / UPDATE own rows |
 
 Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free tier: 20 favorite slots (`getFavoriteSlotLimit` in `entitlementService.js`); notes unlimited per algorithm with HTML sanitization (`noteHtmlSanitizer.js`).
+
+### `public.waitlist` (Pro demand validation)
+
+| Column | Client writable | Notes |
+|--------|-----------------|-------|
+| `id` | no | PK |
+| `user_id` | yes (on insert) | Nullable; FK → `profiles` when signed in |
+| `email` | yes (on insert) | Unique, normalized lowercase in service layer |
+| `source` | yes (on insert) | `landing` \| `app` \| `direct` |
+| `created_at` | no | |
+
+Insert-only RLS for `anon` + `authenticated`; no client SELECT. Public count via `waitlist_public_count()` RPC. Welcome email via `waitlist-welcome` edge function (Resend).
+
+Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attribution.sql` (if base table applied without attribution columns), `20260710160000_drop_waitlist_pitch_variant.sql`.
 
 ### RLS and column grants
 
@@ -156,6 +176,7 @@ Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free t
 - `src/pages/LandingPage.jsx`
 - `src/pages/VisualizerApp.jsx` — main visualizer shell and top-level state
 - `src/pages/Roadmap.jsx`
+- `src/pages/ProComingSoonPage.jsx` — Pro waitlist teaser + email capture (`/pro`)
 - `src/pages/ProfileSettingsPage.jsx` — signed-in display name + avatar preference
 
 ### Category registry and runtime wiring
@@ -198,6 +219,7 @@ Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free t
 - `src/components/OutputConsole.jsx`, `src/components/TestCasesPanel.jsx`
 - `src/components/AutoHidingLegend.jsx`, `src/components/SwipeTutorial.jsx`
 - `src/components/SignInPromptModal.jsx`
+- `src/components/ProWaitlistBanner.jsx` — dismissible Pro waitlist CTA (landing + app)
 - `src/components/LanguageSwitcher.jsx`, `src/components/ThemeToggle.jsx`, `src/components/DocumentTitle.jsx`
 - `src/components/GitHubRepoBadge.jsx`
 
@@ -274,7 +296,7 @@ Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free t
 - `vite.config.js`, `vitest.config.js` (`@/` alias, jsdom, sequential forks for memory)
 - `eslint.config.js`, `wrangler.jsonc`, `codecov.yml`
 - `scripts/render-tone-export-sfx.mjs` — Playwright + Tone.Offline WAV generation
-- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `.github/labeler.yml`
+- `.github/workflows/ci.yml`, `deploy-cloudflare.yml`, `deploy-supabase-functions.yml`, `preview-cloudflare.yml`, `ensure-pr-source-develop.yml`, `release.yml`, `stale.yml`, `semgrep.yml`, `.github/labeler.yml`
 
 ## Runtime Pattern
 

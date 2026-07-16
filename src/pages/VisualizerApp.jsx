@@ -15,6 +15,7 @@ import FloatingActionButton from '../components/FloatingActionButton';
 import InsightFloatingActionButton from '../components/InsightFloatingActionButton';
 import ExportProgressModal from '../components/ExportProgressModal';
 import SignInPromptModal from '../components/SignInPromptModal';
+import ProWaitlistBanner from '../components/ProWaitlistBanner';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
 const AlgorithmInsightPanel = lazy(
@@ -47,6 +48,7 @@ import { getExtraVisualizerProps } from '../registry/extraVisualizerProps';
 import { useCategoryVisualizations } from '../hooks/useCategoryVisualizations';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../hooks/useAuth';
+import { touchLastActive } from '../services/profileService';
 import { useFavorites } from '../hooks/useFavorites';
 import {
   canRunVisualization,
@@ -219,6 +221,7 @@ function App() {
   const [gatedFeature, setGatedFeature] = useState(null);
   const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
   const pendingFeatureRef = useRef(null);
+  const hasTouchedActivityRef = useRef(false);
 
   const openGatedFeature = (feature, metadata = {}) => {
     setGatedFeature(feature);
@@ -370,6 +373,12 @@ function App() {
   };
 
   useEffect(() => {
+    if (!user) {
+      hasTouchedActivityRef.current = false;
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (isAuthenticated && pendingFeatureRef.current) {
       openFeature(pendingFeatureRef.current);
       pendingFeatureRef.current = null;
@@ -392,6 +401,9 @@ function App() {
     // Increment viz count for anonymous users on each play
     if (!user) {
       incrementVisualizationCount();
+    } else if (!hasTouchedActivityRef.current) {
+      hasTouchedActivityRef.current = true;
+      void touchLastActive();
     }
     visualization.play();
   };
@@ -631,6 +643,7 @@ function App() {
       >
         Skip to main content
       </a>
+      <ProWaitlistBanner source="app" />
 
       <AnimatePresence mode="wait">
         {isFullScreen ? (
@@ -691,11 +704,7 @@ function App() {
             className="flex flex-col min-h-screen"
           >
             <Header />
-            <main
-              className="flex-1 pt-0 sm:pt-20 p-6 pb-32"
-              role="main"
-              id="main-content"
-            >
+            <main className="flex-1 p-6 pb-32" role="main" id="main-content">
               <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   {/* Settings Panel */}

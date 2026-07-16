@@ -14,6 +14,14 @@ const { resetAllSessionCounters } = vi.hoisted(() => ({
   resetAllSessionCounters: vi.fn(),
 }));
 
+const { checkPlatformAccess } = vi.hoisted(() => ({
+  checkPlatformAccess: vi.fn(async () => ({ allowed: true })),
+}));
+
+vi.mock('../services/accessService.js', () => ({
+  checkPlatformAccess,
+}));
+
 vi.mock('../services/entitlementService.js', async importOriginal => {
   const actual = await importOriginal();
   return {
@@ -35,11 +43,13 @@ function AuthProbe() {
     signOut,
     signInWithGoogle,
     refreshProfile,
+    accessBlock,
   } = useAuth();
   return (
     <div>
       <span data-testid="loading">{String(isLoading)}</span>
       <span data-testid="authenticated">{String(isAuthenticated)}</span>
+      <span data-testid="access-block">{accessBlock ?? ''}</span>
       <span data-testid="display-name">{profile?.displayName ?? ''}</span>
       <span data-testid="avatar-source">{profile?.avatarSource ?? ''}</span>
       <span data-testid="plan">{profile?.plan ?? ''}</span>
@@ -61,6 +71,8 @@ describe('AuthProvider', () => {
     resetSupabaseMocks();
     mockSupabaseConfigured(true);
     resetAllSessionCounters.mockClear();
+    checkPlatformAccess.mockReset();
+    checkPlatformAccess.mockResolvedValue({ allowed: true });
   });
 
   it('hydrates unauthenticated state', async () => {
@@ -446,5 +458,99 @@ describe('AuthProvider', () => {
     });
     expect(screen.getByTestId('plan')).toHaveTextContent('pro');
     unmount();
+  });
+
+  it('clears profileRow on implicit sign-out via SIGNED_OUT event', async () => {
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: {
+        session: {
+          user: {
+            id: 'user-1',
+            email: 'user@example.com',
+            user_metadata: { full_name: 'Test User' },
+          },
+        },
+      },
+      error: null,
+    });
+
+    supabaseFromMock.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({
+        data: {
+          display_name: 'Test User',
+          avatar_url: null,
+          avatar_preference: 'google',
+          plan: 'free',
+          email: 'user@example.com',
+        },
+        error: null,
+      })),
+    });
+
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
+    });
+    expect(screen.getByTestId('display-name')).toHaveTextContent('Test User');
+
+    act(() => {
+      authStateChangeCallbackRef.current?.('SIGNED_OUT', null);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
+    });
+    expect(screen.getByTestId('display-name')).toHaveTextContent('');
+    expect(screen.getByTestId('access-block')).toHaveTextContent('');
+  });
+
+  it('sets accessBlock when profile is banned', async () => {
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: {
+        session: {
+          user: {
+            id: 'user-banned',
+            email: 'banned@example.com',
+            user_metadata: {},
+          },
+        },
+      },
+      error: null,
+    });
+
+    supabaseFromMock.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({
+        data: {
+          display_name: 'Banned User',
+          avatar_url: null,
+          avatar_preference: 'google',
+          plan: 'free',
+          email: 'banned@example.com',
+          is_banned: true,
+        },
+        error: null,
+      })),
+    });
+
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('access-block')).toHaveTextContent(
+        'account_banned'
+      );
+    });
   });
 });

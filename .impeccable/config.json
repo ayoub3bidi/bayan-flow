@@ -1,0 +1,24 @@
+{
+  "detector": {
+    "ignoreRules": [
+      "overused-font",
+      "single-font"
+    ],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "Inter"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter"
+      }
+    ],
+    "designSystem": {
+      "enabled": true
+    }
+  },
+  "hook": {
+    "consent": "accepted"
+  }
+}

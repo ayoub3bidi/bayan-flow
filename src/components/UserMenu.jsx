@@ -17,8 +17,9 @@ import Tooltip from './ui/Tooltip';
 /**
  * @param {Object} props
  * @param {'landing' | 'compact'} [props.variant]
+ * @param {boolean} [props.hideAvatar] - When true, hide the menu if user is authenticated (used on non-/app pages)
  */
-function UserMenu({ variant = 'landing' }) {
+function UserMenu({ variant = 'landing', hideAvatar = false }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
@@ -31,6 +32,7 @@ function UserMenu({ variant = 'landing' }) {
   } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [signInError, setSignInError] = useState(false);
   const menuRef = useRef(null);
   const isCompact = variant === 'compact';
 
@@ -61,6 +63,7 @@ function UserMenu({ variant = 'landing' }) {
 
   const handleSignIn = async () => {
     setIsSigningIn(true);
+    setSignInError(false);
     try {
       await signInWithGoogle();
       if (variant === 'landing') {
@@ -68,6 +71,8 @@ function UserMenu({ variant = 'landing' }) {
       }
     } catch (error) {
       console.error('Google sign-in failed:', error);
+      // Show feedback for any failure — silent catch hides Auth hook / network errors.
+      setSignInError(true);
     } finally {
       setIsSigningIn(false);
     }
@@ -93,6 +98,10 @@ function UserMenu({ variant = 'landing' }) {
     );
   }
 
+  if (hideAvatar && isAuthenticated && profile) {
+    return null;
+  }
+
   if (!isAuthenticated || !profile) {
     const signInButtonClassName = `flex items-center justify-center bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm transition-colors duration-200 cursor-pointer touch-manipulation disabled:opacity-60 disabled:cursor-not-allowed ${
       isCompact
@@ -102,35 +111,49 @@ function UserMenu({ variant = 'landing' }) {
 
     if (isCompact) {
       return (
-        <Tooltip label={t('auth.sign_in_google')} side="bottom" align="end">
-          <button
-            type="button"
-            onClick={handleSignIn}
-            disabled={isSigningIn}
-            className={signInButtonClassName}
-            aria-label={t('auth.sign_in_google')}
-          >
-            <SiGoogle className="h-4 w-4 shrink-0 text-text-primary" />
-          </button>
-        </Tooltip>
+        <div className="flex flex-col items-end gap-1">
+          <Tooltip label={t('auth.sign_in_google')} side="bottom" align="end">
+            <button
+              type="button"
+              onClick={handleSignIn}
+              disabled={isSigningIn}
+              className={signInButtonClassName}
+              aria-label={t('auth.sign_in_google')}
+            >
+              <SiGoogle className="h-4 w-4 shrink-0 text-text-primary" />
+            </button>
+          </Tooltip>
+          {signInError ? (
+            <p className="max-w-48 text-end text-[10px] text-text-secondary">
+              {t('accessBan.signInUnavailable')}
+            </p>
+          ) : null}
+        </div>
       );
     }
 
     return (
-      <motion.button
-        type="button"
-        onClick={handleSignIn}
-        disabled={isSigningIn}
-        className={signInButtonClassName}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        aria-label={t('auth.sign_in_google')}
-      >
-        <SiGoogle className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-text-primary" />
-        <span className="text-xs sm:text-sm font-medium text-text-primary">
-          {t('auth.sign_in_google')}
-        </span>
-      </motion.button>
+      <div className="flex flex-col items-end gap-1">
+        <motion.button
+          type="button"
+          onClick={handleSignIn}
+          disabled={isSigningIn}
+          className={signInButtonClassName}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          aria-label={t('auth.sign_in_google')}
+        >
+          <SiGoogle className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-text-primary" />
+          <span className="text-xs sm:text-sm font-medium text-text-primary">
+            {t('auth.sign_in_google')}
+          </span>
+        </motion.button>
+        {signInError ? (
+          <p className="max-w-xs text-end text-[10px] sm:text-xs text-text-secondary">
+            {t('accessBan.signInUnavailable')}
+          </p>
+        ) : null}
+      </div>
     );
   }
 

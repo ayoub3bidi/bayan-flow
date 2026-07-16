@@ -1,9 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   // Bayan Flow — static Vite SPA on Cloudflare Workers (not Pages).
-  // Phases 1–2 complete (workers.dev smoke-tested).
-  // Phase 3–4: custom domains below — deploy then repoint DNS in Cloudflare dashboard.
-  // Keep Netlify projects alive as rollback until both domains are stable ~2 weeks.
   "name": "bayan-flow",
   "compatibility_date": "2026-06-23",
   "workers_dev": true,

@@ -26,6 +26,7 @@ import { createContext } from 'react';
  * @property {boolean} isLoading
  * @property {boolean} isAuthenticated
  * @property {boolean} isConfigured
+ * @property {'account_banned' | null} accessBlock
  * @property {() => Promise<void>} signInWithGoogle
  * @property {() => Promise<void>} signOut
  * @property {() => Promise<void>} refreshProfile

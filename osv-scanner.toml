@@ -1,0 +1,9 @@
+# OSV-Scanner configuration
+# https://google.github.io/osv-scanner/configuration/
+
+# Ignore entries for assessed/accepted risks.
+# Example:
+# [[ignore]]
+# id = "GHSA-xxxx-xxxx-xxxx"
+# reason = "No fix available; assessed as low-risk for our usage"
+ignore = []
