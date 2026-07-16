@@ -19,6 +19,10 @@ jobs:
   # PR/merge_group: incremental scan — only reports NEW vulnerabilities introduced by the branch
   scan-pr:
     if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     # SHA verified on the v2.3.8 release page:
     # https://github.com/google/osv-scanner-action/releases/tag/v2.3.8
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8
@@ -26,6 +30,10 @@ jobs:
   # push/schedule/dispatch: full scan — reports all known vulnerabilities
   scan-scheduled:
     if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     # SHA verified on the v2.3.8 release page:
     # https://github.com/google/osv-scanner-action/releases/tag/v2.3.8
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8
