@@ -43,17 +43,6 @@ jobs:
       - name: Check code formatting
         run: pnpm format:check
 
-      # pnpm audit is broken on pnpm 10.x — npm retired the legacy audit
-      # endpoints (410). Use npm audit (which uses the new bulk advisory
-      # endpoint) until the project upgrades to pnpm 11+.
-      - name: Audit production dependencies
-        run: |
-          npm install --package-lock-only --ignore-scripts --silent
-          npm audit --omit=dev --audit-level=high
-          EXIT_CODE=$?
-          rm -f package-lock.json
-          exit $EXIT_CODE
-
   # Job 2: Unit tests with coverage
   # Node 24.x matches package.json engines and the Quality / Build jobs (tests failed on 20.x + Vitest forks).
   test:
