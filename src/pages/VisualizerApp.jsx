@@ -704,11 +704,7 @@ function App() {
             className="flex flex-col min-h-screen"
           >
             <Header />
-            <main
-              className="flex-1 pt-0 sm:pt-20 p-6 pb-32"
-              role="main"
-              id="main-content"
-            >
+            <main className="flex-1 p-6 pb-32" role="main" id="main-content">
               <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   {/* Settings Panel */}
