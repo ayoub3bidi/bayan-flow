@@ -16,6 +16,10 @@ import {
   removeOrphanFavorites,
   resolveFavoritesForRegistry,
 } from '@/services/favoritesService';
+import {
+  trackFavoriteAdded,
+  trackFavoriteRemoved,
+} from '../services/analyticsEvents';
 
 /**
  * @param {import('@supabase/supabase-js').User | null} user
@@ -89,6 +93,7 @@ export function useFavorites(user) {
         );
         try {
           await removeFavorite(user.id, category, algorithmKey);
+          trackFavoriteRemoved(algorithmKey);
           return { ok: true };
         } catch (error) {
           setFavorites(previous);
@@ -113,6 +118,7 @@ export function useFavorites(user) {
           slotLimit,
           currentCount: favorites.length,
         });
+        trackFavoriteAdded(algorithmKey);
         return { ok: true };
       } catch (error) {
         setFavorites(previous);

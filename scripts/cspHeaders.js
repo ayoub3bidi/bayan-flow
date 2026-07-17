@@ -81,6 +81,32 @@ function getSupabaseOrigin() {
 }
 
 /**
+ * Assert CSP directives required for PostHog analytics.
+ * @param {string} csp
+ * @param {string} source - Label for error messages (e.g. "public/_headers")
+ * @returns {{ scriptSrc: string; connectSrc: string }}
+ */
+export function assertAnalyticsCspDirectives(csp, source) {
+  const directives = parseCspDirectives(csp);
+
+  const scriptSrc = directives.get('script-src');
+  if (!scriptSrc?.includes('https://*.posthog.com')) {
+    throw new Error(
+      `${source}: script-src must include https://*.posthog.com (PostHog SDK)`
+    );
+  }
+
+  const connectSrc = directives.get('connect-src');
+  if (!connectSrc?.includes('https://*.posthog.com')) {
+    throw new Error(
+      `${source}: connect-src must include https://*.posthog.com (PostHog analytics)`
+    );
+  }
+
+  return { scriptSrc: scriptSrc ?? '', connectSrc: connectSrc ?? '' };
+}
+
+/**
  * Assert CSP directives required for Supabase auth and Google profile avatars.
  * @param {string} csp
  * @param {string} source - Label for error messages (e.g. "public/_headers")

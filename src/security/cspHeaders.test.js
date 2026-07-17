@@ -9,6 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
+  assertAnalyticsCspDirectives,
   assertAuthCspDirectives,
   assertVideoExportCspDirectives,
   extractCspFromHeadersFile,
@@ -39,5 +40,9 @@ describe('CSP security headers', () => {
   it('public/_headers allows blob media for export preview and Remotion telemetry', () => {
     assertVideoExportCspDirectives(headersCsp, 'public/_headers');
     assertAuthCspDirectives(headersCsp, 'public/_headers');
+  });
+
+  it('public/_headers allows PostHog analytics', () => {
+    assertAnalyticsCspDirectives(headersCsp, 'public/_headers');
   });
 });

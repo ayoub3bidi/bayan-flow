@@ -16,6 +16,8 @@ import {
   resolveUserAvatar,
 } from '@/utils/resolveUserAvatar';
 import { AuthContext } from './AuthContextDefinition';
+import { identifyUser, resetUser } from '../services/analytics';
+import { trackSignInCompleted } from '../services/analyticsEvents';
 
 /** @typedef {'account_banned' | null} AccessBlockReason */
 
@@ -177,6 +179,19 @@ export function AuthProvider({ children }) {
 
         if (event === 'SIGNED_IN' && nextSession?.user != null) {
           resetAllSessionCounters();
+          resetUser();
+          identifyUser(nextSession.user, {
+            email: nextSession.user.email,
+            displayName:
+              nextSession.user.user_metadata?.full_name ||
+              nextSession.user.user_metadata?.name,
+            plan: null,
+          });
+          trackSignInCompleted();
+        }
+
+        if (event === 'SIGNED_OUT') {
+          resetUser();
         }
 
         setSession(nextSession);

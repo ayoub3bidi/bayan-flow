@@ -17,7 +17,10 @@
       "name": "bayan-flow-staging",
       "workers_dev": true,
       "preview_urls": true,
-      "routes": [{ "pattern": "dev.bayanflow.com", "custom_domain": true }]
+      "routes": [
+        { "pattern": "dev.bayanflow.com", "custom_domain": true },
+        { "pattern": "e.dev.bayanflow.com", "custom_domain": true }
+      ]
     },
     "production": {
       "name": "bayan-flow",
@@ -25,7 +28,8 @@
       "preview_urls": true,
       "routes": [
         { "pattern": "bayanflow.com", "custom_domain": true },
-        { "pattern": "www.bayanflow.com", "custom_domain": true }
+        { "pattern": "www.bayanflow.com", "custom_domain": true },
+        { "pattern": "e.bayanflow.com", "custom_domain": true }
       ]
     }
   }
