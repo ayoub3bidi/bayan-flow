@@ -9,6 +9,9 @@ import posthog from 'posthog-js';
 /** @type {boolean} */
 let isInitialized = false;
 
+/** @type {boolean} When true, all tracking calls become no-ops. */
+let isBypassed = false;
+
 /**
  * Initialize PostHog analytics.
  * Safe to call multiple times — subsequent calls are no-ops.
@@ -23,6 +26,7 @@ export function initPostHog() {
     if (import.meta.env.DEV) {
       console.warn('[Analytics] PostHog env vars missing — analytics disabled');
     }
+    isBypassed = true;
     return;
   }
 
@@ -32,6 +36,7 @@ export function initPostHog() {
     (window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1')
   ) {
+    isBypassed = true;
     return;
   }
 
@@ -66,7 +71,7 @@ export function initPostHog() {
  * @param {object} profile - Derived profile view
  */
 export function identifyUser(user, profile) {
-  if (!user || !profile) return;
+  if (!user || !profile || isBypassed) return;
 
   posthog?.identify(user.id, {
     email: profile.email,
@@ -80,6 +85,7 @@ export function identifyUser(user, profile) {
  * Reset PostHog identity (on logout).
  */
 export function resetUser() {
+  if (isBypassed) return;
   posthog?.reset();
 }
 
@@ -89,5 +95,6 @@ export function resetUser() {
  * @param {object} [properties]
  */
 export function captureEvent(eventName, properties = {}) {
+  if (isBypassed) return;
   posthog?.capture(eventName, properties);
 }

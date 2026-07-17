@@ -133,6 +133,12 @@ export function AuthProvider({ children }) {
         }
 
         setAccessBlock(null);
+
+        identifyUser(activeUser, {
+          email: activeUser.email,
+          displayName: row?.display_name ?? resolveDisplayName(activeUser),
+          plan: row?.plan ?? null,
+        });
       } catch (error) {
         if (accessCheckRef.current !== checkId) {
           return;

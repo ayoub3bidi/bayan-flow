@@ -89,21 +89,36 @@ function getSupabaseOrigin() {
 export function assertAnalyticsCspDirectives(csp, source) {
   const directives = parseCspDirectives(csp);
 
-  const scriptSrc = directives.get('script-src');
-  if (!scriptSrc?.includes('https://*.posthog.com')) {
+  const scriptSrcTokens = (directives.get('script-src') ?? '')
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!scriptSrcTokens.includes('https://*.posthog.com')) {
     throw new Error(
       `${source}: script-src must include https://*.posthog.com (PostHog SDK)`
     );
   }
 
-  const connectSrc = directives.get('connect-src');
-  if (!connectSrc?.includes('https://*.posthog.com')) {
+  const connectSrcTokens = (directives.get('connect-src') ?? '')
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!connectSrcTokens.includes('https://*.posthog.com')) {
     throw new Error(
       `${source}: connect-src must include https://*.posthog.com (PostHog analytics)`
     );
   }
 
-  return { scriptSrc: scriptSrc ?? '', connectSrc: connectSrc ?? '' };
+  const hasProxyOrigin =
+    connectSrcTokens.includes('https://e.bayanflow.com') ||
+    connectSrcTokens.includes('https://e.dev.bayanflow.com');
+  if (!hasProxyOrigin) {
+    throw new Error(
+      `${source}: connect-src must include https://e.bayanflow.com or https://e.dev.bayanflow.com (PostHog first-party proxy)`
+    );
+  }
+
+  const connectSrc = directives.get('connect-src') ?? '';
+  const scriptSrc = directives.get('script-src') ?? '';
+  return { scriptSrc, connectSrc };
 }
 
 /**

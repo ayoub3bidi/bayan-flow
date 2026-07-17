@@ -33,8 +33,12 @@ async function handlePostHogProxy(request, ctx) {
     new Request(`https://${targetHost}${pathWithParams}`, init)
   );
 
-  // Cache static assets
-  if (targetHost === POSTHOG_ASSETS_HOST && response.status === 200) {
+  // Cache static assets (GET only — caches.default.put throws on non-GET)
+  if (
+    request.method === 'GET' &&
+    targetHost === POSTHOG_ASSETS_HOST &&
+    response.status === 200
+  ) {
     const cache = caches.default;
     ctx.waitUntil(cache.put(request, response.clone()));
   }
@@ -46,8 +50,11 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // Route PostHog proxy requests (e.bayanflow.com)
-    if (url.hostname === 'e.bayanflow.com') {
+    // Route PostHog proxy requests (e.bayanflow.com or e.dev.bayanflow.com)
+    if (
+      url.hostname === 'e.bayanflow.com' ||
+      url.hostname === 'e.dev.bayanflow.com'
+    ) {
       return handlePostHogProxy(request, ctx);
     }
 

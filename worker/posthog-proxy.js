@@ -66,8 +66,12 @@ async function proxyRequest(targetUrl, request, ctx) {
 
   const response = await fetch(new Request(targetUrl, init));
 
-  // Cache static assets for performance
-  if (targetUrl.includes('/static/') && response.status === 200) {
+  // Cache static assets (GET only — caches.default.put throws on non-GET)
+  if (
+    request.method === 'GET' &&
+    targetUrl.includes('/static/') &&
+    response.status === 200
+  ) {
     const cache = caches.default;
     ctx.waitUntil(cache.put(request, response.clone()));
   }
