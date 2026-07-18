@@ -71,6 +71,19 @@ import {
   finalizeSortingInputArray,
   reorderArrayForSortOrder,
 } from '../utils/arrayHelpers';
+import {
+  trackAlgorithmViewed,
+  trackAlgorithmCompleted,
+  trackAlgorithmRegenerated,
+  trackSpeedChanged,
+  trackManualStepping,
+  trackFullscreenToggled,
+  trackSoundToggled,
+  trackCodePanelOpened,
+  trackInsightPanelOpened,
+  trackVideoExportStarted,
+  trackCategoryChanged,
+} from '../services/analyticsEvents';
 
 const SOUND_PREFERENCE_STORAGE_KEY = 'bayan-flow:sound-enabled';
 
@@ -157,6 +170,11 @@ function App() {
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
+
+  const handleSpeedChange = newSpeed => {
+    trackSpeedChanged(speed, newSpeed);
+    setSpeed(newSpeed);
+  };
 
   useBodyScrollLock(isPythonPanelOpen || isInsightPanelOpen);
 
@@ -299,6 +317,13 @@ function App() {
     }
   }, [isSoundEnabled]);
 
+  // Track algorithm completion
+  useEffect(() => {
+    if (visualization.isComplete) {
+      trackAlgorithmCompleted(activeAlgorithmKey, algorithmType);
+    }
+  }, [visualization.isComplete, activeAlgorithmKey, algorithmType]);
+
   // Force autoplay mode for anonymous users
   useEffect(() => {
     if (!canUseManualControls(user) && mode === VISUALIZATION_MODES.MANUAL) {
@@ -424,6 +449,7 @@ function App() {
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
   const handleGenerateInput = () => {
+    trackAlgorithmRegenerated(activeAlgorithmKey, algorithmType);
     const cfg = CATEGORY_CONFIG[algorithmType];
     if (algorithmType === ALGORITHM_TYPES.TREE_TRAVERSAL) {
       treeTraversalVisualization.regenerateTree();
@@ -454,6 +480,7 @@ function App() {
     if (isSoundEnabled) {
       soundManager.disable();
       setIsSoundEnabled(false);
+      trackSoundToggled(false);
       return;
     }
 
@@ -463,9 +490,11 @@ function App() {
       await soundManager.enable();
       const nextEnabledState = soundManager.getIsEnabled();
       setIsSoundEnabled(nextEnabledState);
+      trackSoundToggled(nextEnabledState);
     } catch (error) {
       console.error('[Sound Toggle]', error);
       setIsSoundEnabled(false);
+      trackSoundToggled(false);
     } finally {
       setIsSoundTogglePending(false);
     }
@@ -482,6 +511,7 @@ function App() {
 
   const handleGatedFullscreenToggle = () => {
     if (isAuthenticated) {
+      trackFullscreenToggled(!isFullScreen);
       toggleFullScreen();
     } else {
       pendingFeatureRef.current = 'fullscreen';
@@ -490,6 +520,7 @@ function App() {
   };
 
   const handleAlgorithmChange = algorithmName => {
+    trackAlgorithmViewed(algorithmName, algorithmType);
     setSelectedAlgorithms(prev => ({
       ...prev,
       [algorithmType]: algorithmName,
@@ -548,6 +579,7 @@ function App() {
       return;
     }
 
+    trackVideoExportStarted(orientation, activeAlgorithmKey);
     incrementVideoExportCount(user);
     exportVideo({
       steps: visualization.steps,
@@ -565,6 +597,7 @@ function App() {
   };
 
   const handleAlgorithmTypeChange = newType => {
+    trackCategoryChanged(algorithmType, newType);
     applyCategorySwitch(newType);
   };
 
@@ -611,6 +644,16 @@ function App() {
     openGatedFeature('favorite');
   };
 
+  const handleStepForward = () => {
+    trackManualStepping(activeAlgorithmKey, 'forward');
+    visualization.stepForward();
+  };
+
+  const handleStepBackward = () => {
+    trackManualStepping(activeAlgorithmKey, 'backward');
+    visualization.stepBackward();
+  };
+
   // ── Shared visualizer props ────────────────────────────────────────────────
   /** Props common to all visualizer components. */
   const sharedVisualizerProps = {
@@ -618,8 +661,8 @@ function App() {
     description: visualization.description,
     isComplete: visualization.isComplete,
     algorithm: activeAlgorithmKey,
-    onStepForward: visualization.stepForward,
-    onStepBackward: visualization.stepBackward,
+    onStepForward: handleStepForward,
+    onStepBackward: handleStepBackward,
     mode,
     onGatedFeatureClick: handleGatedFeatureClick,
   };
@@ -719,7 +762,7 @@ function App() {
                       selectedAlgorithm={activeAlgorithmKey}
                       onAlgorithmChange={handleAlgorithmChange}
                       speed={speed}
-                      onSpeedChange={setSpeed}
+                      onSpeedChange={handleSpeedChange}
                       arraySize={arraySize}
                       onArraySizeChange={handleArraySizeChange}
                       gridSize={gridSize}
@@ -846,6 +889,7 @@ function App() {
                 <FloatingActionButton
                   onClick={() => {
                     if (isAuthenticated) {
+                      trackCodePanelOpened(activeAlgorithmKey);
                       setIsPythonPanelOpen(true);
                     } else {
                       pendingFeatureRef.current = 'code';
@@ -858,6 +902,7 @@ function App() {
                 <InsightFloatingActionButton
                   onClick={() => {
                     if (isAuthenticated) {
+                      trackInsightPanelOpened(activeAlgorithmKey);
                       setIsInsightPanelOpen(true);
                     } else {
                       pendingFeatureRef.current = 'insight';

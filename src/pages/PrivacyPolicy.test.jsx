@@ -33,7 +33,7 @@ describe('PrivacyPolicy', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Privacy Policy' })
     ).toBeInTheDocument();
-    expect(screen.getAllByText(/Umami/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/PostHog/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Optional Google sign-in/i)).toBeInTheDocument();
     expect(screen.getByTestId('footer')).toBeInTheDocument();
   });

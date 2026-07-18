@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { GoogleLogo } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import { trackSignInClicked } from '../services/analyticsEvents';
 
 const LEGACY_FEATURES = new Set([
   'code',
@@ -57,6 +58,7 @@ function SignInPromptModal({ feature, isOpen, onClose, metadata = {} }) {
   }, [isOpen]);
 
   const handleSignIn = async () => {
+    trackSignInClicked('modal');
     setIsSigningIn(true);
     setSignInError(false);
     try {
