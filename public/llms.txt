@@ -1,0 +1,48 @@
+# Bayan Flow
+
+> Interactive algorithm visualizer for learning computer science through step-by-step animations with clarity. Bayan (بيان) means clarity in Arabic.
+
+Bayan Flow is a free, client-side single-page application that visualizes 45 algorithms across five categories. All computation runs in the browser — there are no server-side APIs.
+
+## Categories
+
+- **Sorting** (14): Bubble, Selection, Insertion, Merge, Quick, Heap, Counting, Radix, Shell, Cocktail Shaker, Gnome, Comb, Tim, Bitonic
+- **Pathfinding** (8): Dijkstra, A*, BFS, DFS, Greedy Best-First, Bidirectional BFS, Jump Point Search, Bellman-Ford
+- **Searching** (6): Linear, Binary, Jump, Exponential, Ternary, Fibonacci
+- **Tree Traversal** (7): Pre-order, In-order, Post-order, Level-order, BFS, DFS, Morris In-order
+- **Graph** (10): BFS, DFS, Topological Sort, Bellman-Ford, Floyd-Warshall, Kruskal, Prim, Tarjan, Kosaraju, Ford-Fulkerson
+
+## Key URLs
+
+- Homepage: https://bayanflow.com
+- App: https://bayanflow.com/app
+- Roadmap: https://bayanflow.com/roadmap
+- API Catalog: https://bayanflow.com/.well-known/api-catalog
+- Agent Card: https://bayanflow.com/.well-known/agent-card.json
+- MCP Server Card: https://bayanflow.com/.well-known/mcp/server-card.json
+- Agent Skills: https://bayanflow.com/.well-known/agent-skills/index.json
+- Auth Guide: https://bayanflow.com/auth.md
+- OAuth Discovery: https://bayanflow.com/.well-known/oauth-authorization-server
+- OAuth Protected Resource: https://bayanflow.com/.well-known/oauth-protected-resource
+
+## Capabilities
+
+- Step-by-step algorithm visualization with configurable speed
+- Real-time time and space complexity analysis
+- Python code execution in the browser via Pyodide (WebAssembly)
+- HD video export with optional sound
+- Multi-language support (English, French, Arabic with RTL)
+- Google sign-in for saved preferences and favorites
+- 45 algorithms, each with detailed descriptions and complexity info
+
+## How It Works
+
+1. User selects a category and algorithm from the sidebar
+2. The app generates random input and runs the algorithm, recording each step
+3. Steps are animated in the visualization panel with color-coded state changes
+4. The complexity panel shows interactive time/space complexity charts
+5. Optional Python code panel shows editable, runnable pseudocode
+
+## Agent Integration
+
+Bayan Flow exposes an MCP server card and WebMCP tools for AI agent discovery. Agents can query algorithm information, list available algorithms, and navigate to specific visualizations. The app is fully client-side — no API keys or authentication required for browsing algorithms.

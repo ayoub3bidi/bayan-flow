@@ -12,6 +12,7 @@ import './index.css';
 import i18n from './i18n';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
 import { AuthProvider } from './contexts/AuthProvider.jsx';
+import { PostHogProvider } from './providers/PostHogProvider.jsx';
 import { initRTL } from './utils/rtlManager';
 import AppRoutes from './AppRoutes.jsx';
 import DocumentTitle from './components/DocumentTitle.jsx';
@@ -22,10 +23,12 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <DocumentTitle />
-          <AppRoutes />
-        </BrowserRouter>
+        <PostHogProvider>
+          <BrowserRouter>
+            <DocumentTitle />
+            <AppRoutes />
+          </BrowserRouter>
+        </PostHogProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>

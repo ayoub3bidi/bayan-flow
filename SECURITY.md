@@ -69,7 +69,7 @@ Bayan Flow implements several security measures:
 
 - **Client-side only**: No server-side data processing or storage for algorithm execution
 - **Local algorithm execution**: Sorting, searching, pathfinding, and graph visualizations run entirely in the browser
-- **Limited third-party calls**: Umami analytics (privacy-oriented), GitHub public API (release/repo metadata), and jsDelivr (Pyodide, only when the user opens the Python panel)
+- **Limited third-party calls**: PostHog analytics (privacy-oriented, via first-party proxy), GitHub public API (release/repo metadata), and jsDelivr (Pyodide, only when the user opens the Python panel)
 - **HTTP security headers** (via Cloudflare Workers static assets `public/_headers`): Strict-Transport-Security, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy
 - **Content Security Policy**: Restricts script, connect, frame, and worker sources to approved origins
 - **Automated scanning**:

@@ -1,0 +1,15 @@
+{
+  "resource": "https://bayanflow.com",
+  "authorization_servers": [
+    "https://qketsapzqpzmccljfjcm.supabase.co"
+  ],
+  "scopes_supported": [
+    "openid",
+    "profile",
+    "email"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ],
+  "resource_documentation": "https://bayanflow.com/auth.md"
+}

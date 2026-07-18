@@ -28,15 +28,15 @@ function LandingPage() {
       <Header />
 
       {/* Landing Sections */}
-      <div className="relative z-10">
+      <main className="relative z-10">
         <Hero />
         <LearnYourWay />
         <AlgorithmTypes />
         <Features />
         <ClaritySection />
         <RoadmapCTA />
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }

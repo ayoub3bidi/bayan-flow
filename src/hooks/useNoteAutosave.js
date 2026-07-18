@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getNote, upsertNote } from '@/services/notesService';
+import { trackNoteSaved } from '../services/analyticsEvents';
 
 /** @typedef {'idle' | 'dirty' | 'saving' | 'saved' | 'error'} NoteSaveStatus */
 
@@ -90,6 +91,7 @@ export function useNoteAutosave({
           dirtyRef.current = false;
           retryCountRef.current = 0;
           setSaveStatus('saved');
+          trackNoteSaved(currentAlgorithmKey, html.length);
         } catch (error) {
           console.error('Failed to save note:', error);
           retryCountRef.current += 1;

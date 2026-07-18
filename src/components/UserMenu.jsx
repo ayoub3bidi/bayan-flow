@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import UserAvatar from './UserAvatar';
 import Tooltip from './ui/Tooltip';
+import { trackSignInClicked } from '../services/analyticsEvents';
 
 /**
  * @param {Object} props
@@ -62,6 +63,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
   }
 
   const handleSignIn = async () => {
+    trackSignInClicked('navbar');
     setIsSigningIn(true);
     setSignInError(false);
     try {
