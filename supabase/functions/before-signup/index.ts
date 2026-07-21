@@ -7,6 +7,7 @@ import {
   countRecentSignups,
 } from '../_shared/banLogic.ts';
 import { verifyStandardWebhook } from '../_shared/webhookVerify.ts';
+import { sendTelegramAlert } from '../_shared/telegram.ts';
 
 const GENERIC_REJECT = {
   error: {
@@ -23,6 +24,14 @@ const GENERIC_REJECT = {
  */
 function reject(reason: string, extra: Record<string, unknown> = {}) {
   console.warn('before-signup: reject', { reason, ...extra });
+
+  const details = Object.entries(extra)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join('\n');
+  sendTelegramAlert(
+    `⚠️ SIGNUP REJECTED\n\nReason: ${reason}\n${details || '(no details)'}`
+  );
+
   return jsonResponse(GENERIC_REJECT, 200);
 }
 
@@ -40,6 +49,45 @@ function getServiceClient() {
   );
 }
 
+/**
+ * Verify a Cloudflare Turnstile token via the siteverify endpoint.
+ * Returns { success: boolean } — always succeeds if TURNSTILE_SECRET_KEY is
+ * unset (graceful fallback for local dev or when Turnstile is not configured).
+ */
+async function verifyTurnstileToken(
+  token: string | undefined
+): Promise<{ success: boolean }> {
+  const secretKey = Deno.env.get('TURNSTILE_SECRET_KEY');
+
+  if (!secretKey) {
+    return { success: true };
+  }
+
+  if (!token) {
+    return { success: false };
+  }
+
+  try {
+    const formData = new URLSearchParams();
+    formData.append('secret', secretKey);
+    formData.append('response', token);
+
+    const result = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    const data = await result.json();
+    return { success: data.success === true };
+  } catch (err) {
+    console.error('before-signup: Turnstile verification error', err);
+    return { success: false };
+  }
+}
+
 export async function handleRequest(req) {
   if (req.method !== 'POST') {
     return reject('method_not_allowed', { method: req.method });
@@ -54,7 +102,9 @@ export async function handleRequest(req) {
     const metadata = /** @type {{ ip_address?: string }} */ (
       payload.metadata ?? {}
     );
-    const user = /** @type {{ email?: string }} */ (payload.user ?? {});
+    const user = /** @type {{ email?: string, raw_user_meta_data?: Record<string, unknown> }} */ (
+      payload.user ?? {}
+    );
     const email = typeof user.email === 'string' ? user.email.trim() : '';
     const ip = metadata.ip_address ?? null;
 
@@ -67,6 +117,15 @@ export async function handleRequest(req) {
         email,
       });
       return reject('missing_ip');
+    }
+
+    const turnstileToken = user.raw_user_meta_data?.cf_turnstile_response;
+    const turnstile = await verifyTurnstileToken(
+      typeof turnstileToken === 'string' ? turnstileToken : undefined
+    );
+
+    if (!turnstile.success) {
+      return reject('turnstile_failed', { ip });
     }
 
     const supabase = getServiceClient();

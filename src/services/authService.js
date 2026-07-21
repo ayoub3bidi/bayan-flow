@@ -22,6 +22,44 @@ function requireClient() {
 }
 
 /**
+ * Render an invisible Cloudflare Turnstile widget and resolve with a
+ * verification token. Returns null when the site key is not configured
+ * or the Turnstile script failed to load.
+ * @returns {Promise<string | null>}
+ */
+function getTurnstileToken() {
+  return new Promise(resolve => {
+    const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+    if (
+      !siteKey ||
+      typeof (/** @type {any} */ (globalThis).turnstile) === 'undefined'
+    ) {
+      resolve(null);
+      return;
+    }
+
+    const turnstile = /** @type {any} */ (globalThis).turnstile;
+    const container = document.createElement('div');
+    container.style.cssText =
+      'position:fixed;bottom:0;left:0;width:1px;height:1px;overflow:hidden;opacity:0.01;pointer-events:none;';
+    document.body.appendChild(container);
+
+    turnstile.render(container, {
+      sitekey: siteKey,
+      appearance: 'execute',
+      callback: (/** @type {string} */ token) => {
+        container.remove();
+        resolve(token);
+      },
+      'error-callback': () => {
+        container.remove();
+        resolve(null);
+      },
+    });
+  });
+}
+
+/**
  * @returns {boolean}
  */
 export function isAuthConfigured() {
@@ -76,16 +114,28 @@ async function syncGoogleProfileMetadata(idToken) {
  * @param {string} idToken
  * @param {string} [nonce]
  * @param {string} [accessToken]
+ * @param {string} [turnstileToken]
  * @returns {Promise<void>}
  */
-export async function signInWithGoogleIdToken(idToken, nonce, accessToken) {
+export async function signInWithGoogleIdToken(
+  idToken,
+  nonce,
+  accessToken,
+  turnstileToken
+) {
   const supabase = requireClient();
-  const { error } = await supabase.auth.signInWithIdToken({
-    provider: 'google',
-    token: idToken,
-    nonce,
-    access_token: accessToken,
-  });
+  const /** @type {Record<string, any>} */ options = {
+      provider: 'google',
+      token: idToken,
+      nonce,
+      access_token: accessToken,
+    };
+
+  if (turnstileToken) {
+    options.data = { cf_turnstile_response: turnstileToken };
+  }
+
+  const { error } = await supabase.auth.signInWithIdToken(options);
 
   if (error) {
     throw error;
@@ -100,7 +150,8 @@ export async function signInWithGoogle() {
   }
 
   const { idToken } = await requestGoogleSignInPopup();
-  await signInWithGoogleIdToken(idToken);
+  const turnstileToken = await getTurnstileToken();
+  await signInWithGoogleIdToken(idToken, undefined, undefined, turnstileToken);
 }
 
 export async function signOut() {

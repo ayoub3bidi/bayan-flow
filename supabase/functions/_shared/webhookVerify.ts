@@ -45,5 +45,15 @@ export function verifySharedSecret(req, secretEnvKey) {
   }
 
   const header = req.headers.get('x-webhook-secret');
-  return header === secret;
+  if (!header) {
+    return false;
+  }
+
+  // Constant-time comparison to prevent timing attacks
+  const a = new TextEncoder().encode(header);
+  const b = new TextEncoder().encode(secret);
+  if (a.length !== b.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(a, b);
 }
