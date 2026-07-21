@@ -51,3 +51,4 @@ jobs:
           supabase functions deploy platform-access
           supabase functions deploy delete-account
           supabase functions deploy waitlist-welcome --no-verify-jwt
+          supabase functions deploy sync-contacts

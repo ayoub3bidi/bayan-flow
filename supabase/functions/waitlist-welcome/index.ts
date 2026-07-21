@@ -5,6 +5,8 @@
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { buildCorsHeaders } from '../_shared/cors.ts';
+import { buildWaitlistWelcomeEmail } from '../_shared/transactionalEmails.ts';
+import { sendTelegramAlert } from '../_shared/telegram.ts';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -36,39 +38,11 @@ function normalizeEmail(email: unknown): string | null {
   return normalized;
 }
 
-function buildEmailHtml(
-  position: number,
-): { subject: string; html: string } {
-  const perkLine =
-    'As a waitlist member, you will be eligible for 50% off your first year of Pro plan (annual plan) when we launch.';
-
-  const subject = 'You are on the Pro Plan Waitlist!';
-
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<body style="font-family: Inter, system-ui, sans-serif; line-height: 1.6; color: #364153; max-width: 560px; margin: 0 auto; padding: 24px;">
-  <h1 style="color: #2b7fff; font-size: 1.5rem;">Thank you for joining the Pro plan Waitlist!</h1>
-  <p>Thanks for joining the Pro Plan waitlist.</p>
-  <p>${perkLine}</p>
-  <p><strong>What the Pro Plan will unlock:</strong></p>
-  <ul>
-    <li>Custom algorithm inputs</li>
-    <li>Side-by-side comparison mode</li>
-    <li>Unlimited video export</li>
-    <li>Presentation mode for teaching</li>
-  </ul>
-  <p>We will email you at this address when the Pro Plan launches. No spam, just one launch note when it is ready.</p>
-  <p style="color: #6b7280; font-size: 0.875rem;">Bayan Flow: Clarity in Algorithms · <a href="https://bayanflow.com">bayanflow.com</a></p>
-</body>
-</html>`;
-
-  return { subject, html };
-}
-
 async function sendViaResend(
   to: string,
   subject: string,
-  html: string
+  html: string,
+  text: string
 ): Promise<boolean> {
   const apiKey = Deno.env.get('RESEND_API_KEY')?.trim();
   if (!apiKey) {
@@ -76,7 +50,9 @@ async function sendViaResend(
     return false;
   }
 
-  const from = Deno.env.get('FROM_EMAIL')?.trim() || 'Bayan Flow <contact@bayanflow.com>';
+  const from =
+    Deno.env.get('FROM_EMAIL')?.trim() ||
+    'Bayan Flow <contact@bayanflow.com>';
 
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -89,12 +65,13 @@ async function sendViaResend(
       to: [to],
       subject,
       html,
+      text,
     }),
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    console.error('waitlist-welcome: Resend error', response.status, text);
+    const errText = await response.text();
+    console.error('waitlist-welcome: Resend error', response.status, errText);
     return false;
   }
 
@@ -113,10 +90,6 @@ export async function handleRequest(req: Request): Promise<Response> {
   try {
     const body = await req.json();
     const email = normalizeEmail(body?.email);
-    const position =
-      typeof body?.position === 'number' && body.position > 0
-        ? Math.floor(body.position)
-        : 0;
 
     if (!email) {
       return jsonResponse({ error: 'Invalid email' }, 400, req);
@@ -137,8 +110,8 @@ export async function handleRequest(req: Request): Promise<Response> {
       return jsonResponse({ ok: true, sent: false }, 200, req);
     }
 
-    const { subject, html } = buildEmailHtml(position);
-    const sent = await sendViaResend(email, subject, html);
+    const { subject, html, text } = buildWaitlistWelcomeEmail();
+    const sent = await sendViaResend(email, subject, html, text);
 
     if (sent) {
       await supabase
@@ -146,6 +119,16 @@ export async function handleRequest(req: Request): Promise<Response> {
         .update({ welcomed_at: new Date().toISOString() })
         .eq('id', row.id);
     }
+
+    // Notify on new waitlist join
+    await sendTelegramAlert(
+      [
+        'New Pro waitlist member!',
+        '',
+        `Email: ${email}`,
+        `Time: ${new Date().toISOString()}`,
+      ].join('\n')
+    );
 
     return jsonResponse({ ok: true, sent }, 200, req);
   } catch (error) {

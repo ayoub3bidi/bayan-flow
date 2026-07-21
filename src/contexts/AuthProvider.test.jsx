@@ -7,6 +7,7 @@ import {
   resetSupabaseMocks,
   supabaseAuthMock,
   supabaseFromMock,
+  supabaseFunctionsInvokeMock,
   authStateChangeCallbackRef,
 } from '../test/supabaseMock.js';
 
@@ -339,6 +340,15 @@ describe('AuthProvider', () => {
     });
     expect(screen.getByTestId('display-name')).toHaveTextContent('New User');
     expect(resetAllSessionCounters).toHaveBeenCalledTimes(1);
+    expect(supabaseFunctionsInvokeMock).toHaveBeenCalledWith(
+      'sync-contacts',
+      expect.objectContaining({
+        method: 'POST',
+        body: expect.objectContaining({
+          displayName: 'New User',
+        }),
+      })
+    );
   });
 
   it('does not reset session counters on INITIAL_SESSION hydrate', async () => {
