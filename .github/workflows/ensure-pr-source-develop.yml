@@ -22,16 +22,15 @@ jobs:
 
       - name: Read inputs
         id: check
+        env:
+          ALLOWED: ${{ secrets.ALLOWED_MERGERS }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
           # Allowed mergers come from a repo secret, comma-separated.
           # Set this secret in your repo settings: Settings -> Secrets -> Actions -> New repository secret
           # Example value: ayoub,my-org-release-bot
-          ALLOWED="${{ secrets.ALLOWED_MERGERS }}"
-
-          # PR metadata from github context
-          HEAD_REF="${{ github.event.pull_request.head.ref }}"
-          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
-          TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
 
           echo "HEAD_REF=$HEAD_REF"
           echo "PR_AUTHOR=$PR_AUTHOR"
@@ -68,10 +67,11 @@ jobs:
 
       - name: Fail if not allowed
         if: steps.check.outputs.allowed != 'true'
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
-          head_ref="${{ github.event.pull_request.head.ref }}"
-          author="${{ github.event.pull_request.user.login }}"
-          echo "ERROR: PR targeting 'main' is not allowed. Head branch is '$head_ref' and PR author is '$author'."
+          echo "ERROR: PR targeting 'main' is not allowed. Head branch is '$HEAD_REF' and PR author is '$PR_AUTHOR'."
           echo "Only PRs whose head branch is 'develop' or PRs authored by an allowed merger (repo secret ALLOWED_MERGERS) may target 'main'."
           exit 1
 
