@@ -29,7 +29,11 @@ function ProWaitlistBannerContent({ source, pathname, inRouter }) {
       if (dismissedFlag == null) {
         const legacy = sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY);
         if (legacy != null) {
-          localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, legacy);
+          try {
+            localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, legacy);
+          } catch {
+            // migration write failed, but we still have the legacy value
+          }
           dismissedFlag = legacy;
         }
       }
@@ -60,7 +64,11 @@ function ProWaitlistBannerContent({ source, pathname, inRouter }) {
     try {
       localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
     } catch {
-      // ignore
+      try {
+        sessionStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
+      } catch {
+        // ignore
+      }
     }
     setDismissed(true);
     window.dispatchEvent(new CustomEvent('bayan-flow:banner-dismissed'));

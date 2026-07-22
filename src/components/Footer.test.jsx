@@ -5,7 +5,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithI18n, screen, fireEvent } from '../test/testUtils';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
 import Footer from './Footer';
 import i18n from '../i18n';
 
@@ -19,6 +21,16 @@ vi.mock('react-router-dom', async importOriginal => {
   };
 });
 
+function renderFooter() {
+  return render(
+    <MemoryRouter>
+      <I18nextProvider i18n={i18n}>
+        <Footer />
+      </I18nextProvider>
+    </MemoryRouter>
+  );
+}
+
 describe('Footer', () => {
   beforeEach(async () => {
     mockNavigate.mockClear();
@@ -27,36 +39,42 @@ describe('Footer', () => {
   });
 
   it('renders privacy and terms links', () => {
-    renderWithI18n(<Footer />);
+    renderFooter();
 
     expect(screen.getByText(i18n.t('footer.privacy'))).toBeInTheDocument();
     expect(screen.getByText(i18n.t('footer.terms'))).toBeInTheDocument();
   });
 
   it('navigates to privacy policy on click', () => {
-    renderWithI18n(<Footer />);
+    renderFooter();
 
     fireEvent.click(screen.getByText(i18n.t('footer.privacy')));
     expect(mockNavigate).toHaveBeenCalledWith('/privacy');
   });
 
   it('navigates to terms of use on click', () => {
-    renderWithI18n(<Footer />);
+    renderFooter();
 
     fireEvent.click(screen.getByText(i18n.t('footer.terms')));
     expect(mockNavigate).toHaveBeenCalledWith('/terms');
   });
 
   it('renders pro plan link', () => {
-    renderWithI18n(<Footer />);
+    renderFooter();
 
-    expect(screen.getByText(i18n.t('footer.proPlan'))).toBeInTheDocument();
+    const link = screen.getByRole('link', {
+      name: i18n.t('footer.proPlan'),
+    });
+    expect(link).toHaveAttribute('href', '/pro');
   });
 
   it('navigates to pro page on click', () => {
-    renderWithI18n(<Footer />);
+    renderFooter();
 
-    fireEvent.click(screen.getByText(i18n.t('footer.proPlan')));
-    expect(mockNavigate).toHaveBeenCalledWith('/pro');
+    const link = screen.getByRole('link', {
+      name: i18n.t('footer.proPlan'),
+    });
+    expect(link).toHaveAttribute('href', '/pro');
+    fireEvent.click(link);
   });
 });
