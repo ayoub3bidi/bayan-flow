@@ -53,8 +53,6 @@
     "dangerZoneDescription": "يحذف حسابك نهائياً مع جميع المفضلات وملاحظات الدراسة. لا يمكن التراجع عن هذا الإجراء.",
     "deleteAccount": "حذف الحساب",
     "deleteAccountConfirmLabel": "اكتب بريدك الإلكتروني للتأكيد",
-    "deleteAccountConfirmPlaceholder": "بريدك@الإلكتروني.com",
-    "deleteAccountConfirmWord": "DELETE",
     "deleteAccountInProgress": "جارٍ حذف الحساب…",
     "deleteAccountSuccess": "تم حذف حسابك.",
     "deleteAccountError": "تعذّر حذف حسابك. حاول مرة أخرى أو راسل contact@bayanflow.com."

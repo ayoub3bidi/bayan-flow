@@ -44,14 +44,21 @@ function getTurnstileToken() {
       'position:fixed;bottom:0;left:0;width:1px;height:1px;overflow:hidden;opacity:0.01;pointer-events:none;';
     document.body.appendChild(container);
 
+    const timeoutId = setTimeout(() => {
+      container.remove();
+      resolve(null);
+    }, 10000);
+
     turnstile.render(container, {
       sitekey: siteKey,
       appearance: 'execute',
       callback: (/** @type {string} */ token) => {
+        clearTimeout(timeoutId);
         container.remove();
         resolve(token);
       },
       'error-callback': () => {
+        clearTimeout(timeoutId);
         container.remove();
         resolve(null);
       },
@@ -226,4 +233,23 @@ export function onAuthStateChange(callback) {
     callback(event, session);
   });
   return () => data.subscription.unsubscribe();
+}
+
+/**
+ * Sync signed-in user to Resend (fire-and-forget).
+ * Identity is taken from the JWT inside the edge function — body is metadata only.
+ * @param {object} [profile]
+ */
+export function syncContactToResend(profile) {
+  const supabase = getSupabaseClient();
+  if (!supabase) return Promise.resolve();
+
+  return supabase.functions.invoke('sync-contacts', {
+    method: 'POST',
+    body: {
+      plan: profile?.plan || 'free',
+      displayName: profile?.displayName || '',
+      language: document.documentElement.lang || 'en',
+    },
+  });
 }

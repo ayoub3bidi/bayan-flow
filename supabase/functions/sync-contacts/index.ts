@@ -300,12 +300,15 @@ export async function handleRequest(req) {
     let welcomeSent = false;
     const claimed = await claimWelcomeEmailSlot(supabaseAdmin, user.id);
     if (claimed) {
-      welcomeSent = await sendWelcomeEmail(
-        user.email,
-        firstNameFromDisplayName(displayName)
-      );
-      if (!welcomeSent) {
-        await rollbackWelcomeEmailClaim(supabaseAdmin, user.id);
+      try {
+        welcomeSent = await sendWelcomeEmail(
+          user.email,
+          firstNameFromDisplayName(displayName)
+        );
+      } finally {
+        if (!welcomeSent) {
+          await rollbackWelcomeEmailClaim(supabaseAdmin, user.id);
+        }
       }
     }
 

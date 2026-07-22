@@ -18,28 +18,8 @@ import {
 import { AuthContext } from './AuthContextDefinition';
 import { identifyUser, resetUser } from '../services/analytics';
 import { trackSignInCompleted } from '../services/analyticsEvents';
-import { getSupabaseClient } from '@/lib/supabaseClient';
 
 /** @typedef {'account_banned' | null} AccessBlockReason */
-
-/**
- * Sync signed-in user to Resend (fire-and-forget).
- * Identity is taken from the JWT inside the edge function — body is metadata only.
- * @param {object} [profile]
- */
-function syncContactToResend(profile) {
-  const supabase = getSupabaseClient();
-  if (!supabase) return;
-
-  void supabase.functions.invoke('sync-contacts', {
-    method: 'POST',
-    body: {
-      plan: profile?.plan || 'free',
-      displayName: profile?.displayName || '',
-      language: document.documentElement.lang || 'en',
-    },
-  });
-}
 
 /**
  * @param {import('@supabase/supabase-js').User | null} user
@@ -206,20 +186,23 @@ export function AuthProvider({ children }) {
         if (event === 'SIGNED_IN' && nextSession?.user != null) {
           resetAllSessionCounters();
           resetUser();
+
+          const fallbackDisplayName =
+            nextSession.user.user_metadata?.full_name ||
+            nextSession.user.user_metadata?.name;
+
           identifyUser(nextSession.user, {
             email: nextSession.user.email,
-            displayName:
-              nextSession.user.user_metadata?.full_name ||
-              nextSession.user.user_metadata?.name,
+            displayName: fallbackDisplayName,
             plan: null,
           });
           trackSignInCompleted();
-          syncContactToResend({
-            plan: null,
-            displayName:
-              nextSession.user.user_metadata?.full_name ||
-              nextSession.user.user_metadata?.name,
-          });
+          authService
+            .syncContactToResend({
+              plan: null,
+              displayName: fallbackDisplayName,
+            })
+            .catch(() => {});
         }
 
         if (event === 'SIGNED_OUT') {

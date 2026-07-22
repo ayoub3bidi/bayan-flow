@@ -53,8 +53,6 @@
     "dangerZoneDescription": "Permanently delete your account and all saved favorites and study notes. This cannot be undone.",
     "deleteAccount": "Delete account",
     "deleteAccountConfirmLabel": "Type your email to confirm deletion",
-    "deleteAccountConfirmPlaceholder": "your@email.com",
-    "deleteAccountConfirmWord": "DELETE",
     "deleteAccountInProgress": "Deleting account…",
     "deleteAccountSuccess": "Your account has been deleted.",
     "deleteAccountError": "Could not delete your account. Please try again or email contact@bayanflow.com."

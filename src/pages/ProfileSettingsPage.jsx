@@ -189,7 +189,11 @@ function ProfileSettingsPage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!user || isDeletingAccount || deleteConfirmText.trim() !== user.email) {
+    if (
+      !user ||
+      isDeletingAccount ||
+      deleteConfirmText.trim().toLowerCase() !== user.email?.toLowerCase()
+    ) {
       return;
     }
 
@@ -540,7 +544,8 @@ function ProfileSettingsPage() {
                           onClick={handleDeleteAccount}
                           disabled={
                             isDeletingAccount ||
-                            deleteConfirmText.trim() !== user.email
+                            deleteConfirmText.trim().toLowerCase() !==
+                              user.email?.toLowerCase()
                           }
                           className="flex-1 inline-flex items-center justify-center rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40 px-5 py-3 text-sm font-semibold text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/60 disabled:opacity-50 disabled:cursor-not-allowed min-h-11"
                         >

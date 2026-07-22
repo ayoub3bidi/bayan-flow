@@ -46,14 +46,6 @@ export async function handleRequest(req) {
     } = await supabase.auth.getUser(jwt);
 
     if (userError || !user) {
-      // userError with a code indicates a malformed/tampered JWT — fail closed
-      // A null user without error could be a transient issue — fail open
-      if (userError?.code) {
-        return new Response(
-          JSON.stringify({ allowed: false, reason: 'invalid_token' }),
-          { status: 200, headers: corsHeaders }
-        );
-      }
       return new Response(JSON.stringify({ allowed: true }), {
         status: 200,
         headers: corsHeaders,
@@ -84,7 +76,7 @@ export async function handleRequest(req) {
         console.error('platform-access: auth ban sync failed', banError);
       }
 
-      sendTelegramAlert(
+      await sendTelegramAlert(
         `🚫 BANNED USER BLOCKED\n\nUser: ${user.email ?? user.id}\nAction: platform access denied + auth ban synced`
       );
 
