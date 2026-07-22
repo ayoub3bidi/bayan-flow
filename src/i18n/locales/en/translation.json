@@ -1023,7 +1023,15 @@
     "legal": "Legal",
     "proPlan": "Pro Plan",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Use"
+    "terms": "Terms of Use",
+    "cookiePreferences": "Cookie Preferences"
+  },
+  "consent": {
+    "message": "We use cookies for analytics to improve your experience. You can accept or decline.",
+    "acceptAll": "Accept All",
+    "declineAll": "Decline",
+    "privacyPolicy": "Privacy Policy",
+    "bannerAriaLabel": "Cookie consent"
   },
   "legal": {
     "privacyTitle": "Privacy Policy",

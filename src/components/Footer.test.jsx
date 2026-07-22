@@ -10,6 +10,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import Footer from './Footer';
 import i18n from '../i18n';
+import { ConsentProvider } from '../contexts/ConsentContext.jsx';
 
 const mockNavigate = vi.fn();
 
@@ -25,7 +26,9 @@ function renderFooter() {
   return render(
     <MemoryRouter>
       <I18nextProvider i18n={i18n}>
-        <Footer />
+        <ConsentProvider>
+          <Footer />
+        </ConsentProvider>
       </I18nextProvider>
     </MemoryRouter>
   );
@@ -76,5 +79,12 @@ describe('Footer', () => {
     });
     expect(link).toHaveAttribute('href', '/pro');
     fireEvent.click(link);
+  });
+
+  it('renders cookie preferences button', () => {
+    renderFooter();
+    expect(
+      screen.getByText(i18n.t('footer.cookiePreferences'))
+    ).toBeInTheDocument();
   });
 });

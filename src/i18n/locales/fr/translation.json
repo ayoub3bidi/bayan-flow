@@ -1022,7 +1022,15 @@
     "legal": "Mentions légales",
     "proPlan": "Plan Pro",
     "privacy": "Politique de confidentialité",
-    "terms": "Conditions d'utilisation"
+    "terms": "Conditions d'utilisation",
+    "cookiePreferences": "Préférences cookies"
+  },
+  "consent": {
+    "message": "Nous utilisons des cookies pour les analyses afin d'améliorer votre expérience. Vous pouvez accepter ou refuser.",
+    "acceptAll": "Tout accepter",
+    "declineAll": "Refuser",
+    "privacyPolicy": "Politique de confidentialité",
+    "bannerAriaLabel": "Consentement aux cookies"
   },
   "legal": {
     "privacyTitle": "Politique de confidentialité",
