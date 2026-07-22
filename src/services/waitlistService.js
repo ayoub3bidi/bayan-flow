@@ -45,9 +45,13 @@ export function normalizeWaitlistEmail(email) {
  */
 export function persistWaitlistEmail(email) {
   try {
-    sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, email);
+    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, email);
   } catch {
-    // ignore quota / private mode
+    try {
+      sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, email);
+    } catch {
+      // ignore quota / private mode
+    }
   }
 }
 
@@ -56,10 +60,26 @@ export function persistWaitlistEmail(email) {
  */
 export function readStoredWaitlistEmail() {
   try {
-    const value = sessionStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY);
+    let value = localStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY);
+    if (value == null) {
+      const legacy = sessionStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY);
+      if (legacy != null) {
+        try {
+          localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, legacy);
+        } catch {
+          // migration write failed, but we still have the legacy value
+        }
+        value = legacy;
+      }
+    }
     return value ? normalizeWaitlistEmail(value) : null;
   } catch {
-    return null;
+    try {
+      const fallback = sessionStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY);
+      return fallback ? normalizeWaitlistEmail(fallback) : null;
+    } catch {
+      return null;
+    }
   }
 }
 

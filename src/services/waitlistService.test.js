@@ -52,10 +52,18 @@ describe('waitlistService', () => {
   describe('persistWaitlistEmail / readStoredWaitlistEmail', () => {
     it('stores and reads normalized email', () => {
       persistWaitlistEmail('user@example.com');
-      expect(sessionStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY)).toBe(
+      expect(localStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY)).toBe(
         'user@example.com'
       );
       expect(readStoredWaitlistEmail()).toBe('user@example.com');
+    });
+
+    it('migrates email from sessionStorage to localStorage', () => {
+      sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'legacy@example.com');
+      expect(readStoredWaitlistEmail()).toBe('legacy@example.com');
+      expect(localStorage.getItem(WAITLIST_EMAIL_STORAGE_KEY)).toBe(
+        'legacy@example.com'
+      );
     });
   });
 

@@ -59,17 +59,17 @@
   },
   "pro": {
     "pageTitle": "The Pro Plan",
-    "metaDescription": "Join the Pro plan waitlist and lock in 50% off your first year on the annual plan.",
+    "metaDescription": "Join the Pro Plan waitlist and lock in 50% off your first year on the annual plan.",
     "banner": {
-      "message": "The Pro plan is coming soon. Be first in line.",
+      "message": "The Pro Plan is coming soon. Be first in line.",
       "cta": "Join waitlist",
-      "linkLabel": "Learn about the Pro plan",
+      "linkLabel": "Learn about the Pro Plan",
       "dismiss": "Dismiss"
     },
     "eyebrow": "The Pro Plan",
-    "headline": "Go further with the Pro plan",
+    "headline": "Go further with the Pro Plan",
     "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, unlimited exports, and more.",
-    "featuresHeading": "What the Pro plan unlocks",
+    "featuresHeading": "What the Pro Plan unlocks",
     "features": {
       "customInput": {
         "title": "Custom algorithm inputs",
@@ -95,17 +95,17 @@
       "emailPlaceholder": "you@school.edu",
       "submit": "Join the waitlist",
       "submitting": "Joining…",
-      "privacy": "You can ignore the launch email if the Pro plan is not useful for you."
+      "privacy": "You can ignore the launch email if the Pro Plan is not useful for you."
     },
     "success": {
       "title": "You are on the list",
       "position": "You are #{{position}} on the waitlist",
-      "nextStep": "We will email you at {{email}} when the Pro plan launches.",
+      "nextStep": "We will email you at {{email}} when the Pro Plan launches.",
       "backToApp": "Back to the visualizer"
     },
     "alreadyJoined": {
       "title": "You are already on the waitlist",
-      "body": "We have your email on file. We will notify you when the Pro plan launches."
+      "body": "We have your email on file. We will notify you when the Pro Plan launches."
     },
     "errors": {
       "invalidEmail": "Enter a valid email address.",
@@ -114,7 +114,7 @@
     },
     "featuresMore": {
       "title": "And more to come",
-      "body": "These are just the first features. The Pro plan will keep growing with more tools as we get closer to launch."
+      "body": "These are just the first features. The Pro Plan will keep growing with more tools as we get closer to launch."
     },
     "waitlistCount": "{{count}} learners are on the waitlist"
   },
@@ -1021,6 +1021,7 @@
     "instagramAria": "Bayan Flow on Instagram — open profile in a new tab",
     "tikTokAria": "Bayan Flow on TikTok — open profile in a new tab",
     "legal": "Legal",
+    "proPlan": "Pro Plan",
     "privacy": "Privacy Policy",
     "terms": "Terms of Use"
   },
