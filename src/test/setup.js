@@ -287,6 +287,26 @@ const gridHelpersMock = {
 vi.mock('../utils/gridHelpers', () => gridHelpersMock);
 vi.mock('../utils/gridHelpers.js', () => gridHelpersMock);
 
+vi.mock('posthog-js', () => ({
+  default: {
+    init: vi.fn(),
+    identify: vi.fn(),
+    capture: vi.fn(),
+    reset: vi.fn(),
+    setPersonProperties: vi.fn(),
+    isFeatureEnabled: vi.fn(() => false),
+    getFeatureFlag: vi.fn(() => undefined),
+    getFeatureFlagPayload: vi.fn(() => undefined),
+    onFeatureFlags: vi.fn(() => vi.fn()),
+    get_distinct_id: vi.fn(() => 'test-distinct-id'),
+    opt_out_capturing: vi.fn(),
+    has_opted_out_capturing: vi.fn(() => false),
+    opt_in_capturing: vi.fn(),
+    reloadFeatureFlags: vi.fn(),
+    shutdown: vi.fn(),
+  },
+}));
+
 vi.mock('../lib/supabaseClient', () => import('./supabaseMock.js'));
 vi.mock('../lib/supabaseClient.js', () => import('./supabaseMock.js'));
 

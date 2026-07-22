@@ -1,9 +1,13 @@
-const DEFAULT_ALLOWED_ORIGINS = [
+const PRODUCTION_ORIGINS = [
   'https://bayanflow.com',
   'https://dev.bayanflow.com',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
 ];
+
+const DEV_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+const DEFAULT_ALLOWED_ORIGINS = Deno.env.get('DENO_DEPLOYMENT_ID')
+  ? PRODUCTION_ORIGINS
+  : [...PRODUCTION_ORIGINS, ...DEV_ORIGINS];
 
 /**
  * @param {Request} req

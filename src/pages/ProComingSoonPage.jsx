@@ -27,6 +27,7 @@ import {
   joinWaitlist,
   readStoredWaitlistEmail,
 } from '@/services/waitlistService';
+import { trackWaitlistJoined } from '@/services/analyticsEvents';
 
 const FEATURE_ITEMS = [
   { key: 'customInput', Icon: Sliders },
@@ -104,6 +105,7 @@ function ProComingSoonPage() {
     if (result.status === 'joined') {
       setPosition(result.position ?? null);
       setSubmitState('success');
+      trackWaitlistJoined(source, result.position);
       return;
     }
 

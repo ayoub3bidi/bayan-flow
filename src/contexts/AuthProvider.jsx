@@ -186,14 +186,24 @@ export function AuthProvider({ children }) {
         if (event === 'SIGNED_IN' && nextSession?.user != null) {
           resetAllSessionCounters();
           resetUser();
+
+          const fallbackDisplayName =
+            nextSession.user.user_metadata?.full_name ||
+            nextSession.user.user_metadata?.name;
+
           identifyUser(nextSession.user, {
             email: nextSession.user.email,
-            displayName:
-              nextSession.user.user_metadata?.full_name ||
-              nextSession.user.user_metadata?.name,
+            displayName: fallbackDisplayName,
             plan: null,
           });
           trackSignInCompleted();
+          setTimeout(() => {
+            authService
+              .syncContactToResend({
+                displayName: fallbackDisplayName,
+              })
+              .catch(() => {});
+          }, 0);
         }
 
         if (event === 'SIGNED_OUT') {

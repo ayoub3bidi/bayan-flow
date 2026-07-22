@@ -17,12 +17,12 @@ export function isFeatureEnabled(flagName, defaultValue = false) {
 }
 
 /**
- * Get the variant key of a feature flag.
+ * Get the feature flag value (boolean or multivariate string key).
  * @param {string} flagName
- * @returns {string|undefined}
+ * @returns {boolean|string|undefined}
  */
 export function getFeatureFlagVariant(flagName) {
-  return posthog?.getFeatureFlagVariant(flagName);
+  return posthog?.getFeatureFlag?.(flagName);
 }
 
 /**

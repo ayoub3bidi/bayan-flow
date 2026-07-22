@@ -44,6 +44,7 @@ export function initPostHog() {
     api_host: host,
     ui_host: 'https://us.posthog.com',
     defaults: '2026-05-30',
+    capture_pageview: 'history_change',
     autocapture: false,
     disable_surveys: true,
     capture_performance: true,
@@ -51,6 +52,8 @@ export function initPostHog() {
     rageclick: true,
     person_profiles: 'identified_only',
     session_recording: {
+      // Sample to stretch the free-tier 5k recordings/month.
+      sampleRate: 0.2,
       maskTextSelector: '.ph-no-capture, [data-sensitive]',
       maskAllInputs: true,
       maskAllMedia: true,

@@ -99,7 +99,11 @@
   - `supabase/functions/post-signup/` — post-signup side effects
   - `supabase/functions/platform-access/` — signed-in ban check (`accessService.checkPlatformAccess()`; fail-open on transport)
   - `supabase/functions/waitlist-welcome/` — Pro waitlist confirmation email via Resend (fail-open; invoked after client insert)
+  - `supabase/functions/sync-contacts/` — JWT-authenticated Resend contact upsert + one-time Free welcome email on sign-in (fail-open; identity from JWT only; atomic claim on `profiles.welcome_email_sent_at`; Resend segment via `RESEND_SEGMENT_ID` or legacy `RESEND_AUDIENCE_ID`)
   - `supabase/functions/delete-account/` — self-service account deletion
+- Shared email HTML: `supabase/functions/_shared/transactionalEmails.ts`
+- **Not in 0.5.0:** LemonSqueezy webhook, subscriptions / usage_events / referrals / user_sessions tables (dropped via `20260720180000_drop_premature_saas_scaffolding.sql`); no viz-limit email, weekly digest, Pro nudge, or referral invite sends (Pro nudge + referral templates may exist in Resend as parked drafts for later)
+- Analytics: `src/services/analytics.js`, `src/services/analyticsEvents.js` — PostHog SPA pageviews + growth events `waitlist_joined`, `upgrade_limit_hit`; surveys disabled in SDK
 - Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
 - Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
 - Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
@@ -117,8 +121,9 @@
 | `display_name` | yes | Editable on profile settings page |
 | `avatar_url` | no | OAuth / trigger-populated HTTPS URL |
 | `avatar_preference` | yes | `google` (default) \| `generated` |
+| `welcome_email_sent_at` | no | Set atomically by `sync-contacts` when claiming the one-time welcome send |
 
-Future (v0.6.0, not shipped): `username` (unique, set-once RLS), public `/u/:username` route; referral/billing columns (`referral_code`, `referred_by`, `referral_count`, `pro_months_earned`, `pro_expires_at`) — service role only.
+Future (post-0.5.0, not shipped): `username` (unique, set-once RLS), public `/u/:username` route; any referral/billing columns — new migrations then, not restore of dropped scaffolding. Through 0.5.0 Pro remains waitlist-only.
 
 ### Personal learning tables
 
