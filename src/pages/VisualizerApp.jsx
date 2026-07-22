@@ -405,9 +405,11 @@ function App() {
   }, [user]);
 
   useEffect(() => {
-    if (isAuthenticated && pendingFeatureRef.current) {
-      openFeature(pendingFeatureRef.current);
-      pendingFeatureRef.current = null;
+    if (isAuthenticated) {
+      if (pendingFeatureRef.current) {
+        openFeature(pendingFeatureRef.current);
+        pendingFeatureRef.current = null;
+      }
       closeGatedFeature();
     }
     // openFeature is not a dependency since it's defined above and stable within this scope
