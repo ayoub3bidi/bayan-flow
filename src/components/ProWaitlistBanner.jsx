@@ -25,8 +25,19 @@ function ProWaitlistBannerContent({ source, pathname, inRouter }) {
 
   useEffect(() => {
     try {
-      const isDismissed =
-        sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY) === '1';
+      let dismissedFlag = localStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY);
+      if (dismissedFlag == null) {
+        const legacy = sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY);
+        if (legacy != null) {
+          try {
+            localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, legacy);
+          } catch {
+            // migration write failed, but we still have the legacy value
+          }
+          dismissedFlag = legacy;
+        }
+      }
+      const isDismissed = dismissedFlag === '1';
       const isEnrolled = !!readStoredWaitlistEmail();
       setDismissed(isDismissed || isEnrolled);
       if (isEnrolled && !isDismissed) {
@@ -51,9 +62,13 @@ function ProWaitlistBannerContent({ source, pathname, inRouter }) {
 
   const handleDismiss = () => {
     try {
-      sessionStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
+      localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
     } catch {
-      // ignore
+      try {
+        sessionStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
+      } catch {
+        // ignore
+      }
     }
     setDismissed(true);
     window.dispatchEvent(new CustomEvent('bayan-flow:banner-dismissed'));

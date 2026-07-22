@@ -56,22 +56,31 @@ describe('ProWaitlistBanner', () => {
   it('dismisses for the session', () => {
     renderBanner('landing');
     fireEvent.click(screen.getByRole('button', { name: /dismiss/i }));
-    expect(sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY)).toBe('1');
+    expect(localStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY)).toBe('1');
     expect(
       screen.queryByRole('link', { name: /join waitlist/i })
     ).not.toBeInTheDocument();
   });
 
   it('stays hidden when session flag is set', () => {
-    sessionStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
+    localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
     renderBanner('landing');
     expect(
       screen.queryByRole('link', { name: /join waitlist/i })
     ).not.toBeInTheDocument();
   });
 
-  it('hides when user is already enrolled (email in sessionStorage)', () => {
-    sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
+  it('migrates dismissed flag from sessionStorage to localStorage', () => {
+    sessionStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
+    renderBanner('landing');
+    expect(localStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY)).toBe('1');
+    expect(
+      screen.queryByRole('link', { name: /join waitlist/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it('hides when user is already enrolled (email in localStorage)', () => {
+    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
     renderBanner('landing');
     expect(
       screen.queryByRole('link', { name: /join waitlist/i })
@@ -90,7 +99,7 @@ describe('ProWaitlistBanner', () => {
   it('dispatches banner-dismissed event when hidden due to enrollment', () => {
     const spy = vi.fn();
     window.addEventListener('bayan-flow:banner-dismissed', spy);
-    sessionStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
+    localStorage.setItem(WAITLIST_EMAIL_STORAGE_KEY, 'user@example.com');
     renderBanner('landing');
     expect(spy).toHaveBeenCalledTimes(1);
     window.removeEventListener('bayan-flow:banner-dismissed', spy);

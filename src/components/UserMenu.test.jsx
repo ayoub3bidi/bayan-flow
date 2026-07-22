@@ -52,6 +52,22 @@ describe('UserMenu', () => {
     expect(skeleton).toBeInTheDocument();
   });
 
+  it('does not show loading skeleton when hideAvatar is true', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: true,
+      isAuthenticated: false,
+      profile: null,
+      signInWithGoogle: vi.fn(),
+      signOut: vi.fn(),
+    });
+
+    const { container } = render(<UserMenu hideAvatar />);
+    expect(
+      container.querySelector('[aria-hidden="true"]')
+    ).not.toBeInTheDocument();
+  });
+
   it('shows Google sign-in button when signed out', () => {
     vi.mocked(useAuth).mockReturnValue({
       isConfigured: true,

@@ -9,7 +9,7 @@ import { FileText, WarningCircle, MapPin } from '@phosphor-icons/react';
 import { SiYoutube, SiInstagram, SiTiktok } from 'react-icons/si';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   GITHUB_REPO_NAME,
   GITHUB_REPO_OWNER,
@@ -288,6 +288,12 @@ function Footer() {
               © {currentYear} Bayan Flow. {t('footer.allRightsReserved')}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link
+                to="/pro"
+                className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
+              >
+                {t('footer.proPlan')}
+              </Link>
               <motion.button
                 type="button"
                 onClick={() => handleLinkClick('/privacy')}
