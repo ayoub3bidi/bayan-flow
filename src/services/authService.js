@@ -247,7 +247,7 @@ export function syncContactToResend(profile) {
   return supabase.functions.invoke('sync-contacts', {
     method: 'POST',
     body: {
-      plan: profile?.plan || 'free',
+      ...(profile?.plan ? { plan: profile.plan } : {}),
       displayName: profile?.displayName || '',
       language: document.documentElement.lang || 'en',
     },

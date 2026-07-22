@@ -197,12 +197,13 @@ export function AuthProvider({ children }) {
             plan: null,
           });
           trackSignInCompleted();
-          authService
-            .syncContactToResend({
-              plan: null,
-              displayName: fallbackDisplayName,
-            })
-            .catch(() => {});
+          setTimeout(() => {
+            authService
+              .syncContactToResend({
+                displayName: fallbackDisplayName,
+              })
+              .catch(() => {});
+          }, 0);
         }
 
         if (event === 'SIGNED_OUT') {
