@@ -218,7 +218,7 @@ describe('ProfileSettingsPage', () => {
     });
   });
 
-  it('deletes account after typing DELETE confirmation via modal', async () => {
+  it('deletes account after typing email confirmation via modal', async () => {
     getProfileMock.mockResolvedValue({
       display_name: 'Ada',
       avatar_url: null,
@@ -242,9 +242,9 @@ describe('ProfileSettingsPage', () => {
     const dialog = await screen.findByRole('dialog');
 
     const confirmInput = within(dialog).getByLabelText(
-      /type delete to confirm/i
+      /type your email to confirm/i
     );
-    fireEvent.change(confirmInput, { target: { value: 'DELETE' } });
+    fireEvent.change(confirmInput, { target: { value: 'ada@example.com' } });
 
     const deleteButton = within(dialog).getByRole('button', {
       name: /delete account/i,

@@ -52,9 +52,7 @@
     "dangerZoneTitle": "Zone de danger",
     "dangerZoneDescription": "Supprime définitivement votre compte ainsi que vos favoris et notes d'étude. Cette action est irréversible.",
     "deleteAccount": "Supprimer le compte",
-    "deleteAccountConfirmLabel": "Tapez DELETE pour confirmer",
-    "deleteAccountConfirmPlaceholder": "DELETE",
-    "deleteAccountConfirmWord": "DELETE",
+    "deleteAccountConfirmLabel": "Tapez votre email pour confirmer la suppression",
     "deleteAccountInProgress": "Suppression du compte…",
     "deleteAccountSuccess": "Votre compte a été supprimé.",
     "deleteAccountError": "Impossible de supprimer votre compte. Réessayez ou écrivez à contact@bayanflow.com."

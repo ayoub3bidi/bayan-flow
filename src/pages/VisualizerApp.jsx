@@ -83,6 +83,7 @@ import {
   trackInsightPanelOpened,
   trackVideoExportStarted,
   trackCategoryChanged,
+  trackUpgradeLimitHit,
 } from '../services/analyticsEvents';
 
 const SOUND_PREFERENCE_STORAGE_KEY = 'bayan-flow:sound-enabled';
@@ -418,6 +419,7 @@ function App() {
   /** Play handler with session limit check for anonymous users */
   const handlePlay = () => {
     if (!canRunVisualization(user)) {
+      trackUpgradeLimitHit(ANONYMOUS_VISUALIZATION_LIMIT);
       openGatedFeature('session_limit', {
         limit: ANONYMOUS_VISUALIZATION_LIMIT,
       });

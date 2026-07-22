@@ -70,6 +70,12 @@ export const UPGRADE_MODAL_VIEWED = 'upgrade_modal_viewed';
 /** Upgrade button clicked */
 export const UPGRADE_CLICKED = 'upgrade_clicked';
 
+/** Waitlist form submitted successfully */
+export const WAITLIST_JOINED = 'waitlist_joined';
+
+/** Anonymous user hit visualization limit (sign-in prompt triggered) */
+export const UPGRADE_LIMIT_HIT = 'upgrade_limit_hit';
+
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
 /** Category tab changed */
@@ -255,4 +261,21 @@ export function trackCategoryChanged(fromCategory, toCategory) {
     from_category: fromCategory,
     to_category: toCategory,
   });
+}
+
+/**
+ * Capture a waitlist joined event.
+ * @param {string} source
+ * @param {number} [position]
+ */
+export function trackWaitlistJoined(source, position) {
+  captureEvent(WAITLIST_JOINED, { source, position });
+}
+
+/**
+ * Capture an upgrade limit hit event (anonymous viz limit reached).
+ * @param {number} limit
+ */
+export function trackUpgradeLimitHit(limit) {
+  captureEvent(UPGRADE_LIMIT_HIT, { limit });
 }

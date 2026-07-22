@@ -139,6 +139,28 @@ export async function handleRequest(req) {
       }
     }
 
+    // Notify on every new user registration
+    const userRecord = body.record ?? {};
+    const signupDisplayName =
+      typeof userRecord.raw_user_meta_data?.full_name === 'string'
+        ? userRecord.raw_user_meta_data.full_name
+        : typeof userRecord.raw_user_meta_data?.name === 'string'
+          ? userRecord.raw_user_meta_data.name
+          : null;
+
+    const signupAlert = [
+      'New Bayan Flow user registered!',
+      '',
+      `Email: ${email}`,
+      signupDisplayName ? `Name: ${signupDisplayName}` : null,
+      ip ? `IP: ${ip}` : null,
+      `Time: ${new Date().toISOString()}`,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    await sendTelegramAlert(signupAlert);
+
     const { error: cleanupError } = await supabase
       .from('signup_pending')
       .delete()

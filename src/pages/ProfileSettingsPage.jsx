@@ -192,7 +192,7 @@ function ProfileSettingsPage() {
     if (
       !user ||
       isDeletingAccount ||
-      deleteConfirmText !== t('profile.deleteAccountConfirmWord')
+      deleteConfirmText.trim().toLowerCase() !== user.email?.toLowerCase()
     ) {
       return;
     }
@@ -523,9 +523,7 @@ function ProfileSettingsPage() {
                         onChange={event =>
                           setDeleteConfirmText(event.target.value)
                         }
-                        placeholder={t(
-                          'profile.deleteAccountConfirmPlaceholder'
-                        )}
+                        placeholder={user.email}
                         className="w-full rounded-lg border border-red-200 dark:border-red-800 bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-red-400/40 mb-6"
                         autoComplete="off"
                       />
@@ -546,8 +544,8 @@ function ProfileSettingsPage() {
                           onClick={handleDeleteAccount}
                           disabled={
                             isDeletingAccount ||
-                            deleteConfirmText !==
-                              t('profile.deleteAccountConfirmWord')
+                            deleteConfirmText.trim().toLowerCase() !==
+                              user.email?.toLowerCase()
                           }
                           className="flex-1 inline-flex items-center justify-center rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40 px-5 py-3 text-sm font-semibold text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/60 disabled:opacity-50 disabled:cursor-not-allowed min-h-11"
                         >
