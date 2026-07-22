@@ -89,7 +89,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
     }
   };
 
-  if (isLoading && !isAuthenticated) {
+  if (isLoading && !isAuthenticated && !hideAvatar) {
     return (
       <div
         className={`rounded-full border border-(--color-glass-border) bg-interactive-bg animate-pulse ${
