@@ -25,8 +25,15 @@ function ProWaitlistBannerContent({ source, pathname, inRouter }) {
 
   useEffect(() => {
     try {
-      const isDismissed =
-        sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY) === '1';
+      let dismissedFlag = localStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY);
+      if (dismissedFlag == null) {
+        const legacy = sessionStorage.getItem(WAITLIST_BANNER_DISMISSED_KEY);
+        if (legacy != null) {
+          localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, legacy);
+          dismissedFlag = legacy;
+        }
+      }
+      const isDismissed = dismissedFlag === '1';
       const isEnrolled = !!readStoredWaitlistEmail();
       setDismissed(isDismissed || isEnrolled);
       if (isEnrolled && !isDismissed) {
@@ -51,7 +58,7 @@ function ProWaitlistBannerContent({ source, pathname, inRouter }) {
 
   const handleDismiss = () => {
     try {
-      sessionStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
+      localStorage.setItem(WAITLIST_BANNER_DISMISSED_KEY, '1');
     } catch {
       // ignore
     }

@@ -46,4 +46,17 @@ describe('Footer', () => {
     fireEvent.click(screen.getByText(i18n.t('footer.terms')));
     expect(mockNavigate).toHaveBeenCalledWith('/terms');
   });
+
+  it('renders pro plan link', () => {
+    renderWithI18n(<Footer />);
+
+    expect(screen.getByText(i18n.t('footer.proPlan'))).toBeInTheDocument();
+  });
+
+  it('navigates to pro page on click', () => {
+    renderWithI18n(<Footer />);
+
+    fireEvent.click(screen.getByText(i18n.t('footer.proPlan')));
+    expect(mockNavigate).toHaveBeenCalledWith('/pro');
+  });
 });

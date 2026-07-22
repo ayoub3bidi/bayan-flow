@@ -290,6 +290,15 @@ function Footer() {
             <div className="flex flex-wrap items-center justify-center gap-4">
               <motion.button
                 type="button"
+                onClick={() => handleLinkClick('/pro')}
+                className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {t('footer.proPlan')}
+              </motion.button>
+              <motion.button
+                type="button"
                 onClick={() => handleLinkClick('/privacy')}
                 className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
                 whileHover={{ scale: 1.02 }}
