@@ -7,8 +7,16 @@
 import { useContext } from 'react';
 import { ConsentContext } from '../contexts/ConsentContext.jsx';
 
+const DEFAULT_CONSENT = {
+  consent: null,
+  bannerVisible: false,
+  grantConsent: () => {},
+  denyConsent: () => {},
+  resetConsent: () => {},
+  isAnalyticsAllowed: false,
+};
+
 export function useConsent() {
   const ctx = useContext(ConsentContext);
-  if (!ctx) throw new Error('useConsent must be used within ConsentProvider');
-  return ctx;
+  return ctx ?? DEFAULT_CONSENT;
 }
