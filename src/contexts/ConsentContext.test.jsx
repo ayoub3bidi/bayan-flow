@@ -86,6 +86,10 @@ describe('ConsentContext', () => {
   });
 
   it('auto-denies when Global Privacy Control is set', () => {
+    Object.defineProperty(navigator, 'doNotTrack', {
+      value: '0',
+      configurable: true,
+    });
     Object.defineProperty(navigator, 'globalPrivacyControl', {
       value: true,
       configurable: true,
@@ -93,6 +97,40 @@ describe('ConsentContext', () => {
     const { result } = renderHook(() => useConsent(), { wrapper });
     expect(result.current.bannerVisible).toBe(false);
     expect(result.current.isAnalyticsAllowed).toBe(false);
+  });
+
+  it('DNT/GPC overrides stored approval on load', () => {
+    Object.defineProperty(navigator, 'doNotTrack', {
+      value: '1',
+      configurable: true,
+    });
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ analytics: true, timestamp: Date.now() })
+    );
+    const { result } = renderHook(() => useConsent(), { wrapper });
+    expect(result.current.bannerVisible).toBe(false);
+    expect(result.current.isAnalyticsAllowed).toBe(false);
+  });
+
+  it('resetConsent preserves forced denial when DNT/GPC is active', () => {
+    Object.defineProperty(navigator, 'doNotTrack', {
+      value: '1',
+      configurable: true,
+    });
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ analytics: true, timestamp: Date.now() })
+    );
+    const { result } = renderHook(() => useConsent(), { wrapper });
+    expect(result.current.isAnalyticsAllowed).toBe(false);
+
+    act(() => result.current.resetConsent());
+
+    expect(result.current.bannerVisible).toBe(false);
+    expect(result.current.isAnalyticsAllowed).toBe(false);
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    expect(stored.analytics).toBe(false);
   });
 
   it('does not auto-deny when no privacy signals are present', () => {

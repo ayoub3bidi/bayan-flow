@@ -81,10 +81,18 @@ describe('Footer', () => {
     fireEvent.click(link);
   });
 
-  it('renders cookie preferences button', () => {
+  it('cookie preferences button resets consent and reopens banner', () => {
+    localStorage.setItem(
+      'bayanflow:cookie-consent',
+      JSON.stringify({ analytics: true, timestamp: Date.now() })
+    );
     renderFooter();
-    expect(
-      screen.getByText(i18n.t('footer.cookiePreferences'))
-    ).toBeInTheDocument();
+
+    const btn = screen.getByText(i18n.t('footer.cookiePreferences'));
+    expect(btn).toBeInTheDocument();
+
+    fireEvent.click(btn);
+
+    expect(localStorage.getItem('bayanflow:cookie-consent')).toBeNull();
   });
 });

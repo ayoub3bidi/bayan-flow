@@ -81,22 +81,19 @@ function clearConsent() {
  * @param {{ children: import('react').ReactNode }} props
  */
 export function ConsentProvider({ children }) {
-  const [consent, setConsent] = useState(readStoredConsent);
+  const [consent, setConsent] = useState(() =>
+    hasPrivacySignal()
+      ? { analytics: false, timestamp: Date.now() }
+      : readStoredConsent()
+  );
   const [bannerVisible, setBannerVisible] = useState(() => {
+    if (hasPrivacySignal()) return false;
     const stored = readStoredConsent();
     return stored === null;
   });
 
   useEffect(() => {
-    const stored = readStoredConsent();
-    if (stored !== null) return;
-
-    // No stored consent — check privacy signals
-    if (hasPrivacySignal()) {
-      writeConsent(false);
-      setConsent({ analytics: false, timestamp: Date.now() });
-      setBannerVisible(false);
-    }
+    if (hasPrivacySignal()) writeConsent(false);
   }, []);
 
   const grantConsent = useCallback(() => {
@@ -112,6 +109,12 @@ export function ConsentProvider({ children }) {
   }, []);
 
   const resetConsent = useCallback(() => {
+    if (hasPrivacySignal()) {
+      writeConsent(false);
+      setConsent({ analytics: false, timestamp: Date.now() });
+      setBannerVisible(false);
+      return;
+    }
     clearConsent();
     setConsent(null);
     setBannerVisible(true);

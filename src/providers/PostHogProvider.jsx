@@ -4,20 +4,30 @@
  * See LICENSE for details.
  */
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { PostHogProvider as PHProvider } from '@posthog/react';
 import posthog from 'posthog-js';
 import { initPostHog } from '../services/analytics';
 
 /**
  * PostHog provider wrapper.
- * Defers PostHog initialization until analytics consent is granted.
+ * Defers PostHog initialization until analytics consent is granted,
+ * and opts out when consent is revoked.
  * @param {{ analytics: boolean, children: import('react').ReactNode }} props
  */
 export function PostHogProvider({ analytics, children }) {
+  const initializedRef = useRef(false);
+
   useEffect(() => {
-    if (analytics) {
+    if (analytics && !initializedRef.current) {
       initPostHog();
+      initializedRef.current = true;
+    } else if (initializedRef.current) {
+      if (analytics) {
+        posthog.opt_in_capturing();
+      } else {
+        posthog.opt_out_capturing();
+      }
     }
   }, [analytics]);
 
