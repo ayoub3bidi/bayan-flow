@@ -16,6 +16,7 @@ import InsightFloatingActionButton from '../components/InsightFloatingActionButt
 import ExportProgressModal from '../components/ExportProgressModal';
 import SignInPromptModal from '../components/SignInPromptModal';
 import ProWaitlistBanner from '../components/ProWaitlistBanner';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
 const AlgorithmInsightPanel = lazy(
@@ -953,31 +954,35 @@ function App() {
       />
 
       {/* Python Code Panel */}
-      <Suspense
-        fallback={
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="text-white">Loading...</div>
-          </div>
-        }
-      >
-        <PythonCodePanel
-          isOpen={isPythonPanelOpen}
-          onClose={() => setIsPythonPanelOpen(false)}
-          algorithm={activeAlgorithmKey}
-        />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="text-white">Loading...</div>
+            </div>
+          }
+        >
+          <PythonCodePanel
+            isOpen={isPythonPanelOpen}
+            onClose={() => setIsPythonPanelOpen(false)}
+            algorithm={activeAlgorithmKey}
+          />
+        </Suspense>
+      </ErrorBoundary>
 
       {/* Algorithm Insight Panel */}
-      <Suspense fallback={null}>
-        <AlgorithmInsightPanel
-          isOpen={isInsightPanelOpen}
-          onClose={() => setIsInsightPanelOpen(false)}
-          algorithmKey={activeAlgorithmKey}
-          algorithmName={activeAlgorithmName}
-          categoryType={algorithmType}
-          user={user}
-        />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          <AlgorithmInsightPanel
+            isOpen={isInsightPanelOpen}
+            onClose={() => setIsInsightPanelOpen(false)}
+            algorithmKey={activeAlgorithmKey}
+            algorithmName={activeAlgorithmName}
+            categoryType={algorithmType}
+            user={user}
+          />
+        </Suspense>
+      </ErrorBoundary>
 
       {/* Sign-in prompt for gated features */}
       <SignInPromptModal
