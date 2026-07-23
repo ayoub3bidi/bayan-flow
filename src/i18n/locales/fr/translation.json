@@ -59,7 +59,7 @@
   },
   "pro": {
     "pageTitle": "Le Plan Pro",
-    "metaDescription": "Rejoignez la liste d'attente le Plan Pro et sécurisez 50 % de réduction sur votre première année au plan annuel.",
+    "metaDescription": "Rejoignez la liste d'attente du Plan Pro et sécurisez 50 % de réduction sur l'abonnement Pro à vie.",
     "banner": {
       "message": "Le plan Pro arrive bientôt. Soyez les premiers.",
       "cta": "Rejoindre la liste",
@@ -89,8 +89,8 @@
       }
     },
     "form": {
-      "title": "Obtenez 50 % de réduction la première année",
-      "helper": "Rejoignez la liste d'attente pour sécuriser la moitié du prix votre première année. Pas de spam, un seul e-mail quand le Plan Pro sera prêt.",
+      "title": "Obtenez 50 % de réduction sur le Pro à vie",
+      "helper": "Rejoignez la liste d'attente pour sécuriser la moitié du prix de l'abonnement Pro à vie. Pas de spam, un seul e-mail quand le Plan Pro sera prêt.",
       "emailLabel": "Adresse e-mail",
       "emailPlaceholder": "vous@ecole.fr",
       "submit": "Rejoindre la liste",

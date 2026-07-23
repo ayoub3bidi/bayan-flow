@@ -59,7 +59,7 @@
   },
   "pro": {
     "pageTitle": "The Pro Plan",
-    "metaDescription": "Join the Pro Plan waitlist and lock in 50% off your first year on the annual plan.",
+    "metaDescription": "Join the Pro Plan waitlist and lock in 50% off the lifetime Pro subscription.",
     "banner": {
       "message": "The Pro Plan is coming soon. Be first in line.",
       "cta": "Join waitlist",
@@ -89,8 +89,8 @@
       }
     },
     "form": {
-      "title": "Get 50% off your first year",
-      "helper": "Join the waitlist and lock in half off your first annual plan. No spam, just one email when it is ready.",
+      "title": "Get 50% off lifetime Pro",
+      "helper": "Join the waitlist and lock in half off the lifetime Pro subscription. No spam, just one email when it is ready.",
       "emailLabel": "Email address",
       "emailPlaceholder": "you@school.edu",
       "submit": "Join the waitlist",

@@ -66,7 +66,7 @@ export function buildWaitlistWelcomeEmail(): {
 } {
   const subject = 'You are on the Pro Plan Waitlist!';
   const perkLine =
-    'As a waitlist member, you will be eligible for 50% off your first year of Pro Plan when we launch.';
+    'As a waitlist member, you will be eligible for 50% off the lifetime Pro subscription when we launch.';
 
   const bodyHtml = `
 <p style="margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0;color:${TEXT};font-family:${FONT};font-size:1rem;line-height:1.6;">Thanks for joining the Pro Plan waitlist.</p>
