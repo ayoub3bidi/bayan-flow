@@ -15,10 +15,12 @@ import {
   GITHUB_REPO_OWNER,
   GITHUB_REPO_URL,
 } from '../constants/githubRepo';
+import { useConsent } from '../hooks/useConsent.js';
 
 function Footer() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { resetConsent } = useConsent();
   const [version, setVersion] = useState(null);
   const currentYear = new Date().getFullYear();
 
@@ -311,6 +313,15 @@ function Footer() {
                 whileTap={{ scale: 0.98 }}
               >
                 {t('footer.terms')}
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={resetConsent}
+                className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {t('footer.cookiePreferences')}
               </motion.button>
             </div>
           </div>
