@@ -5,9 +5,10 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Play, Hand } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { getChromeTransition, ENTER_Y } from '../motion/chromeMotion';
 import {
   ALGORITHM_TYPES,
   VISUALIZATION_MODES,
@@ -64,6 +65,7 @@ function SettingsPanel({
   isAuthenticated,
 }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const [isAlgorithmDropdownOpen, setIsAlgorithmDropdownOpen] = useState(false);
   const [isScenarioDropdownOpen, setIsScenarioDropdownOpen] = useState(false);
   const algorithmDropdownRef = useRef(null);
@@ -166,10 +168,20 @@ function SettingsPanel({
   return (
     <motion.div
       className="bg-surface rounded-lg shadow-lg p-4 sm:p-6 space-y-consistent leading-consistent"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.1 }}
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: ENTER_Y }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={getChromeTransition(reduceMotion)}
     >
+      {!isAuthenticated &&
+        (!canUseManual || !canAdjustSpeed || !canUseCategorySettings) && (
+          <p
+            className="text-xs text-text-secondary rounded-lg bg-surface-elevated border border-[var(--color-border-strong)] px-3 py-2"
+            role="note"
+          >
+            {t('settings.signInForAdvancedFeatures')}
+          </p>
+        )}
+
       {isAuthenticated && favorites && favoriteSlotLimit != null && (
         <FavoritesDropdown
           favorites={favorites}
@@ -255,11 +267,6 @@ function SettingsPanel({
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent">
             {t('controls.graphScenario')}
-            {!canUseCategorySettings && (
-              <span className="text-xs text-text-secondary ml-2">
-                ({t('settings.signInForCategoryControls')})
-              </span>
-            )}
           </label>
           <GraphScenarioDropdown
             scenarioOptions={graphScenarioOptions}
@@ -280,11 +287,6 @@ function SettingsPanel({
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
           {t('settings.controlMode')}
-          {!canUseManual && (
-            <span className="text-xs text-text-secondary ml-2">
-              ({t('settings.signInForManual')})
-            </span>
-          )}
         </label>
         <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
           <button
@@ -342,11 +344,6 @@ function SettingsPanel({
               ({t('modes.autoplay')} {t('settings.autoplayOnly')})
             </span>
           )}
-          {!canAdjustSpeed && mode === VISUALIZATION_MODES.AUTOPLAY && (
-            <span className="text-xs text-text-secondary ml-2">
-              ({t('settings.signInForSpeed')})
-            </span>
-          )}
         </label>
 
         <div
@@ -388,11 +385,6 @@ function SettingsPanel({
         <div className={!canUseCategorySettings ? 'opacity-50' : ''}>
           <label className="block text-sm font-semibold text-text-primary mb-2">
             {t(sizeControl.i18nKey)}: {sizeValue}
-            {!canUseCategorySettings && (
-              <span className="text-xs text-text-secondary ml-2">
-                ({t('settings.signInForCategoryControls')})
-              </span>
-            )}
           </label>
           <div
             onClick={() => {

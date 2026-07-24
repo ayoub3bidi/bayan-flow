@@ -4,10 +4,18 @@
  * See LICENSE for details.
  */
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Check, CaretDown, Lock, Star } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { canAccessAlgorithm } from '@/services/entitlementService';
+import {
+  menuInitial,
+  menuAnimate,
+  menuExit,
+  menuTransition,
+  getChromeTransition,
+  CHROME_DURATION_FAST,
+} from '@/motion/chromeMotion';
 
 function AlgorithmDropdown({
   algorithms,
@@ -27,6 +35,7 @@ function AlgorithmDropdown({
   isAuthenticated,
 }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   const handleStarClick = (event, algo) => {
     event.stopPropagation();
@@ -58,7 +67,7 @@ function AlgorithmDropdown({
         </div>
         <motion.div
           animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+          transition={getChromeTransition(reduceMotion, CHROME_DURATION_FAST)}
         >
           <CaretDown
             size={20}
@@ -70,25 +79,20 @@ function AlgorithmDropdown({
       <AnimatePresence>
         {isDropdownOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={menuInitial(reduceMotion)}
+            animate={menuAnimate()}
+            exit={menuExit(reduceMotion)}
+            transition={menuTransition(reduceMotion)}
             className="absolute z-10 w-full mt-2 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden max-h-72 overflow-y-auto algo-dropdown"
           >
-            {algorithmGroups.map((group, groupIndex) => (
+            {algorithmGroups.map(group => (
               <div key={group.label}>
                 <div className="px-4 py-2 text-xs font-bold text-text-tertiary uppercase tracking-wider sticky top-0 bg-surface-elevated z-10 border-b border-[var(--color-border-strong)]">
                   {group.label}
                 </div>
-                {group.algorithms.map((algoValue, index) => {
+                {group.algorithms.map(algoValue => {
                   const algo = algorithms.find(a => a.value === algoValue);
                   if (!algo) return null;
-
-                  const itemIndex =
-                    algorithmGroups
-                      .slice(0, groupIndex)
-                      .reduce((acc, g) => acc + g.algorithms.length, 0) + index;
 
                   const isLocked =
                     categoryType &&
@@ -98,11 +102,8 @@ function AlgorithmDropdown({
                     isFavorite?.(categoryType, algo.value) ?? false;
 
                   return (
-                    <motion.div
+                    <div
                       key={algo.value}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: itemIndex * 0.03 }}
                       className={`group flex items-center w-full transition-colors duration-150 hover:bg-surface-elevated focus-within:bg-surface-elevated ${
                         isSelected
                           ? 'bg-theme-primary-light text-theme-primary dark:text-white'
@@ -139,22 +140,11 @@ function AlgorithmDropdown({
                           </span>
                         </div>
                         {isSelected ? (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{
-                              type: 'spring',
-                              stiffness: 500,
-                              damping: 25,
-                            }}
-                            className="shrink-0 ms-2"
-                          >
-                            <Check
-                              size={18}
-                              weight="bold"
-                              className="text-[#3b82f6] dark:text-white"
-                            />
-                          </motion.div>
+                          <Check
+                            size={18}
+                            weight="bold"
+                            className="shrink-0 ms-2 text-[#3b82f6] dark:text-white"
+                          />
                         ) : isLocked ? (
                           <Lock
                             size={18}
@@ -193,7 +183,7 @@ function AlgorithmDropdown({
                           />
                         </button>
                       )}
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>

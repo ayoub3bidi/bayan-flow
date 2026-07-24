@@ -5,9 +5,14 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { COMPLEXITY_FUNCTIONS } from '../constants';
+import {
+  modalPanelInitial,
+  modalPanelAnimate,
+  modalPanelTransition,
+} from '../motion/chromeMotion';
 import {
   COMPLEXITY_DATASETS,
   DEFAULT_COMPLEXITY_DATASET,
@@ -22,6 +27,7 @@ function ComplexityPanel({
   complexityDataset = DEFAULT_COMPLEXITY_DATASET,
 }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const [isLogScale, setIsLogScale] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [animationProgress, setAnimationProgress] = useState(0);
@@ -105,9 +111,9 @@ function ComplexityPanel({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
+      initial={modalPanelInitial(reduceMotion)}
+      animate={modalPanelAnimate()}
+      transition={modalPanelTransition(reduceMotion)}
       className="w-full h-full bg-surface flex items-center justify-center p-3 sm:p-6 overflow-auto leading-consistent"
       dir="auto"
     >

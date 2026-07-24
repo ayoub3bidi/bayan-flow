@@ -4,13 +4,14 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
 import { ALGORITHM_TYPE_LIST } from '../../constants';
 import { CATEGORY_CONFIG } from '../../registry/categoryConfig';
 import { getAlgorithmTypesGridColsClass } from './algorithmTypesGridCols.js';
+import { marketingEnter, HOVER_SPRING } from '../../motion/chromeMotion';
 
 const ALGORITHM_TYPE_GRADIENTS = {
   sorting: 'from-blue-500 via-cyan-500 to-blue-600',
@@ -22,6 +23,7 @@ const ALGORITHM_TYPE_GRADIENTS = {
 
 function AlgorithmTypes() {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   const getAlgorithmList = cfg => {
     return cfg.algorithmKeys
@@ -56,10 +58,8 @@ function AlgorithmTypes() {
     <Section className="relative overflow-hidden">
       <Container className="relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          {...marketingEnter(reduceMotion)}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
           <h2 className="landing-h2 text-text-primary mb-4">
@@ -76,21 +76,13 @@ function AlgorithmTypes() {
           {modes.map((mode, index) => (
             <motion.div
               key={mode.title}
-              initial={{ opacity: 0, rotateY: 90, scale: 0.8 }}
-              whileInView={{ opacity: 1, rotateY: 0, scale: 1 }}
+              {...marketingEnter(reduceMotion, index * 0.05)}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.7,
-                delay: index * 0.15,
-                type: 'spring',
-                stiffness: 100,
-              }}
               whileHover={{
                 scale: 1.02,
-                transition: { type: 'spring', stiffness: 300 },
+                transition: HOVER_SPRING,
               }}
               className={`group relative h-full min-h-0 self-stretch ${getCardSpanClass(index, modes.length)}`}
-              style={{ perspective: '1000px' }}
             >
               {/* Glass morphism card — parent must fill grid row so inner 1fr + footer align across columns */}
               <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-3xl border border-white/10 bg-(--color-glass-bg) p-8 shadow-lg backdrop-blur-xl transition-all duration-300 hover:shadow-2xl dark:border-white/5">
@@ -110,9 +102,8 @@ function AlgorithmTypes() {
                     <motion.div
                       className={`mb-6 inline-flex self-start rounded-2xl bg-linear-to-br ${mode.gradient} p-4 shadow-lg`}
                       whileHover={{
-                        rotate: [0, -10, 10, -5, 5, 0],
                         scale: 1.1,
-                        transition: { duration: 0.5 },
+                        transition: HOVER_SPRING,
                       }}
                     >
                       <mode.icon className="h-8 w-8 text-white" />

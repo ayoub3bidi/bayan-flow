@@ -16,6 +16,7 @@ import InsightFloatingActionButton from '../components/InsightFloatingActionButt
 import ExportProgressModal from '../components/ExportProgressModal';
 import SignInPromptModal from '../components/SignInPromptModal';
 import ProWaitlistBanner from '../components/ProWaitlistBanner';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
 const AlgorithmInsightPanel = lazy(
@@ -28,7 +29,9 @@ import { useTreeTraversalVisualization } from '../hooks/useTreeTraversalVisualiz
 import { useGraphAlgorithmVisualization } from '../hooks/useGraphAlgorithmVisualization';
 import { useFullScreen } from '../hooks/useFullScreen';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
+import { useIsBelowLg } from '../hooks/useIsBelowLg';
 import { useVideoExporter } from '../video/useVideoExporter';
+import SettingsSheet from '../components/SettingsSheet';
 import { soundManager } from '../utils/soundManager';
 import {
   DEFAULT_ARRAY_SIZE,
@@ -171,6 +174,8 @@ function App() {
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
+  const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
+  const isBelowLg = useIsBelowLg();
 
   const handleSpeedChange = newSpeed => {
     trackSpeedChanged(speed, newSpeed);
@@ -680,9 +685,86 @@ function App() {
     activeAlgorithmKey,
   });
 
+  const settingsPanelProps = {
+    algorithmType,
+    onAlgorithmTypeChange: handleAlgorithmTypeChange,
+    selectedAlgorithm: activeAlgorithmKey,
+    onAlgorithmChange: handleAlgorithmChange,
+    speed,
+    onSpeedChange: handleSpeedChange,
+    arraySize,
+    onArraySizeChange: handleArraySizeChange,
+    gridSize,
+    onGridSizeChange: handleGridSizeChange,
+    searchGraphNodeCount,
+    onSearchGraphNodeCountChange: handleSearchGraphNodeCountChange,
+    treeNodeCount,
+    onTreeNodeCountChange: handleTreeNodeCountChange,
+    graphNodeCount,
+    onGraphNodeCountChange: handleGraphNodeCountChange,
+    selectedGraphScenario,
+    onGraphScenarioChange: setSelectedGraphScenario,
+    graphScenarioOptions: graphAlgorithmVisualization.scenarioOptions,
+    isPlaying: visualization.isPlaying,
+    mode,
+    onModeChange: setMode,
+    user,
+    onLockedAlgorithmClick: handleLockedAlgorithmClick,
+    onGatedFeatureClick: handleGatedFeatureClick,
+    favorites,
+    favoriteSlotLimit: isAuthenticated ? favoriteSlotLimit : null,
+    onFavoriteSelect: handleFavoriteNavigate,
+    isFavorite,
+    onToggleFavorite: handleToggleFavorite,
+    onFavoriteGatedClick: handleFavoriteGatedClick,
+    isAuthenticated,
+  };
+
+  const remainingVisualizations =
+    !user && getRemainingVisualizations(user) < Infinity
+      ? getRemainingVisualizations(user)
+      : null;
+
+  const controlPanelProps = {
+    isPlaying: visualization.isPlaying,
+    isComplete: visualization.isComplete,
+    mode,
+    onPlay: handlePlay,
+    onPause: visualization.pause,
+    onReset: visualization.reset,
+    onStepForward: visualization.stepForward,
+    onStepBackward: visualization.stepBackward,
+    currentStep: visualization.currentStep,
+    totalSteps: visualization.totalSteps,
+    onGenerateInput: handleGenerateInput,
+    algorithmType,
+    sortOrder,
+    onSortOrderChange: setSortOrder,
+    isFullScreen,
+    onToggleFullScreen: handleGatedFullscreenToggle,
+    onExportVideo: handleExportVideo,
+    onCancelExport: cancelExport,
+    exportState,
+    exportProgress,
+    canRenderOnWeb,
+    isSoundEnabled,
+    isSoundTogglePending,
+    onToggleSound: handleGatedSoundToggle,
+    isGated: !isAuthenticated,
+    onGatedFeatureClick: handleGatedFeatureClick,
+    visualizationsRemaining: remainingVisualizations,
+    onOpenSettings: isBelowLg ? () => setIsSettingsSheetOpen(true) : undefined,
+  };
+
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-bg flex flex-col">
+    <div
+      className={`bg-bg flex flex-col ${
+        isBelowLg
+          ? 'h-screen-safe max-h-screen-safe overflow-hidden'
+          : 'min-h-screen-safe'
+      }`}
+    >
       {/* Skip Navigation Link */}
       <a
         href="#main-content"
@@ -692,125 +774,55 @@ function App() {
       </a>
       <ProWaitlistBanner source="app" />
 
-      <AnimatePresence mode="wait">
-        {isFullScreen ? (
-          <motion.div
-            key="fullscreen"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-screen h-screen bg-gray-900 flex flex-col p-4"
-            role="main"
-            id="main-content"
-          >
-            {/* Full-screen Visualizer */}
-            <div className="flex-1 mb-4">
-              <VisualizerComponent
-                {...sharedVisualizerProps}
-                {...extraVisualizerProps}
-              />
-            </div>
+      <div className="flex-1 min-h-0 flex flex-col">
+        <AnimatePresence mode="wait">
+          {isFullScreen ? (
+            <motion.div
+              key="fullscreen"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-screen h-screen bg-gray-900 flex flex-col p-4"
+              role="main"
+              id="main-content"
+            >
+              <div className="flex-1 mb-4">
+                <VisualizerComponent
+                  {...sharedVisualizerProps}
+                  {...extraVisualizerProps}
+                />
+              </div>
 
-            {/* Full-screen Control Panel */}
-            <ControlPanel
-              isPlaying={visualization.isPlaying}
-              isComplete={visualization.isComplete}
-              mode={mode}
-              onPlay={handlePlay}
-              onPause={visualization.pause}
-              onReset={visualization.reset}
-              onStepForward={visualization.stepForward}
-              onStepBackward={visualization.stepBackward}
-              currentStep={visualization.currentStep}
-              totalSteps={visualization.totalSteps}
-              onGenerateInput={handleGenerateInput}
-              algorithmType={algorithmType}
-              sortOrder={sortOrder}
-              onSortOrderChange={setSortOrder}
-              isFullScreen={isFullScreen}
-              onToggleFullScreen={handleGatedFullscreenToggle}
-              onExportVideo={handleExportVideo}
-              onCancelExport={cancelExport}
-              exportState={exportState}
-              exportProgress={exportProgress}
-              canRenderOnWeb={canRenderOnWeb}
-              isSoundEnabled={isSoundEnabled}
-              isSoundTogglePending={isSoundTogglePending}
-              onToggleSound={handleGatedSoundToggle}
-              isGated={!isAuthenticated}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="normal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col min-h-screen"
-          >
-            <Header />
-            <main className="flex-1 p-6 pb-32" role="main" id="main-content">
-              <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                  {/* Settings Panel */}
-                  <aside
-                    className="lg:col-span-1"
-                    role="complementary"
-                    aria-label="Algorithm settings"
-                  >
-                    <SettingsPanel
-                      algorithmType={algorithmType}
-                      onAlgorithmTypeChange={handleAlgorithmTypeChange}
-                      selectedAlgorithm={activeAlgorithmKey}
-                      onAlgorithmChange={handleAlgorithmChange}
-                      speed={speed}
-                      onSpeedChange={handleSpeedChange}
-                      arraySize={arraySize}
-                      onArraySizeChange={handleArraySizeChange}
-                      gridSize={gridSize}
-                      onGridSizeChange={handleGridSizeChange}
-                      searchGraphNodeCount={searchGraphNodeCount}
-                      onSearchGraphNodeCountChange={
-                        handleSearchGraphNodeCountChange
-                      }
-                      treeNodeCount={treeNodeCount}
-                      onTreeNodeCountChange={handleTreeNodeCountChange}
-                      graphNodeCount={graphNodeCount}
-                      onGraphNodeCountChange={handleGraphNodeCountChange}
-                      selectedGraphScenario={selectedGraphScenario}
-                      onGraphScenarioChange={setSelectedGraphScenario}
-                      graphScenarioOptions={
-                        graphAlgorithmVisualization.scenarioOptions
-                      }
-                      isPlaying={visualization.isPlaying}
-                      mode={mode}
-                      onModeChange={setMode}
-                      user={user}
-                      onLockedAlgorithmClick={handleLockedAlgorithmClick}
-                      onGatedFeatureClick={handleGatedFeatureClick}
-                      favorites={favorites}
-                      favoriteSlotLimit={
-                        isAuthenticated ? favoriteSlotLimit : null
-                      }
-                      onFavoriteSelect={handleFavoriteNavigate}
-                      isFavorite={isFavorite}
-                      onToggleFavorite={handleToggleFavorite}
-                      onFavoriteGatedClick={handleFavoriteGatedClick}
-                      isAuthenticated={isAuthenticated}
-                    />
-                  </aside>
-
-                  {/* Visualization Area */}
+              <ControlPanel {...controlPanelProps} onOpenSettings={undefined} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="normal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className={`flex flex-col flex-1 min-h-0 h-full ${
+                isBelowLg ? 'overflow-hidden' : ''
+              }`}
+            >
+              <Header />
+              <main
+                className={`flex-1 min-h-0 ${
+                  isBelowLg ? 'flex flex-col p-3 gap-3 overflow-hidden' : 'p-6'
+                }`}
+                role="main"
+                id="main-content"
+              >
+                {isBelowLg ? (
                   <section
-                    className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-160px)] lg:h-[calc(100vh-85px)]"
+                    className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden"
                     role="region"
                     aria-label="Algorithm visualization"
                   >
-                    {/* Visualizer — resolved via registry */}
                     <div
-                      className="flex-1 min-h-0"
+                      className="flex-1 min-h-0 overflow-hidden"
                       role="img"
                       aria-label={`${activeAlgorithmKey} algorithm visualization`}
                     >
@@ -819,111 +831,102 @@ function App() {
                         {...extraVisualizerProps}
                       />
                     </div>
-
-                    {/* Control Panel */}
-                    <ControlPanel
-                      isPlaying={visualization.isPlaying}
-                      isComplete={visualization.isComplete}
-                      mode={mode}
-                      onPlay={handlePlay}
-                      onPause={visualization.pause}
-                      onReset={visualization.reset}
-                      onStepForward={visualization.stepForward}
-                      onStepBackward={visualization.stepBackward}
-                      currentStep={visualization.currentStep}
-                      totalSteps={visualization.totalSteps}
-                      onGenerateInput={handleGenerateInput}
-                      algorithmType={algorithmType}
-                      sortOrder={sortOrder}
-                      onSortOrderChange={setSortOrder}
-                      isFullScreen={isFullScreen}
-                      onToggleFullScreen={handleGatedFullscreenToggle}
-                      onExportVideo={handleExportVideo}
-                      onCancelExport={cancelExport}
-                      exportState={exportState}
-                      exportProgress={exportProgress}
-                      canRenderOnWeb={canRenderOnWeb}
-                      isSoundEnabled={isSoundEnabled}
-                      isSoundTogglePending={isSoundTogglePending}
-                      onToggleSound={handleGatedSoundToggle}
-                      isGated={!isAuthenticated}
-                      onGatedFeatureClick={handleGatedFeatureClick}
-                    />
+                    <ControlPanel {...controlPanelProps} />
                   </section>
-                </div>
-              </div>
-            </main>
-            <Footer />
+                ) : (
+                  <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                      <aside
+                        className="lg:col-span-1"
+                        role="complementary"
+                        aria-label="Algorithm settings"
+                      >
+                        <SettingsPanel {...settingsPanelProps} />
+                      </aside>
 
-            {/* Remaining Visualizations Counter (anonymous users only) */}
-            {!user && getRemainingVisualizations(user) < Infinity && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="fixed bottom-4 right-4 z-40 text-xs sm:text-sm text-text-secondary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
-              >
-                {t('info.visualizationsRemaining', {
-                  count: getRemainingVisualizations(user),
-                })}
-              </motion.div>
-            )}
+                      <section
+                        className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-85px)]"
+                        role="region"
+                        aria-label="Algorithm visualization"
+                      >
+                        <div
+                          className="flex-1 min-h-0"
+                          role="img"
+                          aria-label={`${activeAlgorithmKey} algorithm visualization`}
+                        >
+                          <VisualizerComponent
+                            {...sharedVisualizerProps}
+                            {...extraVisualizerProps}
+                          />
+                        </div>
+                        <ControlPanel {...controlPanelProps} />
+                      </section>
+                    </div>
+                  </div>
+                )}
+              </main>
+              {!isBelowLg ? <Footer /> : null}
 
-            {/* Floating Action Buttons */}
-            <AnimatePresence>
-              {favoriteNotice && (
-                <motion.div
-                  key="favorite-notice"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-40 text-xs sm:text-sm text-text-primary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
-                  role="status"
-                  aria-live="polite"
-                >
-                  {t('settings.favoriteSlotsFull', {
-                    limit: favoriteSlotLimit,
-                  })}
-                </motion.div>
+              <AnimatePresence>
+                {favoriteNotice && (
+                  <motion.div
+                    key="favorite-notice"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-40 text-xs sm:text-sm text-text-primary bg-surface-elevated px-3 py-2 rounded-lg shadow-md border border-[var(--color-border-strong)]"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {t('settings.favoriteSlotsFull', {
+                      limit: favoriteSlotLimit,
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {!isPythonPanelOpen && !isInsightPanelOpen && (
+                <>
+                  <FloatingActionButton
+                    onClick={() => {
+                      if (isAuthenticated) {
+                        trackCodePanelOpened(activeAlgorithmKey);
+                        setIsPythonPanelOpen(true);
+                      } else {
+                        pendingFeatureRef.current = 'code';
+                        openGatedFeature('code');
+                      }
+                    }}
+                    disabled={!activeAlgorithmKey}
+                    isGated={!isAuthenticated}
+                  />
+                  <InsightFloatingActionButton
+                    onClick={() => {
+                      if (isAuthenticated) {
+                        trackInsightPanelOpened(activeAlgorithmKey);
+                        setIsInsightPanelOpen(true);
+                      } else {
+                        pendingFeatureRef.current = 'insight';
+                        openGatedFeature('insight');
+                      }
+                    }}
+                    disabled={!activeAlgorithmKey}
+                    label={t('insight_panel.viewInsight')}
+                    isGated={!isAuthenticated}
+                  />
+                </>
               )}
-            </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-            {!isPythonPanelOpen && !isInsightPanelOpen && (
-              <>
-                <FloatingActionButton
-                  onClick={() => {
-                    if (isAuthenticated) {
-                      trackCodePanelOpened(activeAlgorithmKey);
-                      setIsPythonPanelOpen(true);
-                    } else {
-                      pendingFeatureRef.current = 'code';
-                      openGatedFeature('code');
-                    }
-                  }}
-                  disabled={!activeAlgorithmKey}
-                  isGated={!isAuthenticated}
-                />
-                <InsightFloatingActionButton
-                  onClick={() => {
-                    if (isAuthenticated) {
-                      trackInsightPanelOpened(activeAlgorithmKey);
-                      setIsInsightPanelOpen(true);
-                    } else {
-                      pendingFeatureRef.current = 'insight';
-                      openGatedFeature('insight');
-                    }
-                  }}
-                  disabled={!activeAlgorithmKey}
-                  label={t('insight_panel.viewInsight')}
-                  isGated={!isAuthenticated}
-                />
-              </>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <SettingsSheet
+        isOpen={isBelowLg && isSettingsSheetOpen}
+        onClose={() => setIsSettingsSheetOpen(false)}
+        settingsPanelProps={settingsPanelProps}
+      />
 
-      {/* Export modal */}
       <ExportProgressModal
         open={
           exportState === 'orientation' ||
@@ -952,34 +955,29 @@ function App() {
         onOrientationSelect={handleOrientationSelected}
       />
 
-      {/* Python Code Panel */}
-      <Suspense
-        fallback={
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="text-white">Loading...</div>
-          </div>
-        }
-      >
-        <PythonCodePanel
-          isOpen={isPythonPanelOpen}
-          onClose={() => setIsPythonPanelOpen(false)}
-          algorithm={activeAlgorithmKey}
-        />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          <PythonCodePanel
+            isOpen={isPythonPanelOpen}
+            onClose={() => setIsPythonPanelOpen(false)}
+            algorithm={activeAlgorithmKey}
+          />
+        </Suspense>
+      </ErrorBoundary>
 
-      {/* Algorithm Insight Panel */}
-      <Suspense fallback={null}>
-        <AlgorithmInsightPanel
-          isOpen={isInsightPanelOpen}
-          onClose={() => setIsInsightPanelOpen(false)}
-          algorithmKey={activeAlgorithmKey}
-          algorithmName={activeAlgorithmName}
-          categoryType={algorithmType}
-          user={user}
-        />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          <AlgorithmInsightPanel
+            isOpen={isInsightPanelOpen}
+            onClose={() => setIsInsightPanelOpen(false)}
+            algorithmKey={activeAlgorithmKey}
+            algorithmName={activeAlgorithmName}
+            categoryType={algorithmType}
+            user={user}
+          />
+        </Suspense>
+      </ErrorBoundary>
 
-      {/* Sign-in prompt for gated features */}
       <SignInPromptModal
         feature={gatedFeature}
         isOpen={gatedFeature !== null}

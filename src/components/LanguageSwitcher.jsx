@@ -5,9 +5,17 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { CaretDown, Check } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import {
+  menuInitial,
+  menuAnimate,
+  menuExit,
+  menuTransition,
+  getChromeTransition,
+  CHROME_DURATION_FAST,
+} from '@/motion/chromeMotion';
 
 /**
  * @param {Object} props
@@ -15,6 +23,7 @@ import { useTranslation } from 'react-i18next';
  */
 function LanguageSwitcher({ excludeLanguages = [] }) {
   const { i18n, t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -61,7 +70,7 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
         </span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+          transition={getChromeTransition(reduceMotion, CHROME_DURATION_FAST)}
           className="hidden sm:block shrink-0"
         >
           <CaretDown
@@ -77,43 +86,31 @@ function LanguageSwitcher({ excludeLanguages = [] }) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={menuInitial(reduceMotion)}
+            animate={menuAnimate()}
+            exit={menuExit(reduceMotion)}
+            transition={menuTransition(reduceMotion)}
             className="absolute top-full right-0 mt-2 w-40 sm:w-48 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden z-50"
           >
             <div className="p-1.5 sm:p-2">
-              {languages.map((language, index) => (
-                <motion.button
+              {languages.map(language => (
+                <button
                   key={language.code}
+                  type="button"
                   onClick={() => handleLanguageChange(language.code)}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.03 }}
                   className="w-full flex items-center justify-between px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-md hover:bg-interactive-hover transition-colors duration-150 text-left"
                 >
                   <span className="text-text-primary font-medium">
                     {language.name}
                   </span>
                   {i18n.language === language.code && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        type: 'spring',
-                        stiffness: 500,
-                        damping: 25,
-                      }}
-                    >
-                      <Check
-                        size={14}
-                        weight="bold"
-                        className="text-accent-primary"
-                      />
-                    </motion.div>
+                    <Check
+                      size={14}
+                      weight="bold"
+                      className="text-accent-primary"
+                    />
                   )}
-                </motion.button>
+                </button>
               ))}
             </div>
           </motion.div>

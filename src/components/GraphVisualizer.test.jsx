@@ -195,7 +195,7 @@ describe('GraphVisualizer', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      const blurOverlay = document.querySelector('.backdrop-blur-md');
+      const blurOverlay = document.querySelector('.bg-black\\/30');
       expect(blurOverlay).toBeInTheDocument();
       expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
     } finally {

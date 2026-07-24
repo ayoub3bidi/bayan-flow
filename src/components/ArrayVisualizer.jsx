@@ -17,6 +17,7 @@ import {
   SEARCH_TARGET_RING_COLOR,
 } from '../constants';
 import useSwipe from '../hooks/useSwipe';
+import { useIsBelowLg } from '../hooks/useIsBelowLg';
 import { useAuth } from '../hooks/useAuth';
 import {
   canViewComplexityPanel,
@@ -52,6 +53,7 @@ function ArrayVisualizer({
 }) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const isCompactArray = useIsBelowLg();
   const arrayLength = array.length;
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
@@ -181,7 +183,7 @@ function ArrayVisualizer({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 backdrop-blur-md bg-black/30 z-10"
+                className="absolute inset-0 bg-black/30 z-10"
                 aria-hidden="true"
               />
             )}
@@ -216,7 +218,7 @@ function ArrayVisualizer({
             )}
 
             {/* Array Visualization */}
-            <div className="flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 pb-10 px-2 overflow-x-auto touch-pan-y">
+            <div className="flex-1 flex items-center justify-center flex-nowrap gap-2 sm:gap-3 pb-10 px-2 overflow-x-auto touch-pan-x lg:flex-wrap lg:overflow-x-auto lg:touch-pan-y">
               {array.map((value, index) => (
                 <ArrayBar
                   key={`${index}-${value}`}
@@ -224,6 +226,7 @@ function ArrayVisualizer({
                   state={states[index]}
                   index={index}
                   arrayLength={arrayLength}
+                  compact={isCompactArray}
                   highlightTarget={
                     visualizerVariant === 'searching' &&
                     targetValue != null &&
@@ -242,9 +245,9 @@ function ArrayVisualizer({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center"
+                  className="absolute bottom-16 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none"
                 >
-                  <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200 backdrop-blur-sm">
+                  <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200">
                     <p
                       className="text-xs sm:text-sm font-semibold text-center text-text-primary"
                       role="status"
