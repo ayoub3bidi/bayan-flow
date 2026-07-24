@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   Play,
   Pause,
@@ -24,6 +24,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
+import { getChromeTransition, ENTER_Y } from '../motion/chromeMotion';
 
 /**
  * ControlPanel Component
@@ -84,6 +85,7 @@ function ControlPanel({
   onGatedFeatureClick,
 }) {
   const { t, i18n } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const isRTL = i18n.dir() === 'rtl';
   const buttonBaseClasses =
     'p-3 h-touch rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation leading-tight-consistent';
@@ -95,9 +97,9 @@ function ControlPanel({
   return (
     <motion.div
       className="bg-surface rounded-lg shadow-lg p-3 sm:p-4 leading-consistent"
-      initial={{ opacity: 0, y: 20 }}
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: ENTER_Y }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
+      transition={getChromeTransition(reduceMotion)}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-center gap-3 sm:gap-4">
         {/* Spacer for centering on desktop only */}

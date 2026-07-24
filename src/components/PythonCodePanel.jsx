@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -19,6 +19,13 @@ import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
 import { usePythonExecution } from '../hooks/usePythonExecution';
 import OutputConsole from './OutputConsole';
+import {
+  drawerPanelVariants,
+  sheetPanelVariants,
+  getChromeTransition,
+  fadeOverlayTransition,
+  OVERLAY_CLASS_LIGHT,
+} from '../motion/chromeMotion';
 
 const STORAGE_KEY_OUTPUT_PERCENT = 'python-panel-output-percent';
 const getCustomTestsStorageKey = algo => `python-test-cases-${algo}`;
@@ -51,11 +58,13 @@ function getStoredOutputPercent() {
 function PythonCodePanel({ isOpen, onClose, algorithm }) {
   const { t, i18n } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
+  const [mountEditor, setMountEditor] = useState(false);
   const panelRef = useRef(null);
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
   const { isDark } = useTheme();
   const isRTL = i18n.dir() === 'rtl';
+  const reduceMotion = useReducedMotion();
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -341,37 +350,17 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
     }
   }, [isDark]);
 
-  // Panel variants for desktop (side panel)
-  const panelVariants = {
-    hidden: {
-      x: isRTL ? '-100%' : '100%',
-      opacity: 0,
-    },
-    visible: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: {
-      x: isRTL ? '-100%' : '100%',
-      opacity: 0,
-    },
-  };
+  useEffect(() => {
+    if (!isOpen) {
+      setMountEditor(false);
+    } else if (reduceMotion) {
+      setMountEditor(true);
+    }
+  }, [isOpen, reduceMotion]);
 
-  // Mobile variants (bottom sheet)
-  const mobileVariants = {
-    hidden: {
-      y: '100%',
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-    },
-    exit: {
-      y: '100%',
-      opacity: 0,
-    },
-  };
+  const panelVariants = isMobile
+    ? sheetPanelVariants()
+    : drawerPanelVariants(isRTL);
 
   return (
     <AnimatePresence>
@@ -379,11 +368,12 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[55]"
+            className={`fixed inset-0 ${OVERLAY_CLASS_LIGHT} z-[55]`}
             style={!isMobile ? { top: '56px' } : {}}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={fadeOverlayTransition(reduceMotion)}
             onClick={onClose}
           />
 
@@ -398,11 +388,16 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                   : `${isRTL ? 'left-0' : 'right-0'} w-full max-w-2xl top-14 bottom-0`
               }
             `}
-            variants={isMobile ? mobileVariants : panelVariants}
+            variants={panelVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            transition={getChromeTransition(reduceMotion)}
+            onAnimationComplete={definition => {
+              if (definition === 'visible' || definition === undefined) {
+                setMountEditor(true);
+              }
+            }}
           >
             <div className={`flex flex-col h-full ${!isMobile ? 'pt-2' : ''}`}>
               {/* Header - show on mobile */}
@@ -511,65 +506,75 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                           minHeight: isMobile ? 100 : 80,
                         }}
                       >
-                        <Editor
-                          height="100%"
-                          defaultLanguage="python"
-                          value={code}
-                          onChange={value => setCode(value ?? '')}
-                          theme={isDark ? 'vs-dark' : 'vs-light'}
-                          onMount={(editor, monaco) => {
-                            editorRef.current = editor;
-                            monacoRef.current = monaco;
-                            editor.addAction({
-                              id: 'run-python',
-                              label: 'Run Python',
-                              keybindings: [
-                                monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-                              ],
-                              run: () => runHandlerRef.current?.(),
-                            });
-                            if (isMobile) {
-                              const container = editor.getContainerDomNode?.();
-                              if (container) {
-                                container.style.touchAction = 'pan-y';
-                                const scrollable =
-                                  container.querySelector(
-                                    '.monaco-scrollable-element'
-                                  ) ??
-                                  container.querySelector(
-                                    '[class*="scrollable"]'
-                                  );
-                                if (scrollable) {
-                                  scrollable.style.webkitOverflowScrolling =
-                                    'touch';
+                        {mountEditor ? (
+                          <Editor
+                            height="100%"
+                            defaultLanguage="python"
+                            value={code}
+                            onChange={value => setCode(value ?? '')}
+                            theme={isDark ? 'vs-dark' : 'vs-light'}
+                            onMount={(editor, monaco) => {
+                              editorRef.current = editor;
+                              monacoRef.current = monaco;
+                              editor.addAction({
+                                id: 'run-python',
+                                label: 'Run Python',
+                                keybindings: [
+                                  monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+                                ],
+                                run: () => runHandlerRef.current?.(),
+                              });
+                              if (isMobile) {
+                                const container =
+                                  editor.getContainerDomNode?.();
+                                if (container) {
+                                  container.style.touchAction = 'pan-y';
+                                  const scrollable =
+                                    container.querySelector(
+                                      '.monaco-scrollable-element'
+                                    ) ??
+                                    container.querySelector(
+                                      '[class*="scrollable"]'
+                                    );
+                                  if (scrollable) {
+                                    scrollable.style.webkitOverflowScrolling =
+                                      'touch';
+                                  }
                                 }
                               }
-                            }
-                          }}
-                          options={{
-                            readOnly: false,
-                            minimap: { enabled: !isMobile },
-                            scrollBeyondLastLine: false,
-                            fontSize: isMobile ? 12 : 14,
-                            lineNumbers: 'on',
-                            folding: true,
-                            wordWrap: 'on',
-                            automaticLayout: true,
-                            padding: { top: 16, bottom: 16 },
-                            scrollbar: {
-                              vertical: 'auto',
-                              horizontal: 'auto',
-                            },
-                          }}
-                          loading={
-                            <div className="flex items-center justify-center h-full bg-surface">
-                              <div className="text-text-secondary">
-                                {t('python_code.loading') ||
-                                  'Loading editor...'}
+                            }}
+                            options={{
+                              readOnly: false,
+                              minimap: { enabled: !isMobile },
+                              scrollBeyondLastLine: false,
+                              fontSize: isMobile ? 12 : 14,
+                              lineNumbers: 'on',
+                              folding: true,
+                              wordWrap: 'on',
+                              automaticLayout: true,
+                              padding: { top: 16, bottom: 16 },
+                              scrollbar: {
+                                vertical: 'auto',
+                                horizontal: 'auto',
+                              },
+                            }}
+                            loading={
+                              <div className="flex items-center justify-center h-full bg-surface">
+                                <div className="text-text-secondary">
+                                  {t('python_code.loading') ||
+                                    'Loading editor...'}
+                                </div>
                               </div>
-                            </div>
-                          }
-                        />
+                            }
+                          />
+                        ) : (
+                          <div
+                            className="flex h-full items-center justify-center bg-surface animate-pulse"
+                            aria-hidden="true"
+                          >
+                            <div className="h-8 w-8 rounded-md bg-surface-elevated" />
+                          </div>
+                        )}
                       </div>
                       {!isMobile && isOutputExpanded && (
                         <div

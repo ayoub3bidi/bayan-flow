@@ -5,9 +5,10 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Play, Hand } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { getChromeTransition, ENTER_Y } from '../motion/chromeMotion';
 import {
   ALGORITHM_TYPES,
   VISUALIZATION_MODES,
@@ -64,6 +65,7 @@ function SettingsPanel({
   isAuthenticated,
 }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const [isAlgorithmDropdownOpen, setIsAlgorithmDropdownOpen] = useState(false);
   const [isScenarioDropdownOpen, setIsScenarioDropdownOpen] = useState(false);
   const algorithmDropdownRef = useRef(null);
@@ -166,9 +168,9 @@ function SettingsPanel({
   return (
     <motion.div
       className="bg-surface rounded-lg shadow-lg p-4 sm:p-6 space-y-consistent leading-consistent"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.1 }}
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: ENTER_Y }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={getChromeTransition(reduceMotion)}
     >
       {isAuthenticated && favorites && favoriteSlotLimit != null && (
         <FavoritesDropdown

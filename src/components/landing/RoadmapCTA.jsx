@@ -4,15 +4,17 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
 import Button from '../ui/Button';
+import { marketingEnter } from '../../motion/chromeMotion';
 
 function RoadmapCTA() {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   return (
     <Section className="relative overflow-hidden">
@@ -21,10 +23,8 @@ function RoadmapCTA() {
 
       <Container className="relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          {...marketingEnter(reduceMotion)}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7, type: 'spring', stiffness: 100 }}
           className="relative"
         >
           {/* Content */}

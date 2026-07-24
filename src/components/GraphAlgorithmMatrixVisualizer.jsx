@@ -103,7 +103,7 @@ function GraphAlgorithmMatrixVisualizer({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute inset-0 backdrop-blur-md bg-black/30 z-10"
+            className="absolute inset-0 bg-black/30 z-10"
             aria-hidden="true"
           />
         )}
@@ -274,7 +274,7 @@ function GraphAlgorithmMatrixVisualizer({
           transition={{ duration: 0.3 }}
           className="absolute bottom-4 sm:bottom-6 left-1/2 max-w-lg w-[90%] -translate-x-1/2 transform"
         >
-          <div className="rounded-full border-2 border-gray-200 bg-surface-elevated px-4 py-3 shadow-xl backdrop-blur-sm">
+          <div className="rounded-full border-2 border-gray-200 bg-surface-elevated px-4 py-3 shadow-xl">
             <p className="text-center text-xs font-semibold text-text-primary sm:text-sm">
               {t(description)}
             </p>

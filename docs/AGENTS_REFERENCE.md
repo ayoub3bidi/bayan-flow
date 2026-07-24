@@ -21,8 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **151** `*.test.js` / `*.test.jsx` files under `src/` (~**1,817** tests)
-- Source surface: **223** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
+- Test surface: **152** `*.test.js` / `*.test.jsx` files under `src/` (~**1,823** tests)
+- Source surface: **224** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -40,6 +40,7 @@
   - `src/registry/graphAlgorithmRegistry.js` — profiles, scenarios, `GRAPH_ALGORITHM_KEYS`, `GRAPH_ALGORITHM_GROUPS`
   - `src/config/algorithmConfig.js` — `useAlgorithmConfig()`, `buildAlgorithmsForCategory()`, `buildGroupsForCategory()`
   - `src/config/settingsConfig.js` — `useSettingsConfig()` (grid size + speed option labels)
+  - `src/motion/chromeMotion.js` — shared chrome UI motion presets (drawers/modals/menus/marketing); do not invent local spring params for chrome
 - `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT.md`, `README.md`, and `CONTRIBUTING.md` are useful, but they can lag behind the live category/runtime wiring.
 - Runtime completeness tests are important because the app depends heavily on synchronized registries (`categoryRuntimeCompleteness.test.js`).
 

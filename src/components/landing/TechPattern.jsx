@@ -4,25 +4,74 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
+import { getChromeTransition } from '../../motion/chromeMotion';
+
+function AnimatedDots({ dots, colorClass, side }) {
+  const reduceMotion = useReducedMotion();
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: false, margin: '-10%' });
+
+  const staticDot = { opacity: 0.4, scale: 1 };
+  const pulseDot = { opacity: [0.2, 0.6, 0.2], scale: [1, 1.5, 1] };
+
+  return (
+    <div ref={containerRef} className="absolute inset-0">
+      {dots.map((dot, i) => (
+        <motion.div
+          key={`${side}-dot-${i}`}
+          className={`absolute w-1 h-1 ${colorClass} rounded-full`}
+          style={dot.style}
+          animate={reduceMotion ? staticDot : isInView ? pulseDot : staticDot}
+          transition={
+            reduceMotion
+              ? { duration: 0 }
+              : {
+                  duration: 3 + i * 0.5,
+                  repeat: isInView ? Infinity : 0,
+                  delay: i * (side === 'left' ? 0.3 : 0.4),
+                }
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
+const LEFT_DOTS = [...Array(8)].map((_, i) => ({
+  style: {
+    left: `${20 + (i % 3) * 30}%`,
+    top: `${10 + i * 12}%`,
+  },
+}));
+
+const RIGHT_DOTS = [...Array(8)].map((_, i) => ({
+  style: {
+    right: `${20 + (i % 3) * 30}%`,
+    top: `${15 + i * 12}%`,
+  },
+}));
 
 function TechPattern() {
-  const [isVisible, setIsVisible] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const leftRef = useRef(null);
+  const rightRef = useRef(null);
+  const leftInView = useInView(leftRef, { once: true, margin: '-10%' });
+  const rightInView = useInView(rightRef, { once: true, margin: '-10%' });
 
-  useEffect(() => {
-    // Fade in pattern after a short delay
-    const timer = setTimeout(() => setIsVisible(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const sideEnter = visible => ({
+    initial: { opacity: reduceMotion ? 0.15 : 0, x: 0 },
+    animate: { opacity: visible ? 0.15 : 0, x: 0 },
+    transition: getChromeTransition(reduceMotion, 0.8),
+  });
 
   return (
     <>
       {/* Left side pattern */}
       <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: isVisible ? 0.15 : 0, x: 0 }}
-        transition={{ duration: 2, ease: 'easeOut' }}
+        ref={leftRef}
+        {...sideEnter(leftInView || reduceMotion)}
         className="fixed left-0 top-0 w-96 h-full pointer-events-none z-0 overflow-hidden"
       >
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -61,33 +110,17 @@ function TechPattern() {
           />
         </svg>
 
-        {/* Animated dots */}
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={`left-dot-${i}`}
-            className="absolute w-1 h-1 bg-theme-primary rounded-full"
-            style={{
-              left: `${20 + (i % 3) * 30}%`,
-              top: `${10 + i * 12}%`,
-            }}
-            animate={{
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 3 + i * 0.5,
-              repeat: Infinity,
-              delay: i * 0.3,
-            }}
-          />
-        ))}
+        <AnimatedDots
+          dots={LEFT_DOTS}
+          colorClass="bg-theme-primary"
+          side="left"
+        />
       </motion.div>
 
       {/* Right side pattern */}
       <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: isVisible ? 0.15 : 0, x: 0 }}
-        transition={{ duration: 2, ease: 'easeOut' }}
+        ref={rightRef}
+        {...sideEnter(rightInView || reduceMotion)}
         className="fixed right-0 top-0 w-96 h-full pointer-events-none z-0 overflow-hidden"
       >
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -125,26 +158,7 @@ function TechPattern() {
           />
         </svg>
 
-        {/* Animated dots */}
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={`right-dot-${i}`}
-            className="absolute w-1 h-1 bg-accent rounded-full"
-            style={{
-              right: `${20 + (i % 3) * 30}%`,
-              top: `${15 + i * 12}%`,
-            }}
-            animate={{
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 3 + i * 0.5,
-              repeat: Infinity,
-              delay: i * 0.4,
-            }}
-          />
-        ))}
+        <AnimatedDots dots={RIGHT_DOTS} colorClass="bg-accent" side="right" />
       </motion.div>
     </>
   );

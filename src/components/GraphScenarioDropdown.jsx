@@ -4,9 +4,17 @@
  * See LICENSE for details.
  */
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Check, CaretDown, Lock } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import {
+  menuInitial,
+  menuAnimate,
+  menuExit,
+  menuTransition,
+  getChromeTransition,
+  CHROME_DURATION_FAST,
+} from '@/motion/chromeMotion';
 
 function GraphScenarioDropdown({
   scenarioOptions,
@@ -20,6 +28,7 @@ function GraphScenarioDropdown({
   onLockedScenarioClick,
 }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const selectedOption =
     scenarioOptions.find(option => option.id === selectedScenario) ?? null;
 
@@ -48,7 +57,7 @@ function GraphScenarioDropdown({
         </div>
         <motion.div
           animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+          transition={getChromeTransition(reduceMotion, CHROME_DURATION_FAST)}
         >
           <CaretDown
             size={20}
@@ -61,10 +70,10 @@ function GraphScenarioDropdown({
       <AnimatePresence>
         {isDropdownOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={menuInitial(reduceMotion)}
+            animate={menuAnimate()}
+            exit={menuExit(reduceMotion)}
+            transition={menuTransition(reduceMotion)}
             className="absolute z-10 w-full mt-2 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden max-h-72 overflow-y-auto algo-dropdown"
             role="listbox"
             aria-label={t('controls.graphScenario')}
@@ -74,7 +83,7 @@ function GraphScenarioDropdown({
               const isLocked = areOptionsGated && index > 0;
 
               return (
-                <motion.button
+                <button
                   key={option.id || 'random-graph'}
                   type="button"
                   onClick={() => {
@@ -85,9 +94,6 @@ function GraphScenarioDropdown({
                     onScenarioSelect(option.id || null);
                     setIsDropdownOpen(false);
                   }}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.03 }}
                   className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
                     isSelected
                       ? 'bg-theme-primary-light text-theme-primary dark:text-white'
@@ -104,22 +110,11 @@ function GraphScenarioDropdown({
                     {t(option.i18nKey)}
                   </span>
                   {isSelected ? (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        type: 'spring',
-                        stiffness: 500,
-                        damping: 25,
-                      }}
-                      className="shrink-0"
-                    >
-                      <Check
-                        size={18}
-                        weight="bold"
-                        className="text-[#3b82f6] dark:text-white"
-                      />
-                    </motion.div>
+                    <Check
+                      size={18}
+                      weight="bold"
+                      className="shrink-0 text-[#3b82f6] dark:text-white"
+                    />
                   ) : isLocked ? (
                     <Lock
                       size={18}
@@ -128,7 +123,7 @@ function GraphScenarioDropdown({
                       aria-hidden="true"
                     />
                   ) : null}
-                </motion.button>
+                </button>
               );
             })}
           </motion.div>

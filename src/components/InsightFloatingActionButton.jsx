@@ -4,8 +4,10 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { getChromeTransition, HOVER_SPRING } from '../motion/chromeMotion';
 
 /**
  * Insight FAB — amber colour, positioned below the Code FAB.
@@ -18,51 +20,28 @@ export default function InsightFloatingActionButton({
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
+  const reduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
   const buttonText = t('insight_panel.insightLabel', {
     defaultValue: 'Insight',
   });
 
-  return (
-    <>
-      {/* Desktop: Side FAB */}
-      <motion.button
-        onClick={onClick}
-        disabled={disabled}
-        className={`
-          hidden md:flex
-          fixed ${isRTL ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 z-50 mt-44
-          h-32 w-14 bg-amber-500 hover:bg-amber-600
-          disabled:bg-disabled-bg disabled:cursor-not-allowed
-          text-white ${isRTL ? 'rounded-r-xl' : 'rounded-l-xl'} shadow-lg hover:shadow-xl
-          flex-col items-center justify-center gap-2
-          transition-all duration-200
-          focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2
-        `}
-        style={{ marginTop: '10rem' }}
-        initial={{ x: isRTL ? -48 : 48, opacity: 0 }}
-        animate={{ x: 0, opacity: isGated ? 0.6 : 1 }}
-        exit={{ x: isRTL ? -48 : 48, opacity: 0 }}
-        whileHover={
-          disabled
-            ? {}
-            : { x: isRTL ? 4 : -4, ...(isGated ? { opacity: 0.8 } : {}) }
-        }
-        whileTap={{ scale: disabled ? 1 : 0.98 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        aria-label={label}
-        title={label}
-      >
-        <span className="font-medium writing-mode-vertical transform rotate-360">
-          {buttonText}
-        </span>
-      </motion.button>
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-      {/* Mobile: Bottom FAB */}
+  const enterTransition = getChromeTransition(reduceMotion);
+
+  if (isMobile) {
+    return (
       <motion.button
         onClick={onClick}
         disabled={disabled}
         className={`
-          flex md:hidden
+          flex
           fixed bottom-20 ${isRTL ? 'left-4' : 'right-4'} z-50
           w-14 h-14 min-w-[56px] min-h-[56px] bg-amber-500 hover:bg-amber-600
           disabled:bg-disabled-bg disabled:cursor-not-allowed
@@ -72,14 +51,20 @@ export default function InsightFloatingActionButton({
           focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2
           touch-manipulation
         `}
-        initial={{ scale: 0, opacity: 0 }}
+        initial={reduceMotion ? false : { scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: isGated ? 0.6 : 1 }}
-        exit={{ scale: 0, opacity: 0 }}
+        exit={reduceMotion ? { opacity: 0 } : { scale: 0.9, opacity: 0 }}
         whileHover={
-          disabled ? {} : { scale: 1.05, ...(isGated ? { opacity: 0.8 } : {}) }
+          disabled
+            ? {}
+            : {
+                scale: 1.05,
+                ...(isGated ? { opacity: 0.8 } : {}),
+                transition: HOVER_SPRING,
+              }
         }
         whileTap={{ scale: disabled ? 1 : 0.95 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        transition={enterTransition}
         aria-label={label}
         title={label}
       >
@@ -98,6 +83,44 @@ export default function InsightFloatingActionButton({
           <path d="M10 22h4" />
         </svg>
       </motion.button>
-    </>
+    );
+  }
+
+  return (
+    <motion.button
+      onClick={onClick}
+      disabled={disabled}
+      className={`
+          flex
+          fixed ${isRTL ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 z-50 mt-44
+          h-32 w-14 bg-amber-500 hover:bg-amber-600
+          disabled:bg-disabled-bg disabled:cursor-not-allowed
+          text-white ${isRTL ? 'rounded-r-xl' : 'rounded-l-xl'} shadow-lg hover:shadow-xl
+          flex-col items-center justify-center gap-2
+          transition-all duration-200
+          focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2
+        `}
+      style={{ marginTop: '10rem' }}
+      initial={reduceMotion ? false : { x: isRTL ? -48 : 48 }}
+      animate={{ x: 0, opacity: isGated ? 0.6 : 1 }}
+      exit={reduceMotion ? { opacity: 0 } : { x: isRTL ? -48 : 48 }}
+      whileHover={
+        disabled
+          ? {}
+          : {
+              x: isRTL ? 4 : -4,
+              ...(isGated ? { opacity: 0.8 } : {}),
+              transition: HOVER_SPRING,
+            }
+      }
+      whileTap={{ scale: disabled ? 1 : 0.98 }}
+      transition={enterTransition}
+      aria-label={label}
+      title={label}
+    >
+      <span className="font-medium writing-mode-vertical transform rotate-360">
+        {buttonText}
+      </span>
+    </motion.button>
   );
 }

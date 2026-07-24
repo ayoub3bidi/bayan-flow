@@ -4,11 +4,18 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle, Lightning, Sparkle } from '@phosphor-icons/react';
 import YouTubeFacade from '../YouTubeFacade';
 import { extractYoutubeVideoId } from '../../utils/youtubeVideoId';
+import {
+  marketingEnter,
+  HOVER_SPRING,
+  getChromeTransition,
+  CHROME_DURATION_MARKETING,
+  ENTER_Y,
+} from '../../motion/chromeMotion';
 
 function TimelineItem({
   date,
@@ -20,7 +27,10 @@ function TimelineItem({
   index,
 }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const isLeft = position === 'left';
+  const slideX = isLeft ? -16 : 16;
+  const enter = marketingEnter(reduceMotion, index * 0.05);
 
   // Status-based styling
   const statusConfig = {
@@ -61,13 +71,20 @@ function TimelineItem({
   const StatusIcon = config.icon;
   const youtubeVideoId = extractYoutubeVideoId(videoUrl);
 
+  const itemInitial = reduceMotion
+    ? { opacity: 1, y: 0, x: 0 }
+    : { ...enter.initial, x: slideX };
+  const itemWhileInView = reduceMotion
+    ? { opacity: 1, y: 0, x: 0 }
+    : { ...enter.whileInView, x: 0 };
+
   return (
     <motion.div
       className="relative grid md:grid-cols-2 gap-8 md:gap-12 mb-16 md:mb-20"
-      initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={itemInitial}
+      whileInView={itemWhileInView}
       viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      transition={enter.transition}
     >
       {/* Content - Left side for left items, right side for right items */}
       <div className={`${isLeft ? 'md:col-start-1' : 'md:col-start-2'}`}>
@@ -75,7 +92,7 @@ function TimelineItem({
           className={`group relative bg-(--color-glass-bg) backdrop-blur-xl border ${config.borderStyle} border-white/10 dark:border-white/5 rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden ${config.opacity}`}
           whileHover={{
             y: -8,
-            transition: { type: 'spring', stiffness: 300, damping: 20 },
+            transition: HOVER_SPRING,
           }}
         >
           {/* Gradient glow on hover */}
@@ -94,7 +111,7 @@ function TimelineItem({
               className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent"
               initial={{ x: '-100%' }}
               whileHover={{ x: '100%' }}
-              transition={{ duration: 0.6 }}
+              transition={getChromeTransition(reduceMotion, 0.6)}
             />
           </div>
 
@@ -102,15 +119,20 @@ function TimelineItem({
           {config.pulse && (
             <motion.div
               className={`absolute inset-0 rounded-2xl bg-linear-to-br ${config.glowColor} opacity-10`}
-              animate={{
-                opacity: [0.1, 0.2, 0.1],
-                scale: [1, 1.02, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
+              animate={
+                reduceMotion
+                  ? { opacity: 0.1, scale: 1 }
+                  : { opacity: [0.1, 0.2, 0.1], scale: [1, 1.02, 1] }
+              }
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : {
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }
+              }
             />
           )}
 
@@ -130,23 +152,20 @@ function TimelineItem({
               </div>
             </div>
 
-            {/* Title with animated icon */}
+            {/* Title with icon */}
             <div className="flex items-center gap-3 mb-3">
               <motion.div
                 className={`w-10 h-10 ${config.accentColor} rounded-xl flex items-center justify-center shadow-md`}
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
+                initial={{ scale: reduceMotion ? 1 : 0 }}
+                whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 200,
-                  damping: 15,
-                  delay: index * 0.1 + 0.2,
-                }}
+                transition={getChromeTransition(
+                  reduceMotion,
+                  CHROME_DURATION_MARKETING
+                )}
                 whileHover={{
                   scale: 1.1,
-                  rotate: [0, -10, 10, -10, 0],
-                  transition: { duration: 0.5 },
+                  transition: HOVER_SPRING,
                 }}
               >
                 <StatusIcon weight="bold" className="w-5 h-5 text-white" />
@@ -163,10 +182,16 @@ function TimelineItem({
             {youtubeVideoId && (
               <motion.div
                 className="relative w-full aspect-video rounded-lg overflow-hidden mt-4 shadow-lg"
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{
+                  opacity: reduceMotion ? 1 : 0,
+                  y: reduceMotion ? 0 : ENTER_Y,
+                }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
+                transition={getChromeTransition(
+                  reduceMotion,
+                  CHROME_DURATION_MARKETING
+                )}
               >
                 <YouTubeFacade
                   videoId={youtubeVideoId}
@@ -182,29 +207,32 @@ function TimelineItem({
       {/* Dot on the timeline - Always in the center on desktop */}
       <motion.div
         className={`hidden md:block absolute top-8 left-1/2 -translate-x-1/2 w-4 h-4 ${config.dotColor} rounded-full border-4 border-bg z-10 shadow-lg`}
-        initial={{ scale: 0 }}
+        initial={{ scale: reduceMotion ? 1 : 0 }}
         whileInView={{ scale: 1 }}
         viewport={{ once: true }}
-        transition={{
-          type: 'spring',
-          stiffness: 300,
-          damping: 20,
-          delay: index * 0.1,
-        }}
+        transition={getChromeTransition(
+          reduceMotion,
+          CHROME_DURATION_MARKETING
+        )}
       >
         {/* Pulsing ring for in-progress */}
         {config.pulse && (
           <motion.div
             className={`absolute inset-0 ${config.dotColor} rounded-full`}
-            animate={{
-              scale: [1, 2, 1],
-              opacity: [0.5, 0, 0.5],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
+            animate={
+              reduceMotion
+                ? { scale: 1, opacity: 0.5 }
+                : { scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }
+            }
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }
+            }
           />
         )}
       </motion.div>

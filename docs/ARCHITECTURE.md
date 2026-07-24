@@ -610,6 +610,20 @@ description: getAlgorithmDescription(
 
 ## Animation System
 
+### Chrome motion (UI chrome)
+
+Non-visualization motion (drawers, modals, menus, banners, marketing entrances, completion overlays) uses shared presets in `src/motion/chromeMotion.js`.
+
+**Contract:**
+- Tween easing (`CHROME_EASE`, ~280ms) — do **not** invent local spring params for drawers/modals/menus
+- Sliding panels: transform (`x`/`y`) only — no opacity on the panel itself
+- Overlays: solid dim classes from the module — never animate `backdrop-blur` with opacity
+- Respect `useReducedMotion()` (duration `0` / skip offset)
+- One Framer tree per chrome surface (no dual desktop+mobile `motion` mounts)
+- Defer heavy content (e.g. Monaco) until drawer `onAnimationComplete`
+
+Visualization step springs (`ArrayBar`, `GridCell`, node fills) and Remotion remain separate from this contract.
+
 ### Framer Motion Integration
 
 **ArrayBar Component Animation:**

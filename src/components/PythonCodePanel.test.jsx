@@ -429,7 +429,7 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
         </ThemeProvider>
       );
 
-      const backdrop = document.querySelector('.backdrop-blur-sm');
+      const backdrop = document.querySelector('.bg-black\\/20');
       expect(backdrop).toBeTruthy();
       fireEvent.click(backdrop);
       expect(onClose).toHaveBeenCalled();

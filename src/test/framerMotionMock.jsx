@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { useEffect } from 'react';
 import { vi } from 'vitest';
 
 const MOTION_PROP_KEYS = new Set([
@@ -45,9 +46,26 @@ export function stripMotionProps(props) {
 }
 
 function createMotionComponent(tag) {
-  return function MotionComponent({ children, ...props }) {
+  return function MotionComponent({
+    children,
+    onAnimationComplete,
+    animate,
+    ...props
+  }) {
     const Tag = tag;
-    return <Tag {...stripMotionProps(props)}>{children}</Tag>;
+
+    useEffect(() => {
+      if (typeof onAnimationComplete !== 'function') return;
+      const definition =
+        typeof animate === 'string'
+          ? animate
+          : animate === undefined
+            ? 'visible'
+            : animate;
+      onAnimationComplete(definition);
+    }, [onAnimationComplete, animate]);
+
+    return <Tag {...stripMotionProps({ animate, ...props })}>{children}</Tag>;
   };
 }
 

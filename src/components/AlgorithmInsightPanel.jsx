@@ -6,23 +6,18 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, Play } from '@phosphor-icons/react';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
 import YouTubeFacade from './YouTubeFacade';
 import AlgorithmNotesTab from './AlgorithmNotesTab';
-
-const panelVariants = {
-  hidden: isRTL => ({ x: isRTL ? '-100%' : '100%', opacity: 0 }),
-  visible: { x: 0, opacity: 1 },
-  exit: isRTL => ({ x: isRTL ? '-100%' : '100%', opacity: 0 }),
-};
-
-const mobileVariants = {
-  hidden: { y: '100%', opacity: 0 },
-  visible: { y: 0, opacity: 1 },
-  exit: { y: '100%', opacity: 0 },
-};
+import {
+  drawerPanelVariants,
+  sheetPanelVariants,
+  getChromeTransition,
+  fadeOverlayTransition,
+  OVERLAY_CLASS_LIGHT,
+} from '../motion/chromeMotion';
 
 function getIndexedItems(t, namespace, prefix, count) {
   const items = [];
@@ -46,9 +41,11 @@ function AlgorithmInsightPanel({
   const isRTL = i18n.dir() === 'rtl';
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState('insight');
+  const [mountHeavyContent, setMountHeavyContent] = useState(false);
   const notesFlushRef = useRef(
     /** @type {null | (() => void | Promise<void>)} */ (null)
   );
+  const reduceMotion = useReducedMotion();
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -60,6 +57,14 @@ function AlgorithmInsightPanel({
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setMountHeavyContent(false);
+    } else if (reduceMotion) {
+      setMountHeavyContent(true);
+    }
+  }, [isOpen, reduceMotion]);
 
   const meta = algorithmKey ? ALGORITHM_KNOWLEDGE[algorithmKey] : null;
   const i18nBase = `insight_panel.algorithms.${algorithmKey}`;
@@ -124,7 +129,16 @@ function AlgorithmInsightPanel({
     algorithmKey,
     user,
     registerNotesFlush,
+    mountHeavyContent,
   };
+
+  const panelVariants = isMobile
+    ? sheetPanelVariants()
+    : drawerPanelVariants(isRTL);
+
+  const dialogLabel = algorithmName
+    ? `${t('insight_panel.learnTitle')}: ${algorithmName}`
+    : t('insight_panel.learnTitle');
 
   return (
     <AnimatePresence>
@@ -132,58 +146,42 @@ function AlgorithmInsightPanel({
         <>
           <motion.div
             key="insight-backdrop"
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            className={`fixed inset-0 ${OVERLAY_CLASS_LIGHT} z-40`}
             style={!isMobile ? { top: '56px' } : {}}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={fadeOverlayTransition(reduceMotion)}
             onClick={() => void handleClose()}
             aria-hidden="true"
           />
 
           <motion.div
-            key="insight-panel-desktop"
+            key="insight-panel"
             className={`
-              hidden md:flex flex-col
-              fixed top-14 bottom-0 ${isRTL ? 'left-0' : 'right-0'}
-              w-full max-w-2xl
-              bg-surface border-${isRTL ? 'r' : 'l'} border-panel-border
-              shadow-2xl z-50 overflow-hidden overscroll-contain
+              flex flex-col
+              fixed z-50 overflow-hidden overscroll-contain bg-surface shadow-2xl
+              ${
+                isMobile
+                  ? 'inset-0'
+                  : `top-14 bottom-0 ${isRTL ? 'left-0' : 'right-0'} w-full max-w-2xl border-${isRTL ? 'r' : 'l'} border-panel-border`
+              }
             `}
-            custom={isRTL}
             variants={panelVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            transition={getChromeTransition(reduceMotion)}
+            onAnimationComplete={definition => {
+              if (definition === 'visible' || definition === undefined) {
+                setMountHeavyContent(true);
+              }
+            }}
             role="dialog"
             aria-modal="true"
-            aria-label={
-              algorithmName
-                ? `${t('insight_panel.learnTitle')}: ${algorithmName}`
-                : t('insight_panel.learnTitle')
-            }
+            aria-label={dialogLabel}
           >
-            <PanelContent {...panelProps} isMobile={false} />
-          </motion.div>
-
-          <motion.div
-            key="insight-panel-mobile"
-            className="flex md:hidden flex-col fixed inset-0 bg-surface shadow-2xl z-50 overflow-hidden overscroll-contain"
-            variants={mobileVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            role="dialog"
-            aria-modal="true"
-            aria-label={
-              algorithmName
-                ? `${t('insight_panel.learnTitle')}: ${algorithmName}`
-                : t('insight_panel.learnTitle')
-            }
-          >
-            <PanelContent {...panelProps} isMobile />
+            <PanelContent {...panelProps} isMobile={isMobile} />
           </motion.div>
         </>
       )}
@@ -209,6 +207,7 @@ function PanelContent({
   algorithmKey,
   user,
   registerNotesFlush,
+  mountHeavyContent,
 }) {
   return (
     <>
@@ -272,8 +271,9 @@ function PanelContent({
             realUses={realUses}
             facts={facts}
             hasContent={hasContent}
+            mountHeavyContent={mountHeavyContent}
           />
-        ) : (
+        ) : mountHeavyContent ? (
           <AlgorithmNotesTab
             user={user}
             categoryType={categoryType}
@@ -281,6 +281,11 @@ function PanelContent({
             algorithmName={algorithmName}
             isActive={activeTab === 'notes'}
             onRegisterFlush={registerNotesFlush}
+          />
+        ) : (
+          <div
+            className="flex-1 min-h-[120px] rounded-lg bg-surface-elevated animate-pulse"
+            aria-hidden="true"
           />
         )}
       </div>
@@ -316,6 +321,7 @@ function InsightTabBody({
   realUses,
   facts,
   hasContent,
+  mountHeavyContent,
 }) {
   return (
     <div className="space-y-5">
@@ -424,15 +430,22 @@ function InsightTabBody({
       {meta && (
         <section className="pt-2">
           {meta.youtubeVideoId ? (
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10">
-              <YouTubeFacade
-                videoId={meta.youtubeVideoId}
-                title={t('insight_panel.relatedVideo', {
-                  defaultValue: 'Related video',
-                })}
-                className="rounded-xl"
+            mountHeavyContent ? (
+              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10">
+                <YouTubeFacade
+                  videoId={meta.youtubeVideoId}
+                  title={t('insight_panel.relatedVideo', {
+                    defaultValue: 'Related video',
+                  })}
+                  className="rounded-xl"
+                />
+              </div>
+            ) : (
+              <div
+                className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10 animate-pulse"
+                aria-hidden="true"
               />
-            </div>
+            )
           ) : (
             <div
               className="flex flex-col items-center justify-center w-full aspect-video rounded-xl border-2 border-dashed border-panel-border bg-panel-hover text-secondary"

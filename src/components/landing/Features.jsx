@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
   SlidersHorizontal,
@@ -16,9 +16,16 @@ import {
 } from '@phosphor-icons/react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
+import {
+  marketingEnter,
+  HOVER_SPRING,
+  getChromeTransition,
+  CHROME_DURATION_MARKETING,
+} from '../../motion/chromeMotion';
 
 function Features() {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   const features = [
     {
@@ -64,10 +71,8 @@ function Features() {
     <Section className="relative overflow-hidden">
       <Container className="relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          {...marketingEnter(reduceMotion)}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
           <h2 className="landing-h2 text-text-primary mb-4">
@@ -82,18 +87,11 @@ function Features() {
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              {...marketingEnter(reduceMotion, index * 0.05)}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.6,
-                delay: index * 0.1,
-                type: 'spring',
-                stiffness: 100,
-              }}
               whileHover={{
                 y: -8,
-                transition: { type: 'spring', stiffness: 300, damping: 20 },
+                transition: HOVER_SPRING,
               }}
               className="group relative"
             >
@@ -115,27 +113,24 @@ function Features() {
                     className={`absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent`}
                     initial={{ x: '-100%' }}
                     whileHover={{ x: '100%' }}
-                    transition={{ duration: 0.6 }}
+                    transition={getChromeTransition(reduceMotion, 0.6)}
                   />
                 </div>
 
                 <div className="relative">
-                  {/* Icon with gradient and bounce animation */}
+                  {/* Icon with gradient */}
                   <motion.div
                     className={`w-12 h-12 bg-linear-to-br ${feature.gradient} rounded-xl flex items-center justify-center mb-4 shadow-md`}
-                    initial={{ scale: 0, rotate: -180 }}
-                    whileInView={{ scale: 1, rotate: 0 }}
+                    initial={{ scale: reduceMotion ? 1 : 0 }}
+                    whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{
-                      type: 'spring',
-                      stiffness: 200,
-                      damping: 15,
-                      delay: index * 0.1 + 0.2,
-                    }}
+                    transition={getChromeTransition(
+                      reduceMotion,
+                      CHROME_DURATION_MARKETING
+                    )}
                     whileHover={{
                       scale: 1.1,
-                      rotate: [0, -10, 10, -10, 0],
-                      transition: { duration: 0.5 },
+                      transition: HOVER_SPRING,
                     }}
                   >
                     <feature.icon

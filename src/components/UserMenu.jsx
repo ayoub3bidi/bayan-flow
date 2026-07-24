@@ -5,7 +5,13 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import {
+  menuInitial,
+  menuAnimate,
+  menuExit,
+  menuTransition,
+} from '@/motion/chromeMotion';
 import { CaretDown, Gear, SignOut } from '@phosphor-icons/react';
 import { SiGoogle } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +28,7 @@ import { trackSignInClicked } from '../services/analyticsEvents';
  */
 function UserMenu({ variant = 'landing', hideAvatar = false }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
   const {
     isConfigured,
@@ -191,10 +198,10 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            transition={{ duration: 0.15 }}
+            initial={menuInitial(reduceMotion)}
+            animate={menuAnimate()}
+            exit={menuExit(reduceMotion)}
+            transition={menuTransition(reduceMotion)}
             className="absolute end-0 mt-2 w-64 rounded-xl border border-(--color-glass-border) bg-(--color-glass-bg) backdrop-blur-lg shadow-xl z-50 overflow-hidden"
             role="menu"
             aria-label={t('auth.account_menu_label', {
