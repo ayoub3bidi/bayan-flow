@@ -11,6 +11,7 @@ import { X, Play } from '@phosphor-icons/react';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
 import YouTubeFacade from './YouTubeFacade';
 import AlgorithmNotesTab from './AlgorithmNotesTab';
+import { useIsBelowLg } from '../hooks/useIsBelowLg';
 import {
   drawerPanelVariants,
   sheetPanelVariants,
@@ -39,24 +40,13 @@ function AlgorithmInsightPanel({
 }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsBelowLg();
   const [activeTab, setActiveTab] = useState('insight');
   const [mountHeavyContent, setMountHeavyContent] = useState(false);
   const notesFlushRef = useRef(
     /** @type {null | (() => void | Promise<void>)} */ (null)
   );
   const reduceMotion = useReducedMotion();
-
-  // Check if mobile on mount and resize
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     if (!isOpen) {

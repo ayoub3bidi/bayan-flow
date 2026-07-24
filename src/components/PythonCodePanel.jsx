@@ -18,6 +18,7 @@ import { highlightPseudocodeToHtml } from '../utils/pseudocodeHighlight';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
 import { usePythonExecution } from '../hooks/usePythonExecution';
+import { useIsBelowLg } from '../hooks/useIsBelowLg';
 import OutputConsole from './OutputConsole';
 import {
   drawerPanelVariants,
@@ -57,7 +58,7 @@ function getStoredOutputPercent() {
  */
 function PythonCodePanel({ isOpen, onClose, algorithm }) {
   const { t, i18n } = useTranslation();
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsBelowLg();
   const [mountEditor, setMountEditor] = useState(false);
   const panelRef = useRef(null);
   const editorRef = useRef(null);
@@ -65,17 +66,6 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
   const { isDark } = useTheme();
   const isRTL = i18n.dir() === 'rtl';
   const reduceMotion = useReducedMotion();
-
-  // Check if mobile on mount and resize
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Handle escape key
   useEffect(() => {

@@ -64,7 +64,8 @@
       "message": "Le plan Pro arrive bientôt. Soyez les premiers.",
       "cta": "Rejoindre la liste",
       "linkLabel": "Découvrir le Plan Pro",
-      "dismiss": "Fermer"
+      "dismiss": "Fermer",
+      "ctaShort": "Rejoindre"
     },
     "eyebrow": "Le Plan Pro",
     "headline": "Allez plus loin avec le Plan Pro",
@@ -155,7 +156,8 @@
     "favoriteSlotsUsed": "{{count}} / {{limit}}",
     "favoriteSlotsFull": "Limite de favoris atteinte ({{limit}}). Retirez-en un pour en ajouter un autre.",
     "addFavorite": "Ajouter {{name}} aux favoris",
-    "removeFavorite": "Retirer {{name}} des favoris"
+    "removeFavorite": "Retirer {{name}} des favoris",
+    "signInForAdvancedFeatures": "Connectez-vous pour débloquer le mode manuel, la vitesse et les contrôles avancés."
   },
   "modes": {
     "sorting": "Tri",
@@ -362,7 +364,11 @@
     "descending": "Ordre d'entrée décroissant (appuyez pour aléatoire)",
     "sortOrder": "Basculer l'ordre initial du tableau pour le tri",
     "graphScenario": "Scénario de graphe",
-    "randomGraph": "Graphe aléatoire"
+    "randomGraph": "Graphe aléatoire",
+    "openSettings": "Réglages",
+    "closeSettings": "Fermer les réglages",
+    "settingsSheetTitle": "Réglages de l’algorithme",
+    "moreActions": "Plus d’actions"
   },
   "info": {
     "step": "Étape {{current}} sur {{total}}",

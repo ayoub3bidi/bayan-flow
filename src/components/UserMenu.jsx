@@ -153,7 +153,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
           aria-label={t('auth.sign_in_google')}
         >
           <SiGoogle className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-text-primary" />
-          <span className="text-xs sm:text-sm font-medium text-text-primary">
+          <span className="hidden xs:inline text-xs sm:text-sm font-medium text-text-primary">
             {t('auth.sign_in_google')}
           </span>
         </motion.button>

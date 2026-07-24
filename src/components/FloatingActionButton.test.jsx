@@ -5,27 +5,31 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import FloatingActionButton from './FloatingActionButton';
+import { BELOW_LG_MEDIA_QUERY } from '../hooks/useIsBelowLg';
 
-function setViewportWidth(width) {
-  Object.defineProperty(window, 'innerWidth', {
-    writable: true,
-    configurable: true,
-    value: width,
-  });
-  act(() => {
-    window.dispatchEvent(new Event('resize'));
-  });
+function stubMatchMedia(isBelowLg) {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(query => ({
+      matches: query === BELOW_LG_MEDIA_QUERY ? isBelowLg : false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    }))
+  );
 }
 
 describe('FloatingActionButton', () => {
   beforeEach(() => {
-    setViewportWidth(1024);
+    stubMatchMedia(false);
   });
 
   afterEach(() => {
-    setViewportWidth(1024);
+    vi.unstubAllGlobals();
   });
 
   it('renders a single desktop button by default', () => {
@@ -47,8 +51,8 @@ describe('FloatingActionButton', () => {
     );
   });
 
-  it('renders a mobile button when viewport is narrow', () => {
-    setViewportWidth(375);
+  it('renders a mobile button when viewport is below lg', () => {
+    stubMatchMedia(true);
     const mockOnClick = vi.fn();
     render(<FloatingActionButton onClick={mockOnClick} />);
 
@@ -56,7 +60,7 @@ describe('FloatingActionButton', () => {
       name: /view python code/i,
     });
     expect(buttons).toHaveLength(1);
-    expect(buttons[0]).toHaveClass('fixed', 'bottom-4', 'right-4', 'z-50');
+    expect(buttons[0]).toHaveClass('fixed', 'bottom-44', 'right-4', 'z-50');
   });
 
   it('calls onClick when clicked', () => {

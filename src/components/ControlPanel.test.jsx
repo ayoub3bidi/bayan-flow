@@ -4,10 +4,25 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
 import ControlPanel from './ControlPanel';
 import { ALGORITHM_TYPES } from '../constants';
+import { BELOW_LG_MEDIA_QUERY } from '../hooks/useIsBelowLg';
+
+function stubMatchMedia(isBelowLg) {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(query => ({
+      matches: query === BELOW_LG_MEDIA_QUERY ? isBelowLg : false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    }))
+  );
+}
 
 function getBaseProps(overrides = {}) {
   return {
@@ -37,6 +52,14 @@ function getBaseProps(overrides = {}) {
 
 describe('ControlPanel', () => {
   const refreshLabel = () => 'Generate New Input';
+
+  beforeEach(() => {
+    stubMatchMedia(false);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
 
   it('shows data refresh shuffle when category has hasDataRefresh true (sorting)', () => {
     renderWithI18n(<ControlPanel {...getBaseProps()} />);
@@ -120,5 +143,36 @@ describe('ControlPanel', () => {
     );
 
     expect(onGatedFeatureClick).toHaveBeenCalledWith('category_controls');
+  });
+
+  it('shows a Settings button when onOpenSettings is provided', () => {
+    const onOpenSettings = vi.fn();
+    renderWithI18n(<ControlPanel {...getBaseProps({ onOpenSettings })} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    expect(onOpenSettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('hides secondary actions behind More on narrow viewports', () => {
+    stubMatchMedia(true);
+    renderWithI18n(<ControlPanel {...getBaseProps()} />);
+
+    expect(
+      screen.queryByRole('button', { name: refreshLabel() })
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'More actions' }));
+
+    expect(
+      screen.getByRole('button', { name: refreshLabel() })
+    ).toBeInTheDocument();
+  });
+
+  it('shows visualizations remaining above the progress bar when provided', () => {
+    renderWithI18n(
+      <ControlPanel {...getBaseProps({ visualizationsRemaining: 7 })} />
+    );
+
+    expect(screen.getByText(/7 visualizations remaining/i)).toBeInTheDocument();
   });
 });

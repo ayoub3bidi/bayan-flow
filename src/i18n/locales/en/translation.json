@@ -64,7 +64,8 @@
       "message": "The Pro Plan is coming soon. Be first in line.",
       "cta": "Join waitlist",
       "linkLabel": "Learn about the Pro Plan",
-      "dismiss": "Dismiss"
+      "dismiss": "Dismiss",
+      "ctaShort": "Join"
     },
     "eyebrow": "The Pro Plan",
     "headline": "Go further with the Pro Plan",
@@ -155,7 +156,8 @@
     "favoriteSlotsUsed": "{{count}} / {{limit}}",
     "favoriteSlotsFull": "Favorite limit reached ({{limit}}). Remove one to add another.",
     "addFavorite": "Add {{name}} to favorites",
-    "removeFavorite": "Remove {{name}} from favorites"
+    "removeFavorite": "Remove {{name}} from favorites",
+    "signInForAdvancedFeatures": "Sign in to unlock manual mode, speed, and advanced controls."
   },
   "modes": {
     "sorting": "Sorting",
@@ -363,7 +365,11 @@
     "descending": "Descending input order (tap for random input)",
     "sortOrder": "Toggle initial array order for sorting",
     "graphScenario": "Graph scenario",
-    "randomGraph": "Random graph"
+    "randomGraph": "Random graph",
+    "openSettings": "Settings",
+    "closeSettings": "Close settings",
+    "settingsSheetTitle": "Algorithm settings",
+    "moreActions": "More actions"
   },
   "info": {
     "step": "Step {{current}} of {{total}}",

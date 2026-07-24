@@ -4,13 +4,13 @@
  * See LICENSE for details.
  */
 
-import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getChromeTransition, HOVER_SPRING } from '../motion/chromeMotion';
+import { useIsBelowLg } from '../hooks/useIsBelowLg';
 
 /**
- * Insight FAB — amber colour, positioned below the Code FAB.
+ * Insight FAB — amber colour, positioned above the Code FAB on mobile.
  */
 export default function InsightFloatingActionButton({
   onClick,
@@ -21,17 +21,10 @@ export default function InsightFloatingActionButton({
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
   const reduceMotion = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsBelowLg();
   const buttonText = t('insight_panel.insightLabel', {
     defaultValue: 'Insight',
   });
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const enterTransition = getChromeTransition(reduceMotion);
 
@@ -42,7 +35,7 @@ export default function InsightFloatingActionButton({
         disabled={disabled}
         className={`
           flex
-          fixed bottom-20 ${isRTL ? 'left-4' : 'right-4'} z-50
+          fixed bottom-60 ${isRTL ? 'left-4' : 'right-4'} z-50
           w-14 h-14 min-w-[56px] min-h-[56px] bg-amber-500 hover:bg-amber-600
           disabled:bg-disabled-bg disabled:cursor-not-allowed
           text-white rounded-full shadow-lg hover:shadow-xl

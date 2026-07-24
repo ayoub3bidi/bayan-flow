@@ -240,6 +240,11 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
       configurable: true,
       value: 1024,
     });
+    global.matchMedia = vi.fn(() => ({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
   });
 
   describe('Theme switching without refresh', () => {
@@ -436,11 +441,15 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
     });
 
     it('shows mobile header when viewport is narrow', async () => {
-      Object.defineProperty(window, 'innerWidth', {
-        writable: true,
-        configurable: true,
-        value: 400,
-      });
+      const { BELOW_LG_MEDIA_QUERY } = await import('../hooks/useIsBelowLg');
+      global.matchMedia = vi.fn(query => ({
+        matches: query === BELOW_LG_MEDIA_QUERY,
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+      }));
       localStorageMock.getItem.mockReturnValue('light');
 
       renderWithI18n(
@@ -452,8 +461,6 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
           />
         </ThemeProvider>
       );
-
-      fireEvent(window, new Event('resize'));
 
       await waitFor(() => {
         expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(

@@ -4,10 +4,10 @@
  * See LICENSE for details.
  */
 
-import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getChromeTransition, HOVER_SPRING } from '../motion/chromeMotion';
+import { useIsBelowLg } from '../hooks/useIsBelowLg';
 
 /**
  * @param {Object} props
@@ -24,14 +24,7 @@ function FloatingActionButton({
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
   const reduceMotion = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsBelowLg();
 
   const enterTransition = getChromeTransition(reduceMotion);
 
@@ -42,7 +35,7 @@ function FloatingActionButton({
         disabled={disabled}
         className={`
           flex
-          fixed bottom-4 ${isRTL ? 'left-4' : 'right-4'} z-50
+          fixed bottom-44 ${isRTL ? 'left-4' : 'right-4'} z-50
           w-14 h-14 min-w-[56px] min-h-[56px] bg-blue-600 hover:bg-blue-700 
           disabled:bg-disabled-bg disabled:cursor-not-allowed
           text-white rounded-full shadow-lg hover:shadow-xl

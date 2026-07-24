@@ -29,8 +29,21 @@ const ArrayBar = memo(function ArrayBar({
   index,
   arrayLength,
   highlightTarget = false,
+  compact = false,
 }) {
   const color = STATE_COLORS[state];
+  const size =
+    arrayLength <= 20
+      ? compact
+        ? 40
+        : 60
+      : arrayLength <= 35
+        ? compact
+          ? 32
+          : 45
+        : compact
+          ? 24
+          : 30;
 
   // Animation variants for swap effect
   const barVariants = {
@@ -60,7 +73,7 @@ const ArrayBar = memo(function ArrayBar({
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center min-w-0 mx-2"
+      className={`flex flex-col items-center justify-center min-w-0 shrink-0 ${compact ? 'mx-1' : 'mx-2'}`}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.01, type: 'spring' }}
@@ -73,12 +86,10 @@ const ArrayBar = memo(function ArrayBar({
           boxShadow: highlightTarget
             ? `0 0 0 3px rgba(${SEARCH_TARGET_RING_RGB}, 0.9), 0 4px 6px -1px rgba(0,0,0,0.2)`
             : undefined,
-          width:
-            arrayLength <= 20 ? '60px' : arrayLength <= 35 ? '45px' : '30px',
-          height:
-            arrayLength <= 20 ? '60px' : arrayLength <= 35 ? '45px' : '30px',
-          minWidth: '25px',
-          minHeight: '25px',
+          width: `${size}px`,
+          height: `${size}px`,
+          minWidth: compact ? '20px' : '25px',
+          minHeight: compact ? '20px' : '25px',
         }}
         variants={barVariants}
         animate={
@@ -95,7 +106,9 @@ const ArrayBar = memo(function ArrayBar({
           scale: { type: 'spring', stiffness: 300 },
         }}
       >
-        <span className="text-white text-sm font-bold drop-shadow-md">
+        <span
+          className={`text-white font-bold drop-shadow-md ${compact ? 'text-xs' : 'text-sm'}`}
+        >
           {value}
         </span>
       </motion.div>
