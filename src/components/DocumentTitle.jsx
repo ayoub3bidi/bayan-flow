@@ -18,6 +18,14 @@ const ROUTE_TITLE_KEYS = {
   '/settings/profile': 'profile.pageTitle',
 };
 
+const HREFLANG_LOCALES = ['en', 'fr', 'ar'];
+
+const OG_LOCALE_MAP = {
+  en: 'en_US',
+  fr: 'fr_FR',
+  ar: 'ar_AR',
+};
+
 function getRouteDescriptions(pathname, t) {
   if (pathname === '/privacy') {
     return {
@@ -69,6 +77,55 @@ function ensureCanonicalLink() {
   }
 
   return canonical;
+}
+
+function ensureAlternateLinks(pathname, currentLang) {
+  for (const locale of HREFLANG_LOCALES) {
+    const selector = `link[rel="alternate"][hreflang="${locale}"]`;
+    let link = document.querySelector(selector);
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'alternate');
+      link.setAttribute('hreflang', locale);
+      document.head.appendChild(link);
+    }
+    const langParam = locale === 'en' ? '' : `?lang=${locale}`;
+    link.setAttribute('href', `https://bayanflow.com${pathname}${langParam}`);
+  }
+
+  let xDefault = document.querySelector('link[rel="alternate"][hreflang="x-default"]');
+  if (!xDefault) {
+    xDefault = document.createElement('link');
+    xDefault.setAttribute('rel', 'alternate');
+    xDefault.setAttribute('hreflang', 'x-default');
+    document.head.appendChild(xDefault);
+  }
+  xDefault.setAttribute('href', `https://bayanflow.com${pathname}`);
+}
+
+function updateOGLocale(lang) {
+  const ogLocale = OG_LOCALE_MAP[lang] || 'en_US';
+  let meta = document.querySelector('meta[property="og:locale"]');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.setAttribute('property', 'og:locale');
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute('content', ogLocale);
+
+  for (const locale of HREFLANG_LOCALES) {
+    if (locale === lang) continue;
+    const altKey = `og:locale:alternate`;
+    const selector = `meta[property="${altKey}"][data-lang="${locale}"]`;
+    let altMeta = document.querySelector(selector);
+    if (!altMeta) {
+      altMeta = document.createElement('meta');
+      altMeta.setAttribute('property', altKey);
+      altMeta.setAttribute('data-lang', locale);
+      document.head.appendChild(altMeta);
+    }
+    altMeta.setAttribute('content', OG_LOCALE_MAP[locale] || locale);
+  }
 }
 
 export default function DocumentTitle() {
@@ -137,6 +194,9 @@ export default function DocumentTitle() {
     if (metaDescription) {
       metaDescription.setAttribute('content', metaDescriptionText);
     }
+
+    ensureAlternateLinks(pathname, i18n.language);
+    updateOGLocale(i18n.language);
   }, [i18n.language, t, pathname]);
 
   return null;
