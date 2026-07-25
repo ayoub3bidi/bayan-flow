@@ -397,11 +397,12 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
                     {t('python_code.title')}: {displayName}
                   </h2>
                   <button
+                    type="button"
                     onClick={onClose}
-                    className="p-2 text-text-tertiary hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors"
+                    className="inline-flex items-center justify-center h-touch w-touch min-h-touch min-w-touch rounded-lg bg-surface-elevated text-text-primary hover:bg-border touch-manipulation"
                     aria-label={t('python_code.close')}
                   >
-                    <X size={20} weight="bold" />
+                    <X size={20} weight="bold" aria-hidden="true" />
                   </button>
                 </div>
               )}

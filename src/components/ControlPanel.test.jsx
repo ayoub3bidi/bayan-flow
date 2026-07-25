@@ -145,7 +145,8 @@ describe('ControlPanel', () => {
     expect(onGatedFeatureClick).toHaveBeenCalledWith('category_controls');
   });
 
-  it('shows a Settings button when onOpenSettings is provided', () => {
+  it('shows a Settings button when onOpenSettings is provided on narrow viewports', () => {
+    stubMatchMedia(true);
     const onOpenSettings = vi.fn();
     renderWithI18n(<ControlPanel {...getBaseProps({ onOpenSettings })} />);
 
@@ -153,15 +154,9 @@ describe('ControlPanel', () => {
     expect(onOpenSettings).toHaveBeenCalledTimes(1);
   });
 
-  it('hides secondary actions behind More on narrow viewports', () => {
+  it('shows all feature buttons directly on narrow viewports', () => {
     stubMatchMedia(true);
     renderWithI18n(<ControlPanel {...getBaseProps()} />);
-
-    expect(
-      screen.queryByRole('button', { name: refreshLabel() })
-    ).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'More actions' }));
 
     expect(
       screen.getByRole('button', { name: refreshLabel() })

@@ -218,7 +218,7 @@ function ArrayVisualizer({
             )}
 
             {/* Array Visualization */}
-            <div className="flex-1 flex items-center justify-center flex-nowrap gap-2 sm:gap-3 pb-10 px-2 overflow-x-auto touch-pan-x lg:flex-wrap lg:overflow-x-auto lg:touch-pan-y">
+            <div className="flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 pb-10 px-2 overflow-x-hidden touch-pan-y">
               {array.map((value, index) => (
                 <ArrayBar
                   key={`${index}-${value}`}

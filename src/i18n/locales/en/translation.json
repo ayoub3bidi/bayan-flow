@@ -1046,6 +1046,7 @@
     "termsDescription": "Terms of Use for the Bayan Flow educational web application."
   },
   "legend": {
+    "show": "Show legend",
     "title": "Legend",
     "toggle": "Toggle legend",
     "close": "Close legend",

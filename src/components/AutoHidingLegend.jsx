@@ -57,15 +57,16 @@ function AutoHidingLegend({ legendItems, isComplete }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={legendExpandedExit}
             transition={legendTransition}
-            className="bg-surface-elevated rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 min-w-[180px]"
+            className="bg-surface-elevated rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 min-w-[180px] sm:items-start"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-text-primary">
                 {t('legend.title')}
               </span>
               <button
+                type="button"
                 onClick={() => setIsExpanded(false)}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors touch-manipulation"
+                className="inline-flex items-center justify-center h-touch w-touch rounded-lg bg-surface-elevated text-text-primary hover:bg-border touch-manipulation sm:p-1 sm:h-auto sm:w-auto sm:bg-transparent sm:hover:bg-gray-100 sm:dark:hover:bg-gray-700"
                 aria-label={t('legend.close')}
               >
                 <X size={14} weight="bold" className="text-text-secondary" />
@@ -73,7 +74,10 @@ function AutoHidingLegend({ legendItems, isComplete }) {
             </div>
             <div className="space-y-1.5">
               {legendItems.map(item => (
-                <div key={item.state} className="flex items-center gap-2">
+                <div
+                  key={item.state}
+                  className="flex items-center gap-2"
+                >
                   <div
                     className="w-3 h-3 rounded shadow-sm flex-shrink-0"
                     style={{ backgroundColor: item.color }}
@@ -93,7 +97,7 @@ function AutoHidingLegend({ legendItems, isComplete }) {
             exit={legendButtonExit}
             transition={legendTransition}
             onClick={() => setIsExpanded(true)}
-            className="bg-surface-elevated p-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-surface-elevated hover:scale-105 transition-all touch-manipulation"
+            className="bg-surface-elevated w-11 h-11 flex items-center justify-center rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-surface-elevated hover:scale-105 transition-all touch-manipulation sm:w-auto sm:h-auto sm:flex-none sm:p-2"
             aria-label={t('legend.show')}
           >
             <Info size={18} weight="bold" className="text-primary" />

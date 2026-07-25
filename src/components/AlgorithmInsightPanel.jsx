@@ -232,10 +232,10 @@ function PanelContent({
             <button
               type="button"
               onClick={() => void onClose()}
-              className="p-2 text-secondary hover:text-primary rounded-lg hover:bg-panel-hover transition-colors flex-shrink-0"
+              className="inline-flex items-center justify-center h-touch w-touch min-h-touch min-w-touch rounded-lg bg-surface-elevated text-text-primary hover:bg-border touch-manipulation flex-shrink-0"
               aria-label={t('insight_panel.close')}
             >
-              <X size={20} weight="bold" />
+              <X size={20} weight="bold" aria-hidden="true" />
             </button>
           )}
         </div>
