@@ -97,7 +97,7 @@ export default function DocumentTitle() {
     }
 
     const twitterTitle = document.querySelector(
-      'meta[property="twitter:title"]'
+      'meta[name="twitter:title"]'
     );
     if (twitterTitle) {
       twitterTitle.setAttribute('content', fullTitle);
@@ -110,7 +110,7 @@ export default function DocumentTitle() {
       ogUrl.setAttribute('content', canonicalUrl);
     }
 
-    const twitterUrl = document.querySelector('meta[property="twitter:url"]');
+    const twitterUrl = document.querySelector('meta[name="twitter:url"]');
     if (twitterUrl) {
       twitterUrl.setAttribute('content', canonicalUrl);
     }
@@ -122,7 +122,7 @@ export default function DocumentTitle() {
       'meta[property="og:description"]'
     );
     const twitterDescription = document.querySelector(
-      'meta[property="twitter:description"]'
+      'meta[name="twitter:description"]'
     );
     const metaDescription = document.querySelector('meta[name="description"]');
 

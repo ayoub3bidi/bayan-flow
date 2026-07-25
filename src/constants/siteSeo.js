@@ -18,7 +18,7 @@ export const DEFAULT_SITE_TITLE =
   'Bayan Flow - Interactive Algorithm Visualizer';
 
 export const DEFAULT_SITE_DESCRIPTION =
-  'Bayan Flow: Learn 45 algorithms with clarity through interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph algorithms. Free educational web app with Python examples and complexity analysis. Bayan (بيان) means clarity in Arabic.';
+  'Learn 45 algorithms with interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph algorithms. Free educational app.';
 
 export const DEFAULT_OG_DESCRIPTION =
   'Interactive step-by-step visualizations for sorting, pathfinding, searching, tree traversal, and graph algorithms — with Python examples and complexity analysis.';
