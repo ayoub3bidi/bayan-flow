@@ -299,6 +299,7 @@ vi.mock('../components/ControlPanel', () => ({
     sortOrder,
     onSortOrderChange,
     onToggleFullScreen,
+    visualizationsRemaining,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -316,6 +317,12 @@ vi.mock('../components/ControlPanel', () => ({
       <button type="button" onClick={onToggleFullScreen}>
         toggle-fullscreen
       </button>
+      {visualizationsRemaining != null &&
+      Number.isFinite(visualizationsRemaining) ? (
+        <p role="status">
+          {`${visualizationsRemaining} visualizations remaining`}
+        </p>
+      ) : null}
       {algorithmType === 'sorting' && (
         <button
           type="button"

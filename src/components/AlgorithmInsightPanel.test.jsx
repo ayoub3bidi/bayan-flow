@@ -9,10 +9,28 @@ import { fireEvent, renderWithI18n, screen, waitFor } from '../test/testUtils';
 import AlgorithmInsightPanel from './AlgorithmInsightPanel';
 import i18n from '../i18n';
 import { ALGORITHM_TYPES } from '@/constants';
+import { BELOW_LG_MEDIA_QUERY } from '../hooks/useIsBelowLg';
+
+function stubMatchMedia(matchesMobile) {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(query => ({
+      matches: query === BELOW_LG_MEDIA_QUERY ? matchesMobile : false,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(() => false),
+    }))
+  );
+}
 
 describe('AlgorithmInsightPanel', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('en');
+    stubMatchMedia(false);
   });
 
   it('renders insight content and icon placeholders when open', () => {
@@ -39,11 +57,7 @@ describe('AlgorithmInsightPanel', () => {
   });
 
   it('calls onClose when the mobile close button is clicked', () => {
-    Object.defineProperty(window, 'innerWidth', {
-      writable: true,
-      configurable: true,
-      value: 375,
-    });
+    stubMatchMedia(true);
     const onClose = vi.fn();
     renderWithI18n(
       <AlgorithmInsightPanel
@@ -63,11 +77,7 @@ describe('AlgorithmInsightPanel', () => {
   });
 
   it('calls onClose when backdrop is clicked on desktop', () => {
-    Object.defineProperty(window, 'innerWidth', {
-      writable: true,
-      configurable: true,
-      value: 1024,
-    });
+    stubMatchMedia(false);
     const onClose = vi.fn();
     const { container } = renderWithI18n(
       <AlgorithmInsightPanel
