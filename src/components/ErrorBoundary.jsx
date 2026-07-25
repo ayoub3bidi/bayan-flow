@@ -4,13 +4,8 @@
  * See LICENSE for details.
  */
 
-import { Component } from 'react';
+import { Component, createElement } from 'react';
 
-/**
- * React error boundary that catches render errors in its subtree
- * and displays a non-destructive fallback instead of crashing the
- * entire application.
- */
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -25,9 +20,38 @@ class ErrorBoundary extends Component {
     console.error('[ErrorBoundary]', error, info?.componentStack);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+
   render() {
     if (this.state.hasError) {
-      return this.props.fallback ?? null;
+      return (
+        this.props.fallback ??
+        createElement(
+          'div',
+          {
+            className:
+              'flex flex-col items-center justify-center h-full p-8 text-center',
+          },
+          createElement(
+            'p',
+            { className: 'text-lg font-semibold mb-2' },
+            'Something went wrong.'
+          ),
+          createElement(
+            'button',
+            {
+              className:
+                'mt-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700',
+              onClick: () => this.setState({ hasError: false }),
+            },
+            'Try again'
+          )
+        )
+      );
     }
     return this.props.children;
   }

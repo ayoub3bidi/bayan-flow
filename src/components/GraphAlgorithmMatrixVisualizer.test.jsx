@@ -120,9 +120,11 @@ describe('GraphAlgorithmMatrixVisualizer', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      const blurOverlay = document.querySelector('.bg-black\\/30');
+      const blurOverlay = document.querySelector('.bg-black\\/80');
       expect(blurOverlay).toBeInTheDocument();
-      expect(screen.getByText('Complexity Analysis')).toBeInTheDocument();
+      expect(
+        screen.getAllByText('Complexity Analysis').length
+      ).toBeGreaterThanOrEqual(1);
     } finally {
       vi.useRealTimers();
     }

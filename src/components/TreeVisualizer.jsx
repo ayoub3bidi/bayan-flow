@@ -203,9 +203,24 @@ function TreeVisualizer({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 bg-black/30 z-10"
-                aria-hidden="true"
-              />
+                className="absolute inset-0 z-10 flex items-center justify-center bg-black/80"
+                role="button"
+                tabIndex={0}
+                onClick={() => onGatedFeatureClick?.('complexity_limit')}
+                onKeyDown={e =>
+                  (e.key === 'Enter' || e.key === ' ') &&
+                  onGatedFeatureClick?.('complexity_limit')
+                }
+              >
+                <div className="text-center text-white p-6 max-w-xs">
+                  <p className="text-lg font-semibold mb-2">
+                    {t('featureGate.complexity_limit')}
+                  </p>
+                  <p className="text-sm opacity-80">
+                    {t('featureGate.complexity_limit_description')}
+                  </p>
+                </div>
+              </motion.div>
             )}
           </div>
         ) : (

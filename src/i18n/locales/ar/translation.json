@@ -393,7 +393,9 @@
     "shareNative": "مشاركة",
     "shareOnX": "مشاركة على X",
     "copyCaption": "نسخ التعليق",
-    "copied": "تم النسخ!"
+    "copied": "تم النسخ!",
+    "captionTemplate": "{{algorithm}}. تصور خطوة بخطوة من Bayan Flow.",
+    "titleTemplate": "تصور {{algorithm}} — Bayan Flow"
   },
   "complexity_panel": {
     "title": "تحليل التعقيد",

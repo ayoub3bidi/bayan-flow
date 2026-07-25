@@ -82,16 +82,16 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
   // Focus trap
   useEffect(() => {
     if (isOpen && panelRef.current) {
-      const focusableElements = panelRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-
       const handleKeyDown = event => {
         if (event.key === 'Escape') {
           onClose();
         } else if (event.key === 'Tab') {
+          const focusableElements = panelRef.current.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
           if (event.shiftKey) {
             if (document.activeElement === firstElement) {
               event.preventDefault();
@@ -107,7 +107,11 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
       };
 
       document.addEventListener('keydown', handleKeyDown);
-      firstElement?.focus();
+      panelRef.current
+        .querySelector(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        ?.focus();
 
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
