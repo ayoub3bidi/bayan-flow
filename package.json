@@ -109,7 +109,12 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "npm:rolldown-vite@7.2.10"
+      "vite": "npm:rolldown-vite@7.2.10",
+      "minimatch@3": "3.1.5",
+      "minimatch@9": "9.0.9",
+      "semver@7": "7.8.5",
+      "flatted": "3.4.3",
+      "ajv@6": "6.15.0"
     }
   }
 }
