@@ -1004,7 +1004,7 @@
     "weightedDirectedSingle": "Matrice à un sommet"
   },
   "footer": {
-    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
+    "description": "Une application web interactive et éducative pour visualiser les algorithmes avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
     "madeWith": "Fait avec",
     "by": "par",

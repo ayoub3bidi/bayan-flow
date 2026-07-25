@@ -1005,7 +1005,7 @@
     "weightedDirectedSingle": "Single Vertex Matrix"
   },
   "footer": {
-    "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
+    "description": "An interactive, educational web application for visualizing algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
     "madeWith": "Made with",
     "by": "by",
