@@ -45,6 +45,9 @@ export const VIDEO_EXPORT_STARTED = 'video_export_started';
 /** Video export completed */
 export const VIDEO_EXPORT_COMPLETED = 'video_export_completed';
 
+/** Video shared from export preview */
+export const VIDEO_SHARED = 'video_shared';
+
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 /** Sign-in button clicked */
@@ -189,6 +192,15 @@ export function trackVideoExportStarted(orientation, algorithmKey) {
  */
 export function trackVideoExportCompleted(durationMs) {
   captureEvent(VIDEO_EXPORT_COMPLETED, { duration_ms: durationMs });
+}
+
+/**
+ * Capture a video shared event.
+ * @param {'native'|'twitter'|'clipboard'} platform
+ * @param {string} algorithmKey
+ */
+export function trackVideoShared(platform, algorithmKey) {
+  captureEvent(VIDEO_SHARED, { platform, algorithm_key: algorithmKey });
 }
 
 /**

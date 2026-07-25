@@ -210,4 +210,39 @@ describe('useVideoExporter hook', () => {
 
     expect(result.current.exportState).toBe('idle');
   });
+
+  it('getExportBlob returns the rendered video blob after export', async () => {
+    const { result } = renderHook(() => useVideoExporter());
+    const steps = [{ array: [1, 2], states: ['default', 'default'] }];
+
+    expect(result.current.getExportBlob()).toBeNull();
+
+    await act(async () => {
+      await result.current.exportVideo({ steps, algorithmName: 'Bubble Sort' });
+    });
+
+    const blob = result.current.getExportBlob();
+    expect(blob).toBeInstanceOf(Blob);
+    expect(blob.size).toBeGreaterThan(0);
+  });
+
+  it('stores algorithm metadata after successful export', async () => {
+    const { result } = renderHook(() => useVideoExporter());
+    const steps = [{ array: [1, 2], states: ['default', 'default'] }];
+
+    await act(async () => {
+      await result.current.exportVideo({
+        steps,
+        algorithmName: 'Insertion Sort',
+        algorithmKey: 'insertionSort',
+        algorithmType: 'sorting',
+      });
+    });
+
+    expect(result.current.exportAlgorithmMeta).toEqual({
+      algorithmName: 'Insertion Sort',
+      algorithmKey: 'insertionSort',
+      algorithmType: 'sorting',
+    });
+  });
 });

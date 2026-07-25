@@ -74,10 +74,7 @@ function AutoHidingLegend({ legendItems, isComplete }) {
             </div>
             <div className="space-y-1.5">
               {legendItems.map(item => (
-                <div
-                  key={item.state}
-                  className="flex items-center gap-2"
-                >
+                <div key={item.state} className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded shadow-sm flex-shrink-0"
                     style={{ backgroundColor: item.color }}

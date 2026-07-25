@@ -355,8 +355,12 @@
     "exportOrientationVertical": "عمودي",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
     "exportPreview": "الفيديو جاهز",
-    "exportPreviewDesc": "معاينة الفيديو وتنزيله عند الحاجة.",
+    "exportPreviewDesc": "معاينة الفيديو أو تنزيله أو مشاركته.",
     "downloadVideo": "تنزيل",
+    "shareVideo": "مشاركة",
+    "shareOnX": "مشاركة على X",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم النسخ!",
     "closePreview": "إغلاق",
     "goFullScreen": "ملء الشاشة (F)",
     "exitFullScreen": "الخروج من ملء الشاشة (Esc)",
@@ -381,6 +385,15 @@
   },
   "videoExport": {
     "noSteps": "لا توجد خطوات لعرضها"
+  },
+  "shareExport": {
+    "title": "شارك التصور البصري الخاص بك",
+    "description": "فيديوك جاهز! شاركه على وسائل التواصل الاجتماعي مع تعليق ذكي.",
+    "captionLabel": "التعليق",
+    "shareNative": "مشاركة",
+    "shareOnX": "مشاركة على X",
+    "copyCaption": "نسخ التعليق",
+    "copied": "تم النسخ!"
   },
   "complexity_panel": {
     "title": "تحليل التعقيد",

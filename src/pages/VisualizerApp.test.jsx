@@ -34,6 +34,9 @@ const {
     cancelExport: vi.fn(),
     closePreview: vi.fn(),
     downloadVideo: vi.fn(),
+    getExportBlob: vi.fn(() => null),
+    exportAlgorithmMeta: null,
+    exportFileName: 'visualization.mp4',
   };
   const fullScreenMockInner = {
     isFullScreen: false,
@@ -205,6 +208,17 @@ vi.mock('../components/ExportProgressModal', () => ({
           onClick={() => onOrientationSelect?.('horizontal')}
         >
           pick-orientation
+        </button>
+      </div>
+    ) : null,
+}));
+
+vi.mock('../components/ShareExportModal', () => ({
+  default: ({ open, onClose }) =>
+    open ? (
+      <div data-testid="share-modal">
+        <button type="button" onClick={onClose}>
+          close-share
         </button>
       </div>
     ) : null,
@@ -432,6 +446,9 @@ vi.mock('../video/useVideoExporter', async () => {
         cancelExport: videoExporterMock.cancelExport,
         closePreview: videoExporterMock.closePreview,
         downloadVideo: videoExporterMock.downloadVideo,
+        getExportBlob: videoExporterMock.getExportBlob,
+        exportAlgorithmMeta: videoExporterMock.exportAlgorithmMeta,
+        exportFileName: videoExporterMock.exportFileName,
         canRenderOnWeb: true,
       };
     },
@@ -449,6 +466,8 @@ describe('VisualizerApp', () => {
     videoExporterMock.exportProgress = 0;
     videoExporterMock.exportBlobUrl = null;
     videoExporterMock.exportErrorMessage = null;
+    videoExporterMock.exportAlgorithmMeta = null;
+    videoExporterMock.getExportBlob.mockReturnValue(null);
     authMock.isAuthenticated = true;
     authMock.user = { id: 'test-user', email: 'test@example.com' };
     useFavoritesMock.useFavorites.mockImplementation(() => ({

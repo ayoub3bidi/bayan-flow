@@ -355,8 +355,12 @@
     "exportOrientationVertical": "Vertical",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
     "exportPreview": "Vidéo prête",
-    "exportPreviewDesc": "Prévisualisez votre vidéo et téléchargez-la quand vous le souhaitez.",
+    "exportPreviewDesc": "Prévisualisez, téléchargez ou partagez votre vidéo.",
     "downloadVideo": "Télécharger",
+    "shareVideo": "Partager",
+    "shareOnX": "Partager sur X",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Copié !",
     "closePreview": "Fermer",
     "goFullScreen": "Plein Écran (F)",
     "exitFullScreen": "Quitter le Plein Écran (Esc)",
@@ -381,6 +385,15 @@
   },
   "videoExport": {
     "noSteps": "Aucune étape à afficher"
+  },
+  "shareExport": {
+    "title": "Partagez votre visualisation",
+    "description": "Votre vidéo est prête ! Partagez-la sur les réseaux sociaux avec une légende intelligente.",
+    "captionLabel": "Légende",
+    "shareNative": "Partager",
+    "shareOnX": "Partager sur X",
+    "copyCaption": "Copier la légende",
+    "copied": "Copié !"
   },
   "complexity_panel": {
     "title": "Analyse de Complexité",

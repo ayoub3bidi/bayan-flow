@@ -14,6 +14,7 @@ import SettingsPanel from '../components/SettingsPanel';
 import FloatingActionButton from '../components/FloatingActionButton';
 import InsightFloatingActionButton from '../components/InsightFloatingActionButton';
 import ExportProgressModal from '../components/ExportProgressModal';
+import ShareExportModal from '../components/ShareExportModal';
 import SignInPromptModal from '../components/SignInPromptModal';
 import ProWaitlistBanner from '../components/ProWaitlistBanner';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -244,6 +245,7 @@ function App() {
 
   const [gatedFeature, setGatedFeature] = useState(null);
   const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
+  const [showShareModal, setShowShareModal] = useState(false);
   const pendingFeatureRef = useRef(null);
   const hasTouchedActivityRef = useRef(false);
 
@@ -265,10 +267,12 @@ function App() {
     exportState,
     exportProgress,
     exportBlobUrl,
+    exportFileName,
     exportErrorMessage,
     cancelExport,
     closePreview,
     downloadVideo,
+    getExportBlob,
     canRenderOnWeb,
   } = useVideoExporter();
 
@@ -603,6 +607,15 @@ function App() {
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
     });
+  };
+
+  const handleDownloadComplete = () => {
+    downloadVideo();
+    setShowShareModal(true);
+  };
+
+  const handleShareModalClose = () => {
+    setShowShareModal(false);
   };
 
   const handleAlgorithmTypeChange = newType => {
@@ -951,8 +964,16 @@ function App() {
         blobUrl={exportBlobUrl}
         onStop={cancelExport}
         onClose={closePreview}
-        onDownload={downloadVideo}
+        onDownload={handleDownloadComplete}
         onOrientationSelect={handleOrientationSelected}
+      />
+
+      <ShareExportModal
+        open={showShareModal}
+        algorithmName={activeAlgorithmName}
+        videoBlob={getExportBlob()}
+        videoFileName={exportFileName}
+        onClose={handleShareModalClose}
       />
 
       <ErrorBoundary>
