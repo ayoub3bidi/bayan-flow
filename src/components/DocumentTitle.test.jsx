@@ -294,7 +294,7 @@ describe('DocumentTitle', () => {
     expect(altFr).toBeTruthy();
     expect(altFr.getAttribute('content')).toBe('fr_FR');
     expect(altAr).toBeTruthy();
-    expect(altAr.getAttribute('content')).toBe('ar_AR');
+    expect(altAr.getAttribute('content')).toBe('ar_SA');
   });
 
   it('should update og:locale when language changes to Arabic', async () => {
@@ -308,7 +308,12 @@ describe('DocumentTitle', () => {
     });
 
     const ogLocale = document.querySelector('meta[property="og:locale"]');
-    expect(ogLocale.getAttribute('content')).toBe('ar_AR');
+    expect(ogLocale.getAttribute('content')).toBe('ar_SA');
+
+    const arAlternate = document.querySelector(
+      'meta[property="og:locale:alternate"][data-lang="ar"]'
+    );
+    expect(arAlternate).toBeNull();
   });
 
   it('should update hreflang links when route changes', () => {

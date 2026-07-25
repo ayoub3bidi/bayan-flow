@@ -23,7 +23,7 @@ const HREFLANG_LOCALES = ['en', 'fr', 'ar'];
 const OG_LOCALE_MAP = {
   en: 'en_US',
   fr: 'fr_FR',
-  ar: 'ar_AR',
+  ar: 'ar_SA',
 };
 
 function getRouteDescriptions(pathname, t) {
@@ -114,6 +114,13 @@ function updateOGLocale(lang) {
     document.head.appendChild(meta);
   }
   meta.setAttribute('content', ogLocale);
+
+  const currentAlternate = document.querySelector(
+    `meta[property="og:locale:alternate"][data-lang="${lang}"]`
+  );
+  if (currentAlternate) {
+    currentAlternate.remove();
+  }
 
   for (const locale of HREFLANG_LOCALES) {
     if (locale === lang) continue;
