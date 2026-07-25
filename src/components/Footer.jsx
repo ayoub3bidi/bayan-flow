@@ -312,24 +312,18 @@ function Footer() {
               >
                 {t('footer.proPlan')}
               </Link>
-              <motion.button
-                type="button"
-                onClick={() => handleLinkClick('/privacy')}
+              <Link
+                to="/privacy"
                 className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
               >
                 {t('footer.privacy')}
-              </motion.button>
-              <motion.button
-                type="button"
-                onClick={() => handleLinkClick('/terms')}
+              </Link>
+              <Link
+                to="/terms"
                 className="text-xs text-text-secondary hover:text-[#3b82f6] transition-colors"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
               >
                 {t('footer.terms')}
-              </motion.button>
+              </Link>
               <motion.button
                 type="button"
                 onClick={resetConsent}
