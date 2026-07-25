@@ -104,9 +104,7 @@ describe('DocumentTitle', () => {
     const subtitle = i18n.t('landing.hero.title');
     const expectedTitle = `${baseTitle} - ${subtitle}`;
 
-    const twitterTitle = document.querySelector(
-      'meta[name="twitter:title"]'
-    );
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     expect(twitterTitle).toBeTruthy();
     expect(twitterTitle.getAttribute('content')).toBe(expectedTitle);
   });
@@ -229,9 +227,10 @@ describe('DocumentTitle', () => {
       'content',
       'https://bayanflow.com/roadmap'
     );
-    expect(
-      document.querySelector('meta[name="twitter:url"]')
-    ).toHaveAttribute('content', 'https://bayanflow.com/roadmap');
+    expect(document.querySelector('meta[name="twitter:url"]')).toHaveAttribute(
+      'content',
+      'https://bayanflow.com/roadmap'
+    );
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       'content',
       i18n.t('roadmap.hero.subtitle')
@@ -322,9 +321,7 @@ describe('DocumentTitle', () => {
     );
 
     const en = document.querySelector('link[rel="alternate"][hreflang="en"]');
-    expect(en.getAttribute('href')).toBe(
-      'https://bayanflow.com/roadmap'
-    );
+    expect(en.getAttribute('href')).toBe('https://bayanflow.com/roadmap');
 
     const fr = document.querySelector('link[rel="alternate"][hreflang="fr"]');
     expect(fr.getAttribute('href')).toBe(

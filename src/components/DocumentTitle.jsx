@@ -79,7 +79,7 @@ function ensureCanonicalLink() {
   return canonical;
 }
 
-function ensureAlternateLinks(pathname, currentLang) {
+function ensureAlternateLinks(pathname) {
   for (const locale of HREFLANG_LOCALES) {
     const selector = `link[rel="alternate"][hreflang="${locale}"]`;
     let link = document.querySelector(selector);
@@ -93,7 +93,9 @@ function ensureAlternateLinks(pathname, currentLang) {
     link.setAttribute('href', `https://bayanflow.com${pathname}${langParam}`);
   }
 
-  let xDefault = document.querySelector('link[rel="alternate"][hreflang="x-default"]');
+  let xDefault = document.querySelector(
+    'link[rel="alternate"][hreflang="x-default"]'
+  );
   if (!xDefault) {
     xDefault = document.createElement('link');
     xDefault.setAttribute('rel', 'alternate');
@@ -153,9 +155,7 @@ export default function DocumentTitle() {
       ogTitle.setAttribute('content', fullTitle);
     }
 
-    const twitterTitle = document.querySelector(
-      'meta[name="twitter:title"]'
-    );
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) {
       twitterTitle.setAttribute('content', fullTitle);
     }
@@ -195,7 +195,7 @@ export default function DocumentTitle() {
       metaDescription.setAttribute('content', metaDescriptionText);
     }
 
-    ensureAlternateLinks(pathname, i18n.language);
+    ensureAlternateLinks(pathname);
     updateOGLocale(i18n.language);
   }, [i18n.language, t, pathname]);
 

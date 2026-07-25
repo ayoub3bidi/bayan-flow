@@ -48,18 +48,22 @@ describe('Footer', () => {
     expect(screen.getByText(i18n.t('footer.terms'))).toBeInTheDocument();
   });
 
-  it('navigates to privacy policy on click', () => {
+  it('links to privacy policy with correct href', () => {
     renderFooter();
 
-    fireEvent.click(screen.getByText(i18n.t('footer.privacy')));
-    expect(mockNavigate).toHaveBeenCalledWith('/privacy');
+    const link = screen.getByRole('link', {
+      name: i18n.t('footer.privacy'),
+    });
+    expect(link).toHaveAttribute('href', '/privacy');
   });
 
-  it('navigates to terms of use on click', () => {
+  it('links to terms of use with correct href', () => {
     renderFooter();
 
-    fireEvent.click(screen.getByText(i18n.t('footer.terms')));
-    expect(mockNavigate).toHaveBeenCalledWith('/terms');
+    const link = screen.getByRole('link', {
+      name: i18n.t('footer.terms'),
+    });
+    expect(link).toHaveAttribute('href', '/terms');
   });
 
   it('renders pro plan link', () => {
