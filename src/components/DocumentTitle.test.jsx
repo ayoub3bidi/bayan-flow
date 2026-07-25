@@ -21,18 +21,24 @@ const renderDocumentTitle = (options = {}) =>
   render(<DocumentTitle />, { wrapper, ...options });
 
 function ensureMetaTag(property, content = '') {
-  const selector =
-    property === 'description'
-      ? 'meta[name="description"]'
-      : `meta[property="${property}"]`;
+  if (property === 'description') {
+    let el = document.querySelector('meta[name="description"]');
+    if (!el) {
+      el = document.createElement('meta');
+      el.setAttribute('name', 'description');
+      document.head.appendChild(el);
+    }
+    el.setAttribute('content', content);
+    return el;
+  }
+
+  const isTwitter = property.startsWith('twitter:');
+  const attr = isTwitter ? 'name' : 'property';
+  const selector = `meta[${attr}="${property}"]`;
   let el = document.querySelector(selector);
   if (!el) {
     el = document.createElement('meta');
-    if (property === 'description') {
-      el.setAttribute('name', 'description');
-    } else {
-      el.setAttribute('property', property);
-    }
+    el.setAttribute(attr, property);
     document.head.appendChild(el);
   }
   el.setAttribute('content', content);
@@ -99,7 +105,7 @@ describe('DocumentTitle', () => {
     const expectedTitle = `${baseTitle} - ${subtitle}`;
 
     const twitterTitle = document.querySelector(
-      'meta[property="twitter:title"]'
+      'meta[name="twitter:title"]'
     );
     expect(twitterTitle).toBeTruthy();
     expect(twitterTitle.getAttribute('content')).toBe(expectedTitle);
@@ -123,7 +129,7 @@ describe('DocumentTitle', () => {
     const expectedDescription = i18n.t('landing.hero.subtitle');
 
     const twitterDescription = document.querySelector(
-      'meta[property="twitter:description"]'
+      'meta[name="twitter:description"]'
     );
     expect(twitterDescription).toBeTruthy();
     expect(twitterDescription.getAttribute('content')).toBe(
@@ -153,7 +159,6 @@ describe('DocumentTitle', () => {
       rerender(<DocumentTitle />);
     });
 
-    // Title still contains app name (Bayan Flow) in French
     expect(document.title).toBeTruthy();
     expect(document.title.length).toBeGreaterThan(0);
   });
@@ -225,7 +230,7 @@ describe('DocumentTitle', () => {
       'https://bayanflow.com/roadmap'
     );
     expect(
-      document.querySelector('meta[property="twitter:url"]')
+      document.querySelector('meta[name="twitter:url"]')
     ).toHaveAttribute('content', 'https://bayanflow.com/roadmap');
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       'content',
@@ -248,6 +253,82 @@ describe('DocumentTitle', () => {
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       'content',
       i18n.t('pro.metaDescription')
+    );
+  });
+
+  it('should create hreflang alternate links for all locales', () => {
+    renderDocumentTitle();
+
+    const en = document.querySelector('link[rel="alternate"][hreflang="en"]');
+    const fr = document.querySelector('link[rel="alternate"][hreflang="fr"]');
+    const ar = document.querySelector('link[rel="alternate"][hreflang="ar"]');
+    const xDefault = document.querySelector(
+      'link[rel="alternate"][hreflang="x-default"]'
+    );
+
+    expect(en).toBeTruthy();
+    expect(en.getAttribute('href')).toBe('https://bayanflow.com/');
+
+    expect(fr).toBeTruthy();
+    expect(fr.getAttribute('href')).toBe('https://bayanflow.com/?lang=fr');
+
+    expect(ar).toBeTruthy();
+    expect(ar.getAttribute('href')).toBe('https://bayanflow.com/?lang=ar');
+
+    expect(xDefault).toBeTruthy();
+    expect(xDefault.getAttribute('href')).toBe('https://bayanflow.com/');
+  });
+
+  it('should set og:locale and og:locale:alternate for current language', () => {
+    renderDocumentTitle();
+
+    const ogLocale = document.querySelector('meta[property="og:locale"]');
+    expect(ogLocale).toBeTruthy();
+    expect(ogLocale.getAttribute('content')).toBe('en_US');
+
+    const altFr = document.querySelector(
+      'meta[property="og:locale:alternate"][data-lang="fr"]'
+    );
+    const altAr = document.querySelector(
+      'meta[property="og:locale:alternate"][data-lang="ar"]'
+    );
+    expect(altFr).toBeTruthy();
+    expect(altFr.getAttribute('content')).toBe('fr_FR');
+    expect(altAr).toBeTruthy();
+    expect(altAr.getAttribute('content')).toBe('ar_AR');
+  });
+
+  it('should update og:locale when language changes to Arabic', async () => {
+    const { rerender } = renderDocumentTitle();
+
+    await act(async () => {
+      await i18n.changeLanguage('ar');
+    });
+    act(() => {
+      rerender(<DocumentTitle />);
+    });
+
+    const ogLocale = document.querySelector('meta[property="og:locale"]');
+    expect(ogLocale.getAttribute('content')).toBe('ar_AR');
+  });
+
+  it('should update hreflang links when route changes', () => {
+    render(
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/roadmap']}>
+          <DocumentTitle />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+
+    const en = document.querySelector('link[rel="alternate"][hreflang="en"]');
+    expect(en.getAttribute('href')).toBe(
+      'https://bayanflow.com/roadmap'
+    );
+
+    const fr = document.querySelector('link[rel="alternate"][hreflang="fr"]');
+    expect(fr.getAttribute('href')).toBe(
+      'https://bayanflow.com/roadmap?lang=fr'
     );
   });
 });
