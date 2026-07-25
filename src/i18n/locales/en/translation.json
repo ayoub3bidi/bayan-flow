@@ -394,7 +394,9 @@
     "shareNative": "Share",
     "shareOnX": "Share on X",
     "copyCaption": "Copy caption",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "captionTemplate": "{{algorithm}}. Step-by-step visualization from Bayan Flow.",
+    "titleTemplate": "{{algorithm}} Visualization — Bayan Flow"
   },
   "complexity_panel": {
     "title": "Complexity Analysis",

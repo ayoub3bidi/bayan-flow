@@ -33,14 +33,35 @@ describe('ErrorBoundary', () => {
     spy.mockRestore();
   });
 
-  it('renders nothing when a child throws and no fallback provided', () => {
+  it('renders built-in fallback when a child throws and no fallback provided', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const { container } = render(
+    render(
       <ErrorBoundary>
         <Boom />
       </ErrorBoundary>
     );
-    expect(container.innerHTML).toBe('');
+    expect(screen.getByText('Something went wrong.')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Try again' })
+    ).toBeInTheDocument();
+    spy.mockRestore();
+  });
+
+  it('recovers when resetKey changes', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { rerender } = render(
+      <ErrorBoundary resetKey={1}>
+        <Boom />
+      </ErrorBoundary>
+    );
+    expect(screen.getByText('Something went wrong.')).toBeInTheDocument();
+
+    rerender(
+      <ErrorBoundary resetKey={2}>
+        <span>recovered content</span>
+      </ErrorBoundary>
+    );
+    expect(screen.getByText('recovered content')).toBeInTheDocument();
     spy.mockRestore();
   });
 });

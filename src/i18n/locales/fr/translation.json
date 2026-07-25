@@ -369,9 +369,9 @@
     "sortOrder": "Basculer l'ordre initial du tableau pour le tri",
     "graphScenario": "Scénario de graphe",
     "randomGraph": "Graphe aléatoire",
-    "openSettings": "Réglages",
-    "closeSettings": "Fermer les réglages",
-    "settingsSheetTitle": "Réglages de l’algorithme",
+    "openSettings": "Paramètres",
+    "closeSettings": "Fermer les paramètres",
+    "settingsSheetTitle": "Paramètres de l'algorithme",
     "moreActions": "Plus d’actions"
   },
   "info": {
@@ -393,7 +393,9 @@
     "shareNative": "Partager",
     "shareOnX": "Partager sur X",
     "copyCaption": "Copier la légende",
-    "copied": "Copié !"
+    "copied": "Copié !",
+    "captionTemplate": "{{algorithm}}. Visualisation étape par étape depuis Bayan Flow.",
+    "titleTemplate": "Visualisation {{algorithm}} — Bayan Flow"
   },
   "complexity_panel": {
     "title": "Analyse de Complexité",

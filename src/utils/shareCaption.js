@@ -11,14 +11,18 @@ import { PRODUCTION_ORIGIN } from '../constants/siteSeo.js';
  * @param {string | null} algorithmName - Display name of the algorithm
  * @returns {{ caption: string, title: string, fullShareText: string }}
  */
-export function generateShareCaption(algorithmName) {
+export function generateShareCaption(algorithmName, t) {
   const name = algorithmName || 'Algorithm';
   const displayName = name.toLowerCase().endsWith('algorithm')
     ? name
     : `${name} Algorithm`;
 
-  const caption = `${displayName}. Step-by-step visualization from Bayan Flow.`;
-  const title = `${name} Visualization — Bayan Flow`;
+  const caption = t
+    ? t('shareExport.captionTemplate', { algorithm: displayName })
+    : `${displayName}. Step-by-step visualization from Bayan Flow.`;
+  const title = t
+    ? t('shareExport.titleTemplate', { algorithm: name })
+    : `${name} Visualization — Bayan Flow`;
   const fullShareText = `${caption}\n\n${PRODUCTION_ORIGIN}/app`;
 
   return { caption, title, fullShareText };

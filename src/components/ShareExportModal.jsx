@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Share, CopySimple, Check, X } from '@phosphor-icons/react';
 import { SiX } from 'react-icons/si';
@@ -39,9 +39,16 @@ function ShareExportModal({
 }) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
-  const shareData = generateShareCaption(algorithmName);
+  const shareData = generateShareCaption(algorithmName, t);
   const [caption, setCaption] = useState(shareData.fullShareText);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setCaption(generateShareCaption(algorithmName, t).fullShareText);
+      setCopied(false);
+    }
+  }, [open, algorithmName, t]);
 
   const handleNativeShare = async () => {
     if (!videoBlob) return;

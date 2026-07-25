@@ -17,11 +17,25 @@ const mockTranslations = {
   'shareExport.copyCaption': 'Copy caption',
   'shareExport.copied': 'Copied!',
   'shareExport.close': 'Close',
+  'shareExport.captionTemplate':
+    '{{algorithm}}. Step-by-step visualization from Bayan Flow.',
+  'shareExport.titleTemplate': '{{algorithm}} Visualization — Bayan Flow',
+};
+
+const stableT = (key, opts) => {
+  const val = mockTranslations[key] || key;
+  if (opts && typeof val === 'string') {
+    return Object.entries(opts).reduce(
+      (s, [k, v]) => s.replace(new RegExp(`\\{\\{${k}\\}\\}`, 'g'), v),
+      val
+    );
+  }
+  return val;
 };
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: key => mockTranslations[key] || key,
+    t: stableT,
     i18n: { language: 'en' },
   }),
 }));

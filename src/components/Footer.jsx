@@ -181,7 +181,7 @@ function Footer() {
             </p>
             <div className="flex items-center gap-2">
               <a
-                href="https://github.com/ayoub3bidi/bayan-flow/blob/develop/LICENSE"
+                href={`${GITHUB_REPO_URL}/blob/main/LICENSE`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200 hover:bg-orange-200 transition-colors"
