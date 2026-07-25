@@ -32,6 +32,11 @@
     "contact": "Email contact@bayanflow.com for assistance.",
     "signInUnavailable": "Sign-in is temporarily unavailable. Please try again later."
   },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you're looking for doesn't exist or has been moved.",
+    "backToHome": "Back to Home"
+  },
   "profile": {
     "pageTitle": "Profile settings",
     "title": "Profile settings",

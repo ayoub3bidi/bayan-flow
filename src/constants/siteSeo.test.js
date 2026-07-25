@@ -10,6 +10,7 @@ import {
   getCanonicalUrl,
   isIndexableHostname,
   isNoIndexHostname,
+  buildMetaDescription,
 } from './siteSeo';
 
 describe('siteSeo', () => {
@@ -33,5 +34,16 @@ describe('siteSeo', () => {
     expect(isNoIndexHostname('bayan-flow.workers.dev')).toBe(true);
     expect(isNoIndexHostname('localhost')).toBe(true);
     expect(isNoIndexHostname('bayanflow.com')).toBe(false);
+  });
+
+  it('builds meta description from algorithm registry', () => {
+    const desc = buildMetaDescription();
+    expect(desc).toMatch(/^Learn \d+ algorithms/);
+    expect(desc).toContain('sorting');
+    expect(desc).toContain('pathfinding');
+    expect(desc).toContain('searching');
+    expect(desc).toContain('tree traversal');
+    expect(desc).toContain('graph');
+    expect(desc).toContain('Free educational app');
   });
 });

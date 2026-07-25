@@ -4,6 +4,8 @@
  * See LICENSE for details.
  */
 
+import { CATEGORY_CONFIG } from '../registry/categoryConfig';
+
 /** Canonical production origin for SEO and social meta tags. */
 export const PRODUCTION_ORIGIN = 'https://bayanflow.com';
 
@@ -18,10 +20,36 @@ export const DEFAULT_SITE_TITLE =
   'Bayan Flow - Interactive Algorithm Visualizer';
 
 export const DEFAULT_SITE_DESCRIPTION =
-  'Bayan Flow: Learn 45 algorithms with clarity through interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph algorithms. Free educational web app with Python examples and complexity analysis. Bayan (بيان) means clarity in Arabic.';
+  'Learn 45 algorithms with interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph. Free educational app.';
 
 export const DEFAULT_OG_DESCRIPTION =
   'Interactive step-by-step visualizations for sorting, pathfinding, searching, tree traversal, and graph algorithms — with Python examples and complexity analysis.';
+
+const CATEGORY_DISPLAY_NAMES = {
+  sorting: 'sorting',
+  pathfinding: 'pathfinding',
+  searching: 'searching',
+  treeTraversal: 'tree traversal',
+  graphAlgorithm: 'graph',
+};
+
+/**
+ * Computes the meta description dynamically from the algorithm registry.
+ * The count and category list stay in sync automatically when algorithms
+ * are added or removed — no manual edits needed.
+ *
+ * @returns {string}
+ */
+export function buildMetaDescription() {
+  const total = Object.values(CATEGORY_CONFIG).reduce(
+    (sum, cat) => sum + cat.algorithmKeys.length,
+    0
+  );
+  const categories = Object.keys(CATEGORY_CONFIG)
+    .map(key => CATEGORY_DISPLAY_NAMES[key] || key)
+    .join(', ');
+  return `Learn ${total} algorithms with interactive step-by-step visualizations — ${categories}. Free educational app.`;
+}
 
 /**
  * @param {string} pathname - React Router pathname (e.g. `/`, `/app`)

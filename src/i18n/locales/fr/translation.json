@@ -32,6 +32,11 @@
     "contact": "Écrivez à contact@bayanflow.com pour obtenir de l'aide.",
     "signInUnavailable": "La connexion est temporairement indisponible. Veuillez réessayer plus tard."
   },
+  "notFound": {
+    "title": "Page non trouvée",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backToHome": "Retour à l'accueil"
+  },
   "profile": {
     "pageTitle": "Paramètres du profil",
     "title": "Paramètres du profil",

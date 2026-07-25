@@ -7,7 +7,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getCanonicalUrl } from '../constants/siteSeo';
+import { getCanonicalUrl, buildMetaDescription } from '../constants/siteSeo';
 
 const ROUTE_TITLE_KEYS = {
   '/privacy': 'legal.privacyTitle',
@@ -16,6 +16,14 @@ const ROUTE_TITLE_KEYS = {
   '/pro': 'pro.pageTitle',
   '/app': 'app.pageTitle',
   '/settings/profile': 'profile.pageTitle',
+};
+
+const HREFLANG_LOCALES = ['en', 'fr', 'ar'];
+
+const OG_LOCALE_MAP = {
+  en: 'en_US',
+  fr: 'fr_FR',
+  ar: 'ar_SA',
 };
 
 function getRouteDescriptions(pathname, t) {
@@ -49,13 +57,13 @@ function getRouteDescriptions(pathname, t) {
 
   if (pathname === '/') {
     return {
-      meta: t('footer.description'),
+      meta: buildMetaDescription(),
       social: t('landing.hero.subtitle'),
     };
   }
 
   return {
-    meta: t('footer.description'),
+    meta: buildMetaDescription(),
     social: t('footer.description'),
   };
 }
@@ -69,6 +77,64 @@ function ensureCanonicalLink() {
   }
 
   return canonical;
+}
+
+function ensureAlternateLinks(pathname) {
+  for (const locale of HREFLANG_LOCALES) {
+    const selector = `link[rel="alternate"][hreflang="${locale}"]`;
+    let link = document.querySelector(selector);
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'alternate');
+      link.setAttribute('hreflang', locale);
+      document.head.appendChild(link);
+    }
+    const langParam = locale === 'en' ? '' : `?lang=${locale}`;
+    link.setAttribute('href', `https://bayanflow.com${pathname}${langParam}`);
+  }
+
+  let xDefault = document.querySelector(
+    'link[rel="alternate"][hreflang="x-default"]'
+  );
+  if (!xDefault) {
+    xDefault = document.createElement('link');
+    xDefault.setAttribute('rel', 'alternate');
+    xDefault.setAttribute('hreflang', 'x-default');
+    document.head.appendChild(xDefault);
+  }
+  xDefault.setAttribute('href', `https://bayanflow.com${pathname}`);
+}
+
+function updateOGLocale(lang) {
+  const ogLocale = OG_LOCALE_MAP[lang] || 'en_US';
+  let meta = document.querySelector('meta[property="og:locale"]');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.setAttribute('property', 'og:locale');
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute('content', ogLocale);
+
+  const currentAlternate = document.querySelector(
+    `meta[property="og:locale:alternate"][data-lang="${lang}"]`
+  );
+  if (currentAlternate) {
+    currentAlternate.remove();
+  }
+
+  for (const locale of HREFLANG_LOCALES) {
+    if (locale === lang) continue;
+    const altKey = `og:locale:alternate`;
+    const selector = `meta[property="${altKey}"][data-lang="${locale}"]`;
+    let altMeta = document.querySelector(selector);
+    if (!altMeta) {
+      altMeta = document.createElement('meta');
+      altMeta.setAttribute('property', altKey);
+      altMeta.setAttribute('data-lang', locale);
+      document.head.appendChild(altMeta);
+    }
+    altMeta.setAttribute('content', OG_LOCALE_MAP[locale] || locale);
+  }
 }
 
 export default function DocumentTitle() {
@@ -96,9 +162,7 @@ export default function DocumentTitle() {
       ogTitle.setAttribute('content', fullTitle);
     }
 
-    const twitterTitle = document.querySelector(
-      'meta[property="twitter:title"]'
-    );
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) {
       twitterTitle.setAttribute('content', fullTitle);
     }
@@ -110,7 +174,7 @@ export default function DocumentTitle() {
       ogUrl.setAttribute('content', canonicalUrl);
     }
 
-    const twitterUrl = document.querySelector('meta[property="twitter:url"]');
+    const twitterUrl = document.querySelector('meta[name="twitter:url"]');
     if (twitterUrl) {
       twitterUrl.setAttribute('content', canonicalUrl);
     }
@@ -122,7 +186,7 @@ export default function DocumentTitle() {
       'meta[property="og:description"]'
     );
     const twitterDescription = document.querySelector(
-      'meta[property="twitter:description"]'
+      'meta[name="twitter:description"]'
     );
     const metaDescription = document.querySelector('meta[name="description"]');
 
@@ -137,6 +201,9 @@ export default function DocumentTitle() {
     if (metaDescription) {
       metaDescription.setAttribute('content', metaDescriptionText);
     }
+
+    ensureAlternateLinks(pathname);
+    updateOGLocale(i18n.language);
   }, [i18n.language, t, pathname]);
 
   return null;

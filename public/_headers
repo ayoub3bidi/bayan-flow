@@ -19,6 +19,7 @@
 
 /index.html
   Cache-Control: no-cache
+  Content-Type: text/html; charset=utf-8
 
 /og-image.png
   Cache-Control: public, max-age=86400

@@ -5,15 +5,12 @@
  */
 
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import RoadmapHero from '../components/roadmap/RoadmapHero';
 import Timeline from '../components/roadmap/Timeline';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
 function Roadmap() {
-  const { t } = useTranslation();
-
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -23,10 +20,10 @@ function Roadmap() {
       <Header />
 
       {/* Roadmap Content */}
-      <div className="flex-1">
+      <main className="flex-1">
         <RoadmapHero />
         <Timeline />
-      </div>
+      </main>
 
       {/* Footer */}
       <Footer />
