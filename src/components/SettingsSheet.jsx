@@ -15,6 +15,7 @@ import {
   sheetPanelVariants,
 } from '../motion/chromeMotion';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
+import { getFocusableElements } from '../utils/focusableElements';
 import SettingsPanel from './SettingsPanel';
 
 /**
@@ -26,7 +27,6 @@ function SettingsSheet({ isOpen, onClose, settingsPanelProps }) {
   const panelRef = useRef(null);
 
   useBodyScrollLock(isOpen);
-
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -34,9 +34,7 @@ function SettingsSheet({ isOpen, onClose, settingsPanelProps }) {
       if (event.key === 'Escape') {
         onClose();
       } else if (event.key === 'Tab' && panelRef.current) {
-        const focusableElements = panelRef.current.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
+        const focusableElements = getFocusableElements(panelRef.current);
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
 

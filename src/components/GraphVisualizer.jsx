@@ -325,10 +325,12 @@ function GraphVisualizer({
                 role="button"
                 tabIndex={0}
                 onClick={() => onGatedFeatureClick?.('complexity_limit')}
-                onKeyDown={e =>
-                  (e.key === 'Enter' || e.key === ' ') &&
-                  onGatedFeatureClick?.('complexity_limit')
-                }
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onGatedFeatureClick?.('complexity_limit');
+                  }
+                }}
               >
                 <div className="text-center text-white p-6 max-w-xs">
                   <p className="text-lg font-semibold mb-2">

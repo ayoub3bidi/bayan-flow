@@ -15,6 +15,7 @@ import {
 } from '../algorithms/python';
 import { getPseudocodeForLocale } from '../algorithms/pseudocode';
 import { highlightPseudocodeToHtml } from '../utils/pseudocodeHighlight';
+import { getFocusableElements } from '../utils/focusableElements';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../hooks/useTheme';
 import { usePythonExecution } from '../hooks/usePythonExecution';
@@ -78,7 +79,6 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
-
   // Focus trap
   useEffect(() => {
     if (isOpen && panelRef.current) {
@@ -86,9 +86,7 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
         if (event.key === 'Escape') {
           onClose();
         } else if (event.key === 'Tab') {
-          const focusableElements = panelRef.current.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          );
+          const focusableElements = getFocusableElements(panelRef.current);
           const firstElement = focusableElements[0];
           const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -107,16 +105,11 @@ function PythonCodePanel({ isOpen, onClose, algorithm }) {
       };
 
       document.addEventListener('keydown', handleKeyDown);
-      panelRef.current
-        .querySelector(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        )
-        ?.focus();
+      getFocusableElements(panelRef.current)[0]?.focus();
 
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
   }, [isOpen, onClose]);
-
   const pythonCode = getPythonCode(algorithm);
   const displayName = getAlgorithmDisplayName(algorithm);
   const pseudocodeText = useMemo(
