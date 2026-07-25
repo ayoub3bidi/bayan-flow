@@ -7,7 +7,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getCanonicalUrl } from '../constants/siteSeo';
+import { getCanonicalUrl, buildMetaDescription } from '../constants/siteSeo';
 
 const ROUTE_TITLE_KEYS = {
   '/privacy': 'legal.privacyTitle',
@@ -57,13 +57,13 @@ function getRouteDescriptions(pathname, t) {
 
   if (pathname === '/') {
     return {
-      meta: t('footer.description'),
+      meta: buildMetaDescription(),
       social: t('landing.hero.subtitle'),
     };
   }
 
   return {
-    meta: t('footer.description'),
+    meta: buildMetaDescription(),
     social: t('footer.description'),
   };
 }

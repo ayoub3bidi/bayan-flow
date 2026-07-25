@@ -138,11 +138,11 @@ describe('DocumentTitle', () => {
   it('should update meta description', () => {
     renderDocumentTitle();
 
-    const expectedDescription = i18n.t('footer.description');
-
     const metaDescription = document.querySelector('meta[name="description"]');
     expect(metaDescription).toBeTruthy();
-    expect(metaDescription.getAttribute('content')).toBe(expectedDescription);
+    expect(metaDescription.getAttribute('content')).toMatch(
+      /^Learn \d+ algorithms/
+    );
   });
 
   it('should update titles when language changes', async () => {
