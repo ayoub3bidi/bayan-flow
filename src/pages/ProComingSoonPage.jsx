@@ -127,10 +127,11 @@ function ProComingSoonPage() {
 
   return (
     <div className="min-h-screen bg-bg flex flex-col overflow-x-hidden">
-      <DocumentTitle titleKey="pro.pageTitle" />
+      <DocumentTitle />
 
       <Header />
 
+      <main>
       <Section className="relative z-10 flex-1 pt-28 pb-20 md:pt-36 md:pb-28 lg:pb-32">
         <Container>
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)] lg:gap-12">
@@ -310,6 +311,7 @@ function ProComingSoonPage() {
           </div>
         </Container>
       </Section>
+      </main>
 
       <div className="relative z-10 mt-10 md:mt-14 lg:mt-16">
         <Footer />

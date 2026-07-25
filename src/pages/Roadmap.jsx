@@ -23,10 +23,10 @@ function Roadmap() {
       <Header />
 
       {/* Roadmap Content */}
-      <div className="flex-1">
+      <main className="flex-1">
         <RoadmapHero />
         <Timeline />
-      </div>
+      </main>
 
       {/* Footer */}
       <Footer />
