@@ -16,6 +16,7 @@ import TermsOfUse from './pages/TermsOfUse.jsx';
 import GoogleAuthCallback from './pages/GoogleAuthCallback.jsx';
 import ProfileSettingsPage from './pages/ProfileSettingsPage.jsx';
 import ProComingSoonPage from './pages/ProComingSoonPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 import RequireAuth from './components/RequireAuth.jsx';
 
 function AppRoutes() {
@@ -42,6 +43,7 @@ function AppRoutes() {
           </RequireAuth>
         }
       />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
