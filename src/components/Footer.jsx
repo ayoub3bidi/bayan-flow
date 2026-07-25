@@ -168,10 +168,26 @@ function Footer() {
               <br />
               {t('footer.descriptionNote')}
             </p>
+            <p className="text-xs text-text-secondary leading-relaxed">
+              {t('footer.madeWith')} ☕️ {t('footer.by')}{' '}
+              <a
+                href="https://ayoub3bidi.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#3b82f6] hover:underline"
+              >
+                Ayoub Abidi
+              </a>
+            </p>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+              <a
+                href="https://github.com/ayoub3bidi/bayan-flow/blob/develop/LICENSE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200 hover:bg-orange-200 transition-colors"
+              >
                 Elastic-2.0 License
-              </span>
+              </a>
               {version ? (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                   {version}

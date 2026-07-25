@@ -5,11 +5,19 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { CaretDown, Star } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_CONFIG } from '@/registry/categoryConfig';
 import { useAlgorithmConfig } from '@/config/algorithmConfig';
+import {
+  menuInitial,
+  menuAnimate,
+  menuExit,
+  menuTransition,
+  getChromeTransition,
+  CHROME_DURATION_FAST,
+} from '@/motion/chromeMotion';
 
 /**
  * @typedef {Object} FavoriteItem
@@ -28,6 +36,7 @@ import { useAlgorithmConfig } from '@/config/algorithmConfig';
 function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
   const { t } = useTranslation();
   const { byType } = useAlgorithmConfig();
+  const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -78,7 +87,7 @@ function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
         </span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+          transition={getChromeTransition(reduceMotion, CHROME_DURATION_FAST)}
         >
           <CaretDown
             size={20}
@@ -91,10 +100,10 @@ function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={menuInitial(reduceMotion)}
+            animate={menuAnimate()}
+            exit={menuExit(reduceMotion)}
+            transition={menuTransition(reduceMotion)}
             className="absolute z-10 w-full mt-2 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto"
           >
             {count === 0 ? (
@@ -102,13 +111,10 @@ function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
                 {t('settings.favoriteAlgorithmsHint')}
               </p>
             ) : (
-              favorites.map((item, index) => (
-                <motion.button
+              favorites.map(item => (
+                <button
                   key={`${item.category}:${item.algorithm_key}`}
                   type="button"
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.03 }}
                   onClick={() => {
                     onSelect(item.category, item.algorithm_key);
                     setIsOpen(false);
@@ -121,7 +127,7 @@ function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
                   <span className="text-xs text-text-secondary">
                     {resolveCategoryLabel(item.category)}
                   </span>
-                </motion.button>
+                </button>
               ))
             )}
           </motion.div>

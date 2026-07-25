@@ -126,7 +126,11 @@ function Header({ hideLanguageSwitcher = false }) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
-            {isAppPage && <GitHubRepoBadge />}
+            {isAppPage && (
+              <div className="hidden lg:block">
+                <GitHubRepoBadge />
+              </div>
+            )}
             {isAppPage && !hideLanguageSwitcher && <LanguageSwitcher />}
             {isAppPage && <ThemeToggle theme={theme} onToggle={toggleTheme} />}
             <UserMenu

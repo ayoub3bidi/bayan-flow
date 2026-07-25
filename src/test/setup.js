@@ -216,7 +216,7 @@ vi.mock('framer-motion', async () => {
   return createFramerMotionMock();
 });
 
-if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
+if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     configurable: true,

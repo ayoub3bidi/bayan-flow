@@ -19,6 +19,7 @@ import {
 } from './constants.js';
 import { ALGORITHM_TYPES } from '../constants/index.js';
 import { normalizeExportLanguage } from './exportLanguage.js';
+import { PRODUCTION_ORIGIN } from '../constants/siteSeo.js';
 
 const COMPOSITION_ID = 'AlgorithmVideo';
 
@@ -92,7 +93,7 @@ export function hasAudioRenderBlocker(issues = []) {
  * Hook for exporting algorithm visualization as MP4 via @remotion/web-renderer.
  * State: idle | orientation | checking | rendering | preview | error
  *
- * @returns {{ beginExportFlow: Function, exportVideo: Function, exportState: string, exportProgress: number, exportBlobUrl: string | null, exportFileName: string, exportErrorMessage: string | null, cancelExport: Function, closePreview: Function, downloadVideo: Function, canRenderOnWeb: boolean | null }}
+ * @returns {{ beginExportFlow: Function, exportVideo: Function, exportState: string, exportProgress: number, exportBlobUrl: string | null, exportFileName: string, exportErrorMessage: string | null, exportAlgorithmMeta: { algorithmName: string, algorithmKey: string, algorithmType: string } | null, cancelExport: Function, closePreview: Function, downloadVideo: Function, getExportBlob: Function, canRenderOnWeb: boolean | null }}
  */
 export function useVideoExporter() {
   const [exportState, setExportState] = useState('idle');
@@ -101,6 +102,7 @@ export function useVideoExporter() {
   const [exportFileName, setExportFileName] = useState('visualization.mp4');
   const [exportErrorMessage, setExportErrorMessage] = useState(null);
   const [canRenderOnWeb, setCanRenderOnWeb] = useState(null);
+  const [exportAlgorithmMeta, setExportAlgorithmMeta] = useState(null);
   const blobRef = useRef(null);
   const abortRef = useRef(null);
   const userCancelledRef = useRef(false);
@@ -109,6 +111,7 @@ export function useVideoExporter() {
     setExportState('idle');
     setExportProgress(0);
     setExportErrorMessage(null);
+    setExportAlgorithmMeta(null);
   }, []);
 
   const resetExportSession = useCallback(() => {
@@ -120,6 +123,7 @@ export function useVideoExporter() {
     setExportState('idle');
     setExportProgress(0);
     setExportErrorMessage(null);
+    setExportAlgorithmMeta(null);
   }, [exportBlobUrl]);
 
   const cancelExport = useCallback(() => {
@@ -152,6 +156,8 @@ export function useVideoExporter() {
     a.click();
     URL.revokeObjectURL(url);
   }, [exportFileName]);
+
+  const getExportBlob = useCallback(() => blobRef.current, []);
 
   const exportVideo = useCallback(
     async ({
@@ -304,6 +310,7 @@ export function useVideoExporter() {
         setExportFileName(
           `${algorithmName || 'visualization'}-visualization.mp4`
         );
+        setExportAlgorithmMeta({ algorithmName, algorithmKey, algorithmType });
         setExportState('preview');
         setExportProgress(1);
       } catch (err) {
@@ -333,9 +340,11 @@ export function useVideoExporter() {
     exportBlobUrl,
     exportFileName,
     exportErrorMessage,
+    exportAlgorithmMeta,
     cancelExport,
     closePreview,
     downloadVideo,
+    getExportBlob,
     canRenderOnWeb,
   };
 }

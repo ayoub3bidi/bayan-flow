@@ -4,14 +4,16 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Play, Hand } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
+import { marketingEnter, HOVER_SPRING } from '../../motion/chromeMotion';
 
 function LearnYourWay() {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   const features = [
     {
@@ -32,10 +34,8 @@ function LearnYourWay() {
     <Section className="relative overflow-hidden">
       <Container className="relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          {...marketingEnter(reduceMotion)}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
           <h2 className="landing-h2 text-text-primary mb-4">
@@ -47,18 +47,11 @@ function LearnYourWay() {
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, x: index === 0 ? -50 : 50, scale: 0.95 }}
-              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              {...marketingEnter(reduceMotion, index * 0.05)}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.7,
-                delay: index * 0.15,
-                type: 'spring',
-                stiffness: 100,
-              }}
               whileHover={{
                 scale: 1.03,
-                transition: { type: 'spring', stiffness: 300 },
+                transition: HOVER_SPRING,
               }}
               className="group relative"
             >
@@ -79,8 +72,8 @@ function LearnYourWay() {
                   <motion.div
                     className={`shrink-0 w-14 h-14 bg-linear-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg`}
                     whileHover={{
-                      scale: [1, 1.1, 1.05, 1.1, 1],
-                      transition: { duration: 0.6 },
+                      scale: 1.1,
+                      transition: HOVER_SPRING,
                     }}
                   >
                     <feature.icon
@@ -105,10 +98,8 @@ function LearnYourWay() {
         </div>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          {...marketingEnter(reduceMotion, 0.15)}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
           className="text-center text-xl text-text-secondary italic"
         >
           {t('landing.learnYourWay.tagline')}

@@ -4,11 +4,18 @@
  * See LICENSE for details.
  */
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Cookie } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useConsent } from '../hooks/useConsent.js';
 import { Link } from 'react-router-dom';
+import {
+  bannerInitial,
+  bannerAnimate,
+  bannerExit,
+  bannerTransition,
+  HOVER_SPRING,
+} from '../motion/chromeMotion';
 
 /**
  * Fixed bottom cookie consent banner.
@@ -17,6 +24,7 @@ import { Link } from 'react-router-dom';
 export default function CookieConsentBanner() {
   const { t } = useTranslation();
   const { bannerVisible, grantConsent, denyConsent } = useConsent();
+  const reduceMotion = useReducedMotion();
 
   return (
     <AnimatePresence>
@@ -25,12 +33,12 @@ export default function CookieConsentBanner() {
           role="dialog"
           aria-label={t('consent.bannerAriaLabel')}
           className="fixed bottom-0 inset-x-0 z-50 p-4 sm:p-6"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 25 }}
+          initial={bannerInitial(reduceMotion)}
+          animate={bannerAnimate()}
+          exit={bannerExit(reduceMotion)}
+          transition={bannerTransition(reduceMotion)}
         >
-          <div className="max-w-4xl mx-auto rounded-2xl border border-(--color-glass-border) bg-(--color-glass-bg) backdrop-blur-xl shadow-2xl p-5 sm:p-6">
+          <div className="max-w-4xl mx-auto rounded-2xl border border-(--color-glass-border) bg-(--color-glass-bg) shadow-2xl p-5 sm:p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <Cookie
@@ -53,8 +61,9 @@ export default function CookieConsentBanner() {
                   type="button"
                   onClick={denyConsent}
                   className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-text-secondary border border-(--color-glass-border) rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={reduceMotion ? {} : { scale: 1.02 }}
+                  whileTap={reduceMotion ? {} : { scale: 0.98 }}
+                  transition={HOVER_SPRING}
                 >
                   {t('consent.declineAll')}
                 </motion.button>
@@ -62,8 +71,9 @@ export default function CookieConsentBanner() {
                   type="button"
                   onClick={grantConsent}
                   className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-[#3b82f6] rounded-lg hover:bg-[#2563eb] transition-colors cursor-pointer"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={reduceMotion ? {} : { scale: 1.02 }}
+                  whileTap={reduceMotion ? {} : { scale: 0.98 }}
+                  transition={HOVER_SPRING}
                 >
                   {t('consent.acceptAll')}
                 </motion.button>

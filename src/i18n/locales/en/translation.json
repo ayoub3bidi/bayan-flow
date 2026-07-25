@@ -59,12 +59,13 @@
   },
   "pro": {
     "pageTitle": "The Pro Plan",
-    "metaDescription": "Join the Pro Plan waitlist and lock in 50% off your first year on the annual plan.",
+    "metaDescription": "Join the Pro Plan waitlist and lock in 50% off the lifetime Pro subscription.",
     "banner": {
       "message": "The Pro Plan is coming soon. Be first in line.",
       "cta": "Join waitlist",
       "linkLabel": "Learn about the Pro Plan",
-      "dismiss": "Dismiss"
+      "dismiss": "Dismiss",
+      "ctaShort": "Join"
     },
     "eyebrow": "The Pro Plan",
     "headline": "Go further with the Pro Plan",
@@ -89,8 +90,8 @@
       }
     },
     "form": {
-      "title": "Get 50% off your first year",
-      "helper": "Join the waitlist and lock in half off your first annual plan. No spam, just one email when it is ready.",
+      "title": "Get 50% off lifetime Pro",
+      "helper": "Join the waitlist and lock in half off the lifetime Pro subscription. No spam, just one email when it is ready.",
       "emailLabel": "Email address",
       "emailPlaceholder": "you@school.edu",
       "submit": "Join the waitlist",
@@ -155,7 +156,8 @@
     "favoriteSlotsUsed": "{{count}} / {{limit}}",
     "favoriteSlotsFull": "Favorite limit reached ({{limit}}). Remove one to add another.",
     "addFavorite": "Add {{name}} to favorites",
-    "removeFavorite": "Remove {{name}} from favorites"
+    "removeFavorite": "Remove {{name}} from favorites",
+    "signInForAdvancedFeatures": "Sign in to unlock manual mode, speed, and advanced controls."
   },
   "modes": {
     "sorting": "Sorting",
@@ -354,8 +356,12 @@
     "exportOrientationVertical": "Vertical",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
     "exportPreview": "Video ready",
-    "exportPreviewDesc": "Preview your video and download when ready.",
+    "exportPreviewDesc": "Preview, download, or share your video.",
     "downloadVideo": "Download",
+    "shareVideo": "Share",
+    "shareOnX": "Share on X",
+    "copyLink": "Copy Link",
+    "linkCopied": "Copied!",
     "closePreview": "Close",
     "goFullScreen": "Go Full Screen (F)",
     "exitFullScreen": "Exit Full Screen (Esc)",
@@ -363,7 +369,11 @@
     "descending": "Descending input order (tap for random input)",
     "sortOrder": "Toggle initial array order for sorting",
     "graphScenario": "Graph scenario",
-    "randomGraph": "Random graph"
+    "randomGraph": "Random graph",
+    "openSettings": "Settings",
+    "closeSettings": "Close settings",
+    "settingsSheetTitle": "Algorithm settings",
+    "moreActions": "More actions"
   },
   "info": {
     "step": "Step {{current}} of {{total}}",
@@ -376,6 +386,15 @@
   },
   "videoExport": {
     "noSteps": "No steps to display"
+  },
+  "shareExport": {
+    "title": "Share your visualization",
+    "description": "Your video is ready! Share it on social media with a smart caption.",
+    "captionLabel": "Caption",
+    "shareNative": "Share",
+    "shareOnX": "Share on X",
+    "copyCaption": "Copy caption",
+    "copied": "Copied!"
   },
   "complexity_panel": {
     "title": "Complexity Analysis",
@@ -999,7 +1018,7 @@
     "weightedDirectedSingle": "Single Vertex Matrix"
   },
   "footer": {
-    "description": "An interactive, educational web application for visualizing sorting, searching, and pathfinding algorithms with clarity.",
+    "description": "An interactive, educational web application for visualizing algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
     "madeWith": "Made with",
     "by": "by",
@@ -1040,6 +1059,7 @@
     "termsDescription": "Terms of Use for the Bayan Flow educational web application."
   },
   "legend": {
+    "show": "Show legend",
     "title": "Legend",
     "toggle": "Toggle legend",
     "close": "Close legend",

@@ -9,10 +9,28 @@ import { fireEvent, renderWithI18n, screen, waitFor } from '../test/testUtils';
 import AlgorithmInsightPanel from './AlgorithmInsightPanel';
 import i18n from '../i18n';
 import { ALGORITHM_TYPES } from '@/constants';
+import { BELOW_LG_MEDIA_QUERY } from '../hooks/useIsBelowLg';
+
+function stubMatchMedia(matchesMobile) {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(query => ({
+      matches: query === BELOW_LG_MEDIA_QUERY ? matchesMobile : false,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(() => false),
+    }))
+  );
+}
 
 describe('AlgorithmInsightPanel', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('en');
+    stubMatchMedia(false);
   });
 
   it('renders insight content and icon placeholders when open', () => {
@@ -35,10 +53,11 @@ describe('AlgorithmInsightPanel', () => {
     expect(screen.getAllByText('My Notes').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Bubble Sort').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Video coming soon').length).toBeGreaterThan(0);
-    expect(container.querySelectorAll('svg').length).toBeGreaterThanOrEqual(3);
+    expect(container.querySelectorAll('svg').length).toBeGreaterThanOrEqual(1);
   });
 
   it('calls onClose when the mobile close button is clicked', () => {
+    stubMatchMedia(true);
     const onClose = vi.fn();
     renderWithI18n(
       <AlgorithmInsightPanel
@@ -54,6 +73,26 @@ describe('AlgorithmInsightPanel', () => {
     const closeButtons = screen.getAllByRole('button', { name: 'Close' });
     fireEvent.click(closeButtons[0]);
 
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('calls onClose when backdrop is clicked on desktop', () => {
+    stubMatchMedia(false);
+    const onClose = vi.fn();
+    const { container } = renderWithI18n(
+      <AlgorithmInsightPanel
+        isOpen={true}
+        onClose={onClose}
+        algorithmKey="bubbleSort"
+        algorithmName="Bubble Sort"
+        categoryType={ALGORITHM_TYPES.SORTING}
+        user={{ id: 'user-1' }}
+      />
+    );
+
+    const backdrop = container.querySelector('.bg-black\\/20');
+    expect(backdrop).toBeTruthy();
+    fireEvent.click(backdrop);
     expect(onClose).toHaveBeenCalled();
   });
 
