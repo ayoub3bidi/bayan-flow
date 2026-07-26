@@ -1,10 +1,15 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Info, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import {
+  getChromeTransition,
+  CHROME_DURATION_FAST,
+} from '@/motion/chromeMotion';
 
 function AutoHidingLegend({ legendItems, isComplete }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasAutoShown, setHasAutoShown] = useState(false);
 
@@ -25,25 +30,43 @@ function AutoHidingLegend({ legendItems, isComplete }) {
     }
   }, [isComplete]);
 
+  const legendTransition = getChromeTransition(
+    reduceMotion,
+    CHROME_DURATION_FAST
+  );
+  const legendExpandedInitial = reduceMotion
+    ? { opacity: 1, scale: 1, y: 0 }
+    : { opacity: 0, scale: 0.9, y: -10 };
+  const legendExpandedExit = reduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, scale: 0.9, y: -10 };
+  const legendButtonInitial = reduceMotion
+    ? { opacity: 1, scale: 1 }
+    : { opacity: 0, scale: 0.9 };
+  const legendButtonExit = reduceMotion
+    ? { opacity: 0 }
+    : { opacity: 0, scale: 0.9 };
+
   return (
     <div className="absolute top-2 right-2 z-10">
       <AnimatePresence mode="wait">
         {isExpanded ? (
           <motion.div
             key="legend-expanded"
-            initial={{ opacity: 0, scale: 0.9, y: -10 }}
+            initial={legendExpandedInitial}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="bg-surface-elevated/95 backdrop-blur-sm rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 min-w-[180px]"
+            exit={legendExpandedExit}
+            transition={legendTransition}
+            className="bg-surface-elevated rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 min-w-[180px] sm:items-start"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-text-primary">
                 {t('legend.title')}
               </span>
               <button
+                type="button"
                 onClick={() => setIsExpanded(false)}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors touch-manipulation"
+                className="inline-flex items-center justify-center h-touch w-touch rounded-lg bg-surface-elevated text-text-primary hover:bg-border touch-manipulation sm:p-1 sm:h-auto sm:w-auto sm:bg-transparent sm:hover:bg-gray-100 sm:dark:hover:bg-gray-700"
                 aria-label={t('legend.close')}
               >
                 <X size={14} weight="bold" className="text-text-secondary" />
@@ -66,12 +89,12 @@ function AutoHidingLegend({ legendItems, isComplete }) {
         ) : (
           <motion.button
             key="legend-button"
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={legendButtonInitial}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.2 }}
+            exit={legendButtonExit}
+            transition={legendTransition}
             onClick={() => setIsExpanded(true)}
-            className="bg-surface-elevated/90 backdrop-blur-sm p-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-surface-elevated hover:scale-105 transition-all touch-manipulation"
+            className="bg-surface-elevated w-11 h-11 flex items-center justify-center rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-surface-elevated hover:scale-105 transition-all touch-manipulation sm:w-auto sm:h-auto sm:flex-none sm:p-2"
             aria-label={t('legend.show')}
           >
             <Info size={18} weight="bold" className="text-primary" />

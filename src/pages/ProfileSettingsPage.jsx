@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowLeft,
   ArrowRight,
@@ -18,6 +18,15 @@ import {
 import { useTranslation } from 'react-i18next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import {
+  fadeOverlayTransition,
+  modalPanelInitial,
+  modalPanelAnimate,
+  modalPanelExit,
+  modalPanelTransition,
+  getChromeTransition,
+  CHROME_DURATION_FAST,
+} from '@/motion/chromeMotion';
 import Container from '@/components/ui/Container';
 import { useAuth } from '@/hooks/useAuth';
 import { getProfile, updateProfile } from '@/services/profileService';
@@ -49,6 +58,7 @@ const SETTINGS_TABS = [
 
 function ProfileSettingsPage() {
   const { t, i18n } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const { user, refreshProfile } = useAuth();
   const isRTLDirection = isRTL(i18n.language);
   const BackIcon = isRTLDirection ? ArrowRight : ArrowLeft;
@@ -473,7 +483,7 @@ function ProfileSettingsPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={fadeOverlayTransition(reduceMotion)}
                     onClick={() => {
                       setShowDeleteModal(false);
                       setDeleteConfirmText('');
@@ -492,14 +502,10 @@ function ProfileSettingsPage() {
                   >
                     <motion.div
                       className="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-8"
-                      initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                      animate={{ scale: 1, opacity: 1, y: 0 }}
-                      exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                      transition={{
-                        type: 'spring',
-                        stiffness: 300,
-                        damping: 25,
-                      }}
+                      initial={modalPanelInitial(reduceMotion)}
+                      animate={modalPanelAnimate()}
+                      exit={modalPanelExit(reduceMotion)}
+                      transition={modalPanelTransition(reduceMotion)}
                       onClick={e => e.stopPropagation()}
                       autoFocus
                     >
@@ -564,10 +570,15 @@ function ProfileSettingsPage() {
           <AnimatePresence>
             {toast && (
               <motion.div
-                initial={{ opacity: 0, y: 16, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                initial={
+                  reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }
+                }
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                transition={getChromeTransition(
+                  reduceMotion,
+                  CHROME_DURATION_FAST
+                )}
                 className={`fixed bottom-20 right-6 z-50 flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg ${
                   toastType === 'success'
                     ? 'border-emerald-200 bg-bg text-emerald-600 dark:border-emerald-700/50 dark:bg-emerald-950/60 dark:text-emerald-300'

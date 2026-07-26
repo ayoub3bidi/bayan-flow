@@ -16,6 +16,7 @@ const { useEditor: mockUseEditor, defaultEditor } = vi.hoisted(() => {
     })),
     getHTML: vi.fn(() => '<p>initial</p>'),
     commands: { setContent: vi.fn() },
+    view: { state: { doc: {} } },
   };
   return { useEditor: vi.fn(() => editor), defaultEditor: editor };
 });
@@ -89,12 +90,15 @@ describe('NoteEditor', () => {
         })),
         getHTML: vi.fn(() => '<p>updated</p>'),
         commands: { setContent: vi.fn() },
+        view: { state: { doc: {} } },
       };
     });
 
     renderWithI18n(<NoteEditor {...defaultProps} onUpdate={onUpdate} />);
 
-    capturedOnUpdate({ editor: { getHTML: () => '<p>updated</p>' } });
+    capturedOnUpdate({
+      editor: { getHTML: () => '<p>updated</p>', view: { state: { doc: {} } } },
+    });
     expect(onUpdate).toHaveBeenCalledWith('<p>updated</p>');
   });
 
@@ -127,6 +131,7 @@ describe('NoteEditor', () => {
       })),
       getHTML: vi.fn(() => '<p>hello</p>'),
       commands: { setContent: vi.fn() },
+      view: { state: { doc: {} } },
     };
     mockUseEditor.mockReturnValueOnce(matchedEditor);
     renderWithI18n(
@@ -153,6 +158,7 @@ describe('NoteEditor', () => {
       })),
       getHTML: vi.fn(() => '<p>initial</p>'),
       commands: { setContent: vi.fn() },
+      view: { state: { doc: {} } },
     };
     mockUseEditor.mockReturnValueOnce(activeEditor);
     renderWithI18n(<NoteEditor {...defaultProps} />);
@@ -177,10 +183,62 @@ describe('NoteEditor', () => {
       })),
       getHTML: vi.fn(() => '<p>initial</p>'),
       commands: { setContent: vi.fn() },
+      view: { state: { doc: {} } },
     };
     mockUseEditor.mockReturnValueOnce(headingEditor);
     renderWithI18n(<NoteEditor {...defaultProps} />);
     screen.getByLabelText('Heading').click();
     expect(toggleHeadingMock).toHaveBeenCalledWith({ level: 2 });
+  });
+
+  it('skips onUpdate when editor ProseMirror state is not ready', () => {
+    const onUpdate = vi.fn();
+    let capturedOnUpdate;
+
+    mockUseEditor.mockImplementation(config => {
+      capturedOnUpdate = config.onUpdate;
+      return {
+        isActive: vi.fn(() => false),
+        chain: vi.fn(() => ({
+          focus: vi.fn(() => ({
+            toggleBold: vi.fn(() => ({ run: vi.fn() })),
+            toggleItalic: vi.fn(() => ({ run: vi.fn() })),
+            toggleBulletList: vi.fn(() => ({ run: vi.fn() })),
+            toggleOrderedList: vi.fn(() => ({ run: vi.fn() })),
+            toggleHeading: vi.fn(() => ({ run: vi.fn() })),
+          })),
+        })),
+        getHTML: vi.fn(() => '<p>test</p>'),
+        commands: { setContent: vi.fn() },
+        view: { state: null },
+      };
+    });
+
+    renderWithI18n(<NoteEditor {...defaultProps} onUpdate={onUpdate} />);
+    capturedOnUpdate({
+      editor: { getHTML: () => '<p>updated</p>', view: { state: null } },
+    });
+    expect(onUpdate).not.toHaveBeenCalled();
+  });
+
+  it('skips content sync when editor ProseMirror state is not ready', () => {
+    const notReadyEditor = {
+      isActive: vi.fn(() => false),
+      chain: vi.fn(() => ({
+        focus: vi.fn(() => ({
+          toggleBold: vi.fn(() => ({ run: vi.fn() })),
+          toggleItalic: vi.fn(() => ({ run: vi.fn() })),
+          toggleBulletList: vi.fn(() => ({ run: vi.fn() })),
+          toggleOrderedList: vi.fn(() => ({ run: vi.fn() })),
+          toggleHeading: vi.fn(() => ({ run: vi.fn() })),
+        })),
+      })),
+      getHTML: vi.fn(() => '<p>initial</p>'),
+      commands: { setContent: vi.fn() },
+      view: { state: null },
+    };
+    mockUseEditor.mockReturnValueOnce(notReadyEditor);
+    renderWithI18n(<NoteEditor {...defaultProps} />);
+    expect(notReadyEditor.commands.setContent).not.toHaveBeenCalled();
   });
 });

@@ -4,13 +4,15 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation, Trans } from 'react-i18next';
 import Container from '../ui/Container';
 import { isProductionMainBranch } from '../../utils/deployContext';
+import { marketingEnter, getChromeTransition } from '../../motion/chromeMotion';
 
 function RoadmapHero() {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const showDevFeedbackNote = isProductionMainBranch();
 
   return (
@@ -24,24 +26,14 @@ function RoadmapHero() {
       <Container className="relative z-10">
         <motion.div
           className="text-center max-w-3xl mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: reduceMotion ? 1 : 0 }}
+          animate={{ opacity: 1 }}
+          transition={getChromeTransition(reduceMotion, 0.4)}
         >
           {/* Title with gradient text effect */}
           <motion.h1
             className="landing-h1 text-text-primary mb-6"
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-            }}
-            transition={{
-              opacity: { duration: 0.8, delay: 0.2 },
-              y: { duration: 0.8, delay: 0.2, type: 'spring', stiffness: 100 },
-              scale: { duration: 0.8, delay: 0.2 },
-            }}
+            {...marketingEnter(reduceMotion, 0.2)}
             style={{
               textShadow: '0 0 40px rgba(43, 127, 255, 0.3)',
             }}
@@ -52,14 +44,7 @@ function RoadmapHero() {
           {/* Subtitle with stagger animation */}
           <motion.p
             className="landing-body text-text-secondary"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.4,
-              type: 'spring',
-              stiffness: 100,
-            }}
+            {...marketingEnter(reduceMotion, 0.4)}
           >
             {t('roadmap.hero.subtitle')}
           </motion.p>
@@ -68,14 +53,7 @@ function RoadmapHero() {
           {showDevFeedbackNote && (
             <motion.p
               className="landing-body text-text-secondary text-sm mt-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.5,
-                type: 'spring',
-                stiffness: 100,
-              }}
+              {...marketingEnter(reduceMotion, 0.5)}
             >
               <Trans
                 i18nKey="roadmap.hero.devNote"

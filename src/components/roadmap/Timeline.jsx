@@ -4,14 +4,37 @@
  * See LICENSE for details.
  */
 
-import { motion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
 import Container from '../ui/Container';
 import TimelineItem from './TimelineItem';
 import { roadmapData } from '../../data/roadmapData';
+import { getChromeTransition, marketingEnter } from '../../motion/chromeMotion';
 
 function Timeline() {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: false, margin: '-10%' });
+
+  const dotPulse = {
+    animate:
+      reduceMotion || !isInView
+        ? { scale: 1, opacity: 0.5 }
+        : { scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] },
+    transition: delay =>
+      reduceMotion
+        ? { duration: 0 }
+        : {
+            duration: 1.5,
+            repeat: isInView ? Infinity : 0,
+            delay,
+            ease: 'easeInOut',
+          },
+  };
+
   return (
     <section
+      ref={sectionRef}
       data-testid="timeline"
       className="relative py-20 bg-surface overflow-visible"
     >
@@ -26,20 +49,26 @@ function Timeline() {
           initial={{ scaleY: 0 }}
           whileInView={{ scaleY: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
+          transition={getChromeTransition(reduceMotion, 1.5)}
           style={{ transformOrigin: 'top' }}
         />
         {/* Subtle glow effect */}
         <motion.div
           className="absolute inset-0 w-0.5 bg-linear-to-b from-blue-400 via-purple-400 to-transparent blur-sm"
-          animate={{
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          animate={
+            reduceMotion || !isInView
+              ? { opacity: 0.3 }
+              : { opacity: [0.3, 0.5, 0.3] }
+          }
+          transition={
+            reduceMotion
+              ? { duration: 0 }
+              : {
+                  duration: 3,
+                  repeat: isInView ? Infinity : 0,
+                  ease: 'easeInOut',
+                }
+          }
         />
       </div>
 
@@ -59,35 +88,23 @@ function Timeline() {
         {/* Animated "Future" Dots at the End */}
         <motion.div
           className="relative flex justify-center items-center h-32 mt-8"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          {...marketingEnter(reduceMotion, 0.5)}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
         >
           <div className="flex items-center gap-3">
             {[0, 1, 2].map(i => (
               <motion.div
                 key={i}
                 className="w-3 h-3 bg-linear-to-br from-blue-500 to-purple-500 rounded-full"
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.3, 1, 0.3],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                  ease: 'easeInOut',
-                }}
+                {...dotPulse}
+                transition={dotPulse.transition(i * 0.2)}
               />
             ))}
           </div>
           <motion.p
             className="absolute -bottom-6 text-sm text-text-tertiary italic"
-            initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            {...marketingEnter(reduceMotion, 0.8)}
             viewport={{ once: true }}
-            transition={{ delay: 0.8 }}
           >
             The journey continues...
           </motion.p>

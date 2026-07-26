@@ -32,6 +32,11 @@
     "contact": "راسلنا على contact@bayanflow.com للمساعدة.",
     "signInUnavailable": "تسجيل الدخول غير متاح مؤقتًا. يُرجى المحاولة لاحقًا."
   },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "message": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "backToHome": "العودة إلى الصفحة الرئيسية"
+  },
   "profile": {
     "pageTitle": "إعدادات الملف الشخصي",
     "title": "إعدادات الملف الشخصي",
@@ -59,12 +64,13 @@
   },
   "pro": {
     "pageTitle": "الخطة الاحترافية",
-    "metaDescription": "سجّل اهتمامك بالخطة الاحترافية واحصل على خصم 50٪ على أول سنة في الخطة السنوية.",
+    "metaDescription": "سجّل اهتمامك بالخطة الاحترافية واحصل على خصم 50٪ على الاشتراك الاحترافي مدى الحياة.",
     "banner": {
       "message": "الخطة الاحترافية قادمة قريبًا. كن أول من ينضم.",
       "cta": "انضم للقائمة",
       "linkLabel": "اكتشف الخطة الاحترافية",
-      "dismiss": "إغلاق"
+      "dismiss": "إغلاق",
+      "ctaShort": "انضم"
     },
     "eyebrow": "الخطة الاحترافية",
     "headline": "تقدّم أكثر مع الخطة الاحترافية",
@@ -89,8 +95,8 @@
       }
     },
     "form": {
-      "title": "احصل على خصم 50٪ على أول سنة",
-      "helper": "سجّل في قائمة الانتظار لتأمين نصف السعر على خطتك السنوية الأولى.",
+      "title": "احصل على خصم 50٪ على الخطة الاحترافية مدى الحياة",
+      "helper": "سجّل في قائمة الانتظار لتأمين نصف السعر على الاشتراك الاحترافي مدى الحياة. بلا رسائل مزعجة، رسالة واحدة فقط عندما يصبح جاهزًا.",
       "emailLabel": "البريد الإلكتروني",
       "emailPlaceholder": "you@school.edu",
       "submit": "سجّل اهتمامك",
@@ -155,7 +161,8 @@
     "favoriteSlotsUsed": "{{count}} / {{limit}}",
     "favoriteSlotsFull": "تم بلوغ حد المفضلات ({{limit}}). أزل واحدة لإضافة أخرى.",
     "addFavorite": "إضافة {{name}} إلى المفضلة",
-    "removeFavorite": "إزالة {{name}} من المفضلة"
+    "removeFavorite": "إزالة {{name}} من المفضلة",
+    "signInForAdvancedFeatures": "سجّل الدخول لفتح الوضع اليدوي والسرعة وعناصر التحكم المتقدمة."
   },
   "modes": {
     "sorting": "الترتيب",
@@ -353,8 +360,12 @@
     "exportOrientationVertical": "عمودي",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
     "exportPreview": "الفيديو جاهز",
-    "exportPreviewDesc": "معاينة الفيديو وتنزيله عند الحاجة.",
+    "exportPreviewDesc": "معاينة الفيديو أو تنزيله أو مشاركته.",
     "downloadVideo": "تنزيل",
+    "shareVideo": "مشاركة",
+    "shareOnX": "مشاركة على X",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم النسخ!",
     "closePreview": "إغلاق",
     "goFullScreen": "ملء الشاشة (F)",
     "exitFullScreen": "الخروج من ملء الشاشة (Esc)",
@@ -362,7 +373,11 @@
     "descending": "ترتيب إدخال تنازلي (اضغط للعشوائي)",
     "sortOrder": "تبديل ترتيب المصفوفة الأولي للفرز",
     "graphScenario": "سيناريو الرسم البياني",
-    "randomGraph": "رسم بياني عشوائي"
+    "randomGraph": "رسم بياني عشوائي",
+    "openSettings": "الإعدادات",
+    "closeSettings": "إغلاق الإعدادات",
+    "settingsSheetTitle": "إعدادات الخوارزمية",
+    "moreActions": "المزيد من الإجراءات"
   },
   "info": {
     "step": "الخطوة {{current}} من {{total}}",
@@ -375,6 +390,17 @@
   },
   "videoExport": {
     "noSteps": "لا توجد خطوات لعرضها"
+  },
+  "shareExport": {
+    "title": "شارك التصور البصري الخاص بك",
+    "description": "فيديوك جاهز! شاركه على وسائل التواصل الاجتماعي مع تعليق ذكي.",
+    "captionLabel": "التعليق",
+    "shareNative": "مشاركة",
+    "shareOnX": "مشاركة على X",
+    "copyCaption": "نسخ التعليق",
+    "copied": "تم النسخ!",
+    "captionTemplate": "{{algorithm}}. تصور خطوة بخطوة من Bayan Flow.",
+    "titleTemplate": "تصور {{algorithm}} — Bayan Flow"
   },
   "complexity_panel": {
     "title": "تحليل التعقيد",
@@ -998,7 +1024,7 @@
     "weightedDirectedSingle": "مصفوفة ذات رأس واحد"
   },
   "footer": {
-    "description": "تطبيق ويب تفاعلي وتعليمي لتصور خوارزميات الترتيب والبحث في البيانات المرتبة وإيجاد المسار بوضوح.",
+    "description": "تطبيق ويب تفاعلي وتعليمي لتصور الخوارزميات بوضوح.",
     "descriptionNote": "بيان تعني الوضوح باللغة العربية.",
     "madeWith": "صنع بـ",
     "by": "بواسطة",
@@ -1022,7 +1048,15 @@
     "legal": "قانوني",
     "proPlan": "الخطة الاحترافية",
     "privacy": "سياسة الخصوصية",
-    "terms": "شروط الاستخدام"
+    "terms": "شروط الاستخدام",
+    "cookiePreferences": "تفضيلات ملفات تعريف الارتباط"
+  },
+  "consent": {
+    "message": "نستخدم ملفات تعريف الارتباط الخاصة بالتحليلات لتحسين تجربتك. يمكنك القبول أو الرفض.",
+    "acceptAll": "قبول الكل",
+    "declineAll": "رفض",
+    "privacyPolicy": "سياسة الخصوصية",
+    "bannerAriaLabel": "الموافقة على ملفات تعريف الارتباط"
   },
   "legal": {
     "privacyTitle": "سياسة الخصوصية",

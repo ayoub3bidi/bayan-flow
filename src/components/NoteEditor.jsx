@@ -42,12 +42,14 @@ function NoteEditor({ content, placeholder, onUpdate }) {
       },
     },
     onUpdate: ({ editor: ed }) => {
-      onUpdate(ed.getHTML());
+      if (ed?.view?.state?.doc) {
+        onUpdate(ed.getHTML());
+      }
     },
   });
 
   useEffect(() => {
-    if (!editor) {
+    if (!editor?.view?.state?.doc) {
       return;
     }
     const current = editor.getHTML();

@@ -7,9 +7,10 @@
     <!-- Primary Meta Tags -->
     <title>Bayan Flow - Interactive Algorithm Visualizer</title>
     <meta name="title" content="Bayan Flow - Interactive Algorithm Visualizer" />
+    <!-- Static fallback; DocumentTitle.jsx overwrites at runtime with computed count from CATEGORY_CONFIG -->
     <meta
       name="description"
-      content="Bayan Flow: Learn 45 algorithms with clarity through interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph algorithms. Free educational web app with Python examples and complexity analysis. Bayan (بيان) means clarity in Arabic."
+      content="Learn 45 algorithms with interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph. Free educational app."
     />
     <meta
       name="keywords"
@@ -17,7 +18,6 @@
     />
     <meta name="author" content="Ayoub Abidi" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://bayanflow.com/" />
 
     <!-- Non-production hostnames: noindex at runtime (dev, Workers previews) -->
     <script>
@@ -47,7 +47,7 @@
     />
     <meta
       property="og:description"
-      content="Interactive step-by-step visualizations for sorting, pathfinding, searching, tree traversal, and graph algorithms — with Python examples and complexity analysis."
+      content="Learn 45 algorithms with interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph. Free educational app."
     />
     <meta property="og:image" content="https://bayanflow.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
@@ -59,18 +59,19 @@
     <meta property="og:site_name" content="Bayan Flow" />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://bayanflow.com/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@bayanflow" />
+    <meta name="twitter:url" content="https://bayanflow.com/" />
     <meta
-      property="twitter:title"
+      name="twitter:title"
       content="Bayan Flow - Interactive Algorithm Visualizer"
     />
     <meta
-      property="twitter:description"
-      content="Interactive step-by-step visualizations for sorting, pathfinding, searching, tree traversal, and graph algorithms — with Python examples and complexity analysis."
+      name="twitter:description"
+      content="Learn 45 algorithms with interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph. Free educational app."
     />
     <meta
-      property="twitter:image"
+      name="twitter:image"
       content="https://bayanflow.com/og-image.png"
     />
 
@@ -78,6 +79,10 @@
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="apple-touch-icon" href="/logo.png" />
     <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3b82f6" />
+
+    <!-- Preconnect for critical third-party origins -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -211,13 +216,6 @@
         }
       })();
     </script>
-
-    <!-- Cloudflare Turnstile — invisible CAPTCHA for bot signup prevention -->
-    <script
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-      async
-      defer
-    ></script>
   </head>
   <body>
     <div id="root"></div>

@@ -32,6 +32,11 @@
     "contact": "Écrivez à contact@bayanflow.com pour obtenir de l'aide.",
     "signInUnavailable": "La connexion est temporairement indisponible. Veuillez réessayer plus tard."
   },
+  "notFound": {
+    "title": "Page non trouvée",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backToHome": "Retour à l'accueil"
+  },
   "profile": {
     "pageTitle": "Paramètres du profil",
     "title": "Paramètres du profil",
@@ -59,12 +64,13 @@
   },
   "pro": {
     "pageTitle": "Le Plan Pro",
-    "metaDescription": "Rejoignez la liste d'attente le Plan Pro et sécurisez 50 % de réduction sur votre première année au plan annuel.",
+    "metaDescription": "Rejoignez la liste d'attente du Plan Pro et sécurisez 50 % de réduction sur l'abonnement Pro à vie.",
     "banner": {
       "message": "Le plan Pro arrive bientôt. Soyez les premiers.",
       "cta": "Rejoindre la liste",
       "linkLabel": "Découvrir le Plan Pro",
-      "dismiss": "Fermer"
+      "dismiss": "Fermer",
+      "ctaShort": "Rejoindre"
     },
     "eyebrow": "Le Plan Pro",
     "headline": "Allez plus loin avec le Plan Pro",
@@ -89,8 +95,8 @@
       }
     },
     "form": {
-      "title": "Obtenez 50 % de réduction la première année",
-      "helper": "Rejoignez la liste d'attente pour sécuriser la moitié du prix votre première année. Pas de spam, un seul e-mail quand le Plan Pro sera prêt.",
+      "title": "Obtenez 50 % de réduction sur le Pro à vie",
+      "helper": "Rejoignez la liste d'attente pour sécuriser la moitié du prix de l'abonnement Pro à vie. Pas de spam, un seul e-mail quand le Plan Pro sera prêt.",
       "emailLabel": "Adresse e-mail",
       "emailPlaceholder": "vous@ecole.fr",
       "submit": "Rejoindre la liste",
@@ -155,7 +161,8 @@
     "favoriteSlotsUsed": "{{count}} / {{limit}}",
     "favoriteSlotsFull": "Limite de favoris atteinte ({{limit}}). Retirez-en un pour en ajouter un autre.",
     "addFavorite": "Ajouter {{name}} aux favoris",
-    "removeFavorite": "Retirer {{name}} des favoris"
+    "removeFavorite": "Retirer {{name}} des favoris",
+    "signInForAdvancedFeatures": "Connectez-vous pour débloquer le mode manuel, la vitesse et les contrôles avancés."
   },
   "modes": {
     "sorting": "Tri",
@@ -353,8 +360,12 @@
     "exportOrientationVertical": "Vertical",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
     "exportPreview": "Vidéo prête",
-    "exportPreviewDesc": "Prévisualisez votre vidéo et téléchargez-la quand vous le souhaitez.",
+    "exportPreviewDesc": "Prévisualisez, téléchargez ou partagez votre vidéo.",
     "downloadVideo": "Télécharger",
+    "shareVideo": "Partager",
+    "shareOnX": "Partager sur X",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Copié !",
     "closePreview": "Fermer",
     "goFullScreen": "Plein Écran (F)",
     "exitFullScreen": "Quitter le Plein Écran (Esc)",
@@ -362,7 +373,11 @@
     "descending": "Ordre d'entrée décroissant (appuyez pour aléatoire)",
     "sortOrder": "Basculer l'ordre initial du tableau pour le tri",
     "graphScenario": "Scénario de graphe",
-    "randomGraph": "Graphe aléatoire"
+    "randomGraph": "Graphe aléatoire",
+    "openSettings": "Paramètres",
+    "closeSettings": "Fermer les paramètres",
+    "settingsSheetTitle": "Paramètres de l'algorithme",
+    "moreActions": "Plus d’actions"
   },
   "info": {
     "step": "Étape {{current}} sur {{total}}",
@@ -375,6 +390,17 @@
   },
   "videoExport": {
     "noSteps": "Aucune étape à afficher"
+  },
+  "shareExport": {
+    "title": "Partagez votre visualisation",
+    "description": "Votre vidéo est prête ! Partagez-la sur les réseaux sociaux avec une légende intelligente.",
+    "captionLabel": "Légende",
+    "shareNative": "Partager",
+    "shareOnX": "Partager sur X",
+    "copyCaption": "Copier la légende",
+    "copied": "Copié !",
+    "captionTemplate": "{{algorithm}}. Visualisation étape par étape depuis Bayan Flow.",
+    "titleTemplate": "Visualisation {{algorithm}} — Bayan Flow"
   },
   "complexity_panel": {
     "title": "Analyse de Complexité",
@@ -998,7 +1024,7 @@
     "weightedDirectedSingle": "Matrice à un sommet"
   },
   "footer": {
-    "description": "Une application web interactive et éducative pour visualiser les algorithmes de tri, de recherche (données triées) et de recherche de chemin avec clarté.",
+    "description": "Une application web interactive et éducative pour visualiser les algorithmes avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
     "madeWith": "Fait avec",
     "by": "par",
@@ -1022,7 +1048,15 @@
     "legal": "Mentions légales",
     "proPlan": "Plan Pro",
     "privacy": "Politique de confidentialité",
-    "terms": "Conditions d'utilisation"
+    "terms": "Conditions d'utilisation",
+    "cookiePreferences": "Préférences cookies"
+  },
+  "consent": {
+    "message": "Nous utilisons des cookies pour les analyses afin d'améliorer votre expérience. Vous pouvez accepter ou refuser.",
+    "acceptAll": "Tout accepter",
+    "declineAll": "Refuser",
+    "privacyPolicy": "Politique de confidentialité",
+    "bannerAriaLabel": "Consentement aux cookies"
   },
   "legal": {
     "privacyTitle": "Politique de confidentialité",

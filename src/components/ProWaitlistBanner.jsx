@@ -80,16 +80,17 @@ function ProWaitlistBannerContent({ source, pathname, inRouter }) {
       role="region"
       aria-label={t('pro.banner.linkLabel')}
     >
-      <div className="mx-auto flex max-w-[1200px] items-start gap-2 px-4 py-3 sm:items-center sm:gap-3 sm:px-6 lg:px-12">
-        <div className="flex min-w-0 flex-1 flex-col items-start gap-2 pe-1 text-start xs:flex-row xs:items-center xs:gap-3 sm:justify-center">
-          <p className="min-w-0 text-sm font-medium leading-snug text-(--color-pro-banner-text) sm:text-base">
+      <div className="mx-auto flex max-w-[1200px] items-center gap-2 px-3 py-2 sm:gap-3 sm:px-6 sm:py-3 lg:px-12">
+        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 sm:justify-center">
+          <p className="min-w-0 flex-1 truncate text-sm font-medium leading-snug text-(--color-pro-banner-text) sm:flex-none sm:text-base">
             {t('pro.banner.message')}
           </p>
           <LinkComponent
             {...{ [hrefProp]: `/pro?source=${waitlistSource}` }}
-            className="inline-flex min-h-touch shrink-0 items-center justify-center gap-1.5 rounded-lg bg-(--color-pro-banner-cta-bg) px-3.5 text-sm font-semibold text-(--color-pro-banner-cta-text) shadow-sm transition-colors hover:bg-(--color-pro-banner-cta-hover) hover:text-(--color-pro-banner-cta-hover-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+            className="inline-flex min-h-touch shrink-0 items-center justify-center gap-1.5 rounded-lg bg-(--color-pro-banner-cta-bg) px-2.5 sm:px-3.5 text-sm font-semibold text-(--color-pro-banner-cta-text) shadow-sm transition-colors hover:bg-(--color-pro-banner-cta-hover) hover:text-(--color-pro-banner-cta-hover-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
-            {t('pro.banner.cta')}
+            <span className="hidden xs:inline">{t('pro.banner.cta')}</span>
+            <span className="xs:hidden">{t('pro.banner.ctaShort')}</span>
             <CtaIcon size={15} weight="bold" aria-hidden />
           </LinkComponent>
         </div>

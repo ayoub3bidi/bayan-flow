@@ -4,37 +4,74 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import FloatingActionButton from './FloatingActionButton';
+import { BELOW_LG_MEDIA_QUERY } from '../hooks/useIsBelowLg';
+
+function stubMatchMedia(isBelowLg) {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(query => ({
+      matches: query === BELOW_LG_MEDIA_QUERY ? isBelowLg : false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    }))
+  );
+}
 
 describe('FloatingActionButton', () => {
-  it('renders correctly with both desktop and mobile buttons', () => {
+  beforeEach(() => {
+    stubMatchMedia(false);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('renders a single desktop button by default', () => {
     const mockOnClick = vi.fn();
     render(<FloatingActionButton onClick={mockOnClick} />);
 
-    // Should render two buttons (desktop and mobile)
     const buttons = screen.getAllByRole('button', {
       name: /view python code/i,
     });
-    expect(buttons).toHaveLength(2);
+    expect(buttons).toHaveLength(1);
+    expect(buttons[0]).toHaveAttribute('aria-label', 'View Python code');
+    expect(buttons[0]).toHaveAttribute('title', 'View Python code');
+    expect(buttons[0]).toHaveClass(
+      'fixed',
+      'right-0',
+      'top-1/2',
+      '-translate-y-1/2',
+      'z-50'
+    );
+  });
 
-    // Both should have proper accessibility attributes
-    buttons.forEach(button => {
-      expect(button).toHaveAttribute('aria-label', 'View Python code');
-      expect(button).toHaveAttribute('title', 'View Python code');
+  it('renders a mobile button when viewport is below lg', () => {
+    stubMatchMedia(true);
+    const mockOnClick = vi.fn();
+    render(<FloatingActionButton onClick={mockOnClick} />);
+
+    const buttons = screen.getAllByRole('button', {
+      name: /view python code/i,
     });
+    expect(buttons).toHaveLength(1);
+    expect(buttons[0]).toHaveClass('fixed', 'bottom-44', 'right-4', 'z-50');
   });
 
   it('calls onClick when clicked', () => {
     const mockOnClick = vi.fn();
     render(<FloatingActionButton onClick={mockOnClick} />);
 
-    const buttons = screen.getAllByRole('button', {
-      name: /view python code/i,
-    });
-    // Click the first button (desktop)
-    fireEvent.click(buttons[0]);
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: /view python code/i,
+      })
+    );
 
     expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
@@ -43,15 +80,12 @@ describe('FloatingActionButton', () => {
     const mockOnClick = vi.fn();
     render(<FloatingActionButton onClick={mockOnClick} disabled={true} />);
 
-    const buttons = screen.getAllByRole('button', {
+    const button = screen.getByRole('button', {
       name: /view python code/i,
     });
-    // Both buttons should be disabled
-    buttons.forEach(button => {
-      expect(button).toBeDisabled();
-    });
+    expect(button).toBeDisabled();
 
-    fireEvent.click(buttons[0]);
+    fireEvent.click(button);
     expect(mockOnClick).not.toHaveBeenCalled();
   });
 
@@ -59,13 +93,11 @@ describe('FloatingActionButton', () => {
     const mockOnClick = vi.fn();
     render(<FloatingActionButton onClick={mockOnClick} disabled={false} />);
 
-    const buttons = screen.getAllByRole('button', {
-      name: /view python code/i,
-    });
-    // Both buttons should be enabled
-    buttons.forEach(button => {
-      expect(button).not.toBeDisabled();
-    });
+    expect(
+      screen.getByRole('button', {
+        name: /view python code/i,
+      })
+    ).not.toBeDisabled();
   });
 
   it('applies additional className when provided', () => {
@@ -75,45 +107,21 @@ describe('FloatingActionButton', () => {
       <FloatingActionButton onClick={mockOnClick} className={customClass} />
     );
 
-    const buttons = screen.getAllByRole('button', {
-      name: /view python code/i,
-    });
-    // Both buttons should have the custom class
-    buttons.forEach(button => {
-      expect(button).toHaveClass(customClass);
-    });
-  });
-
-  it('has correct positioning classes for desktop button', () => {
-    const mockOnClick = vi.fn();
-    render(<FloatingActionButton onClick={mockOnClick} />);
-
-    const buttons = screen.getAllByRole('button', {
-      name: /view python code/i,
-    });
-    // Desktop button (first one) should have side positioning
-    expect(buttons[0]).toHaveClass(
-      'fixed',
-      'right-0',
-      'top-1/2',
-      '-translate-y-1/2',
-      'z-50'
-    );
-    // Mobile button (second one) should have bottom-right positioning
-    expect(buttons[1]).toHaveClass('fixed', 'bottom-4', 'right-4', 'z-50');
+    expect(
+      screen.getByRole('button', {
+        name: /view python code/i,
+      })
+    ).toHaveClass(customClass);
   });
 
   it('has correct accessibility attributes', () => {
     const mockOnClick = vi.fn();
     render(<FloatingActionButton onClick={mockOnClick} />);
 
-    const buttons = screen.getAllByRole('button', {
+    const button = screen.getByRole('button', {
       name: /view python code/i,
     });
-    // Both buttons should have correct accessibility attributes
-    buttons.forEach(button => {
-      expect(button).toHaveAttribute('aria-label', 'View Python code');
-      expect(button).toHaveAttribute('title', 'View Python code');
-    });
+    expect(button).toHaveAttribute('aria-label', 'View Python code');
+    expect(button).toHaveAttribute('title', 'View Python code');
   });
 });

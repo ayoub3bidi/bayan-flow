@@ -145,7 +145,7 @@ function OutputConsole({
                 className={`flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 disabled:bg-teal-600/60 disabled:cursor-not-allowed disabled:opacity-90 rounded transition-colors ${
                   runBusy
                     ? 'w-8 h-8'
-                    : 'gap-1.5 px-2.5 py-1 text-xs font-medium min-w-[4.5rem]'
+                    : 'w-8 h-8 sm:w-auto sm:h-auto sm:gap-1.5 sm:px-2.5 sm:py-1 text-xs font-medium sm:min-w-[4.5rem]'
                 }`}
                 aria-label={runLabel}
               >
@@ -172,7 +172,7 @@ function OutputConsole({
                 ) : (
                   <>
                     <Play size={14} weight="bold" />
-                    {runLabel}
+                    <span className="hidden sm:inline">{runLabel}</span>
                   </>
                 )}
               </button>
@@ -207,21 +207,13 @@ function OutputConsole({
             <button
               type="button"
               onClick={() => setActiveTab('testCases')}
-              className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-t transition-colors ${
+              className={`px-3 py-2 text-sm font-medium rounded-t transition-colors ${
                 activeTab === 'testCases'
                   ? 'bg-[#1e1e1e] text-gray-200'
                   : 'text-gray-500 hover:text-gray-300'
               }`}
             >
               {t('python_code.test_cases', { defaultValue: 'Test Cases' })}
-              <span
-                className="px-2 py-0.5 bg-amber-500/10 text-amber-500 text-xs font-semibold rounded-full border border-amber-500/20 whitespace-nowrap"
-                title={t('settings.experimental', {
-                  defaultValue: 'Experimental',
-                })}
-              >
-                {t('settings.experimental', { defaultValue: 'Experimental' })}
-              </span>
             </button>
           )}
         </div>
@@ -251,7 +243,7 @@ function OutputConsole({
               className={`flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 disabled:bg-teal-600/60 disabled:cursor-not-allowed disabled:opacity-90 rounded transition-colors ${
                 runBusy
                   ? 'w-8 h-8'
-                  : 'gap-1.5 px-2.5 py-1 text-xs font-medium min-w-[4.5rem]'
+                  : 'w-8 h-8 sm:w-auto sm:h-auto sm:gap-1.5 sm:px-2.5 sm:py-1 text-xs font-medium sm:min-w-[4.5rem]'
               }`}
               aria-label={runLabel}
             >
@@ -278,7 +270,7 @@ function OutputConsole({
               ) : (
                 <>
                   <Play size={14} weight="bold" />
-                  {runLabel}
+                  <span className="hidden sm:inline">{runLabel}</span>
                 </>
               )}
             </button>
@@ -328,7 +320,7 @@ function OutputConsole({
                 </span>
               )}
               {status === 'success' && hasContent && (
-                <span className="text-xs text-green-400 shrink-0">
+                <span className="hidden sm:inline text-xs text-green-400 shrink-0">
                   {t('python_code.completed', { defaultValue: 'Completed' })}
                 </span>
               )}

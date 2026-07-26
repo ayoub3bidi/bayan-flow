@@ -10,6 +10,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import Footer from './Footer';
 import i18n from '../i18n';
+import { ConsentProvider } from '../contexts/ConsentContext.jsx';
 
 const mockNavigate = vi.fn();
 
@@ -25,7 +26,9 @@ function renderFooter() {
   return render(
     <MemoryRouter>
       <I18nextProvider i18n={i18n}>
-        <Footer />
+        <ConsentProvider>
+          <Footer />
+        </ConsentProvider>
       </I18nextProvider>
     </MemoryRouter>
   );
@@ -45,18 +48,22 @@ describe('Footer', () => {
     expect(screen.getByText(i18n.t('footer.terms'))).toBeInTheDocument();
   });
 
-  it('navigates to privacy policy on click', () => {
+  it('links to privacy policy with correct href', () => {
     renderFooter();
 
-    fireEvent.click(screen.getByText(i18n.t('footer.privacy')));
-    expect(mockNavigate).toHaveBeenCalledWith('/privacy');
+    const link = screen.getByRole('link', {
+      name: i18n.t('footer.privacy'),
+    });
+    expect(link).toHaveAttribute('href', '/privacy');
   });
 
-  it('navigates to terms of use on click', () => {
+  it('links to terms of use with correct href', () => {
     renderFooter();
 
-    fireEvent.click(screen.getByText(i18n.t('footer.terms')));
-    expect(mockNavigate).toHaveBeenCalledWith('/terms');
+    const link = screen.getByRole('link', {
+      name: i18n.t('footer.terms'),
+    });
+    expect(link).toHaveAttribute('href', '/terms');
   });
 
   it('renders pro plan link', () => {
@@ -76,5 +83,20 @@ describe('Footer', () => {
     });
     expect(link).toHaveAttribute('href', '/pro');
     fireEvent.click(link);
+  });
+
+  it('cookie preferences button resets consent and reopens banner', () => {
+    localStorage.setItem(
+      'bayanflow:cookie-consent',
+      JSON.stringify({ analytics: true, timestamp: Date.now() })
+    );
+    renderFooter();
+
+    const btn = screen.getByText(i18n.t('footer.cookiePreferences'));
+    expect(btn).toBeInTheDocument();
+
+    fireEvent.click(btn);
+
+    expect(localStorage.getItem('bayanflow:cookie-consent')).toBeNull();
   });
 });

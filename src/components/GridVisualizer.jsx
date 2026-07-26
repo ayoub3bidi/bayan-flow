@@ -182,9 +182,26 @@ function GridVisualizer({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 backdrop-blur-md bg-black/30 z-10"
-                aria-hidden="true"
-              />
+                className="absolute inset-0 z-10 flex items-center justify-center bg-black/80"
+                role="button"
+                tabIndex={0}
+                onClick={() => onGatedFeatureClick?.('complexity_limit')}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onGatedFeatureClick?.('complexity_limit');
+                  }
+                }}
+              >
+                <div className="text-center text-white p-6 max-w-xs">
+                  <p className="text-lg font-semibold mb-2">
+                    {t('featureGate.complexity_limit')}
+                  </p>
+                  <p className="text-sm opacity-80">
+                    {t('featureGate.complexity_limit_description')}
+                  </p>
+                </div>
+              </motion.div>
             )}
           </div>
         ) : (
@@ -299,7 +316,7 @@ function GridVisualizer({
                   transition={{ duration: 0.3 }}
                   className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center"
                 >
-                  <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200 backdrop-blur-sm">
+                  <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200">
                     <p
                       className="text-xs sm:text-sm font-semibold text-center text-text-primary"
                       role="status"

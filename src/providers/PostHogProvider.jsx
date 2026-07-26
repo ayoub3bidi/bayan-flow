@@ -4,18 +4,32 @@
  * See LICENSE for details.
  */
 
+import { useEffect, useRef } from 'react';
 import { PostHogProvider as PHProvider } from '@posthog/react';
 import posthog from 'posthog-js';
 import { initPostHog } from '../services/analytics';
 
-// Initialize PostHog once at module load
-initPostHog();
-
 /**
  * PostHog provider wrapper.
- * Provides PostHog context to the entire app.
- * @param {{ children: import('react').ReactNode }} props
+ * Defers PostHog initialization until analytics consent is granted,
+ * and opts out when consent is revoked.
+ * @param {{ analytics: boolean, children: import('react').ReactNode }} props
  */
-export function PostHogProvider({ children }) {
+export function PostHogProvider({ analytics, children }) {
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (analytics && !initializedRef.current) {
+      initPostHog();
+      initializedRef.current = true;
+    } else if (initializedRef.current) {
+      if (analytics) {
+        posthog.opt_in_capturing();
+      } else {
+        posthog.opt_out_capturing();
+      }
+    }
+  }, [analytics]);
+
   return <PHProvider client={posthog}>{children}</PHProvider>;
 }

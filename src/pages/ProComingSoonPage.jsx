@@ -41,12 +41,12 @@ const WAITLIST_COUNT_THRESHOLD = 50;
 
 function AbstractSortingAnimation() {
   return (
-    <div className="flex items-end justify-center gap-3 rounded-2xl border border-border bg-surface py-8 shadow-sm">
+    <div className="flex items-end justify-center gap-1.5 sm:gap-2 lg:gap-3 rounded-2xl border border-border bg-surface py-6 sm:py-8 shadow-sm overflow-hidden">
       {PRO_SORT_BAR_HEIGHTS.map((height, index) => (
         <div
           key={`sort-bar-${index}`}
-          className={`pro-sorting-tile-${index + 1} pro-sorting-tile rounded-lg border-2 shadow-lg`}
-          style={{ width: '48px', height: `${height}px` }}
+          className={`pro-sorting-tile-${index + 1} pro-sorting-tile w-7 sm:w-8 lg:w-12 rounded-lg border-2 shadow-lg`}
+          style={{ height: `${height}px` }}
           aria-hidden
         />
       ))}
@@ -69,7 +69,14 @@ function ProComingSoonPage() {
 
   const [email, setEmail] = useState(defaultEmail);
   const emailEditedRef = useRef(false);
-  const [submitState, setSubmitState] = useState('idle');
+  const [submitState, setSubmitState] = useState(() => {
+    const storedEmail = readStoredWaitlistEmail();
+    if (!storedEmail) return 'idle';
+    const currentUserEmail = profile?.email || user?.email;
+    return currentUserEmail && storedEmail === currentUserEmail
+      ? 'already_joined'
+      : 'idle';
+  });
   const [position, setPosition] = useState(null);
   const [errorKey, setErrorKey] = useState(null);
   const [waitlistCount, setWaitlistCount] = useState(0);
@@ -79,6 +86,17 @@ function ProComingSoonPage() {
       setEmail(defaultEmail);
     }
   }, [defaultEmail]);
+
+  // Re-evaluate already_joined when auth state loads — a different user may
+  // have left a stale waitlist email in localStorage.
+  useEffect(() => {
+    if (submitState !== 'idle') return;
+    const storedEmail = readStoredWaitlistEmail();
+    const currentUserEmail = profile?.email || user?.email;
+    if (storedEmail && currentUserEmail && storedEmail === currentUserEmail) {
+      setSubmitState('already_joined');
+    }
+  }, [user, profile, submitState]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -127,189 +145,191 @@ function ProComingSoonPage() {
 
   return (
     <div className="min-h-screen bg-bg flex flex-col overflow-x-hidden">
-      <DocumentTitle titleKey="pro.pageTitle" />
+      <DocumentTitle />
 
       <Header />
 
-      <Section className="relative z-10 flex-1 pt-28 pb-20 md:pt-36 md:pb-28 lg:pb-32">
-        <Container>
-          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)] lg:gap-12">
-            <div className="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left rtl:lg:text-right">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-theme-primary">
-                {t('pro.eyebrow')}
-              </p>
-              <h1 className="text-3xl font-bold leading-tight text-text-primary sm:text-4xl md:text-5xl">
-                {t('pro.headline')}
-              </h1>
-              <p className="mt-5 text-base leading-relaxed text-text-secondary sm:text-lg">
-                {t('pro.subheadline')}
-              </p>
-            </div>
+      <main>
+        <Section className="relative z-10 flex-1 pt-28 pb-20 md:pt-36 md:pb-28 lg:pb-32">
+          <Container>
+            <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)] lg:gap-12">
+              <div className="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left rtl:lg:text-right">
+                <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-theme-primary">
+                  {t('pro.eyebrow')}
+                </p>
+                <h1 className="text-3xl font-bold leading-tight text-text-primary sm:text-4xl md:text-5xl">
+                  {t('pro.headline')}
+                </h1>
+                <p className="mt-5 text-base leading-relaxed text-text-secondary sm:text-lg">
+                  {t('pro.subheadline')}
+                </p>
+              </div>
 
-            <div className="mx-auto w-full max-w-md self-center lg:mx-0">
-              <AbstractSortingAnimation />
-            </div>
-          </div>
-
-          <div className="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)] lg:gap-12">
-            <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">
-                {t('pro.featuresHeading')}
-              </h2>
-              <ul className="mt-5 space-y-4">
-                {FEATURE_ITEMS.map(feature => {
-                  const FeatureIcon = feature.Icon;
-                  return (
-                    <li key={feature.key} className="flex items-start gap-3">
-                      <span
-                        className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg bg-theme-primary/10 text-theme-primary"
-                        aria-hidden
-                      >
-                        <FeatureIcon size={20} weight="bold" />
-                      </span>
-                      <span>
-                        <span className="block text-sm font-semibold text-text-primary">
-                          {t(`pro.features.${feature.key}.title`)}
-                        </span>
-                        <span className="mt-1 block text-sm leading-relaxed text-text-secondary">
-                          {t(`pro.features.${feature.key}.body`)}
-                        </span>
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-              <div className="mt-5 flex items-start gap-3 border-t border-border pt-4">
-                <span
-                  className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-theme-primary"
-                  aria-hidden
-                >
-                  <PlusCircle size={20} weight="bold" />
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-text-primary">
-                    {t('pro.featuresMore.title')}
-                  </span>
-                  <span className="mt-1 block text-sm leading-relaxed text-text-secondary">
-                    {t('pro.featuresMore.body')}
-                  </span>
-                </span>
+              <div className="mx-auto w-full max-w-md self-center lg:mx-0">
+                <AbstractSortingAnimation />
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-md lg:mx-0">
-              {submitState === 'success' ? (
-                <div
-                  className="rounded-2xl border border-border bg-surface p-6 text-center shadow-sm"
-                  role="status"
-                >
-                  <h2 className="text-xl font-semibold text-text-primary">
-                    {t('pro.success.title')}
-                  </h2>
-                  {/* TODO: Bring back this position statement when we have many people on the waitlist */}
-                  {/* {position != null && position > 0 ? (
+            <div className="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)] lg:gap-12">
+              <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">
+                  {t('pro.featuresHeading')}
+                </h2>
+                <ul className="mt-5 space-y-4">
+                  {FEATURE_ITEMS.map(feature => {
+                    const FeatureIcon = feature.Icon;
+                    return (
+                      <li key={feature.key} className="flex items-start gap-3">
+                        <span
+                          className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg bg-theme-primary/10 text-theme-primary"
+                          aria-hidden
+                        >
+                          <FeatureIcon size={20} weight="bold" />
+                        </span>
+                        <span>
+                          <span className="block text-sm font-semibold text-text-primary">
+                            {t(`pro.features.${feature.key}.title`)}
+                          </span>
+                          <span className="mt-1 block text-sm leading-relaxed text-text-secondary">
+                            {t(`pro.features.${feature.key}.body`)}
+                          </span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div className="mt-5 flex items-start gap-3 border-t border-border pt-4">
+                  <span
+                    className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-theme-primary"
+                    aria-hidden
+                  >
+                    <PlusCircle size={20} weight="bold" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-semibold text-text-primary">
+                      {t('pro.featuresMore.title')}
+                    </span>
+                    <span className="mt-1 block text-sm leading-relaxed text-text-secondary">
+                      {t('pro.featuresMore.body')}
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div className="mx-auto w-full max-w-md lg:mx-0">
+                {submitState === 'success' ? (
+                  <div
+                    className="rounded-2xl border border-border bg-surface p-6 text-center shadow-sm"
+                    role="status"
+                  >
+                    <h2 className="text-xl font-semibold text-text-primary">
+                      {t('pro.success.title')}
+                    </h2>
+                    {/* TODO: Bring back this position statement when we have many people on the waitlist */}
+                    {/* {position != null && position > 0 ? (
                     <p className="mt-2 text-text-secondary">
                       {t('pro.success.position', { position })}
                     </p>
                   ) : null} */}
-                  <p className="mt-3 text-text-secondary">
-                    {t('pro.success.nextStep', { email })}
-                  </p>
-                  <div className="mt-6">
-                    <Button to="/app" variant="primary">
-                      {t('pro.success.backToApp')}
-                    </Button>
+                    <p className="mt-3 text-text-secondary">
+                      {t('pro.success.nextStep', { email })}
+                    </p>
+                    <div className="mt-6">
+                      <Button to="/app" variant="primary">
+                        {t('pro.success.backToApp')}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ) : submitState === 'already_joined' ? (
-                <div
-                  className="rounded-2xl border border-border bg-surface p-6 text-center shadow-sm"
-                  role="status"
-                >
-                  <h2 className="text-xl font-semibold text-text-primary">
-                    {t('pro.alreadyJoined.title')}
-                  </h2>
-                  <p className="mt-3 text-text-secondary">
-                    {t('pro.alreadyJoined.body')}
-                  </p>
-                  <div className="mt-6">
-                    <Button to="/app" variant="secondary">
-                      {t('pro.success.backToApp')}
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <form
-                  onSubmit={handleSubmit}
-                  className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6"
-                  noValidate
-                >
-                  <div className="mb-5">
+                ) : submitState === 'already_joined' ? (
+                  <div
+                    className="rounded-2xl border border-border bg-surface p-6 text-center shadow-sm"
+                    role="status"
+                  >
                     <h2 className="text-xl font-semibold text-text-primary">
-                      {t('pro.form.title')}
+                      {t('pro.alreadyJoined.title')}
                     </h2>
-                    <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                      {t('pro.form.helper')}
+                    <p className="mt-3 text-text-secondary">
+                      {t('pro.alreadyJoined.body')}
                     </p>
+                    <div className="mt-6">
+                      <Button to="/app" variant="secondary">
+                        {t('pro.success.backToApp')}
+                      </Button>
+                    </div>
                   </div>
-                  <label
-                    htmlFor="pro-waitlist-email"
-                    className="mb-2 block text-sm font-medium text-text-primary"
+                ) : (
+                  <form
+                    onSubmit={handleSubmit}
+                    className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6"
+                    noValidate
                   >
-                    {t('pro.form.emailLabel')}
-                  </label>
-                  <input
-                    id="pro-waitlist-email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={event => {
-                      emailEditedRef.current = true;
-                      setEmail(event.target.value);
-                    }}
-                    placeholder={t('pro.form.emailPlaceholder')}
-                    aria-describedby={
-                      errorKey ? 'pro-waitlist-email-error' : undefined
-                    }
-                    className="w-full rounded-lg border border-border-hover bg-bg px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-primary/30"
-                    disabled={submitState === 'submitting'}
-                  />
-                  {errorKey ? (
-                    <p
-                      id="pro-waitlist-email-error"
-                      className="mt-2 text-sm text-(--color-error)"
-                      role="alert"
+                    <div className="mb-5">
+                      <h2 className="text-xl font-semibold text-text-primary">
+                        {t('pro.form.title')}
+                      </h2>
+                      <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                        {t('pro.form.helper')}
+                      </p>
+                    </div>
+                    <label
+                      htmlFor="pro-waitlist-email"
+                      className="mb-2 block text-sm font-medium text-text-primary"
                     >
-                      {t(errorKey)}
-                    </p>
-                  ) : null}
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="mt-4 w-full"
-                    disabled={submitState === 'submitting'}
-                  >
-                    {submitState === 'submitting'
-                      ? t('pro.form.submitting')
-                      : t('pro.form.submit')}
-                  </Button>
-                  {waitlistCount > 0 ? (
-                    <p className="mt-3 text-center text-xs leading-relaxed text-text-secondary">
-                      {t('pro.waitlistCount', { count: waitlistCount })}
-                    </p>
-                  ) : (
-                    <p className="mt-3 text-center text-xs leading-relaxed text-text-secondary">
-                      {t('pro.form.privacy')}
-                    </p>
-                  )}
-                </form>
-              )}
+                      {t('pro.form.emailLabel')}
+                    </label>
+                    <input
+                      id="pro-waitlist-email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={email}
+                      onChange={event => {
+                        emailEditedRef.current = true;
+                        setEmail(event.target.value);
+                      }}
+                      placeholder={t('pro.form.emailPlaceholder')}
+                      aria-describedby={
+                        errorKey ? 'pro-waitlist-email-error' : undefined
+                      }
+                      className="w-full rounded-lg border border-border-hover bg-bg px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-primary/30"
+                      disabled={submitState === 'submitting'}
+                    />
+                    {errorKey ? (
+                      <p
+                        id="pro-waitlist-email-error"
+                        className="mt-2 text-sm text-(--color-error)"
+                        role="alert"
+                      >
+                        {t(errorKey)}
+                      </p>
+                    ) : null}
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      className="mt-4 w-full"
+                      disabled={submitState === 'submitting'}
+                    >
+                      {submitState === 'submitting'
+                        ? t('pro.form.submitting')
+                        : t('pro.form.submit')}
+                    </Button>
+                    {waitlistCount > 0 ? (
+                      <p className="mt-3 text-center text-xs leading-relaxed text-text-secondary">
+                        {t('pro.waitlistCount', { count: waitlistCount })}
+                      </p>
+                    ) : (
+                      <p className="mt-3 text-center text-xs leading-relaxed text-text-secondary">
+                        {t('pro.form.privacy')}
+                      </p>
+                    )}
+                  </form>
+                )}
+              </div>
             </div>
-          </div>
-        </Container>
-      </Section>
+          </Container>
+        </Section>
+      </main>
 
       <div className="relative z-10 mt-10 md:mt-14 lg:mt-16">
         <Footer />

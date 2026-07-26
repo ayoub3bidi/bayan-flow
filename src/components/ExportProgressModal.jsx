@@ -6,7 +6,14 @@
 
 import { useTranslation } from 'react-i18next';
 import { SpinnerGap, Square, DownloadSimple, X } from '@phosphor-icons/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import {
+  fadeOverlayTransition,
+  modalPanelInitial,
+  modalPanelAnimate,
+  modalPanelExit,
+  modalPanelTransition,
+} from '../motion/chromeMotion';
 
 /**
  * Modal shown during video export.
@@ -36,6 +43,7 @@ function ExportProgressModal({
   errorMessage = null,
 }) {
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const percent = Math.round(progress * 100);
   const isPreview = phase === 'preview';
   const isOrientation = phase === 'orientation';
@@ -49,6 +57,7 @@ function ExportProgressModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={fadeOverlayTransition(reduceMotion)}
           role="dialog"
           aria-modal="true"
           aria-labelledby="export-progress-title"
@@ -58,9 +67,10 @@ function ExportProgressModal({
             className={`relative bg-surface rounded-xl shadow-2xl w-full p-6 ${
               isPreview ? 'max-w-2xl' : isOrientation ? 'max-w-xl' : 'max-w-md'
             }`}
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
+            initial={modalPanelInitial(reduceMotion)}
+            animate={modalPanelAnimate()}
+            exit={modalPanelExit(reduceMotion)}
+            transition={modalPanelTransition(reduceMotion)}
           >
             {(isPreview || isOrientation || isError) && (
               <button

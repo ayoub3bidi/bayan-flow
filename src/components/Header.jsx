@@ -95,9 +95,9 @@ function Header({ hideLanguageSwitcher = false }) {
                 </svg>
               </div>
               <div className="flex flex-col min-w-0">
-                <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-tight truncate">
+                <span className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-text-primary tracking-tight leading-tight truncate">
                   {t('header.title')}
-                </h1>
+                </span>
                 <p className="text-[9px] sm:text-[10px] text-text-secondary hidden sm:block leading-tight mt-0.5 truncate">
                   {t('header.subtitle')}
                 </p>
@@ -126,7 +126,11 @@ function Header({ hideLanguageSwitcher = false }) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
-            {isAppPage && <GitHubRepoBadge />}
+            {isAppPage && (
+              <div className="hidden lg:block">
+                <GitHubRepoBadge />
+              </div>
+            )}
             {isAppPage && !hideLanguageSwitcher && <LanguageSwitcher />}
             {isAppPage && <ThemeToggle theme={theme} onToggle={toggleTheme} />}
             <UserMenu

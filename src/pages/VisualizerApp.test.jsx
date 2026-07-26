@@ -34,6 +34,9 @@ const {
     cancelExport: vi.fn(),
     closePreview: vi.fn(),
     downloadVideo: vi.fn(),
+    getExportBlob: vi.fn(() => null),
+    exportAlgorithmMeta: null,
+    exportFileName: 'visualization.mp4',
   };
   const fullScreenMockInner = {
     isFullScreen: false,
@@ -210,6 +213,17 @@ vi.mock('../components/ExportProgressModal', () => ({
     ) : null,
 }));
 
+vi.mock('../components/ShareExportModal', () => ({
+  default: ({ open, onClose }) =>
+    open ? (
+      <div data-testid="share-modal">
+        <button type="button" onClick={onClose}>
+          close-share
+        </button>
+      </div>
+    ) : null,
+}));
+
 vi.mock('../components/FloatingActionButton', () => ({
   default: ({ disabled, onClick }) => (
     <button data-testid="code-fab" disabled={disabled} onClick={onClick}>
@@ -285,6 +299,7 @@ vi.mock('../components/ControlPanel', () => ({
     sortOrder,
     onSortOrderChange,
     onToggleFullScreen,
+    visualizationsRemaining,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -302,6 +317,12 @@ vi.mock('../components/ControlPanel', () => ({
       <button type="button" onClick={onToggleFullScreen}>
         toggle-fullscreen
       </button>
+      {visualizationsRemaining != null &&
+      Number.isFinite(visualizationsRemaining) ? (
+        <p role="status">
+          {`${visualizationsRemaining} visualizations remaining`}
+        </p>
+      ) : null}
       {algorithmType === 'sorting' && (
         <button
           type="button"
@@ -432,6 +453,9 @@ vi.mock('../video/useVideoExporter', async () => {
         cancelExport: videoExporterMock.cancelExport,
         closePreview: videoExporterMock.closePreview,
         downloadVideo: videoExporterMock.downloadVideo,
+        getExportBlob: videoExporterMock.getExportBlob,
+        exportAlgorithmMeta: videoExporterMock.exportAlgorithmMeta,
+        exportFileName: videoExporterMock.exportFileName,
         canRenderOnWeb: true,
       };
     },
@@ -449,6 +473,8 @@ describe('VisualizerApp', () => {
     videoExporterMock.exportProgress = 0;
     videoExporterMock.exportBlobUrl = null;
     videoExporterMock.exportErrorMessage = null;
+    videoExporterMock.exportAlgorithmMeta = null;
+    videoExporterMock.getExportBlob.mockReturnValue(null);
     authMock.isAuthenticated = true;
     authMock.user = { id: 'test-user', email: 'test@example.com' };
     useFavoritesMock.useFavorites.mockImplementation(() => ({

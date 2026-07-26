@@ -6,16 +6,14 @@
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import '@fontsource-variable/inter';
 import './index.css';
 import i18n from './i18n';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
 import { AuthProvider } from './contexts/AuthProvider.jsx';
-import { PostHogProvider } from './providers/PostHogProvider.jsx';
+import { ConsentProvider } from './contexts/ConsentContext.jsx';
 import { initRTL } from './utils/rtlManager';
-import AppRoutes from './AppRoutes.jsx';
-import DocumentTitle from './components/DocumentTitle.jsx';
+import AppShell from './AppShell.jsx';
 
 initRTL(i18n);
 
@@ -23,12 +21,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <PostHogProvider>
-          <BrowserRouter>
-            <DocumentTitle />
-            <AppRoutes />
-          </BrowserRouter>
-        </PostHogProvider>
+        <ConsentProvider>
+          <AppShell />
+        </ConsentProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>
