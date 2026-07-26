@@ -207,21 +207,13 @@ function OutputConsole({
             <button
               type="button"
               onClick={() => setActiveTab('testCases')}
-              className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-t transition-colors ${
+              className={`px-3 py-2 text-sm font-medium rounded-t transition-colors ${
                 activeTab === 'testCases'
                   ? 'bg-[#1e1e1e] text-gray-200'
                   : 'text-gray-500 hover:text-gray-300'
               }`}
             >
               {t('python_code.test_cases', { defaultValue: 'Test Cases' })}
-              <span
-                className="px-2 py-0.5 bg-amber-500/10 text-amber-500 text-xs font-semibold rounded-full border border-amber-500/20 whitespace-nowrap"
-                title={t('settings.experimental', {
-                  defaultValue: 'Experimental',
-                })}
-              >
-                {t('settings.experimental', { defaultValue: 'Experimental' })}
-              </span>
             </button>
           )}
         </div>
