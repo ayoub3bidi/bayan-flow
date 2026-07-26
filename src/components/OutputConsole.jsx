@@ -145,7 +145,7 @@ function OutputConsole({
                 className={`flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 disabled:bg-teal-600/60 disabled:cursor-not-allowed disabled:opacity-90 rounded transition-colors ${
                   runBusy
                     ? 'w-8 h-8'
-                    : 'gap-1.5 px-2.5 py-1 text-xs font-medium min-w-[4.5rem]'
+                    : 'w-8 h-8 sm:w-auto sm:h-auto sm:gap-1.5 sm:px-2.5 sm:py-1 text-xs font-medium sm:min-w-[4.5rem]'
                 }`}
                 aria-label={runLabel}
               >
@@ -172,7 +172,7 @@ function OutputConsole({
                 ) : (
                   <>
                     <Play size={14} weight="bold" />
-                    {runLabel}
+                    <span className="hidden sm:inline">{runLabel}</span>
                   </>
                 )}
               </button>
@@ -251,7 +251,7 @@ function OutputConsole({
               className={`flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 disabled:bg-teal-600/60 disabled:cursor-not-allowed disabled:opacity-90 rounded transition-colors ${
                 runBusy
                   ? 'w-8 h-8'
-                  : 'gap-1.5 px-2.5 py-1 text-xs font-medium min-w-[4.5rem]'
+                  : 'w-8 h-8 sm:w-auto sm:h-auto sm:gap-1.5 sm:px-2.5 sm:py-1 text-xs font-medium sm:min-w-[4.5rem]'
               }`}
               aria-label={runLabel}
             >
@@ -278,7 +278,7 @@ function OutputConsole({
               ) : (
                 <>
                   <Play size={14} weight="bold" />
-                  {runLabel}
+                  <span className="hidden sm:inline">{runLabel}</span>
                 </>
               )}
             </button>
