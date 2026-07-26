@@ -320,7 +320,7 @@ function OutputConsole({
                 </span>
               )}
               {status === 'success' && hasContent && (
-                <span className="text-xs text-green-400 shrink-0">
+                <span className="hidden sm:inline text-xs text-green-400 shrink-0">
                   {t('python_code.completed', { defaultValue: 'Completed' })}
                 </span>
               )}
