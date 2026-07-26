@@ -69,9 +69,14 @@ function ProComingSoonPage() {
 
   const [email, setEmail] = useState(defaultEmail);
   const emailEditedRef = useRef(false);
-  const [submitState, setSubmitState] = useState(() =>
-    readStoredWaitlistEmail() ? 'already_joined' : 'idle'
-  );
+  const [submitState, setSubmitState] = useState(() => {
+    const storedEmail = readStoredWaitlistEmail();
+    if (!storedEmail) return 'idle';
+    const currentUserEmail = profile?.email || user?.email;
+    return currentUserEmail && storedEmail === currentUserEmail
+      ? 'already_joined'
+      : 'idle';
+  });
   const [position, setPosition] = useState(null);
   const [errorKey, setErrorKey] = useState(null);
   const [waitlistCount, setWaitlistCount] = useState(0);
@@ -81,6 +86,17 @@ function ProComingSoonPage() {
       setEmail(defaultEmail);
     }
   }, [defaultEmail]);
+
+  // Re-evaluate already_joined when auth state loads — a different user may
+  // have left a stale waitlist email in localStorage.
+  useEffect(() => {
+    if (submitState !== 'idle') return;
+    const storedEmail = readStoredWaitlistEmail();
+    const currentUserEmail = profile?.email || user?.email;
+    if (storedEmail && currentUserEmail && storedEmail === currentUserEmail) {
+      setSubmitState('already_joined');
+    }
+  }, [user, profile, submitState]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
