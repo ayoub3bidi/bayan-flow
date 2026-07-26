@@ -107,8 +107,8 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
     );
   }
 
-  if (hideAvatar && isAuthenticated && profile) {
-    return null;
+  if (hideAvatar) {
+    if (isLoading || isAuthenticated) return null;
   }
 
   if (!isAuthenticated || !profile) {

@@ -5,9 +5,16 @@
  */
 
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ComplexityPanel from './ComplexityPanel';
 import '../test/setup';
+
+// Mock useMediaQuery — default to desktop (no match)
+const mockUseMediaQuery = vi.fn(() => false);
+vi.mock('../hooks/useMediaQuery', () => ({
+  useMediaQuery: (...args) => mockUseMediaQuery(...args),
+}));
+
 // Mock constants
 vi.mock('../constants', () => ({
   ALGORITHM_COMPLEXITY: {
@@ -85,6 +92,10 @@ vi.mock('../constants', () => ({
 describe('ComplexityPanel', () => {
   const mockAlgorithm = 'bubbleSort';
 
+  beforeEach(() => {
+    mockUseMediaQuery.mockReturnValue(false);
+  });
+
   describe('Rendering', () => {
     it('should render complexity analysis title', () => {
       render(<ComplexityPanel algorithm={mockAlgorithm} />);
@@ -115,6 +126,43 @@ describe('ComplexityPanel', () => {
       expect(screen.getByText('Log')).toBeInTheDocument();
       expect(screen.getByRole('switch')).toBeInTheDocument();
     });
+
+    it('should render SVG with viewBox for responsive scaling', () => {
+      const { container } = render(
+        <ComplexityPanel algorithm={mockAlgorithm} />
+      );
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+      expect(svg).toHaveAttribute('viewBox', '0 0 650 350');
+      expect(svg).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet');
+    });
+  });
+
+  describe('Mobile Rendering', () => {
+    beforeEach(() => {
+      mockUseMediaQuery.mockImplementation(query => {
+        if (query === '(max-width: 639px)') return true;
+        if (query === '(max-width: 1023px)') return true;
+        return false;
+      });
+    });
+
+    it('should render title on mobile (not hidden)', () => {
+      render(<ComplexityPanel algorithm={mockAlgorithm} />);
+      const title = screen.getByText('Complexity Analysis');
+      expect(title).toBeInTheDocument();
+      expect(title.closest('div')).not.toHaveClass('hidden');
+    });
+
+    it('should render compact badge layout on small screens', () => {
+      const { container } = render(
+        <ComplexityPanel algorithm={mockAlgorithm} />
+      );
+      const badgeContainer = container.querySelector(
+        '.flex.flex-row.flex-wrap'
+      );
+      expect(badgeContainer).toBeInTheDocument();
+    });
   });
 
   describe('Scale Toggle', () => {
@@ -127,6 +175,43 @@ describe('ComplexityPanel', () => {
       fireEvent.click(toggleButton);
 
       expect(toggleButton).toHaveAttribute('aria-checked', 'true');
+    });
+  });
+
+  describe('Touch Tooltip', () => {
+    it('should toggle tooltip on point click', () => {
+      const { container } = render(
+        <ComplexityPanel algorithm={mockAlgorithm} />
+      );
+      // Animation starts at progress 0 — only the first data point circle is rendered
+      const circles = container.querySelectorAll('circle');
+      expect(circles.length).toBeGreaterThanOrEqual(1);
+
+      // Click the first data point — tooltip should appear
+      fireEvent.click(circles[0]);
+      const tooltip = screen.getByRole('status');
+      expect(tooltip).toBeInTheDocument();
+
+      // Click the same point again — tooltip should dismiss
+      fireEvent.click(circles[0]);
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    it('should dismiss tooltip when clicking the chart area', () => {
+      const { container } = render(
+        <ComplexityPanel algorithm={mockAlgorithm} />
+      );
+      const circles = container.querySelectorAll('circle');
+      expect(circles.length).toBeGreaterThanOrEqual(1);
+
+      // Show tooltip
+      fireEvent.click(circles[0]);
+      expect(screen.getByRole('status')).toBeInTheDocument();
+
+      // Click outside (chart wrapper div)
+      const chartWrapper = container.querySelector('.relative.w-full');
+      fireEvent.click(chartWrapper);
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
   });
 

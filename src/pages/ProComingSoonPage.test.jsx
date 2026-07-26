@@ -149,4 +149,26 @@ describe('ProComingSoonPage', () => {
       screen.queryByText(/learners are on the waitlist/i)
     ).not.toBeInTheDocument();
   });
+
+  it('does not show already_joined for a different user on same browser', async () => {
+    const { readStoredWaitlistEmail } =
+      await import('@/services/waitlistService.js');
+    vi.mocked(readStoredWaitlistEmail).mockReturnValue('other@example.com');
+
+    const { useAuth } = await import('@/hooks/useAuth.js');
+    useAuth.mockReturnValue({
+      user: { id: 'u2', email: 'current@example.com' },
+      profile: { email: 'current@example.com' },
+    });
+
+    renderPage('/pro');
+
+    // Form should be idle, not already_joined
+    expect(
+      screen.queryByText(/you are already on the waitlist/i)
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /join the waitlist/i })
+    ).toBeInTheDocument();
+  });
 });

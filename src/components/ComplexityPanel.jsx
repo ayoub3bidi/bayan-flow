@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { COMPLEXITY_FUNCTIONS } from '../constants';
@@ -17,6 +17,11 @@ import {
   COMPLEXITY_DATASETS,
   DEFAULT_COMPLEXITY_DATASET,
 } from '../registry/complexityDatasetRegistry';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+
+// Fixed internal viewBox — CSS scales the SVG to its container
+const VIEWBOX_WIDTH = 650;
+const VIEWBOX_HEIGHT = 350;
 
 /**
  * @param {string} algorithm - Current algorithm key
@@ -32,10 +37,23 @@ function ComplexityPanel({
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [animationProgress, setAnimationProgress] = useState(0);
   const svgRef = useRef(null);
+
+  const isSmall = useMediaQuery('(max-width: 639px)');
+  const isBelowLg = useMediaQuery('(max-width: 1023px)');
+
   const dataset =
     COMPLEXITY_DATASETS[complexityDataset] ??
     COMPLEXITY_DATASETS[DEFAULT_COMPLEXITY_DATASET];
   const complexityData = dataset[algorithm];
+
+  // Touch-friendly tooltip: tap toggles, tap elsewhere dismisses
+  const handlePointInteraction = useCallback(point => {
+    setHoveredPoint(prev => (prev && prev.n === point.n ? null : point));
+  }, []);
+
+  const dismissTooltip = useCallback(() => {
+    setHoveredPoint(null);
+  }, []);
 
   // Animate curve drawing on mount
   useEffect(() => {
@@ -74,13 +92,14 @@ function ComplexityPanel({
 
   const graphData = generateGraphData();
 
-  // SVG dimensions - responsive for mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-  const width = isMobile ? 320 : 650;
-  const height = isMobile ? 280 : 350;
-  const margin = { top: 30, right: 50, bottom: 60, left: 60 };
-  const chartWidth = width - margin.left - margin.right;
-  const chartHeight = height - margin.top - margin.bottom;
+  // Responsive margins for the SVG viewBox coordinate system
+  const margin = isSmall
+    ? { top: 20, right: 25, bottom: 50, left: 50 }
+    : isBelowLg
+      ? { top: 25, right: 35, bottom: 55, left: 55 }
+      : { top: 30, right: 50, bottom: 60, left: 60 };
+  const chartWidth = VIEWBOX_WIDTH - margin.left - margin.right;
+  const chartHeight = VIEWBOX_HEIGHT - margin.top - margin.bottom;
 
   // Scales
   const maxN = Math.max(...graphData.map(d => d.n));
@@ -109,6 +128,12 @@ function ComplexityPanel({
       .join(' ');
   };
 
+  const svgTextClass = isSmall
+    ? 'text-[8px]'
+    : isBelowLg
+      ? 'text-[9px]'
+      : 'text-xs';
+
   return (
     <motion.div
       initial={modalPanelInitial(reduceMotion)}
@@ -118,24 +143,24 @@ function ComplexityPanel({
       dir="auto"
     >
       <div className="rounded-xl p-3 sm:p-6 max-w-5xl w-full">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-gray-200">
-          <div className="hidden sm:block">
-            <h2 className="text-lg sm:text-xl font-bold text-text-primary">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4 pb-3 border-b border-gray-200">
+          <div>
+            <h2 className="text-sm sm:text-xl font-bold text-text-primary">
               {t('complexity_panel.title')}
             </h2>
-            <p className="text-xs sm:text-sm text-text-secondary">
+            <p className="text-[10px] sm:text-sm text-text-secondary">
               {t(`algorithms.${complexityDataset}.${algorithm}`, {
                 defaultValue: complexityData.name || algorithm,
               })}
             </p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-xs sm:text-sm text-text-secondary">
+          <div className="hidden sm:flex items-center gap-3">
+            <span className="hidden sm:inline text-sm text-text-secondary">
               {t('complexity_panel.linearScale')}
             </span>
             <button
               onClick={() => setIsLogScale(!isLogScale)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation ${
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation ${
                 isLogScale ? 'bg-blue-600' : 'bg-gray-300'
               }`}
               role="switch"
@@ -143,43 +168,54 @@ function ComplexityPanel({
               aria-label={t('complexity_panel.toggleScale')}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${
                   isLogScale
                     ? 'translate-x-6 rtl:-translate-x-6'
                     : 'translate-x-1 rtl:-translate-x-1'
                 }`}
               />
             </button>
-            <span className="text-xs sm:text-sm text-text-secondary">
+            <span className="hidden sm:inline text-sm text-text-secondary">
               {t('complexity_panel.logScale')}
             </span>
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-          <div className="space-y-3 sm:space-y-4 flex-shrink-0 w-full lg:w-auto">
-            <div>
-              <h3 className="text-[10px] sm:text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wide">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6">
+          {/* Complexity badges */}
+          <div
+            className={`flex-shrink-0 w-full lg:w-auto ${
+              isSmall
+                ? 'flex flex-row flex-wrap gap-x-4 gap-y-2'
+                : 'space-y-3 sm:space-y-4'
+            }`}
+          >
+            <div className={isSmall ? 'min-w-0' : ''}>
+              <h3 className="text-[10px] sm:text-xs font-semibold text-text-secondary mb-1.5 sm:mb-2 uppercase tracking-wide">
                 {t('complexity_panel.timeComplexity')}
               </h3>
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] sm:text-xs text-text-green-500 w-12 sm:w-16 rtl:text-right">
+              <div
+                className={
+                  isSmall ? 'flex flex-wrap gap-x-3 gap-y-1' : 'space-y-1.5'
+                }
+              >
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-[10px] sm:text-xs text-text-green-500 w-10 sm:w-16 rtl:text-right">
                     {t('complexity_panel.best')}:
                   </span>
                   <code className="bg-green-100 text-green-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold">
                     {complexityData.timeComplexity.best}
                   </code>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] sm:text-xs text-text-tertiary w-12 sm:w-16 rtl:text-right">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-[10px] sm:text-xs text-text-tertiary w-10 sm:w-16 rtl:text-right">
                     {t('complexity_panel.average')}:
                   </span>
                   <code className="bg-blue-100 text-blue-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold">
                     {complexityData.timeComplexity.average}
                   </code>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] sm:text-xs text-text-tertiary w-12 sm:w-16 rtl:text-right">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-[10px] sm:text-xs text-text-tertiary w-10 sm:w-16 rtl:text-right">
                     {t('complexity_panel.worst')}:
                   </span>
                   <code className="bg-red-100 text-red-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold">
@@ -188,8 +224,8 @@ function ComplexityPanel({
                 </div>
               </div>
             </div>
-            <div>
-              <h3 className="text-[10px] sm:text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wide">
+            <div className={isSmall ? 'min-w-0' : ''}>
+              <h3 className="text-[10px] sm:text-xs font-semibold text-text-secondary mb-1.5 sm:mb-2 uppercase tracking-wide">
                 {t('complexity_panel.spaceComplexity')}
               </h3>
               <code className="bg-purple-100 text-purple-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-mono text-[10px] sm:text-xs font-semibold inline-block">
@@ -197,22 +233,24 @@ function ComplexityPanel({
               </code>
             </div>
           </div>
-          <div className="flex-1 w-full overflow-x-auto">
-            <h3 className="text-xs sm:text-sm font-semibold text-text-primary mb-2">
+
+          {/* Chart */}
+          <div className="flex-1 w-full min-w-0">
+            <h3 className="text-xs sm:text-sm font-semibold text-text-primary mb-1 sm:mb-2">
               {t('complexity_panel.performance')}
             </h3>
-            <div className="text-[10px] sm:text-xs text-text-secondary mb-3">
+            <div className="text-[10px] sm:text-xs text-text-secondary mb-2 sm:mb-3">
               {t('complexity_panel.axisLabels', {
                 complexity: complexityData.timeComplexity.average,
               })}
             </div>
 
-            <div className="relative w-full overflow-x-auto">
+            <div className="relative w-full" onClick={dismissTooltip}>
               <svg
                 ref={svgRef}
-                width={width}
-                height={height}
-                className="border border-gray-200 rounded bg-bg w-full"
+                viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+                className="border border-gray-200 rounded bg-bg w-full h-auto"
+                preserveAspectRatio="xMidYMid meet"
               >
                 <g transform={`translate(${margin.left}, ${margin.top})`}>
                   <defs>
@@ -276,23 +314,27 @@ function ComplexityPanel({
                         className="cursor-pointer transition-all duration-200"
                         onMouseEnter={() => setHoveredPoint(point)}
                         onMouseLeave={() => setHoveredPoint(null)}
+                        onClick={e => {
+                          e.stopPropagation();
+                          handlePointInteraction(point);
+                        }}
                       />
                     ))}
                   <text
                     x={chartWidth / 2}
-                    y={chartHeight + 35}
+                    y={chartHeight + (isSmall ? 30 : 35)}
                     textAnchor="middle"
-                    className="text-xs font-medium"
+                    className={`${svgTextClass} font-medium`}
                     fill="var(--color-text-secondary)"
                   >
                     {t('complexity_panel.inputSize')}
                   </text>
                   <text
                     x={-chartHeight / 2}
-                    y={-45}
+                    y={isSmall ? -38 : -45}
                     textAnchor="middle"
-                    transform={`rotate(-90, -45, ${chartHeight / 2})`}
-                    className="text-xs font-medium"
+                    transform={`rotate(-90, ${isSmall ? -38 : -45}, ${chartHeight / 2})`}
+                    className={`${svgTextClass} font-medium`}
                     fill="var(--color-text-secondary)"
                   >
                     {t('complexity_panel.operations', {
@@ -305,7 +347,7 @@ function ComplexityPanel({
                     x="0"
                     y={chartHeight + 15}
                     textAnchor="start"
-                    className="text-xs"
+                    className={svgTextClass}
                     fill="var(--color-text-tertiary)"
                   >
                     0
@@ -314,7 +356,7 @@ function ComplexityPanel({
                     x={chartWidth}
                     y={chartHeight + 15}
                     textAnchor="end"
-                    className="text-xs"
+                    className={svgTextClass}
                     fill="var(--color-text-tertiary)"
                   >
                     {maxN.toLocaleString()}
@@ -323,7 +365,7 @@ function ComplexityPanel({
                     x="-10"
                     y={chartHeight + 4}
                     textAnchor="end"
-                    className="text-xs"
+                    className={svgTextClass}
                     fill="var(--color-text-tertiary)"
                   >
                     0
@@ -332,7 +374,7 @@ function ComplexityPanel({
                     x="-10"
                     y="4"
                     textAnchor="end"
-                    className="text-xs"
+                    className={svgTextClass}
                     fill="var(--color-text-tertiary)"
                   >
                     {isLogScale
@@ -342,7 +384,11 @@ function ComplexityPanel({
                 </g>
               </svg>
               {hoveredPoint && (
-                <div className="absolute top-2 ltr:left-2 rtl:right-2 bg-surface-elevated border border-gray-200 text-text-primary text-xs px-3 py-2 rounded shadow-lg z-10">
+                <div
+                  className="absolute top-2 ltr:left-2 rtl:right-2 bg-surface-elevated border border-gray-200 text-text-primary text-[10px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded shadow-lg z-10"
+                  role="status"
+                  aria-live="polite"
+                >
                   <div>
                     {t('complexity_panel.hoverN')} = {hoveredPoint.n}
                   </div>

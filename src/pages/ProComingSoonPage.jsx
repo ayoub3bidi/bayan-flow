@@ -41,12 +41,12 @@ const WAITLIST_COUNT_THRESHOLD = 50;
 
 function AbstractSortingAnimation() {
   return (
-    <div className="flex items-end justify-center gap-3 rounded-2xl border border-border bg-surface py-8 shadow-sm">
+    <div className="flex items-end justify-center gap-1.5 sm:gap-2 lg:gap-3 rounded-2xl border border-border bg-surface py-6 sm:py-8 shadow-sm overflow-hidden">
       {PRO_SORT_BAR_HEIGHTS.map((height, index) => (
         <div
           key={`sort-bar-${index}`}
-          className={`pro-sorting-tile-${index + 1} pro-sorting-tile rounded-lg border-2 shadow-lg`}
-          style={{ width: '48px', height: `${height}px` }}
+          className={`pro-sorting-tile-${index + 1} pro-sorting-tile w-7 sm:w-8 lg:w-12 rounded-lg border-2 shadow-lg`}
+          style={{ height: `${height}px` }}
           aria-hidden
         />
       ))}
@@ -69,7 +69,14 @@ function ProComingSoonPage() {
 
   const [email, setEmail] = useState(defaultEmail);
   const emailEditedRef = useRef(false);
-  const [submitState, setSubmitState] = useState('idle');
+  const [submitState, setSubmitState] = useState(() => {
+    const storedEmail = readStoredWaitlistEmail();
+    if (!storedEmail) return 'idle';
+    const currentUserEmail = profile?.email || user?.email;
+    return currentUserEmail && storedEmail === currentUserEmail
+      ? 'already_joined'
+      : 'idle';
+  });
   const [position, setPosition] = useState(null);
   const [errorKey, setErrorKey] = useState(null);
   const [waitlistCount, setWaitlistCount] = useState(0);
@@ -79,6 +86,17 @@ function ProComingSoonPage() {
       setEmail(defaultEmail);
     }
   }, [defaultEmail]);
+
+  // Re-evaluate already_joined when auth state loads — a different user may
+  // have left a stale waitlist email in localStorage.
+  useEffect(() => {
+    if (submitState !== 'idle') return;
+    const storedEmail = readStoredWaitlistEmail();
+    const currentUserEmail = profile?.email || user?.email;
+    if (storedEmail && currentUserEmail && storedEmail === currentUserEmail) {
+      setSubmitState('already_joined');
+    }
+  }, [user, profile, submitState]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
