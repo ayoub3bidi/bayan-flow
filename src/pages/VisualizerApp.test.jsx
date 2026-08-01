@@ -971,7 +971,7 @@ describe('VisualizerApp', () => {
       fireEvent.click(screen.getByText('select-dijkstra'));
 
       expect(screen.getByText('Why it matters')).toBeInTheDocument();
-      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+      expect(screen.getByText(/every navigation app/)).toBeInTheDocument();
     });
 
     it('shows a tip for the new category default when switching category', async () => {
@@ -981,7 +981,7 @@ describe('VisualizerApp', () => {
 
       expect(screen.getByText('Why it matters')).toBeInTheDocument();
       expect(
-        screen.getByText(/shortest paths in unweighted networks/)
+        screen.getByText(/shortest-path and level-order/)
       ).toBeInTheDocument();
     });
 
@@ -989,14 +989,16 @@ describe('VisualizerApp', () => {
       await renderApp();
 
       fireEvent.click(screen.getByText('select-dijkstra'));
-      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+      expect(screen.getByText(/every navigation app/)).toBeInTheDocument();
 
       fireEvent.click(screen.getByText('select-quick-sort'));
-      expect(screen.getByText(/qsort/)).toBeInTheDocument();
+      expect(screen.getByText(/iconic interview sort/)).toBeInTheDocument();
 
       fireEvent.click(screen.getByText('select-dijkstra'));
-      expect(screen.queryByText(/GPS routing/)).not.toBeInTheDocument();
-      expect(screen.getByText(/qsort/)).toBeInTheDocument();
+      expect(
+        screen.queryByText(/every navigation app/)
+      ).not.toBeInTheDocument();
+      expect(screen.getByText(/iconic interview sort/)).toBeInTheDocument();
     });
   });
 });

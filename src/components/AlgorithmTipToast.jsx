@@ -39,7 +39,7 @@ export default function AlgorithmTipToast({ algorithmKey, onClose }) {
     };
   }, [algorithmKey, onClose]);
 
-  const message = t(`algorithmUses.${algorithmKey}`, {
+  const message = t(`algorithmTips.${algorithmKey}`, {
     defaultValue: '',
   });
 

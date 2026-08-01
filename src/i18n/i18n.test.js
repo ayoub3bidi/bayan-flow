@@ -83,6 +83,38 @@ describe('i18n Configuration', () => {
     }
   });
 
+  it('should provide an algorithm tip string for every algorithm in all locales', async () => {
+    const algorithmKeys = Object.keys(ALGORITHM_KNOWLEDGE);
+    expect(algorithmKeys.length).toBeGreaterThan(0);
+
+    for (const lang of ['en', 'fr', 'ar']) {
+      await i18n.changeLanguage(lang);
+      for (const key of algorithmKeys) {
+        const result = i18n.t(`algorithmTips.${key}`);
+        expect(result, `missing algorithmTips.${key} in ${lang}`).not.toBe(
+          `algorithmTips.${key}`
+        );
+        expect(result.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should not duplicate the use-case string in the algorithm tip', async () => {
+    const algorithmKeys = Object.keys(ALGORITHM_KNOWLEDGE);
+
+    for (const lang of ['en', 'fr', 'ar']) {
+      await i18n.changeLanguage(lang);
+      for (const key of algorithmKeys) {
+        const use = i18n.t(`algorithmUses.${key}`);
+        const tip = i18n.t(`algorithmTips.${key}`);
+        expect(
+          tip,
+          `algorithmTips.${key} in ${lang} duplicates algorithmUses.${key}`
+        ).not.toBe(use);
+      }
+    }
+  });
+
   it('should translate algorithm use-case labels in all locales', async () => {
     for (const lang of ['en', 'fr', 'ar']) {
       await i18n.changeLanguage(lang);
