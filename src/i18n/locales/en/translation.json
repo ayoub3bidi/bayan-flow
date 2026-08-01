@@ -1476,7 +1476,8 @@
       "planned": "Planned"
     },
     "timeline": {
-      "sampleNote": "Timeline items are samples. Replace with actual roadmap content."
+      "sampleNote": "Timeline items are samples. Replace with actual roadmap content.",
+      "readArticle": "Read article"
     }
   },
   "featureGate": {

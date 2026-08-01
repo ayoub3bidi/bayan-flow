@@ -1475,7 +1475,8 @@
       "planned": "Prévu"
     },
     "timeline": {
-      "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route."
+      "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route.",
+      "readArticle": "Lire l'article"
     }
   },
   "featureGate": {

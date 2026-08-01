@@ -13,13 +13,15 @@ vi.mock('@phosphor-icons/react', () => ({
   Lightning: () => <svg data-testid="zap-icon" />,
   Sparkle: () => <svg data-testid="sparkles-icon" />,
   Play: () => <svg data-testid="play-icon" />,
+  ArrowUpRight: () => <svg data-testid="arrow-up-right-icon" />,
 }));
 
 describe('TimelineItem', () => {
   const defaultProps = {
     date: '2025-01',
     title: 'Test Feature',
-    description: 'This is a test timeline item',
+    highlights: ['First highlight', 'Second highlight'],
+    articleUrl: '',
     status: 'completed',
     position: 'left',
     index: 0,
@@ -30,9 +32,8 @@ describe('TimelineItem', () => {
       render(<TimelineItem {...defaultProps} />);
       expect(screen.getByText('Test Feature')).toBeInTheDocument();
       expect(screen.getByText('2025-01')).toBeInTheDocument();
-      expect(
-        screen.getByText('This is a test timeline item')
-      ).toBeInTheDocument();
+      expect(screen.getByText('First highlight')).toBeInTheDocument();
+      expect(screen.getByText('Second highlight')).toBeInTheDocument();
     });
 
     it('should display date', () => {
@@ -45,11 +46,12 @@ describe('TimelineItem', () => {
       expect(screen.getByText('Test Feature')).toBeInTheDocument();
     });
 
-    it('should display description', () => {
-      render(<TimelineItem {...defaultProps} />);
-      expect(
-        screen.getByText('This is a test timeline item')
-      ).toBeInTheDocument();
+    it('should display highlights as a bullet list', () => {
+      const { container } = render(<TimelineItem {...defaultProps} />);
+      expect(screen.getByText('First highlight')).toBeInTheDocument();
+      expect(screen.getByText('Second highlight')).toBeInTheDocument();
+      expect(container.querySelector('ul')).toBeInTheDocument();
+      expect(container.querySelectorAll('li')).toHaveLength(2);
     });
 
     it('should render video facade when videoUrl is provided', () => {
@@ -70,23 +72,54 @@ describe('TimelineItem', () => {
     });
   });
 
+  describe('Article Link', () => {
+    it('should render article link when articleUrl is provided', () => {
+      const props = {
+        ...defaultProps,
+        articleUrl: 'https://dev.to/example/post',
+      };
+      render(<TimelineItem {...props} />);
+      const link = screen.getByRole('link', { name: /read article/i });
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute('href', 'https://dev.to/example/post');
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+      expect(screen.getByTestId('arrow-up-right-icon')).toBeInTheDocument();
+    });
+
+    it('should not render article link when articleUrl is empty', () => {
+      render(<TimelineItem {...defaultProps} />);
+      expect(
+        screen.queryByRole('link', { name: /read article/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should not render article link when articleUrl is undefined', () => {
+      const props = { ...defaultProps, articleUrl: undefined };
+      render(<TimelineItem {...props} />);
+      expect(
+        screen.queryByRole('link', { name: /read article/i })
+      ).not.toBeInTheDocument();
+    });
+  });
+
   describe('Status Variants', () => {
     it('should render with completed status', () => {
       const props = { ...defaultProps, status: 'completed' };
       render(<TimelineItem {...props} />);
-      expect(screen.getAllByTestId('check-icon')).toHaveLength(2);
+      expect(screen.getAllByTestId('check-icon')).toHaveLength(1);
     });
 
     it('should render with in-progress status', () => {
       const props = { ...defaultProps, status: 'in-progress' };
       render(<TimelineItem {...props} />);
-      expect(screen.getAllByTestId('zap-icon')).toHaveLength(2);
+      expect(screen.getAllByTestId('zap-icon')).toHaveLength(1);
     });
 
     it('should render with planned status', () => {
       const props = { ...defaultProps, status: 'planned' };
       render(<TimelineItem {...props} />);
-      expect(screen.getAllByTestId('sparkles-icon')).toHaveLength(2);
+      expect(screen.getAllByTestId('sparkles-icon')).toHaveLength(1);
     });
 
     it('should apply correct styling for completed status', () => {
@@ -122,7 +155,7 @@ describe('TimelineItem', () => {
     it('should default to planned status when not specified', () => {
       const props = { ...defaultProps, status: undefined };
       render(<TimelineItem {...props} />);
-      expect(screen.getAllByTestId('sparkles-icon')).toHaveLength(2);
+      expect(screen.getAllByTestId('sparkles-icon')).toHaveLength(1);
     });
   });
 
@@ -131,19 +164,19 @@ describe('TimelineItem', () => {
       const props = { ...defaultProps, status: 'completed' };
       render(<TimelineItem {...props} />);
       // Status badge should be rendered through i18n
-      expect(screen.getAllByTestId('check-icon')).toHaveLength(2);
+      expect(screen.getAllByTestId('check-icon')).toHaveLength(1);
     });
 
     it('should display status badge for in-progress', () => {
       const props = { ...defaultProps, status: 'in-progress' };
       render(<TimelineItem {...props} />);
-      expect(screen.getAllByTestId('zap-icon')).toHaveLength(2);
+      expect(screen.getAllByTestId('zap-icon')).toHaveLength(1);
     });
 
     it('should display status badge for planned', () => {
       const props = { ...defaultProps, status: 'planned' };
       render(<TimelineItem {...props} />);
-      expect(screen.getAllByTestId('sparkles-icon')).toHaveLength(2);
+      expect(screen.getAllByTestId('sparkles-icon')).toHaveLength(1);
     });
   });
 
@@ -224,12 +257,15 @@ describe('TimelineItem', () => {
       expect(screen.getByText(longTitle)).toBeInTheDocument();
     });
 
-    it('should handle very long description', () => {
-      const longDesc = 'Lorem ipsum '.repeat(50);
-      const props = { ...defaultProps, description: longDesc };
+    it('should handle very long highlight', () => {
+      const longHighlight = 'Lorem ipsum '.repeat(50);
+      const props = {
+        ...defaultProps,
+        highlights: [longHighlight],
+      };
       render(<TimelineItem {...props} />);
       expect(
-        screen.getByText(new RegExp(longDesc.slice(0, 50)))
+        screen.getByText(new RegExp(longHighlight.slice(0, 50)))
       ).toBeInTheDocument();
     });
 
@@ -274,7 +310,7 @@ describe('TimelineItem', () => {
       expect(titleContainer).toBeInTheDocument();
     });
 
-    it('should maintain proper order: date → status → icon → title → description → video', () => {
+    it('should maintain proper order: date → status → icon → title → highlights → video', () => {
       const props = {
         ...defaultProps,
         videoUrl: 'https://www.youtube.com/embed/test123',
