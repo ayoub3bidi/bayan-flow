@@ -8,7 +8,8 @@
     "cancel": "Annuler"
   },
   "app": {
-    "pageTitle": "Visualiseur Interactif d'Algorithmes"
+    "pageTitle": "Visualiseur Interactif d'Algorithmes",
+    "algorithmTipTitle": "Pourquoi c'est utile"
   },
   "header": {
     "title": "Bayan Flow",
@@ -162,7 +163,8 @@
     "favoriteSlotsFull": "Limite de favoris atteinte ({{limit}}). Retirez-en un pour en ajouter un autre.",
     "addFavorite": "Ajouter {{name}} aux favoris",
     "removeFavorite": "Retirer {{name}} des favoris",
-    "signInForAdvancedFeatures": "Connectez-vous pour débloquer le mode manuel, la vitesse et les contrôles avancés."
+    "signInForAdvancedFeatures": "Connectez-vous pour débloquer le mode manuel, la vitesse et les contrôles avancés.",
+    "useCases": "Cas d'usage"
   },
   "modes": {
     "sorting": "Tri",
@@ -1502,5 +1504,52 @@
     "favorite_description": "Connectez-vous pour marquer des algorithmes et y revenir rapidement depuis vos favoris.",
     "timeline_scrub": "Défilement des étapes",
     "timeline_scrub_description": "Accédez directement à n'importe quelle étape en défilant la barre. Connectez-vous pour la débloquer et profiter de l'ensemble de l'offre gratuite."
+  },
+  "algorithmUses": {
+    "aStar": "Utilisé dans presque tous les jeux vidéo pour la recherche de chemin, ainsi que pour la navigation des robots et des véhicules autonomes.",
+    "bellmanFord": "Détecte les cycles négatifs, utilisé pour l'arbitrage de devises et le routage à vecteur de distance RIP.",
+    "bfs": "Trouve les plus courts chemins dans les réseaux non pondérés, des graphes sociaux aux robots d'indexation web.",
+    "bidirectionalSearch": "Accélère les requêtes de plus court chemin dans les réseaux sociaux géants et la planification d'itinéraires.",
+    "binarySearch": "Recherches dans les bases de données triées et fonctions des bibliothèques standard. Un favori des entretiens de codage.",
+    "bogoSort": "Un exemple utile de pire cas pour expliquer pourquoi l'analyse algorithmique compte.",
+    "breadthFirstSearchGraph": "Les plus courts chemins dans les graphes non pondérés, et la base de Dijkstra.",
+    "bubbleSort": "Le premier tri classique, utile pour comprendre les échanges et la terminaison anticipée.",
+    "bucketSort": "Organise les flottants uniformément répartis et les données géospatiales par plage de valeurs ou de coordonnées.",
+    "combSort": "Améliore le tri à bulles avec une simple séquence d'écarts, utile dans les systèmes embarqués.",
+    "countingSort": "Trie les caractères et les petits entiers dans les pipelines de texte et construit des histogrammes pour le traitement d'image.",
+    "cycleSort": "Minimise les écritures, ce qui protège la mémoire flash. Souvent un cas limite d'entretien.",
+    "dStarLite": "Navigation en terrain changeant, célèbre pour les rovers martiens de la NASA.",
+    "depthFirstSearch": "La base du parcours de graphe, du tri topologique et de nombreux motifs récursifs.",
+    "dijkstra": "Alimente le routage GPS de Google Maps et Apple Maps, ainsi que des protocoles comme OSPF.",
+    "exponentialSearch": "Recherche dans des flux triés de longueur inconnue et fonde le galloping des fusions.",
+    "fibonacciSearch": "Une recherche sans division qui montre que O(log n) n'exige pas de point médian. Idéal pour discuter de théorie des nombres.",
+    "floydWarshallAlgorithm": "Plus courts chemins entre toutes les paires et détection de cycles négatifs, un problème classique de programmation dynamique sur graphe.",
+    "greedyBestFirstSearch": "IA de jeu en temps réel où tout chemin rapide vaut mieux que le chemin optimal.",
+    "heapSort": "Alimente les files de priorité des ordonnanceurs et de Dijkstra, avec une garantie O(n log n) dans le pire cas.",
+    "idaStar": "Résout des puzzles à grand espace d'états comme le taquin 15 et le Rubik's Cube avec peu de mémoire.",
+    "inorderTraversal": "Produit les clés d'un arbre binaire de recherche en ordre trié et restaure les expressions infixes. Courant dans les entretiens de codage.",
+    "insertionSort": "Trie des flux de données en temps réel et sert de cas de base dans Tim Sort. Rapide sur des données presque triées.",
+    "interpolationSearch": "Recherches rapides sur des données numériques bien réparties, en moyenne O(log log n).",
+    "jumpPointSearch": "Un chercheur de chemin sur grille rapide pour les jeux de stratégie temps réel et la navigation de nombreux agents.",
+    "jumpSearch": "Montre comment des sauts grossiers plus des balayages linéaires battent les sondes aléatoires sur le stockage par blocs.",
+    "kahnAlgorithm": "Tri topologique avec détection de cycle, utilisé pour valider les graphes de build.",
+    "kosarajuAlgorithm": "Trouve les composantes fortement connexes en deux parcours DFS.",
+    "kruskalAlgorithm": "Conception de réseaux à coût minimal, et un bon moyen d'apprendre Union-Find.",
+    "levelOrderTraversal": "Parcourt les arbres niveau par niveau avec une file, l'étape naturelle avant le BFS sur graphe.",
+    "linearSearch": "Le bon outil pour de petites données ou des données non triées quand la préparation du tri ne vaut pas le coût.",
+    "mergeSort": "Alimente le tri des objets de Java, gère des données trop volumineuses pour la mémoire et compte les inversions.",
+    "morrisTraversal": "Parcourt un arbre avec O(1) d'espace supplémentaire, une technique d'entretien connue.",
+    "postorderTraversal": "Supprime les arbres en sécurité, calcule la hauteur de bas en haut et résout les dépendances de build.",
+    "preorderTraversal": "Sérialise et reconstruit les arbres binaires, souvent associé au parcours infixe.",
+    "primAlgorithm": "Fait croître une infrastructure à faible coût depuis un nœud de départ, un problème d'entretien glouton courant.",
+    "quickSort": "Le tri par défaut du qsort de C et des premières versions de Arrays.sort de Java. Un choix standard en entretien et en programmation compétitive.",
+    "radixSort": "Trie les entiers et les chaînes de longueur fixe dans les bases de données, le routage réseau et les arrays de suffixes en bio-informatique.",
+    "selectionSort": "Minimise les écritures, idéal pour la mémoire flash et l'EEPROM. Rapide à expliquer en entretien.",
+    "shellSort": "Un tri compact utilisé dans les systèmes embarqués et la bibliothèque uClibc quand la taille du code compte.",
+    "tarjanAlgorithm": "Trouve les composantes fortement connexes en un seul parcours DFS, un sujet d'entretien avancé.",
+    "ternarySearch": "Une question de suivi courante qui compare les sondes supplémentaires au nombre de comparaisons.",
+    "timSort": "Le tri intégré de Python et Java, la référence pour les données réelles comportant des séquences ordonnées.",
+    "topologicalSort": "Ordonne les étapes de build et les prérequis de cours, rendant la résolution des dépendances claire.",
+    "zigzagLevelOrderTraversal": "La variante en spirale qui conserve les garanties du BFS, souvent vue dans les problèmes LeetCode."
   }
 }

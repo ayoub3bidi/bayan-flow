@@ -6,6 +6,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import i18n from './index';
+import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
 
 describe('i18n Configuration', () => {
   beforeEach(() => {
@@ -64,5 +65,29 @@ describe('i18n Configuration', () => {
     expect(i18n.t('info.step', { current: 5, total: 10 })).toBe(
       'الخطوة 5 من 10'
     );
+  });
+
+  it('should provide a use-case string for every algorithm in all locales', async () => {
+    const algorithmKeys = Object.keys(ALGORITHM_KNOWLEDGE);
+    expect(algorithmKeys.length).toBeGreaterThan(0);
+
+    for (const lang of ['en', 'fr', 'ar']) {
+      await i18n.changeLanguage(lang);
+      for (const key of algorithmKeys) {
+        const result = i18n.t(`algorithmUses.${key}`);
+        expect(result, `missing algorithmUses.${key} in ${lang}`).not.toBe(
+          `algorithmUses.${key}`
+        );
+        expect(result.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should translate algorithm use-case labels in all locales', async () => {
+    for (const lang of ['en', 'fr', 'ar']) {
+      await i18n.changeLanguage(lang);
+      expect(i18n.t('settings.useCases').length).toBeGreaterThan(0);
+      expect(i18n.t('app.algorithmTipTitle').length).toBeGreaterThan(0);
+    }
   });
 });

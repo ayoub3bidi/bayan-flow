@@ -955,4 +955,46 @@ describe('VisualizerApp', () => {
       ).toBeInTheDocument();
     });
   });
+
+  describe('algorithm tip toast', () => {
+    it('does not show a tip for the default algorithm on initial render', async () => {
+      await renderApp();
+
+      expect(screen.queryByText('Why it matters')).not.toBeInTheDocument();
+    });
+
+    it('shows a tip when a new algorithm is selected', async () => {
+      await renderApp();
+
+      fireEvent.click(screen.getByText('select-dijkstra'));
+
+      expect(screen.getByText('Why it matters')).toBeInTheDocument();
+      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+    });
+
+    it('shows a tip for the new category default when switching category', async () => {
+      await renderApp();
+
+      fireEvent.click(screen.getByText('pathfinding'));
+
+      expect(screen.getByText('Why it matters')).toBeInTheDocument();
+      expect(
+        screen.getByText(/shortest paths in unweighted networks/)
+      ).toBeInTheDocument();
+    });
+
+    it('shows a tip only once per algorithm per session', async () => {
+      await renderApp();
+
+      fireEvent.click(screen.getByText('select-dijkstra'));
+      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('select-quick-sort'));
+      expect(screen.getByText(/qsort/)).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('select-dijkstra'));
+      expect(screen.queryByText(/GPS routing/)).not.toBeInTheDocument();
+      expect(screen.getByText(/qsort/)).toBeInTheDocument();
+    });
+  });
 });

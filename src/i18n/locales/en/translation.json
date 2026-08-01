@@ -8,7 +8,8 @@
     "cancel": "Cancel"
   },
   "app": {
-    "pageTitle": "Interactive Algorithm Visualizer"
+    "pageTitle": "Interactive Algorithm Visualizer",
+    "algorithmTipTitle": "Why it matters"
   },
   "header": {
     "title": "Bayan Flow",
@@ -162,7 +163,8 @@
     "favoriteSlotsFull": "Favorite limit reached ({{limit}}). Remove one to add another.",
     "addFavorite": "Add {{name}} to favorites",
     "removeFavorite": "Remove {{name}} from favorites",
-    "signInForAdvancedFeatures": "Sign in to unlock manual mode, speed, and advanced controls."
+    "signInForAdvancedFeatures": "Sign in to unlock manual mode, speed, and advanced controls.",
+    "useCases": "Use cases"
   },
   "modes": {
     "sorting": "Sorting",
@@ -1503,5 +1505,52 @@
     "favorite_description": "Sign in to star algorithms and jump back to them quickly from your favorites list.",
     "timeline_scrub": "Step scrubbing",
     "timeline_scrub_description": "Jump to any step by scrubbing the timeline. Sign in to unlock it and the rest of the Free tier."
+  },
+  "algorithmUses": {
+    "aStar": "Used in nearly every video game for pathfinding, plus robot and autonomous vehicle navigation.",
+    "bellmanFord": "Detects negative cycles, used for currency arbitrage and RIP distance-vector routing.",
+    "bfs": "Finds shortest paths in unweighted networks, from social graphs to web crawlers.",
+    "bidirectionalSearch": "Speeds up shortest path queries in large social networks and route planning.",
+    "binarySearch": "Sorted database lookups and standard library helpers. A favorite in coding interviews.",
+    "bogoSort": "A useful worst case example for explaining why algorithmic analysis matters.",
+    "breadthFirstSearchGraph": "Shortest paths in unweighted graphs, and the basis for Dijkstra.",
+    "bubbleSort": "The classic first sort, useful for learning swaps and early termination.",
+    "bucketSort": "Organizes uniformly distributed floats and geospatial data by value or coordinate range.",
+    "combSort": "Improves bubble sort with a simple gap sequence, useful in embedded systems.",
+    "countingSort": "Sorts characters and small integers in text pipelines and builds histograms for image processing.",
+    "cycleSort": "Minimizes writes, which protects flash memory. Often an interview edge case.",
+    "dStarLite": "Navigation in changing terrain, famously used by NASA's Mars rovers.",
+    "depthFirstSearch": "The basis of graph traversal, topological sorting, and many recursive patterns.",
+    "dijkstra": "Drives GPS routing in Google Maps and Apple Maps, plus protocols like OSPF.",
+    "exponentialSearch": "Searches sorted streams of unknown length and underpins galloping in merges.",
+    "fibonacciSearch": "A division-free search that shows O(log n) does not require a midpoint. Good for number theory discussions.",
+    "floydWarshallAlgorithm": "All pairs shortest paths and negative cycle detection, a classic dynamic programming problem on graphs.",
+    "greedyBestFirstSearch": "Real time game AI where any quick path beats an optimal one.",
+    "heapSort": "Drives priority queues in schedulers and Dijkstra, with a guaranteed O(n log n) worst case.",
+    "idaStar": "Solves large state-space puzzles like the 15-puzzle and Rubik's Cube with low memory.",
+    "inorderTraversal": "Outputs BST keys in sorted order and recovers infix expressions. Common in coding interviews.",
+    "insertionSort": "Sorts real-time data streams and serves as the base case in Tim Sort. Fast on nearly sorted data.",
+    "interpolationSearch": "Fast lookups on evenly spread numeric data, averaging O(log log n).",
+    "jumpPointSearch": "A fast grid pathfinder for RTS games and large-scale agent navigation.",
+    "jumpSearch": "Shows how coarse jumps plus linear scans beat random probes on block storage.",
+    "kahnAlgorithm": "Topological sort with cycle detection, used to validate build graphs.",
+    "kosarajuAlgorithm": "Finds strongly connected components with two DFS passes.",
+    "kruskalAlgorithm": "Minimum cost network design, and a common way to learn Union-Find.",
+    "levelOrderTraversal": "Walks trees level by level with a queue, the natural step before graph BFS.",
+    "linearSearch": "The right tool for small or unsorted data when sorting setup is not worth the cost.",
+    "mergeSort": "Powers Java's object sort, handles data too large for memory, and counts inversions.",
+    "morrisTraversal": "Traverses a tree in O(1) extra space, a well-known interview technique.",
+    "postorderTraversal": "Deletes trees safely, computes height bottom-up, and resolves build dependencies.",
+    "preorderTraversal": "Serializes and reconstructs binary trees, often paired with inorder traversal.",
+    "primAlgorithm": "Grows low cost infrastructure from a starting node, a common greedy interview problem.",
+    "quickSort": "The default sort in C's qsort and early Java Arrays.sort. A standard pick in interviews and competitive programming.",
+    "radixSort": "Sorts integers and fixed-length strings in databases, network routing, and bioinformatics suffix arrays.",
+    "selectionSort": "Minimizes writes, ideal for flash and EEPROM memory. Quick to explain in an interview.",
+    "shellSort": "A compact in-place sort used in embedded systems and the uClibc library when code size matters.",
+    "tarjanAlgorithm": "Finds strongly connected components in one DFS pass, an advanced interview topic.",
+    "ternarySearch": "A common follow-up question that compares extra probes against comparison count.",
+    "timSort": "Python and Java's built-in sort, the standard for real-world data with ordered runs.",
+    "topologicalSort": "Orders build steps and course prerequisites, making dependency resolution clear.",
+    "zigzagLevelOrderTraversal": "The spiral variant that keeps BFS guarantees, often seen in LeetCode problems."
   }
 }
