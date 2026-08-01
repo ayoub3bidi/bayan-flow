@@ -33,11 +33,12 @@
  *   reset: () => void,
  *   stepForward: () => void,
  *   stepBackward: () => void,
+ *   seekToStep: (index: number) => void,
  * }}
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { VISUALIZATION_MODES } from '../constants/index.js';
+import { ANIMATION_SPEEDS, VISUALIZATION_MODES } from '../constants/index.js';
 import { getSoundEventsForStep } from '../utils/soundEvents.js';
 import { soundManager } from '../utils/soundManager.js';
 
@@ -130,27 +131,9 @@ export function useVisualization({
     [clearAutoplayTimeout, applyStep]
   );
 
-  const play = useCallback(() => {
-    if (stepsRef.current.length === 0 || isComplete) return;
-
-    // ── Manual: advance one step ───────────────────────────────────────────
-    if (mode === VISUALIZATION_MODES.MANUAL) {
-      if (currentStep < stepsRef.current.length - 1) {
-        const next = currentStep + 1;
-        applyStep(stepsRef.current[next], { emitSound: true, stepIndex: next });
-        setCurrentStep(next);
-        if (next === stepsRef.current.length - 1) setIsComplete(true);
-      }
-      return;
-    }
-
-    // ── Autoplay ───────────────────────────────────────────────────────────
-    clearAutoplayTimeout();
-    setIsPlaying(true);
-    setIsAutoplayActive(true);
-    animationRef.current = true;
-
-    const runAutoplay = idx => {
+  // Stable autoplay scheduler: applies one step and schedules the next.
+  const scheduleNext = useCallback(
+    idx => {
       if (!animationRef.current || idx >= stepsRef.current.length) {
         setIsPlaying(false);
         setIsAutoplayActive(false);
@@ -172,13 +155,42 @@ export function useVisualization({
 
       clearAutoplayTimeout();
       autoplayTimeoutRef.current = setTimeout(
-        () => runAutoplay(idx + 1),
+        () => scheduleNext(idx + 1),
         speed
       );
-    };
+    },
+    [applyStep, speed, clearAutoplayTimeout]
+  );
 
-    runAutoplay(currentStep);
-  }, [currentStep, speed, isComplete, mode, clearAutoplayTimeout, applyStep]);
+  const play = useCallback(() => {
+    if (stepsRef.current.length === 0 || isComplete) return;
+
+    // ── Manual: advance one step ───────────────────────────────────────────
+    if (mode === VISUALIZATION_MODES.MANUAL) {
+      if (currentStep < stepsRef.current.length - 1) {
+        const next = currentStep + 1;
+        applyStep(stepsRef.current[next], { emitSound: true, stepIndex: next });
+        setCurrentStep(next);
+        if (next === stepsRef.current.length - 1) setIsComplete(true);
+      }
+      return;
+    }
+
+    // ── Autoplay ───────────────────────────────────────────────────────────
+    clearAutoplayTimeout();
+    setIsPlaying(true);
+    setIsAutoplayActive(true);
+    animationRef.current = true;
+
+    scheduleNext(currentStep);
+  }, [
+    currentStep,
+    isComplete,
+    mode,
+    scheduleNext,
+    clearAutoplayTimeout,
+    applyStep,
+  ]);
 
   const pause = useCallback(() => {
     animationRef.current = null;
@@ -214,10 +226,44 @@ export function useVisualization({
     }
   }, [currentStep, applyStep]);
 
+  const seekToStep = useCallback(
+    index => {
+      const count = stepsRef.current.length;
+      if (count === 0) return;
+      const target = Math.max(0, Math.min(index, count - 1));
+      if (target === currentStep) return;
+
+      // ── Seek while autoplay is running: keep playing from the new spot ───
+      if (isPlaying && mode === VISUALIZATION_MODES.AUTOPLAY) {
+        clearAutoplayTimeout();
+        scheduleNext(target);
+        return;
+      }
+
+      // ── Manual / paused: silent jump to the requested step ───────────────
+      applyStep(stepsRef.current[target]);
+      setCurrentStep(target);
+      setIsComplete(target === count - 1);
+    },
+    [
+      currentStep,
+      isPlaying,
+      mode,
+      scheduleNext,
+      clearAutoplayTimeout,
+      applyStep,
+    ]
+  );
+
   // Keep animationRef consistent with isPlaying.
   useEffect(() => {
     if (isPlaying) animationRef.current = true;
   }, [isPlaying]);
+
+  // Ultra-fast autoplay is too quick for the step caption to be useful.
+  const isUltraFastAutoplay =
+    mode === VISUALIZATION_MODES.AUTOPLAY &&
+    speed === ANIMATION_SPEEDS.ULTRA_FAST;
 
   return {
     steps,
@@ -225,7 +271,7 @@ export function useVisualization({
     isAutoplayActive,
     currentStep,
     totalSteps: steps.length,
-    description,
+    description: isUltraFastAutoplay ? '' : description,
     isComplete,
     mode,
     loadSteps,
@@ -234,5 +280,6 @@ export function useVisualization({
     reset,
     stepForward,
     stepBackward,
+    seekToStep,
   };
 }

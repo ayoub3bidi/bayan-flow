@@ -68,7 +68,7 @@
 
 ### Shared product features
 
-- Playback: manual vs autoplay (`VISUALIZATION_MODES`), four speed presets (`ANIMATION_SPEEDS`)
+- Playback: manual vs autoplay (`VISUALIZATION_MODES`), five speed presets (`ANIMATION_SPEEDS`)
 - Mobile: horizontal swipe for manual step forward/back (`useSwipe`), one-time swipe tutorial (`SwipeTutorial`)
 - Full-screen visualization mode (`useFullScreen`) reuses the same control panel and visualizer registry
 - Light/dark theme with system preference fallback (`ThemeContext`, `ThemeToggle`, `useTheme`)
@@ -419,6 +419,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Full-screen mode uses the same `ControlPanel` and visualizer registry as normal mode.
 - Lazy panels (`PythonCodePanel`, `AlgorithmInsightPanel`) must remain optional overlays and should not block the main visualization path.
 - Swipe stepping applies only in manual playback mode on touch devices.
+- The step progress bar is seekable for Free-tier users (non-gated, `onSeek` present): an invisible full-width range input drives seeking, a circular grab handle (`seek-thumb`) marks the fill edge, and the `controls.dragToSeek` microcopy sits under the bar. Anonymous/gated users keep the static autoplay-only bar with no handle or microcopy.
 
 ## Sound And Export Notes
 

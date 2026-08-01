@@ -70,6 +70,7 @@ const constantsMockValue = {
     MEDIUM: 1000,
     FAST: 500,
     VERY_FAST: 250,
+    ULTRA_FAST: 125,
   },
   VISUALIZATION_MODES: {
     MANUAL: 'manual',

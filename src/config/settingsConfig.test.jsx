@@ -43,12 +43,12 @@ describe('useSettingsConfig', () => {
     expect(values).toContain(35);
   });
 
-  it('should return speedOptions with 4 entries', () => {
+  it('should return speedOptions with 5 entries', () => {
     const { result } = renderHook(() => useSettingsConfig(), { wrapper });
 
     expect(result.current.speedOptions).toBeDefined();
     expect(Array.isArray(result.current.speedOptions)).toBe(true);
-    expect(result.current.speedOptions).toHaveLength(4);
+    expect(result.current.speedOptions).toHaveLength(5);
   });
 
   it('each speed option should have value and label', () => {
@@ -62,7 +62,7 @@ describe('useSettingsConfig', () => {
     });
   });
 
-  it('speed values should match ANIMATION_SPEEDS (from mocked constants: 2000, 1000, 500, 250)', () => {
+  it('speed values should match ANIMATION_SPEEDS (from mocked constants: 2000, 1000, 500, 250, 125)', () => {
     const { result } = renderHook(() => useSettingsConfig(), { wrapper });
 
     const values = result.current.speedOptions.map(o => o.value);
@@ -70,6 +70,7 @@ describe('useSettingsConfig', () => {
     expect(values).toContain(1000);
     expect(values).toContain(500);
     expect(values).toContain(250);
+    expect(values).toContain(125);
   });
 
   it('should use translated labels for grid sizes', () => {

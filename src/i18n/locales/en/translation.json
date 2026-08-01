@@ -328,7 +328,8 @@
     "slow": "Slow",
     "medium": "Medium",
     "fast": "Fast",
-    "veryFast": "Very Fast"
+    "veryFast": "Very Fast",
+    "ultraFast": "Ultra Fast"
   },
   "gridSizes": {
     "small": "Small (15×15)",
@@ -341,6 +342,8 @@
     "stop": "Stop",
     "stepForward": "Step Forward",
     "stepBackward": "Step Backward",
+    "seekTimeline": "Scrub through steps",
+    "dragToSeek": "Drag the timeline to skip steps",
     "reset": "Reset",
     "generateInput": "Generate New Input",
     "exportVideo": "Export Video",

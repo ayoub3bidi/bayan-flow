@@ -34,6 +34,7 @@ function getBaseProps(overrides = {}) {
     onReset: vi.fn(),
     onStepForward: vi.fn(),
     onStepBackward: vi.fn(),
+    onSeek: vi.fn(),
     currentStep: 0,
     totalSteps: 5,
     onGenerateInput: vi.fn(),
@@ -169,5 +170,63 @@ describe('ControlPanel', () => {
     );
 
     expect(screen.getByText(/7 visualizations remaining/i)).toBeInTheDocument();
+  });
+
+  it('renders a seekable timeline with the correct range for Free users', () => {
+    const onSeek = vi.fn();
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({
+          currentStep: 2,
+          totalSteps: 5,
+          onSeek,
+        })}
+      />
+    );
+
+    const slider = screen.getByRole('slider', { name: 'Scrub through steps' });
+    expect(slider).toHaveAttribute('min', '0');
+    expect(slider).toHaveAttribute('max', '4');
+    expect(slider).toHaveValue('2');
+
+    expect(
+      screen.getByText('Drag the timeline to skip steps')
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('seek-thumb')).toBeInTheDocument();
+
+    fireEvent.change(slider, { target: { value: '3' } });
+    expect(onSeek).toHaveBeenCalledWith(3);
+  });
+
+  it('disables the timeline and hides the seek affordances when there are no steps', () => {
+    renderWithI18n(<ControlPanel {...getBaseProps({ totalSteps: 0 })} />);
+
+    const slider = screen.getByRole('slider', { name: 'Scrub through steps' });
+    expect(slider).toBeDisabled();
+    expect(
+      screen.queryByText('Drag the timeline to skip steps')
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('seek-thumb')).not.toBeInTheDocument();
+  });
+
+  it('hides the seekable timeline for anonymous (gated) users', () => {
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({
+          isGated: true,
+          currentStep: 2,
+          totalSteps: 5,
+        })}
+      />
+    );
+
+    expect(
+      screen.queryByRole('slider', { name: 'Scrub through steps' })
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/step 3 of 5/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText('Drag the timeline to skip steps')
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('seek-thumb')).not.toBeInTheDocument();
   });
 });

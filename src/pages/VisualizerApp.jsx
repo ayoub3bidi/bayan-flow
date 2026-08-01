@@ -747,6 +747,7 @@ function App() {
     onReset: visualization.reset,
     onStepForward: visualization.stepForward,
     onStepBackward: visualization.stepBackward,
+    onSeek: visualization.seekToStep,
     currentStep: visualization.currentStep,
     totalSteps: visualization.totalSteps,
     onGenerateInput: handleGenerateInput,

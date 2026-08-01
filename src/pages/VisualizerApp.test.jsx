@@ -89,6 +89,7 @@ const sortingVisualization = {
   play: vi.fn(),
   pause: vi.fn(),
   reset: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 0,
@@ -105,6 +106,7 @@ const pathfindingVisualization = {
   pause: vi.fn(),
   reset: vi.fn(),
   regenerateGrid: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 2,
@@ -129,6 +131,7 @@ const searchingVisualization = {
   play: vi.fn(),
   pause: vi.fn(),
   reset: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 1,
@@ -150,6 +153,7 @@ const treeTraversalVisualization = {
   reset: vi.fn(),
   regenerateTree: vi.fn(),
   reloadSteps: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 1,
@@ -182,6 +186,7 @@ const graphAlgorithmVisualization = {
   reset: vi.fn(),
   regenerateGraph: vi.fn(),
   reloadSteps: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 1,
@@ -300,6 +305,7 @@ vi.mock('../components/ControlPanel', () => ({
     onSortOrderChange,
     onToggleFullScreen,
     visualizationsRemaining,
+    onSeek,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -317,6 +323,11 @@ vi.mock('../components/ControlPanel', () => ({
       <button type="button" onClick={onToggleFullScreen}>
         toggle-fullscreen
       </button>
+      {onSeek && (
+        <button type="button" onClick={() => onSeek(2)}>
+          seek-to-step-2
+        </button>
+      )}
       {visualizationsRemaining != null &&
       Number.isFinite(visualizationsRemaining) ? (
         <p role="status">
@@ -792,6 +803,16 @@ describe('VisualizerApp', () => {
       expect(window.localStorage.getItem('bayan-flow:sound-enabled')).toBe(
         'false'
       );
+    });
+  });
+
+  it('forwards timeline seeks to the active visualization', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('seek-to-step-2'));
+
+    await waitFor(() => {
+      expect(sortingVisualization.seekToStep).toHaveBeenCalledWith(2);
     });
   });
 
