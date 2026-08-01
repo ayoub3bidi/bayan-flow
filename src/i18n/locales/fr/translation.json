@@ -343,6 +343,7 @@
     "stepBackward": "Étape Précédente",
     "seekTimeline": "Parcourir les étapes",
     "dragToSeek": "Faites glisser la barre pour sauter des étapes",
+    "dragToSeekLocked": "Connectez-vous pour sauter des étapes",
     "reset": "Réinitialiser",
     "generateInput": "Générer une nouvelle entrée",
     "exportVideo": "Exporter en vidéo",
@@ -1498,6 +1499,8 @@
     "category_controls": "Contrôles avancés",
     "category_controls_description": "Connectez-vous pour personnaliser la taille de la grille, l'ordre de tri, les scénarios de graphe et bien plus.",
     "favorite": "Algorithmes favoris",
-    "favorite_description": "Connectez-vous pour marquer des algorithmes et y revenir rapidement depuis vos favoris."
+    "favorite_description": "Connectez-vous pour marquer des algorithmes et y revenir rapidement depuis vos favoris.",
+    "timeline_scrub": "Défilement des étapes",
+    "timeline_scrub_description": "Accédez directement à n'importe quelle étape en défilant la barre. Connectez-vous pour la débloquer et profiter de l'ensemble de l'offre gratuite."
   }
 }

@@ -306,6 +306,8 @@ vi.mock('../components/ControlPanel', () => ({
     onToggleFullScreen,
     visualizationsRemaining,
     onSeek,
+    isGated,
+    onGatedFeatureClick,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -326,6 +328,14 @@ vi.mock('../components/ControlPanel', () => ({
       {onSeek && (
         <button type="button" onClick={() => onSeek(2)}>
           seek-to-step-2
+        </button>
+      )}
+      {isGated && (
+        <button
+          type="button"
+          onClick={() => onGatedFeatureClick('timeline_scrub')}
+        >
+          gated-seek
         </button>
       )}
       {visualizationsRemaining != null &&
@@ -870,6 +880,15 @@ describe('VisualizerApp', () => {
       fireEvent.click(screen.getByText('toggle-fullscreen'));
 
       expectGatedFeatureModal('fullscreen');
+    });
+
+    it('gates timeline scrubbing when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('gated-seek'));
+
+      expectGatedFeatureModal('timeline_scrub');
     });
 
     it('does not gate features when authenticated', async () => {

@@ -80,6 +80,7 @@ function ControlPanel({
   const isExporting = exportState === 'checking' || exportState === 'rendering';
   const progressPct =
     totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0;
+  const isSeekLocked = isGated && totalSteps > 0;
 
   const handleSortOrderClick = () => {
     if (isGated) {
@@ -319,7 +320,21 @@ function ControlPanel({
             {totalSteps} {t('info.steps')}
           </span>
         </div>
-        <div className="relative w-full">
+        <div
+          className={`relative w-full ${isSeekLocked ? 'cursor-pointer' : ''}`}
+          role={isSeekLocked ? 'button' : undefined}
+          tabIndex={isSeekLocked ? 0 : undefined}
+          aria-label={isSeekLocked ? t('controls.dragToSeekLocked') : undefined}
+          onClick={() => {
+            if (isSeekLocked) onGatedFeatureClick?.('timeline_scrub');
+          }}
+          onKeyDown={e => {
+            if (isSeekLocked && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              onGatedFeatureClick?.('timeline_scrub');
+            }
+          }}
+        >
           <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
             <motion.div
               className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full shadow-inner"
@@ -328,7 +343,7 @@ function ControlPanel({
               transition={{ duration: 0.3, ease: 'easeOut' }}
             />
           </div>
-          {!isGated && onSeek && totalSteps > 0 && (
+          {totalSteps > 0 && (
             <motion.div
               data-testid="seek-thumb"
               aria-hidden="true"
@@ -361,6 +376,11 @@ function ControlPanel({
         {!isGated && onSeek && totalSteps > 0 && (
           <p className="mt-1 text-xs text-text-secondary text-center sm:text-start">
             {t('controls.dragToSeek')}
+          </p>
+        )}
+        {isSeekLocked && (
+          <p className="mt-1 text-xs text-text-secondary text-center sm:text-start">
+            {t('controls.dragToSeekLocked')}
           </p>
         )}
       </div>

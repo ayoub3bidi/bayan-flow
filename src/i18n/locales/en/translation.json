@@ -344,6 +344,7 @@
     "stepBackward": "Step Backward",
     "seekTimeline": "Scrub through steps",
     "dragToSeek": "Drag the timeline to skip steps",
+    "dragToSeekLocked": "Sign in to skip steps",
     "reset": "Reset",
     "generateInput": "Generate New Input",
     "exportVideo": "Export Video",
@@ -1499,6 +1500,8 @@
     "category_controls": "Advanced Controls",
     "category_controls_description": "Sign in to customize grid sizes, sort order, graph scenarios, and more.",
     "favorite": "Favorite Algorithms",
-    "favorite_description": "Sign in to star algorithms and jump back to them quickly from your favorites list."
+    "favorite_description": "Sign in to star algorithms and jump back to them quickly from your favorites list.",
+    "timeline_scrub": "Step scrubbing",
+    "timeline_scrub_description": "Jump to any step by scrubbing the timeline. Sign in to unlock it and the rest of the Free tier."
   }
 }
