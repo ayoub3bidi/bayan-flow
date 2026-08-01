@@ -25,6 +25,7 @@ describe('Worker markdown negotiation', () => {
 
   beforeEach(() => {
     env = createFetchHandler({
+      '/llms.txt': '# Bayan Flow\n\nTest content',
       '/markdown/index.md': '# Bayan Flow\n\nTest content',
       '/markdown/app.md': '# Algorithm Visualizer\n\nTest',
       '/markdown/_fallback.md': '# Bayan Flow\n\nFallback',
@@ -96,5 +97,27 @@ describe('Worker markdown negotiation', () => {
     expect(res.headers.get('Content-Type')).toBe(
       'text/markdown; charset=utf-8'
     );
+  });
+
+  it('serves /llms.txt as markdown when the asset exists', async () => {
+    const req = makeRequest('https://bayanflow.com/llms.txt', 'text/markdown');
+    const res = await worker.fetch(req, env);
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toBe(
+      'text/markdown; charset=utf-8'
+    );
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
+    expect(await res.text()).toBe('# Bayan Flow\n\nTest content');
+  });
+
+  it('preserves the asset status when /llms.txt is missing', async () => {
+    const missingEnv = createFetchHandler({
+      '/markdown/index.md': '# Bayan Flow\n\nTest content',
+    });
+    const req = makeRequest('https://bayanflow.com/llms.txt', 'text/markdown');
+    const res = await worker.fetch(req, missingEnv);
+
+    expect(res.status).toBe(404);
   });
 });

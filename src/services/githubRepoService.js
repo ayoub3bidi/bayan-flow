@@ -13,8 +13,22 @@ import {
 
 export const GITHUB_REPO_CACHE_KEY = 'bayan-flow:github-repo';
 export const GITHUB_REPO_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+export const GITHUB_REPO_FETCH_TIMEOUT_MS = 10000;
 
 const GITHUB_REPO_ENDPOINT = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`;
+
+async function fetchWithTimeout(url) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    GITHUB_REPO_FETCH_TIMEOUT_MS
+  );
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 const parseReleaseTag = tagName => {
   if (typeof tagName !== 'string' || !tagName.trim()) {
@@ -75,12 +89,14 @@ export function cacheGitHubRepo(data) {
   }
 }
 
+let inFlightGitHubRepoPromise = null;
+
 export async function fetchGitHubRepo() {
   const fallback = createFallbackGitHubRepo();
 
   const [repoResponse, releaseResponse] = await Promise.all([
-    fetch(GITHUB_REPO_ENDPOINT),
-    fetch(`${GITHUB_REPO_ENDPOINT}/releases/latest`),
+    fetchWithTimeout(GITHUB_REPO_ENDPOINT),
+    fetchWithTimeout(`${GITHUB_REPO_ENDPOINT}/releases/latest`),
   ]);
 
   let next = { ...fallback };
@@ -107,22 +123,29 @@ export async function fetchGitHubRepo() {
   return next;
 }
 
-export async function loadGitHubRepoData() {
+export function loadGitHubRepoData() {
   const cached = readCachedGitHubRepo();
   if (cached && !cached.isStale) {
-    return { data: cached.data, fromCache: true };
+    return Promise.resolve({ data: cached.data, fromCache: true });
   }
-  try {
-    const data = await fetchGitHubRepo();
-    cacheGitHubRepo(data);
-    return { data, fromCache: false };
-  } catch (error) {
-    if (cached) {
-      return { data: cached.data, fromCache: true, error };
-    }
-    console.error('Failed to fetch GitHub data:', error);
-    return { data: createFallbackGitHubRepo(), fromCache: false, error };
+  if (!inFlightGitHubRepoPromise) {
+    inFlightGitHubRepoPromise = (async () => {
+      try {
+        const data = await fetchGitHubRepo();
+        cacheGitHubRepo(data);
+        return { data, fromCache: false };
+      } catch (error) {
+        if (cached) {
+          return { data: cached.data, fromCache: true, error };
+        }
+        console.error('Failed to fetch GitHub data:', error);
+        return { data: createFallbackGitHubRepo(), fromCache: false, error };
+      } finally {
+        inFlightGitHubRepoPromise = null;
+      }
+    })();
   }
+  return inFlightGitHubRepoPromise;
 }
 
 export function runWhenIdle(task) {

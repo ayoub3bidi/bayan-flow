@@ -157,4 +157,67 @@ describe('githubRepoService', () => {
 
     expect(data.versionTag).toBe('0.6.0');
   });
+
+  it('falls back to defaults when repo endpoint returns non-OK', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async url => {
+        if (String(url).includes('/releases/latest')) {
+          return {
+            ok: true,
+            json: async () => ({ tag_name: 'v0.6.0' }),
+          };
+        }
+        return { ok: false, status: 404, json: async () => ({}) };
+      })
+    );
+
+    const data = await fetchGitHubRepo();
+
+    expect(data).toMatchObject({
+      url: GITHUB_REPO_URL,
+      fullName: GITHUB_REPO_FULL_NAME,
+      stars: 0,
+      forks: 0,
+      versionTag: '0.6.0',
+    });
+  });
+
+  it('aborts pending fetches after the timeout', async () => {
+    let signalSeen = null;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url, init) => {
+        signalSeen = init.signal;
+        return { ok: false, json: async () => ({}) };
+      })
+    );
+
+    const data = await fetchGitHubRepo();
+
+    expect(signalSeen).toBeInstanceOf(AbortSignal);
+    expect(signalSeen.aborted).toBe(false);
+    expect(data.versionTag).toBe(GITHUB_REPO_PACKAGE_VERSION);
+  });
+
+  it('deduplicates concurrent in-flight fetches', async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        html_url: GITHUB_REPO_URL,
+        full_name: GITHUB_REPO_FULL_NAME,
+        stargazers_count: 42,
+        forks_count: 7,
+      }),
+    }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const [first, second] = await Promise.all([
+      loadGitHubRepoData(),
+      loadGitHubRepoData(),
+    ]);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(first.data).toEqual(second.data);
+  });
 });

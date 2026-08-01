@@ -634,7 +634,10 @@ function App() {
     applyCategorySwitch(newType);
   };
 
-  const applyCategorySwitch = newType => {
+  const applyCategorySwitch = (
+    newType,
+    tipKey = selectedAlgorithms[newType]
+  ) => {
     const cfg = CATEGORY_CONFIG[newType];
     if (cfg.sizeBinding === 'array') {
       const searchingKey = selectedAlgorithms[ALGORITHM_TYPES.SEARCHING];
@@ -652,12 +655,12 @@ function App() {
     }
     setAlgorithmType(newType);
     visualizationMap[newType]?.reset();
-    maybeShowAlgorithmTip(selectedAlgorithms[newType]);
+    maybeShowAlgorithmTip(tipKey);
   };
 
   const handleFavoriteNavigate = (category, algorithmKey) => {
     if (category !== algorithmType) {
-      applyCategorySwitch(category);
+      applyCategorySwitch(category, algorithmKey);
     }
     setSelectedAlgorithms(prev => ({
       ...prev,

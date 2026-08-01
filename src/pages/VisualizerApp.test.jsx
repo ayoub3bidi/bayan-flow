@@ -325,12 +325,12 @@ vi.mock('../components/ControlPanel', () => ({
       <button type="button" onClick={onToggleFullScreen}>
         toggle-fullscreen
       </button>
-      {onSeek && (
+      {onSeek && totalSteps > 0 && (
         <button type="button" onClick={() => onSeek(2)}>
           seek-to-step-2
         </button>
       )}
-      {isGated && (
+      {isGated && totalSteps > 0 && (
         <button
           type="button"
           onClick={() => onGatedFeatureClick('timeline_scrub')}
@@ -819,10 +819,11 @@ describe('VisualizerApp', () => {
   it('forwards timeline seeks to the active visualization', async () => {
     await renderApp();
 
+    fireEvent.click(screen.getByText('pathfinding'));
     fireEvent.click(screen.getByText('seek-to-step-2'));
 
     await waitFor(() => {
-      expect(sortingVisualization.seekToStep).toHaveBeenCalledWith(2);
+      expect(pathfindingVisualization.seekToStep).toHaveBeenCalledWith(2);
     });
   });
 
@@ -886,6 +887,7 @@ describe('VisualizerApp', () => {
       authMock.isAuthenticated = false;
       await renderApp();
 
+      fireEvent.click(screen.getByText('pathfinding'));
       fireEvent.click(screen.getByText('gated-seek'));
 
       expectGatedFeatureModal('timeline_scrub');

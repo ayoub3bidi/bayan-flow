@@ -68,6 +68,7 @@ export default {
           new Request(new URL('/llms.txt', request.url).toString())
         );
         return new Response(llmsResponse.body, {
+          status: llmsResponse.status,
           headers: {
             'Content-Type': 'text/markdown; charset=utf-8',
             'Access-Control-Allow-Origin': '*',
