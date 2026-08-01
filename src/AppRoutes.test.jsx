@@ -90,7 +90,7 @@ describe('AppRoutes', () => {
     expect(screen.queryByTestId('banned-screen')).not.toBeInTheDocument();
   });
 
-  it('does not show BannedScreen when no access block', () => {
+  it('does not show BannedScreen when no access block', async () => {
     vi.mocked(useAuth).mockReturnValue({
       accessBlock: null,
       isLoading: false,
@@ -99,7 +99,7 @@ describe('AppRoutes', () => {
     renderRoutes('/app');
 
     expect(screen.queryByTestId('banned-screen')).not.toBeInTheDocument();
-    expect(screen.getByTestId('visualizer-app')).toBeInTheDocument();
+    await screen.findByTestId('visualizer-app');
   });
 
   it('renders LandingPage on /', () => {
@@ -113,7 +113,7 @@ describe('AppRoutes', () => {
     expect(screen.getByTestId('landing-page')).toBeInTheDocument();
   });
 
-  it('renders ProComingSoonPage on /pro', () => {
+  it('renders ProComingSoonPage on /pro', async () => {
     vi.mocked(useAuth).mockReturnValue({
       accessBlock: null,
       isLoading: false,
@@ -121,10 +121,10 @@ describe('AppRoutes', () => {
 
     renderRoutes('/pro');
 
-    expect(screen.getByTestId('pro-page')).toBeInTheDocument();
+    await screen.findByTestId('pro-page');
   });
 
-  it('renders PrivacyPolicy on /privacy', () => {
+  it('renders PrivacyPolicy on /privacy', async () => {
     vi.mocked(useAuth).mockReturnValue({
       accessBlock: null,
       isLoading: false,
@@ -132,10 +132,10 @@ describe('AppRoutes', () => {
 
     renderRoutes('/privacy');
 
-    expect(screen.getByTestId('privacy')).toBeInTheDocument();
+    await screen.findByTestId('privacy');
   });
 
-  it('renders TermsOfUse on /terms', () => {
+  it('renders TermsOfUse on /terms', async () => {
     vi.mocked(useAuth).mockReturnValue({
       accessBlock: null,
       isLoading: false,
@@ -143,10 +143,10 @@ describe('AppRoutes', () => {
 
     renderRoutes('/terms');
 
-    expect(screen.getByTestId('terms')).toBeInTheDocument();
+    await screen.findByTestId('terms');
   });
 
-  it('wraps /settings/profile in RequireAuth', () => {
+  it('wraps /settings/profile in RequireAuth', async () => {
     vi.mocked(useAuth).mockReturnValue({
       accessBlock: null,
       isLoading: false,
@@ -154,7 +154,7 @@ describe('AppRoutes', () => {
 
     renderRoutes('/settings/profile');
 
-    expect(screen.getByTestId('require-auth')).toBeInTheDocument();
+    await screen.findByTestId('require-auth');
     expect(screen.getByTestId('profile-settings')).toBeInTheDocument();
   });
 });

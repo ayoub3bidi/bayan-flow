@@ -61,6 +61,20 @@ export default {
     const accept = request.headers.get('Accept') || '';
 
     if (accept.includes('text/markdown')) {
+      // llms.txt already ships as Markdown; serve it as such to markdown
+      // accepting LLM crawlers instead of routing through /markdown/*.md.
+      if (url.pathname === '/llms.txt') {
+        const llmsResponse = await env.ASSETS.fetch(
+          new Request(new URL('/llms.txt', request.url).toString())
+        );
+        return new Response(llmsResponse.body, {
+          headers: {
+            'Content-Type': 'text/markdown; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
+      }
+
       const path = url.pathname === '/' ? '/index' : url.pathname;
       const mdPath = `/markdown${path}.md`;
 

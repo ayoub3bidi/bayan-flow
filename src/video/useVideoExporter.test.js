@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import {
   cloneExportSteps,
@@ -129,6 +129,10 @@ describe('useVideoExporter hook', () => {
       createObjectURL: vi.fn(() => 'blob:export'),
       revokeObjectURL: vi.fn(),
     });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('enters error state when export is requested with no steps', async () => {
