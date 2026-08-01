@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Play, Hand } from '@phosphor-icons/react';
+import { Play, Hand, Lightbulb } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { getChromeTransition, ENTER_Y } from '../motion/chromeMotion';
 import {
@@ -75,6 +75,10 @@ function SettingsPanel({
   const { speedOptions } = useSettingsConfig();
 
   const { algorithms, groups } = byType[algorithmType];
+
+  const algorithmUseCase = t(`algorithmUses.${selectedAlgorithm}`, {
+    defaultValue: '',
+  });
 
   const canUseManual = canUseManualControls(user);
   const canAdjustSpeed = canChangeSpeed(user);
@@ -261,6 +265,23 @@ function SettingsPanel({
           isAuthenticated={isAuthenticated}
         />
       </div>
+
+      {algorithmUseCase && (
+        <div className="flex items-start gap-2 rounded-lg border border-[var(--color-border-strong)] bg-surface-elevated px-3 py-2.5">
+          <Lightbulb
+            size={16}
+            weight="fill"
+            className="shrink-0 mt-0.5 text-amber-500"
+            aria-hidden="true"
+          />
+          <p className="text-xs leading-relaxed text-text-secondary">
+            <span className="font-semibold text-text-primary">
+              {t('settings.useCases')}:
+            </span>{' '}
+            {algorithmUseCase}
+          </p>
+        </div>
+      )}
 
       {algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM &&
       graphScenarioOptions.length > 0 ? (

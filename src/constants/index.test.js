@@ -136,10 +136,11 @@ describe('Constants', () => {
 
   describe('ANIMATION_SPEEDS', () => {
     it('should have numeric values for each speed', () => {
-      expect(ANIMATION_SPEEDS.SLOW).toBe(8000);
-      expect(ANIMATION_SPEEDS.MEDIUM).toBe(4800);
-      expect(ANIMATION_SPEEDS.FAST).toBe(2400);
-      expect(ANIMATION_SPEEDS.VERY_FAST).toBe(1200);
+      expect(ANIMATION_SPEEDS.SLOW).toBe(5000);
+      expect(ANIMATION_SPEEDS.MEDIUM).toBe(3000);
+      expect(ANIMATION_SPEEDS.FAST).toBe(1500);
+      expect(ANIMATION_SPEEDS.VERY_FAST).toBe(700);
+      expect(ANIMATION_SPEEDS.ULTRA_FAST).toBe(350);
     });
   });
 

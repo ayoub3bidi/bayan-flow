@@ -9,6 +9,7 @@ import { renderHook, act } from '@testing-library/react';
 import { useVisualization } from './useVisualization';
 import {
   ALGORITHM_TYPES,
+  ANIMATION_SPEEDS,
   ELEMENT_STATES,
   VISUALIZATION_MODES,
 } from '../constants/index.js';
@@ -322,6 +323,32 @@ describe('useVisualization', () => {
     });
   });
 
+  // ── Ultra-fast caption ────────────────────────────────────────────────────
+
+  describe('Ultra-fast caption', () => {
+    it('hides the description in autoplay mode at ultra-fast speed', () => {
+      const { result } = makeHook({
+        mode: VISUALIZATION_MODES.AUTOPLAY,
+        speed: ANIMATION_SPEEDS.ULTRA_FAST,
+      });
+      act(() => {
+        result.current.loadSteps(makeSteps(3));
+      });
+      expect(result.current.description).toBe('');
+    });
+
+    it('keeps the description in manual mode at ultra-fast speed', () => {
+      const { result } = makeHook({
+        mode: VISUALIZATION_MODES.MANUAL,
+        speed: ANIMATION_SPEEDS.ULTRA_FAST,
+      });
+      act(() => {
+        result.current.loadSteps(makeSteps(3));
+      });
+      expect(result.current.description).toBe('Step 0');
+    });
+  });
+
   // ── reset ─────────────────────────────────────────────────────────────────
 
   describe('reset', () => {
@@ -366,6 +393,122 @@ describe('useVisualization', () => {
         result.current.reset();
       });
       expect(result.current.currentStep).toBe(0);
+    });
+  });
+
+  // ── seekToStep ────────────────────────────────────────────────────────────
+
+  describe('seekToStep', () => {
+    it('jumps directly to a requested step', () => {
+      const { result, executeStep } = makeHook();
+      const steps = makeSteps(5);
+      act(() => {
+        result.current.loadSteps(steps);
+      });
+
+      act(() => {
+        result.current.seekToStep(3);
+      });
+      expect(result.current.currentStep).toBe(3);
+      expect(executeStep).toHaveBeenLastCalledWith(steps[3]);
+    });
+
+    it('clamps out-of-range targets to the available steps', () => {
+      const { result } = makeHook();
+      act(() => {
+        result.current.loadSteps(makeSteps(4));
+      });
+
+      act(() => {
+        result.current.seekToStep(99);
+      });
+      expect(result.current.currentStep).toBe(3);
+
+      act(() => {
+        result.current.seekToStep(-5);
+      });
+      expect(result.current.currentStep).toBe(0);
+    });
+
+    it('is a no-op when seeking to the current step', () => {
+      const { result, executeStep } = makeHook();
+      act(() => {
+        result.current.loadSteps(makeSteps(3));
+      });
+      const callsBefore = executeStep.mock.calls.length;
+
+      act(() => {
+        result.current.seekToStep(0);
+      });
+      expect(executeStep.mock.calls.length).toBe(callsBefore);
+    });
+
+    it('marks isComplete when seeking to the last step and clears it elsewhere', () => {
+      const { result } = makeHook();
+      act(() => {
+        result.current.loadSteps(makeSteps(4));
+      });
+
+      act(() => {
+        result.current.seekToStep(3);
+      });
+      expect(result.current.isComplete).toBe(true);
+
+      act(() => {
+        result.current.seekToStep(1);
+      });
+      expect(result.current.isComplete).toBe(false);
+    });
+
+    it('seeks silently (no sound)', () => {
+      const { result } = makeHook({
+        soundContext: {
+          algorithmType: ALGORITHM_TYPES.SORTING,
+          algorithmKey: 'bubbleSort',
+        },
+      });
+      act(() => {
+        result.current.loadSteps(makeSteps(4));
+      });
+
+      act(() => {
+        result.current.seekToStep(2);
+      });
+      expect(soundManager.playEvents).not.toHaveBeenCalled();
+    });
+
+    it('is safe when no steps are loaded', () => {
+      const { result } = makeHook();
+      act(() => {
+        result.current.seekToStep(2);
+      });
+      expect(result.current.currentStep).toBe(0);
+    });
+
+    it('while autoplay is running, continues playing from the new index', () => {
+      const { result, executeStep } = makeHook({
+        mode: VISUALIZATION_MODES.AUTOPLAY,
+        speed: 100,
+      });
+      const steps = makeSteps(5);
+      act(() => {
+        result.current.loadSteps(steps);
+        result.current.play();
+      });
+      expect(result.current.isPlaying).toBe(true);
+
+      act(() => {
+        result.current.seekToStep(3);
+      });
+      expect(result.current.currentStep).toBe(3);
+      expect(executeStep).toHaveBeenLastCalledWith(steps[3]);
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      expect(result.current.currentStep).toBe(4);
+      expect(result.current.isComplete).toBe(true);
+      expect(result.current.isPlaying).toBe(false);
     });
   });
 

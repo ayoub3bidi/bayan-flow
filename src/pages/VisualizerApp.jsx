@@ -17,6 +17,7 @@ import ExportProgressModal from '../components/ExportProgressModal';
 import ShareExportModal from '../components/ShareExportModal';
 import SignInPromptModal from '../components/SignInPromptModal';
 import ProWaitlistBanner from '../components/ProWaitlistBanner';
+import AlgorithmTipToast from '../components/AlgorithmTipToast';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
@@ -242,6 +243,15 @@ function App() {
     toggleFavorite,
   } = useFavorites(user);
   const [favoriteNotice, setFavoriteNotice] = useState(null);
+  const [algorithmTip, setAlgorithmTip] = useState(null);
+  const shownAlgorithmTipsRef = useRef(new Set());
+
+  const maybeShowAlgorithmTip = algorithmKey => {
+    if (!algorithmKey || shownAlgorithmTipsRef.current.has(algorithmKey))
+      return;
+    shownAlgorithmTipsRef.current.add(algorithmKey);
+    setAlgorithmTip(algorithmKey);
+  };
 
   const [gatedFeature, setGatedFeature] = useState(null);
   const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
@@ -534,6 +544,7 @@ function App() {
 
   const handleAlgorithmChange = algorithmName => {
     trackAlgorithmViewed(algorithmName, algorithmType);
+    maybeShowAlgorithmTip(algorithmName);
     setSelectedAlgorithms(prev => ({
       ...prev,
       [algorithmType]: algorithmName,
@@ -623,7 +634,10 @@ function App() {
     applyCategorySwitch(newType);
   };
 
-  const applyCategorySwitch = newType => {
+  const applyCategorySwitch = (
+    newType,
+    tipKey = selectedAlgorithms[newType]
+  ) => {
     const cfg = CATEGORY_CONFIG[newType];
     if (cfg.sizeBinding === 'array') {
       const searchingKey = selectedAlgorithms[ALGORITHM_TYPES.SEARCHING];
@@ -641,16 +655,18 @@ function App() {
     }
     setAlgorithmType(newType);
     visualizationMap[newType]?.reset();
+    maybeShowAlgorithmTip(tipKey);
   };
 
   const handleFavoriteNavigate = (category, algorithmKey) => {
     if (category !== algorithmType) {
-      applyCategorySwitch(category);
+      applyCategorySwitch(category, algorithmKey);
     }
     setSelectedAlgorithms(prev => ({
       ...prev,
       [category]: algorithmKey,
     }));
+    maybeShowAlgorithmTip(algorithmKey);
     visualizationMap[category]?.reset();
   };
 
@@ -747,6 +763,7 @@ function App() {
     onReset: visualization.reset,
     onStepForward: visualization.stepForward,
     onStepBackward: visualization.stepBackward,
+    onSeek: visualization.seekToStep,
     currentStep: visualization.currentStep,
     totalSteps: visualization.totalSteps,
     onGenerateInput: handleGenerateInput,
@@ -895,6 +912,15 @@ function App() {
                       limit: favoriteSlotLimit,
                     })}
                   </motion.div>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {algorithmTip && (
+                  <AlgorithmTipToast
+                    algorithmKey={algorithmTip}
+                    onClose={() => setAlgorithmTip(null)}
+                  />
                 )}
               </AnimatePresence>
 

@@ -41,6 +41,7 @@ function ControlPanel({
   onReset,
   onStepForward,
   onStepBackward,
+  onSeek,
   currentStep,
   totalSteps,
   onGenerateInput,
@@ -77,6 +78,9 @@ function ControlPanel({
     CATEGORY_CONFIG[algorithmType]?.features?.hasDataRefresh === true;
   const isSorting = algorithmType === ALGORITHM_TYPES.SORTING;
   const isExporting = exportState === 'checking' || exportState === 'rendering';
+  const progressPct =
+    totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0;
+  const isSeekLocked = isGated && totalSteps > 0;
 
   const handleSortOrderClick = () => {
     if (isGated) {
@@ -316,16 +320,69 @@ function ControlPanel({
             {totalSteps} {t('info.steps')}
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-          <motion.div
-            className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full shadow-inner"
-            initial={{ width: '0%' }}
-            animate={{
-              width: `${totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0}%`,
-            }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-          />
+        <div
+          className={`relative w-full ${isSeekLocked ? 'cursor-pointer' : ''}`}
+          role={isSeekLocked ? 'button' : undefined}
+          tabIndex={isSeekLocked ? 0 : undefined}
+          aria-label={isSeekLocked ? t('controls.dragToSeekLocked') : undefined}
+          onClick={() => {
+            if (isSeekLocked) onGatedFeatureClick?.('timeline_scrub');
+          }}
+          onKeyDown={e => {
+            if (isSeekLocked && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              onGatedFeatureClick?.('timeline_scrub');
+            }
+          }}
+        >
+          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+            <motion.div
+              className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full shadow-inner"
+              initial={{ width: '0%' }}
+              animate={{ width: `${progressPct}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />
+          </div>
+          {totalSteps > 0 && (
+            <motion.div
+              data-testid="seek-thumb"
+              aria-hidden="true"
+              initial={false}
+              animate={
+                isRTL
+                  ? { right: `${progressPct}%` }
+                  : { left: `${progressPct}%` }
+              }
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className={`pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md ${
+                isRTL ? 'translate-x-1/2' : '-translate-x-1/2'
+              }`}
+            />
+          )}
+          {!isGated && onSeek && (
+            <input
+              type="range"
+              className="absolute inset-x-0 top-0 h-2.5 w-full cursor-pointer appearance-none bg-transparent opacity-0"
+              min={0}
+              max={totalSteps > 0 ? totalSteps - 1 : 0}
+              value={currentStep}
+              onChange={event => onSeek(Number(event.target.value))}
+              disabled={totalSteps === 0}
+              aria-label={t('controls.seekTimeline')}
+              title={t('controls.seekTimeline')}
+            />
+          )}
         </div>
+        {!isGated && onSeek && totalSteps > 0 && (
+          <p className="mt-1 text-xs text-text-secondary text-center sm:text-start">
+            {t('controls.dragToSeek')}
+          </p>
+        )}
+        {isSeekLocked && (
+          <p className="mt-1 text-xs text-text-secondary text-center sm:text-start">
+            {t('controls.dragToSeekLocked')}
+          </p>
+        )}
       </div>
     </motion.div>
   );

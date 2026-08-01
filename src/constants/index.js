@@ -83,10 +83,11 @@ export const GRAPH_ALGORITHMS = {
 };
 
 export const ANIMATION_SPEEDS = {
-  SLOW: 8000,
-  MEDIUM: 4800,
-  FAST: 2400,
-  VERY_FAST: 1200,
+  SLOW: 5000,
+  MEDIUM: 3000,
+  FAST: 1500,
+  VERY_FAST: 700,
+  ULTRA_FAST: 350,
 };
 
 export const ELEMENT_STATES = {
