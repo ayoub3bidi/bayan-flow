@@ -14,16 +14,20 @@ vi.mock('../components/landing/Hero', () => ({
   default: () => <div data-testid="hero">Hero</div>,
 }));
 
-vi.mock('../components/landing/LearnYourWay', () => ({
-  default: () => <div data-testid="learn-your-way">LearnYourWay</div>,
-}));
-
 vi.mock('../components/landing/AlgorithmTypes', () => ({
   default: () => <div data-testid="algorithm-types">AlgorithmTypes</div>,
 }));
 
 vi.mock('../components/landing/Features', () => ({
   default: () => <div data-testid="features">Features</div>,
+}));
+
+vi.mock('../components/landing/ProPreview', () => ({
+  default: () => <div data-testid="pro-preview">ProPreview</div>,
+}));
+
+vi.mock('../components/landing/FAQ', () => ({
+  default: () => <div data-testid="faq">FAQ</div>,
 }));
 
 vi.mock('../components/landing/ClaritySection', () => ({
@@ -60,10 +64,11 @@ describe('LandingPage', () => {
       renderComponent();
 
       expect(screen.getByTestId('hero')).toBeInTheDocument();
-      expect(screen.getByTestId('learn-your-way')).toBeInTheDocument();
       expect(screen.getByTestId('algorithm-types')).toBeInTheDocument();
       expect(screen.getByTestId('features')).toBeInTheDocument();
+      expect(screen.getByTestId('pro-preview')).toBeInTheDocument();
       expect(screen.getByTestId('clarity-section')).toBeInTheDocument();
+      expect(screen.getByTestId('faq')).toBeInTheDocument();
       expect(screen.getByTestId('roadmap-cta')).toBeInTheDocument();
       expect(screen.getByTestId('header')).toBeInTheDocument();
       expect(screen.getByTestId('footer')).toBeInTheDocument();
@@ -112,6 +117,19 @@ describe('LandingPage', () => {
       // Check that Footer is last
       const footerIndex = testIds.indexOf('footer');
       expect(footerIndex).toBeGreaterThan(heroIndex);
+
+      // Content sections follow the curated 7-section order
+      const expectedOrder = [
+        'hero',
+        'algorithm-types',
+        'features',
+        'pro-preview',
+        'clarity-section',
+        'faq',
+        'roadmap-cta',
+      ];
+      const sectionIndexes = expectedOrder.map(id => testIds.indexOf(id));
+      expect(sectionIndexes).toEqual([...sectionIndexes].sort((a, b) => a - b));
     });
   });
 

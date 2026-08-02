@@ -1353,18 +1353,6 @@
       "subtitle": "Watch algorithms come to life with interactive, step-by-step visualizations. Learn at your own pace.",
       "cta": "Start Visualizing"
     },
-    "learnYourWay": {
-      "heading": "Learn Your Way",
-      "autoPlay": {
-        "title": "Auto-Play Mode",
-        "description": "Sit back and watch algorithms unfold automatically at your preferred speed. Perfect for understanding the big picture."
-      },
-      "manual": {
-        "title": "Manual Control",
-        "description": "Step through each operation manually. Pause, rewind, and analyze every decision the algorithm makes."
-      },
-      "tagline": "You decide how fast you learn."
-    },
     "clarity": {
       "heading": "No Clutter, Just Clarity",
       "description": "Bayan Flow strips away complexity to reveal the beauty of algorithms. Clean interface, clear explanations, and vivid animations help you see what's really happening.",
@@ -1428,6 +1416,65 @@
       "videoExport": {
         "title": "Video Export",
         "description": "Export your visualizations as HD MP4 videos. Choose horizontal (YouTube) or vertical (Shorts, Reels) format with preview before download."
+      },
+      "pseudocode": {
+        "title": "Pseudocode",
+        "description": "Follow clean pseudocode for every algorithm, then jump into the runnable Python implementation in the code panel."
+      },
+      "notes": {
+        "title": "Personal Study Notes",
+        "description": "Save your own notes on each algorithm. Autosaved to your account and always one click away inside the Insight panel."
+      }
+    },
+    "proPreview": {
+      "badge": "Coming Soon",
+      "badgeJoined": "You're on the list",
+      "heading": "Go Further with Pro",
+      "subheading": "Built for interview prep and classroom teaching: custom inputs, side-by-side comparisons, watermark-free exports, and more...",
+      "cta": "Join The Waitlist",
+      "ctaJoined": "View Your Spot",
+      "table": {
+        "feature": "Feature",
+        "freeLabel": "Free",
+        "proLabel": "Pro",
+        "included": "Included",
+        "notIncluded": "Not included",
+        "allAlgorithms": "Visualize All Algorithms",
+        "customization": "Customizable: Adjust Array Size (5-100) or Grid Size (15×15 to 35×35)",
+        "pythonCode": "Interactive Python Online Editor",
+        "sound": "Interactive Sound",
+        "fullscreen": "Full Screen Mode",
+        "insight": "Algorithm Insight",
+        "videoExport": "Video Export",
+        "videoExportFree": "50 Exports Per Day (With Watermark)",
+        "videoExportPro": "Unlimited (Customizable Watermark)",
+        "customInput": "Custom Inputs",
+        "comparison": "Algorithms Comparison Mode",
+        "presentation": "Presentation Mode (Dedicated For Teachers)",
+        "pseudocode": "Step-by-step Pseudocode",
+        "notes": "Save Your Notes on Every Algorithm"
+      }
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "subheading": "Answers for learners and instructors before you get started.",
+      "items": {
+        "difference": {
+          "question": "How is this different from just watching algorithm videos?",
+          "answer": "Videos are over in 60 seconds and you can't slow them down. Bayan Flow is interactive: pause the animation on any single step, replay it slowly, or step through the algorithm one operation at a time. You're in control of the pace, which is how understanding actually happens."
+        },
+        "beginner": {
+          "question": "I'm new to algorithms and programming. Will I still get it?",
+          "answer": "That's exactly who this is for. Every algorithm is explained visually first, so you see the logic happen before you read a single line of code. When you're ready to go deeper, plain-language explanations and pseudocode are one click away, and the real Python code is there whenever you want it."
+        },
+        "learn": {
+          "question": "Will I actually learn it, or just watch a pretty animation?",
+          "answer": "The animation is just the beginning. You can open the real Python code and run it, change the input and watch the algorithm react, and see how it scales before your eyes. By the time you leave, you'll be able to explain the algorithm, not just recognize it."
+        },
+        "try": {
+          "question": "Do I need to install anything?",
+          "answer": "Nothing to install, nothing to download. Open it in your browser and run your first algorithm in seconds. The Python code even runs inside your own browser, so it never leaves your device."
+        }
       }
     },
     "roadmapCTA": {

@@ -4,9 +4,11 @@
  * See LICENSE for details.
  */
 
-function Section({ children, className = '' }) {
+function Section({ children, className = '', id }) {
   return (
-    <section className={`py-20 md:py-32 ${className}`}>{children}</section>
+    <section id={id} className={`py-20 md:py-32 ${className}`}>
+      {children}
+    </section>
   );
 }
 

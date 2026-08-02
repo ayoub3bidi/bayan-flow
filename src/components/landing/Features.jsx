@@ -13,6 +13,8 @@ import {
   ArrowsOut,
   Lightbulb,
   VideoCamera,
+  TextAlignLeft,
+  NotePencil,
 } from '@phosphor-icons/react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
@@ -39,7 +41,6 @@ function Features() {
       title: t('landing.features.pythonCode.title'),
       description: t('landing.features.pythonCode.description'),
       gradient: 'from-amber-500 to-orange-500',
-      badge: t('landing.features.pythonCode.badge'),
     },
     {
       icon: SpeakerHigh,
@@ -64,6 +65,18 @@ function Features() {
       title: t('landing.features.videoExport.title'),
       description: t('landing.features.videoExport.description'),
       gradient: 'from-teal-500 to-cyan-500',
+    },
+    {
+      icon: TextAlignLeft,
+      title: t('landing.features.pseudocode.title'),
+      description: t('landing.features.pseudocode.description'),
+      gradient: 'from-sky-500 to-blue-500',
+    },
+    {
+      icon: NotePencil,
+      title: t('landing.features.notes.title'),
+      description: t('landing.features.notes.description'),
+      gradient: 'from-violet-500 to-fuchsia-500',
     },
   ];
 

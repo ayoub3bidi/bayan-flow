@@ -5,10 +5,11 @@
  */
 
 import Hero from '../components/landing/Hero';
-import LearnYourWay from '../components/landing/LearnYourWay';
 import AlgorithmTypes from '../components/landing/AlgorithmTypes';
 import Features from '../components/landing/Features';
+import ProPreview from '../components/landing/ProPreview';
 import ClaritySection from '../components/landing/ClaritySection';
+import FAQ from '../components/landing/FAQ';
 import RoadmapCTA from '../components/landing/RoadmapCTA';
 import TechPattern from '../components/landing/TechPattern';
 import Footer from '../components/Footer';
@@ -30,10 +31,11 @@ function LandingPage() {
       {/* Landing Sections */}
       <main className="relative z-10">
         <Hero />
-        <LearnYourWay />
         <AlgorithmTypes />
         <Features />
+        <ProPreview />
         <ClaritySection />
+        <FAQ />
         <RoadmapCTA />
       </main>
       <Footer />
