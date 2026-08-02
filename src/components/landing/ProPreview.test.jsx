@@ -177,14 +177,12 @@ describe('ProPreview', () => {
       );
     });
 
-    it('should render video export limits as text instead of icons', () => {
+    it('should render video export cells as text instead of icons', () => {
       renderComponent();
       expect(
-        screen.getByText('50 Exports Per Day (With Watermark)')
+        screen.getByText('HD MP4 Exports (With Watermark)')
       ).toBeInTheDocument();
-      expect(
-        screen.getByText('Unlimited (Customizable Watermark)')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Watermark-Free Exports')).toBeInTheDocument();
     });
 
     it('should not render any price', () => {

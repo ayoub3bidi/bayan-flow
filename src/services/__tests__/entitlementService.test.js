@@ -16,7 +16,6 @@ import {
   canViewComplexityPanel,
   incrementComplexityViewCount,
   canRunVideoExport,
-  incrementVideoExportCount,
   getExportWatermarkConfig,
   canCustomizeExportWatermark,
   resetAllSessionCounters,
@@ -228,44 +227,14 @@ describe('entitlementService', () => {
       expect(canRunVideoExport(null)).toBe(false);
     });
 
-    it('should allow free users under the daily export guard', () => {
+    it('should allow free users unlimited video export', () => {
       const user = { id: '123' };
-
-      expect(canRunVideoExport(user)).toBe(true);
-
-      for (let i = 0; i < 49; i += 1) {
-        incrementVideoExportCount(user);
-      }
 
       expect(canRunVideoExport(user)).toBe(true);
     });
 
-    it('should block free users at the daily export guard', () => {
-      const user = { id: '123' };
-
-      for (let i = 0; i < 50; i += 1) {
-        incrementVideoExportCount(user);
-      }
-
-      expect(canRunVideoExport(user)).toBe(false);
-    });
-
-    it('should reset the free export guard on a new UTC day', () => {
-      const user = { id: '123' };
-      localStorage.setItem(
-        'free_export_daily_123',
-        JSON.stringify({ date: '2025-01-01', count: 50 })
-      );
-
-      expect(canRunVideoExport(user)).toBe(true);
-    });
-
-    it('should not limit pro users with the free export guard', () => {
+    it('should allow pro users unlimited video export', () => {
       const user = { id: '123', plan: 'pro' };
-
-      for (let i = 0; i < 60; i += 1) {
-        incrementVideoExportCount(user);
-      }
 
       expect(canRunVideoExport(user)).toBe(true);
     });

@@ -20,6 +20,8 @@ import { readStoredWaitlistEmail } from '@/services/waitlistService';
 // `free` / `pro` per row: `true` → green check, `false` → red x,
 // a string → i18n key for a text value (`landing.proPreview.table.<key>`).
 // The shared (check/check) rows mirror the Features-section cards above.
+// The video export row uses text cells (not icons): Free is unlimited with a
+// watermark, Pro is watermark-free. No daily export count is advertised.
 const TABLE_ROWS = [
   { key: 'allAlgorithms', free: true, pro: true },
   { key: 'customization', free: true, pro: true },

@@ -75,7 +75,7 @@
     },
     "eyebrow": "The Pro Plan",
     "headline": "Go further with the Pro Plan",
-    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, unlimited exports, and more.",
+    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, watermark-free exports, and more.",
     "featuresHeading": "What the Pro Plan unlocks",
     "features": {
       "customInput": {
@@ -1446,8 +1446,8 @@
         "fullscreen": "Full Screen Mode",
         "insight": "Algorithm Insight",
         "videoExport": "Video Export",
-        "videoExportFree": "50 Exports Per Day (With Watermark)",
-        "videoExportPro": "Unlimited (Customizable Watermark)",
+        "videoExportFree": "HD MP4 Exports (With Watermark)",
+        "videoExportPro": "Watermark-Free Exports",
         "customInput": "Custom Inputs",
         "comparison": "Algorithms Comparison Mode",
         "presentation": "Presentation Mode (Dedicated For Teachers)",

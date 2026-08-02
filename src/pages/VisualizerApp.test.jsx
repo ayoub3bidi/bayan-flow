@@ -605,7 +605,7 @@ describe('VisualizerApp', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows the export error modal when a free user reaches the private daily guard', async () => {
+  it('does not block free exports when a legacy daily guard key exists', async () => {
     window.localStorage.setItem(
       'free_export_daily_test-user',
       JSON.stringify({
@@ -618,14 +618,8 @@ describe('VisualizerApp', () => {
     fireEvent.click(screen.getByText('pathfinding'));
     fireEvent.click(screen.getByText('export'));
 
-    expect(beginExportFlow).not.toHaveBeenCalled();
-    expect(reportExportError).toHaveBeenCalledWith(
-      'Export unavailable right now. Please try again later.'
-    );
-    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
-    expect(screen.getByTestId('export-error-message')).toHaveTextContent(
-      'Export unavailable right now. Please try again later.'
-    );
+    expect(beginExportFlow).toHaveBeenCalledTimes(1);
+    expect(reportExportError).not.toHaveBeenCalled();
   });
 
   it('dispatches new data by category: array config vs grid regenerateGrid', async () => {

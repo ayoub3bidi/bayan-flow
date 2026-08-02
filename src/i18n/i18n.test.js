@@ -55,7 +55,7 @@ describe('i18n Configuration', () => {
 
   it('should translate basic keys in Arabic', async () => {
     await i18n.changeLanguage('ar');
-    expect(i18n.t('header.title')).toBe('بيان Flow');
+    expect(i18n.t('header.title')).toBe('بيان فلو');
     expect(i18n.t('settings.algorithm')).toBe('الخوارزمية');
     expect(i18n.t('controls.play')).toBe('تشغيل');
   });

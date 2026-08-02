@@ -75,7 +75,7 @@
     },
     "eyebrow": "Le Plan Pro",
     "headline": "Allez plus loin avec le Plan Pro",
-    "subheadline": "La version payante à venir débloquera des fonctionnalités plus puissantes comme des entrées personnalisées, des comparaisons côte à côte, des exports illimités et plus encore.",
+    "subheadline": "La version payante à venir débloquera des fonctionnalités plus puissantes comme des entrées personnalisées, des comparaisons côte à côte, des exports sans filigrane et plus encore.",
     "featuresHeading": "Ce que le Plan Pro débloque",
     "features": {
       "customInput": {
@@ -1446,8 +1446,8 @@
         "fullscreen": "Mode plein écran",
         "insight": "Aperçu des Algorithmes",
         "videoExport": "Export vidéo",
-        "videoExportFree": "50 exports par jour (avec filigrane)",
-        "videoExportPro": "Illimité (sans filigrane ou personnalisable)",
+        "videoExportFree": "Exports MP4 HD (avec filigrane)",
+        "videoExportPro": "Exports sans filigrane",
         "customInput": "Entrées personnalisées",
         "comparison": "Mode comparaison d'algorithmes",
         "presentation": "Mode présentation (dédié aux enseignants)",

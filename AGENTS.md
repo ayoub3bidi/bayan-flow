@@ -125,7 +125,7 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
   - Favorite algorithms: up to 20 slots (`FREE_TIER_FAVORITE_SLOT_LIMIT` in `src/constants/personalLearning.js`); stored in Supabase `favorite_algorithms`
   - Per-algorithm study notes: stored in Supabase `algorithm_notes`; sanitized HTML via `notesService.js`
   - Self-service account deletion: Profile Settings danger zone → Supabase Edge Function `delete-account` (CASCADE removes profile, favorites, notes)
-  - Video Export: unlimited for Free tier with mandatory watermark; Pro tier adds watermark customization/removal; internal daily abuse guard exists (not user-facing)
+  - Video Export: unlimited for Free tier with mandatory watermark; Pro tier adds watermark customization/removal
 - **Auth PRs must not reduce Free tier functionality** — only Anonymous tier can be further restricted
 - **Secrets** — publishable anon key via `VITE_*` only; service role key never in repo or client bundle
 - **CSP** — Supabase origin in `connect-src`; Google profile photos in `img-src` (lh3.googleusercontent.com); GIS scripts/connect/frame in respective directives; asserted via `scripts/cspHeaders.js` at build time
