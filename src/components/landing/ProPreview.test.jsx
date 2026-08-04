@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderWithI18n, screen } from '../../test/testUtils';
 import { BrowserRouter } from 'react-router-dom';
+import i18n from '../../i18n';
 import ProPreview from './ProPreview';
 import { WAITLIST_EMAIL_STORAGE_KEY } from '@/constants/waitlist';
 
@@ -22,11 +23,20 @@ vi.mock('../ui/Section', () => ({
 }));
 
 vi.mock('../ui/Button', () => ({
-  default: ({ children, variant, ...props }) => (
-    <button data-variant={variant} {...props}>
-      {children}
-    </button>
-  ),
+  default: ({ children, variant, to, href, ...props }) => {
+    if (to || href) {
+      return (
+        <a href={to || href} data-variant={variant} {...props}>
+          {children}
+        </a>
+      );
+    }
+    return (
+      <button data-variant={variant} {...props}>
+        {children}
+      </button>
+    );
+  },
 }));
 
 const renderComponent = () => {
@@ -47,8 +57,9 @@ const excludedIcons = container =>
   );
 
 describe('ProPreview', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
+    await i18n.changeLanguage('en');
   });
 
   afterEach(() => {
@@ -230,10 +241,10 @@ describe('ProPreview', () => {
   });
 
   describe('CTA', () => {
-    it('should render CTA button with cta variant', () => {
+    it('should render CTA link with cta variant', () => {
       renderComponent();
-      const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('data-variant', 'cta');
+      const link = screen.getByRole('link');
+      expect(link).toHaveAttribute('data-variant', 'cta');
     });
 
     it('should show waitlist CTA when not joined', () => {
@@ -248,10 +259,10 @@ describe('ProPreview', () => {
       expect(link).toHaveAttribute('href', '/pro?source=landing');
     });
 
-    it('should contain button inside link', () => {
+    it('should not nest a button inside the link', () => {
       renderComponent();
       const link = screen.getByRole('link');
-      expect(link.querySelector('button')).toBeInTheDocument();
+      expect(link.querySelector('button')).not.toBeInTheDocument();
     });
   });
 
@@ -313,9 +324,10 @@ describe('ProPreview', () => {
       expect(screen.getByRole('link')).toBeInTheDocument();
     });
 
-    it('should have accessible button', () => {
+    it('should render a single interactive element (no nested button)', () => {
       renderComponent();
-      expect(screen.getByRole('button')).toBeInTheDocument();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.getByRole('link')).toBeInTheDocument();
     });
   });
 });

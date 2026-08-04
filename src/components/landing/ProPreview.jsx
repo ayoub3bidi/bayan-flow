@@ -7,7 +7,6 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { Check, X } from '@phosphor-icons/react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
@@ -161,13 +160,11 @@ function ProPreview() {
           viewport={{ once: true, amount: 0.3 }}
           className="text-center mt-10"
         >
-          <Link to={`/pro?source=${WAITLIST_SOURCES.LANDING}`}>
-            <Button variant="cta">
-              {joined
-                ? t('landing.proPreview.ctaJoined')
-                : t('landing.proPreview.cta')}
-            </Button>
-          </Link>
+          <Button to={`/pro?source=${WAITLIST_SOURCES.LANDING}`} variant="cta">
+            {joined
+              ? t('landing.proPreview.ctaJoined')
+              : t('landing.proPreview.cta')}
+          </Button>
         </motion.div>
       </Container>
     </Section>

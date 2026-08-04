@@ -1125,6 +1125,8 @@
   },
   "visualization": {
     "description": "Interactive algorithm visualization",
+    "arrayPaneLabel": "Array visualization",
+    "arrayPaneLabelInteractive": "Array visualization - Swipe left/right to navigate steps",
     "viewPythonCode": "View Python code",
     "codeLabel": "Code",
     "searchTarget": "Target: {{value}}",
@@ -1480,19 +1482,19 @@
       "items": {
         "difference": {
           "question": "How is this different from just watching algorithm videos?",
-          "answer": "Videos are over in 60 seconds and you can't slow them down. Bayan Flow is interactive: pause the animation on any single step, replay it slowly, or step through the algorithm one operation at a time. You're in control of the pace, which is how understanding actually happens."
+          "answer": "Videos are over in 60 seconds and you can't slow them down. Bayan Flow is interactive: with a free account you can pause on any single step, replay it slowly, or step through the algorithm one operation at a time. You're in control of the pace, which is how understanding actually happens."
         },
         "beginner": {
           "question": "I'm new to algorithms and programming. Will I still get it?",
-          "answer": "That's exactly who this is for. Every algorithm is explained visually first, so you see the logic happen before you read a single line of code. When you're ready to go deeper, plain-language explanations and pseudocode are one click away, and the real Python code is there whenever you want it."
+          "answer": "That's exactly who this is for. Every algorithm is explained visually first, so you see the logic happen before you read a single line of code. When you're ready to go deeper, a free account puts plain-language explanations, pseudocode, and the real Python code one click away."
         },
         "learn": {
           "question": "Will I actually learn it, or just watch a pretty animation?",
-          "answer": "The animation is just the beginning. You can open the real Python code and run it, change the input and watch the algorithm react, and see how it scales before your eyes. By the time you leave, you'll be able to explain the algorithm, not just recognize it."
+          "answer": "The animation is just the beginning. With a free account you can open the real Python code and run it, change the input and watch the algorithm react, and see how it scales before your eyes. By the time you leave, you'll be able to explain the algorithm, not just recognize it."
         },
         "try": {
           "question": "Do I need to install anything?",
-          "answer": "Nothing to install, nothing to download. Open it in your browser and run your first algorithm in seconds. The Python code even runs inside your own browser, so it never leaves your device."
+          "answer": "Nothing to install, nothing to download. Open it in your browser and watch your first algorithm run in seconds. Free accounts can even run the real Python code right inside your browser — it never leaves your device."
         }
       }
     },

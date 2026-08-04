@@ -89,7 +89,7 @@
       },
       "export": {
         "title": "Export vidéo illimité",
-        "body": "Créez des explications soignées sans watermark, ou personnalisez-le avec votre propre marque."
+        "body": "Créez des explications soignées sans filigrane, ou personnalisez-le avec votre propre marque."
       },
       "presentation": {
         "title": "Mode présentation",
@@ -1124,6 +1124,8 @@
   },
   "visualization": {
     "description": "Visualisation interactive d'algorithme",
+    "arrayPaneLabel": "Visualisation de tableau",
+    "arrayPaneLabelInteractive": "Visualisation de tableau - Balayez à gauche/droite pour parcourir les étapes",
     "viewPythonCode": "Voir le code Python",
     "codeLabel": "Code",
     "searchTarget": "Cible : {{value}}",
@@ -1480,19 +1482,19 @@
       "items": {
         "difference": {
           "question": "En quoi est-ce différent de simplement regarder des vidéos d'algorithmes ?",
-          "answer": "Une vidéo est terminée en 60 secondes et vous ne pouvez pas la ralentir. Bayan Flow est interactif : mettez l'animation en pause à n'importe quelle étape, rejouez-la lentement, ou avancez dans l'algorithme opération par opération. Vous contrôlez le rythme, et c'est ainsi que la compréhension se construit vraiment."
+          "answer": "Une vidéo est terminée en 60 secondes et vous ne pouvez pas la ralentir. Bayan Flow est interactif : avec un compte gratuit, mettez l'animation en pause à n'importe quelle étape, rejouez-la lentement, ou avancez dans l'algorithme opération par opération. Vous contrôlez le rythme, et c'est ainsi que la compréhension se construit vraiment."
         },
         "beginner": {
           "question": "Je débute dans les algorithmes et la programmation. Vais-je quand même comprendre ?",
-          "answer": "C'est exactement pour vous que c'est conçu. Chaque algorithme est d'abord expliqué visuellement, pour que vous voyiez la logique se dérouler avant de lire une seule ligne de code. Quand vous voulez aller plus loin, les explications en langage clair et le pseudo-code sont à un clic, et le vrai code Python est là quand vous en avez besoin."
+          "answer": "C'est exactement pour vous que c'est conçu. Chaque algorithme est d'abord expliqué visuellement, pour que vous voyiez la logique se dérouler avant de lire une seule ligne de code. Quand vous voulez aller plus loin, un compte gratuit met les explications en langage clair, le pseudo-code et le vrai code Python à portée de clic."
         },
         "learn": {
           "question": "Vais-je vraiment apprendre, ou juste regarder une jolie animation ?",
-          "answer": "L'animation n'est que le début. Vous pouvez ouvrir le vrai code Python et l'exécuter, modifier les données et regarder l'algorithme réagir, et voir comment il évolue à l'échelle sous vos yeux. À la fin, vous saurez expliquer l'algorithme, pas seulement le reconnaître."
+          "answer": "L'animation n'est que le début. Avec un compte gratuit, vous pouvez ouvrir le vrai code Python et l'exécuter, modifier les données et regarder l'algorithme réagir, et voir comment il évolue à l'échelle sous vos yeux. À la fin, vous saurez expliquer l'algorithme, pas seulement le reconnaître."
         },
         "try": {
           "question": "Dois-je installer quelque chose ?",
-          "answer": "Rien à installer, rien à télécharger. Ouvrez-le dans votre navigateur et lancez votre premier algorithme en quelques secondes. Le code Python s'exécute même dans votre propre navigateur, il ne quitte donc jamais votre appareil."
+          "answer": "Rien à installer, rien à télécharger. Ouvrez-le dans votre navigateur et regardez votre premier algorithme s'exécuter en quelques secondes. Les comptes gratuits peuvent même exécuter le vrai code Python directement dans votre navigateur — il ne quitte donc jamais votre appareil."
         }
       }
     },

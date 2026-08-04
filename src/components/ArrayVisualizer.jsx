@@ -193,8 +193,8 @@ function ArrayVisualizer({
   const arrayPaneProps = canSwipe ? swipe : {};
   const arrayPaneRole = interactive ? 'application' : 'img';
   const arrayPaneLabel = interactive
-    ? 'Array visualization - Swipe left/right to navigate steps'
-    : 'Array visualization';
+    ? t('visualization.arrayPaneLabelInteractive')
+    : t('visualization.arrayPaneLabel');
 
   return (
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
@@ -284,32 +284,30 @@ function ArrayVisualizer({
               ))}
             </div>
 
-            {showCaption && (
-              <AnimatePresence mode="wait">
-                {description && (
-                  <motion.div
-                    key={description}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute bottom-16 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none"
-                  >
-                    <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200">
-                      <p
-                        className="text-xs sm:text-sm font-semibold text-center text-text-primary"
-                        role="status"
-                        aria-live="polite"
-                      >
-                        {visualizerVariant === 'searching'
-                          ? description
-                          : t(description)}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            )}
+            <AnimatePresence mode="wait">
+              {showCaption && description && (
+                <motion.div
+                  key={description}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute bottom-16 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none"
+                >
+                  <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200">
+                    <p
+                      className="text-xs sm:text-sm font-semibold text-center text-text-primary"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      {visualizerVariant === 'searching'
+                        ? description
+                        : t(description)}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

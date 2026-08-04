@@ -217,6 +217,7 @@ function SettingsPanel({
                 type="button"
                 onClick={() => !isPlaying && onAlgorithmTypeChange(type)}
                 disabled={isPlaying}
+                aria-pressed={isActive}
                 aria-label={t(cfg.i18nTabKey)}
                 title={t(cfg.i18nTabKey)}
                 className={`group flex h-16 flex-col items-center justify-center gap-1.5 rounded-xl px-1 text-center transition-all duration-200 touch-manipulation leading-tight-consistent disabled:cursor-not-allowed hover:scale-110 focus-visible:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6] disabled:hover:scale-100 ${
