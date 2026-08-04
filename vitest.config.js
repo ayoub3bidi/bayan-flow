@@ -7,6 +7,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      //? tone is only ever loaded via dynamic import (lazy Tone.js) and is globally
+      //? mocked in the setup file, so it must be resolved through Vite's graph.
+      //? rolldown-vite's oxc-resolver caches fs access while walking node_modules,
+      //? which intermittently fails the bare `tone` specifier at transform time
+      //? (vite:import-analysis normalizeUrl). Point directly at the package entry
+      //? so resolution is deterministic and never traverses node_modules.
+      tone: path.resolve(__dirname, 'node_modules/tone/build/esm/index.js'),
     },
     // Ensure directory imports resolve to index.js for ES modules
     extensions: ['.js', '.jsx', '.json'],
@@ -22,7 +29,6 @@ export default defineConfig({
       VITE_SUPABASE_ANON_KEY: 'test-anon-key',
     },
     css: true,
-    //? Run tests sequentially to reduce memory pressure
     pool: 'forks',
     poolOptions: {
       forks: {
