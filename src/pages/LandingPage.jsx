@@ -12,9 +12,11 @@ import ClaritySection from '../components/landing/ClaritySection';
 import FAQ from '../components/landing/FAQ';
 import RoadmapCTA from '../components/landing/RoadmapCTA';
 import TechPattern from '../components/landing/TechPattern';
+import SocialProofStrip from '../components/landing/SocialProofStrip';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import ProWaitlistBanner from '../components/ProWaitlistBanner';
+import { SHOW_LANDING_SOCIAL_PROOF } from '../components/landing/landingSocialProof';
 
 function LandingPage() {
   return (
@@ -31,6 +33,7 @@ function LandingPage() {
       {/* Landing Sections */}
       <main className="relative z-10">
         <Hero />
+        {SHOW_LANDING_SOCIAL_PROOF ? <SocialProofStrip /> : null}
         <AlgorithmTypes />
         <Features />
         <ProPreview />

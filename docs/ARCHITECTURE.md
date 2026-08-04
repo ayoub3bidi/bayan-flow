@@ -79,7 +79,7 @@ Bayan Flow is built as a single-page application (SPA) with multiple routes:
 - No visualizer functionality
 
 **Components:**
-- Hero, AlgorithmTypes, Features, ProPreview, ClaritySection, FAQ, RoadmapCTA, GitHubRepoBadge
+- Hero, AlgorithmTypes, Features, ProPreview, ClaritySection, FAQ, RoadmapCTA, SocialProofStrip (gated), GitHubRepoBadge
 - Footer, ThemeToggle, LanguageSwitcher
 - TechPattern (animated background)
 
@@ -150,6 +150,7 @@ LandingPage
 ├── LanguageSwitcher
 ├── TechPattern (background)
 ├── Hero
+├── SocialProofStrip (gated off)
 ├── AlgorithmTypes
 ├── Features
 ├── ProPreview

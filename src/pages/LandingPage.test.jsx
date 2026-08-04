@@ -8,6 +8,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithI18n, screen } from '../test/testUtils';
 import LandingPage from './LandingPage';
+import { SHOW_LANDING_SOCIAL_PROOF } from '../components/landing/landingSocialProof';
 
 // Mock components that don't need data-testid testing
 vi.mock('../components/landing/Hero', () => ({
@@ -20,6 +21,10 @@ vi.mock('../components/landing/AlgorithmTypes', () => ({
 
 vi.mock('../components/landing/Features', () => ({
   default: () => <div data-testid="features">Features</div>,
+}));
+
+vi.mock('../components/landing/SocialProofStrip', () => ({
+  default: () => <div data-testid="social-proof-strip">SocialProofStrip</div>,
 }));
 
 vi.mock('../components/landing/ProPreview', () => ({
@@ -74,6 +79,14 @@ describe('LandingPage', () => {
       expect(screen.getByTestId('footer')).toBeInTheDocument();
     });
 
+    it('keeps the social proof strip gated off until proof is ready', () => {
+      expect(SHOW_LANDING_SOCIAL_PROOF).toBe(false);
+      renderComponent();
+      expect(
+        screen.queryByTestId('social-proof-strip')
+      ).not.toBeInTheDocument();
+    });
+
     it('should render TechPattern component', () => {
       renderComponent();
       expect(screen.getByTestId('tech-pattern')).toBeInTheDocument();
@@ -118,7 +131,7 @@ describe('LandingPage', () => {
       const footerIndex = testIds.indexOf('footer');
       expect(footerIndex).toBeGreaterThan(heroIndex);
 
-      // Content sections follow the curated 7-section order
+      // Content sections follow curated order (social proof gated)
       const expectedOrder = [
         'hero',
         'algorithm-types',

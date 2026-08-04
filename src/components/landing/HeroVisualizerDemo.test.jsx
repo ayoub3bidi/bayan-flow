@@ -13,7 +13,7 @@ import { ELEMENT_STATES, STATE_COLORS } from '../../constants';
 import i18n from '../../i18n';
 
 /** Deterministic stand-in for generateRandomArray in tests. */
-const MOCK_HERO_ARRAY = [42, 17, 88, 5, 63];
+const MOCK_HERO_ARRAY = [42, 17, 88, 5, 63, 29];
 
 const reduceMotionRef = { current: false };
 
@@ -54,7 +54,7 @@ describe('HeroVisualizerDemo', () => {
     const demo = screen.getByTestId('hero-visualizer-demo');
     expect(demo).toBeInTheDocument();
     expect(demo.getAttribute('data-array-size')).toBe(String(HERO_DEMO_SIZE));
-    expect(HERO_DEMO_SIZE).toBe(5);
+    expect(HERO_DEMO_SIZE).toBe(6);
 
     for (const value of MOCK_HERO_ARRAY) {
       expect(screen.getByText(String(value))).toBeInTheDocument();
@@ -115,9 +115,9 @@ describe('HeroVisualizerDemo', () => {
       expect(demo.getAttribute('data-current-step')).toBe('0');
     });
 
-    // Enough time for a 5-element bubble sort at FAST speed, plus buffer
+    // Enough time for a 6-element bubble sort at FAST speed, plus buffer
     await act(async () => {
-      vi.advanceTimersByTime(40 * HERO_STEP_MS);
+      vi.advanceTimersByTime(60 * HERO_STEP_MS);
     });
 
     await waitFor(() => {

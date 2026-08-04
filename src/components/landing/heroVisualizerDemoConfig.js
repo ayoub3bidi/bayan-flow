@@ -6,8 +6,8 @@
 
 import { ANIMATION_SPEEDS } from '../../constants';
 
-/** Same size budget as a small /app array so each step stays readable. */
-export const HERO_DEMO_SIZE = 5;
+/** Enough bars to read as a real sort without crowding the hero stage. */
+export const HERO_DEMO_SIZE = 6;
 
 /** Same delay as in-app autoplay "Fast" speed. */
 export const HERO_STEP_MS = ANIMATION_SPEEDS.FAST;

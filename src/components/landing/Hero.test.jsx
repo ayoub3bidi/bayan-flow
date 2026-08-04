@@ -160,10 +160,16 @@ describe('Hero', () => {
       expect(section).toHaveClass('overflow-hidden');
     });
 
-    it('uses a two-column layout container', () => {
+    it('uses a two-column layout with a dominant visualizer column', () => {
       const { container } = renderComponent();
       const layout = container.querySelector('div[class*="lg:flex-row"]');
       expect(layout).toBeInTheDocument();
+      expect(
+        container.querySelector('div[class*="lg:w-[40%]"]')
+      ).toBeInTheDocument();
+      expect(
+        container.querySelector('div[class*="lg:w-[60%]"]')
+      ).toBeInTheDocument();
     });
   });
 

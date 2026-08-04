@@ -1351,9 +1351,26 @@
   "landing": {
     "hero": {
       "title": "Enfin, les Algorithmes Ont un Sens",
-      "subtitle": "Voyez le tri, la recherche et les algorithmes de graphes s'exécuter étape par étape. Pause, retour arrière, apprenez à votre rythme.",
+      "subtitle": "Voyez les algorithmes s'exécuter étape par étape. Pause, retour arrière, apprenez à votre rythme.",
       "cta": "Explorer un Algorithme",
       "outcome": "Repartez capable d'expliquer l'algorithme, pas seulement de le reconnaître."
+    },
+    "socialProof": {
+      "ariaLabel": "Points forts du produit",
+      "items": {
+        "algorithms": {
+          "value": "45 algorithmes",
+          "label": "Sur cinq catégories"
+        },
+        "locales": {
+          "value": "EN · FR · AR",
+          "label": "Dont l'arabe RTL complet"
+        },
+        "depth": {
+          "value": "Pas · insight · export",
+          "label": "Apprenez en le regardant réfléchir"
+        }
+      }
     },
     "clarity": {
       "heading": "Pas de Désordre, Juste de la Clarté",

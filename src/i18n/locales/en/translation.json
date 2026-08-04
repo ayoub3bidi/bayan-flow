@@ -1351,9 +1351,26 @@
   "landing": {
     "hero": {
       "title": "Finally, Algorithms Make Sense",
-      "subtitle": "Watch sorting, searching, and graph algorithms run step by step. Pause, rewind, and learn at your own pace.",
+      "subtitle": "Watch algorithms run step by step. Pause, rewind, and learn at your own pace.",
       "cta": "Explore an Algorithm",
       "outcome": "Leave able to explain the algorithm, not just recognize it."
+    },
+    "socialProof": {
+      "ariaLabel": "Product highlights",
+      "items": {
+        "algorithms": {
+          "value": "45 algorithms",
+          "label": "Across five categories"
+        },
+        "locales": {
+          "value": "EN · FR · AR",
+          "label": "Including full Arabic RTL"
+        },
+        "depth": {
+          "value": "Step · insight · export",
+          "label": "Learn by watching it think"
+        }
+      }
     },
     "clarity": {
       "heading": "No Clutter, Just Clarity",

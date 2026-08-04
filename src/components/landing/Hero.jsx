@@ -24,7 +24,7 @@ function Hero() {
       <Container className="relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-12">
           <motion.div
-            className="lg:w-[48%] text-center lg:text-start"
+            className="lg:w-[40%] text-center lg:text-start"
             initial={{ opacity: reduceMotion ? 1 : 0 }}
             animate={{ opacity: 1 }}
             transition={getChromeTransition(reduceMotion, 0.4)}
@@ -42,12 +42,6 @@ function Hero() {
             >
               {t('landing.hero.subtitle')}
             </motion.p>
-            <motion.p
-              className="landing-body text-text-secondary max-w-xl mx-auto lg:mx-0 mb-8"
-              {...marketingEnter(reduceMotion, 0.4)}
-            >
-              {t('landing.hero.outcome')}
-            </motion.p>
 
             <motion.div
               className="flex flex-col items-center lg:items-start gap-3 mb-8 lg:mb-0"
@@ -62,11 +56,14 @@ function Hero() {
                   {t('landing.hero.cta')}
                 </Button>
               </motion.div>
+              <p className="text-sm text-text-secondary max-w-md">
+                {t('landing.hero.outcome')}
+              </p>
             </motion.div>
           </motion.div>
 
           <motion.div
-            className="lg:w-[52%] w-full"
+            className="lg:w-[60%] w-full"
             {...marketingEnter(reduceMotion, 0.5)}
           >
             <HeroVisualizerDemo />
