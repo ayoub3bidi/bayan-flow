@@ -23,12 +23,16 @@ import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
  * @param {Array}  initialArray  - The array to sort.
  * @param {number} speed         - Autoplay delay in ms.
  * @param {string} mode          - VISUALIZATION_MODES.AUTOPLAY | MANUAL.
+ * @param {Object} [options]
+ * @param {boolean} [options.enableSound=true] - When false, skip soundContext
+ *   so the playback engine never emits visualization SFX.
  */
 export function useSortingVisualization(
   algorithmKey,
   initialArray,
   speed,
-  mode = VISUALIZATION_MODES.MANUAL
+  mode = VISUALIZATION_MODES.MANUAL,
+  { enableSound = true } = {}
 ) {
   const [array, setArray] = useState(initialArray);
   const [states, setStates] = useState(() =>
@@ -43,8 +47,11 @@ export function useSortingVisualization(
 
   // ── Shared playback engine ──────────────────────────────────────────────────
   const soundContext = useMemo(
-    () => ({ algorithmType: ALGORITHM_TYPES.SORTING, algorithmKey }),
-    [algorithmKey]
+    () =>
+      enableSound
+        ? { algorithmType: ALGORITHM_TYPES.SORTING, algorithmKey }
+        : null,
+    [algorithmKey, enableSound]
   );
   const engine = useVisualization({ executeStep, speed, mode, soundContext });
 

@@ -8,6 +8,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 import Container from '../ui/Container';
+import HeroVisualizerDemo from './HeroVisualizerDemo';
 import {
   marketingEnter,
   HOVER_SPRING,
@@ -20,43 +21,57 @@ function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Content */}
       <Container className="relative z-10">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: reduceMotion ? 1 : 0 }}
-          animate={{ opacity: 1 }}
-          transition={getChromeTransition(reduceMotion, 0.4)}
-        >
-          <motion.h1
-            className="landing-h1 text-text-primary mb-6"
-            {...marketingEnter(reduceMotion, 0.2)}
-            style={{
-              textShadow: '0 0 40px rgba(43, 127, 255, 0.3)',
-            }}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-12">
+          <motion.div
+            className="lg:w-[48%] text-center lg:text-start"
+            initial={{ opacity: reduceMotion ? 1 : 0 }}
+            animate={{ opacity: 1 }}
+            transition={getChromeTransition(reduceMotion, 0.4)}
           >
-            {t('landing.hero.title')}
-          </motion.h1>
-
-          <motion.p
-            className="landing-body text-text-secondary max-w-auto mx-auto mb-10"
-            {...marketingEnter(reduceMotion, 0.4)}
-          >
-            {t('landing.hero.subtitle')}
-          </motion.p>
-
-          <motion.div {...marketingEnter(reduceMotion, 0.6)}>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={HOVER_SPRING}
+            <motion.h1
+              className="landing-h1 text-text-primary mb-6"
+              {...marketingEnter(reduceMotion, 0.2)}
             >
-              <Button to="/app" variant="cta">
-                {t('landing.hero.cta')}
-              </Button>
+              {t('landing.hero.title')}
+            </motion.h1>
+
+            <motion.p
+              className="landing-body text-text-secondary max-w-xl mx-auto lg:mx-0 mb-8"
+              {...marketingEnter(reduceMotion, 0.4)}
+            >
+              {t('landing.hero.subtitle')}
+            </motion.p>
+            <motion.p
+              className="landing-body text-text-secondary max-w-xl mx-auto lg:mx-0 mb-8"
+              {...marketingEnter(reduceMotion, 0.4)}
+            >
+              {t('landing.hero.outcome')}
+            </motion.p>
+
+            <motion.div
+              className="flex flex-col items-center lg:items-start gap-3 mb-8 lg:mb-0"
+              {...marketingEnter(reduceMotion, 0.6)}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={HOVER_SPRING}
+              >
+                <Button to="/app" variant="cta">
+                  {t('landing.hero.cta')}
+                </Button>
+              </motion.div>
             </motion.div>
           </motion.div>
-        </motion.div>
+
+          <motion.div
+            className="lg:w-[52%] w-full"
+            {...marketingEnter(reduceMotion, 0.5)}
+          >
+            <HeroVisualizerDemo />
+          </motion.div>
+        </div>
       </Container>
     </section>
   );

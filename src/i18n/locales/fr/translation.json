@@ -1351,8 +1351,9 @@
   "landing": {
     "hero": {
       "title": "Enfin, les Algorithmes Ont un Sens",
-      "subtitle": "Regardez les algorithmes prendre vie avec des visualisations interactives, étape par étape. Apprenez à votre propre rythme.",
-      "cta": "Commencer la Visualisation"
+      "subtitle": "Voyez le tri, la recherche et les algorithmes de graphes s'exécuter étape par étape. Pause, retour arrière, apprenez à votre rythme.",
+      "cta": "Explorer un Algorithme",
+      "outcome": "Repartez capable d'expliquer l'algorithme, pas seulement de le reconnaître."
     },
     "clarity": {
       "heading": "Pas de Désordre, Juste de la Clarté",

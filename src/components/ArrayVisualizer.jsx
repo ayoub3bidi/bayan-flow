@@ -36,6 +36,9 @@ import {
  * @param {number|null} [targetValue] - Search target (searching category)
  * @param {'sorting'|'searching'} [visualizerVariant]
  * @param {string} [complexityDataset] - ComplexityPanel dataset key
+ * @param {boolean} [showChrome=true] - Legend, complexity panel, swipe tutorial
+ * @param {boolean} [showCaption=true] - Step status caption under the bars
+ * @param {boolean} [interactive=true] - Swipe / keyboard step navigation
  */
 function ArrayVisualizer({
   array,
@@ -50,6 +53,9 @@ function ArrayVisualizer({
   visualizerVariant = 'sorting',
   complexityDataset = 'sorting',
   onGatedFeatureClick,
+  showChrome = true,
+  showCaption = true,
+  interactive = true,
 }) {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -62,6 +68,8 @@ function ArrayVisualizer({
 
   // Show swipe tutorial on mobile when user scrolls to visualization area
   useEffect(() => {
+    if (!showChrome || !interactive) return undefined;
+
     const isMobile = window.innerWidth < 640;
     const hasSteps = array.length > 0;
     const isManualMode = mode === 'manual';
@@ -85,7 +93,8 @@ function ArrayVisualizer({
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
     }
-  }, [mode, array.length, isComplete]);
+    return undefined;
+  }, [mode, array.length, isComplete, showChrome, interactive]);
 
   const handleDismissTutorial = () => {
     setShowSwipeTutorial(false);
@@ -93,6 +102,11 @@ function ArrayVisualizer({
   };
 
   useEffect(() => {
+    if (!showChrome) {
+      setShowComplexityPanel(false);
+      return undefined;
+    }
+
     if (isComplete) {
       const timer = setTimeout(() => {
         setShowComplexityPanel(true);
@@ -103,7 +117,8 @@ function ArrayVisualizer({
       setIsComplexityGated(false);
       hasCountedThisCompletion.current = false;
     }
-  }, [isComplete]);
+    return undefined;
+  }, [isComplete, showChrome]);
 
   useEffect(() => {
     if (user) {
@@ -113,6 +128,8 @@ function ArrayVisualizer({
 
   // Increment complexity view count once per completion for anonymous users
   useEffect(() => {
+    if (!showChrome) return;
+
     if (isComplete && !hasCountedThisCompletion.current && !user) {
       if (canViewComplexityPanel(user)) {
         incrementComplexityViewCount();
@@ -122,7 +139,7 @@ function ArrayVisualizer({
       }
       hasCountedThisCompletion.current = true;
     }
-  }, [isComplete, user, onGatedFeatureClick]);
+  }, [isComplete, user, onGatedFeatureClick, showChrome]);
 
   const legendItems =
     visualizerVariant === 'searching'
@@ -163,17 +180,26 @@ function ArrayVisualizer({
           { state: ELEMENT_STATES.PIVOT, label: t('legend.sorting.pivot') },
         ];
 
+  const canSwipe =
+    interactive && mode === 'manual' && (onStepForward || onStepBackward);
+
   // Swipe gesture support for manual mode
   const swipe = useSwipe({
-    onLeft: mode === 'manual' && onStepBackward ? onStepBackward : undefined,
-    onRight: mode === 'manual' && onStepForward ? onStepForward : undefined,
+    onLeft: canSwipe && onStepBackward ? onStepBackward : undefined,
+    onRight: canSwipe && onStepForward ? onStepForward : undefined,
     threshold: 50,
   });
+
+  const arrayPaneProps = canSwipe ? swipe : {};
+  const arrayPaneRole = interactive ? 'application' : 'img';
+  const arrayPaneLabel = interactive
+    ? 'Array visualization - Swipe left/right to navigate steps'
+    : 'Array visualization';
 
   return (
     <div className="w-full h-full rounded-xl shadow-2xl overflow-hidden relative">
       <AnimatePresence mode="wait">
-        {showComplexityPanel ? (
+        {showChrome && showComplexityPanel ? (
           <div className="relative w-full h-full">
             <ComplexityPanel
               algorithm={algorithm}
@@ -210,18 +236,19 @@ function ArrayVisualizer({
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="w-full h-full bg-surface p-3 sm:p-6 flex flex-col"
-            {...(mode === 'manual' ? swipe : {})}
-            role="application"
-            aria-label="Array visualization - Swipe left/right to navigate steps"
+            {...arrayPaneProps}
+            role={arrayPaneRole}
+            aria-label={arrayPaneLabel}
           >
-            {/* Auto-hiding Legend */}
-            <AutoHidingLegend
-              legendItems={legendItems.map(item => ({
-                ...item,
-                color: item.color ?? STATE_COLORS[item.state],
-              }))}
-              isComplete={isComplete}
-            />
+            {showChrome && (
+              <AutoHidingLegend
+                legendItems={legendItems.map(item => ({
+                  ...item,
+                  color: item.color ?? STATE_COLORS[item.state],
+                }))}
+                isComplete={isComplete}
+              />
+            )}
 
             {visualizerVariant === 'searching' && targetValue != null && (
               <div className="flex justify-center mb-2 shrink-0">
@@ -235,7 +262,11 @@ function ArrayVisualizer({
             )}
 
             {/* Array Visualization */}
-            <div className="flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 pb-10 px-2 overflow-x-hidden touch-pan-y">
+            <div
+              className={`flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 px-2 overflow-x-hidden touch-pan-y ${
+                showChrome || showCaption ? 'pb-10' : 'pb-2'
+              }`}
+            >
               {array.map((value, index) => (
                 <ArrayBar
                   key={`${index}-${value}`}
@@ -253,40 +284,42 @@ function ArrayVisualizer({
               ))}
             </div>
 
-            {/* Description */}
-            <AnimatePresence mode="wait">
-              {description && (
-                <motion.div
-                  key={description}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute bottom-16 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none"
-                >
-                  <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200">
-                    <p
-                      className="text-xs sm:text-sm font-semibold text-center text-text-primary"
-                      role="status"
-                      aria-live="polite"
-                    >
-                      {visualizerVariant === 'searching'
-                        ? description
-                        : t(description)}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {showCaption && (
+              <AnimatePresence mode="wait">
+                {description && (
+                  <motion.div
+                    key={description}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute bottom-16 sm:bottom-6 left-1/2 transform -translate-x-1/2 max-w-lg w-[90%] flex justify-center pointer-events-none"
+                  >
+                    <div className="bg-surface-elevated px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl border-2 border-gray-200">
+                      <p
+                        className="text-xs sm:text-sm font-semibold text-center text-text-primary"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        {visualizerVariant === 'searching'
+                          ? description
+                          : t(description)}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Swipe Tutorial Overlay */}
-      <SwipeTutorial
-        show={showSwipeTutorial}
-        onDismiss={handleDismissTutorial}
-      />
+      {showChrome && (
+        <SwipeTutorial
+          show={showSwipeTutorial}
+          onDismiss={handleDismissTutorial}
+        />
+      )}
     </div>
   );
 }
