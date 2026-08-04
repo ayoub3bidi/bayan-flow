@@ -24,17 +24,23 @@ function requireClient() {
 /**
  * Render an invisible Cloudflare Turnstile widget and resolve with a
  * verification token. Returns null when the site key is not configured
- * or the Turnstile script failed to load.
+ * (local/CI without Turnstile). Rejects when the site key is set but the
+ * script is missing or the challenge fails — avoids sending a token-less
+ * signup into the server gate.
  * @returns {Promise<string | null>}
  */
 function getTurnstileToken() {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-    if (
-      !siteKey ||
-      typeof (/** @type {any} */ (globalThis).turnstile) === 'undefined'
-    ) {
+    if (!siteKey) {
       resolve(null);
+      return;
+    }
+
+    if (typeof (/** @type {any} */ (globalThis).turnstile) === 'undefined') {
+      reject(
+        new Error('Turnstile is not available. Please refresh and try again.')
+      );
       return;
     }
 
@@ -46,7 +52,7 @@ function getTurnstileToken() {
 
     const timeoutId = setTimeout(() => {
       container.remove();
-      resolve(null);
+      reject(new Error('Turnstile verification timed out. Please try again.'));
     }, 10000);
 
     turnstile.render(container, {
@@ -60,7 +66,7 @@ function getTurnstileToken() {
       'error-callback': () => {
         clearTimeout(timeoutId);
         container.remove();
-        resolve(null);
+        reject(new Error('Turnstile verification failed. Please try again.'));
       },
     });
   });

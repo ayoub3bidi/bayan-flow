@@ -90,7 +90,12 @@ async function verifyTurnstileToken(
 
 export async function handleRequest(req) {
   if (req.method !== 'POST') {
-    return await reject('method_not_allowed', { method: req.method });
+    // Probes/scanners hit this URL with GET — log only, no Telegram noise.
+    console.warn('before-signup: method_not_allowed', { method: req.method });
+    return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -125,7 +130,7 @@ export async function handleRequest(req) {
     );
 
     if (!turnstile.success) {
-      return await reject('turnstile_failed', { ip });
+      return await reject('turnstile_failed', { email, ip });
     }
 
     const supabase = getServiceClient();
