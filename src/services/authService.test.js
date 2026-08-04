@@ -174,6 +174,26 @@ describe('authService', () => {
     expect(supabaseAuthMock.signInWithIdToken).not.toHaveBeenCalled();
   });
 
+  it('signInWithGoogle throws when Turnstile challenge times out', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
+      globalThis.turnstile = {
+        render: vi.fn(() => 'widget-id'),
+      };
+
+      const signInPromise = authService.signInWithGoogle();
+      const rejection = expect(signInPromise).rejects.toThrow(
+        /Turnstile verification timed out/
+      );
+      await vi.advanceTimersByTimeAsync(10000);
+      await rejection;
+      expect(supabaseAuthMock.signInWithIdToken).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('signOut delegates to Supabase auth', async () => {
     await authService.signOut();
     expect(supabaseAuthMock.signOut).toHaveBeenCalled();

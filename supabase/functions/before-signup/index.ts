@@ -94,7 +94,10 @@ export async function handleRequest(req) {
     console.warn('before-signup: method_not_allowed', { method: req.method });
     return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
       status: 405,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Allow: 'POST',
+      },
     });
   }
 
