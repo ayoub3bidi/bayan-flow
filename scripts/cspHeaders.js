@@ -171,5 +171,23 @@ export function assertAuthCspDirectives(csp, source) {
     );
   }
 
+  if (!scriptSrc?.includes('https://challenges.cloudflare.com')) {
+    throw new Error(
+      `${source}: script-src must include https://challenges.cloudflare.com (Turnstile)`
+    );
+  }
+
+  if (!connectSrc?.includes('https://challenges.cloudflare.com')) {
+    throw new Error(
+      `${source}: connect-src must include https://challenges.cloudflare.com (Turnstile)`
+    );
+  }
+
+  if (!frameSrc?.includes('https://challenges.cloudflare.com')) {
+    throw new Error(
+      `${source}: frame-src must include https://challenges.cloudflare.com (Turnstile)`
+    );
+  }
+
   return { connectSrc: connectSrc ?? '', imgSrc: imgSrc ?? '' };
 }
