@@ -133,7 +133,7 @@
   },
   "settings": {
     "title": "Paramètres",
-    "mode": "Mode",
+    "category": "Catégorie",
     "algorithm": "Algorithme",
     "speed": "Vitesse",
     "arraySize": "Taille du Tableau",

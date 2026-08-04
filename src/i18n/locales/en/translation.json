@@ -133,7 +133,7 @@
   },
   "settings": {
     "title": "Settings",
-    "mode": "Mode",
+    "category": "Category",
     "algorithm": "Algorithm",
     "speed": "Speed",
     "arraySize": "Array Size",

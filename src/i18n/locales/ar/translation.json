@@ -133,7 +133,7 @@
   },
   "settings": {
     "title": "الإعدادات",
-    "mode": "الوضع",
+    "category": "الفئة",
     "algorithm": "الخوارزمية",
     "speed": "السرعة",
     "arraySize": "حجم المصفوفة",

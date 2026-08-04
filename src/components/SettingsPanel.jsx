@@ -197,15 +197,15 @@ function SettingsPanel({
 
       <div>
         <label
-          id="settings-algorithm-mode-label"
+          id="settings-algorithm-category-label"
           className="block text-sm font-semibold text-text-primary mb-1.5 leading-tight-consistent"
         >
-          {t('settings.mode')}
+          {t('settings.category')}
         </label>
         <div
           className="grid grid-cols-3 gap-2"
           role="group"
-          aria-labelledby="settings-algorithm-mode-label"
+          aria-labelledby="settings-algorithm-category-label"
         >
           {ALGORITHM_TYPE_LIST.map(type => {
             const cfg = CATEGORY_CONFIG[type];
