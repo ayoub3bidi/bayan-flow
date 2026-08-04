@@ -49,45 +49,6 @@ function getServiceClient() {
   );
 }
 
-/**
- * Verify a Cloudflare Turnstile token via the siteverify endpoint.
- * Returns { success: boolean } — always succeeds if TURNSTILE_SECRET_KEY is
- * unset (graceful fallback for local dev or when Turnstile is not configured).
- */
-async function verifyTurnstileToken(
-  token: string | undefined
-): Promise<{ success: boolean }> {
-  const secretKey = Deno.env.get('TURNSTILE_SECRET_KEY');
-
-  if (!secretKey) {
-    return { success: true };
-  }
-
-  if (!token) {
-    return { success: false };
-  }
-
-  try {
-    const formData = new URLSearchParams();
-    formData.append('secret', secretKey);
-    formData.append('response', token);
-
-    const result = await fetch(
-      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
-
-    const data = await result.json();
-    return { success: data.success === true };
-  } catch (err) {
-    console.error('before-signup: Turnstile verification error', err);
-    return { success: false };
-  }
-}
-
 export async function handleRequest(req) {
   if (req.method !== 'POST') {
     // Probes/scanners hit this URL with GET — log only, no Telegram noise.
@@ -127,14 +88,11 @@ export async function handleRequest(req) {
       return await reject('missing_ip');
     }
 
-    const turnstileToken = user.raw_user_meta_data?.cf_turnstile_response;
-    const turnstile = await verifyTurnstileToken(
-      typeof turnstileToken === 'string' ? turnstileToken : undefined
-    );
-
-    if (!turnstile.success) {
-      return await reject('turnstile_failed', { email, ip });
-    }
+    // Turnstile is NOT checked here. Google OIDC uses signInWithIdToken, which
+    // cannot attach custom raw_user_meta_data. The client sends the token as
+    // options.captchaToken; enable Auth → CAPTCHA protection (Turnstile) in the
+    // Supabase dashboard so GoTrue verifies it before this hook runs.
+    // This hook still enforces IP bans + signup rate limits.
 
     const supabase = getServiceClient();
 

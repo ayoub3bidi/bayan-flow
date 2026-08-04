@@ -90,7 +90,7 @@ describe('authService', () => {
     });
   });
 
-  it('signInWithGoogleIdToken includes Turnstile token in user metadata when provided', async () => {
+  it('signInWithGoogleIdToken passes Turnstile token as captchaToken', async () => {
     await authService.signInWithGoogleIdToken(
       'token-123',
       undefined,
@@ -103,7 +103,7 @@ describe('authService', () => {
       token: 'token-123',
       nonce: undefined,
       access_token: undefined,
-      data: { cf_turnstile_response: 'turnstile-token' },
+      options: { captchaToken: 'turnstile-token' },
     });
   });
 
@@ -146,7 +146,7 @@ describe('authService', () => {
       token: 'google-id-token',
       nonce: undefined,
       access_token: undefined,
-      data: { cf_turnstile_response: 'cf-turnstile-ok' },
+      options: { captchaToken: 'cf-turnstile-ok' },
     });
   });
 

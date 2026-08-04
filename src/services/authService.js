@@ -137,7 +137,10 @@ export async function signInWithGoogleIdToken(
   turnstileToken
 ) {
   const supabase = requireClient();
-  const /** @type {Record<string, any>} */ options = {
+  // signInWithIdToken does not accept user `data` metadata. Turnstile must go
+  // through options.captchaToken → gotrue_meta_security.captcha_token (verified
+  // by GoTrue when Auth CAPTCHA protection is enabled).
+  const /** @type {Record<string, any>} */ credentials = {
       provider: 'google',
       token: idToken,
       nonce,
@@ -145,10 +148,10 @@ export async function signInWithGoogleIdToken(
     };
 
   if (turnstileToken) {
-    options.data = { cf_turnstile_response: turnstileToken };
+    credentials.options = { captchaToken: turnstileToken };
   }
 
-  const { error } = await supabase.auth.signInWithIdToken(options);
+  const { error } = await supabase.auth.signInWithIdToken(credentials);
 
   if (error) {
     throw error;
