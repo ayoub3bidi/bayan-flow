@@ -23,6 +23,7 @@
     "signed_in_as": "Signed in as {{name}}",
     "account_menu_label": "Account menu for {{name}}",
     "completing_sign_in": "Completing sign-in…",
+    "signing_in": "Signing in…",
     "account_settings": "Account settings",
     "settings": "Settings"
   },

@@ -78,6 +78,30 @@ describe('SignInPromptModal', () => {
     expect(signInWithGoogle).toHaveBeenCalledTimes(1);
   });
 
+  it('shows a loading state while signing in', async () => {
+    let resolveSignIn;
+    signInWithGoogle.mockReturnValue(
+      new Promise(resolve => {
+        resolveSignIn = resolve;
+      })
+    );
+    renderWithI18n(
+      <SignInPromptModal feature="code" isOpen onClose={vi.fn()} />
+    );
+
+    fireEvent.click(screen.getByText('Sign in with Google'));
+
+    const button = screen.getByRole('button', { name: /signing in/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
+    expect(button.querySelector('.animate-spin')).toBeInTheDocument();
+
+    resolveSignIn();
+    await waitFor(() => {
+      expect(signInWithGoogle).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('shows unavailable message when sign-in fails', async () => {
     signInWithGoogle.mockRejectedValue({
       message: 'Invalid payload sent to hook',

@@ -23,6 +23,7 @@
     "signed_in_as": "مسجّل الدخول باسم {{name}}",
     "account_menu_label": "قائمة الحساب لـ {{name}}",
     "completing_sign_in": "جارٍ إتمام تسجيل الدخول…",
+    "signing_in": "جارٍ تسجيل الدخول…",
     "account_settings": "إعدادات الحساب",
     "settings": "الإعدادات"
   },
