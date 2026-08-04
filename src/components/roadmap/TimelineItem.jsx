@@ -6,7 +6,12 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle, Lightning, Sparkle } from '@phosphor-icons/react';
+import {
+  ArrowUpRight,
+  CheckCircle,
+  Lightning,
+  Sparkle,
+} from '@phosphor-icons/react';
 import YouTubeFacade from '../YouTubeFacade';
 import { extractYoutubeVideoId } from '../../utils/youtubeVideoId';
 import {
@@ -20,8 +25,9 @@ import {
 function TimelineItem({
   date,
   title,
-  description,
+  highlights,
   videoUrl,
+  articleUrl,
   status,
   position,
   index,
@@ -140,7 +146,7 @@ function TimelineItem({
             {/* Date Label with Status Badge */}
             <div className="flex items-center gap-3 mb-4">
               <div className="inline-flex items-center px-3 py-1 bg-theme-primary-light rounded-full">
-                <span className="text-sm font-semibold text-theme-primary">
+                <span className="text-sm font-semibold text-theme-primary dark:text-white">
                   {date}
                 </span>
               </div>
@@ -152,31 +158,41 @@ function TimelineItem({
               </div>
             </div>
 
-            {/* Title with icon */}
-            <div className="flex items-center gap-3 mb-3">
-              <motion.div
-                className={`w-10 h-10 ${config.accentColor} rounded-xl flex items-center justify-center shadow-md`}
-                initial={{ scale: reduceMotion ? 1 : 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={getChromeTransition(
-                  reduceMotion,
-                  CHROME_DURATION_MARKETING
-                )}
-                whileHover={{
-                  scale: 1.1,
-                  transition: HOVER_SPRING,
-                }}
-              >
-                <StatusIcon weight="bold" className="w-5 h-5 text-white" />
-              </motion.div>
-              <h3 className="text-2xl font-bold text-text-primary">{title}</h3>
-            </div>
+            {/* Title */}
+            <h3 className="text-2xl font-bold text-text-primary mb-3">
+              {title}
+            </h3>
 
-            {/* Description */}
-            <p className="text-text-secondary leading-relaxed mb-4">
-              {description}
-            </p>
+            {/* Highlights */}
+            <ul className="space-y-2 mb-5">
+              {highlights.map((highlight, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2.5 text-text-secondary leading-relaxed"
+                >
+                  <span
+                    className={`mt-2 w-1.5 h-1.5 rounded-full shrink-0 ${config.dotColor}`}
+                    aria-hidden
+                  />
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Optional DevLog article link */}
+            {articleUrl && (
+              <motion.a
+                href={articleUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#3b82f6] dark:text-[#60a5fa] hover:underline mb-4"
+                whileHover={{ x: 2 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              >
+                {t('roadmap.timeline.readArticle')}
+                <ArrowUpRight size={16} weight="bold" aria-hidden />
+              </motion.a>
+            )}
 
             {/* Optional YouTube Embed */}
             {youtubeVideoId && (

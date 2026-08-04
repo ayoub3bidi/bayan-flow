@@ -31,6 +31,7 @@
  *   play: () => void,
  *   pause: () => void,
  *   reset: () => void,
+ *   replay: () => void,
  *   stepForward: () => void,
  *   stepBackward: () => void,
  *   seekToStep: (index: number) => void,
@@ -208,6 +209,24 @@ export function useVisualization({
     }
   }, [pause, applyStep]);
 
+  /**
+   * Atomically reset to step 0 and start autoplay.
+   * Needed because play() early-returns while isComplete is still true in its
+   * closure, so reset(); play() in the same tick is a no-op.
+   */
+  const replay = useCallback(() => {
+    if (stepsRef.current.length === 0) return;
+    if (mode !== VISUALIZATION_MODES.AUTOPLAY) return;
+
+    clearAutoplayTimeout();
+    setIsComplete(false);
+    setCurrentStep(0);
+    setIsPlaying(true);
+    setIsAutoplayActive(true);
+    animationRef.current = true;
+    scheduleNext(0);
+  }, [mode, clearAutoplayTimeout, scheduleNext]);
+
   const stepForward = useCallback(() => {
     if (currentStep < stepsRef.current.length - 1) {
       const next = currentStep + 1;
@@ -278,6 +297,7 @@ export function useVisualization({
     play,
     pause,
     reset,
+    replay,
     stepForward,
     stepBackward,
     seekToStep,

@@ -23,6 +23,7 @@
     "signed_in_as": "Signed in as {{name}}",
     "account_menu_label": "Account menu for {{name}}",
     "completing_sign_in": "Completing sign-in…",
+    "signing_in": "Signing in…",
     "account_settings": "Account settings",
     "settings": "Settings"
   },
@@ -75,7 +76,7 @@
     },
     "eyebrow": "The Pro Plan",
     "headline": "Go further with the Pro Plan",
-    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, unlimited exports, and more.",
+    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, watermark-free exports, and more.",
     "featuresHeading": "What the Pro Plan unlocks",
     "features": {
       "customInput": {
@@ -132,7 +133,7 @@
   },
   "settings": {
     "title": "Settings",
-    "mode": "Mode",
+    "category": "Category",
     "algorithm": "Algorithm",
     "speed": "Speed",
     "arraySize": "Array Size",
@@ -1124,6 +1125,8 @@
   },
   "visualization": {
     "description": "Interactive algorithm visualization",
+    "arrayPaneLabel": "Array visualization",
+    "arrayPaneLabelInteractive": "Array visualization - Swipe left/right to navigate steps",
     "viewPythonCode": "View Python code",
     "codeLabel": "Code",
     "searchTarget": "Target: {{value}}",
@@ -1350,20 +1353,26 @@
   "landing": {
     "hero": {
       "title": "Finally, Algorithms Make Sense",
-      "subtitle": "Watch algorithms come to life with interactive, step-by-step visualizations. Learn at your own pace.",
-      "cta": "Start Visualizing"
+      "subtitle": "Watch algorithms run step by step. Pause, rewind, and learn at your own pace.",
+      "cta": "Explore an Algorithm",
+      "outcome": "Leave able to explain the algorithm, not just recognize it."
     },
-    "learnYourWay": {
-      "heading": "Learn Your Way",
-      "autoPlay": {
-        "title": "Auto-Play Mode",
-        "description": "Sit back and watch algorithms unfold automatically at your preferred speed. Perfect for understanding the big picture."
-      },
-      "manual": {
-        "title": "Manual Control",
-        "description": "Step through each operation manually. Pause, rewind, and analyze every decision the algorithm makes."
-      },
-      "tagline": "You decide how fast you learn."
+    "socialProof": {
+      "ariaLabel": "Product highlights",
+      "items": {
+        "algorithms": {
+          "value": "45 algorithms",
+          "label": "Across five categories"
+        },
+        "locales": {
+          "value": "EN · FR · AR",
+          "label": "Including full Arabic RTL"
+        },
+        "depth": {
+          "value": "Step · insight · export",
+          "label": "Learn by watching it think"
+        }
+      }
     },
     "clarity": {
       "heading": "No Clutter, Just Clarity",
@@ -1428,6 +1437,65 @@
       "videoExport": {
         "title": "Video Export",
         "description": "Export your visualizations as HD MP4 videos. Choose horizontal (YouTube) or vertical (Shorts, Reels) format with preview before download."
+      },
+      "pseudocode": {
+        "title": "Pseudocode",
+        "description": "Follow clean pseudocode for every algorithm, then jump into the runnable Python implementation in the code panel."
+      },
+      "notes": {
+        "title": "Personal Study Notes",
+        "description": "Save your own notes on each algorithm. Autosaved to your account and always one click away inside the Insight panel."
+      }
+    },
+    "proPreview": {
+      "badge": "Coming Soon",
+      "badgeJoined": "You're on the list",
+      "heading": "Go Further with Pro",
+      "subheading": "Built for interview prep and classroom teaching: custom inputs, side-by-side comparisons, watermark-free exports, and more...",
+      "cta": "Join The Waitlist",
+      "ctaJoined": "View Your Spot",
+      "table": {
+        "feature": "Feature",
+        "freeLabel": "Free",
+        "proLabel": "Pro",
+        "included": "Included",
+        "notIncluded": "Not included",
+        "allAlgorithms": "Visualize All Algorithms",
+        "customization": "Customizable: Adjust Array Size (5-100) or Grid Size (15×15 to 35×35)",
+        "pythonCode": "Interactive Python Online Editor",
+        "sound": "Interactive Sound",
+        "fullscreen": "Full Screen Mode",
+        "insight": "Algorithm Insight",
+        "videoExport": "Video Export",
+        "videoExportFree": "HD MP4 Exports (With Watermark)",
+        "videoExportPro": "Watermark-Free Exports",
+        "customInput": "Custom Inputs",
+        "comparison": "Algorithms Comparison Mode",
+        "presentation": "Presentation Mode (Dedicated For Teachers)",
+        "pseudocode": "Step-by-step Pseudocode",
+        "notes": "Save Your Notes on Every Algorithm"
+      }
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "subheading": "Answers for learners and instructors before you get started.",
+      "items": {
+        "difference": {
+          "question": "How is this different from just watching algorithm videos?",
+          "answer": "Videos are over in 60 seconds and you can't slow them down. Bayan Flow is interactive: with a free account you can pause on any single step, replay it slowly, or step through the algorithm one operation at a time. You're in control of the pace, which is how understanding actually happens."
+        },
+        "beginner": {
+          "question": "I'm new to algorithms and programming. Will I still get it?",
+          "answer": "That's exactly who this is for. Every algorithm is explained visually first, so you see the logic happen before you read a single line of code. When you're ready to go deeper, a free account puts plain-language explanations, pseudocode, and the real Python code one click away."
+        },
+        "learn": {
+          "question": "Will I actually learn it, or just watch a pretty animation?",
+          "answer": "The animation is just the beginning. With a free account you can open the real Python code and run it, change the input and watch the algorithm react, and see how it scales before your eyes. By the time you leave, you'll be able to explain the algorithm, not just recognize it."
+        },
+        "try": {
+          "question": "Do I need to install anything?",
+          "answer": "Nothing to install, nothing to download. Open it in your browser and watch your first algorithm run in seconds. Free accounts can even run the real Python code right inside your browser — it never leaves your device."
+        }
       }
     },
     "roadmapCTA": {
@@ -1476,7 +1544,8 @@
       "planned": "Planned"
     },
     "timeline": {
-      "sampleNote": "Timeline items are samples. Replace with actual roadmap content."
+      "sampleNote": "Timeline items are samples. Replace with actual roadmap content.",
+      "readArticle": "Read Article"
     }
   },
   "featureGate": {
@@ -1552,5 +1621,52 @@
     "timSort": "Python and Java's built-in sort, the standard for real-world data with ordered runs.",
     "topologicalSort": "Orders build steps and course prerequisites, making dependency resolution clear.",
     "zigzagLevelOrderTraversal": "The spiral variant that keeps BFS guarantees, often seen in LeetCode problems."
+  },
+  "algorithmTips": {
+    "aStar": "A go-to answer for pathfinding interview questions. Mention it to show you know more than BFS.",
+    "bellmanFord": "A classic hard interview topic. Negative weights, negative cycles, and dynamic programming in one algorithm.",
+    "bfs": "The first thing interviewers expect for shortest-path and level-order problems. Master it.",
+    "bidirectionalSearch": "A clever optimization that halves your search space. Interviewers like seeing it.",
+    "binarySearch": "The single most-asked algorithm in coding interviews. Learn the boundary cases cold.",
+    "bogoSort": "The joke answer every interviewer knows. Use it to make your complexity analysis memorable.",
+    "breadthFirstSearchGraph": "Unweighted shortest paths. The foundation for dozens of graph interview problems.",
+    "bubbleSort": "The gateway sort. Easy to explain, easy to optimize, and a common warm-up question.",
+    "bucketSort": "A counting-style trick that turns linear-time sorting into a standout interview answer.",
+    "combSort": "Know it as a follow-up. Interviewers often ask how to improve Bubble Sort.",
+    "countingSort": "Linear-time sorting is a great trick. Pull it out when elements are small integers.",
+    "cycleSort": "Minimum-write sorting is a rare and memorable interview edge case.",
+    "dStarLite": "An advanced topic that shows real depth. NASA's Mars rovers use it.",
+    "depthFirstSearch": "The recursion workhorse behind most tree and graph interview questions.",
+    "dijkstra": "The algorithm behind every navigation app. A must-know for interviews and systems design.",
+    "exponentialSearch": "A neat follow-up to binary search that interviewers use to test your flexibility.",
+    "fibonacciSearch": "An obscure classic that proves O(log n) doesn't need a midpoint.",
+    "floydWarshallAlgorithm": "All-pairs shortest paths. A dynamic-programming question that separates strong candidates.",
+    "greedyBestFirstSearch": "Shows you understand the greedy-versus-optimal tradeoff interviewers like to probe.",
+    "heapSort": "A guaranteed O(n log n) sort that also works as a priority-queue refresher.",
+    "idaStar": "Iterative deepening is a common interview pattern. A low-memory A* shows mastery.",
+    "inorderTraversal": "The BST question that appears everywhere. Know why inorder output is sorted.",
+    "insertionSort": "The 'fast on nearly-sorted data' answer interviewers quietly expect.",
+    "interpolationSearch": "An O(log log n) average case. A strong talking point when the discussion turns to search.",
+    "jumpPointSearch": "A niche but impressive answer for grid pathfinding optimization questions.",
+    "jumpSearch": "A great 'think beyond binary search' question that rewards a clever split.",
+    "kahnAlgorithm": "Topological sort with cycle detection. The cleaner BFS-based interview answer.",
+    "kosarajuAlgorithm": "Strongly connected components is a hard-topic favorite in advanced interviews.",
+    "kruskalAlgorithm": "MST interview problems are almost always Kruskal or Prim. Know both.",
+    "levelOrderTraversal": "Level-order (BFS on a tree) is one of the most common warm-up questions.",
+    "linearSearch": "Simple, but know exactly when it beats sorting. Interviewers test judgment.",
+    "mergeSort": "The stable divide-and-conquer sort that powers Java and Python, and a common interview topic.",
+    "morrisTraversal": "O(1) space tree traversal. The classic bonus-points interview technique.",
+    "postorderTraversal": "Deletion, height, and dependency problems all lean on postorder.",
+    "preorderTraversal": "Serialization questions are a favorite. Preorder is usually the starting point.",
+    "primAlgorithm": "The greedy MST sibling to Kruskal. Interviewers expect you to pick the right one.",
+    "quickSort": "The most iconic interview sort. Master partitioning, pivot picking, and worst cases.",
+    "radixSort": "A non-comparison sort that stands out in integer-sorting interview discussions.",
+    "selectionSort": "The simplest sort. Great for practicing swap counts and complexity proofs.",
+    "shellSort": "A 'sorting evolution' answer. Shows you understand gap sequences beyond the basics.",
+    "tarjanAlgorithm": "One-pass strongly connected components with a stack. An advanced topic interviewers appreciate.",
+    "ternarySearch": "A classic follow-up that tests whether you really understand binary search.",
+    "timSort": "The sort behind Python and Java. Mention it to show you know what powers real codebases.",
+    "topologicalSort": "Course scheduling and dependency problems are common interview questions.",
+    "zigzagLevelOrderTraversal": "The spiral variant is a LeetCode favorite that tests BFS with direction control."
   }
 }

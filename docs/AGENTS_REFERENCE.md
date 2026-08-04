@@ -231,7 +231,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 
 ### Landing and roadmap components
 
-- `src/components/landing/` — `Hero`, `Features`, `AlgorithmTypes`, `ClaritySection`, `LearnYourWay`, `RoadmapCTA`, `TechPattern`
+- `src/components/landing/` — `Hero`, `HeroVisualizerDemo`, `AlgorithmTypes`, `Features`, `ProPreview`, `ClaritySection`, `FAQ`, `RoadmapCTA`, `TechPattern`, `SocialProofStrip` (gated by `SHOW_LANDING_SOCIAL_PROOF`)
 - `src/components/roadmap/` — `RoadmapHero`, `Timeline`, `TimelineItem`
 - `src/components/ui/` — shared `Button`, `Container`, `Section`
 

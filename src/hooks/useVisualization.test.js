@@ -321,6 +321,36 @@ describe('useVisualization', () => {
       });
       expect(result.current.isPlaying).toBe(false);
     });
+
+    it('replay() restarts autoplay after a completed run', () => {
+      const { result } = makeHook({
+        mode: VISUALIZATION_MODES.AUTOPLAY,
+        speed: 100,
+      });
+      act(() => {
+        result.current.loadSteps(makeSteps(3));
+      });
+      act(() => {
+        result.current.play();
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(result.current.isComplete).toBe(true);
+      expect(result.current.currentStep).toBe(2);
+
+      act(() => {
+        result.current.replay();
+      });
+      expect(result.current.isComplete).toBe(false);
+      expect(result.current.isPlaying).toBe(true);
+      expect(result.current.currentStep).toBe(0);
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      expect(result.current.currentStep).toBe(1);
+    });
   });
 
   // ── Ultra-fast caption ────────────────────────────────────────────────────

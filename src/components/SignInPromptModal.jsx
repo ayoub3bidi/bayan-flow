@@ -6,7 +6,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GoogleLogo } from '@phosphor-icons/react';
+import { GoogleLogo, SpinnerGap } from '@phosphor-icons/react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { trackSignInClicked } from '../services/analyticsEvents';
@@ -116,10 +116,20 @@ function SignInPromptModal({ feature, isOpen, onClose, metadata = {} }) {
                 type="button"
                 onClick={handleSignIn}
                 disabled={isSigningIn}
-                className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-gray-800 rounded-xl border border-gray-300 font-medium transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-gray-800 rounded-xl border border-gray-300 font-medium transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:cursor-wait"
+                aria-busy={isSigningIn}
               >
-                <GoogleLogo size={22} weight="bold" />
-                {t('featureGate.signIn')}
+                {isSigningIn ? (
+                  <SpinnerGap
+                    size={22}
+                    weight="bold"
+                    className="animate-spin text-gray-500"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <GoogleLogo size={22} weight="bold" />
+                )}
+                {t(isSigningIn ? 'auth.signing_in' : 'featureGate.signIn')}
               </button>
 
               {signInError ? (

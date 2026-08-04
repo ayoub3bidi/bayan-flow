@@ -605,7 +605,7 @@ describe('VisualizerApp', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows the export error modal when a free user reaches the private daily guard', async () => {
+  it('does not block free exports when a legacy daily guard key exists', async () => {
     window.localStorage.setItem(
       'free_export_daily_test-user',
       JSON.stringify({
@@ -618,14 +618,8 @@ describe('VisualizerApp', () => {
     fireEvent.click(screen.getByText('pathfinding'));
     fireEvent.click(screen.getByText('export'));
 
-    expect(beginExportFlow).not.toHaveBeenCalled();
-    expect(reportExportError).toHaveBeenCalledWith(
-      'Export unavailable right now. Please try again later.'
-    );
-    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
-    expect(screen.getByTestId('export-error-message')).toHaveTextContent(
-      'Export unavailable right now. Please try again later.'
-    );
+    expect(beginExportFlow).toHaveBeenCalledTimes(1);
+    expect(reportExportError).not.toHaveBeenCalled();
   });
 
   it('dispatches new data by category: array config vs grid regenerateGrid', async () => {
@@ -971,7 +965,7 @@ describe('VisualizerApp', () => {
       fireEvent.click(screen.getByText('select-dijkstra'));
 
       expect(screen.getByText('Why it matters')).toBeInTheDocument();
-      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+      expect(screen.getByText(/every navigation app/)).toBeInTheDocument();
     });
 
     it('shows a tip for the new category default when switching category', async () => {
@@ -981,7 +975,7 @@ describe('VisualizerApp', () => {
 
       expect(screen.getByText('Why it matters')).toBeInTheDocument();
       expect(
-        screen.getByText(/shortest paths in unweighted networks/)
+        screen.getByText(/shortest-path and level-order/)
       ).toBeInTheDocument();
     });
 
@@ -989,14 +983,16 @@ describe('VisualizerApp', () => {
       await renderApp();
 
       fireEvent.click(screen.getByText('select-dijkstra'));
-      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+      expect(screen.getByText(/every navigation app/)).toBeInTheDocument();
 
       fireEvent.click(screen.getByText('select-quick-sort'));
-      expect(screen.getByText(/qsort/)).toBeInTheDocument();
+      expect(screen.getByText(/iconic interview sort/)).toBeInTheDocument();
 
       fireEvent.click(screen.getByText('select-dijkstra'));
-      expect(screen.queryByText(/GPS routing/)).not.toBeInTheDocument();
-      expect(screen.getByText(/qsort/)).toBeInTheDocument();
+      expect(
+        screen.queryByText(/every navigation app/)
+      ).not.toBeInTheDocument();
+      expect(screen.getByText(/iconic interview sort/)).toBeInTheDocument();
     });
   });
 });

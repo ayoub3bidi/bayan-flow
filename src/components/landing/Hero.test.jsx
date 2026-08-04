@@ -4,11 +4,22 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { renderWithI18n, screen } from '../../test/testUtils';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { renderWithProviders, screen } from '../../test/testUtils';
 import { BrowserRouter } from 'react-router-dom';
+import i18n from '../../i18n';
 import Hero from './Hero';
-// Mock UI components
+
+const reduceMotionRef = { current: false };
+
+vi.mock('framer-motion', async () => {
+  const { createFramerMotionMock } =
+    await import('../../test/framerMotionMock.jsx');
+  return createFramerMotionMock({
+    useReducedMotion: () => reduceMotionRef.current,
+  });
+});
+
 vi.mock('../ui/Container', () => ({
   default: ({ children, className = '' }) => (
     <div className={className} data-testid="container">
@@ -25,8 +36,23 @@ vi.mock('../ui/Button', () => ({
   ),
 }));
 
+vi.mock('./HeroVisualizerDemo', async () => {
+  const { useReducedMotion } = await import('framer-motion');
+  return {
+    default: function MockHeroVisualizerDemo() {
+      const reduceMotion = useReducedMotion();
+      return (
+        <div
+          data-testid="hero-visualizer-demo"
+          data-reduced-motion={reduceMotion ? 'true' : 'false'}
+        />
+      );
+    },
+  };
+});
+
 const renderComponent = () => {
-  return renderWithI18n(
+  return renderWithProviders(
     <BrowserRouter>
       <Hero />
     </BrowserRouter>
@@ -34,6 +60,15 @@ const renderComponent = () => {
 };
 
 describe('Hero', () => {
+  beforeEach(async () => {
+    reduceMotionRef.current = false;
+    await i18n.changeLanguage('en');
+  });
+
+  afterEach(async () => {
+    await i18n.changeLanguage('en');
+  });
+
   describe('Rendering', () => {
     it('should render hero section', () => {
       const { container } = renderComponent();
@@ -49,16 +84,16 @@ describe('Hero', () => {
 
     it('should render title', () => {
       renderComponent();
-      // Title should be present (translated)
       const heading = screen.getByRole('heading', { level: 1 });
       expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent(i18n.t('landing.hero.title'));
     });
 
     it('should render subtitle', () => {
       renderComponent();
-      // Subtitle should be present
-      const sections = screen.getAllByText(/./);
-      expect(sections.length).toBeGreaterThan(0);
+      expect(
+        screen.getByText(i18n.t('landing.hero.subtitle'))
+      ).toBeInTheDocument();
     });
 
     it('should render CTA button', () => {
@@ -67,6 +102,49 @@ describe('Hero', () => {
       expect(link).toBeInTheDocument();
       expect(link).toHaveAttribute('href', '/app');
       expect(link).toHaveAttribute('data-variant', 'cta');
+      expect(link).toHaveTextContent(i18n.t('landing.hero.cta'));
+    });
+
+    it('should render student outcome under the CTA', () => {
+      renderComponent();
+      expect(
+        screen.getByText(i18n.t('landing.hero.outcome'))
+      ).toBeInTheDocument();
+    });
+
+    it('should render HeroVisualizerDemo', () => {
+      renderComponent();
+      expect(screen.getByTestId('hero-visualizer-demo')).toBeInTheDocument();
+    });
+  });
+
+  describe('Locales', () => {
+    it('renders French hero copy', async () => {
+      await i18n.changeLanguage('fr');
+      renderComponent();
+      expect(
+        screen.getByText(i18n.t('landing.hero.subtitle'))
+      ).toBeInTheDocument();
+      expect(screen.getByRole('link')).toHaveTextContent(
+        i18n.t('landing.hero.cta')
+      );
+      expect(
+        screen.getByText(i18n.t('landing.hero.outcome'))
+      ).toBeInTheDocument();
+    });
+
+    it('renders Arabic hero copy', async () => {
+      await i18n.changeLanguage('ar');
+      renderComponent();
+      expect(
+        screen.getByText(i18n.t('landing.hero.subtitle'))
+      ).toBeInTheDocument();
+      expect(screen.getByRole('link')).toHaveTextContent(
+        i18n.t('landing.hero.cta')
+      );
+      expect(
+        screen.getByText(i18n.t('landing.hero.outcome'))
+      ).toBeInTheDocument();
     });
   });
 
@@ -80,6 +158,18 @@ describe('Hero', () => {
       expect(section).toHaveClass('items-center');
       expect(section).toHaveClass('justify-center');
       expect(section).toHaveClass('overflow-hidden');
+    });
+
+    it('uses a two-column layout with a dominant visualizer column', () => {
+      const { container } = renderComponent();
+      const layout = container.querySelector('div[class*="lg:flex-row"]');
+      expect(layout).toBeInTheDocument();
+      expect(
+        container.querySelector('div[class*="lg:w-[40%]"]')
+      ).toBeInTheDocument();
+      expect(
+        container.querySelector('div[class*="lg:w-[60%]"]')
+      ).toBeInTheDocument();
     });
   });
 
@@ -97,12 +187,12 @@ describe('Hero', () => {
     });
   });
 
-  describe('Content', () => {
-    it('should render with translations', () => {
+  describe('Reduced motion', () => {
+    it('passes reduced motion into the demo as a static fallback', () => {
+      reduceMotionRef.current = true;
       renderComponent();
-      // Component should render even with translation keys
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
-      expect(screen.getByRole('link')).toBeInTheDocument();
+      const demo = screen.getByTestId('hero-visualizer-demo');
+      expect(demo.getAttribute('data-reduced-motion')).toBe('true');
     });
   });
 });

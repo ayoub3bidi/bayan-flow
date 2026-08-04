@@ -26,6 +26,8 @@ vi.mock('@phosphor-icons/react', () => ({
   ArrowsOut: () => <svg data-testid="maximize-icon" />,
   Lightbulb: () => <svg data-testid="lightbulb-icon" />,
   VideoCamera: () => <svg data-testid="video-icon" />,
+  TextAlignLeft: () => <svg data-testid="pseudocode-icon" />,
+  NotePencil: () => <svg data-testid="notes-icon" />,
 }));
 
 describe('Features', () => {
@@ -85,10 +87,20 @@ describe('Features', () => {
       expect(screen.getByTestId('video-icon')).toBeInTheDocument();
     });
 
-    it('should include all six features from array', () => {
+    it('should display pseudocode feature', () => {
+      renderWithI18n(<Features />);
+      expect(screen.getByTestId('pseudocode-icon')).toBeInTheDocument();
+    });
+
+    it('should display personal notes feature', () => {
+      renderWithI18n(<Features />);
+      expect(screen.getByTestId('notes-icon')).toBeInTheDocument();
+    });
+
+    it('should include all eight features from array', () => {
       const { container } = renderWithI18n(<Features />);
       const icons = container.querySelectorAll('[data-testid$="-icon"]');
-      expect(icons.length).toBe(6);
+      expect(icons.length).toBe(8);
     });
   });
 

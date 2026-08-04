@@ -110,9 +110,9 @@
   "narrative": {
     "northStar": "The Clarity Lab",
     "overview": "Bayan Flow looks like a focused lab instrument: generous whitespace, tinted neutrals, and a single confident blue primary. The visualization canvas owns attention; panels and controls recede until needed.",
-    "keyCharacteristics": [
+      "keyCharacteristics": [
       "CSS-variable tokens in src/index.css",
-      "Inter Variable for all UI copy",
+      "Inter Variable for product UI; Source Serif 4 for landing display headings",
       "Phosphor icons only",
       "Semantic visualization colors are sacred",
       "RTL via rtlManager"
@@ -125,7 +125,7 @@
       },
       {
         "name": "The Inter Lock Rule",
-        "body": "Inter is the established brand face. Do not swap fonts without an explicit rebrand request.",
+        "body": "Inter is the established brand face for product UI. Landing display headings (.landing-h1/.landing-h2) may use Source Serif 4 Variable.",
         "section": "typography"
       },
       {
