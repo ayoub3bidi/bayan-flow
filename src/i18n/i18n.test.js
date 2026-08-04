@@ -7,6 +7,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import i18n from './index';
 import { ALGORITHM_KNOWLEDGE } from '../constants/algorithmKnowledge';
+import en from './locales/en/translation.json';
+import fr from './locales/fr/translation.json';
+import ar from './locales/ar/translation.json';
+
+const LOCALE_RESOURCES = { en, fr, ar };
 
 describe('i18n Configuration', () => {
   beforeEach(() => {
@@ -55,7 +60,7 @@ describe('i18n Configuration', () => {
 
   it('should translate basic keys in Arabic', async () => {
     await i18n.changeLanguage('ar');
-    expect(i18n.t('header.title')).toBe('بيان Flow');
+    expect(i18n.t('header.title')).toBe('بيان فلو');
     expect(i18n.t('settings.algorithm')).toBe('الخوارزمية');
     expect(i18n.t('controls.play')).toBe('تشغيل');
   });
@@ -67,18 +72,47 @@ describe('i18n Configuration', () => {
     );
   });
 
-  it('should provide a use-case string for every algorithm in all locales', async () => {
+  it('should provide a use-case string for every algorithm in all locales', () => {
     const algorithmKeys = Object.keys(ALGORITHM_KNOWLEDGE);
     expect(algorithmKeys.length).toBeGreaterThan(0);
 
     for (const lang of ['en', 'fr', 'ar']) {
-      await i18n.changeLanguage(lang);
+      const uses = LOCALE_RESOURCES[lang].algorithmUses;
       for (const key of algorithmKeys) {
-        const result = i18n.t(`algorithmUses.${key}`);
-        expect(result, `missing algorithmUses.${key} in ${lang}`).not.toBe(
-          `algorithmUses.${key}`
-        );
-        expect(result.trim().length).toBeGreaterThan(0);
+        const result = uses[key];
+        expect(result, `missing algorithmUses.${key} in ${lang}`).toBeTruthy();
+        expect(String(result).trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should provide an algorithm tip string for every algorithm in all locales', () => {
+    const algorithmKeys = Object.keys(ALGORITHM_KNOWLEDGE);
+    expect(algorithmKeys.length).toBeGreaterThan(0);
+
+    for (const lang of ['en', 'fr', 'ar']) {
+      const tips = LOCALE_RESOURCES[lang].algorithmTips;
+      for (const key of algorithmKeys) {
+        const result = tips[key];
+        expect(result, `missing algorithmTips.${key} in ${lang}`).toBeTruthy();
+        expect(String(result).trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should not duplicate the use-case string in the algorithm tip', () => {
+    const algorithmKeys = Object.keys(ALGORITHM_KNOWLEDGE);
+
+    for (const lang of ['en', 'fr', 'ar']) {
+      const uses = LOCALE_RESOURCES[lang].algorithmUses;
+      const tips = LOCALE_RESOURCES[lang].algorithmTips;
+      for (const key of algorithmKeys) {
+        const use = uses[key];
+        const tip = tips[key];
+        expect(
+          tip,
+          `algorithmTips.${key} in ${lang} duplicates algorithmUses.${key}`
+        ).not.toBe(use);
       }
     }
   });

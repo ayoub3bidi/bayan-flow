@@ -101,6 +101,73 @@ describe('UserMenu', () => {
     expect(screen.queryByText(/sign in with google/i)).not.toBeInTheDocument();
   });
 
+  it('shows a loading state while signing in', async () => {
+    let resolveSignIn;
+    const signInWithGoogle = vi.fn(
+      () =>
+        new Promise(resolve => {
+          resolveSignIn = resolve;
+        })
+    );
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: false,
+      isAuthenticated: false,
+      profile: null,
+      signInWithGoogle,
+      signOut: vi.fn(),
+    });
+
+    render(<UserMenu variant="landing" />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /sign in with google/i })
+    );
+
+    const button = screen.getByRole('button', { name: /signing in/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
+    expect(button.querySelector('.animate-spin')).toBeInTheDocument();
+    expect(screen.getByText(/signing in/i)).toBeInTheDocument();
+
+    resolveSignIn();
+    await waitFor(() => {
+      expect(signInWithGoogle).toHaveBeenCalled();
+    });
+  });
+
+  it('shows a loading state in compact variant while signing in', async () => {
+    let resolveSignIn;
+    const signInWithGoogle = vi.fn(
+      () =>
+        new Promise(resolve => {
+          resolveSignIn = resolve;
+        })
+    );
+    vi.mocked(useAuth).mockReturnValue({
+      isConfigured: true,
+      isLoading: false,
+      isAuthenticated: false,
+      profile: null,
+      signInWithGoogle,
+      signOut: vi.fn(),
+    });
+
+    render(<UserMenu variant="compact" />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /sign in with google/i })
+    );
+
+    const button = screen.getByRole('button', { name: /signing in/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
+    expect(button.querySelector('.animate-spin')).toBeInTheDocument();
+
+    resolveSignIn();
+    await waitFor(() => {
+      expect(signInWithGoogle).toHaveBeenCalled();
+    });
+  });
+
   it('navigates to /app after landing sign-in succeeds', async () => {
     const signInWithGoogle = vi.fn().mockResolvedValue(undefined);
     vi.mocked(useAuth).mockReturnValue({

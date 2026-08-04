@@ -21,9 +21,32 @@ colors:
   viz-pivot: "#8b5cf6"
 typography:
   display:
-    fontFamily: "Inter Variable, Inter, system-ui, sans-serif"
-    fontWeight: 700
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, Times New Roman, serif"
+    fontWeight: 800
+    fontSize: "3.5rem"
     lineHeight: 1.1
+    letterSpacing: "-0.02em"
+  displayMobile:
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, Times New Roman, serif"
+    fontWeight: 800
+    fontSize: "2.5rem"
+    lineHeight: 1.1
+  heading:
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, Times New Roman, serif"
+    fontWeight: 700
+    fontSize: "2.5rem"
+    lineHeight: 1.2
+    letterSpacing: "-0.01em"
+  headingMobile:
+    fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, Times New Roman, serif"
+    fontWeight: 700
+    fontSize: "2rem"
+    lineHeight: 1.2
+  landingBody:
+    fontFamily: "Inter Variable, Inter, system-ui, sans-serif"
+    fontWeight: 400
+    fontSize: "1.125rem"
+    lineHeight: 1.7
   body:
     fontFamily: "Inter Variable, Inter, system-ui, sans-serif"
     fontWeight: 400
@@ -35,6 +58,8 @@ typography:
     fontSize: "0.875rem"
     letterSpacing: "0.02em"
 rounded:
+  xs: "0.25rem"
+  scrollbar: "3px"
   sm: "0.375rem"
   md: "0.5rem"
   lg: "0.75rem"
@@ -109,21 +134,21 @@ A cool slate-and-blue product palette with saturated accents reserved for algori
 
 ## Typography
 
-**Display Font:** Inter Variable (system-ui fallback)
-**Body Font:** Inter Variable (system-ui fallback)
+**Display Font (landing / marketing headings):** Source Serif 4 Variable — academic lab character on `.landing-h1` / `.landing-h2` only.
+**Body Font:** Inter Variable (system-ui fallback) — product UI, body copy, controls.
 
-**Character:** Clean, legible, technical-but-warm. Optimized for step descriptions and control labels at a glance.
+**Character:** Clean, legible, technical-but-warm. Optimized for step descriptions and control labels at a glance. Marketing display adds a restrained serif for Clarity Lab presence without replacing Inter in the app.
 
 ### Hierarchy
 
-- **Display** (700, clamp on landing heroes): Marketing headlines only.
-- **Title** (600, 1.125–1.25rem): Panel titles, algorithm names.
-- **Body** (400, 1rem, line-height 1.5): Descriptions, insight copy, settings.
-- **Label** (600, 0.875rem, slight tracking): Control groups, tabs, chips.
+- **Display** (700–800, clamp on landing heroes): Marketing headlines only (Source Serif 4).
+- **Title** (600, 1.125–1.25rem): Panel titles, algorithm names (Inter).
+- **Body** (400, 1rem, line-height 1.5): Descriptions, insight copy, settings (Inter).
+- **Label** (600, 0.875rem, slight tracking): Control groups, tabs, chips (Inter).
 
 ### Named Rules
 
-**The Inter Lock Rule.** Inter is the established brand face. Do not swap fonts unless the user explicitly requests a rebrand.
+**The Inter Lock Rule.** Inter is the established brand face for product UI and body copy. Do not swap Inter app-wide unless the user explicitly requests a rebrand. **Exception:** landing/marketing display headings (`.landing-h1`, `.landing-h2`) may use Source Serif 4 Variable for academic-lab character.
 
 ## Elevation
 
@@ -180,5 +205,5 @@ Depth comes from tinted surface steps and restrained shadows, plus selective gla
 - **Don't** nest cards inside cards in the visualizer shell; use spacing and dividers.
 - **Don't** apply gradient text to headings or step descriptions.
 - **Don't** use bounce or elastic easing on UI transitions.
-- **Don't** swap Inter or replace Phosphor with emoji icons without an explicit rebrand request.
+- **Don't** swap Inter app-wide or replace Phosphor with emoji icons without an explicit rebrand request (landing display serif on `.landing-h1` / `.landing-h2` is the documented exception).
 - **Don't** add UI click sounds — audio is for visualization steps only.

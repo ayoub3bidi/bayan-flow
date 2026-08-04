@@ -12,7 +12,7 @@ import {
   menuExit,
   menuTransition,
 } from '@/motion/chromeMotion';
-import { CaretDown, Gear, SignOut } from '@phosphor-icons/react';
+import { CaretDown, Gear, SignOut, SpinnerGap } from '@phosphor-icons/react';
 import { SiGoogle } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -112,27 +112,43 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
   }
 
   if (!isAuthenticated || !profile) {
-    const signInButtonClassName = `flex items-center justify-center bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm transition-colors duration-200 cursor-pointer touch-manipulation disabled:opacity-60 disabled:cursor-not-allowed ${
+    const signInButtonClassName = `flex items-center justify-center bg-interactive-bg backdrop-blur-md rounded-md border border-interactive-border shadow-sm transition-colors duration-200 cursor-pointer touch-manipulation ${
+      isSigningIn
+        ? 'disabled:cursor-wait'
+        : 'disabled:opacity-60 disabled:cursor-not-allowed'
+    } ${
       isCompact
         ? 'h-8 w-8 sm:h-9 sm:w-9 p-0'
         : 'gap-1.5 sm:gap-2 h-8 sm:h-9 px-2.5 sm:px-3 py-0 hover:shadow-md transition-all duration-200'
     }`;
+    const signInLabel = isSigningIn
+      ? t('auth.signing_in')
+      : t('auth.sign_in_google');
 
     if (isCompact) {
       return (
         <div className="flex flex-col items-end gap-1">
-          <Tooltip label={t('auth.sign_in_google')} side="bottom" align="end">
+          <Tooltip label={signInLabel} side="bottom" align="end">
             <button
               type="button"
               onClick={handleSignIn}
               disabled={isSigningIn}
               className={signInButtonClassName}
-              aria-label={t('auth.sign_in_google')}
+              aria-label={signInLabel}
+              aria-busy={isSigningIn}
             >
-              <SiGoogle
-                className="h-4 w-4 shrink-0 text-text-primary"
-                aria-hidden="true"
-              />
+              {isSigningIn ? (
+                <SpinnerGap
+                  className="h-4 w-4 shrink-0 animate-spin text-text-secondary"
+                  weight="bold"
+                  aria-hidden="true"
+                />
+              ) : (
+                <SiGoogle
+                  className="h-4 w-4 shrink-0 text-text-primary"
+                  aria-hidden="true"
+                />
+              )}
             </button>
           </Tooltip>
           {signInError ? (
@@ -153,14 +169,23 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
           className={signInButtonClassName}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          aria-label={t('auth.sign_in_google')}
+          aria-label={signInLabel}
+          aria-busy={isSigningIn}
         >
-          <SiGoogle
-            className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-text-primary"
-            aria-hidden="true"
-          />
+          {isSigningIn ? (
+            <SpinnerGap
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 animate-spin text-text-secondary"
+              weight="bold"
+              aria-hidden="true"
+            />
+          ) : (
+            <SiGoogle
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-text-primary"
+              aria-hidden="true"
+            />
+          )}
           <span className="hidden xs:inline text-xs sm:text-sm font-medium text-text-primary">
-            {t('auth.sign_in_google')}
+            {signInLabel}
           </span>
         </motion.button>
         {signInError ? (

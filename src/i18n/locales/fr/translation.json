@@ -14,7 +14,7 @@
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarté dans les Algorithmes",
-    "openGithubRepo": "Ouvrir {{repo}} sur GitHub — version {{version}}, {{stars}} étoiles, {{forks}} forks",
+    "openGithubRepo": "Ouvrir {{repo}} sur GitHub, version {{version}}, {{stars}} étoiles, {{forks}} forks",
     "goToRepository": "Aller au dépôt"
   },
   "auth": {
@@ -23,6 +23,7 @@
     "signed_in_as": "Connecté en tant que {{name}}",
     "account_menu_label": "Menu du compte pour {{name}}",
     "completing_sign_in": "Finalisation de la connexion…",
+    "signing_in": "Connexion en cours…",
     "account_settings": "Paramètres du compte",
     "settings": "Paramètres"
   },
@@ -75,7 +76,7 @@
     },
     "eyebrow": "Le Plan Pro",
     "headline": "Allez plus loin avec le Plan Pro",
-    "subheadline": "La version payante à venir débloquera des fonctionnalités plus puissantes comme des entrées personnalisées, des comparaisons côte à côte, des exports illimités et plus encore.",
+    "subheadline": "La version payante à venir débloquera des fonctionnalités plus puissantes comme des entrées personnalisées, des comparaisons côte à côte, des exports sans filigrane et plus encore.",
     "featuresHeading": "Ce que le Plan Pro débloque",
     "features": {
       "customInput": {
@@ -88,7 +89,7 @@
       },
       "export": {
         "title": "Export vidéo illimité",
-        "body": "Créez des explications soignées sans watermark — ou personnalisez-le avec votre propre marque."
+        "body": "Créez des explications soignées sans filigrane, ou personnalisez-le avec votre propre marque."
       },
       "presentation": {
         "title": "Mode présentation",
@@ -132,7 +133,7 @@
   },
   "settings": {
     "title": "Paramètres",
-    "mode": "Mode",
+    "category": "Catégorie",
     "algorithm": "Algorithme",
     "speed": "Vitesse",
     "arraySize": "Taille du Tableau",
@@ -406,7 +407,7 @@
     "copyCaption": "Copier la légende",
     "copied": "Copié !",
     "captionTemplate": "{{algorithm}}. Visualisation étape par étape depuis Bayan Flow.",
-    "titleTemplate": "Visualisation {{algorithm}} — Bayan Flow"
+    "titleTemplate": "Visualisation {{algorithm}} | Bayan Flow"
   },
   "complexity_panel": {
     "title": "Analyse de Complexité",
@@ -482,7 +483,7 @@
     "saving": "Enregistrement…",
     "saved": "Enregistré",
     "unsaved": "Modifications non enregistrées",
-    "saveError": "Échec de l'enregistrement — nouvelle tentative…",
+    "saveError": "Échec de l'enregistrement, nouvelle tentative…",
     "loading": "Chargement de votre note…",
     "loadingEditor": "Chargement de l'éditeur…",
     "signInRequired": "Connectez-vous pour enregistrer vos notes d'étude."
@@ -748,7 +749,7 @@
       },
       "linearSearch": {
         "history": "La recherche séquentielle est aussi ancienne que les listes : on parcourt du début jusqu'à trouver la cible ou épuiser les éléments. Tout langage généraliste la présente comme base avant la dichotomie sur données triées.",
-        "intuition": "Commencer à l'indice 0. Si l'élément égale la cible, arrêter. Sinon passer à 1, puis 2, etc. Au pire on inspecte chaque position une fois — temps O(n) et espace supplémentaire O(1). Si la cible est au début, arrêt immédiat — meilleur cas O(1).",
+        "intuition": "Commencer à l'indice 0. Si l'élément égale la cible, arrêter. Sinon passer à 1, puis 2, etc. Au pire on inspecte chaque position une fois : temps O(n) et espace supplémentaire O(1). Si la cible est au début, arrêt immédiat : meilleur cas O(1).",
         "realWorldUses_0": "Petits tableaux ou listes où trier ou indexer d'abord ne vaut pas le coût",
         "realWorldUses_1": "Structures non triées ou chaînées où l'on ne peut parcourir qu'en avant",
         "realWorldUses_2": "Expliquer pourquoi les astuces sur tableaux triés (dichotomie) réduisent les comparaisons",
@@ -806,12 +807,12 @@
       },
       "exponentialSearch": {
         "history": "La recherche exponentielle (recherche par doublement) est un algorithme en deux phases classique sur données triées : encadrer la cible en testant des indices qui croissent en puissances de deux, puis terminer par une dichotomie dans cet intervalle. On la trouve dans les cours sur la recherche non bornée et comme brique lorsque la taille du tableau est inconnue ou très grande.",
-        "intuition": "On avance en doublant l’indice à chaque fois (1, 2, 4, 8, …) jusqu’à ce que la valeur à cet indice soit au moins la cible ou qu’on atteigne la fin du tableau. Cela encadre la cible en O(log i) sondes lorsque la réponse est près de l’indice i. Ensuite, on applique la dichotomie ordinaire sur l’intervalle borné — encore un nombre logarithmique d’étapes dans cette fenêtre.",
+        "intuition": "On avance en doublant l’indice à chaque fois (1, 2, 4, 8, …) jusqu’à ce que la valeur à cet indice soit au moins la cible ou qu’on atteigne la fin du tableau. Cela encadre la cible en O(log i) sondes lorsque la réponse est près de l’indice i. Ensuite, on applique la dichotomie ordinaire sur l’intervalle borné : encore un nombre logarithmique d’étapes dans cette fenêtre.",
         "realWorldUses_0": "Recherche dans des flux ou listes triées dont la longueur est inconnue ou très grande",
         "realWorldUses_1": "Enseigner la combinaison encadrement + dichotomie",
         "realWorldUses_2": "Comparer une croissance géométrique avec des sauts de pas fixe (recherche par sauts) sur le même modèle de tableau trié",
         "realWorldUses_3": "Bases pour des variantes « galloping » dans des fusions et des recherches adaptatives",
-        "facts_0": "Sur des données triées non bornées, trouver une cible à l’indice i coûte O(log i) en phase de doublement plus O(log i) pour la dichotomie sur l’intervalle — O(log i) au total.",
+        "facts_0": "Sur des données triées non bornées, trouver une cible à l’indice i coûte O(log i) en phase de doublement plus O(log i) pour la dichotomie sur l’intervalle, soit O(log i) au total.",
         "facts_1": "Sur un tableau fini de taille n, le pire cas reste en O(log n), comme la dichotomie, avec une phase de doublement avant le premier partage.",
         "facts_2": "Il faut des valeurs triées (croissantes) pour que les comparaisons indiquent quel côté conserver.",
         "facts_3": "Après le doublement, l'intervalle de recherche est [⌊bound/2⌋, min(bound, n−1)] avant que la dichotomie ne le rétrécisse."
@@ -833,7 +834,7 @@
         "intuition": "Démarrez à la racine. Dépillez répétitivement, visitez ce sommet, puis empilez les voisins non découverts en ordre inverse pour explorer le premier voisin listé ensuite. Quand l'objectif est dépilé, reconstruisez un chemin via les pointeurs parents.",
         "realWorldUses_0": "Enseignement du parcours basé sur une pile sur des sommets et arêtes explicites",
         "realWorldUses_1": "Arbres et graphes généraux avant d'introduire poids ou heuristiques",
-        "realWorldUses_2": "Contraster l'ordre de parcours avec BFS — même graphe, structure différente, chemin différent",
+        "realWorldUses_2": "Contraster l'ordre de parcours avec BFS : même graphe, structure différente, chemin différent",
         "realWorldUses_3": "Fondements du raisonnement topologique et des algorithmes récursifs exprimés itérativement",
         "facts_0": "Temps O(V + E) et espace supplémentaire O(V) pour la pile et la mémorisation sur V sommets et E arêtes.",
         "facts_1": "Contrairement à BFS sur un graphe non pondéré, DFS ne garantit pas le chemin le plus court.",
@@ -841,7 +842,7 @@
         "facts_3": "Les positions sont uniquement pour la mise en page ; l'algorithme utilise uniquement la structure d'adjacence."
       },
       "breadthFirstSearchGraph": {
-        "history": "Le parcours en largeur explore un graphe niveau par niveau, découvert par Konrad Zuse en 1945. Sur des graphes non pondérés, il garantit le chemin le plus court — la distinction clé avec DFS dans la même catégorie Recherche.",
+        "history": "Le parcours en largeur explore un graphe niveau par niveau, découvert par Konrad Zuse en 1945. Sur des graphes non pondérés, il garantit le chemin le plus court, la distinction clé avec DFS dans la même catégorie Recherche.",
         "intuition": "Démarrez à la racine et enfilez-la. Défilez répétitivement le nœud de tête, marquez-le visité, puis enfilez tous les voisins non découverts. BFS visite tout l'anneau de profondeur 1 avant tout nœud de profondeur 2.",
         "realWorldUses_0": "Chemin le plus court sur des graphes non pondérés",
         "realWorldUses_1": "Parcours d'arbre en ordre de niveau et analyse couche par couche",
@@ -849,7 +850,7 @@
         "realWorldUses_3": "Fondement de l'algorithme de Dijkstra lorsque les poids deviennent non uniformes",
         "facts_0": "Temps O(V + E) ; espace O(V) pour la file et l'ensemble des visités.",
         "facts_1": "BFS garantit le chemin le plus court (sauts minimaux) sur les graphes non pondérés ; DFS ne le garantit pas.",
-        "facts_2": "La tête de file est affichée en haut du canevas — le prochain nœud à défiler.",
+        "facts_2": "La tête de file est affichée en haut du canevas : le prochain nœud à défiler.",
         "facts_3": "La même mise en page d'arbre utilisée pour DFS est réutilisée ici, afin de comparer les deux algorithmes."
       },
       "topologicalSort": {
@@ -944,7 +945,7 @@
         "realWorldUses_2": "Introduire les parcours profondeur avant préfixe et suffixe",
         "realWorldUses_3": "Base des itérateurs d'arbres dans les bibliothèques",
         "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour une pile explicite avec hauteur h.",
-        "facts_1": "Les arbres aléatoires assignent les valeurs par indexation infixe pour produire 1…n — un ABR valide.",
+        "facts_1": "Les arbres aléatoires assignent les valeurs par indexation infixe pour produire 1…n, soit un ABR valide.",
         "facts_2": "La version récursive correspond au comportement itératif montré pas à pas.",
         "facts_3": "Contrairement au DFS dans un graphe avec but, le parcours visite chaque nœud une fois."
       },
@@ -982,7 +983,7 @@
         "facts_0": "Temps Θ(n) sur n nœuds ; espace O(h) pour la pile explicite avec hauteur h.",
         "facts_1": "Les mêmes arbres aléatoires qu'en infixe portent des étiquettes en ABR (infixe → 1…n) ; l'ordre préfixe dépend de la forme, pas du tri des étiquettes.",
         "facts_2": "Le panneau Python propose versions récursive et itérative avec le même ordre de visite.",
-        "facts_3": "Le préfixe seul ne trie pas les clés d'un ABR — l'infixe oui."
+        "facts_3": "Le préfixe seul ne trie pas les clés d'un ABR ; l'infixe oui."
       },
       "postorderTraversal": {
         "history": "Le parcours suffixe (sous-arbre gauche, sous-arbre droit, nœud) est le troisième membre du trio classique. C'est l'ordre naturel pour la suppression récursive d'arbres et la résolution de dépendances, où les enfants doivent être traités avant le parent.",
@@ -997,7 +998,7 @@
         "facts_3": "Suffixe + infixe détermine uniquement un arbre (valeurs uniques supposées) ; suffixe seul ne le fait pas."
       },
       "morrisTraversal": {
-        "history": "Joseph M. Morris a publié en 1979 le parcours infixe avec fils vers le prédécesseur—une réponse élégante au défi « infixe sans pile ni récursion ». Les liens temporaires sur le fils droit encodent les mêmes informations qu’une pile puis l’arbre est rétabli sur place.",
+        "history": "Joseph M. Morris a publié en 1979 le parcours infixe avec fils vers le prédécesseur, une réponse élégante au défi « infixe sans pile ni récursion ». Les liens temporaires sur le fils droit encodent les mêmes informations qu’une pile puis l’arbre est rétabli sur place.",
         "intuition": "Pour un nœud avec un fils gauche, trouver le prédécesseur en infixe (le plus à droite dans le sous-arbre gauche). Si son fils droit est nul, connecter ce prédécesseur au nœud courant (retour après le gauche) puis aller à gauche. Si le fils droit pointe déjà vers le courant, le sous-arbre gauche est fini : on rompt le fil, on visite le nœud, on va à droite. Aucune structure auxiliaire.",
         "realWorldUses_0": "Concours et entretiens sur les limites d’espace des parcours",
         "realWorldUses_1": "Très petits systèmes embarqués où la profondeur de pile risquée ou absente",
@@ -1048,9 +1049,9 @@
     "contactEmailAria": "Envoyer un e-mail au fondateur de Bayan Flow à contact@bayanflow.com",
     "enjoying": "Vous appréciez ce projet ? Soutenez mon travail !",
     "allRightsReserved": "Tous droits réservés",
-    "youtubeAria": "Bayan Flow sur YouTube — ouvrir la chaîne dans un nouvel onglet",
-    "instagramAria": "Bayan Flow sur Instagram — ouvrir le profil dans un nouvel onglet",
-    "tikTokAria": "Bayan Flow sur TikTok — ouvrir le profil dans un nouvel onglet",
+    "youtubeAria": "Bayan Flow sur YouTube, ouvrir la chaîne dans un nouvel onglet",
+    "instagramAria": "Bayan Flow sur Instagram, ouvrir le profil dans un nouvel onglet",
+    "tikTokAria": "Bayan Flow sur TikTok, ouvrir le profil dans un nouvel onglet",
     "legal": "Mentions légales",
     "proPlan": "Plan Pro",
     "privacy": "Politique de confidentialité",
@@ -1123,6 +1124,8 @@
   },
   "visualization": {
     "description": "Visualisation interactive d'algorithme",
+    "arrayPaneLabel": "Visualisation de tableau",
+    "arrayPaneLabelInteractive": "Visualisation de tableau - Balayez à gauche/droite pour parcourir les étapes",
     "viewPythonCode": "Voir le code Python",
     "codeLabel": "Code",
     "searchTarget": "Cible : {{value}}",
@@ -1176,40 +1179,40 @@
     "mergedSection": "Section fusionnée [{{start}}...{{end}}]",
     "dfsStackPush": "Voisins empilés ; taille de la pile : {{count}} (prochain sommet dépilé en profondeur)",
     "dfsGraphVisiting": "Exploration du nœud {{node}}",
-    "bfsGraphDequeue": "Nœud {{node}} sorti de la file — examen des voisins niveau par niveau",
+    "bfsGraphDequeue": "Nœud {{node}} sorti de la file, examen des voisins niveau par niveau",
     "bfsGraphEnqueue": "{{count}} voisin(s) ajouté(s) à la file ; le suivant est en tête",
     "inorderStart": "Parcours infixe : sous-arbre gauche, nœud, sous-arbre droit (LNR).",
     "inorderVisiting": "Visite du nœud {{node}}",
     "inorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "inorderComplete": "Parcours infixe terminé. Ordre final : {{order}}",
-    "inorderEmpty": "Arbre vide — rien à parcourir.",
+    "inorderEmpty": "Arbre vide : rien à parcourir.",
     "levelOrderStart": "Parcours en largeur de l'arbre : visiter chaque niveau à l'aide d'une file.",
     "levelOrderVisiting": "Visite du nœud {{node}}",
     "levelOrderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "levelOrderComplete": "Parcours en largeur terminé. Ordre final : {{order}}",
-    "levelOrderEmpty": "Arbre vide — rien à parcourir.",
+    "levelOrderEmpty": "Arbre vide : rien à parcourir.",
     "zigzagLevelStart": "Parcours en largeur zigzag : mêmes couches que le BFS, mais on alterne gauche→droite et droite→gauche selon la profondeur (en commençant par la racine).",
     "zigzagLevelVisiting": "Visite du nœud {{node}}",
     "zigzagLevelVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "zigzagLevelComplete": "Parcours en largeur zigzag terminé. Ordre final : {{order}}",
-    "zigzagLevelEmpty": "Arbre vide — rien à parcourir.",
+    "zigzagLevelEmpty": "Arbre vide : rien à parcourir.",
     "preorderStart": "Parcours préfixe : nœud, puis sous-arbre gauche, puis sous-arbre droit (NLR).",
     "preorderVisiting": "Visite du nœud {{node}}",
     "preorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "preorderComplete": "Parcours préfixe terminé. Ordre final : {{order}}",
-    "preorderEmpty": "Arbre vide — rien à parcourir.",
+    "preorderEmpty": "Arbre vide : rien à parcourir.",
     "postorderStart": "Parcours suffixe : sous-arbre gauche, puis sous-arbre droit, puis nœud (LRN).",
     "postorderVisiting": "Visite du nœud {{node}}",
     "postorderVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "postorderComplete": "Parcours suffixe terminé. Ordre final : {{order}}",
-    "postorderEmpty": "Arbre vide — rien à parcourir.",
-    "morrisStart": "Parcours de Morris : ordre infixe (LNR) avec un espace auxiliaire en O(1) — des fils temporaires remplacent la pile.",
+    "postorderEmpty": "Arbre vide : rien à parcourir.",
+    "morrisStart": "Parcours de Morris : ordre infixe (LNR) avec un espace auxiliaire en O(1) ; des fils temporaires remplacent la pile.",
     "morrisThreading": "Fil : lier le prédécesseur {{from}} → {{to}} pour revenir après le sous-arbre gauche.",
-    "morrisUnthreading": "Défil : restaurer le pointeur droit de {{from}} ; le sous-arbre gauche de {{to}} est fini — visiter {{to}}.",
+    "morrisUnthreading": "Défil : restaurer le pointeur droit de {{from}} ; le sous-arbre gauche de {{to}} est fini, visiter {{to}}.",
     "morrisVisiting": "Visite du nœud {{node}}",
     "morrisVisited": "Enregistré {{node}}. Ordre actuel : {{order}}",
     "morrisComplete": "Parcours de Morris terminé. Ordre final : {{order}}",
-    "morrisEmpty": "Arbre vide — rien à parcourir.",
+    "morrisEmpty": "Arbre vide : rien à parcourir.",
     "topologicalStart": "Tri topologique : exécuter DFS et enregistrer chaque sommet après la fin de toutes ses arêtes sortantes.",
     "topologicalEnter": "Entrer dans {{node}} et l'ajouter à la pile de récursion.",
     "topologicalExploreEdge": "Explorer l'arête de dépendance {{from}} → {{to}}.",
@@ -1327,7 +1330,7 @@
     "searchTernaryFound": "{{target}} trouvé à l'index {{mid}}.",
     "searchTernaryNotFound": "La cible {{target}} n'est pas dans le tableau.",
     "searchJumpStart": "Recherche de {{target}} par sauts sur le tableau trié. Taille de pas {{m}} (⌊√n⌋).",
-    "searchJumpBlockCheck": "Phase de sauts — début de bloc {{prev}}, fin de bloc {{jumpIdx}} : valeur {{value}}. Pas {{m}}. Cible {{target}}.",
+    "searchJumpBlockCheck": "Phase de sauts : début de bloc {{prev}}, fin de bloc {{jumpIdx}} ; valeur {{value}}. Pas {{m}}. Cible {{target}}.",
     "searchJumpLinearCheck": "Balayage linéaire à l'index {{prev}} : valeur {{value}}. Cible {{target}}.",
     "searchJumpFound": "{{target}} trouvé à l'index {{prev}}.",
     "searchJumpNotFound": "La cible {{target}} n'est pas dans le tableau.",
@@ -1336,13 +1339,13 @@
     "searchInterpolationFound": "{{target}} trouvé à l'index {{pos}}.",
     "searchInterpolationNotFound": "La cible {{target}} n'est pas dans le tableau.",
     "searchExponentialStart": "Recherche de {{target}} par recherche exponentielle sur le tableau trié.",
-    "searchExponentialCheckFirst": "Phase de doublement — comparer l'index 0 : valeur {{value}}. Cible {{target}}.",
-    "searchExponentialDoubledProbe": "Phase de doublement — comparer l'index {{bound}} : valeur {{value}}. Cible {{target}}. Prochaine borne {{nextBound}} (jusqu'à encadrer la plage).",
-    "searchExponentialRangeLocked": "Plage encadrée : si {{target}} existe, il est entre les indices {{left}} et {{right}}. Phase dichotomique — rétrécir cette fenêtre.",
-    "searchExponentialBinaryCheck": "Phase dichotomique — milieu {{mid}} : valeur {{value}}. Plage active [{{left}}, {{right}}]. Cible {{target}}.",
+    "searchExponentialCheckFirst": "Phase de doublement : comparer l'index 0 (valeur {{value}}). Cible {{target}}.",
+    "searchExponentialDoubledProbe": "Phase de doublement : comparer l'index {{bound}} (valeur {{value}}). Cible {{target}}. Prochaine borne {{nextBound}} (jusqu'à encadrer la plage).",
+    "searchExponentialRangeLocked": "Plage encadrée : si {{target}} existe, il est entre les indices {{left}} et {{right}}. Phase dichotomique : rétrécir cette fenêtre.",
+    "searchExponentialBinaryCheck": "Phase dichotomique : milieu {{mid}} (valeur {{value}}). Plage active [{{left}}, {{right}}]. Cible {{target}}.",
     "searchExponentialFound": "{{target}} trouvé à l'index {{mid}}.",
     "searchExponentialNotFound": "La cible {{target}} n'est pas dans le tableau.",
-    "searchFibonacciStart": "Recherche de {{target}} par recherche de Fibonacci sur le tableau trié (pas de division — les sondes suivent des pas de taille Fibonacci).",
+    "searchFibonacciStart": "Recherche de {{target}} par recherche de Fibonacci sur le tableau trié (pas de division, les sondes suivent des pas de taille Fibonacci).",
     "searchFibonacciProbe": "Sonde à l'index {{probe}} : valeur {{value}}. Fenêtre active [{{offset}}, {{windowEnd}}]. Cible {{target}}.",
     "searchFibonacciFound": "{{target}} trouvé à l'index {{probe}}.",
     "searchFibonacciNotFound": "La cible {{target}} n'est pas dans le tableau."
@@ -1350,24 +1353,31 @@
   "landing": {
     "hero": {
       "title": "Enfin, les Algorithmes Ont un Sens",
-      "subtitle": "Regardez les algorithmes prendre vie avec des visualisations interactives, étape par étape. Apprenez à votre propre rythme.",
-      "cta": "Commencer la Visualisation"
+      "subtitle": "Voyez les algorithmes s'exécuter étape par étape. Pause, retour arrière, apprenez à votre rythme.",
+      "cta": "Explorer un Algorithme",
+      "outcome": "Repartez capable d'expliquer l'algorithme, pas seulement de le reconnaître."
     },
-    "learnYourWay": {
-      "heading": "Apprenez à Votre Manière",
-      "autoPlay": {
-        "title": "Mode Lecture Automatique",
-        "description": "Asseyez-vous et regardez les algorithmes se dérouler automatiquement à votre vitesse préférée. Parfait pour comprendre la vue d'ensemble."
-      },
-      "manual": {
-        "title": "Contrôle Manuel",
-        "description": "Parcourez chaque opération manuellement. Mettez en pause, rembobinez et analysez chaque décision prise par l'algorithme."
-      },
-      "tagline": "Vous décidez de la vitesse à laquelle vous apprenez."
+    "socialProof": {
+      "ariaLabel": "Points forts du produit",
+      "items": {
+        "algorithms": {
+          "value": "45 algorithmes",
+          "label": "Sur cinq catégories"
+        },
+        "locales": {
+          "value": "EN · FR · AR",
+          "label": "Dont l'arabe RTL complet"
+        },
+        "depth": {
+          "value": "Pas · insight · export",
+          "label": "Apprenez en le regardant réfléchir"
+        }
+      }
     },
     "clarity": {
       "heading": "Pas de Désordre, Juste de la Clarté",
-      "description": "Bayan Flow élimine la complexité pour révéler la beauté des algorithmes. Interface épurée, explications claires et animations vives vous aident à voir ce qui se passe réellement."
+      "description": "Bayan Flow élimine la complexité pour révéler la beauté des algorithmes. Interface épurée, explications claires et animations vives vous aident à voir ce qui se passe réellement.",
+      "videoTitle": "Vidéo de Démonstration du Produit"
     },
     "algorithmTypes": {
       "heading": "Explorez les Types d'Algorithmes",
@@ -1427,6 +1437,65 @@
       "videoExport": {
         "title": "Export Vidéo",
         "description": "Exportez vos visualisations en vidéos MP4 HD. Choisissez le format horizontal (YouTube) ou vertical (Shorts, Reels) avec aperçu avant téléchargement."
+      },
+      "pseudocode": {
+        "title": "Pseudo-code",
+        "description": "Suivez un pseudo-code clair pour chaque algorithme, puis passez à l'implémentation Python exécutable dans le panneau de code."
+      },
+      "notes": {
+        "title": "Notes d'étude personnelles",
+        "description": "Enregistrez vos propres notes sur chaque algorithme, sauvegardées automatiquement sur votre compte et toujours à portée de clic dans le panneau d'aperçu."
+      }
+    },
+    "proPreview": {
+      "badge": "Bientôt Disponible",
+      "badgeJoined": "Vous êtes sur la liste",
+      "heading": "Allez Plus Loin avec Pro",
+      "subheading": "Conçu pour la préparation aux entretiens et l'enseignement en classe : entrées personnalisées, comparaisons côte à côte, exports sans filigrane, et plus encore, bientôt disponible.",
+      "cta": "Rejoignez la liste d'attente",
+      "ctaJoined": "Plan Pro",
+      "table": {
+        "feature": "Fonctionnalité",
+        "freeLabel": "Gratuit",
+        "proLabel": "Pro",
+        "included": "Inclus",
+        "notIncluded": "Non inclus",
+        "allAlgorithms": "Visualisez les 45 algorithmes",
+        "customization": "Personnalisable : ajustez la taille du tableau (5-100) ou de la grille (15×15 à 35×35)",
+        "pythonCode": "Python Interactif",
+        "sound": "Son Interactif",
+        "fullscreen": "Mode plein écran",
+        "insight": "Aperçu des Algorithmes",
+        "videoExport": "Export vidéo",
+        "videoExportFree": "Exports MP4 HD (avec filigrane)",
+        "videoExportPro": "Exports sans filigrane",
+        "customInput": "Entrées personnalisées",
+        "comparison": "Mode comparaison d'algorithmes",
+        "presentation": "Mode présentation (dédié aux enseignants)",
+        "pseudocode": "Pseudo-code pas à pas",
+        "notes": "Notes sur chaque algorithme"
+      }
+    },
+    "faq": {
+      "heading": "Questions Fréquentes",
+      "subheading": "Des réponses pour les apprenants et les enseignants avant de commencer.",
+      "items": {
+        "difference": {
+          "question": "En quoi est-ce différent de simplement regarder des vidéos d'algorithmes ?",
+          "answer": "Une vidéo est terminée en 60 secondes et vous ne pouvez pas la ralentir. Bayan Flow est interactif : avec un compte gratuit, mettez l'animation en pause à n'importe quelle étape, rejouez-la lentement, ou avancez dans l'algorithme opération par opération. Vous contrôlez le rythme, et c'est ainsi que la compréhension se construit vraiment."
+        },
+        "beginner": {
+          "question": "Je débute dans les algorithmes et la programmation. Vais-je quand même comprendre ?",
+          "answer": "C'est exactement pour vous que c'est conçu. Chaque algorithme est d'abord expliqué visuellement, pour que vous voyiez la logique se dérouler avant de lire une seule ligne de code. Quand vous voulez aller plus loin, un compte gratuit met les explications en langage clair, le pseudo-code et le vrai code Python à portée de clic."
+        },
+        "learn": {
+          "question": "Vais-je vraiment apprendre, ou juste regarder une jolie animation ?",
+          "answer": "L'animation n'est que le début. Avec un compte gratuit, vous pouvez ouvrir le vrai code Python et l'exécuter, modifier les données et regarder l'algorithme réagir, et voir comment il évolue à l'échelle sous vos yeux. À la fin, vous saurez expliquer l'algorithme, pas seulement le reconnaître."
+        },
+        "try": {
+          "question": "Dois-je installer quelque chose ?",
+          "answer": "Rien à installer, rien à télécharger. Ouvrez-le dans votre navigateur et regardez votre premier algorithme s'exécuter en quelques secondes. Les comptes gratuits peuvent même exécuter le vrai code Python directement dans votre navigateur — il ne quitte donc jamais votre appareil."
+        }
       }
     },
     "roadmapCTA": {
@@ -1475,7 +1544,8 @@
       "planned": "Prévu"
     },
     "timeline": {
-      "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route."
+      "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route.",
+      "readArticle": "Lire l'article"
     }
   },
   "featureGate": {
@@ -1551,5 +1621,52 @@
     "timSort": "Le tri intégré de Python et Java, la référence pour les données réelles comportant des séquences ordonnées.",
     "topologicalSort": "Ordonne les étapes de build et les prérequis de cours, rendant la résolution des dépendances claire.",
     "zigzagLevelOrderTraversal": "La variante en spirale qui conserve les garanties du BFS, souvent vue dans les problèmes LeetCode."
+  },
+  "algorithmTips": {
+    "aStar": "La réponse à donner pour les questions de recherche de chemin en entretien. La citer montre que vous connaissez plus que le BFS.",
+    "bellmanFord": "Un classique des entretiens difficiles : poids négatifs, cycles négatifs et programmation dynamique en un seul algorithme.",
+    "bfs": "C'est ce que les recruteurs attendent pour les problèmes de plus court chemin et de parcours par niveaux. Maîtrisez-le.",
+    "bidirectionalSearch": "Une optimisation maligne qui divise votre espace de recherche par deux. Les recruteurs aiment la voir.",
+    "binarySearch": "L'algorithme le plus demandé en entretien de codage. Apprenez les cas limites par cœur.",
+    "bogoSort": "La réponse humoristique que tout recruteur connaît. Servez-vous-en pour rendre votre analyse de complexité mémorable.",
+    "breadthFirstSearchGraph": "Plus courts chemins non pondérés. La base de dizaines de problèmes d'entretien sur les graphes.",
+    "bubbleSort": "Le tri d'introduction. Facile à expliquer, facile à optimiser, et une question d'échauffement courante.",
+    "bucketSort": "Une astuce inspirée du tri par comptage qui transforme le tri linéaire en réponse remarquable.",
+    "combSort": "À connaître comme question de suivi. Les recruteurs demandent souvent comment améliorer le tri à bulles.",
+    "countingSort": "Le tri en temps linéaire est un excellent argument. Sortez-le quand les éléments sont de petits entiers.",
+    "cycleSort": "Le tri à écritures minimales est un cas limite rare et mémorable en entretien.",
+    "dStarLite": "Un sujet avancé qui montre une vraie profondeur. Les rovers martiens de la NASA l'utilisent.",
+    "depthFirstSearch": "Le cheval de bataille de la récursivité derrière la plupart des questions d'entretien sur les arbres et les graphes.",
+    "dijkstra": "L'algorithme derrière chaque application de navigation. Incontournable pour les entretiens et la conception de systèmes.",
+    "exponentialSearch": "Une suite élégante du binary search que les recruteurs utilisent pour tester votre souplesse.",
+    "fibonacciSearch": "Un classique obscur qui prouve que O(log n) n'exige pas de point médian.",
+    "floydWarshallAlgorithm": "Plus courts chemins entre toutes les paires. Une question de programmation dynamique qui distingue les bons candidats.",
+    "greedyBestFirstSearch": "Montre que vous comprenez le compromis glouton versus optimal que les recruteurs aiment sonder.",
+    "heapSort": "Un tri garanti en O(n log n) qui sert aussi de révision des files de priorité.",
+    "idaStar": "Le deepening itératif est un motif d'entretien courant. Un A* à faible mémoire montre votre maîtrise.",
+    "inorderTraversal": "La question BST qui apparaît partout. Sachez pourquoi le parcours infixe est trié.",
+    "insertionSort": "La réponse « rapide sur des données presque triées » que les recruteurs attendent discrètement.",
+    "interpolationSearch": "Un cas moyen en O(log log n). Un bon argument quand la discussion porte sur la recherche.",
+    "jumpPointSearch": "Une réponse pointue et impressionnante pour les questions d'optimisation de recherche de chemin sur grille.",
+    "jumpSearch": "Une excellente question « au-delà du binary search » qui récompense une astuce de découpage.",
+    "kahnAlgorithm": "Tri topologique avec détection de cycle. La réponse BFS plus propre pour les entretiens.",
+    "kosarajuAlgorithm": "Les composantes fortement connexes sont un sujet difficile favori des entretiens avancés.",
+    "kruskalAlgorithm": "Les problèmes d'arbre couvrant minimal en entretien sont presque toujours Kruskal ou Prim. Connaissez les deux.",
+    "levelOrderTraversal": "Le parcours par niveaux (BFS sur un arbre) est l'une des questions d'échauffement les plus courantes.",
+    "linearSearch": "Simple, mais sachez exactement quand il bat le tri. Les recruteurs testent votre jugement.",
+    "mergeSort": "Le tri stable par division et conquête qui alimente Java et Python, et un sujet d'entretien courant.",
+    "morrisTraversal": "Le parcours d'arbre en O(1) d'espace. La technique classique pour gagner des points bonus.",
+    "postorderTraversal": "La suppression, la hauteur et les problèmes de dépendances reposent tous sur le parcours postfixe.",
+    "preorderTraversal": "Les questions de sérialisation sont un favori. Le préfixe est généralement le point de départ.",
+    "primAlgorithm": "Le jumeau glouton de Kruskal pour les MST. Les recruteurs attendent que vous choisissiez le bon.",
+    "quickSort": "Le tri d'entretien le plus emblématique. Maîtrisez le partitionnement, les pivots et les pires cas.",
+    "radixSort": "Un tri sans comparaison qui se démarque dans les discussions de tri d'entiers.",
+    "selectionSort": "Le tri le plus simple. Idéal pour s'entraîner aux échanges et aux preuves de complexité.",
+    "shellSort": "Une réponse « évolution des tris ». Montre que vous comprenez les séquences d'écarts au-delà des bases.",
+    "tarjanAlgorithm": "Les composantes fortement connexes en un seul parcours avec une pile. Un sujet avancé que les recruteurs apprécient.",
+    "ternarySearch": "Une question de suivi classique qui vérifie que vous comprenez vraiment le binary search.",
+    "timSort": "Le tri derrière Python et Java. Mentionnez-le pour montrer que vous savez ce qui alimente de vraies bases de code.",
+    "topologicalSort": "Les problèmes de planification de cours et de dépendances sont des questions d'entretien courantes.",
+    "zigzagLevelOrderTraversal": "La variante en spirale est un favori de LeetCode qui teste le BFS avec gestion de direction."
   }
 }

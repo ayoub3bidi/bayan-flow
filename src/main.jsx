@@ -7,6 +7,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@fontsource-variable/inter';
+import '@fontsource-variable/source-serif-4';
 import './index.css';
 import i18n from './i18n';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';

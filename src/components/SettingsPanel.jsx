@@ -171,7 +171,7 @@ function SettingsPanel({
 
   return (
     <motion.div
-      className="bg-surface rounded-lg shadow-lg p-4 sm:p-6 space-y-consistent leading-consistent"
+      className="bg-surface rounded-lg shadow-lg p-4 space-y-consistent-sm leading-consistent"
       initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: ENTER_Y }}
       animate={{ opacity: 1, y: 0 }}
       transition={getChromeTransition(reduceMotion)}
@@ -197,44 +197,42 @@ function SettingsPanel({
 
       <div>
         <label
-          id="settings-algorithm-mode-label"
-          className="block text-sm font-semibold text-text-primary mb-2 leading-tight-consistent"
+          id="settings-algorithm-category-label"
+          className="block text-sm font-semibold text-text-primary mb-1.5 leading-tight-consistent"
         >
-          {t('settings.mode')}
+          {t('settings.category')}
         </label>
         <div
-          className="grid grid-cols-2 gap-2 sm:gap-3"
+          className="grid grid-cols-3 gap-2"
           role="group"
-          aria-labelledby="settings-algorithm-mode-label"
+          aria-labelledby="settings-algorithm-category-label"
         >
-          {ALGORITHM_TYPE_LIST.map((type, index) => {
+          {ALGORITHM_TYPE_LIST.map(type => {
             const cfg = CATEGORY_CONFIG[type];
             const Icon = cfg.icon;
             const isActive = algorithmType === type;
-            const isLoneLastItem =
-              ALGORITHM_TYPE_LIST.length % 2 === 1 &&
-              index === ALGORITHM_TYPE_LIST.length - 1;
             return (
               <button
                 key={type}
                 type="button"
                 onClick={() => !isPlaying && onAlgorithmTypeChange(type)}
                 disabled={isPlaying}
-                className={`min-h-touch flex flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-3 text-center transition-all duration-200 touch-manipulation leading-tight-consistent disabled:cursor-not-allowed ${
-                  isLoneLastItem ? 'col-span-2' : ''
-                } ${
+                aria-pressed={isActive}
+                aria-label={t(cfg.i18nTabKey)}
+                title={t(cfg.i18nTabKey)}
+                className={`group flex h-16 flex-col items-center justify-center gap-1.5 rounded-xl px-1 text-center transition-all duration-200 touch-manipulation leading-tight-consistent disabled:cursor-not-allowed hover:scale-110 focus-visible:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6] disabled:hover:scale-100 ${
                   isActive
                     ? 'bg-theme-primary-consistent text-white shadow-md'
                     : 'bg-surface-elevated text-text-primary shadow-sm hover:bg-bg hover:shadow'
                 } ${isPlaying ? 'opacity-50' : ''}`}
               >
                 <Icon
-                  size={20}
+                  size={22}
                   weight="bold"
                   className="shrink-0"
                   aria-hidden
                 />
-                <span className="text-xs sm:text-sm font-semibold">
+                <span className="max-h-6 overflow-hidden text-[11px] leading-none font-semibold opacity-100 transition-all duration-200 lg:max-h-0 lg:opacity-0 lg:group-hover:max-h-6 lg:group-hover:opacity-100 lg:group-focus-visible:max-h-6 lg:group-focus-visible:opacity-100">
                   {t(cfg.i18nTabKey)}
                 </span>
               </button>
@@ -306,7 +304,7 @@ function SettingsPanel({
       ) : null}
 
       <div>
-        <label className="block text-sm font-semibold text-text-primary mb-2 sm:mb-3">
+        <label className="block text-sm font-semibold text-text-primary mb-1.5 leading-tight-consistent">
           {t('settings.controlMode')}
         </label>
         <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
@@ -344,11 +342,6 @@ function SettingsPanel({
             <span className="hidden sm:inline">{t('modes.manual')}</span>
           </button>
         </div>
-        <p className="text-xs text-text-secondary mt-2">
-          {mode === VISUALIZATION_MODES.AUTOPLAY
-            ? t('settings.autoplayDescription')
-            : t('settings.manualDescription')}
-        </p>
       </div>
 
       <div

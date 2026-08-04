@@ -22,11 +22,12 @@ describe('roadmapData', () => {
         expect(entry).toHaveProperty('id');
         expect(entry).toHaveProperty('date');
         expect(entry).toHaveProperty('title');
-        expect(entry).toHaveProperty('description');
+        expect(entry).toHaveProperty('highlights');
         expect(entry).toHaveProperty('status');
 
         // Optional fields
         expect(entry).toHaveProperty('videoUrl');
+        expect(entry).toHaveProperty('articleUrl');
       });
     });
   });
@@ -49,9 +50,20 @@ describe('roadmapData', () => {
       roadmapData.forEach(entry => {
         expect(typeof entry.date).toBe('string');
         expect(typeof entry.title).toBe('string');
-        expect(typeof entry.description).toBe('string');
         expect(typeof entry.status).toBe('string');
         expect(typeof entry.videoUrl).toBe('string');
+        expect(typeof entry.articleUrl).toBe('string');
+      });
+    });
+
+    it('should have highlights as a non-empty array of strings', () => {
+      roadmapData.forEach(entry => {
+        expect(Array.isArray(entry.highlights)).toBe(true);
+        expect(entry.highlights.length).toBeGreaterThan(0);
+        entry.highlights.forEach(highlight => {
+          expect(typeof highlight).toBe('string');
+          expect(highlight.length).toBeGreaterThan(0);
+        });
       });
     });
 
@@ -69,9 +81,9 @@ describe('roadmapData', () => {
       });
     });
 
-    it('should have non-empty descriptions', () => {
+    it('should have non-empty highlights', () => {
       roadmapData.forEach(entry => {
-        expect(entry.description.length).toBeGreaterThan(0);
+        expect(entry.highlights.length).toBeGreaterThan(0);
       });
     });
 
@@ -86,6 +98,15 @@ describe('roadmapData', () => {
         if (entry.videoUrl) {
           // If videoUrl is provided, it should be a valid URL format
           expect(entry.videoUrl).toMatch(/^https?:\/\/.+/);
+        }
+      });
+    });
+
+    it('should have valid article URLs (empty string or valid URL)', () => {
+      roadmapData.forEach(entry => {
+        if (entry.articleUrl) {
+          // If articleUrl is provided, it should be a valid URL format
+          expect(entry.articleUrl).toMatch(/^https?:\/\/.+/);
         }
       });
     });

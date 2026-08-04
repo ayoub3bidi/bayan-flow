@@ -17,13 +17,13 @@ describe('AlgorithmTipToast', () => {
     vi.useRealTimers();
   });
 
-  it('renders the tip title and use-case message for the algorithm', () => {
+  it('renders the tip title and interview-focused message for the algorithm', () => {
     renderWithI18n(
       <AlgorithmTipToast algorithmKey="dijkstra" onClose={vi.fn()} />
     );
 
     expect(screen.getByText('Why it matters')).toBeInTheDocument();
-    expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+    expect(screen.getByText(/every navigation app/)).toBeInTheDocument();
   });
 
   it('exposes the message to assistive technology', () => {

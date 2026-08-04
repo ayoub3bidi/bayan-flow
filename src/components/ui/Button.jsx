@@ -34,13 +34,17 @@ function Button({
 
   // Render CTA variant with modern professional design
   if (variant === 'cta') {
+    // When used as a link, keep a single focusable element (the <a>): render a
+    // non-interactive inner element so we don't nest <button> inside it.
+    const isLinkVariant = Boolean(to || href);
+    const MotionInner = isLinkVariant ? motion.div : motion.button;
     const content = (
-      <MotionComponent
+      <MotionInner
         className="relative inline-flex h-12 active:scale-[0.98] transition-all duration-200 overflow-hidden rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/50 focus:ring-offset-2 focus:ring-offset-transparent group"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-        onClick={onClick}
+        {...(isLinkVariant ? {} : { onClick })}
         {...props}
       >
         {/* Light mode: solid background | Dark mode: premium gradient */}
@@ -59,7 +63,7 @@ function Button({
         <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center px-7 text-sm font-semibold text-white gap-2 antialiased">
           {children}
         </span>
-      </MotionComponent>
+      </MotionInner>
     );
 
     if (to) {

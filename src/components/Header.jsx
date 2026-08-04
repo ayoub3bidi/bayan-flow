@@ -131,7 +131,7 @@ function Header({ hideLanguageSwitcher = false }) {
                 <GitHubRepoBadge />
               </div>
             )}
-            {isAppPage && !hideLanguageSwitcher && <LanguageSwitcher />}
+            {!hideLanguageSwitcher && <LanguageSwitcher />}
             {isAppPage && <ThemeToggle theme={theme} onToggle={toggleTheme} />}
             <UserMenu
               variant={isAppPage ? 'compact' : 'landing'}

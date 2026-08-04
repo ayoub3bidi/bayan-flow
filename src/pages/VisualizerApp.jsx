@@ -62,7 +62,6 @@ import {
   canUseManualControls,
   canUseCategoryControls,
   canRunVideoExport,
-  incrementVideoExportCount,
   getExportWatermarkConfig,
   ANONYMOUS_VISUALIZATION_LIMIT,
 } from '../services/entitlementService';
@@ -604,7 +603,6 @@ function App() {
     }
 
     trackVideoExportStarted(orientation, activeAlgorithmKey);
-    incrementVideoExportCount(user);
     exportVideo({
       steps: visualization.steps,
       algorithmType,
