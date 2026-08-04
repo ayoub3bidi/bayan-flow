@@ -67,7 +67,7 @@ When docs drift, trust runtime config:
 - Complexity panel: interactive SVG chart with log/linear toggle; best/average/worst time + space complexity
 - Graph algorithms: `GraphAlgorithmCategoryVisualizer` routes node-link to `GraphVisualizer` and matrix (Floyd-Warshall) to `GraphAlgorithmMatrixVisualizer`; `GraphScenarioDropdown` for preset scenarios
 - Searching category: `SearchingCategoryVisualizer` routes array-based to `ArrayVisualizer` and node-link (DFS/BFS graph) to `GraphVisualizer`
-- Animation speeds: SLOW 8000ms, MEDIUM 4800ms, FAST 2400ms, VERY_FAST 1200ms
+- Animation speeds: SLOW 5000ms, MEDIUM 3000ms, FAST 1500ms, VERY_FAST 700ms, ULTRA_FAST 350ms
 
 ## Ship It test ladder
 
@@ -113,13 +113,13 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 - **Anonymous tier (no account):**
   - 18 of 45 algorithms (curated starter set across all 5 categories; see `src/constants/algorithmEntitlements.js`)
   - 12 visualizations per session (localStorage counter `anon_viz_count`, resets on sign-in)
-  - Autoplay only, default speed (MEDIUM: 4800ms)
+  - Autoplay only, default speed (MEDIUM: 3000ms)
   - Complexity panel: 2 views per completion (localStorage `anon_complexity_views`), then blur overlay + sign-in gate
   - No manual controls, speed adjustment, or category-specific controls (grid size locked to MEDIUM, sort order locked to ascending, graph scenarios disabled)
   - No Code Panel, Insight Panel, Video Export, Sound, or Fullscreen
 - **Free tier (Google sign-in):**
   - All 45 algorithms, unlimited visualizations
-  - Manual controls, all 4 speed presets
+  - Manual controls, all 5 speed presets
   - Full complexity panel access, all category-specific controls
   - Code Panel, Insight Panel (with My Notes tab), Sound, Fullscreen
   - Favorite algorithms: up to 20 slots (`FREE_TIER_FAVORITE_SLOT_LIMIT` in `src/constants/personalLearning.js`); stored in Supabase `favorite_algorithms`

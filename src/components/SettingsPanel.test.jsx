@@ -260,4 +260,21 @@ describe('SettingsPanel', () => {
     expect(onGraphScenarioChange).toHaveBeenCalledWith('linearChain');
     expect(onGatedFeatureClick).not.toHaveBeenCalled();
   });
+
+  it('shows the use-case line for the selected algorithm', () => {
+    renderWithI18n(
+      <SettingsPanel {...getBaseProps({ selectedAlgorithm: 'dijkstra' })} />
+    );
+
+    expect(screen.getByText('Use cases:')).toBeInTheDocument();
+    expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+  });
+
+  it('hides the use-case line when no use-case string exists', () => {
+    renderWithI18n(
+      <SettingsPanel {...getBaseProps({ selectedAlgorithm: 'unknownKey' })} />
+    );
+
+    expect(screen.queryByText('Use cases:')).not.toBeInTheDocument();
+  });
 });

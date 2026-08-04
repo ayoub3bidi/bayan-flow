@@ -688,10 +688,11 @@ Speed is user-configurable via constants:
 
 ```javascript
 export const ANIMATION_SPEEDS = {
-  SLOW: 8000,
-  MEDIUM: 4800,
-  FAST: 2400,
-  VERY_FAST: 1200,
+  SLOW: 5000,
+  MEDIUM: 3000,
+  FAST: 1500,
+  VERY_FAST: 700,
+  ULTRA_FAST: 350,
 };
 ```
 

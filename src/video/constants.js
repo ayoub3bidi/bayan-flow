@@ -35,6 +35,7 @@ export const SPEED_TO_FRAMES_MAP = {
   [ANIMATION_SPEEDS.MEDIUM]: 8,
   [ANIMATION_SPEEDS.FAST]: 5,
   [ANIMATION_SPEEDS.VERY_FAST]: 3,
+  [ANIMATION_SPEEDS.ULTRA_FAST]: 2,
 };
 
 /** Default Remotion inputProps.watermark — overridden per export from UI. */

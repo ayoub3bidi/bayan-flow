@@ -7,21 +7,12 @@ import { useState, useEffect } from 'react';
 import { Star, Tag, GitFork } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
-  GITHUB_REPO_FULL_NAME,
-  GITHUB_REPO_NAME,
-  GITHUB_REPO_OWNER,
-  GITHUB_REPO_PACKAGE_VERSION,
-  GITHUB_REPO_URL,
-} from '../constants/githubRepo';
+  loadGitHubRepoData,
+  readCachedGitHubRepo,
+  runWhenIdle,
+} from '../services/githubRepoService';
 import { formatGitHubCount } from '../utils/formatGitHubCount';
 import Tooltip from './ui/Tooltip';
-
-const parseReleaseTag = tagName => {
-  if (typeof tagName !== 'string' || !tagName.trim()) {
-    return null;
-  }
-  return tagName.trim().replace(/^v/i, '');
-};
 
 const GitHubIcon = ({ className }) => (
   <svg
@@ -53,60 +44,26 @@ const Metric = ({ icon, value }) => {
 
 function GitHubRepoBadge() {
   const { t } = useTranslation();
-  const [repoData, setRepoData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [repoData, setRepoData] = useState(() => {
+    const cached = readCachedGitHubRepo();
+    return cached ? cached.data : null;
+  });
+  const [loading, setLoading] = useState(() => {
+    const cached = readCachedGitHubRepo();
+    return !cached;
+  });
 
   useEffect(() => {
-    const fetchGitHubData = async () => {
-      const fallback = {
-        url: GITHUB_REPO_URL,
-        fullName: GITHUB_REPO_FULL_NAME,
-        stars: 0,
-        forks: 0,
-        versionTag: GITHUB_REPO_PACKAGE_VERSION,
-      };
-
-      try {
-        const [repoResponse, releaseResponse] = await Promise.all([
-          fetch(
-            `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`
-          ),
-          fetch(
-            `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`
-          ),
-        ]);
-
-        let next = { ...fallback };
-
-        if (repoResponse.ok) {
-          const repoJson = await repoResponse.json();
-          next = {
-            url: repoJson.html_url || fallback.url,
-            fullName: repoJson.full_name || fallback.fullName,
-            stars: repoJson.stargazers_count ?? 0,
-            forks: repoJson.forks_count ?? 0,
-            versionTag: fallback.versionTag,
-          };
-        }
-
-        if (releaseResponse.ok) {
-          const releaseJson = await releaseResponse.json();
-          const parsed = parseReleaseTag(releaseJson.tag_name);
-          if (parsed) {
-            next.versionTag = parsed;
-          }
-        }
-
-        setRepoData(next);
-      } catch (error) {
-        console.error('Failed to fetch GitHub data:', error);
-        setRepoData(fallback);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGitHubData();
+    const cached = readCachedGitHubRepo();
+    if (cached && !cached.isStale) {
+      return undefined;
+    }
+    return runWhenIdle(() => {
+      loadGitHubRepoData()
+        .then(({ data }) => setRepoData(data))
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    });
   }, []);
 
   if (loading) {

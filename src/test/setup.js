@@ -66,10 +66,11 @@ const constantsMockValue = {
     cycle: '#ef4444',
   },
   ANIMATION_SPEEDS: {
-    SLOW: 2000,
-    MEDIUM: 1000,
-    FAST: 500,
-    VERY_FAST: 250,
+    SLOW: 5000,
+    MEDIUM: 3000,
+    FAST: 1500,
+    VERY_FAST: 700,
+    ULTRA_FAST: 350,
   },
   VISUALIZATION_MODES: {
     MANUAL: 'manual',

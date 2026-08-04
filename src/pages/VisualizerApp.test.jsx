@@ -89,6 +89,7 @@ const sortingVisualization = {
   play: vi.fn(),
   pause: vi.fn(),
   reset: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 0,
@@ -105,6 +106,7 @@ const pathfindingVisualization = {
   pause: vi.fn(),
   reset: vi.fn(),
   regenerateGrid: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 2,
@@ -129,6 +131,7 @@ const searchingVisualization = {
   play: vi.fn(),
   pause: vi.fn(),
   reset: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 1,
@@ -150,6 +153,7 @@ const treeTraversalVisualization = {
   reset: vi.fn(),
   regenerateTree: vi.fn(),
   reloadSteps: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 1,
@@ -182,6 +186,7 @@ const graphAlgorithmVisualization = {
   reset: vi.fn(),
   regenerateGraph: vi.fn(),
   reloadSteps: vi.fn(),
+  seekToStep: vi.fn(),
   isPlaying: false,
   currentStep: 0,
   totalSteps: 1,
@@ -300,6 +305,9 @@ vi.mock('../components/ControlPanel', () => ({
     onSortOrderChange,
     onToggleFullScreen,
     visualizationsRemaining,
+    onSeek,
+    isGated,
+    onGatedFeatureClick,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -317,6 +325,19 @@ vi.mock('../components/ControlPanel', () => ({
       <button type="button" onClick={onToggleFullScreen}>
         toggle-fullscreen
       </button>
+      {onSeek && totalSteps > 0 && (
+        <button type="button" onClick={() => onSeek(2)}>
+          seek-to-step-2
+        </button>
+      )}
+      {isGated && totalSteps > 0 && (
+        <button
+          type="button"
+          onClick={() => onGatedFeatureClick('timeline_scrub')}
+        >
+          gated-seek
+        </button>
+      )}
       {visualizationsRemaining != null &&
       Number.isFinite(visualizationsRemaining) ? (
         <p role="status">
@@ -795,6 +816,17 @@ describe('VisualizerApp', () => {
     });
   });
 
+  it('forwards timeline seeks to the active visualization', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByText('pathfinding'));
+    fireEvent.click(screen.getByText('seek-to-step-2'));
+
+    await waitFor(() => {
+      expect(pathfindingVisualization.seekToStep).toHaveBeenCalledWith(2);
+    });
+  });
+
   describe('feature gating', () => {
     function expectGatedFeatureModal(featureKey) {
       const modal = screen.getByTestId('sign-in-prompt-modal');
@@ -849,6 +881,16 @@ describe('VisualizerApp', () => {
       fireEvent.click(screen.getByText('toggle-fullscreen'));
 
       expectGatedFeatureModal('fullscreen');
+    });
+
+    it('gates timeline scrubbing when unauthenticated', async () => {
+      authMock.isAuthenticated = false;
+      await renderApp();
+
+      fireEvent.click(screen.getByText('pathfinding'));
+      fireEvent.click(screen.getByText('gated-seek'));
+
+      expectGatedFeatureModal('timeline_scrub');
     });
 
     it('does not gate features when authenticated', async () => {
@@ -913,6 +955,48 @@ describe('VisualizerApp', () => {
       expect(
         await screen.findByText(/Favorite limit reached/)
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('algorithm tip toast', () => {
+    it('does not show a tip for the default algorithm on initial render', async () => {
+      await renderApp();
+
+      expect(screen.queryByText('Why it matters')).not.toBeInTheDocument();
+    });
+
+    it('shows a tip when a new algorithm is selected', async () => {
+      await renderApp();
+
+      fireEvent.click(screen.getByText('select-dijkstra'));
+
+      expect(screen.getByText('Why it matters')).toBeInTheDocument();
+      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+    });
+
+    it('shows a tip for the new category default when switching category', async () => {
+      await renderApp();
+
+      fireEvent.click(screen.getByText('pathfinding'));
+
+      expect(screen.getByText('Why it matters')).toBeInTheDocument();
+      expect(
+        screen.getByText(/shortest paths in unweighted networks/)
+      ).toBeInTheDocument();
+    });
+
+    it('shows a tip only once per algorithm per session', async () => {
+      await renderApp();
+
+      fireEvent.click(screen.getByText('select-dijkstra'));
+      expect(screen.getByText(/GPS routing/)).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('select-quick-sort'));
+      expect(screen.getByText(/qsort/)).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('select-dijkstra'));
+      expect(screen.queryByText(/GPS routing/)).not.toBeInTheDocument();
+      expect(screen.getByText(/qsort/)).toBeInTheDocument();
     });
   });
 });

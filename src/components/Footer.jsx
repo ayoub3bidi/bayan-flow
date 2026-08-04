@@ -10,42 +10,34 @@ import { SiYoutube, SiInstagram, SiTiktok } from 'react-icons/si';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
+import { GITHUB_REPO_URL } from '../constants/githubRepo';
 import {
-  GITHUB_REPO_NAME,
-  GITHUB_REPO_OWNER,
-  GITHUB_REPO_URL,
-} from '../constants/githubRepo';
+  loadGitHubRepoData,
+  readCachedGitHubRepo,
+  runWhenIdle,
+} from '../services/githubRepoService';
 import { useConsent } from '../hooks/useConsent.js';
 
 function Footer() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { resetConsent } = useConsent();
-  const [version, setVersion] = useState(null);
+  const [version, setVersion] = useState(() => {
+    const cached = readCachedGitHubRepo();
+    return cached ? cached.data.versionTag : null;
+  });
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
-    const fetchLatestVersion = async () => {
-      try {
-        const response = await fetch(
-          `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`
-        );
-        if (!response.ok) {
-          throw new Error('Failed to fetch release data');
-        }
-        const data = await response.json();
-        const rawTag = data.tag_name;
-        if (typeof rawTag !== 'string' || !rawTag.trim()) {
-          throw new Error('Missing release tag');
-        }
-        const versionTag = rawTag.replace(/^v/, '');
-        setVersion(versionTag);
-      } catch (error) {
-        console.error('Failed to fetch latest version:', error);
-      }
-    };
-
-    fetchLatestVersion();
+    const cached = readCachedGitHubRepo();
+    if (cached && !cached.isStale) {
+      return undefined;
+    }
+    return runWhenIdle(() => {
+      loadGitHubRepoData()
+        .then(({ data }) => setVersion(data.versionTag))
+        .catch(() => {});
+    });
   }, []);
 
   const links = [
@@ -71,21 +63,21 @@ function Footer() {
       label: t('footer.youtube'),
       href: 'https://www.youtube.com/@bayan-flow',
       ariaLabel: t('footer.youtubeAria'),
-      icon: <SiYoutube className="w-5 h-5" />,
+      icon: <SiYoutube className="w-5 h-5" aria-hidden="true" />,
       hoverClass: 'hover:text-[#FF0000]',
     },
     {
       label: t('footer.instagram'),
       href: 'https://www.instagram.com/bayanflow.app',
       ariaLabel: t('footer.instagramAria'),
-      icon: <SiInstagram className="w-5 h-5" />,
+      icon: <SiInstagram className="w-5 h-5" aria-hidden="true" />,
       hoverClass: 'hover:text-[#d62976]',
     },
     {
       label: t('footer.tikTok'),
       href: 'https://www.tiktok.com/@bayanflow.app',
       ariaLabel: t('footer.tikTokAria'),
-      icon: <SiTiktok className="w-5 h-5" />,
+      icon: <SiTiktok className="w-5 h-5" aria-hidden="true" />,
       hoverClass: 'hover:text-[#8B5CF6]',
     },
   ];

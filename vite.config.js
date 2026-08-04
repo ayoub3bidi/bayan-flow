@@ -80,6 +80,9 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    build: {
+      target: 'es2022',
+    },
     plugins: [
       react(),
       {
@@ -92,6 +95,51 @@ export default defineConfig(({ mode }) => {
           return html.replace(
             '<meta name="robots" content="index, follow" />',
             '<meta name="robots" content="noindex, nofollow" />'
+          );
+        },
+      },
+      {
+        name: 'font-preload',
+        apply: 'build',
+        closeBundle() {
+          const distDir = path.join(__dirname, 'dist');
+          const htmlPath = path.join(distDir, 'index.html');
+          if (!fs.existsSync(htmlPath)) {
+            return;
+          }
+          const html = fs.readFileSync(htmlPath, 'utf8');
+          if (html.includes('rel="preload" as="font"')) {
+            return;
+          }
+
+          const cssFiles = fs
+            .readdirSync(path.join(distDir, 'assets'))
+            .filter(name => name.endsWith('.css'));
+          let match = null;
+          for (const name of cssFiles) {
+            const css = fs.readFileSync(
+              path.join(distDir, 'assets', name),
+              'utf8'
+            );
+            match =
+              css.match(
+                /\/assets\/inter-latin-wght-normal-[A-Za-z0-9_-]+\.woff2/
+              ) || null;
+            if (match) {
+              break;
+            }
+          }
+          if (!match) {
+            return;
+          }
+
+          const preload = `<link rel="preload" as="font" type="font/woff2" crossorigin href="${match[0]}" />`;
+          fs.writeFileSync(
+            htmlPath,
+            html.replace(
+              '<meta name="viewport"',
+              `${preload}\n    <meta name="viewport"`
+            )
           );
         },
       },

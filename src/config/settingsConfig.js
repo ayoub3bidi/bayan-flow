@@ -21,6 +21,7 @@ export const useSettingsConfig = () => {
     { value: ANIMATION_SPEEDS.MEDIUM, label: t('speeds.medium') },
     { value: ANIMATION_SPEEDS.FAST, label: t('speeds.fast') },
     { value: ANIMATION_SPEEDS.VERY_FAST, label: t('speeds.veryFast') },
+    { value: ANIMATION_SPEEDS.ULTRA_FAST, label: t('speeds.ultraFast') },
   ];
 
   return {

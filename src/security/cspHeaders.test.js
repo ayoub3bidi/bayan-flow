@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, it, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   assertAnalyticsCspDirectives,
   assertAuthCspDirectives,
@@ -44,5 +44,18 @@ describe('CSP security headers', () => {
 
   it('public/_headers allows PostHog analytics', () => {
     assertAnalyticsCspDirectives(headersCsp, 'public/_headers');
+  });
+
+  it('public/_headers allows Cloudflare Turnstile', () => {
+    const directives = parseCspDirectives(headersCsp);
+    expect(directives.get('script-src')).toContain(
+      'https://challenges.cloudflare.com'
+    );
+    expect(directives.get('connect-src')).toContain(
+      'https://challenges.cloudflare.com'
+    );
+    expect(directives.get('frame-src')).toContain(
+      'https://challenges.cloudflare.com'
+    );
   });
 });

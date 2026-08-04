@@ -11,7 +11,7 @@
 
 ## Features
 
-- Step-by-step animation with configurable speed (Slow/Medium/Fast/Very Fast)
+- Step-by-step animation with configurable speed (Slow/Medium/Fast/Very Fast/Ultra Fast)
 - Real-time time and space complexity analysis
 - Python code execution in the browser via Pyodide (WebAssembly)
 - HD video export with optional sound
