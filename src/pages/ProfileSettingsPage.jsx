@@ -368,7 +368,7 @@ function ProfileSettingsPage() {
                     {t('profile.avatarGoogle')}
                   </span>
                 </div>
-                <p className="text-xs text-text-secondary/40 dark:text-text-secondary/30 text-center opacity-70">
+                <p className="text-xs text-text-secondary text-center">
                   {t('profile.avatarCustomizationComingSoon')}
                 </p>
               </div>

@@ -32,6 +32,7 @@
     "description": "L'accès à Bayan Flow est restreint pour ce compte. Si vous pensez qu'il s'agit d'une erreur, contactez-nous.",
     "signedInAs": "Connecté en tant que {{email}}",
     "contact": "Écrivez à contact@bayanflow.com pour obtenir de l'aide.",
+    "signInUnavailableTitle": "Connexion indisponible",
     "signInUnavailable": "La connexion est temporairement indisponible. Veuillez réessayer plus tard."
   },
   "notFound": {
@@ -1494,7 +1495,7 @@
         },
         "try": {
           "question": "Dois-je installer quelque chose ?",
-          "answer": "Rien à installer, rien à télécharger. Ouvrez-le dans votre navigateur et regardez votre premier algorithme s'exécuter en quelques secondes. Les comptes gratuits peuvent même exécuter le vrai code Python directement dans votre navigateur — il ne quitte donc jamais votre appareil."
+          "answer": "Rien à installer, rien à télécharger. Ouvrez-le dans votre navigateur et regardez votre premier algorithme s'exécuter en quelques secondes. Les comptes gratuits peuvent même exécuter le vrai code Python directement dans votre navigateur. Il ne quitte donc jamais votre appareil."
         }
       }
     },

@@ -32,6 +32,7 @@
     "description": "تم تقييد الوصول إلى Bayan Flow لهذا الحساب. إذا كنت تعتقد أن هذا خطأ، تواصل معنا.",
     "signedInAs": "مسجّل الدخول باسم {{email}}",
     "contact": "راسلنا على contact@bayanflow.com للمساعدة.",
+    "signInUnavailableTitle": "تسجيل الدخول غير متاح",
     "signInUnavailable": "تسجيل الدخول غير متاح مؤقتًا. يُرجى المحاولة لاحقًا."
   },
   "notFound": {
