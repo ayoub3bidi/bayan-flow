@@ -15,6 +15,7 @@ import {
   modalPanelExit,
   modalPanelTransition,
 } from '../motion/chromeMotion';
+import { getFocusableElements } from '../utils/focusableElements';
 
 /**
  * Modal shown when Google sign-in fails, so the header stays clean.
@@ -26,22 +27,46 @@ import {
 function SignInErrorModal({ isOpen, onClose }) {
   const { t } = useTranslation();
   const dialogRef = useRef(null);
+  const closeButtonRef = useRef(null);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!isOpen) {
-      return;
+      return undefined;
     }
 
     const prevFocus = document.activeElement;
-    dialogRef.current?.querySelector('button')?.focus();
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') {
+        onClose();
+      } else if (event.key === 'Tab' && dialogRef.current) {
+        const focusableElements = getFocusableElements(dialogRef.current);
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (event.shiftKey) {
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus();
+          }
+        } else if (document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.removeEventListener('keydown', handleKeyDown);
       if (prevFocus && typeof prevFocus.focus === 'function') {
         prevFocus.focus();
       }
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
@@ -54,7 +79,6 @@ function SignInErrorModal({ isOpen, onClose }) {
           exit={{ opacity: 0 }}
           transition={fadeOverlayTransition(reduceMotion)}
           onClick={onClose}
-          onKeyDown={e => e.key === 'Escape' && onClose()}
           role="dialog"
           aria-modal="true"
           aria-label={t('accessBan.signInUnavailableTitle')}
@@ -84,6 +108,7 @@ function SignInErrorModal({ isOpen, onClose }) {
             </p>
 
             <button
+              ref={closeButtonRef}
               type="button"
               onClick={onClose}
               className="w-full px-6 py-3 bg-interactive-bg text-text-primary rounded-xl border border-interactive-border font-medium transition-all duration-200 hover:bg-surface-elevated active:scale-[0.98]"

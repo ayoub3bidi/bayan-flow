@@ -67,4 +67,26 @@ describe('SignInErrorModal', () => {
     fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Enter' });
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  it('keeps focus on the close button when Tab is pressed', () => {
+    const onClose = vi.fn();
+    renderWithI18n(<SignInErrorModal isOpen onClose={onClose} />);
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    closeButton.focus();
+
+    fireEvent.keyDown(closeButton, { key: 'Tab' });
+    expect(closeButton).toHaveFocus();
+  });
+
+  it('keeps focus on the close button when Shift+Tab is pressed', () => {
+    const onClose = vi.fn();
+    renderWithI18n(<SignInErrorModal isOpen onClose={onClose} />);
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    closeButton.focus();
+
+    fireEvent.keyDown(closeButton, { key: 'Tab', shiftKey: true });
+    expect(closeButton).toHaveFocus();
+  });
 });
