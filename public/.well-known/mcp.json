@@ -3,7 +3,7 @@
     "name": "Bayan Flow",
     "version": "0.5.0"
   },
-  "description": "Interactive algorithm visualizer — 45 algorithms across sorting, pathfinding, searching, tree traversal, and graph categories with step-by-step animation, Python code editing, and complexity analysis.",
+  "description": "Interactive algorithm visualizer | 45 algorithms across sorting, pathfinding, searching, tree traversal, and graph categories with step-by-step animation, Python code editing, and complexity analysis.",
   "endpoint": "/mcp",
   "homepageUrl": "https://bayanflow.com",
   "capabilities": {

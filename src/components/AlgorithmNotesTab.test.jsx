@@ -183,7 +183,7 @@ describe('AlgorithmNotesTab', () => {
       />
     );
 
-    expect(screen.getByText(/retrying/)).toBeInTheDocument();
+    expect(screen.getByText(/Trying again/)).toBeInTheDocument();
   });
 
   it('shows unsaved status text when dirty', () => {

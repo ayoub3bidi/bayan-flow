@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import UserAvatar from './UserAvatar';
 import Tooltip from './ui/Tooltip';
+import SignInErrorModal from './SignInErrorModal';
 import { trackSignInClicked } from '../services/analyticsEvents';
 
 /**
@@ -40,7 +41,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
   } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [signInError, setSignInError] = useState(false);
+  const [showSignInError, setShowSignInError] = useState(false);
   const menuRef = useRef(null);
   const isCompact = variant === 'compact';
 
@@ -72,7 +73,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
   const handleSignIn = async () => {
     trackSignInClicked('navbar');
     setIsSigningIn(true);
-    setSignInError(false);
+    setShowSignInError(false);
     try {
       await signInWithGoogle();
       if (variant === 'landing') {
@@ -81,7 +82,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
     } catch (error) {
       console.error('Google sign-in failed:', error);
       // Show feedback for any failure — silent catch hides Auth hook / network errors.
-      setSignInError(true);
+      setShowSignInError(true);
     } finally {
       setIsSigningIn(false);
     }
@@ -136,6 +137,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
               className={signInButtonClassName}
               aria-label={signInLabel}
               aria-busy={isSigningIn}
+              data-navbar-signin
             >
               {isSigningIn ? (
                 <SpinnerGap
@@ -151,11 +153,10 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
               )}
             </button>
           </Tooltip>
-          {signInError ? (
-            <p className="max-w-48 text-end text-[10px] text-text-secondary">
-              {t('accessBan.signInUnavailable')}
-            </p>
-          ) : null}
+          <SignInErrorModal
+            isOpen={showSignInError}
+            onClose={() => setShowSignInError(false)}
+          />
         </div>
       );
     }
@@ -171,6 +172,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
           whileTap={{ scale: 0.98 }}
           aria-label={signInLabel}
           aria-busy={isSigningIn}
+          data-navbar-signin
         >
           {isSigningIn ? (
             <SpinnerGap
@@ -188,11 +190,10 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
             {signInLabel}
           </span>
         </motion.button>
-        {signInError ? (
-          <p className="max-w-xs text-end text-[10px] sm:text-xs text-text-secondary">
-            {t('accessBan.signInUnavailable')}
-          </p>
-        ) : null}
+        <SignInErrorModal
+          isOpen={showSignInError}
+          onClose={() => setShowSignInError(false)}
+        />
       </div>
     );
   }

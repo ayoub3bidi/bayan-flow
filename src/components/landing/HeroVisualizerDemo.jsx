@@ -77,7 +77,7 @@ function HeroVisualizerDemo() {
       data-current-step={reduceMotion ? 0 : currentStep}
       data-complete={isComplete ? 'true' : 'false'}
       data-array-size={initialArray.length}
-      className="w-full min-h-[20rem] sm:min-h-[28rem] lg:min-h-[32rem] aspect-[4/3] max-h-[36rem] pointer-events-none"
+      className="w-full max-w-full min-h-[20rem] sm:min-h-[28rem] lg:min-h-[32rem] aspect-[4/3] max-h-[36rem] pointer-events-none"
       aria-hidden="true"
     >
       <ArrayVisualizer

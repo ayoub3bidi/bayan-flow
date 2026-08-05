@@ -25,6 +25,11 @@ function Header({ hideLanguageSwitcher = false }) {
     import.meta.env.VITE_DEV_SITE_URL || 'https://dev.bayanflow.com';
 
   const isAppPage = location.pathname.startsWith('/app');
+  const showThemeToggle =
+    isAppPage ||
+    location.pathname.startsWith('/settings') ||
+    location.pathname === '/roadmap' ||
+    location.pathname === '/pro';
 
   const handleLogoClick = () => {
     navigate(isAppPage ? '/' : '/app');
@@ -132,7 +137,9 @@ function Header({ hideLanguageSwitcher = false }) {
               </div>
             )}
             {!hideLanguageSwitcher && <LanguageSwitcher />}
-            {isAppPage && <ThemeToggle theme={theme} onToggle={toggleTheme} />}
+            {showThemeToggle && (
+              <ThemeToggle theme={theme} onToggle={toggleTheme} />
+            )}
             <UserMenu
               variant={isAppPage ? 'compact' : 'landing'}
               hideAvatar={!isAppPage}

@@ -21,8 +21,8 @@ function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <Container className="relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-12">
+      <Container className="relative z-10 w-full">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-12 px-4 sm:px-0">
           <motion.div
             className="lg:w-[40%] text-center lg:text-start"
             initial={{ opacity: reduceMotion ? 1 : 0 }}

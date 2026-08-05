@@ -51,7 +51,7 @@ describe('AlgorithmTypes', () => {
     it('should render subheading', () => {
       renderComponent();
       expect(
-        screen.getByText(/Dive into different algorithm categories/i)
+        screen.getByText(/Explore different algorithm categories/i)
       ).toBeInTheDocument();
     });
 
