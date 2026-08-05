@@ -335,30 +335,32 @@ function ControlPanel({
             }
           }}
         >
-          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-            <motion.div
-              className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full shadow-inner"
-              initial={{ width: '0%' }}
-              animate={{ width: `${progressPct}%` }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            />
+          <div className="relative h-2.5 w-full">
+            <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+              <motion.div
+                className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full shadow-inner"
+                initial={{ width: '0%' }}
+                animate={{ width: `${progressPct}%` }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              />
+            </div>
+            {totalSteps > 0 && (
+              <motion.div
+                data-testid="seek-thumb"
+                aria-hidden="true"
+                initial={false}
+                animate={
+                  isRTL
+                    ? { right: `${progressPct}%` }
+                    : { left: `${progressPct}%` }
+                }
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className={`pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md ${
+                  isRTL ? 'translate-x-1/2' : '-translate-x-1/2'
+                }`}
+              />
+            )}
           </div>
-          {totalSteps > 0 && (
-            <motion.div
-              data-testid="seek-thumb"
-              aria-hidden="true"
-              initial={false}
-              animate={
-                isRTL
-                  ? { right: `${progressPct}%` }
-                  : { left: `${progressPct}%` }
-              }
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-              className={`pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md ${
-                isRTL ? 'translate-x-1/2' : '-translate-x-1/2'
-              }`}
-            />
-          )}
           {!isGated && onSeek && (
             <input
               type="range"

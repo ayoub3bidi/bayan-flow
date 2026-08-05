@@ -14,7 +14,7 @@
   "header": {
     "title": "Bayan Flow",
     "subtitle": "Clarity in Algorithms",
-    "openGithubRepo": "Open {{repo}} on GitHub — version {{version}}, {{stars}} stars, {{forks}} forks",
+    "openGithubRepo": "Open {{repo}} on GitHub. Version {{version}}, {{stars}} stars, {{forks}} forks",
     "goToRepository": "Go to repository"
   },
   "auth": {
@@ -408,7 +408,7 @@
     "copyCaption": "Copy caption",
     "copied": "Copied!",
     "captionTemplate": "{{algorithm}}. Step-by-step visualization from Bayan Flow.",
-    "titleTemplate": "{{algorithm}} Visualization — Bayan Flow"
+    "titleTemplate": "{{algorithm}} Visualization | Bayan Flow"
   },
   "complexity_panel": {
     "title": "Complexity Analysis",
@@ -484,7 +484,7 @@
     "saving": "Saving…",
     "saved": "Saved",
     "unsaved": "Unsaved changes",
-    "saveError": "Couldn't save — retrying…",
+    "saveError": "Couldn't save. Trying again…",
     "loading": "Loading your note…",
     "loadingEditor": "Loading editor…",
     "signInRequired": "Sign in to save study notes."
@@ -750,7 +750,7 @@
       },
       "linearSearch": {
         "history": "Sequential search is as old as ordered lists: scan from the beginning until you find a match or run out of elements. Every general-purpose language offers it as the baseline pattern before introducing binary search on sorted data.",
-        "intuition": "Start at index 0. If that element equals the target, stop. Otherwise move to index 1, then 2, and so on. In the worst case you inspect every position once — O(n) time and O(1) extra space. If the target is at the front, you stop immediately — best case O(1).",
+        "intuition": "Start at index 0. If that element equals the target, stop. Otherwise move to index 1, then 2, and so on. In the worst case you inspect every position once, costing O(n) time and O(1) extra space. If the target is at the front, you stop immediately, which is the best case at O(1).",
         "realWorldUses_0": "Small arrays or lists where setup cost of sorting or indexing is not justified",
         "realWorldUses_1": "Unsorted or singly-linked structures where you only have forward traversal",
         "realWorldUses_2": "Teaching why sorted-array tricks (binary search) buy logarithmic comparisons",
@@ -808,12 +808,12 @@
       },
       "exponentialSearch": {
         "history": "Exponential search (also called doubling search) is a standard two-phase algorithm for sorted data: find a bracketing range by probing indices that grow as powers of two, then finish with binary search within that range. It appears in textbooks on unbounded search and as a building block when the array length is unknown or effectively infinite.",
-        "intuition": "First, jump forward so your index doubles each time (1, 2, 4, 8, …) until the value at that index is at least the target or you reach the end of the array. That brackets the target in O(log i) probes when the answer lies near index i. Then run ordinary binary search on the bounded interval — another logarithmic number of steps in that window.",
+        "intuition": "First, jump forward so your index doubles each time (1, 2, 4, 8, …) until the value at that index is at least the target or you reach the end of the array. That brackets the target in O(log i) probes when the answer lies near index i. Then run ordinary binary search on the bounded interval, another logarithmic number of steps in that window.",
         "realWorldUses_0": "Searching sorted streams or lists where the length is unknown or very large",
         "realWorldUses_1": "Teaching how bracketing plus halving combines two logarithmic ideas",
         "realWorldUses_2": "Contrasting geometric growth with fixed-step jump search on the same sorted-array model",
         "realWorldUses_3": "Foundations for galloping variants in merge algorithms and adaptive search contexts",
-        "facts_0": "On unbounded sorted data, finding a target at index i takes O(log i) comparisons in the doubling phase plus O(log i) for binary search on the bracket — O(log i) total.",
+        "facts_0": "On unbounded sorted data, finding a target at index i takes O(log i) comparisons in the doubling phase plus O(log i) for binary search on the bracket, for O(log i) total.",
         "facts_1": "On a finite array of length n, the worst-case cost is still O(log n), like binary search, with an extra doubling phase before the first halving step.",
         "facts_2": "The algorithm requires sorted (ascending) values so comparisons tell you which side of a probe to keep.",
         "facts_3": "After doubling, the search interval is [⌊bound/2⌋, min(bound, n−1)] before binary search narrows it further."
@@ -835,7 +835,7 @@
         "intuition": "Start at the root. Repeatedly pop the stack, visit that vertex, then push undiscovered neighbors in reverse adjacency order so the first listed neighbor is explored next. When the goal is popped, reconstruct one path using parent pointers. The path is valid but not necessarily shortest.",
         "realWorldUses_0": "Teaching stack-based traversal on explicit vertices and edges",
         "realWorldUses_1": "Trees and general graphs before introducing weights or heuristics",
-        "realWorldUses_2": "Contrasting traversal order with BFS — same graph, different data structure, different path",
+        "realWorldUses_2": "Contrasting traversal order with BFS: same graph, different data structure, different path",
         "realWorldUses_3": "Foundations for topological reasoning and recursive algorithms expressed iteratively",
         "facts_0": "Time is O(V + E) and extra space is O(V) for the stack and bookkeeping on V vertices and E edges.",
         "facts_1": "Unlike BFS on an unweighted graph, DFS does not guarantee a shortest path to the goal.",
@@ -843,15 +843,15 @@
         "facts_3": "Positions are layout-only; the algorithm uses the adjacency structure only."
       },
       "breadthFirstSearchGraph": {
-        "history": "Breadth-first search explores a graph level by level, discovered by Konrad Zuse in 1945 and reinvented by Edward F. Moore in 1959. On unweighted graphs it guarantees the shortest path — the key distinction from DFS in this same Searching category.",
-        "intuition": "Start at the root and enqueue it. Repeatedly dequeue the front node, mark it visited, then enqueue all undiscovered neighbors. Because nodes are processed in the order they were discovered, BFS visits the entire depth-1 ring before any depth-2 node — guaranteeing a minimum-hop path to the goal.",
+        "history": "Breadth-first search explores a graph level by level, discovered by Konrad Zuse in 1945 and reinvented by Edward F. Moore in 1959. On unweighted graphs it guarantees the shortest path, the key distinction from DFS in this same Searching category.",
+        "intuition": "Start at the root and enqueue it. Repeatedly dequeue the front node, mark it visited, then enqueue all undiscovered neighbors. Because nodes are processed in the order they were discovered, BFS visits the entire depth-1 ring before any depth-2 node, so it guarantees a minimum-hop path to the goal.",
         "realWorldUses_0": "Shortest-path on unweighted graphs (social networks, peer connections)",
         "realWorldUses_1": "Level-order tree traversal and layer-by-layer graph analysis",
         "realWorldUses_2": "Contrasting with DFS: same graph, queue vs. stack, shortest vs. any path",
         "realWorldUses_3": "Foundation for Dijkstra's algorithm when edge weights become non-uniform",
         "facts_0": "Time is O(V + E); space is O(V) for the queue and visited set.",
         "facts_1": "BFS guarantees a shortest (minimum-hop) path on unweighted graphs; DFS does not.",
-        "facts_2": "The queue front is shown at the top of the canvas — the next node to be dequeued.",
+        "facts_2": "The queue front is shown at the top of the canvas. It is the next node to be dequeued.",
         "facts_3": "The same tree layout used for DFS is reused here, so you can compare both algorithms side by side on re-generation."
       },
       "topologicalSort": {
@@ -939,14 +939,14 @@
         "facts_3": "Compared with repeated Dijkstra runs, Floyd-Warshall is usually preferred only on smaller or denser graphs."
       },
       "inorderTraversal": {
-        "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order — the bridge between pointer structure and ordering.",
-        "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed—this is why BST inorder prints sorted keys.",
+        "history": "Systematic binary-tree walks were codified early in compiler construction and compiler textbooks: visit left subtree, node, right subtree (inorder). When the structure is a binary search tree, inorder yields keys in sorted order, bridging pointer structure and ordering.",
+        "intuition": "Starting from the root, push along left children until there is none; then visit (record) the node, then move to its right child and repeat. Every node is visited exactly once after its entire left subtree has been processed, which is why BST inorder prints sorted keys.",
         "realWorldUses_0": "BST range queries and sorted enumeration without maintaining a separate sorted array",
         "realWorldUses_1": "Recovering infix notation from expression trees",
         "realWorldUses_2": "Teaching depth-first patterns before preorder and postorder",
         "realWorldUses_3": "Foundation for Euler tours and tree iterators in standard libraries",
         "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for an explicit stack with tree height h.",
-        "facts_1": "Random trees here assign values by inorder indexing so inorder produces 1…n — a valid BST.",
+        "facts_1": "Random trees here assign values by inorder indexing so inorder produces 1…n, a valid BST.",
         "facts_2": "Recursive formulation matches the iterative stack behavior shown step by step.",
         "facts_3": "Unlike graph DFS with a goal, traversal visits every node exactly once."
       },
@@ -970,12 +970,12 @@
         "realWorldUses_2": "Teaching deque / reverse patterns while keeping overall BFS guarantees",
         "realWorldUses_3": "Serialization puzzles that require alternating row direction",
         "facts_0": "Still Θ(n) time; space remains O(w) for the widest level when you enqueue one layer at a time.",
-        "facts_1": "The zigzag permutation does not reorder children for the next level—spatial left-to-right must be preserved.",
+        "facts_1": "The zigzag permutation does not reorder children for the next level; spatial left-to-right order must be preserved.",
         "facts_2": "The breadcrumb badges show scan direction separately from remaining frontier nodes.",
-        "facts_3": "Odd-sized levels still zigzag—you simply reverse single-node rows with no visible change."
+        "facts_3": "Odd-sized levels still zigzag; you simply reverse single-node rows, with no visible change."
       },
       "preorderTraversal": {
-        "history": "Preorder (prefix) order—node, then left subtree, then right subtree—is standard in textbooks on trees and expression evaluation. Together with inorder it is one half of the classic pair used to reconstruct a binary tree when node values are unique.",
+        "history": "Preorder (prefix) order, which visits the node, then the left subtree, then the right subtree, is standard in textbooks on trees and expression evaluation. Together with inorder it is one half of the classic pair used to reconstruct a binary tree when node values are unique.",
         "intuition": "Always record the current node before going deeper: visit the node, then explore the entire left branch, then the entire right branch. The visualization uses an explicit stack (push right before left so left is processed first), mirroring recursive calls without unbounded recursion depth in the UI runner.",
         "realWorldUses_0": "Copying or serializing a tree structure (save node, then children)",
         "realWorldUses_1": "Prefix (Polish) notation from expression trees",
@@ -984,10 +984,10 @@
         "facts_0": "Time is Θ(n) on n nodes; extra space is O(h) for the explicit stack with tree height h.",
         "facts_1": "The same random binary trees as inorder use BST-shaped labels (inorder yields 1…n); preorder order depends on shape, not sorted labels.",
         "facts_2": "The Python panel includes both recursive and iterative implementations with identical visit order.",
-        "facts_3": "Preorder alone does not yield sorted keys on a BST—inorder does."
+        "facts_3": "Preorder alone does not yield sorted keys on a BST; inorder does."
       },
       "postorderTraversal": {
-        "history": "Postorder (suffix/postfix) order—left subtree, right subtree, then node—is the third member of the classic traversal trio. It is the natural order for recursive tree deletion and dependency resolution, where you must finish children before handling the parent.",
+        "history": "Postorder (suffix/postfix) order, which visits the left subtree, then the right subtree, then the node, is the third member of the classic traversal trio. It is the natural order for recursive tree deletion and dependency resolution, where you must finish children before handling the parent.",
         "intuition": "Process both children entirely before handling the current node: descend left, then right, then visit. Unlike preorder's 'node-first' approach, postorder processes leaf nodes before their ancestors. This matches deletion logic (delete subtrees before deleting the node) and topological sorting of DAGs.",
         "realWorldUses_0": "Deleting or destroying a tree structure (delete children before parent, avoiding dangling pointers)",
         "realWorldUses_1": "Computing tree height, size, or aggregate values bottom-up",
@@ -999,14 +999,14 @@
         "facts_3": "Postorder + inorder uniquely determine a tree (assuming unique node values); postorder alone does not."
       },
       "morrisTraversal": {
-        "history": "Joseph M. Morris published the threaded inorder walk in 1979—an elegant answer to “inorder without recursion or a stack.” Temporary right-child links (threads) encode the same push/pop information a stack would hold, then the tree is repaired in place.",
-        "intuition": "For each node with a left child, find its inorder predecessor (rightmost in the left subtree). If that predecessor’s right is null, wire it to the current node as a return link and go left. If the right already points back to the current node, you’ve finished the left subtree—remove the wire, visit the node, go right. No extra structures—only clever pointer surgery.",
+        "history": "Joseph M. Morris published the threaded inorder walk in 1979 as an elegant answer to “inorder without recursion or a stack.” Temporary right-child links (threads) encode the same push/pop information a stack would hold, then the tree is repaired in place.",
+        "intuition": "For each node with a left child, find its inorder predecessor (rightmost in the left subtree). If that predecessor’s right is null, wire it to the current node as a return link and go left. If the right already points back to the current node, you've finished the left subtree, so remove the wire, visit the node, and go right. No extra structures, only clever pointer surgery.",
         "realWorldUses_0": "Interview and exam questions on space-bounded tree algorithms",
         "realWorldUses_1": "Very small embedded systems where stack depth is risky or unavailable",
         "realWorldUses_2": "Teaching how tree structure can double as navigation state",
         "realWorldUses_3": "Contrasting with iterative inorder that needs O(h) stack space",
         "facts_0": "Time Θ(n): each real edge is crossed a constant number of times; same visit order as classic inorder.",
-        "facts_1": "Extra space is O(1) pointers only—no recursion stack, no explicit stack, no queue.",
+        "facts_1": "Extra space is only O(1) pointers: no recursion stack, no explicit stack, no queue.",
         "facts_2": "Threads are removed before the walk ends; the tree ends with the same shape it started with.",
         "facts_3": "The visualization draws each temporary thread as an extra edge for that step."
       }
@@ -1050,9 +1050,9 @@
     "contactEmailAria": "Email the Bayan Flow founder at contact@bayanflow.com",
     "enjoying": "Enjoying this project? Support my work!",
     "allRightsReserved": "All rights reserved",
-    "youtubeAria": "Bayan Flow on YouTube — open channel in a new tab",
-    "instagramAria": "Bayan Flow on Instagram — open profile in a new tab",
-    "tikTokAria": "Bayan Flow on TikTok — open profile in a new tab",
+    "youtubeAria": "Bayan Flow on YouTube. Opens the channel in a new tab.",
+    "instagramAria": "Bayan Flow on Instagram. Opens the profile in a new tab.",
+    "tikTokAria": "Bayan Flow on TikTok. Opens the profile in a new tab.",
     "legal": "Legal",
     "proPlan": "Pro Plan",
     "privacy": "Privacy Policy",
@@ -1180,40 +1180,40 @@
     "mergedSection": "Merged section [{{start}}...{{end}}]",
     "dfsStackPush": "Pushed neighbors onto the stack; stack size is {{count}} (next vertex is popped depth-first)",
     "dfsGraphVisiting": "Exploring node {{node}}",
-    "bfsGraphDequeue": "Dequeued node {{node}} — examining neighbors level by level",
+    "bfsGraphDequeue": "Dequeued node {{node}}. Examining neighbors level by level.",
     "bfsGraphEnqueue": "Enqueued {{count}} neighbor(s); queue front is next",
     "inorderStart": "Inorder traversal: left subtree, node, right subtree (LNR).",
     "inorderVisiting": "Visiting node {{node}}",
     "inorderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "inorderComplete": "Inorder complete. Final order: {{order}}",
-    "inorderEmpty": "Tree is empty — nothing to traverse.",
+    "inorderEmpty": "Tree is empty, so there is nothing to traverse.",
     "levelOrderStart": "Level-order traversal: visit the tree one layer at a time using a queue.",
     "levelOrderVisiting": "Visiting node {{node}}",
     "levelOrderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "levelOrderComplete": "Level-order complete. Final order: {{order}}",
-    "levelOrderEmpty": "Tree is empty — nothing to traverse.",
+    "levelOrderEmpty": "Tree is empty, so there is nothing to traverse.",
     "zigzagLevelStart": "Zigzag level-order: same layers as BFS, but scan left-to-right on even depths and right-to-left on odd depths (starting at the root).",
     "zigzagLevelVisiting": "Visiting node {{node}}",
     "zigzagLevelVisited": "Recorded {{node}}. Order so far: {{order}}",
     "zigzagLevelComplete": "Zigzag level-order complete. Final order: {{order}}",
-    "zigzagLevelEmpty": "Tree is empty — nothing to traverse.",
+    "zigzagLevelEmpty": "Tree is empty, so there is nothing to traverse.",
     "preorderStart": "Preorder traversal: node, then left subtree, then right subtree (NLR).",
     "preorderVisiting": "Visiting node {{node}}",
     "preorderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "preorderComplete": "Preorder complete. Final order: {{order}}",
-    "preorderEmpty": "Tree is empty — nothing to traverse.",
+    "preorderEmpty": "Tree is empty, so there is nothing to traverse.",
     "postorderStart": "Postorder traversal: left subtree, then right subtree, then node (LRN).",
     "postorderVisiting": "Visiting node {{node}}",
     "postorderVisited": "Recorded {{node}}. Order so far: {{order}}",
     "postorderComplete": "Postorder complete. Final order: {{order}}",
-    "postorderEmpty": "Tree is empty — nothing to traverse.",
-    "morrisStart": "Morris traversal: inorder (LNR) with O(1) extra space — temporary threads replace a stack.",
+    "postorderEmpty": "Tree is empty, so there is nothing to traverse.",
+    "morrisStart": "Morris traversal: inorder (LNR) with O(1) extra space, using temporary threads instead of a stack.",
     "morrisThreading": "Thread: link predecessor {{from}} → {{to}} so we can return after the left subtree.",
-    "morrisUnthreading": "Unthread: restore {{from}}'s right pointer; left subtree of {{to}} is done — visit {{to}}.",
+    "morrisUnthreading": "Unthread: restore {{from}}'s right pointer. The left subtree of {{to}} is done, so visit {{to}}.",
     "morrisVisiting": "Visiting node {{node}}",
     "morrisVisited": "Recorded {{node}}. Order so far: {{order}}",
     "morrisComplete": "Morris traversal complete. Final order: {{order}}",
-    "morrisEmpty": "Tree is empty — nothing to traverse.",
+    "morrisEmpty": "Tree is empty, so there is nothing to traverse.",
     "topologicalStart": "Topological sort: run DFS and record each vertex after all outgoing edges finish.",
     "topologicalEnter": "Enter {{node}} and add it to the recursion stack.",
     "topologicalExploreEdge": "Explore dependency edge {{from}} → {{to}}.",
@@ -1330,7 +1330,7 @@
     "searchTernaryFound": "Found {{target}} at index {{mid}}.",
     "searchTernaryNotFound": "Target {{target}} is not in the array.",
     "searchJumpStart": "Searching for {{target}} using jump search on the sorted array. Block step size {{m}} (⌊√n⌋).",
-    "searchJumpBlockCheck": "Jump phase — block start {{prev}}, block end index {{jumpIdx}}: value {{value}}. Step size {{m}}. Target {{target}}.",
+    "searchJumpBlockCheck": "Jump phase: block start {{prev}}, block end index {{jumpIdx}} holds value {{value}}. Step size {{m}}. Target {{target}}.",
     "searchJumpLinearCheck": "Linear scan at index {{prev}}: value {{value}}. Target {{target}}.",
     "searchJumpFound": "Found {{target}} at index {{prev}}.",
     "searchJumpNotFound": "Target {{target}} is not in the array.",
@@ -1339,13 +1339,13 @@
     "searchInterpolationFound": "Found {{target}} at index {{pos}}.",
     "searchInterpolationNotFound": "Target {{target}} is not in the array.",
     "searchExponentialStart": "Searching for {{target}} using exponential search on the sorted array.",
-    "searchExponentialCheckFirst": "Doubling phase — compare index 0: value {{value}}. Target {{target}}.",
-    "searchExponentialDoubledProbe": "Doubling phase — compare index {{bound}}: value {{value}}. Target {{target}}. Next bound would be {{nextBound}} (until the range is found).",
-    "searchExponentialRangeLocked": "Range bracketed: if {{target}} exists, it lies between indices {{left}} and {{right}}. Binary search phase — narrow this window.",
-    "searchExponentialBinaryCheck": "Binary phase — middle index {{mid}}: value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
+    "searchExponentialCheckFirst": "Doubling phase: compare index 0, which holds value {{value}}. Target {{target}}.",
+    "searchExponentialDoubledProbe": "Doubling phase: compare index {{bound}}, which holds value {{value}}. Target {{target}}. Next bound would be {{nextBound}} (until the range is found).",
+    "searchExponentialRangeLocked": "Range bracketed: if {{target}} exists, it lies between indices {{left}} and {{right}}. Binary search phase: narrow this window.",
+    "searchExponentialBinaryCheck": "Binary phase: middle index {{mid}} holds value {{value}}. Active range [{{left}}, {{right}}]. Target {{target}}.",
     "searchExponentialFound": "Found {{target}} at index {{mid}}.",
     "searchExponentialNotFound": "Target {{target}} is not in the array.",
-    "searchFibonacciStart": "Searching for {{target}} using Fibonacci search on the sorted array (probe positions follow Fibonacci-sized steps — no division).",
+    "searchFibonacciStart": "Searching for {{target}} using Fibonacci search on the sorted array (probe positions follow Fibonacci-sized steps, with no division).",
     "searchFibonacciProbe": "Probe index {{probe}}: value {{value}}. Active window [{{offset}}, {{windowEnd}}]. Target {{target}}.",
     "searchFibonacciFound": "Found {{target}} at index {{probe}}.",
     "searchFibonacciNotFound": "Target {{target}} is not in the array."
@@ -1381,7 +1381,7 @@
     },
     "algorithmTypes": {
       "heading": "Explore Algorithm Types",
-      "subheading": "Dive into different algorithm categories and see how they work step by step",
+      "subheading": "Explore different algorithm categories and see how they work step by step",
       "available": "Available Algorithms:",
       "sorting": {
         "title": "Sorting Algorithms",
@@ -1494,7 +1494,7 @@
         },
         "try": {
           "question": "Do I need to install anything?",
-          "answer": "Nothing to install, nothing to download. Open it in your browser and watch your first algorithm run in seconds. Free accounts can even run the real Python code right inside your browser — it never leaves your device."
+          "answer": "Nothing to install, nothing to download. Open it in your browser and watch your first algorithm run in seconds. Free accounts can even run the real Python code right inside your browser, and it never leaves your device."
         }
       }
     },

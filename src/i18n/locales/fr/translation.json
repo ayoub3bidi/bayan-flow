@@ -1494,7 +1494,7 @@
         },
         "try": {
           "question": "Dois-je installer quelque chose ?",
-          "answer": "Rien à installer, rien à télécharger. Ouvrez-le dans votre navigateur et regardez votre premier algorithme s'exécuter en quelques secondes. Les comptes gratuits peuvent même exécuter le vrai code Python directement dans votre navigateur — il ne quitte donc jamais votre appareil."
+          "answer": "Rien à installer, rien à télécharger. Ouvrez-le dans votre navigateur et regardez votre premier algorithme s'exécuter en quelques secondes. Les comptes gratuits peuvent même exécuter le vrai code Python directement dans votre navigateur. Il ne quitte donc jamais votre appareil."
         }
       }
     },

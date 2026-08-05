@@ -136,6 +136,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
               className={signInButtonClassName}
               aria-label={signInLabel}
               aria-busy={isSigningIn}
+              data-navbar-signin
             >
               {isSigningIn ? (
                 <SpinnerGap
@@ -171,6 +172,7 @@ function UserMenu({ variant = 'landing', hideAvatar = false }) {
           whileTap={{ scale: 0.98 }}
           aria-label={signInLabel}
           aria-busy={isSigningIn}
+          data-navbar-signin
         >
           {isSigningIn ? (
             <SpinnerGap

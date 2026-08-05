@@ -120,7 +120,7 @@
     "rules": [
       {
         "name": "The Semantic Color Rule",
-        "body": "Visualization state colors are algorithm vocabulary — never reuse for marketing chrome.",
+        "body": "Visualization state colors are algorithm vocabulary. Never reuse for marketing chrome.",
         "section": "colors"
       },
       {

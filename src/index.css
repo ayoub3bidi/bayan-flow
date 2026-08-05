@@ -371,8 +371,9 @@ body {
     min-width: 44px;
   }
 
-  /* Language switcher: compact proportions in navbar (override global min-size) */
-  [data-language-switcher] {
+  /* Navbar controls: compact proportions in navbar (override global min-size) */
+  [data-language-switcher],
+  [data-navbar-signin] {
     min-height: 32px !important;
     min-width: 32px !important;
   }

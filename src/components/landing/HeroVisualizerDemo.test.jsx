@@ -13,7 +13,7 @@ import { ELEMENT_STATES, STATE_COLORS } from '../../constants';
 import i18n from '../../i18n';
 
 /** Deterministic stand-in for generateRandomArray in tests. */
-const MOCK_HERO_ARRAY = [42, 17, 88, 5, 63, 29];
+const MOCK_HERO_ARRAY = [42, 17, 88, 5, 63];
 
 const reduceMotionRef = { current: false };
 
@@ -54,7 +54,7 @@ describe('HeroVisualizerDemo', () => {
     const demo = screen.getByTestId('hero-visualizer-demo');
     expect(demo).toBeInTheDocument();
     expect(demo.getAttribute('data-array-size')).toBe(String(HERO_DEMO_SIZE));
-    expect(HERO_DEMO_SIZE).toBe(6);
+    expect(HERO_DEMO_SIZE).toBe(5);
 
     for (const value of MOCK_HERO_ARRAY) {
       expect(screen.getByText(String(value))).toBeInTheDocument();
