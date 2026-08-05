@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import UserMenu from './UserMenu';
 import { useAuth } from '../hooks/useAuth';
 
@@ -212,8 +218,11 @@ describe('UserMenu', () => {
       expect(signInWithGoogle).toHaveBeenCalled();
     });
     expect(navigateMock).not.toHaveBeenCalled();
+    const dialog = await screen.findByRole('dialog', {
+      name: /sign-in unavailable/i,
+    });
     expect(
-      await screen.findByText(/sign-in is temporarily unavailable/i)
+      within(dialog).getByText(/sign-in is temporarily unavailable/i)
     ).toBeInTheDocument();
   });
 
@@ -237,7 +246,10 @@ describe('UserMenu', () => {
     );
 
     expect(
-      await screen.findByText(/sign-in is temporarily unavailable/i)
+      await screen.findByRole('dialog', { name: /sign-in unavailable/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/sign-in is temporarily unavailable/i)
     ).toBeInTheDocument();
     expect(navigateMock).not.toHaveBeenCalled();
   });

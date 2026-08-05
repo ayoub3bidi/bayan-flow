@@ -32,6 +32,7 @@
     "description": "Access to Bayan Flow is restricted for this account. If you believe this is a mistake, contact us.",
     "signedInAs": "Signed in as {{email}}",
     "contact": "Email contact@bayanflow.com for assistance.",
+    "signInUnavailableTitle": "Sign-in unavailable",
     "signInUnavailable": "Sign-in is temporarily unavailable. Please try again later."
   },
   "notFound": {
