@@ -97,7 +97,7 @@
         "body": "Utilisez une vue d'enseignement plus ciblée avec moins de chrome et des états visuels plus grands."
       },
       "quizExam": {
-        "title": "Générateur de quiz et d'examens",
+        "title": "Générateur de quiz et d'examens personnalisés",
         "body": "Transformez n'importe quel ensemble d'algorithmes en quiz noté ou examen chronométré, exportable en PDF."
       },
       "studyGuide": {
@@ -1485,7 +1485,7 @@
         "customInput": "Entrées personnalisées",
         "comparison": "Mode comparaison d'algorithmes",
         "presentation": "Mode présentation (dédié aux enseignants)",
-        "quizExam": "Générateur de quiz et d'examens",
+        "quizExam": "Générateur de quiz et d'examens personnalisés",
         "embedWidget": "Widget visualiseur intégrable",
         "pseudocode": "Pseudo-code pas à pas",
         "notes": "Notes d'étude",
