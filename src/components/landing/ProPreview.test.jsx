@@ -132,10 +132,14 @@ describe('ProPreview', () => {
       expect(
         screen.getByText('Presentation Mode (Dedicated For Teachers)')
       ).toBeInTheDocument();
-      expect(screen.getByText('Step-by-step Pseudocode')).toBeInTheDocument();
       expect(
-        screen.getByText('Save Your Notes on Every Algorithm')
+        screen.getByText('Custom Quiz & Exam Generator')
       ).toBeInTheDocument();
+      expect(
+        screen.getByText('Embeddable Visualizer Widget')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Step-by-step Pseudocode')).toBeInTheDocument();
+      expect(screen.getByText('Study Notes')).toBeInTheDocument();
     });
 
     it('should render check icon for features on both plans', () => {
@@ -150,7 +154,7 @@ describe('ProPreview', () => {
     it('should render x icon for features missing on the free plan', () => {
       const { container } = renderComponent();
       const crosses = excludedIcons(container);
-      expect(crosses.length).toBe(3);
+      expect(crosses.length).toBe(5);
       crosses.forEach(cross => {
         expect(cross).toHaveClass('text-red-500');
       });
@@ -171,20 +175,18 @@ describe('ProPreview', () => {
       ).toBe('Included');
     });
 
-    it('should mark pseudocode and notes as included on both plans', () => {
+    it('should mark pseudocode as included on both plans', () => {
       const { container } = renderComponent();
       const rows = [...container.querySelectorAll('tbody tr')];
-      ['Step-by-step Pseudocode', 'Save Your Notes on Every Algorithm'].forEach(
-        label => {
-          const row = rows.find(tr => tr.textContent.includes(label));
-          const cells = row.querySelectorAll('td');
-          expect(cells[1].querySelector('svg').getAttribute('aria-label')).toBe(
-            'Included'
-          );
-          expect(cells[2].querySelector('svg').getAttribute('aria-label')).toBe(
-            'Included'
-          );
-        }
+      const pseudocodeRow = rows.find(tr =>
+        tr.textContent.includes('Step-by-step Pseudocode')
+      );
+      const cells = pseudocodeRow.querySelectorAll('td');
+      expect(cells[1].querySelector('svg').getAttribute('aria-label')).toBe(
+        'Included'
+      );
+      expect(cells[2].querySelector('svg').getAttribute('aria-label')).toBe(
+        'Included'
       );
     });
 
@@ -194,6 +196,16 @@ describe('ProPreview', () => {
         screen.getByText('HD MP4 Exports (With Watermark)')
       ).toBeInTheDocument();
       expect(screen.getByText('Watermark-Free Exports')).toBeInTheDocument();
+    });
+
+    it('should render study notes cells as text instead of icons', () => {
+      renderComponent();
+      expect(
+        screen.getByText('Basic Text Notes per Algorithm')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Study Guide Export, Code Snippets & Search')
+      ).toBeInTheDocument();
     });
 
     it('should not render any price', () => {
@@ -222,7 +234,7 @@ describe('ProPreview', () => {
       const proColumnCells = [...container.querySelectorAll('tbody tr')].map(
         tr => tr.querySelectorAll('td')[2]
       );
-      expect(proColumnCells.length).toBe(12);
+      expect(proColumnCells.length).toBe(14);
     });
   });
 

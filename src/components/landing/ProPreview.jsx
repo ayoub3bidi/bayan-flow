@@ -29,11 +29,13 @@ const TABLE_ROWS = [
   { key: 'fullscreen', free: true, pro: true },
   { key: 'insight', free: true, pro: true },
   { key: 'pseudocode', free: true, pro: true },
-  { key: 'notes', free: true, pro: true },
+  { key: 'notes', free: 'notesFree', pro: 'notesPro' },
   { key: 'videoExport', free: 'videoExportFree', pro: 'videoExportPro' },
   { key: 'customInput', free: false, pro: true },
   { key: 'comparison', free: false, pro: true },
   { key: 'presentation', free: false, pro: true },
+  { key: 'quizExam', free: false, pro: true },
+  { key: 'embedWidget', free: false, pro: true },
 ];
 
 function ProPreview() {
