@@ -77,7 +77,7 @@
     },
     "eyebrow": "The Pro Plan",
     "headline": "Go further with the Pro Plan",
-    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, watermark-free exports, and more.",
+    "subheadline": "The upcoming paid plan will unlock more powerful features like custom inputs, side-by-side comparisons, watermark-free exports, custom quizzes, and embeddable widgets.",
     "featuresHeading": "What the Pro Plan unlocks",
     "features": {
       "customInput": {
@@ -95,6 +95,18 @@
       "presentation": {
         "title": "Presentation mode",
         "body": "Use a focused teaching view with cleaner chrome and larger visual states."
+      },
+      "quizExam": {
+        "title": "Custom quiz & exam generator",
+        "body": "Turn any algorithm set into a gradeable quiz or timed exam, exportable as PDF."
+      },
+      "studyGuide": {
+        "title": "Supercharged study notes",
+        "body": "Export your notes as a study guide, attach runnable code snippets, and search across every algorithm you've studied."
+      },
+      "embedWidget": {
+        "title": "Embeddable widget",
+        "body": "Drop a live, interactive visualizer into your own course site, slides, or blog."
       }
     },
     "form": {
@@ -1452,7 +1464,7 @@
       "badge": "Coming Soon",
       "badgeJoined": "You're on the list",
       "heading": "Go Further with Pro",
-      "subheading": "Built for interview prep and classroom teaching: custom inputs, side-by-side comparisons, watermark-free exports, and more...",
+      "subheading": "Built for interview prep and classroom teaching: custom inputs, side-by-side comparisons, watermark-free exports, custom quizzes, embeddable visualizers, and more...",
       "cta": "Join The Waitlist",
       "ctaJoined": "View Your Spot",
       "table": {
@@ -1473,8 +1485,12 @@
         "customInput": "Custom Inputs",
         "comparison": "Algorithms Comparison Mode",
         "presentation": "Presentation Mode (Dedicated For Teachers)",
+        "quizExam": "Custom Quiz & Exam Generator",
+        "embedWidget": "Embeddable Visualizer Widget",
         "pseudocode": "Step-by-step Pseudocode",
-        "notes": "Save Your Notes on Every Algorithm"
+        "notes": "Study Notes",
+        "notesFree": "Basic Text Notes per Algorithm",
+        "notesPro": "Study Guide Export, Code Snippets & Search"
       }
     },
     "faq": {

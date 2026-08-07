@@ -20,7 +20,7 @@ import { SHOW_LANDING_SOCIAL_PROOF } from '../components/landing/landingSocialPr
 
 function LandingPage() {
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
+    <div className="min-h-screen relative overflow-x-clip">
       <ProWaitlistBanner source="landing" />
 
       {/* Animated Tech Pattern */}
