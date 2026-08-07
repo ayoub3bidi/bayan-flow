@@ -104,7 +104,7 @@ describe('LandingPage', () => {
       const mainContainer = container.firstChild;
       expect(mainContainer).toHaveClass('min-h-screen');
       expect(mainContainer).toHaveClass('relative');
-      expect(mainContainer).toHaveClass('overflow-x-hidden');
+      expect(mainContainer).toHaveClass('overflow-x-clip');
     });
 
     it('should have header below the banner', () => {

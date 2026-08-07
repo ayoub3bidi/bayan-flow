@@ -7,8 +7,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
+  CodeBlock,
   Columns,
+  Exam,
   Export,
+  Notebook,
   PlusCircle,
   Presentation,
   Sliders,
@@ -34,6 +37,9 @@ const FEATURE_ITEMS = [
   { key: 'comparison', Icon: Columns },
   { key: 'export', Icon: Export },
   { key: 'presentation', Icon: Presentation },
+  { key: 'quizExam', Icon: Exam },
+  { key: 'studyGuide', Icon: Notebook },
+  { key: 'embedWidget', Icon: CodeBlock },
 ];
 
 const PRO_SORT_BAR_HEIGHTS = [40, 65, 30, 80, 50, 70];
