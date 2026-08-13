@@ -26,6 +26,12 @@ typography:
     fontSize: "3.5rem"
     lineHeight: 1.1
     letterSpacing: "-0.02em"
+  displayRtl:
+    fontFamily: "Noto Naskh Arabic Variable, Noto Naskh Arabic, Segoe UI, Tahoma, sans-serif"
+    fontWeight: 700
+    fontSize: "3.5rem"
+    lineHeight: 1.1
+    letterSpacing: "0"
   displayMobile:
     fontFamily: "Source Serif 4 Variable, Source Serif 4, Georgia, Times New Roman, serif"
     fontWeight: 800
@@ -134,21 +140,22 @@ A cool slate-and-blue product palette with saturated accents reserved for algori
 
 ## Typography
 
-**Display Font (landing / marketing headings):** Source Serif 4 Variable — academic lab character on `.landing-h1` / `.landing-h2` only.
-**Body Font:** Inter Variable (system-ui fallback) — product UI, body copy, controls.
+**Display Font (landing / marketing headings):** Source Serif 4 Variable — academic lab character on `.landing-h1` / `.landing-h2` only (LTR).
+**Arabic Display Font:** Noto Naskh Arabic Variable on `[dir='rtl'] .landing-h1` / `.landing-h2` — same academic role for Arabic (Source Serif has no Arabic glyphs). Self-hosted via Fontsource; never Google Fonts CDN.
+**Body Font:** Inter Variable (system-ui fallback) — product UI, body copy, controls. RTL body still uses the system Arabic stack in `index.css`.
 
-**Character:** Clean, legible, technical-but-warm. Optimized for step descriptions and control labels at a glance. Marketing display adds a restrained serif for Clarity Lab presence without replacing Inter in the app.
+**Character:** Clean, legible, technical-but-warm. Optimized for step descriptions and control labels at a glance. Marketing display adds a restrained serif (or Naskh in Arabic) for Clarity Lab presence without replacing Inter in the app.
 
 ### Hierarchy
 
-- **Display** (700–800, clamp on landing heroes): Marketing headlines only (Source Serif 4).
+- **Display** (700–800 LTR / 700 RTL, clamp on landing heroes): Marketing headlines only (Source Serif 4; Noto Naskh Arabic in RTL).
 - **Title** (600, 1.125–1.25rem): Panel titles, algorithm names (Inter).
 - **Body** (400, 1rem, line-height 1.5): Descriptions, insight copy, settings (Inter).
 - **Label** (600, 0.875rem, slight tracking): Control groups, tabs, chips (Inter).
 
 ### Named Rules
 
-**The Inter Lock Rule.** Inter is the established brand face for product UI and body copy. Do not swap Inter app-wide unless the user explicitly requests a rebrand. **Exception:** landing/marketing display headings (`.landing-h1`, `.landing-h2`) may use Source Serif 4 Variable for academic-lab character.
+**The Inter Lock Rule.** Inter is the established brand face for product UI and body copy. Do not swap Inter app-wide unless the user explicitly requests a rebrand. **Exception:** landing/marketing display headings (`.landing-h1`, `.landing-h2`) may use Source Serif 4 Variable for academic-lab character; in Arabic RTL they use Noto Naskh Arabic Variable instead.
 
 ## Elevation
 
@@ -205,5 +212,6 @@ Depth comes from tinted surface steps and restrained shadows, plus selective gla
 - **Don't** nest cards inside cards in the visualizer shell; use spacing and dividers.
 - **Don't** apply gradient text to headings or step descriptions.
 - **Don't** use bounce or elastic easing on UI transitions.
-- **Don't** swap Inter app-wide or replace Phosphor with emoji icons without an explicit rebrand request (landing display serif on `.landing-h1` / `.landing-h2` is the documented exception).
+- **Don't** swap Inter app-wide or replace Phosphor with emoji icons without an explicit rebrand request (landing display serif / Arabic Naskh on `.landing-h1` / `.landing-h2` is the documented exception).
+- **Don't** load fonts from Google Fonts CDN — self-host via Fontsource only (GDPR).
 - **Don't** add UI click sounds — audio is for visualization steps only.
