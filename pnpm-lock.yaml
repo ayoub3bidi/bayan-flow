@@ -25,6 +25,9 @@ importers:
       '@fontsource-variable/inter':
         specifier: ^5.2.8
         version: 5.2.8
+      '@fontsource-variable/noto-naskh-arabic':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@fontsource-variable/source-serif-4':
         specifier: ^5.3.0
         version: 5.3.0
@@ -651,6 +654,9 @@ packages:
 
   '@fontsource-variable/inter@5.2.8':
     resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
+
+  '@fontsource-variable/noto-naskh-arabic@5.3.0':
+    resolution: {integrity: sha512-Ot0G5iln5MeLPKp1WNt6AGi4KHbPIVm0GEow2ED6rZ+8Rao+OuswhX4D+RPerc3aQ6teneLdqXSL8VPGorJvGg==}
 
   '@fontsource-variable/source-serif-4@5.3.0':
     resolution: {integrity: sha512-9vch9WqxjaaA+1o9Ur8pOgIGbCYLjRReOUel23A6lOpD1syptgjtkORevvNmldJ5kGXQL29onQUqI5Ltz0s3bQ==}
@@ -3399,6 +3405,8 @@ snapshots:
     optional: true
 
   '@fontsource-variable/inter@5.2.8': {}
+
+  '@fontsource-variable/noto-naskh-arabic@5.3.0': {}
 
   '@fontsource-variable/source-serif-4@5.3.0': {}
 

@@ -522,6 +522,20 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Arabic display: Source Serif has no Arabic glyphs — Noto Naskh restores
+   academic-lab personality for .landing-h1 / .landing-h2 (self-hosted). */
+[dir='rtl'] .landing-h1,
+[dir='rtl'] .landing-h2 {
+  font-family:
+    'Noto Naskh Arabic Variable', 'Noto Naskh Arabic', 'Segoe UI', Tahoma,
+    sans-serif;
+  letter-spacing: 0;
+}
+
+[dir='rtl'] .landing-h1 {
+  font-weight: 700;
+}
+
 .landing-body {
   font-size: 1.125rem;
   line-height: 1.7;
