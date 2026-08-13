@@ -232,7 +232,7 @@ function SettingsPanel({
                   className="shrink-0"
                   aria-hidden
                 />
-                <span className="max-h-6 overflow-hidden text-[11px] leading-none font-semibold opacity-100 transition-all duration-200 lg:max-h-0 lg:opacity-0 lg:group-hover:max-h-6 lg:group-hover:opacity-100 lg:group-focus-visible:max-h-6 lg:group-focus-visible:opacity-100">
+                <span className="max-h-9 overflow-hidden text-[11px] leading-none font-semibold opacity-100">
                   {t(cfg.i18nTabKey)}
                 </span>
               </button>
