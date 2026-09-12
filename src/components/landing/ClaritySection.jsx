@@ -24,7 +24,7 @@ function ClaritySection() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: false, margin: '-100px' });
 
-  const YOUTUBE_VIDEO_ID = 'ZwcT68ZRD0U';
+  const YOUTUBE_VIDEO_ID = 'EmyTsj1DzA4';
   const videoTitle = t('landing.clarity.videoTitle', {
     defaultValue: 'Product Demo Video',
   });

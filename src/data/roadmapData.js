@@ -89,8 +89,9 @@ export const roadmapData = [
       'Pseudocode tab with syntax highlighting plus ascending/descending sort-order toggle',
       'Pro Plan waitlist, Privacy Policy & Terms of Use, and GDPR cookie consent',
     ],
-    videoUrl: '',
-    articleUrl: '',
+    videoUrl: 'https://www.youtube.com/embed/CkRRPMIE9_g',
+    articleUrl:
+      'https://dev.to/ayoub3bidi/bayan-flow-050-tree-traversals-graph-algorithms-and-turning-a-visualizer-into-a-platform-22c3',
     status: 'completed',
   },
   {
