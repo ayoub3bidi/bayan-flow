@@ -35,7 +35,7 @@ describe('ClaritySection', () => {
     it('should use local thumbnail for video facade', () => {
       const { container } = renderWithI18n(<ClaritySection />);
       const thumb = container.querySelector(
-        'img[src="/thumbnails/ZwcT68ZRD0U.jpg"]'
+        'img[src="/thumbnails/EmyTsj1DzA4.jpg"]'
       );
       expect(thumb).toBeInTheDocument();
     });

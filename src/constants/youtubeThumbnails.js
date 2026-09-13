@@ -6,9 +6,10 @@
 
 /** YouTube video IDs with committed local thumbnails under public/thumbnails/. */
 export const YOUTUBE_THUMBNAIL_VIDEO_IDS = [
-  'ZwcT68ZRD0U', // landing ClaritySection demo
+  'EmyTsj1DzA4', // landing ClaritySection demo
   'WcE3O2x77lU', // roadmap v0.1
   '8t4vh3ovldo', // roadmap v0.2
   'hqxLovhkhrU', // roadmap v0.3
   'uL3G3nvjGh4', // roadmap v0.4
+  'CkRRPMIE9_g', // roadmap v0.5
 ];

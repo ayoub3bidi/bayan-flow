@@ -12,11 +12,12 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const videoIds = [
-  'ZwcT68ZRD0U',
+  'EmyTsj1DzA4',
   'WcE3O2x77lU',
   '8t4vh3ovldo',
   'hqxLovhkhrU',
   'uL3G3nvjGh4',
+  'CkRRPMIE9_g',
 ];
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
