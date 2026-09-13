@@ -80,7 +80,7 @@ export const roadmapData = [
   },
   {
     id: 5,
-    date: 'Q3 2026',
+    date: 'September 2026',
     title: 'Tree Traversals & Graph Algorithms (0.5.0)',
     highlights: [
       'Two new categories: Tree Traversals (6) and Graph Algorithms (7), bringing the library to 45 algorithms, with preset graph scenarios and node-link/matrix visualizers',
@@ -111,11 +111,13 @@ export const roadmapData = [
     date: 'Q1 2027',
     title: 'Pro Plan (0.7.0)',
     highlights: [
-      'Custom array and graph input (visualize your own data)',
-      'Unlimited video export with watermark control',
-      'Shareable step links (encode algorithm + step + input into a URL)',
-      'Algorithm comparison mode (run two algorithms side-by-side)',
-      'And more...',
+      'Custom algorithm inputs: bring your own arrays, graphs, trees, and grids into guided visualizations',
+      'Side-by-side comparison mode: run two algorithms against the same scenario and inspect each decision',
+      'Unlimited video export with watermark control (or customize it to your own branding)',
+      'Presentation mode with a focused teaching view and larger visual states',
+      'Custom quiz & exam generator, exportable as PDF',
+      'Supercharged study notes with runnable code snippets and cross-algorithm search',
+      'Embeddable widget to drop a live visualizer into your own course site, slides, or blog',
     ],
     videoUrl: '',
     articleUrl: '',
