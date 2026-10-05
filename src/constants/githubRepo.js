@@ -11,3 +11,9 @@ export const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO_FULL_NAME}`;
 
 /** Fallback when GitHub releases API has no tag (matches package.json version). */
 export const GITHUB_REPO_PACKAGE_VERSION = '0.5.0';
+
+/**
+ * Temporary: hides the stars/forks/release badge in the app header while the
+ * public repo is still early. Flip back to true to restore it.
+ */
+export const SHOW_GITHUB_REPO_BADGE = false;

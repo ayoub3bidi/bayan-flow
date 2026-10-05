@@ -7,6 +7,7 @@ import { GitBranch } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
+import { SHOW_GITHUB_REPO_BADGE } from '../constants/githubRepo';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import GitHubRepoBadge from './GitHubRepoBadge';
@@ -131,7 +132,7 @@ function Header({ hideLanguageSwitcher = false }) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
-            {isAppPage && (
+            {isAppPage && SHOW_GITHUB_REPO_BADGE && (
               <div className="hidden lg:block">
                 <GitHubRepoBadge />
               </div>
