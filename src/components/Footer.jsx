@@ -160,17 +160,6 @@ function Footer() {
               <br />
               {t('footer.descriptionNote')}
             </p>
-            <p className="text-xs text-text-secondary leading-relaxed">
-              {t('footer.madeWith')} ☕️ {t('footer.by')}{' '}
-              <a
-                href="https://ayoub3bidi.me"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#3b82f6] hover:underline"
-              >
-                Ayoub Abidi
-              </a>
-            </p>
             <div className="flex items-center gap-2">
               <a
                 href={`${GITHUB_REPO_URL}/blob/main/LICENSE`}

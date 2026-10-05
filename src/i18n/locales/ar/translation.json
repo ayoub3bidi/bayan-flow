@@ -1046,8 +1046,6 @@
   "footer": {
     "description": "تطبيق ويب تفاعلي وتعليمي لتصور الخوارزميات بوضوح.",
     "descriptionNote": "",
-    "madeWith": "صنع بـ",
-    "by": "بواسطة",
     "license": "مرخص بموجب ترخيص Elastic 2.0",
     "viewDocs": "عرض التوثيق",
     "reportIssue": "الإبلاغ عن مشكلة",

@@ -1046,8 +1046,6 @@
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
-    "madeWith": "Fait avec",
-    "by": "par",
     "license": "Sous licence Elastic License 2.0",
     "viewDocs": "Voir la Documentation",
     "reportIssue": "Signaler un Problème",
