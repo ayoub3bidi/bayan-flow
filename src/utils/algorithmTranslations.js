@@ -244,7 +244,6 @@ export const ALGORITHM_STEPS = {
 
   // Bellman-Ford
   BELLMAN_ITERATION: 'bellmanIteration',
-  BELLMAN_RELAXATION: 'bellmanRelaxation',
   BELLMAN_NO_UPDATES: 'bellmanNoUpdates',
 
   // IDA*
