@@ -1045,6 +1045,7 @@
     "weightedDirectedSingle": "Single Vertex Matrix"
   },
   "footer": {
+    "brand": "Bayan Flow",
     "description": "An interactive, educational web application for visualizing algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
     "license": "Licensed under Elastic License 2.0",
@@ -1317,7 +1318,7 @@
     "cycleStart": "Starting cycle with item {{item}} at position {{position}}",
     "cycleSkip": "Item {{item}} is already in correct position",
     "cyclePlace": "Placed {{item}} at its correct position {{position}}",
-    "bellmanIteration": "Iteration {{iteration}}: Relaxing edges",
+    "bellmanIteration": "Iteration {{iteration}}/{{maxIterations}} | Relaxations: {{relaxations}} | Distance to target: {{distance}}",
     "bellmanNoUpdates": "No updates in this iteration. Algorithm terminated early.",
     "idaNewThreshold": "New Threshold: {{threshold}}",
     "idaVisiting": "Visiting ({{x}}, {{y}}) | Threshold: {{threshold}}",

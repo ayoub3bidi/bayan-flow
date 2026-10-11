@@ -152,7 +152,7 @@ function Footer() {
                 </svg>
               </div>
               <h3 className="text-sm font-bold text-text-primary">
-                Bayan Flow
+                {t('footer.brand')}
               </h3>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed">
@@ -284,7 +284,8 @@ function Footer() {
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
             <p className="text-xs text-text-secondary text-center">
-              © {currentYear} Bayan Flow. {t('footer.allRightsReserved')}
+              © {currentYear} {t('footer.brand')}.{' '}
+              {t('footer.allRightsReserved')}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link

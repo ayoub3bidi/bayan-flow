@@ -1045,6 +1045,7 @@
     "weightedDirectedSingle": "مصفوفة ذات رأس واحد"
   },
   "footer": {
+    "brand": "بيان فلو",
     "description": "تطبيق ويب تفاعلي وتعليمي لتصور الخوارزميات بوضوح.",
     "descriptionNote": "بيان تعني الوضوح في اللغة العربية.",
     "license": "مرخص بموجب ترخيص Elastic 2.0",

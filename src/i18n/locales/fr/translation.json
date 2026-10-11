@@ -1045,6 +1045,7 @@
     "weightedDirectedSingle": "Matrice à un sommet"
   },
   "footer": {
+    "brand": "Bayan Flow",
     "description": "Une application web interactive et éducative pour visualiser les algorithmes avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
     "license": "Sous licence Elastic License 2.0",
