@@ -32,7 +32,7 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 3.2.0
 
       - name: Link project and deploy functions
         env:
@@ -46,9 +46,9 @@ jobs:
             exit 1
           fi
           supabase link --project-ref "$PROJECT_REF"
-          supabase functions deploy before-signup --no-verify-jwt
-          supabase functions deploy post-signup --no-verify-jwt
-          supabase functions deploy platform-access
-          supabase functions deploy delete-account
-          supabase functions deploy waitlist-welcome --no-verify-jwt
-          supabase functions deploy sync-contacts
+          supabase functions deploy before-signup --no-verify-jwt --yes
+          supabase functions deploy post-signup --no-verify-jwt --yes
+          supabase functions deploy platform-access --yes
+          supabase functions deploy delete-account --yes
+          supabase functions deploy waitlist-welcome --no-verify-jwt --yes
+          supabase functions deploy sync-contacts --yes
