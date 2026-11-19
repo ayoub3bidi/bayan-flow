@@ -179,7 +179,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 
 ### Pages
 
-- `src/pages/LandingPage.jsx`
+- `src/pages/LandingPage.jsx` — served through `LandingRoute` in `src/AppRoutes.jsx`: returning signed-in visitors (`hasStoredSession()` + hydrated auth) go to `/app` on a fresh visit
 - `src/pages/VisualizerApp.jsx` — main visualizer shell and top-level state
 - `src/pages/Roadmap.jsx`
 - `src/pages/ProComingSoonPage.jsx` — Pro waitlist teaser + email capture (`/pro`)

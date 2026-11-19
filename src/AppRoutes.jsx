@@ -4,12 +4,15 @@
  * See LICENSE for details.
  */
 
-import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { SpinnerGap } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './hooks/useAuth.js';
-import { AUTH_CALLBACK_PATH } from './services/authService.js';
+import {
+  AUTH_CALLBACK_PATH,
+  hasStoredSession,
+} from './services/authService.js';
 import BannedScreen from './components/BannedScreen.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import RequireAuth from './components/RequireAuth.jsx';
@@ -39,6 +42,30 @@ function RouteFallback() {
   );
 }
 
+// Decided once per page load, so returning to `/` later (logo, Back) never redirects.
+let landingEntryDecided = false;
+
+/** `/`: a returning signed-in visitor goes straight to the app on a fresh visit. */
+function LandingRoute() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+  const [isReturningVisit] = useState(() => {
+    const returning =
+      !landingEntryDecided &&
+      location.key === 'default' &&
+      !location.hash &&
+      hasStoredSession();
+    landingEntryDecided = true;
+    return returning;
+  });
+
+  if (isReturningVisit) {
+    if (isLoading) return <RouteFallback />;
+    if (isAuthenticated) return <Navigate to="/app" replace />;
+  }
+  return <LandingPage />;
+}
+
 function AppRoutes() {
   const { accessBlock, isLoading } = useAuth();
 
@@ -49,7 +76,7 @@ function AppRoutes() {
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingRoute />} />
         <Route path="/app" element={<VisualizerApp />} />
         <Route path="/roadmap" element={<Roadmap />} />
         <Route path="/pro" element={<ProComingSoonPage />} />

@@ -196,6 +196,20 @@ export async function deleteAccount() {
   await signOut();
 }
 
+/**
+ * Whether Supabase has a persisted session in this browser, read synchronously
+ * (it may still be expired; `getSession()` is the authority).
+ * @returns {boolean}
+ */
+export function hasStoredSession() {
+  try {
+    const key = getSupabaseClient()?.auth?.storageKey;
+    return Boolean(key && window.localStorage.getItem(key));
+  } catch {
+    return false;
+  }
+}
+
 export async function getSession() {
   const supabase = getSupabaseClient();
   if (!supabase) {

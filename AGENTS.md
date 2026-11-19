@@ -22,7 +22,7 @@
 
 | Path | Page | Auth |
 |------|------|------|
-| `/` | LandingPage | Public |
+| `/` | LandingPage (`LandingRoute`) | Public — a fresh visit with a stored, valid session redirects to `/app` (once per page load; `/#hash` links exempt) |
 | `/app` | VisualizerApp | Public |
 | `/roadmap` | Roadmap | Public |
 | `/pro` | ProComingSoonPage | Public |
