@@ -360,6 +360,25 @@ body {
   scrollbar-gutter: stable;
 }
 
+/* Theme switch BFS flood fill (src/utils/themeTransition.js): the new theme
+   layer sits on top and a per-frame tile mask reveals it. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+/* No color fades behind the mask; the toggle keeps its knob slide. */
+.theme-transitioning *:not([data-theme-toggle], [data-theme-toggle] *) {
+  transition: none !important;
+}
+
 /* Mobile-specific improvements */
 @media (max-width: 640px) {
   /* Improve touch targets on mobile */

@@ -5,9 +5,11 @@
  */
 
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { ThemeContext } from '../contexts/ThemeContextDefinition';
 import { playThemeSwitchSound } from '../utils/themeSwitchSound';
+import { runThemeTransition } from '../utils/themeTransition';
 
 /**
  * @param {Object} props
@@ -28,14 +30,22 @@ function ThemeToggle({
   const onToggle = onToggleProp ?? context?.toggleTheme ?? (() => {});
 
   const isDark = theme === 'dark';
+  const labelRef = useRef(null);
 
   const handleToggle = () => {
     playThemeSwitchSound(isDark ? 'light' : 'dark');
-    onToggle();
+    const rect = labelRef.current?.getBoundingClientRect();
+    const origin = rect
+      ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+      : { x: 0, y: 0 };
+    // flushSync so React commits the new theme inside the transition snapshot.
+    runThemeTransition(origin, () => flushSync(onToggle));
   };
 
   return (
     <label
+      ref={labelRef}
+      data-theme-toggle
       className={`inline-flex items-center relative cursor-pointer ${className}`}
     >
       <input
