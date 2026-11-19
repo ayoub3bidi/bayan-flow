@@ -927,6 +927,25 @@ describe('VisualizerApp', () => {
         ).not.toBeInTheDocument();
       });
 
+      it('fires visualization_started once per run', async () => {
+        captureEventMock.mockClear();
+        await renderApp();
+        fireEvent.click(screen.getByText('pathfinding'));
+
+        fireEvent.click(screen.getByText('play'));
+        fireEvent.click(screen.getByText('play'));
+        fireEvent.click(screen.getByText('step-forward'));
+
+        const runEvents = captureEventMock.mock.calls.filter(
+          ([name]) => name === 'visualization_started'
+        );
+        expect(runEvents).toHaveLength(1);
+        expect(runEvents[0][1]).toMatchObject({
+          category: 'pathfinding',
+          is_authenticated: false,
+        });
+      });
+
       it.each(['play', 'step-forward', 'seek-to-step-2'])(
         'blocks %s with the session_limit gate once the trial is used up',
         async control => {
@@ -959,6 +978,21 @@ describe('VisualizerApp', () => {
       fireEvent.click(screen.getByText('step-forward'));
 
       expect(window.localStorage.getItem('anon_viz_count')).toBeNull();
+    });
+
+    it('fires visualization_started once per run for signed-in users', async () => {
+      captureEventMock.mockClear();
+      await renderApp();
+      fireEvent.click(screen.getByText('pathfinding'));
+
+      fireEvent.click(screen.getByText('play'));
+      fireEvent.click(screen.getByText('step-forward'));
+
+      const runEvents = captureEventMock.mock.calls.filter(
+        ([name]) => name === 'visualization_started'
+      );
+      expect(runEvents).toHaveLength(1);
+      expect(runEvents[0][1]).toMatchObject({ is_authenticated: true });
     });
 
     it('does not gate features when authenticated', async () => {

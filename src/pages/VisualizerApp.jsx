@@ -84,6 +84,9 @@ import {
   trackCodePanelOpened,
   trackInsightPanelOpened,
   trackVideoExportStarted,
+  trackVideoExportCompleted,
+  trackVideoShared,
+  trackVisualizationStarted,
   trackCategoryChanged,
   trackUpgradeLimitHit,
   trackUpgradeModalViewed,
@@ -429,8 +432,12 @@ function App() {
    * replay of the same steps are free. Returns false when the limit blocks it.
    */
   const consumeRunIfNeeded = () => {
-    if (user) return true;
     if (countedStepsRef.current === visualization.steps) return true;
+    if (user) {
+      countedStepsRef.current = visualization.steps;
+      trackVisualizationStarted(activeAlgorithmKey, algorithmType, true);
+      return true;
+    }
     if (!canRunVisualization(user)) {
       trackUpgradeLimitHit(ANONYMOUS_VISUALIZATION_LIMIT);
       openGatedFeature('session_limit', {
@@ -440,6 +447,7 @@ function App() {
     }
     incrementVisualizationCount();
     countedStepsRef.current = visualization.steps;
+    trackVisualizationStarted(activeAlgorithmKey, algorithmType, false);
     return true;
   };
 
@@ -613,6 +621,7 @@ function App() {
   };
 
   const handleDownloadComplete = () => {
+    trackVideoExportCompleted(activeAlgorithmKey);
     downloadVideo();
     setShowShareModal(true);
   };
@@ -989,6 +998,9 @@ function App() {
         algorithmName={activeAlgorithmName}
         videoBlob={getExportBlob()}
         videoFileName={exportFileName}
+        onShare={({ platform }) =>
+          trackVideoShared(platform, activeAlgorithmKey)
+        }
         onClose={handleShareModalClose}
       />
 
