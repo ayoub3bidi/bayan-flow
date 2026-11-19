@@ -31,6 +31,15 @@ vi.mock('../services/entitlementService.js', async importOriginal => {
   };
 });
 
+const analyticsMock = vi.hoisted(() => ({
+  captureEvent: vi.fn(),
+  identifyUser: vi.fn(),
+  resetUser: vi.fn(),
+  initPostHog: vi.fn(),
+}));
+
+vi.mock('../services/analytics', () => analyticsMock);
+
 vi.mock('../lib/googleIdentity', () => ({
   requestGoogleSignInPopup: vi.fn(async () => ({ idToken: 'test-token' })),
   isGoogleAuthConfigured: vi.fn(() => true),
@@ -72,6 +81,8 @@ describe('AuthProvider', () => {
     resetSupabaseMocks();
     mockSupabaseConfigured(true);
     resetAllSessionCounters.mockClear();
+    Object.values(analyticsMock).forEach(fn => fn.mockClear());
+    vi.unstubAllEnvs();
     checkPlatformAccess.mockReset();
     checkPlatformAccess.mockResolvedValue({ allowed: true });
   });
@@ -404,6 +415,112 @@ describe('AuthProvider', () => {
 
     expect(resetAllSessionCounters).not.toHaveBeenCalled();
   });
+
+  it('does not reset identity or count a sign-in when SIGNED_IN is re-emitted', async () => {
+    const sessionUser = {
+      id: 'user-1',
+      email: 'user@example.com',
+      user_metadata: { full_name: 'Test User' },
+    };
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: { session: { user: sessionUser } },
+      error: null,
+    });
+
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
+    });
+
+    act(() => {
+      authStateChangeCallbackRef.current?.('SIGNED_IN', { user: sessionUser });
+    });
+
+    await waitFor(() => {
+      expect(analyticsMock.identifyUser).toHaveBeenCalled();
+    });
+    expect(analyticsMock.resetUser).not.toHaveBeenCalled();
+    expect(analyticsMock.captureEvent).not.toHaveBeenCalledWith(
+      'sign_in_completed',
+      expect.anything()
+    );
+  });
+
+  it('resets identity when a different account signs in', async () => {
+    supabaseAuthMock.getSession.mockResolvedValueOnce({
+      data: { session: { user: { id: 'user-1', email: 'a@example.com' } } },
+      error: null,
+    });
+
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
+    });
+
+    act(() => {
+      authStateChangeCallbackRef.current?.('SIGNED_IN', {
+        user: { id: 'user-2', email: 'b@example.com' },
+      });
+    });
+
+    expect(analyticsMock.resetUser).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ['a first sign-in', '2026-11-19T10:00:00Z', true],
+    ['a returning sign-in', '2026-09-01T10:00:00Z', false],
+  ])(
+    'tracks sign_in_completed once for %s',
+    async (_label, createdAt, isNewUser) => {
+      vi.stubEnv('VITE_TURNSTILE_SITE_KEY', '');
+      supabaseAuthMock.signInWithIdToken.mockResolvedValueOnce({
+        data: {
+          user: {
+            id: 'user-1',
+            created_at: createdAt,
+            last_sign_in_at: '2026-11-19T10:00:05Z',
+          },
+        },
+        error: null,
+      });
+
+      render(
+        <AuthProvider>
+          <AuthProbe />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('loading')).toHaveTextContent('false');
+      });
+
+      await act(async () => {
+        screen.getByTestId('sign-in').click();
+      });
+
+      await waitFor(() => {
+        expect(analyticsMock.captureEvent).toHaveBeenCalledWith(
+          'sign_in_completed',
+          { is_new_user: isNewUser }
+        );
+      });
+      expect(
+        analyticsMock.captureEvent.mock.calls.filter(
+          ([name]) => name === 'sign_in_completed'
+        )
+      ).toHaveLength(1);
+    }
+  );
 
   it('refreshProfile re-fetches profile for the current user', async () => {
     supabaseAuthMock.getSession.mockResolvedValueOnce({
