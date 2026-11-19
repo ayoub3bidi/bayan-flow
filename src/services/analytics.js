@@ -12,6 +12,9 @@ let isInitialized = false;
 /** @type {boolean} When true, all tracking calls become no-ops. */
 let isBypassed = false;
 
+/** @type {boolean | null} Visitor's cookie choice; null until they pick one. */
+let consentGranted = null;
+
 /**
  * Initialize PostHog analytics.
  * Safe to call multiple times — subsequent calls are no-ops.
@@ -79,6 +82,7 @@ export function initPostHog() {
  * @param {boolean} granted
  */
 export function setAnalyticsConsent(granted) {
+  consentGranted = granted;
   if (!isInitialized) return;
   const wanted = granted ? 'granted' : 'denied';
   if (posthog.get_explicit_consent_status() === wanted) return;
@@ -111,6 +115,13 @@ export function identifyUser(user, profile) {
 export function resetUser() {
   if (isBypassed) return;
   posthog?.reset();
+  // reset() also wipes PostHog's stored consent; restore it so a consenting
+  // visitor is not dropped to cookieless mode (which breaks identify merges).
+  if (consentGranted === true) {
+    posthog.opt_in_capturing({ captureEventName: false });
+  } else if (consentGranted === false) {
+    posthog.opt_out_capturing();
+  }
 }
 
 /**
