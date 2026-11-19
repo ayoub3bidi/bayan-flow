@@ -21,7 +21,7 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **173** test files (~**2,013** tests, per `pnpm vitest run`)
+- Test surface: **174** test files (~**2,018** tests, per `pnpm vitest run`)
 - Source surface: **252** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
@@ -104,7 +104,7 @@
   - `supabase/functions/delete-account/` — self-service account deletion
 - Shared email HTML: `supabase/functions/_shared/transactionalEmails.ts`
 - **Not in 0.5.0:** LemonSqueezy webhook, subscriptions / usage_events / referrals / user_sessions tables (dropped via `20260720180000_drop_premature_saas_scaffolding.sql`); no viz-limit email, weekly digest, Pro nudge, or referral invite sends (Pro nudge + referral templates may exist in Resend as parked drafts for later)
-- Analytics: `src/services/analytics.js`, `src/services/analyticsEvents.js` — PostHog SPA pageviews + growth events `waitlist_joined`, `upgrade_limit_hit`; surveys disabled in SDK
+- Analytics: `src/services/analytics.js`, `src/services/analyticsEvents.js` — PostHog SPA pageviews + growth events `waitlist_joined`, `upgrade_limit_hit`; surveys disabled in SDK. PostHog inits on mount via `PostHogProvider` (cookieless until consent, `setAnalyticsConsent()` on banner choice). Funnel events: `visualization_started` (once per run, `is_authenticated`), `upgrade_modal_viewed` (`trigger`), `sign_in_clicked` (`source`), `sign_in_completed` (`is_new_user`), `video_export_completed`, `video_shared` (`platform`). Dev and prod share PostHog project 517091 — filter insights on `$host`
 - Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
 - Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
 - Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
