@@ -166,9 +166,7 @@
     "treeNodeCount": "Nœuds de l'arbre",
     "graphNodeCount": "Sommets du graphe",
     "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier.",
-    "signInForManual": "Connectez-vous pour le mode manuel",
     "signInForSpeed": "Connectez-vous pour régler la vitesse",
-    "signInForCategoryControls": "Connectez-vous pour les contrôles avancés",
     "favoriteAlgorithms": "Algorithmes favoris",
     "favoriteAlgorithmsEmpty": "Aucun favori pour l'instant",
     "favoriteAlgorithmsCount": "{{count}} enregistrés",
@@ -177,7 +175,6 @@
     "favoriteSlotsFull": "Limite de favoris atteinte ({{limit}}). Retirez-en un pour en ajouter un autre.",
     "addFavorite": "Ajouter {{name}} aux favoris",
     "removeFavorite": "Retirer {{name}} des favoris",
-    "signInForAdvancedFeatures": "Connectez-vous pour débloquer le mode manuel, la vitesse et les contrôles avancés.",
     "useCases": "Cas d'usage"
   },
   "modes": {
@@ -359,7 +356,6 @@
     "stepBackward": "Étape Précédente",
     "seekTimeline": "Parcourir les étapes",
     "dragToSeek": "Faites glisser la barre pour sauter des étapes",
-    "dragToSeekLocked": "Connectez-vous pour sauter des étapes",
     "reset": "Réinitialiser",
     "generateInput": "Générer une nouvelle entrée",
     "exportVideo": "Exporter en vidéo",
@@ -1579,18 +1575,8 @@
     "algorithm_lock_description": "Connectez-vous pour accéder aux 45 algorithmes répartis dans 5 catégories.",
     "session_limit": "Continuer à apprendre",
     "session_limit_description": "Vous avez exploré {{limit}} visualisations. Connectez-vous pour continuer avec un accès illimité.",
-    "speed_control": "Régler la vitesse",
-    "speed_control_description": "Connectez-vous pour contrôler la vitesse d'animation, du plus lent au plus rapide.",
-    "complexity_limit": "Analyse de complexité",
-    "complexity_limit_description": "Connectez-vous pour accéder aux graphiques de complexité interactifs pour chaque algorithme.",
-    "manual_controls": "Contrôle manuel pas à pas",
-    "manual_controls_description": "Connectez-vous pour avancer dans les algorithmes à votre propre rythme.",
-    "category_controls": "Contrôles avancés",
-    "category_controls_description": "Connectez-vous pour personnaliser la taille de la grille, l'ordre de tri, les scénarios de graphe et bien plus.",
     "favorite": "Algorithmes favoris",
-    "favorite_description": "Connectez-vous pour marquer des algorithmes et y revenir rapidement depuis vos favoris.",
-    "timeline_scrub": "Défilement des étapes",
-    "timeline_scrub_description": "Accédez directement à n'importe quelle étape en défilant la barre. Connectez-vous pour la débloquer et profiter de l'ensemble de l'offre gratuite."
+    "favorite_description": "Connectez-vous pour marquer des algorithmes et y revenir rapidement depuis vos favoris."
   },
   "algorithmUses": {
     "aStar": "Utilisé dans presque tous les jeux vidéo pour la recherche de chemin, ainsi que pour la navigation des robots et des véhicules autonomes.",

@@ -59,8 +59,6 @@ import {
   canRunVisualization,
   incrementVisualizationCount,
   getRemainingVisualizations,
-  canUseManualControls,
-  canUseCategoryControls,
   canRunVideoExport,
   getExportWatermarkConfig,
   ANONYMOUS_VISUALIZATION_LIMIT,
@@ -88,6 +86,7 @@ import {
   trackVideoExportStarted,
   trackCategoryChanged,
   trackUpgradeLimitHit,
+  trackUpgradeModalViewed,
 } from '../services/analyticsEvents';
 
 const SOUND_PREFERENCE_STORAGE_KEY = 'bayan-flow:sound-enabled';
@@ -257,8 +256,10 @@ function App() {
   const [showShareModal, setShowShareModal] = useState(false);
   const pendingFeatureRef = useRef(null);
   const hasTouchedActivityRef = useRef(false);
+  const countedStepsRef = useRef(null);
 
   const openGatedFeature = (feature, metadata = {}) => {
+    trackUpgradeModalViewed(feature);
     setGatedFeature(feature);
     setGatedFeatureMetadata(metadata);
   };
@@ -343,20 +344,6 @@ function App() {
     }
   }, [visualization.isComplete, activeAlgorithmKey, algorithmType]);
 
-  // Force autoplay mode for anonymous users
-  useEffect(() => {
-    if (!canUseManualControls(user) && mode === VISUALIZATION_MODES.MANUAL) {
-      setMode(VISUALIZATION_MODES.AUTOPLAY);
-    }
-  }, [user, mode]);
-
-  // Force medium grid for anonymous pathfinding users
-  useEffect(() => {
-    if (!canUseCategoryControls(user) && gridSize !== GRID_SIZES.MEDIUM) {
-      setGridSize(GRID_SIZES.MEDIUM);
-    }
-  }, [user, gridSize]);
-
   useEffect(() => {
     if (!isSoundEnabled || soundManager.getIsEnabled()) {
       return undefined;
@@ -436,37 +423,44 @@ function App() {
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
-  /** Play handler with session limit check for anonymous users */
-  const handlePlay = () => {
+  /**
+   * Anonymous trial accounting: each run (one generated steps array) costs one
+   * credit, however it is advanced (play, manual step, seek). Pause/resume and
+   * replay of the same steps are free. Returns false when the limit blocks it.
+   */
+  const consumeRunIfNeeded = () => {
+    if (user) return true;
+    if (countedStepsRef.current === visualization.steps) return true;
     if (!canRunVisualization(user)) {
       trackUpgradeLimitHit(ANONYMOUS_VISUALIZATION_LIMIT);
       openGatedFeature('session_limit', {
         limit: ANONYMOUS_VISUALIZATION_LIMIT,
       });
-      return;
+      return false;
     }
-    // Increment viz count for anonymous users on each play
-    if (!user) {
-      incrementVisualizationCount();
-    } else if (!hasTouchedActivityRef.current) {
+    incrementVisualizationCount();
+    countedStepsRef.current = visualization.steps;
+    return true;
+  };
+
+  /** Play handler with session limit check for anonymous users */
+  const handlePlay = () => {
+    if (!consumeRunIfNeeded()) return;
+    if (user && !hasTouchedActivityRef.current) {
       hasTouchedActivityRef.current = true;
       void touchLastActive();
     }
     visualization.play();
   };
 
+  const handleSeek = step => {
+    if (!consumeRunIfNeeded()) return;
+    visualization.seekToStep(step);
+  };
+
   /** Handler for locked algorithm clicks (anonymous tier) */
   const handleLockedAlgorithmClick = algo => {
     openGatedFeature('algorithm_lock', { algorithmName: algo.label });
-  };
-
-  /** Handler for gated feature clicks from SettingsPanel and visualizers */
-  const handleGatedFeatureClick = feature => {
-    const metadata =
-      feature === 'session_limit'
-        ? { limit: ANONYMOUS_VISUALIZATION_LIMIT }
-        : {};
-    openGatedFeature(feature, metadata);
   };
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
@@ -681,6 +675,7 @@ function App() {
   };
 
   const handleStepForward = () => {
+    if (!consumeRunIfNeeded()) return;
     trackManualStepping(activeAlgorithmKey, 'forward');
     visualization.stepForward();
   };
@@ -700,7 +695,6 @@ function App() {
     onStepForward: handleStepForward,
     onStepBackward: handleStepBackward,
     mode,
-    onGatedFeatureClick: handleGatedFeatureClick,
   };
 
   const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
@@ -737,7 +731,6 @@ function App() {
     onModeChange: setMode,
     user,
     onLockedAlgorithmClick: handleLockedAlgorithmClick,
-    onGatedFeatureClick: handleGatedFeatureClick,
     favorites,
     favoriteSlotLimit: isAuthenticated ? favoriteSlotLimit : null,
     onFavoriteSelect: handleFavoriteNavigate,
@@ -759,9 +752,9 @@ function App() {
     onPlay: handlePlay,
     onPause: visualization.pause,
     onReset: visualization.reset,
-    onStepForward: visualization.stepForward,
-    onStepBackward: visualization.stepBackward,
-    onSeek: visualization.seekToStep,
+    onStepForward: handleStepForward,
+    onStepBackward: handleStepBackward,
+    onSeek: handleSeek,
     currentStep: visualization.currentStep,
     totalSteps: visualization.totalSteps,
     onGenerateInput: handleGenerateInput,
@@ -779,7 +772,6 @@ function App() {
     isSoundTogglePending,
     onToggleSound: handleGatedSoundToggle,
     isGated: !isAuthenticated,
-    onGatedFeatureClick: handleGatedFeatureClick,
     visualizationsRemaining: remainingVisualizations,
     onOpenSettings: isBelowLg ? () => setIsSettingsSheetOpen(true) : undefined,
   };

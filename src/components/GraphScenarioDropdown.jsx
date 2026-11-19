@@ -5,7 +5,7 @@
  */
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Check, CaretDown, Lock } from '@phosphor-icons/react';
+import { Check, CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
   menuInitial,
@@ -24,8 +24,6 @@ function GraphScenarioDropdown({
   setIsDropdownOpen,
   isPlaying,
   dropdownRef,
-  areOptionsGated = false,
-  onLockedScenarioClick,
 }) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -78,28 +76,21 @@ function GraphScenarioDropdown({
             role="listbox"
             aria-label={t('controls.graphScenario')}
           >
-            {renderedOptions.map((option, index) => {
+            {renderedOptions.map(option => {
               const isSelected = (selectedScenario ?? '') === option.id;
-              const isLocked = areOptionsGated && index > 0;
 
               return (
                 <button
                   key={option.id || 'random-graph'}
                   type="button"
                   onClick={() => {
-                    if (isLocked) {
-                      onLockedScenarioClick?.(option);
-                      return;
-                    }
                     onScenarioSelect(option.id || null);
                     setIsDropdownOpen(false);
                   }}
                   className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150 hover:bg-surface-elevated ${
                     isSelected
                       ? 'bg-theme-primary-light text-theme-primary dark:text-white'
-                      : isLocked
-                        ? 'text-text-primary opacity-60'
-                        : 'text-text-primary'
+                      : 'text-text-primary'
                   }`}
                   role="option"
                   aria-selected={isSelected}
@@ -114,13 +105,6 @@ function GraphScenarioDropdown({
                       size={18}
                       weight="bold"
                       className="shrink-0 text-[#3b82f6] dark:text-white"
-                    />
-                  ) : isLocked ? (
-                    <Lock
-                      size={18}
-                      weight="bold"
-                      className="shrink-0 text-text-tertiary"
-                      aria-hidden="true"
                     />
                   ) : null}
                 </button>

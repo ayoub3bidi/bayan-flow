@@ -21,8 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **152** `*.test.js` / `*.test.jsx` files under `src/` (~**1,823** tests)
-- Source surface: **224** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
+- Test surface: **173** test files (~**2,013** tests, per `pnpm vitest run`)
+- Source surface: **252** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -419,7 +419,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Full-screen mode uses the same `ControlPanel` and visualizer registry as normal mode.
 - Lazy panels (`PythonCodePanel`, `AlgorithmInsightPanel`) must remain optional overlays and should not block the main visualization path.
 - Swipe stepping applies only in manual playback mode on touch devices.
-- The step progress bar is seekable: Free-tier users (non-gated) get an invisible full-width range input driving seeking, a circular grab handle (`seek-thumb`) marking the fill edge, and the `controls.dragToSeek` microcopy under the bar. Anonymous/gated users see the **same grab handle** and a persistent `controls.dragToSeekLocked` microcopy ("Sign in to skip steps"), but no range input; the timeline wrapper is a focusable button (`role="button"`) whose click or Enter/Space fires `onGatedFeatureClick('timeline_scrub')` → `SignInPromptModal` (`featureGate.timeline_scrub`).
+- The step progress bar is seekable for everyone (anonymous trial included): an invisible full-width range input drives seeking, a circular grab handle (`seek-thumb`) marks the fill edge, and `controls.dragToSeek` microcopy sits under the bar. For anonymous users a seek on a fresh run consumes one trial credit via `VisualizerApp` `consumeRunIfNeeded()` (`session_limit` gate once the 12 runs are used).
 
 ## Sound And Export Notes
 

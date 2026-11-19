@@ -40,26 +40,19 @@ describe('ArrayVisualizer complexity gate', () => {
     mode: 'autoplay',
   };
 
-  it('opens complexity_limit gate after anonymous view limit is exceeded', async () => {
+  it('shows the complexity panel to anonymous users without a gate', async () => {
     vi.useFakeTimers();
-    const onGatedFeatureClick = vi.fn();
-
+    // A leftover count from the removed 2-view cap must not gate anything.
     localStorage.setItem('anon_complexity_views', '2');
 
-    renderWithProviders(
-      <ArrayVisualizer
-        {...baseProps}
-        isComplete
-        onGatedFeatureClick={onGatedFeatureClick}
-      />
-    );
+    renderWithProviders(<ArrayVisualizer {...baseProps} isComplete />);
 
     await act(async () => {
       vi.advanceTimersByTime(1000);
     });
 
     expect(screen.getByTestId('complexity-panel')).toBeInTheDocument();
-    expect(onGatedFeatureClick).toHaveBeenCalledWith('complexity_limit');
+    expect(document.querySelector('.bg-black\\/80')).not.toBeInTheDocument();
 
     vi.useRealTimers();
   });

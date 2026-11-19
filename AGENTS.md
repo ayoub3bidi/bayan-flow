@@ -14,9 +14,9 @@
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
 - Version: `0.5.0` in `package.json` — **45 algorithms** across **5 categories** (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph); optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
-- **Tests**: 151 test files (~1,817 tests)
-- **Source**: 223 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
-- **Supabase**: `eu-central-1` region, migrations for `profiles`, `favorite_algorithms`, `algorithm_notes` + RLS; `keep-supabase-alive.yml` prevents free-tier pausing
+- **Tests**: 173 test files (~2,013 tests)
+- **Source**: 252 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
+- **Supabase**: `eu-central-1` region, Postgres 17; 14 migrations — public tables `profiles`, `favorite_algorithms`, `algorithm_notes`, `waitlist`, `keepalive` + abuse tables `banned_ips`, `trusted_ips`, `signup_events`, `signup_pending` (RLS on, no policies = service-role only); 6 edge functions (`before-signup`, `post-signup`, `platform-access`, `delete-account`, `waitlist-welcome`, `sync-contacts`); `keep-supabase-alive.yml` prevents free-tier pausing
 
 ## Routes
 
@@ -30,6 +30,9 @@
 | `/terms` | TermsOfUse (LegalDocument) | Public |
 | `/auth/google/callback` | GoogleAuthCallback | Public (OAuth redirect) |
 | `/settings/profile` | ProfileSettingsPage | `RequireAuth` |
+| `*` | NotFoundPage | Public |
+
+Routes are declared in `src/AppRoutes.jsx`.
 
 ## Source Of Truth (registries)
 
@@ -112,11 +115,11 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 - **Tiered access model** — Anonymous (no account) gets limited access to drive sign-in conversion; Free account (Google sign-in) unlocks the full platform
 - **Anonymous tier (no account):**
   - 18 of 45 algorithms (curated starter set across all 5 categories; see `src/constants/algorithmEntitlements.js`)
-  - 12 visualizations per session (localStorage counter `anon_viz_count`, resets on sign-in)
-  - Autoplay only, default speed (MEDIUM: 3000ms)
-  - Complexity panel: 2 views per completion (localStorage `anon_complexity_views`), then blur overlay + sign-in gate
-  - No manual controls, speed adjustment, or category-specific controls (grid size locked to MEDIUM, sort order locked to ascending, graph scenarios disabled)
-  - No Code Panel, Insight Panel, Video Export, Sound, or Fullscreen
+  - 12 full runs per browser (localStorage counter `anon_viz_count`, cleared on sign-in), then `session_limit` sign-in gate
+  - A run = one generated `steps` array, counted once in `VisualizerApp` `consumeRunIfNeeded()` on the first play, manual step-forward, or timeline seek; pause/resume, step-back, and replay of the same steps are free. Any new way to advance a visualization must go through that helper
+  - During the trial everything interactive works: manual stepping, all speeds, category controls (grid size, sort order, node counts, graph scenarios), timeline scrub, complexity panel
+  - No Code Panel, Insight Panel, Video Export, Sound, Fullscreen, or Favorites
+  - Every sign-in gate fires `upgrade_modal_viewed` with `trigger` = gate name (via `openGatedFeature`)
 - **Free tier (Google sign-in):**
   - All 45 algorithms, unlimited visualizations
   - Manual controls, all 5 speed presets
@@ -151,6 +154,9 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 | `VITE_SUPABASE_URL` | Auth | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Auth | Publishable anon key |
 | `VITE_GOOGLE_WEB_CLIENT_ID` | Auth | Google OAuth client ID |
+| `VITE_TURNSTILE_SITE_KEY` | Auth | Cloudflare Turnstile site key; client sends `captchaToken` (secret lives in Supabase, never `VITE_*`) |
+| `VITE_POSTHOG_API_KEY` | Analytics | PostHog project token |
+| `VITE_POSTHOG_API_HOST` | Analytics | PostHog host (prod uses reverse proxy `https://e.bayanflow.com`) |
 | `VITE_PYODIDE_CDN_BASE` | Optional | Override default jsDelivr CDN for Pyodide |
 | `VITE_DEV_SITE_URL` | CI | Dev site URL for build metadata |
 
@@ -158,9 +164,9 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 
 - `ci.yml` — push/PR to main/develop: quality (lint + format + audit) → test (coverage + Codecov) → build (with `VITE_GIT_BRANCH` + `VITE_DEV_SITE_URL`)
 - `deploy-cloudflare.yml` — triggered by CI completion on main/develop: build + `wrangler deploy` (production/staging envs)
-- `deploy-supabase-functions.yml` — triggered by CI completion on main/develop: deploy `before-signup`, `post-signup`, `platform-access`, `delete-account` edge functions
+- `deploy-supabase-functions.yml` — triggered by CI completion on main/develop: deploy `before-signup`, `post-signup`, `waitlist-welcome` (all `--no-verify-jwt`), `platform-access`, `delete-account`, `sync-contacts`
 - `preview-cloudflare.yml` — PR to develop: lint → test → build → `wrangler versions upload` → comment PR with preview URL + QR code; cleanup on PR close
 - `ensure-pr-source-develop.yml` — blocks PRs to `main` unless head is `develop` or user in `ALLOWED_MERGERS`
 - `release.yml` — GitHub release on `v*` tags
 - `keep-supabase-alive.yml` — weekly ping to prevent free-tier project hibernation
-- `stale.yml`, `labeler.yml`, `semgrep.yml` — repo hygiene + SAST scanning
+- `stale.yml`, `labeler.yml`, `semgrep.yml`, `osv-scanner.yml` — repo hygiene, SAST, and dependency vulnerability scanning

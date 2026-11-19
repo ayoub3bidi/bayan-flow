@@ -59,7 +59,6 @@ function ControlPanel({
   isSoundTogglePending = false,
   onToggleSound,
   isGated = false,
-  onGatedFeatureClick,
   onOpenSettings,
   visualizationsRemaining = null,
 }) {
@@ -80,13 +79,8 @@ function ControlPanel({
   const isExporting = exportState === 'checking' || exportState === 'rendering';
   const progressPct =
     totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0;
-  const isSeekLocked = isGated && totalSteps > 0;
 
   const handleSortOrderClick = () => {
-    if (isGated) {
-      onGatedFeatureClick?.('category_controls');
-      return;
-    }
     onSortOrderChange?.(
       sortOrder === SORT_ORDERS.ASCENDING
         ? SORT_ORDERS.DESCENDING
@@ -114,7 +108,7 @@ function ControlPanel({
           type="button"
           onClick={handleSortOrderClick}
           disabled={isPlaying}
-          className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white ${isGated ? 'opacity-60' : ''}`}
+          className={`${buttonBaseClasses} bg-indigo-500 hover:bg-indigo-600 text-white`}
           title={
             sortOrder === SORT_ORDERS.DESCENDING
               ? t('controls.descending')
@@ -320,21 +314,7 @@ function ControlPanel({
             {totalSteps} {t('info.steps')}
           </span>
         </div>
-        <div
-          className={`relative w-full ${isSeekLocked ? 'cursor-pointer' : ''}`}
-          role={isSeekLocked ? 'button' : undefined}
-          tabIndex={isSeekLocked ? 0 : undefined}
-          aria-label={isSeekLocked ? t('controls.dragToSeekLocked') : undefined}
-          onClick={() => {
-            if (isSeekLocked) onGatedFeatureClick?.('timeline_scrub');
-          }}
-          onKeyDown={e => {
-            if (isSeekLocked && (e.key === 'Enter' || e.key === ' ')) {
-              e.preventDefault();
-              onGatedFeatureClick?.('timeline_scrub');
-            }
-          }}
-        >
+        <div className="relative w-full">
           <div className="relative h-2.5 w-full">
             <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
               <motion.div
@@ -361,7 +341,7 @@ function ControlPanel({
               />
             )}
           </div>
-          {!isGated && onSeek && (
+          {onSeek && (
             <input
               type="range"
               className="absolute inset-x-0 top-0 h-2.5 w-full cursor-pointer appearance-none bg-transparent opacity-0"
@@ -375,14 +355,9 @@ function ControlPanel({
             />
           )}
         </div>
-        {!isGated && onSeek && totalSteps > 0 && (
+        {onSeek && totalSteps > 0 && (
           <p className="mt-1 text-xs text-text-secondary text-center sm:text-start">
             {t('controls.dragToSeek')}
-          </p>
-        )}
-        {isSeekLocked && (
-          <p className="mt-1 text-xs text-text-secondary text-center sm:text-start">
-            {t('controls.dragToSeekLocked')}
           </p>
         )}
       </div>

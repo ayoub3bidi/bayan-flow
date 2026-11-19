@@ -21,11 +21,6 @@ import { useSettingsConfig } from '../config/settingsConfig';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import { getGraphAlgorithmNodeCountRange } from '../registry/graphAlgorithmRegistry.js';
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
-import {
-  canUseManualControls,
-  canChangeSpeed,
-  canUseCategoryControls,
-} from '../services/entitlementService';
 import AlgorithmDropdown from './AlgorithmDropdown';
 import FavoritesDropdown from './FavoritesDropdown';
 import GraphScenarioDropdown from './GraphScenarioDropdown';
@@ -55,7 +50,6 @@ function SettingsPanel({
   onModeChange,
   user,
   onLockedAlgorithmClick,
-  onGatedFeatureClick,
   favorites,
   favoriteSlotLimit,
   onFavoriteSelect,
@@ -79,10 +73,6 @@ function SettingsPanel({
   const algorithmUseCase = t(`algorithmUses.${selectedAlgorithm}`, {
     defaultValue: '',
   });
-
-  const canUseManual = canUseManualControls(user);
-  const canAdjustSpeed = canChangeSpeed(user);
-  const canUseCategorySettings = canUseCategoryControls(user);
 
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
   const graphNodeCountRange =
@@ -176,16 +166,6 @@ function SettingsPanel({
       animate={{ opacity: 1, y: 0 }}
       transition={getChromeTransition(reduceMotion)}
     >
-      {!isAuthenticated &&
-        (!canUseManual || !canAdjustSpeed || !canUseCategorySettings) && (
-          <p
-            className="text-xs text-text-secondary rounded-lg bg-surface-elevated border border-[var(--color-border-strong)] px-3 py-2"
-            role="note"
-          >
-            {t('settings.signInForAdvancedFeatures')}
-          </p>
-        )}
-
       {isAuthenticated && favorites && favoriteSlotLimit != null && (
         <FavoritesDropdown
           favorites={favorites}
@@ -295,10 +275,6 @@ function SettingsPanel({
             setIsDropdownOpen={setIsScenarioDropdownOpen}
             isPlaying={isPlaying}
             dropdownRef={scenarioDropdownRef}
-            areOptionsGated={!canUseCategorySettings}
-            onLockedScenarioClick={() =>
-              onGatedFeatureClick?.('category_controls')
-            }
           />
         </div>
       ) : null}
@@ -323,20 +299,15 @@ function SettingsPanel({
             <span className="hidden sm:inline">{t('modes.autoplay')}</span>
           </button>
           <button
-            onClick={() => {
-              if (!canUseManual) {
-                onGatedFeatureClick?.('manual_controls');
-              } else if (!isPlaying) {
-                onModeChange(VISUALIZATION_MODES.MANUAL);
-              }
-            }}
+            onClick={() =>
+              !isPlaying && onModeChange(VISUALIZATION_MODES.MANUAL)
+            }
             disabled={isPlaying}
-            title={!canUseManual ? t('settings.signInForManual') : ''}
             className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
               mode === VISUALIZATION_MODES.MANUAL
                 ? 'bg-theme-primary-consistent text-white shadow-md'
                 : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
-            } ${isPlaying || !canUseManual ? 'opacity-50' : ''}`}
+            } ${isPlaying ? 'opacity-50' : ''}`}
           >
             <Hand size={16} weight="bold" />
             <span className="hidden sm:inline">{t('modes.manual')}</span>
@@ -344,13 +315,7 @@ function SettingsPanel({
         </div>
       </div>
 
-      <div
-        className={
-          mode === VISUALIZATION_MODES.MANUAL || !canAdjustSpeed
-            ? 'opacity-50'
-            : ''
-        }
-      >
+      <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
         <label className="block text-sm font-semibold text-text-primary mb-2">
           {t('settings.speed')}: {speedOptions[currentSpeedIndex]?.label}
           {mode === VISUALIZATION_MODES.MANUAL && (
@@ -360,34 +325,18 @@ function SettingsPanel({
           )}
         </label>
 
-        <div
-          onClick={() => {
-            if (!canAdjustSpeed && mode === VISUALIZATION_MODES.AUTOPLAY) {
-              onGatedFeatureClick?.('speed_control');
-            }
-          }}
-        >
-          <input
-            type="range"
-            min={0}
-            max={speedOptions.length - 1}
-            step={1}
-            value={currentSpeedIndex}
-            onChange={e => {
-              if (!canAdjustSpeed && mode === VISUALIZATION_MODES.AUTOPLAY) {
-                onGatedFeatureClick?.('speed_control');
-                return;
-              }
-              onSpeedChange(speedOptions[parseInt(e.target.value, 10)].value);
-            }}
-            disabled={isPlaying || mode === VISUALIZATION_MODES.MANUAL}
-            className={`w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 ${
-              !canAdjustSpeed && mode === VISUALIZATION_MODES.AUTOPLAY
-                ? 'opacity-50 cursor-pointer'
-                : 'cursor-pointer'
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
-          />
-        </div>
+        <input
+          type="range"
+          min={0}
+          max={speedOptions.length - 1}
+          step={1}
+          value={currentSpeedIndex}
+          onChange={e =>
+            onSpeedChange(speedOptions[parseInt(e.target.value, 10)].value)
+          }
+          disabled={isPlaying || mode === VISUALIZATION_MODES.MANUAL}
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        />
 
         <div className="flex justify-between text-xs text-text-secondary mt-1">
           <span>{speedOptions[0].label}</span>
@@ -396,38 +345,20 @@ function SettingsPanel({
       </div>
 
       {sizeControl.type === 'slider' && !isPresetGraphScenarioSelected && (
-        <div className={!canUseCategorySettings ? 'opacity-50' : ''}>
+        <div>
           <label className="block text-sm font-semibold text-text-primary mb-2">
             {t(sizeControl.i18nKey)}: {sizeValue}
           </label>
-          <div
-            onClick={() => {
-              if (!canUseCategorySettings) {
-                onGatedFeatureClick?.('category_controls');
-              }
-            }}
-          >
-            <input
-              type="range"
-              min={sizeControl.min}
-              max={sizeControl.max}
-              step={sizeControl.step}
-              value={sizeValue}
-              onChange={e => {
-                if (!canUseCategorySettings) {
-                  onGatedFeatureClick?.('category_controls');
-                  return;
-                }
-                onSizeChange(parseInt(e.target.value, 10));
-              }}
-              disabled={isPlaying}
-              className={`w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 ${
-                !canUseCategorySettings
-                  ? 'opacity-50 cursor-pointer'
-                  : 'cursor-pointer'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
-            />
-          </div>
+          <input
+            type="range"
+            min={sizeControl.min}
+            max={sizeControl.max}
+            step={sizeControl.step}
+            value={sizeValue}
+            onChange={e => onSizeChange(parseInt(e.target.value, 10))}
+            disabled={isPlaying}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          />
           <div className="flex justify-between text-xs text-text-secondary mt-1">
             <span>{sizeControl.min}</span>
             <span>{sizeControl.max}</span>
@@ -442,33 +373,22 @@ function SettingsPanel({
       ) : null}
 
       {sizeControl.type === 'buttons' && (
-        <div className={!canUseCategorySettings ? 'opacity-50' : ''}>
+        <div>
           <label className="block text-sm font-semibold text-text-primary mb-2">
             {t(sizeControl.i18nKey)}
-            {!canUseCategorySettings && (
-              <span className="text-xs text-text-secondary ml-2">
-                ({t('settings.signInForCategoryControls')})
-              </span>
-            )}
           </label>
           <div className="flex gap-2">
             {sizeControl.options.map(optionValue => (
               <button
                 key={optionValue}
                 type="button"
-                onClick={() => {
-                  if (!canUseCategorySettings) {
-                    onGatedFeatureClick?.('category_controls');
-                  } else if (!isPlaying) {
-                    onSizeChange(optionValue);
-                  }
-                }}
+                onClick={() => !isPlaying && onSizeChange(optionValue)}
                 disabled={isPlaying}
                 className={`flex-1 px-3 py-2 min-h-[44px] text-xs font-medium rounded-lg transition-all duration-200 disabled:cursor-not-allowed touch-manipulation ${
                   sizeValue === optionValue
                     ? 'bg-theme-primary-consistent text-white shadow-md'
                     : 'bg-surface-elevated text-text-primary hover:bg-border cursor-pointer'
-                } ${isPlaying || !canUseCategorySettings ? 'opacity-50' : ''}`}
+                } ${isPlaying ? 'opacity-50' : ''}`}
               >
                 {optionValue}×{optionValue}
               </button>

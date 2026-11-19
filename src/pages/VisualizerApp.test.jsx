@@ -69,6 +69,15 @@ const authMock = vi.hoisted(() => ({
   },
 }));
 
+const captureEventMock = vi.hoisted(() => vi.fn());
+
+vi.mock('../services/analytics', () => ({
+  captureEvent: captureEventMock,
+  initPostHog: vi.fn(),
+  identifyUser: vi.fn(),
+  resetUser: vi.fn(),
+}));
+
 const useFavoritesMock = vi.hoisted(() => ({
   useFavorites: vi.fn(() => ({
     favorites: [],
@@ -306,8 +315,8 @@ vi.mock('../components/ControlPanel', () => ({
     onToggleFullScreen,
     visualizationsRemaining,
     onSeek,
-    isGated,
-    onGatedFeatureClick,
+    onPlay,
+    onStepForward,
   }) => (
     <div data-testid="control-panel">
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
@@ -330,14 +339,12 @@ vi.mock('../components/ControlPanel', () => ({
           seek-to-step-2
         </button>
       )}
-      {isGated && totalSteps > 0 && (
-        <button
-          type="button"
-          onClick={() => onGatedFeatureClick('timeline_scrub')}
-        >
-          gated-seek
-        </button>
-      )}
+      <button type="button" onClick={onPlay}>
+        play
+      </button>
+      <button type="button" onClick={onStepForward}>
+        step-forward
+      </button>
       {visualizationsRemaining != null &&
       Number.isFinite(visualizationsRemaining) ? (
         <p role="status">
@@ -877,14 +884,81 @@ describe('VisualizerApp', () => {
       expectGatedFeatureModal('fullscreen');
     });
 
-    it('gates timeline scrubbing when unauthenticated', async () => {
-      authMock.isAuthenticated = false;
+    describe('anonymous trial run accounting', () => {
+      beforeEach(() => {
+        authMock.isAuthenticated = false;
+        authMock.user = null;
+      });
+
+      it('counts pause/resume of the same run once', async () => {
+        await renderApp();
+        fireEvent.click(screen.getByText('pathfinding'));
+
+        fireEvent.click(screen.getByText('play'));
+        fireEvent.click(screen.getByText('play'));
+
+        expect(pathfindingVisualization.play).toHaveBeenCalledTimes(2);
+        expect(window.localStorage.getItem('anon_viz_count')).toBe('1');
+      });
+
+      it('counts manual stepping through a run once', async () => {
+        await renderApp();
+        fireEvent.click(screen.getByText('pathfinding'));
+
+        fireEvent.click(screen.getByText('step-forward'));
+        fireEvent.click(screen.getByText('step-forward'));
+        fireEvent.click(screen.getByText('step-forward'));
+
+        expect(pathfindingVisualization.stepForward).toHaveBeenCalledTimes(3);
+        expect(window.localStorage.getItem('anon_viz_count')).toBe('1');
+      });
+
+      it('lets anonymous users scrub and counts it as the run', async () => {
+        await renderApp();
+        fireEvent.click(screen.getByText('pathfinding'));
+
+        fireEvent.click(screen.getByText('seek-to-step-2'));
+        fireEvent.click(screen.getByText('play'));
+
+        expect(pathfindingVisualization.seekToStep).toHaveBeenCalledWith(2);
+        expect(window.localStorage.getItem('anon_viz_count')).toBe('1');
+        expect(
+          screen.queryByTestId('sign-in-prompt-modal')
+        ).not.toBeInTheDocument();
+      });
+
+      it.each(['play', 'step-forward', 'seek-to-step-2'])(
+        'blocks %s with the session_limit gate once the trial is used up',
+        async control => {
+          window.localStorage.setItem('anon_viz_count', '12');
+          await renderApp();
+          fireEvent.click(screen.getByText('pathfinding'));
+
+          fireEvent.click(screen.getByText(control));
+
+          expectGatedFeatureModal('session_limit');
+          expect(pathfindingVisualization.play).not.toHaveBeenCalled();
+          expect(pathfindingVisualization.stepForward).not.toHaveBeenCalled();
+          expect(pathfindingVisualization.seekToStep).not.toHaveBeenCalled();
+          expect(window.localStorage.getItem('anon_viz_count')).toBe('12');
+          expect(captureEventMock).toHaveBeenCalledWith(
+            'upgrade_modal_viewed',
+            {
+              trigger: 'session_limit',
+            }
+          );
+        }
+      );
+    });
+
+    it('never touches the trial counter for signed-in users', async () => {
       await renderApp();
-
       fireEvent.click(screen.getByText('pathfinding'));
-      fireEvent.click(screen.getByText('gated-seek'));
 
-      expectGatedFeatureModal('timeline_scrub');
+      fireEvent.click(screen.getByText('play'));
+      fireEvent.click(screen.getByText('step-forward'));
+
+      expect(window.localStorage.getItem('anon_viz_count')).toBeNull();
     });
 
     it('does not gate features when authenticated', async () => {

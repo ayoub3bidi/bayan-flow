@@ -5,15 +5,10 @@
  */
 
 import { motion } from 'framer-motion';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ComplexityPanel from './ComplexityPanel';
 import { getGraphMatrixLayout } from '../utils/graphMatrixLayout.js';
-import { useAuth } from '../hooks/useAuth';
-import {
-  canViewComplexityPanel,
-  incrementComplexityViewCount,
-} from '../services/entitlementService';
 
 const INTERACTIVE_MATRIX_VIEWPORT = Object.freeze({
   width: 960,
@@ -52,13 +47,9 @@ function GraphAlgorithmMatrixVisualizer({
   isComplete,
   algorithm,
   complexityDataset = 'graphAlgorithm',
-  onGatedFeatureClick,
 }) {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const [showComplexityPanel, setShowComplexityPanel] = useState(false);
-  const [isComplexityGated, setIsComplexityGated] = useState(false);
-  const hasCountedThisCompletion = useRef(false);
 
   useEffect(() => {
     if (isComplete) {
@@ -68,29 +59,8 @@ function GraphAlgorithmMatrixVisualizer({
       return () => clearTimeout(timer);
     } else {
       setShowComplexityPanel(false);
-      setIsComplexityGated(false);
-      hasCountedThisCompletion.current = false;
     }
   }, [isComplete]);
-
-  useEffect(() => {
-    if (user) {
-      setIsComplexityGated(false);
-    }
-  }, [user]);
-
-  // Increment complexity view count once per completion for anonymous users
-  useEffect(() => {
-    if (isComplete && !hasCountedThisCompletion.current && !user) {
-      if (canViewComplexityPanel(user)) {
-        incrementComplexityViewCount();
-      } else {
-        setIsComplexityGated(true);
-        onGatedFeatureClick?.('complexity_limit');
-      }
-      hasCountedThisCompletion.current = true;
-    }
-  }, [isComplete, user, onGatedFeatureClick]);
 
   if (showComplexityPanel) {
     return (
@@ -99,31 +69,6 @@ function GraphAlgorithmMatrixVisualizer({
           algorithm={algorithm}
           complexityDataset={complexityDataset}
         />
-        {isComplexityGated && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-black/80"
-            role="button"
-            tabIndex={0}
-            onClick={() => onGatedFeatureClick?.('complexity_limit')}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onGatedFeatureClick?.('complexity_limit');
-              }
-            }}
-          >
-            <div className="text-center text-white p-6 max-w-xs">
-              <p className="text-lg font-semibold mb-2">
-                {t('featureGate.complexity_limit')}
-              </p>
-              <p className="text-sm opacity-80">
-                {t('featureGate.complexity_limit_description')}
-              </p>
-            </div>
-          </motion.div>
-        )}
       </div>
     );
   }
