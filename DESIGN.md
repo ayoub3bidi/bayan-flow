@@ -142,7 +142,7 @@ A cool slate-and-blue product palette with saturated accents reserved for algori
 
 **Display Font (landing / marketing headings):** Source Serif 4 Variable — academic lab character on `.landing-h1` / `.landing-h2` only (LTR).
 **Arabic Display Font:** Noto Naskh Arabic Variable on `[dir='rtl'] .landing-h1` / `.landing-h2` — same academic role for Arabic (Source Serif has no Arabic glyphs). Self-hosted via Fontsource; never Google Fonts CDN.
-**Body Font:** Inter Variable (system-ui fallback) — product UI, body copy, controls. RTL body still uses the system Arabic stack in `index.css`.
+**Body Font:** Inter Variable (system-ui fallback) — product UI, body copy, controls. RTL body uses **IBM Plex Sans Arabic** (`@fontsource/ibm-plex-sans-arabic`, Arabic subset only, weights 400–700) for Arabic glyphs with Latin falling through to Inter; RTL line-height 1.7 and no letter-spacing (keeps cursive joining). Video export uses the same stack for Arabic.
 
 **Character:** Clean, legible, technical-but-warm. Optimized for step descriptions and control labels at a glance. Marketing display adds a restrained serif (or Naskh in Arabic) for Clarity Lab presence without replacing Inter in the app.
 

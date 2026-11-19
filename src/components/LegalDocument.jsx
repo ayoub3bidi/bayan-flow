@@ -5,6 +5,7 @@
  */
 
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
 import Header from './Header';
@@ -16,6 +17,9 @@ import Header from './Header';
  * @param {Array<{ id: string, title: string, paragraphs: string[], list?: string[] }>} props.sections
  */
 function LegalDocument({ title, lastUpdated, sections }) {
+  const { t } = useTranslation();
+  const englishOnlyNote = t('legal.englishOnlyNote');
+
   useEffect(() => {
     if (!window.location.hash) {
       window.scrollTo(0, 0);
@@ -36,10 +40,16 @@ function LegalDocument({ title, lastUpdated, sections }) {
           {title}
         </h1>
         <p className="text-sm text-text-secondary mb-10">
-          Last updated: {lastUpdated}
+          {t('legal.lastUpdated', { date: lastUpdated })}
         </p>
+        {englishOnlyNote ? (
+          <p className="text-sm text-text-secondary mb-10 rounded-lg border border-[var(--color-border)] px-4 py-3">
+            {englishOnlyNote}
+          </p>
+        ) : null}
 
-        <div className="space-y-10">
+        {/* Legal text is English-only; keep it LTR even when the UI is RTL. */}
+        <div className="space-y-10" dir="ltr" lang="en">
           {sections.map(section => (
             <section key={section.id} id={section.id} className="scroll-mt-24">
               <h2 className="text-xl font-semibold text-text-primary mb-3">

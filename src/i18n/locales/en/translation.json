@@ -406,7 +406,10 @@
     "visualizationsRemaining": "{{count}} visualizations remaining"
   },
   "videoExport": {
-    "noSteps": "No steps to display"
+    "noSteps": "No steps to display",
+    "complexityUnavailable": "Complexity data not available",
+    "performance": "Performance",
+    "operations": "Operations"
   },
   "shareExport": {
     "title": "Share your visualization",
@@ -1043,8 +1046,6 @@
   "footer": {
     "description": "An interactive, educational web application for visualizing algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
-    "madeWith": "Made with",
-    "by": "by",
     "license": "Licensed under Elastic License 2.0",
     "viewDocs": "View Documentation",
     "reportIssue": "Report Issue",
@@ -1079,7 +1080,9 @@
     "privacyTitle": "Privacy Policy",
     "termsTitle": "Terms of Use",
     "privacyDescription": "How Bayan Flow handles analytics, local preferences, and third-party services.",
-    "termsDescription": "Terms of Use for the Bayan Flow educational web application."
+    "termsDescription": "Terms of Use for the Bayan Flow educational web application.",
+    "lastUpdated": "Last updated: {{date}}",
+    "englishOnlyNote": ""
   },
   "legend": {
     "show": "Show legend",
@@ -1559,7 +1562,8 @@
     "timeline": {
       "sampleNote": "Timeline items are samples. Replace with actual roadmap content.",
       "readArticle": "Read Article"
-    }
+    },
+    "journeyContinues": "The journey continues..."
   },
   "featureGate": {
     "title": "Unlock {{feature}}",
@@ -1671,5 +1675,15 @@
     "timSort": "The sort behind Python and Java. Mention it to show you know what powers real codebases.",
     "topologicalSort": "Course scheduling and dependency problems are common interview questions.",
     "zigzagLevelOrderTraversal": "The spiral variant is a LeetCode favorite that tests BFS with direction control."
+  },
+  "a11y": {
+    "loadingPage": "Loading page",
+    "mainNavigation": "Main navigation",
+    "goToLanding": "Navigate to landing page",
+    "pathfindingGrid": "Pathfinding grid visualization",
+    "skipToContent": "Skip to main content",
+    "algorithmVisualization": "Algorithm visualization",
+    "namedVisualization": "{{name}} algorithm visualization",
+    "algorithmSettings": "Algorithm settings"
   }
 }

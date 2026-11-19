@@ -379,10 +379,18 @@ body {
   }
 }
 
+/* Arabic UI: IBM Plex Sans Arabic (Arabic subset only, self-hosted) for Arabic
+   glyphs; Latin falls through to Inter so brand text stays consistent. */
 [dir='rtl'] body {
   font-family:
-    'Segoe UI', 'Tahoma', 'Arial', sans-serif, 'Noto Sans Arabic',
-    'Arabic UI Text';
+    'IBM Plex Sans Arabic', 'Inter Variable', 'Inter', 'Segoe UI', Tahoma,
+    sans-serif;
+  line-height: 1.7;
+}
+
+/* Letter-spacing breaks Arabic cursive joining. */
+[dir='rtl'] [class*='tracking-'] {
+  letter-spacing: 0;
 }
 
 .scrollbar-thin {

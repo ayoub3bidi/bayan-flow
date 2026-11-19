@@ -232,7 +232,7 @@ function GridVisualizer({
                       gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
                     }}
                     role="grid"
-                    aria-label="Pathfinding grid visualization"
+                    aria-label={t('a11y.pathfindingGrid')}
                   >
                     {states.map((row, rowIndex) =>
                       row.map((state, colIndex) => (

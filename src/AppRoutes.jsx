@@ -7,6 +7,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { SpinnerGap } from '@phosphor-icons/react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from './hooks/useAuth.js';
 import { AUTH_CALLBACK_PATH } from './services/authService.js';
 import BannedScreen from './components/BannedScreen.jsx';
@@ -25,11 +26,13 @@ const ProComingSoonPage = lazy(() => import('./pages/ProComingSoonPage.jsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
 
 function RouteFallback() {
+  const { t } = useTranslation();
+
   return (
     <div
       className="flex min-h-40 items-center justify-center"
       role="status"
-      aria-label="Loading page"
+      aria-label={t('a11y.loadingPage')}
     >
       <SpinnerGap className="size-6 animate-spin text-text-secondary" />
     </div>

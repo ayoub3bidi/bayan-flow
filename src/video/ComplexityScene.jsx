@@ -13,6 +13,7 @@ import {
   DEFAULT_COMPLEXITY_DATASET,
 } from '../registry/complexityDatasetRegistry.js';
 import { getVideoExportTheme } from './videoExportTheme.js';
+import i18n from '../i18n/index.js';
 
 /**
  * Remotion-compatible complexity analysis display.
@@ -24,14 +25,19 @@ import { getVideoExportTheme } from './videoExportTheme.js';
  * @param {string} props.complexityDataset - Key into COMPLEXITY_DATASETS (see CATEGORY_CONFIG.complexityDataset)
  * @param {string} props.algorithmName - Display name of the algorithm
  * @param {'light'|'dark'} [props.exportTheme] - Matches app theme for export
+ * @param {'en'|'fr'|'ar'} [props.lng] - Export language for labels
  */
 function ComplexityScene({
   algorithmKey,
   complexityDataset,
   algorithmName,
   exportTheme = 'dark',
+  lng = 'en',
 }) {
   const frame = useCurrentFrame();
+  const tr = key => i18n.t(key, { lng });
+  const dir = i18n.dir(lng);
+  const labelSpacing = dir === 'rtl' ? 0 : 1;
   const c = getVideoExportTheme(exportTheme).complexity;
   const map =
     COMPLEXITY_DATASETS[complexityDataset] ??
@@ -42,6 +48,7 @@ function ComplexityScene({
     return (
       <AbsoluteFill
         style={{
+          direction: dir,
           backgroundColor: c.pageBg,
           alignItems: 'center',
           justifyContent: 'center',
@@ -49,7 +56,7 @@ function ComplexityScene({
           fontSize: 18,
         }}
       >
-        Complexity data not available
+        {tr('videoExport.complexityUnavailable')}
       </AbsoluteFill>
     );
   }
@@ -91,6 +98,7 @@ function ComplexityScene({
   return (
     <AbsoluteFill
       style={{
+        direction: dir,
         backgroundColor: c.pageBg,
         flexDirection: 'column',
         alignItems: 'center',
@@ -113,7 +121,7 @@ function ComplexityScene({
             margin: 0,
           }}
         >
-          Complexity Analysis
+          {tr('complexity_panel.title')}
         </h2>
         <p
           style={{
@@ -151,16 +159,16 @@ function ComplexityScene({
                 fontSize: 12,
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                letterSpacing: 1,
+                letterSpacing: labelSpacing,
                 margin: '0 0 8px 0',
               }}
             >
-              Time Complexity
+              {tr('complexity_panel.timeComplexity')}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ color: c.labelMuted, fontSize: 14, width: 48 }}>
-                  Best:
+                  {tr('complexity_panel.best')}:
                 </span>
                 <code
                   style={{
@@ -178,7 +186,7 @@ function ComplexityScene({
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ color: c.labelMuted, fontSize: 14, width: 48 }}>
-                  Avg:
+                  {tr('complexity_panel.average')}:
                 </span>
                 <code
                   style={{
@@ -196,7 +204,7 @@ function ComplexityScene({
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ color: c.labelMuted, fontSize: 14, width: 48 }}>
-                  Worst:
+                  {tr('complexity_panel.worst')}:
                 </span>
                 <code
                   style={{
@@ -221,11 +229,11 @@ function ComplexityScene({
                 fontSize: 12,
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                letterSpacing: 1,
+                letterSpacing: labelSpacing,
                 margin: '0 0 8px 0',
               }}
             >
-              Space Complexity
+              {tr('complexity_panel.spaceComplexity')}
             </h3>
             <code
               style={{
@@ -256,11 +264,11 @@ function ComplexityScene({
               fontSize: 12,
               fontWeight: 600,
               textTransform: 'uppercase',
-              letterSpacing: 1,
+              letterSpacing: labelSpacing,
               margin: '0 0 8px 0',
             }}
           >
-            Performance
+            {tr('videoExport.performance')}
           </h3>
           <svg
             width={width}
@@ -308,7 +316,7 @@ function ComplexityScene({
                 fill={c.axisText}
                 fontSize={12}
               >
-                Input size (n)
+                {tr('complexity_panel.inputSize')}
               </text>
               <text
                 x={-chartHeight / 2}
@@ -318,7 +326,7 @@ function ComplexityScene({
                 fill={c.axisText}
                 fontSize={12}
               >
-                Operations
+                {tr('videoExport.operations')}
               </text>
             </g>
           </svg>

@@ -286,7 +286,8 @@
       "primAlgorithm": "Démarrage de l'algorithme d'arbre couvrant minimal de Prim",
       "tarjanAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Tarjan",
       "kosarajuAlgorithm": "Démarrage de l'algorithme des composantes fortement connexes de Kosaraju",
-      "floydWarshallAlgorithm": "Démarrage du plus court chemin tous couples de Floyd-Warshall"
+      "floydWarshallAlgorithm": "Démarrage du plus court chemin tous couples de Floyd-Warshall",
+      "idaStar": "Recherche IDA*"
     }
   },
   "complexity": {
@@ -405,7 +406,10 @@
     "visualizationsRemaining": "{{count}} visualisations restantes"
   },
   "videoExport": {
-    "noSteps": "Aucune étape à afficher"
+    "noSteps": "Aucune étape à afficher",
+    "complexityUnavailable": "Données de complexité indisponibles",
+    "performance": "Performance",
+    "operations": "Opérations"
   },
   "shareExport": {
     "title": "Partagez votre visualisation",
@@ -1042,8 +1046,6 @@
   "footer": {
     "description": "Une application web interactive et éducative pour visualiser les algorithmes avec clarté.",
     "descriptionNote": "Bayan (بيان) signifie clarté en arabe.",
-    "madeWith": "Fait avec",
-    "by": "par",
     "license": "Sous licence Elastic License 2.0",
     "viewDocs": "Voir la Documentation",
     "reportIssue": "Signaler un Problème",
@@ -1078,7 +1080,9 @@
     "privacyTitle": "Politique de confidentialité",
     "termsTitle": "Conditions d'utilisation",
     "privacyDescription": "Comment Bayan Flow traite les analyses, les préférences locales et les services tiers.",
-    "termsDescription": "Conditions d'utilisation de l'application web éducative Bayan Flow."
+    "termsDescription": "Conditions d'utilisation de l'application web éducative Bayan Flow.",
+    "lastUpdated": "Dernière mise à jour : {{date}}",
+    "englishOnlyNote": "Ce document est disponible uniquement en anglais ; la version anglaise fait foi."
   },
   "legend": {
     "title": "Légende",
@@ -1559,6 +1563,79 @@
     "timeline": {
       "sampleNote": "Les éléments de la chronologie sont des exemples. Remplacer par le contenu réel de la feuille de route.",
       "readArticle": "Lire l'article"
+    },
+    "journeyContinues": "L’aventure continue...",
+    "checkpoints": {
+      "1": {
+        "date": "Novembre 2025",
+        "title": "Version initiale (0.1.0)",
+        "highlights": [
+          "Algorithmes de tri de base : à bulles, rapide, fusion",
+          "Algorithmes de recherche de chemin : BFS, Dijkstra, A*",
+          "Modes pas à pas manuel et lecture automatique"
+        ]
+      },
+      "2": {
+        "date": "Décembre 2025",
+        "title": "UX, accessibilité et localisation (0.2.0)",
+        "highlights": [
+          "Mode plein écran",
+          "Localisation : English / Français / العربية (RTL)",
+          "Signaux sonores expérimentaux",
+          "Nouvelle page d’accueil présentant le produit et ses fonctionnalités",
+          "Mise en page responsive et améliorations de l’accessibilité"
+        ]
+      },
+      "3": {
+        "date": "Mars 2026",
+        "title": "Extension de la bibliothèque d’algorithmes (0.3.0)",
+        "highlights": [
+          "Bibliothèque passée de 6 à 23 algorithmes : 14 de tri et 9 de recherche de chemin",
+          "Menu d’algorithmes par catégories pour une découverte facilitée"
+        ]
+      },
+      "4": {
+        "date": "Avril 2026",
+        "title": "Recherche et outils pédagogiques (0.4.0)",
+        "highlights": [
+          "Nouvelle catégorie Recherche avec 9 algorithmes sur tableaux triés et graphes",
+          "Panneau d’informations avec l’histoire de l’algorithme et des faits sur sa complexité",
+          "Panneau Python interactif avec des cas de test façon LeetCode",
+          "Export vidéo dans le navigateur (horizontal et vertical) propulsé par Remotion"
+        ]
+      },
+      "5": {
+        "date": "Septembre 2026",
+        "title": "Parcours d’arbres et algorithmes de graphes (0.5.0)",
+        "highlights": [
+          "Deux nouvelles catégories : Parcours d’arbres (6) et Algorithmes de graphes (7), portant la bibliothèque à 45 algorithmes, avec des scénarios de graphes prédéfinis et des vues nœuds-liens ou matrice",
+          "Connexion Google avec un modèle d’accès par paliers (explorez 18 algorithmes sans compte ou connectez-vous pour débloquer les 45)",
+          "Paramètres de profil avec favoris et notes d’étude enregistrées automatiquement pour chaque algorithme",
+          "Onglet pseudocode avec coloration syntaxique et choix de l’ordre de tri croissant/décroissant",
+          "Liste d’attente du plan Pro, politique de confidentialité, conditions d’utilisation et consentement aux cookies conforme au RGPD"
+        ]
+      },
+      "6": {
+        "date": "T4 2026",
+        "title": "Programmation dynamique et algorithmes sur les chaînes (0.6.0)",
+        "highlights": [
+          "Programmation dynamique : Fibonacci (mémoïsation vs tabulation), sac à dos 0/1, LCS, LIS, distance d’édition et rendu de monnaie",
+          "Moteur de rendu de tableaux/matrices réutilisable pour les visualisations de programmation dynamique"
+        ]
+      },
+      "7": {
+        "date": "T1 2027",
+        "title": "Plan Pro (0.7.0)",
+        "highlights": [
+          "Entrées personnalisées : utilisez vos propres tableaux, graphes, arbres et grilles dans des visualisations guidées",
+          "Mode comparaison côte à côte : exécutez deux algorithmes sur le même scénario et inspectez chaque décision",
+          "Export vidéo illimité avec contrôle du filigrane (ou personnalisez-le à votre image)",
+          "Mode présentation avec une vue pédagogique épurée et des états visuels agrandis",
+          "Générateur de quiz et d’examens personnalisés, exportable en PDF",
+          "Notes d’étude enrichies avec extraits de code exécutables et recherche entre algorithmes",
+          "Widget intégrable pour ajouter un visualiseur interactif à votre site de cours, vos diapositives ou votre blog"
+        ]
+      }
     }
   },
   "featureGate": {
@@ -1671,5 +1748,15 @@
     "timSort": "Le tri derrière Python et Java. Mentionnez-le pour montrer que vous savez ce qui alimente de vraies bases de code.",
     "topologicalSort": "Les problèmes de planification de cours et de dépendances sont des questions d'entretien courantes.",
     "zigzagLevelOrderTraversal": "La variante en spirale est un favori de LeetCode qui teste le BFS avec gestion de direction."
+  },
+  "a11y": {
+    "loadingPage": "Chargement de la page",
+    "mainNavigation": "Navigation principale",
+    "goToLanding": "Aller à la page d’accueil",
+    "pathfindingGrid": "Visualisation de la grille de recherche de chemin",
+    "skipToContent": "Aller au contenu principal",
+    "algorithmVisualization": "Visualisation de l’algorithme",
+    "namedVisualization": "Visualisation de l’algorithme {{name}}",
+    "algorithmSettings": "Paramètres de l’algorithme"
   }
 }

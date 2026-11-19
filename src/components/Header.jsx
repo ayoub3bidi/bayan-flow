@@ -43,14 +43,14 @@ function Header({ hideLanguageSwitcher = false }) {
         <nav
           className="flex items-center justify-between h-12 sm:h-14 gap-1 sm:gap-2 md:gap-4"
           role="navigation"
-          aria-label="Main navigation"
+          aria-label={t('a11y.mainNavigation')}
         >
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
             <div
               className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 cursor-pointer"
               onClick={handleLogoClick}
               role="button"
-              aria-label="Navigate to landing page"
+              aria-label={t('a11y.goToLanding')}
               tabIndex={0}
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {

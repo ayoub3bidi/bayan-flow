@@ -11,6 +11,7 @@ import {
   TREE_NODE_STATE_COLORS,
 } from '../constants/index.js';
 import { getVideoExportTheme } from './videoExportTheme.js';
+import i18n from '../i18n/index.js';
 
 const VIEW_PAD = 8;
 const VIEW_INNER = 100 - 2 * VIEW_PAD;
@@ -22,11 +23,13 @@ const VIEW_INNER = 100 - 2 * VIEW_PAD;
  * @param {Array<{ nodes: Array, edges: Array, nodeStates: Record<string,string>, queueOrder?: string[], levelScanDirection?: 'ltr'|'rtl' }>} props.steps
  * @param {number} props.framesPerStep
  * @param {'light'|'dark'} [props.exportTheme]
+ * @param {'en'|'fr'|'ar'} [props.lng] - Export language for captions
  */
 function TreeTraversalSceneInner({
   steps,
   framesPerStep,
   exportTheme = 'dark',
+  lng = 'en',
 }) {
   const frame = useCurrentFrame();
   const {
@@ -77,9 +80,9 @@ function TreeTraversalSceneInner({
   const queueLabels = queueOrder.map(id => labelById[id] ?? id);
   const levelScanCaption =
     levelScanDirection === 'ltr'
-      ? 'This level: left to right'
+      ? i18n.t('visualization.levelScanLtr', { lng })
       : levelScanDirection === 'rtl'
-        ? 'This level: right to left'
+        ? i18n.t('visualization.levelScanRtl', { lng })
         : null;
 
   return (
@@ -133,7 +136,10 @@ function TreeTraversalSceneInner({
             background: captionBg,
             border: `1px solid ${captionBorder}`,
             color: descText,
-            fontFamily: 'system-ui, sans-serif',
+            // RTL inherits the Arabic export font from AlgorithmVideo.
+            fontFamily:
+              i18n.dir(lng) === 'rtl' ? 'inherit' : 'system-ui, sans-serif',
+            direction: i18n.dir(lng),
             fontSize: 18,
             fontWeight: 600,
             opacity: 0.95,

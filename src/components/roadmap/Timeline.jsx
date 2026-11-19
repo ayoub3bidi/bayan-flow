@@ -6,6 +6,7 @@
 
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import Container from '../ui/Container';
 import TimelineItem from './TimelineItem';
 import { roadmapData } from '../../data/roadmapData';
@@ -15,6 +16,13 @@ function Timeline() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: false, margin: '-10%' });
+  const { t, i18n } = useTranslation();
+
+  // English lives in roadmapData; fr/ar override date/title/highlights by id.
+  const localizedCheckpoint = id => {
+    const key = `roadmap.checkpoints.${id}`;
+    return i18n.exists(key) ? t(key, { returnObjects: true }) : {};
+  };
 
   const dotPulse = {
     animate:
@@ -79,6 +87,7 @@ function Timeline() {
             <TimelineItem
               key={item.id}
               {...item}
+              {...localizedCheckpoint(item.id)}
               position={index % 2 === 0 ? 'left' : 'right'}
               index={index}
             />
@@ -106,7 +115,7 @@ function Timeline() {
             {...marketingEnter(reduceMotion, 0.8)}
             viewport={{ once: true }}
           >
-            The journey continues...
+            {t('roadmap.journeyContinues')}
           </motion.p>
         </motion.div>
       </Container>

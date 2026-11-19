@@ -72,7 +72,7 @@
 - Mobile: horizontal swipe for manual step forward/back (`useSwipe`), one-time swipe tutorial (`SwipeTutorial`)
 - Full-screen visualization mode (`useFullScreen`) reuses the same control panel and visualizer registry
 - Light/dark theme with system preference fallback (`ThemeContext`, `ThemeToggle`, `useTheme`)
-- i18n: English, French, Arabic with RTL (`rtlManager`, `LanguageSwitcher`)
+- i18n: English, French, Arabic with RTL (`rtlManager`, `LanguageSwitcher`); Arabic UI font IBM Plex Sans Arabic (`@fontsource/ibm-plex-sans-arabic`, Arabic subsets imported in `src/main.jsx`)
 - Optional visualization sound (Tone.js); persisted in `localStorage` under `bayan-flow:sound-enabled`
 - Code panel (lazy): Python + pseudocode tabs in one panel (`PythonCodePanel`), Monaco editor, Pyodide worker execution, editable custom test cases, predefined tests (`TestCasesPanel`, `OutputConsole`)
 - Algorithm insight panel with history, intuition, facts, optional YouTube embed (`AlgorithmInsightPanel`, `InsightFloatingActionButton`)

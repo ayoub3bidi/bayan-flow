@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { useTranslation } from 'react-i18next';
 import LegalDocument from '../components/LegalDocument';
 import {
   TERMS_OF_USE_LAST_UPDATED,
@@ -11,9 +12,11 @@ import {
 } from '../content/legal/terms.en';
 
 function TermsOfUse() {
+  const { t } = useTranslation();
+
   return (
     <LegalDocument
-      title="Terms of Use"
+      title={t('legal.termsTitle')}
       lastUpdated={TERMS_OF_USE_LAST_UPDATED}
       sections={TERMS_OF_USE_SECTIONS}
     />

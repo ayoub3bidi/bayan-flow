@@ -24,6 +24,9 @@ import { getVideoExportTheme } from './videoExportTheme.js';
 import i18n from '../i18n/index.js';
 import { normalizeExportLanguage } from './exportLanguage.js';
 
+const RTL_FONT_STACK =
+  "'IBM Plex Sans Arabic', 'Inter Variable', 'Inter', 'Segoe UI', Tahoma, sans-serif";
+
 /**
  * Root Remotion composition: title bar, step counter + description, then full-frame visualization.
  * Shows complexity analysis for the last 5 seconds.
@@ -73,6 +76,7 @@ function AlgorithmVideo({
         complexityDataset={complexityDataset}
         algorithmName={algorithmName}
         exportTheme={exportTheme}
+        lng={lng}
       />
     );
   } else if (!steps.length) {
@@ -231,6 +235,7 @@ function AlgorithmVideo({
                 gridSize,
                 exportTheme,
                 algorithmKey,
+                lng,
               })
             : null}
         </div>
@@ -239,7 +244,13 @@ function AlgorithmVideo({
   }
 
   return (
-    <AbsoluteFill style={{ position: 'relative' }}>
+    <AbsoluteFill
+      style={{
+        position: 'relative',
+        // Same Arabic UI font as the app (loaded by main.jsx) so RTL exports match.
+        ...(textDir === 'rtl' && { fontFamily: RTL_FONT_STACK }),
+      }}
+    >
       {body}
       <VideoWatermarkOverlay
         enabled={watermark.enabled}

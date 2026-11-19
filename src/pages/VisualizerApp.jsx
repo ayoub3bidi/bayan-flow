@@ -799,7 +799,7 @@ function App() {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg"
       >
-        Skip to main content
+        {t('a11y.skipToContent')}
       </a>
       <ProWaitlistBanner source="app" />
 
@@ -848,12 +848,14 @@ function App() {
                   <section
                     className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden"
                     role="region"
-                    aria-label="Algorithm visualization"
+                    aria-label={t('a11y.algorithmVisualization')}
                   >
                     <div
                       className="flex-1 min-h-0 overflow-hidden"
                       role="img"
-                      aria-label={`${activeAlgorithmKey} algorithm visualization`}
+                      aria-label={t('a11y.namedVisualization', {
+                        name: activeAlgorithmKey,
+                      })}
                     >
                       <VisualizerComponent
                         {...sharedVisualizerProps}
@@ -868,7 +870,7 @@ function App() {
                       <aside
                         className="lg:col-span-1"
                         role="complementary"
-                        aria-label="Algorithm settings"
+                        aria-label={t('a11y.algorithmSettings')}
                       >
                         <SettingsPanel {...settingsPanelProps} />
                       </aside>
@@ -876,12 +878,14 @@ function App() {
                       <section
                         className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-85px)]"
                         role="region"
-                        aria-label="Algorithm visualization"
+                        aria-label={t('a11y.algorithmVisualization')}
                       >
                         <div
                           className="flex-1 min-h-0"
                           role="img"
-                          aria-label={`${activeAlgorithmKey} algorithm visualization`}
+                          aria-label={t('a11y.namedVisualization', {
+                            name: activeAlgorithmKey,
+                          })}
                         >
                           <VisualizerComponent
                             {...sharedVisualizerProps}
