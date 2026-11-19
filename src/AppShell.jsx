@@ -12,10 +12,10 @@ import DocumentTitle from './components/DocumentTitle.jsx';
 import CookieConsentBanner from './components/CookieConsentBanner.jsx';
 
 export default function AppShell() {
-  const { isAnalyticsAllowed } = useConsent();
+  const { consent } = useConsent();
 
   return (
-    <PostHogProvider analytics={isAnalyticsAllowed}>
+    <PostHogProvider consent={consent?.analytics ?? null}>
       <BrowserRouter>
         <DocumentTitle />
         <AppRoutes />
