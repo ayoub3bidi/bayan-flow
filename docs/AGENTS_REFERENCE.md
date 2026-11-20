@@ -21,7 +21,7 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **180** test files (~**2,103** tests, per `pnpm vitest run`)
+- Test surface: **180** test files (~**2,113** tests, per `pnpm vitest run`)
 - Source surface: **252** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
@@ -249,9 +249,9 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 
 - `src/video/useVideoExporter.js`, `src/video/AlgorithmVideo.jsx`
 - Scenes: `SortingScene`, `PathfindingScene`, `SearchingVideoScene`, `GraphSearchingScene`, `TreeTraversalScene`, `GraphAlgorithmVideoScene`, `GraphAlgorithmScene`, `GraphAlgorithmMatrixScene`, `ComplexityScene`
-- `src/video/ExportAudioTracks.jsx`, `src/video/VideoWatermarkOverlay.jsx`
+- `src/video/VideoWatermarkOverlay.jsx`
 - `src/video/exportLanguage.js`, `src/video/videoExportTheme.js`, `src/video/constants.js`
-- `src/video/audio/buildExportSoundCues.js`, `src/video/audio/exportAudioAssets.js`
+- `src/video/audio/buildExportSoundCues.js`, `src/video/audio/exportAudioAssets.js`, `src/video/audio/mixExportAudio.js`
 - Static export SFX: `public/video-export/sfx/` — 18 pre-rendered WAV files (regenerated via `pnpm run generate:export-sfx`)
 
 ### Python and pseudocode
@@ -437,7 +437,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Pre-rendered export WAV assets live under `public/video-export/sfx/`; regenerate with `pnpm run generate:export-sfx` after changing instrument presets or event kinds.
 - Graph algorithm and Floyd-Warshall matrix sound parity must cover both interactive visualization and Remotion export.
 - Export uses `@remotion/web-renderer`, supports horizontal and vertical orientations, and renders MP4/H.264 when the browser supports it.
-- Export audio playback in Remotion uses `@remotion/media` (`ExportAudioTracks.jsx`).
+- Export audio is pre-mixed into one WAV before rendering (`buildExportAudioUrl()` in `src/video/audio/mixExportAudio.js`) and played by a single `@remotion/media` `<Audio>` in `AlgorithmVideo`.
 - `AlgorithmVideo` adds title, step counter, localized description, watermark, optional export audio, and final complexity scene.
 - `buildExportSoundCues()` should schedule cues from `getSoundEventsForStep()` and must not special-case translated copy.
 - Export descriptions use `resolveStepDescription()` and normalized export language (`exportLanguage.js`). Keep description keys localizable.
@@ -496,6 +496,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Export pacing comes from `getExportTiming()` in `src/video/constants.js`: 1.5 s per step when the video fits in 10 minutes, faster down to 0.2 s per step, and blocked in the format dialog above that. Scenes must derive all timing from the `framesPerStep` prop.
 - Export scenes may render any Unicode inside `<svg>` (Remotion `>= 4.0.458`, asserted by `src/video/remotionSvgEncoding.test.js`). Keep `remotion`, `@remotion/media` and `@remotion/web-renderer` on the same exact version.
 - Export audio is always mixed in; it does not follow the playback Sound toggle.
+- Never mount one media element per step or cue in an export composition. `@remotion/media` keeps an iterator per element in a cache sized to half of system RAM, so ~2,000 per-step `<Audio>` elements crashed near-limit exports. Add new sounds as cues to the pre-mixed track instead.
 
 ## Adding A New Graph Algorithm
 

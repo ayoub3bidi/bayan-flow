@@ -5,12 +5,10 @@
  */
 
 import { useCurrentFrame, useVideoConfig, AbsoluteFill } from 'remotion';
+import { Audio } from '@remotion/media';
 import { ALGORITHM_TYPES } from '../constants/index.js';
 import ComplexityScene from './ComplexityScene.jsx';
-import {
-  DEFAULT_VIDEO_WATERMARK,
-  DEFAULT_EXPORT_AUDIO_VOLUME,
-} from './constants.js';
+import { DEFAULT_VIDEO_WATERMARK } from './constants.js';
 import {
   VIDEO_SCENE_RENDERERS,
   VIDEO_TITLE_FALLBACK,
@@ -18,7 +16,6 @@ import {
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
 import { DEFAULT_COMPLEXITY_DATASET } from '../registry/complexityDatasetRegistry.js';
 import VideoWatermarkOverlay from './VideoWatermarkOverlay.jsx';
-import ExportAudioTracks from './ExportAudioTracks.jsx';
 import { resolveStepDescription } from '../utils/resolveStepDescription.js';
 import { getVideoExportTheme } from './videoExportTheme.js';
 import i18n from '../i18n/index.js';
@@ -31,7 +28,7 @@ const RTL_FONT_STACK =
  * Root Remotion composition: title bar, step counter + description, then full-frame visualization.
  * Shows complexity analysis for the last 5 seconds.
  * Receives inputProps: steps, algorithmType, algorithmName, algorithmKey, framesPerStep, gridSize,
- * watermark (partial), includeExportAudio, exportAudioVolume, exportTheme ('light' | 'dark'),
+ * watermark (partial), exportAudioSrc (pre-mixed WAV URL or null), exportTheme ('light' | 'dark'),
  * exportLanguage ('en' | 'fr' | 'ar') for step label and description keys.
  */
 function AlgorithmVideo({
@@ -42,8 +39,7 @@ function AlgorithmVideo({
   framesPerStep = 6,
   gridSize = 15,
   watermark: watermarkInput,
-  includeExportAudio = false,
-  exportAudioVolume = DEFAULT_EXPORT_AUDIO_VOLUME,
+  exportAudioSrc = null,
   exportTheme = 'dark',
   exportLanguage: exportLanguageInput = 'en',
 }) {
@@ -263,15 +259,7 @@ function AlgorithmVideo({
         position={watermark.position}
         exportTheme={exportTheme}
       />
-      <ExportAudioTracks
-        enabled={includeExportAudio}
-        algorithmType={algorithmType}
-        algorithmKey={algorithmKey}
-        steps={steps}
-        framesPerStep={framesPerStep}
-        mainDurationInFrames={mainDurationInFrames}
-        volume={exportAudioVolume}
-      />
+      {exportAudioSrc ? <Audio src={exportAudioSrc} /> : null}
     </AbsoluteFill>
   );
 }

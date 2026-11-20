@@ -20,7 +20,7 @@ const complexityScene = vi.fn(() => (
 ));
 
 vi.mock('@remotion/media', () => ({
-  Audio: () => null,
+  Audio: ({ src }) => <span data-testid="export-audio" data-src={src} />,
 }));
 
 vi.mock('remotion', () => ({
@@ -64,6 +64,19 @@ describe('AlgorithmVideo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     useCurrentFrame.mockReturnValue(0);
+  });
+
+  it('plays the pre-mixed sound track through a single Audio element', () => {
+    const steps = Array.from({ length: 50 }, () => ({ description: 'x' }));
+    const { rerender } = render(
+      <AlgorithmVideo steps={steps} exportAudioSrc="blob:mix" />
+    );
+    const tracks = screen.getAllByTestId('export-audio');
+    expect(tracks).toHaveLength(1);
+    expect(tracks[0]).toHaveAttribute('data-src', 'blob:mix');
+
+    rerender(<AlgorithmVideo steps={steps} />);
+    expect(screen.queryByTestId('export-audio')).not.toBeInTheDocument();
   });
 
   it('renders the empty state when there are no steps', () => {

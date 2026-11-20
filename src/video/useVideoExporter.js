@@ -19,6 +19,7 @@ import {
 } from './constants.js';
 import { ALGORITHM_TYPES } from '../constants/index.js';
 import { normalizeExportLanguage } from './exportLanguage.js';
+import { buildExportAudioUrl } from './audio/mixExportAudio.js';
 import { PRODUCTION_ORIGIN } from '../constants/siteSeo.js';
 
 const COMPOSITION_ID = 'AlgorithmVideo';
@@ -204,7 +205,7 @@ export function useVideoExporter() {
       };
 
       let renderMuted = !includeExportAudio;
-      let exportAudioEnabled = includeExportAudio;
+      let exportAudioUrl = null;
 
       const inputProps = {
         steps: exportSteps,
@@ -214,8 +215,7 @@ export function useVideoExporter() {
         framesPerStep,
         gridSize,
         watermark,
-        includeExportAudio: exportAudioEnabled,
-        exportAudioVolume,
+        exportAudioSrc: null,
         exportTheme:
           exportTheme === 'light' || exportTheme === 'dark'
             ? exportTheme
@@ -259,8 +259,6 @@ export function useVideoExporter() {
           });
           if (canProceedWithExport(check)) {
             renderMuted = true;
-            exportAudioEnabled = false;
-            inputProps.includeExportAudio = false;
           }
         }
 
@@ -290,6 +288,26 @@ export function useVideoExporter() {
         }
 
         setExportState('rendering');
+
+        if (!renderMuted) {
+          try {
+            exportAudioUrl = await buildExportAudioUrl({
+              algorithmType: inputProps.algorithmType,
+              algorithmKey: inputProps.algorithmKey,
+              steps: exportSteps,
+              framesPerStep,
+              volume: exportAudioVolume,
+            });
+          } catch (err) {
+            console.warn(
+              '[Export Video] Could not prepare export audio; exporting without sound.',
+              err
+            );
+          }
+          if (userCancelledRef.current) return;
+          inputProps.exportAudioSrc = exportAudioUrl;
+          renderMuted = !exportAudioUrl;
+        }
 
         const { getBlob } = await renderMediaOnWeb({
           signal: abortRef.current.signal,
@@ -334,6 +352,7 @@ export function useVideoExporter() {
         setExportProgress(0);
       } finally {
         abortRef.current = null;
+        if (exportAudioUrl) URL.revokeObjectURL(exportAudioUrl);
       }
     },
     [dismissExportSession]

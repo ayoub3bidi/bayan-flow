@@ -16,15 +16,19 @@ import {
   useVideoExporter,
 } from './useVideoExporter.js';
 
-const { canRenderMediaOnWeb, renderMediaOnWeb } = vi.hoisted(() => ({
-  canRenderMediaOnWeb: vi.fn(),
-  renderMediaOnWeb: vi.fn(),
-}));
+const { canRenderMediaOnWeb, renderMediaOnWeb, buildExportAudioUrl } =
+  vi.hoisted(() => ({
+    canRenderMediaOnWeb: vi.fn(),
+    renderMediaOnWeb: vi.fn(),
+    buildExportAudioUrl: vi.fn(),
+  }));
 
 vi.mock('@remotion/web-renderer', () => ({
   canRenderMediaOnWeb,
   renderMediaOnWeb,
 }));
+
+vi.mock('./audio/mixExportAudio.js', () => ({ buildExportAudioUrl }));
 
 describe('useVideoExporter helpers', () => {
   it('cloneExportSteps returns a deep copy of plain step data', () => {
@@ -125,6 +129,7 @@ describe('useVideoExporter hook', () => {
     renderMediaOnWeb.mockResolvedValue({
       getBlob: vi.fn().mockResolvedValue(new Blob(['video'])),
     });
+    buildExportAudioUrl.mockResolvedValue('blob:audio');
     vi.stubGlobal('URL', {
       createObjectURL: vi.fn(() => 'blob:export'),
       revokeObjectURL: vi.fn(),
@@ -182,10 +187,46 @@ describe('useVideoExporter hook', () => {
     });
 
     expect(canRenderMediaOnWeb).toHaveBeenCalledTimes(2);
+    expect(buildExportAudioUrl).not.toHaveBeenCalled();
     expect(renderMediaOnWeb).toHaveBeenCalledWith(
       expect.objectContaining({ muted: true })
     );
     expect(result.current.exportState).toBe('preview');
+  });
+
+  it('renders one pre-mixed sound track and frees it afterwards', async () => {
+    const { result } = renderHook(() => useVideoExporter());
+    const steps = [{ array: [1, 2], states: ['default', 'default'] }];
+
+    await act(async () => {
+      await result.current.exportVideo({ steps, algorithmName: 'Bubble Sort' });
+    });
+
+    expect(buildExportAudioUrl).toHaveBeenCalledWith(
+      expect.objectContaining({ steps, framesPerStep: 45 })
+    );
+    const options = renderMediaOnWeb.mock.calls[0][0];
+    expect(options.muted).toBe(false);
+    expect(options.inputProps.exportAudioSrc).toBe('blob:audio');
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:audio');
+  });
+
+  it('exports without sound when the sound track cannot be built', async () => {
+    buildExportAudioUrl.mockRejectedValueOnce(new Error('decode failed'));
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { result } = renderHook(() => useVideoExporter());
+    const steps = [{ array: [1, 2], states: ['default', 'default'] }];
+
+    await act(async () => {
+      await result.current.exportVideo({ steps, algorithmName: 'Bubble Sort' });
+    });
+
+    const options = renderMediaOnWeb.mock.calls[0][0];
+    expect(options.muted).toBe(true);
+    expect(options.inputProps.exportAudioSrc).toBeNull();
+    expect(warnSpy).toHaveBeenCalled();
+    expect(result.current.exportState).toBe('preview');
+    warnSpy.mockRestore();
   });
 
   it('reportExportError sets error state with the given message', () => {
