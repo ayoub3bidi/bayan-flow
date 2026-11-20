@@ -403,7 +403,9 @@
     "openSettings": "الإعدادات",
     "closeSettings": "إغلاق الإعدادات",
     "settingsSheetTitle": "إعدادات الخوارزمية",
-    "moreActions": "المزيد من الإجراءات"
+    "moreActions": "المزيد من الإجراءات",
+    "exportNoSteps": "لا يوجد شيء لتصديره بعد. شغّل التصوّر أولًا.",
+    "exportFailedRetry": "حدث خطأ أثناء إنشاء الفيديو. يرجى المحاولة مرة أخرى."
   },
   "info": {
     "step": "الخطوة {{current}} من {{total}}",

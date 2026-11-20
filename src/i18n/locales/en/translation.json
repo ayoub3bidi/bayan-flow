@@ -403,7 +403,9 @@
     "openSettings": "Settings",
     "closeSettings": "Close settings",
     "settingsSheetTitle": "Algorithm settings",
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "exportNoSteps": "There is nothing to export yet. Run the visualization first.",
+    "exportFailedRetry": "Something went wrong while creating the video. Please try again."
   },
   "info": {
     "step": "Step {{current}} of {{total}}",

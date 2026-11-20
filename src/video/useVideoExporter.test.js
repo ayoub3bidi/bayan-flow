@@ -12,9 +12,9 @@ import {
   getBlockingRenderIssues,
   hasAudioRenderBlocker,
   isExportCancelledError,
-  summarizeRenderIssues,
   useVideoExporter,
 } from './useVideoExporter.js';
+import i18n from '../i18n/index.js';
 
 const { canRenderMediaOnWeb, renderMediaOnWeb, buildExportAudioUrl } =
   vi.hoisted(() => ({
@@ -42,15 +42,6 @@ describe('useVideoExporter helpers', () => {
     expect(steps[0].array[0]).toBe(3);
   });
 
-  it('summarizeRenderIssues prefers error-severity messages', () => {
-    expect(
-      summarizeRenderIssues([
-        { severity: 'warning', message: 'Heads up' },
-        { severity: 'error', message: 'Audio codec unsupported' },
-      ])
-    ).toBe('Audio codec unsupported');
-  });
-
   it('hasAudioRenderBlocker detects audio/container codec issues', () => {
     expect(hasAudioRenderBlocker([{ type: 'audio-codec-unsupported' }])).toBe(
       true
@@ -72,9 +63,6 @@ describe('useVideoExporter helpers', () => {
 
     expect(canProceedWithExport(webglOnly)).toBe(true);
     expect(getBlockingRenderIssues(webglOnly.issues)).toEqual([]);
-    expect(summarizeRenderIssues(webglOnly.issues)).toBe(
-      'WebGL is not supported. 3D CSS transforms will fail.'
-    );
   });
 
   it('canProceedWithExport still blocks on codec and WebCodecs issues', () => {
@@ -90,7 +78,6 @@ describe('useVideoExporter helpers', () => {
     };
 
     expect(canProceedWithExport(blocked)).toBe(false);
-    expect(summarizeRenderIssues(blocked.issues)).toBe('WebCodecs unavailable');
   });
 
   it('isExportCancelledError detects abort and Remotion cancel messages', () => {
@@ -149,7 +136,7 @@ describe('useVideoExporter hook', () => {
 
     expect(result.current.exportState).toBe('error');
     expect(result.current.exportErrorMessage).toBe(
-      'No visualization steps to export.'
+      'There is nothing to export yet. Run the visualization first.'
     );
   });
 
@@ -226,6 +213,54 @@ describe('useVideoExporter hook', () => {
     expect(options.inputProps.exportAudioSrc).toBeNull();
     expect(warnSpy).toHaveBeenCalled();
     expect(result.current.exportState).toBe('preview');
+    warnSpy.mockRestore();
+  });
+
+  it('shows a translated message instead of the raw render error', async () => {
+    renderMediaOnWeb.mockRejectedValueOnce(
+      new Error("Failed to execute 'btoa' on 'Window'")
+    );
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await i18n.changeLanguage('fr');
+    const { result } = renderHook(() => useVideoExporter());
+
+    try {
+      await act(async () => {
+        await result.current.exportVideo({
+          steps: [{ array: [1], states: ['default'] }],
+        });
+      });
+
+      expect(result.current.exportState).toBe('error');
+      expect(result.current.exportErrorMessage).toBe(
+        "Une erreur s'est produite lors de la création de la vidéo. Veuillez réessayer."
+      );
+      expect(errorSpy).toHaveBeenCalled();
+    } finally {
+      await i18n.changeLanguage('en');
+      errorSpy.mockRestore();
+    }
+  });
+
+  it('shows the translated unsupported-browser message', async () => {
+    canRenderMediaOnWeb.mockResolvedValue({
+      canRender: false,
+      issues: [
+        { type: 'webcodecs-unavailable', severity: 'error', message: 'raw' },
+      ],
+    });
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { result } = renderHook(() => useVideoExporter());
+
+    await act(async () => {
+      await result.current.exportVideo({
+        steps: [{ array: [1], states: ['default'] }],
+      });
+    });
+
+    expect(result.current.exportErrorMessage).toBe(
+      'Video export is not supported in this browser. Use Chrome 94+, Firefox 130+, or Safari 26+.'
+    );
     warnSpy.mockRestore();
   });
 

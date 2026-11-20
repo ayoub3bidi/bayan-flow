@@ -403,7 +403,9 @@
     "openSettings": "Paramètres",
     "closeSettings": "Fermer les paramètres",
     "settingsSheetTitle": "Paramètres de l'algorithme",
-    "moreActions": "Plus d’actions"
+    "moreActions": "Plus d’actions",
+    "exportNoSteps": "Il n'y a encore rien à exporter. Lancez d'abord la visualisation.",
+    "exportFailedRetry": "Une erreur s'est produite lors de la création de la vidéo. Veuillez réessayer."
   },
   "info": {
     "step": "Étape {{current}} sur {{total}}",

@@ -20,6 +20,7 @@ import {
 import { ALGORITHM_TYPES } from '../constants/index.js';
 import { normalizeExportLanguage } from './exportLanguage.js';
 import { buildExportAudioUrl } from './audio/mixExportAudio.js';
+import i18n from '../i18n/index.js';
 import { PRODUCTION_ORIGIN } from '../constants/siteSeo.js';
 
 const COMPOSITION_ID = 'AlgorithmVideo';
@@ -72,15 +73,6 @@ export function isExportCancelledError(err) {
           ? String(err.message)
           : '';
   return /\bcancel(?:led|ed)\b/i.test(message);
-}
-
-/** @param {Array<{ severity?: string, message?: string, type?: string }>} [issues] */
-export function summarizeRenderIssues(issues = []) {
-  const messages = getBlockingRenderIssues(issues)
-    .map(issue => issue.message)
-    .filter(Boolean);
-  if (messages.length) return messages.join(' ');
-  return issues[0]?.message ?? '';
 }
 
 /** @param {Array<{ type?: string }>} [issues] */
@@ -176,16 +168,14 @@ export function useVideoExporter() {
       exportLanguage,
     }) => {
       if (!steps?.length) {
-        setExportErrorMessage('No visualization steps to export.');
+        setExportErrorMessage(i18n.t('controls.exportNoSteps'));
         setExportState('error');
         return;
       }
 
       const { framesPerStep, exceedsLimit } = getExportTiming(steps.length);
       if (exceedsLimit) {
-        setExportErrorMessage(
-          'This run is too long to export. Reduce the input size.'
-        );
+        setExportErrorMessage(i18n.t('controls.exportTooLong'));
         setExportState('error');
         return;
       }
@@ -268,15 +258,11 @@ export function useVideoExporter() {
         setCanRenderOnWeb(canExport);
 
         if (!canExport) {
-          const issueSummary = summarizeRenderIssues(check.issues);
           console.warn(
             '[Export Video] Browser cannot render MP4:',
             check.issues
           );
-          setExportErrorMessage(
-            issueSummary ||
-              'Video export is not supported in this browser. Try Chrome 94+, Firefox 130+, or Safari 26+.'
-          );
+          setExportErrorMessage(i18n.t('controls.browserNotSupported'));
           setExportState('error');
           return;
         }
@@ -345,9 +331,7 @@ export function useVideoExporter() {
           return;
         }
         console.error('[Export Video]', err);
-        setExportErrorMessage(
-          err instanceof Error ? err.message : String(err ?? 'Export failed')
-        );
+        setExportErrorMessage(i18n.t('controls.exportFailedRetry'));
         setExportState('error');
         setExportProgress(0);
       } finally {
