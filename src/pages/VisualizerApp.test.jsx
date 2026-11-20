@@ -682,6 +682,16 @@ describe('VisualizerApp', () => {
     );
   });
 
+  it('keeps export audio on when playback sound is off', async () => {
+    videoExporterMock.exportState = 'orientation';
+    await renderApp();
+
+    expect(screen.getByTestId('sound-enabled')).toHaveTextContent('false');
+    fireEvent.click(screen.getByText('pick-orientation'));
+
+    expect(exportVideo.mock.calls[0][0].includeExportAudio).not.toBe(false);
+  });
+
   it('reorders the sorting array when sort order is toggled on sorting category', async () => {
     await renderApp();
 

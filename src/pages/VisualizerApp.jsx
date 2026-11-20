@@ -614,7 +614,6 @@ function App() {
       gridSize,
       orientation,
       watermark: getExportWatermarkConfig(user),
-      includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
     });
