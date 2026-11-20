@@ -21,7 +21,7 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **174** test files (~**2,021** tests, per `pnpm vitest run`)
+- Test surface: **180** test files (~**2,103** tests, per `pnpm vitest run`)
 - Source surface: **252** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
@@ -473,6 +473,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 8. Ensure `src/registry/complexityDatasetRegistry.js` contains the dataset key.
 9. Add settings config/i18n entries where needed.
 10. Add or update tests for category config, runtime completeness, visualizer selection, export scene selection, and settings UI.
+11. Add a runner for the category hook in `src/registry/generatorSmoke.test.jsx` (the test fails until one exists). Build hook inputs once per case, outside the render.
 
 ## Adding A New Algorithm
 
@@ -487,6 +488,14 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 9. Add/update semantic sound-event coverage in `src/utils/soundEvents.js` when the algorithm introduces new visual action states.
 10. Update `categoryConfig.js` `algorithmKeys` and `groupDefs` (and graph profile if applicable).
 11. Add or extend tests for algorithm logic, registry wiring, hook behavior, visualizers, export scenes, Python index, complexity metadata, pseudocode, sound events, and insight metadata.
+12. `src/registry/generatorSmoke.test.jsx` must stay green: the algorithm terminates at min/default/max size (and every graph scenario) and its default-size run fits the export limit.
+
+### Generator and export guardrails
+
+- Step generators run synchronously on the main thread; a non-terminating loop freezes the tab and hangs the smoke test. Loops driven by a queue without decrease-key (`src/utils/PriorityQueue.js`) must skip stale or already-consistent entries and carry an iteration bound (see `dStarLite.js`).
+- Export pacing comes from `getExportTiming()` in `src/video/constants.js`: 1.5 s per step when the video fits in 10 minutes, faster down to 0.2 s per step, and blocked in the format dialog above that. Scenes must derive all timing from the `framesPerStep` prop.
+- Export scenes may render any Unicode inside `<svg>` (Remotion `>= 4.0.458`, asserted by `src/video/remotionSvgEncoding.test.js`). Keep `remotion`, `@remotion/media` and `@remotion/web-renderer` on the same exact version.
+- Export audio is always mixed in; it does not follow the playback Sound toggle.
 
 ## Adding A New Graph Algorithm
 
