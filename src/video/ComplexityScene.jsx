@@ -277,6 +277,7 @@ function ComplexityScene({
               border: `1px solid ${c.chartBorder}`,
               borderRadius: 8,
               backgroundColor: c.chartBg,
+              fontFamily: 'system-ui, sans-serif',
             }}
           >
             <g transform={`translate(${margin.left}, ${margin.top})`}>
