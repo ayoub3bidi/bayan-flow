@@ -97,6 +97,10 @@ export function usePathfindingVisualization(
     if (!algorithmKey || !start || !end) return;
     const fn =
       CATEGORY_CONFIG[ALGORITHM_TYPES.PATHFINDING].getAlgorithmFn(algorithmKey);
+    // After a resize, start/end still belong to the previous grid until
+    // generateNewGrid lands; running now would index outside the new grid.
+    const fits = p => p.row < gridSize && p.col < gridSize;
+    if (!fits(start) || !fits(end)) return;
     if (fn) {
       const grid = createEmptyGrid(gridSize, gridSize);
       engine.loadSteps(fn(grid, start, end, gridSize, gridSize));

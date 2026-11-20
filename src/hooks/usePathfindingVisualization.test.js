@@ -186,6 +186,30 @@ describe('usePathfindingVisualization', () => {
       expect(result.current.totalSteps).toBeGreaterThanOrEqual(0);
     });
 
+    it('never runs the algorithm with endpoints from a larger previous grid', () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const { result, rerender } = renderHook(
+        ({ size }) =>
+          usePathfindingVisualization(
+            TEST_ALGO_KEY,
+            size,
+            1000,
+            VISUALIZATION_MODES.MANUAL
+          ),
+        { initialProps: { size: 35 } }
+      );
+
+      rerender({ size: 15 });
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringMatching(/out of bounds/),
+        expect.anything()
+      );
+      expect(result.current.end).toEqual({ row: 14, col: 14 });
+      expect(result.current.totalSteps).toBeGreaterThan(0);
+      errorSpy.mockRestore();
+    });
+
     it('should clear autoplay timeout when generating new grid', () => {
       const { result } = renderHook(() =>
         usePathfindingVisualization(
