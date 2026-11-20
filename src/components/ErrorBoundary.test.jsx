@@ -7,6 +7,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import ErrorBoundary from './ErrorBoundary';
+import i18n from '../i18n/index.js';
 
 function Boom() {
   throw new Error('test crash');
@@ -45,6 +46,27 @@ describe('ErrorBoundary', () => {
       screen.getByRole('button', { name: 'Try again' })
     ).toBeInTheDocument();
     spy.mockRestore();
+  });
+
+  it('shows the built-in fallback in the current language', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await i18n.changeLanguage('fr');
+    try {
+      render(
+        <ErrorBoundary>
+          <Boom />
+        </ErrorBoundary>
+      );
+      expect(
+        screen.getByText("Une erreur s'est produite.")
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Réessayer' })
+      ).toBeInTheDocument();
+    } finally {
+      await i18n.changeLanguage('en');
+      spy.mockRestore();
+    }
   });
 
   it('recovers when resetKey changes', () => {

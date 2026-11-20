@@ -40,6 +40,13 @@
     "message": "The page you're looking for doesn't exist or has been moved.",
     "backToHome": "Back to Home"
   },
+  "errors": {
+    "pageCrashTitle": "Something went wrong",
+    "pageCrashBody": "This page hit an unexpected error. Reload to try again, or head back home.",
+    "reload": "Reload page",
+    "somethingWentWrong": "Something went wrong.",
+    "tryAgain": "Try again"
+  },
   "profile": {
     "pageTitle": "Profile settings",
     "title": "Profile settings",

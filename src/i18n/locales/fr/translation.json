@@ -40,6 +40,13 @@
     "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "backToHome": "Retour à l'accueil"
   },
+  "errors": {
+    "pageCrashTitle": "Une erreur s'est produite",
+    "pageCrashBody": "Cette page a rencontré une erreur inattendue. Rechargez-la pour réessayer ou revenez à l'accueil.",
+    "reload": "Recharger la page",
+    "somethingWentWrong": "Une erreur s'est produite.",
+    "tryAgain": "Réessayer"
+  },
   "profile": {
     "pageTitle": "Paramètres du profil",
     "title": "Paramètres du profil",

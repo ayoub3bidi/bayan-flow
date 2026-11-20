@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 vi.mock('@/hooks/useAuth', () => ({
   useAuth: vi.fn(() => ({
@@ -27,8 +27,13 @@ vi.mock('@/pages/VisualizerApp', () => ({
   default: () => <div data-testid="visualizer-app">Visualizer</div>,
 }));
 
+const roadmapCrash = vi.hoisted(() => ({ enabled: false }));
+
 vi.mock('@/pages/Roadmap', () => ({
-  default: () => <div data-testid="roadmap">Roadmap</div>,
+  default: () => {
+    if (roadmapCrash.enabled) throw new Error('roadmap exploded');
+    return <div data-testid="roadmap">Roadmap</div>;
+  },
 }));
 
 vi.mock('@/pages/ProComingSoonPage', () => ({
@@ -149,6 +154,30 @@ describe('AppRoutes', () => {
     renderRoutes('/terms');
 
     await screen.findByTestId('terms');
+  });
+
+  it('shows a recovery screen instead of a blank page when a route crashes', async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      accessBlock: null,
+      isLoading: false,
+    });
+    roadmapCrash.enabled = true;
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    try {
+      renderRoutes('/roadmap');
+
+      expect(
+        await screen.findByRole('heading', { name: 'Something went wrong' })
+      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Reload page' })).toBeVisible();
+
+      fireEvent.click(screen.getByRole('link', { name: 'Back to Home' }));
+      expect(await screen.findByTestId('landing-page')).toBeInTheDocument();
+    } finally {
+      roadmapCrash.enabled = false;
+      errorSpy.mockRestore();
+    }
   });
 
   it('wraps /settings/profile in RequireAuth', async () => {
