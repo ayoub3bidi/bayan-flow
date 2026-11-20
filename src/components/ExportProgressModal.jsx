@@ -14,6 +14,12 @@ import {
   modalPanelExit,
   modalPanelTransition,
 } from '../motion/chromeMotion';
+import { getExportTiming } from '../video/constants';
+
+function formatDuration(totalSeconds) {
+  const seconds = Math.ceil(totalSeconds);
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+}
 
 /**
  * Modal shown during video export.
@@ -30,6 +36,7 @@ import {
  * @param {Function} onClose - Called when user closes preview or orientation
  * @param {Function} onDownload - Called when user clicks Download
  * @param {Function} onOrientationSelect - Called when user selects orientation (horizontal | vertical)
+ * @param {number} [stepCount] - Steps to export; shows the video length and blocks over-limit runs
  */
 function ExportProgressModal({
   open,
@@ -41,6 +48,7 @@ function ExportProgressModal({
   onDownload,
   onOrientationSelect,
   errorMessage = null,
+  stepCount,
 }) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -48,6 +56,8 @@ function ExportProgressModal({
   const isPreview = phase === 'preview';
   const isOrientation = phase === 'orientation';
   const isError = phase === 'error';
+  const timing = stepCount ? getExportTiming(stepCount) : null;
+  const tooLong = Boolean(timing?.exceedsLimit);
 
   return (
     <AnimatePresence>
@@ -114,7 +124,8 @@ function ExportProgressModal({
                 <button
                   type="button"
                   onClick={() => onOrientationSelect?.('horizontal')}
-                  className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group"
+                  disabled={tooLong}
+                  className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group disabled:opacity-50 disabled:pointer-events-none"
                   aria-label={t('controls.exportOrientationHorizontal')}
                 >
                   <div className="w-20 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
@@ -140,7 +151,8 @@ function ExportProgressModal({
                 <button
                   type="button"
                   onClick={() => onOrientationSelect?.('vertical')}
-                  className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group"
+                  disabled={tooLong}
+                  className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 hover:bg-teal-500/5 dark:hover:bg-teal-500/10 transition-all group disabled:opacity-50 disabled:pointer-events-none"
                   aria-label={t('controls.exportOrientationVertical')}
                 >
                   <div className="w-12 h-20 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-teal-500/20 flex items-center justify-center">
@@ -163,6 +175,22 @@ function ExportProgressModal({
                     {t('controls.exportOrientationVerticalDesc')}
                   </span>
                 </button>
+                {timing && (
+                  <p
+                    className={`col-span-2 text-sm text-center ${
+                      tooLong
+                        ? 'text-red-600 dark:text-red-400'
+                        : 'text-text-secondary'
+                    }`}
+                    role={tooLong ? 'alert' : undefined}
+                  >
+                    {tooLong
+                      ? t('controls.exportTooLong')
+                      : t('controls.exportEstimatedLength', {
+                          duration: formatDuration(timing.durationSec),
+                        })}
+                  </p>
+                )}
               </div>
             ) : isPreview ? (
               <div className="space-y-4">

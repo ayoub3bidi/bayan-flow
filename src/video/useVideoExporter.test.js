@@ -148,6 +148,17 @@ describe('useVideoExporter hook', () => {
     );
   });
 
+  it('refuses runs too long to fit the 10-minute limit', async () => {
+    const { result } = renderHook(() => useVideoExporter());
+
+    await act(async () => {
+      await result.current.exportVideo({ steps: Array(3000).fill({}) });
+    });
+
+    expect(result.current.exportState).toBe('error');
+    expect(canRenderMediaOnWeb).not.toHaveBeenCalled();
+  });
+
   it('falls back to muted export when audio codec preflight fails', async () => {
     canRenderMediaOnWeb
       .mockResolvedValueOnce({

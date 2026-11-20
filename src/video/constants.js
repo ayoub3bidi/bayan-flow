@@ -26,6 +26,36 @@ export const VIDEO_EXPORT_FRAMES_PER_STEP = 45;
  */
 export const COMPLEXITY_DURATION_FRAMES = 5 * VIDEO_FPS;
 
+/** Longest video an export may produce (shorts up to long-form lessons). */
+export const MAX_EXPORT_SECONDS = 10 * 60;
+
+/** Fastest export pace (0.2 s per step) used to squeeze long runs under the limit. */
+export const MIN_EXPORT_FRAMES_PER_STEP = DEFAULT_FRAMES_PER_STEP;
+
+/**
+ * Pace and length of an export: the comfortable 1.5 s/step pace when it fits,
+ * otherwise as fast as needed to stay within MAX_EXPORT_SECONDS.
+ *
+ * @param {number} stepCount
+ * @returns {{ framesPerStep: number, durationSec: number, exceedsLimit: boolean }}
+ */
+export function getExportTiming(stepCount) {
+  const steps = Math.max(0, stepCount || 0);
+  const maxMainFrames =
+    MAX_EXPORT_SECONDS * VIDEO_FPS - COMPLEXITY_DURATION_FRAMES;
+  const fitting = steps > 0 ? Math.floor(maxMainFrames / steps) : Infinity;
+  const framesPerStep = Math.max(
+    MIN_EXPORT_FRAMES_PER_STEP,
+    Math.min(VIDEO_EXPORT_FRAMES_PER_STEP, fitting)
+  );
+  return {
+    framesPerStep,
+    durationSec:
+      (steps * framesPerStep + COMPLEXITY_DURATION_FRAMES) / VIDEO_FPS,
+    exceedsLimit: fitting < MIN_EXPORT_FRAMES_PER_STEP,
+  };
+}
+
 /**
  * Map app animation speed (ms delay) to video frames per step.
  * Slower speed = more frames per step = longer visible time per step in video.

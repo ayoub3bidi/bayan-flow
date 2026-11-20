@@ -376,6 +376,8 @@
     "exportOrientationHorizontalDesc": "16:9 • يوتيوب، العروض التقديمية",
     "exportOrientationVertical": "عمودي",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
+    "exportEstimatedLength": "مدة الفيديو: حوالي {{duration}}",
+    "exportTooLong": "هذا التشغيل أطول من أن يُصدَّر (الحد الأقصى 10 دقائق). قلّل حجم المدخلات وحاول مجددًا.",
     "exportPreview": "الفيديو جاهز",
     "exportPreviewDesc": "معاينة الفيديو أو تنزيله أو مشاركته.",
     "downloadVideo": "تنزيل",

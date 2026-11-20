@@ -12,7 +12,7 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH_VERTICAL,
   VIDEO_HEIGHT_VERTICAL,
-  VIDEO_EXPORT_FRAMES_PER_STEP,
+  getExportTiming,
   COMPLEXITY_DURATION_FRAMES,
   DEFAULT_VIDEO_WATERMARK,
   DEFAULT_EXPORT_AUDIO_VOLUME,
@@ -180,12 +180,20 @@ export function useVideoExporter() {
         return;
       }
 
+      const { framesPerStep, exceedsLimit } = getExportTiming(steps.length);
+      if (exceedsLimit) {
+        setExportErrorMessage(
+          'This run is too long to export. Reduce the input size.'
+        );
+        setExportState('error');
+        return;
+      }
+
       const exportSteps = cloneExportSteps(steps);
       const isVertical = orientation === 'vertical';
       const width = isVertical ? VIDEO_WIDTH_VERTICAL : VIDEO_WIDTH;
       const height = isVertical ? VIDEO_HEIGHT_VERTICAL : VIDEO_HEIGHT;
 
-      const framesPerStep = VIDEO_EXPORT_FRAMES_PER_STEP;
       const mainDurationInFrames = exportSteps.length * framesPerStep;
       const durationInFrames =
         mainDurationInFrames + COMPLEXITY_DURATION_FRAMES;

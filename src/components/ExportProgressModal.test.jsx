@@ -34,6 +34,35 @@ describe('ExportProgressModal', () => {
     expect(onOrientationSelect).toHaveBeenCalledWith('vertical');
   });
 
+  it('shows the estimated video length', () => {
+    renderWithI18n(
+      <ExportProgressModal
+        open
+        progress={0}
+        phase="orientation"
+        stepCount={20}
+      />
+    );
+    expect(screen.getByText(/about 0:35/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /horizontal/i })).toBeEnabled();
+  });
+
+  it('blocks runs that are too long to export', () => {
+    const onOrientationSelect = vi.fn();
+    renderWithI18n(
+      <ExportProgressModal
+        open
+        progress={0}
+        phase="orientation"
+        stepCount={10001}
+        onOrientationSelect={onOrientationSelect}
+      />
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent(/too long/i);
+    expect(screen.getByRole('button', { name: /horizontal/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /vertical/i })).toBeDisabled();
+  });
+
   it('shows rendering progress and stop action', () => {
     const onStop = vi.fn();
     renderWithI18n(

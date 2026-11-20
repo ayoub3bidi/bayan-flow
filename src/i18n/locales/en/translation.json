@@ -376,6 +376,8 @@
     "exportOrientationHorizontalDesc": "16:9 • YouTube, presentations",
     "exportOrientationVertical": "Vertical",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
+    "exportEstimatedLength": "Video length: about {{duration}}",
+    "exportTooLong": "This run is too long to export (10 minutes max). Reduce the input size and try again.",
     "exportPreview": "Video ready",
     "exportPreviewDesc": "Preview, download, or share your video.",
     "downloadVideo": "Download",

@@ -977,6 +977,7 @@ function App() {
           exportState === 'error'
         }
         progress={exportProgress}
+        stepCount={visualization.steps?.length}
         phase={
           exportState === 'orientation'
             ? 'orientation'
