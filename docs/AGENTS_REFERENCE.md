@@ -21,7 +21,7 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **180** test files (~**2,113** tests, per `pnpm vitest run`)
+- Test surface: **181** test files (~**2,118** tests, per `pnpm vitest run`)
 - Source surface: **252** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
@@ -180,6 +180,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 ### Pages
 
 - `src/pages/LandingPage.jsx` — served through `LandingRoute` in `src/AppRoutes.jsx`: returning signed-in visitors (`hasStoredSession()` + hydrated auth) go to `/app` on a fresh visit
+- `src/AppRoutes.jsx` wraps every route in `ErrorBoundary` (reset on path change) with a localized `RouteErrorFallback` (Reload / Back to Home), so a crashing page or a failed lazy chunk never blanks the app
 - `src/pages/VisualizerApp.jsx` — main visualizer shell and top-level state
 - `src/pages/Roadmap.jsx`
 - `src/pages/ProComingSoonPage.jsx` — Pro waitlist teaser + email capture (`/pro`)
@@ -496,6 +497,8 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Export pacing comes from `getExportTiming()` in `src/video/constants.js`: 1.5 s per step when the video fits in 10 minutes, faster down to 0.2 s per step, and blocked in the format dialog above that. Scenes must derive all timing from the `framesPerStep` prop.
 - Export scenes may render any Unicode inside `<svg>` (Remotion `>= 4.0.458`, asserted by `src/video/remotionSvgEncoding.test.js`). Keep `remotion`, `@remotion/media` and `@remotion/web-renderer` on the same exact version.
 - Export audio is always mixed in; it does not follow the playback Sound toggle.
+- `@remotion/web-renderer` draws every DOM element on every frame, but rasterises an `<svg>` once with its children. Scenes with many cells or shapes draw them inside one `<svg>` (see `PathfindingScene.jsx`: a 35×35 grid of `<div>`s rendered at 7.7× real time, one `<svg>` at 1.2×).
+- `generatorSmoke.test.jsx` runs each generator under a watchdog thread that kills the test process after 20 s and names the case, because Vitest timeouts cannot interrupt a synchronous infinite loop.
 - Never mount one media element per step or cue in an export composition. `@remotion/media` keeps an iterator per element in a cache sized to half of system RAM, so ~2,000 per-step `<Audio>` elements crashed near-limit exports. Add new sounds as cues to the pre-mixed track instead.
 
 ## Adding A New Graph Algorithm
