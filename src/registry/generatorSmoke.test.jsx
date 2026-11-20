@@ -4,7 +4,8 @@
  * See LICENSE for details.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { Worker } from 'node:worker_threads';
+import { describe, it, expect, vi, afterAll } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { CATEGORY_CONFIG } from './categoryConfig';
 import { isNodeLinkSearchingAlgorithm } from './searchingSubstrate';
@@ -35,6 +36,56 @@ vi.mock('../utils/gridHelpers.js', async importOriginal => importOriginal());
 const SPEED = ANIMATION_SPEEDS.MEDIUM;
 const MODE = VISUALIZATION_MODES.MANUAL;
 const MAX_GENERATION_MS = 3000;
+const HANG_LIMIT_MS = 20_000;
+
+/**
+ * Generators run synchronously, so Vitest's own timeout can never fire on an
+ * infinite loop. A watchdog thread kills the test process instead, naming the
+ * case, so the run fails in seconds rather than hanging CI.
+ */
+const watchdogMemory = new SharedArrayBuffer(8 + 256);
+const watchdogState = new Int32Array(watchdogMemory, 0, 2); // [case number, running]
+const watchdogLabel = new Uint8Array(watchdogMemory, 8, 256);
+const watchdog = new Worker(
+  `
+  const { workerData } = require('node:worker_threads');
+  const state = new Int32Array(workerData.memory, 0, 2);
+  const label = new Uint8Array(workerData.memory, 8, 256);
+  let seen = -1;
+  let since = Date.now();
+  setInterval(() => {
+    const caseNumber = Atomics.load(state, 0);
+    if (!Atomics.load(state, 1) || caseNumber !== seen) {
+      seen = caseNumber;
+      since = Date.now();
+      return;
+    }
+    if (Date.now() - since > workerData.limitMs) {
+      const name = Buffer.from(label).toString('utf8').replace(/\\0[\\s\\S]*$/, '');
+      require('node:fs').writeSync(
+        2,
+        '\\nGenerator did not terminate within ' + workerData.limitMs / 1000 + ' s: ' + name + '\\n'
+      );
+      process.kill(process.pid, 'SIGKILL');
+    }
+  }, 250);
+  `,
+  { eval: true, workerData: { memory: watchdogMemory, limitMs: HANG_LIMIT_MS } }
+);
+watchdog.unref();
+afterAll(() => watchdog.terminate());
+
+function underWatchdog(label, fn) {
+  watchdogLabel.fill(0);
+  watchdogLabel.set(new TextEncoder().encode(label).subarray(0, 255));
+  Atomics.add(watchdogState, 0, 1);
+  Atomics.store(watchdogState, 1, 1);
+  try {
+    return fn();
+  } finally {
+    Atomics.store(watchdogState, 1, 0);
+  }
+}
 
 /**
  * Calls each category hook like VisualizerApp does. Inputs are built once per
@@ -89,15 +140,18 @@ function sizesFor(config, defaultSize) {
 }
 
 function generate(runner, key, size, scenarioId) {
-  const input = runner.input?.(size);
-  const startedAt = performance.now();
-  const { result, unmount } = renderHook(() =>
-    runner.useRun(key, size, scenarioId, input)
-  );
-  const elapsed = performance.now() - startedAt;
-  const { steps } = result.current;
-  unmount();
-  return { steps, elapsed };
+  const label = `${key} @ ${size}${scenarioId ? ` / ${scenarioId}` : ''}`;
+  return underWatchdog(label, () => {
+    const input = runner.input?.(size);
+    const startedAt = performance.now();
+    const { result, unmount } = renderHook(() =>
+      runner.useRun(key, size, scenarioId, input)
+    );
+    const elapsed = performance.now() - startedAt;
+    const { steps } = result.current;
+    unmount();
+    return { steps, elapsed };
+  });
 }
 
 describe('every registered algorithm generates steps through its category hook', () => {
