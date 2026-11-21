@@ -141,6 +141,11 @@ describe('authService', () => {
 
     await authService.signInWithGoogle();
 
+    // Visible-on-demand so a phone can actually solve an interactive check.
+    expect(globalThis.turnstile.render).toHaveBeenCalledWith(
+      expect.any(HTMLElement),
+      expect.objectContaining({ appearance: 'interaction-only' })
+    );
     expect(supabaseAuthMock.signInWithIdToken).toHaveBeenCalledWith({
       provider: 'google',
       token: 'google-id-token',
@@ -163,14 +168,17 @@ describe('authService', () => {
     vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
     globalThis.turnstile = {
       render: vi.fn((_container, options) => {
-        options['error-callback']();
+        options['error-callback']('600010');
         return 'widget-id';
       }),
     };
 
-    await expect(authService.signInWithGoogle()).rejects.toThrow(
-      /Turnstile verification failed/
-    );
+    await expect(authService.signInWithGoogle()).rejects.toMatchObject({
+      message: expect.stringMatching(
+        /Turnstile verification failed \(600010\)/
+      ),
+      signInStep: 'turnstile',
+    });
     expect(supabaseAuthMock.signInWithIdToken).not.toHaveBeenCalled();
   });
 
@@ -186,12 +194,29 @@ describe('authService', () => {
       const rejection = expect(signInPromise).rejects.toThrow(
         /Turnstile verification timed out/
       );
-      await vi.advanceTimersByTimeAsync(10000);
+      await vi.advanceTimersByTimeAsync(authService.TURNSTILE_TIMEOUT_MS);
       await rejection;
       expect(supabaseAuthMock.signInWithIdToken).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('signInWithGoogle tags Google and Supabase failures with their step', async () => {
+    vi.mocked(requestGoogleSignInPopup).mockRejectedValueOnce(
+      new Error('Google sign-in timed out')
+    );
+    await expect(authService.signInWithGoogle()).rejects.toMatchObject({
+      signInStep: 'google',
+    });
+
+    supabaseAuthMock.signInWithIdToken.mockResolvedValueOnce({
+      data: null,
+      error: new Error('captcha protection: request disallowed'),
+    });
+    await expect(authService.signInWithGoogle()).rejects.toMatchObject({
+      signInStep: 'supabase',
+    });
   });
 
   it('signOut delegates to Supabase auth', async () => {

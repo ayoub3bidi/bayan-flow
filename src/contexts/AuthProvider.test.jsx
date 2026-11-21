@@ -522,6 +522,34 @@ describe('AuthProvider', () => {
     }
   );
 
+  it('tracks sign_in_failed with the failing step', async () => {
+    vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
+    let signIn;
+    function SignInGrabber() {
+      signIn = useAuth().signInWithGoogle;
+      return null;
+    }
+
+    render(
+      <AuthProvider>
+        <SignInGrabber />
+      </AuthProvider>
+    );
+
+    await act(async () => {
+      await expect(signIn()).rejects.toThrow(/Turnstile is not available/);
+    });
+
+    expect(analyticsMock.captureEvent).toHaveBeenCalledWith('sign_in_failed', {
+      step: 'turnstile',
+      reason: expect.stringMatching(/Turnstile is not available/),
+    });
+    expect(analyticsMock.captureEvent).not.toHaveBeenCalledWith(
+      'sign_in_completed',
+      expect.anything()
+    );
+  });
+
   it('refreshProfile re-fetches profile for the current user', async () => {
     supabaseAuthMock.getSession.mockResolvedValueOnce({
       data: {

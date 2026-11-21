@@ -59,6 +59,9 @@ export const SIGN_IN_CLICKED = 'sign_in_clicked';
 /** Sign-in completed successfully */
 export const SIGN_IN_COMPLETED = 'sign_in_completed';
 
+/** A user-initiated sign-in failed; `step` says where (google/turnstile/supabase). */
+export const SIGN_IN_FAILED = 'sign_in_failed';
+
 /** Algorithm added to favorites */
 export const FAVORITE_ADDED = 'favorite_added';
 
@@ -235,6 +238,18 @@ export function trackSignInClicked(source) {
  */
 export function trackSignInCompleted({ isNewUser }) {
   captureEvent(SIGN_IN_COMPLETED, { is_new_user: isNewUser });
+}
+
+/**
+ * Capture a failed user-initiated sign-in.
+ * @param {unknown} error - may carry `signInStep` set by authService
+ */
+export function trackSignInFailed(error) {
+  const err = /** @type {any} */ (error);
+  captureEvent(SIGN_IN_FAILED, {
+    step: err?.signInStep ?? 'unknown',
+    reason: String(err?.message ?? err ?? 'unknown').slice(0, 200),
+  });
 }
 
 /**

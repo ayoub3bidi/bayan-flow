@@ -21,12 +21,16 @@ function requireClient() {
   return supabase;
 }
 
+export const TURNSTILE_TIMEOUT_MS = 60_000;
+
 /**
- * Render an invisible Cloudflare Turnstile widget and resolve with a
- * verification token. Returns null when the site key is not configured
- * (local/CI without Turnstile). Rejects when the site key is set but the
- * script is missing or the challenge fails — avoids sending a token-less
- * signup into the server gate.
+ * Run Cloudflare Turnstile and resolve with a verification token. Returns null
+ * when the site key is not configured (local/CI without Turnstile). Rejects
+ * when the site key is set but the script is missing or the challenge fails —
+ * avoids sending a token-less signup into the server gate.
+ *
+ * `interaction-only` stays invisible unless Cloudflare asks for a human check
+ * (common on phones); the container must be visible and tappable for that.
  * @returns {Promise<string | null>}
  */
 function getTurnstileToken() {
@@ -47,29 +51,51 @@ function getTurnstileToken() {
     const turnstile = /** @type {any} */ (globalThis).turnstile;
     const container = document.createElement('div');
     container.style.cssText =
-      'position:fixed;bottom:0;left:0;width:1px;height:1px;overflow:hidden;opacity:0.01;pointer-events:none;';
+      'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483647;';
     document.body.appendChild(container);
 
     const timeoutId = setTimeout(() => {
       container.remove();
       reject(new Error('Turnstile verification timed out. Please try again.'));
-    }, 10000);
+    }, TURNSTILE_TIMEOUT_MS);
 
     turnstile.render(container, {
       sitekey: siteKey,
-      appearance: 'execute',
+      appearance: 'interaction-only',
       callback: (/** @type {string} */ token) => {
         clearTimeout(timeoutId);
         container.remove();
         resolve(token);
       },
-      'error-callback': () => {
+      'error-callback': (/** @type {string | undefined} */ code) => {
         clearTimeout(timeoutId);
         container.remove();
-        reject(new Error('Turnstile verification failed. Please try again.'));
+        reject(
+          new Error(
+            `Turnstile verification failed${code ? ` (${code})` : ''}. Please try again.`
+          )
+        );
       },
     });
   });
+}
+
+/**
+ * Tag a failure with the sign-in step it came from (for analytics).
+ * @template T
+ * @param {'google' | 'turnstile' | 'supabase'} step
+ * @param {() => Promise<T>} run
+ * @returns {Promise<T>}
+ */
+async function signInStep(step, run) {
+  try {
+    return await run();
+  } catch (error) {
+    if (error && typeof error === 'object') {
+      /** @type {any} */ (error).signInStep = step;
+    }
+    throw error;
+  }
 }
 
 /**
@@ -166,9 +192,11 @@ export async function signInWithGoogle() {
     throw new Error('Auth is not fully configured');
   }
 
-  const { idToken } = await requestGoogleSignInPopup();
-  const turnstileToken = await getTurnstileToken();
-  return signInWithGoogleIdToken(idToken, undefined, undefined, turnstileToken);
+  const { idToken } = await signInStep('google', requestGoogleSignInPopup);
+  const turnstileToken = await signInStep('turnstile', getTurnstileToken);
+  return signInStep('supabase', () =>
+    signInWithGoogleIdToken(idToken, undefined, undefined, turnstileToken)
+  );
 }
 
 export async function signOut() {
