@@ -7,14 +7,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import {
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle,
-  Bell,
-  Plugs,
-  X,
-} from '@phosphor-icons/react';
+import { ArrowLeft, ArrowRight, CheckCircle, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -50,11 +43,7 @@ function getDefaultDisplayName(user) {
   return '';
 }
 
-const SETTINGS_TABS = [
-  { key: 'profile', icon: null },
-  { key: 'notifications', icon: Bell, disabled: true },
-  { key: 'connections', icon: Plugs, disabled: true },
-];
+const SETTINGS_TABS = [{ key: 'profile', icon: null }];
 
 function ProfileSettingsPage() {
   const { t, i18n } = useTranslation();
@@ -247,20 +236,16 @@ function ProfileSettingsPage() {
               const isActive = activeTab === tab.key;
               const Icon = tab.icon;
               return (
-                <div key={tab.key} className="relative group">
+                <div key={tab.key}>
                   <button
                     type="button"
                     role="tab"
                     aria-selected={isActive}
-                    aria-disabled={tab.disabled}
-                    disabled={tab.disabled}
-                    onClick={() => !tab.disabled && setActiveTab(tab.key)}
+                    onClick={() => setActiveTab(tab.key)}
                     className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap touch-manipulation ${
                       isActive
                         ? 'border-accent-primary text-accent-primary'
-                        : tab.disabled
-                          ? 'border-transparent text-text-secondary/30 cursor-not-allowed opacity-40'
-                          : 'border-transparent text-text-secondary hover:text-text-primary hover:border-border-hover cursor-pointer'
+                        : 'border-transparent text-text-secondary hover:text-text-primary hover:border-border-hover cursor-pointer'
                     }`}
                   >
                     {Icon && (
@@ -272,11 +257,6 @@ function ProfileSettingsPage() {
                     )}
                     {t(`settings_tabs.${tab.key}`)}
                   </button>
-                  {tab.disabled && (
-                    <span className="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-lg px-2.5 py-1.5 text-xs font-medium shadow-lg border border-white/10 bg-zinc-900/95 text-white backdrop-blur-sm dark:bg-zinc-100/95 dark:text-zinc-900 dark:border-zinc-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
-                      {t('common.coming_soon')}
-                    </span>
-                  )}
                 </div>
               );
             })}
@@ -297,9 +277,6 @@ function ProfileSettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                 <div className="h-[3.25rem] rounded-lg bg-interactive-bg" />
                 <div className="h-[3.25rem] rounded-lg bg-interactive-bg" />
-              </div>
-              <div className="w-full">
-                <div className="h-[5.5rem] rounded-lg bg-interactive-bg" />
               </div>
               <div className="flex justify-end w-full">
                 <div className="h-11 w-32 rounded-lg bg-interactive-bg" />
@@ -368,9 +345,6 @@ function ProfileSettingsPage() {
                     {t('profile.avatarGoogle')}
                   </span>
                 </div>
-                <p className="text-xs text-text-secondary text-center">
-                  {t('profile.avatarCustomizationComingSoon')}
-                </p>
               </div>
 
               <div className="mx-20 border-t border-gray-300/60 dark:border-gray-600/60" />
@@ -410,23 +384,6 @@ function ProfileSettingsPage() {
                     className="w-full rounded-lg border border-interactive-border bg-surface-elevated px-4 py-3 text-sm text-text-secondary cursor-not-allowed opacity-70"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="profile-description"
-                  className="block text-sm font-medium text-text-primary mb-2"
-                >
-                  {t('profile.description')}
-                </label>
-                <textarea
-                  id="profile-description"
-                  rows={3}
-                  disabled
-                  readOnly
-                  placeholder={t('profile.descriptionPlaceholder')}
-                  className="w-full rounded-lg border border-interactive-border bg-surface-elevated px-4 py-3 text-sm text-text-secondary cursor-not-allowed opacity-70 resize-none"
-                />
               </div>
 
               <div className="flex justify-end">

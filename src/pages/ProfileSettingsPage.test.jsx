@@ -66,7 +66,7 @@ describe('ProfileSettingsPage', () => {
     deleteAccountMock.mockReset();
   });
 
-  it('renders Settings heading and tab bar with Profile active', async () => {
+  it('renders only the Profile tab, without placeholder features', async () => {
     getProfileMock.mockResolvedValue({
       display_name: 'Ada',
       avatar_url: null,
@@ -84,10 +84,9 @@ describe('ProfileSettingsPage', () => {
       );
     });
 
-    expect(screen.getByRole('tab', { name: /notifications/i })).toBeDisabled();
-    expect(
-      screen.getByRole('tab', { name: /connected accounts/i })
-    ).toBeDisabled();
+    expect(screen.getAllByRole('tab')).toHaveLength(1);
+    expect(screen.queryByText(/very soon/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/description/i)).not.toBeInTheDocument();
   });
 
   it('prefills display name from profile row', async () => {
