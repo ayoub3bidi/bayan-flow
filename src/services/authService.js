@@ -21,84 +21,10 @@ function requireClient() {
   return supabase;
 }
 
-/** Max wait for Turnstile once the Google step is done. */
-export const TURNSTILE_TIMEOUT_MS = 60_000;
-
-/**
- * Start Cloudflare Turnstile. `token` resolves with a verification token, or
- * null when the site key is not configured (local/CI). It rejects when the
- * site key is set but the script is missing or the challenge fails, so a
- * token-less signup never reaches the server gate. `cancel()` removes the widget.
- *
- * `interaction-only` stays invisible unless Cloudflare asks for a human check
- * (common on phones); the container must be visible and tappable for that.
- * @returns {{ token: Promise<string | null>, cancel: () => void }}
- */
-function startTurnstile() {
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-  if (!siteKey) {
-    return { token: Promise.resolve(null), cancel: () => {} };
-  }
-
-  const turnstile = /** @type {any} */ (globalThis).turnstile;
-  if (typeof turnstile === 'undefined') {
-    return {
-      token: Promise.reject(
-        new Error('Turnstile is not available. Please refresh and try again.')
-      ),
-      cancel: () => {},
-    };
-  }
-
-  const container = document.createElement('div');
-  container.style.cssText =
-    'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483647;';
-  document.body.appendChild(container);
-  const cancel = () => container.remove();
-
-  const token = new Promise((resolve, reject) => {
-    turnstile.render(container, {
-      sitekey: siteKey,
-      appearance: 'interaction-only',
-      callback: (/** @type {string} */ value) => {
-        cancel();
-        resolve(value);
-      },
-      'error-callback': (/** @type {string | undefined} */ code) => {
-        cancel();
-        reject(
-          new Error(
-            `Turnstile verification failed${code ? ` (${code})` : ''}. Please try again.`
-          )
-        );
-      },
-    });
-  });
-
-  return { token, cancel };
-}
-
-/**
- * @param {{ token: Promise<string | null>, cancel: () => void }} turnstile
- * @returns {Promise<string | null>}
- */
-function awaitTurnstile(turnstile) {
-  let timeoutId;
-  const timeout = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => {
-      turnstile.cancel();
-      reject(new Error('Turnstile verification timed out. Please try again.'));
-    }, TURNSTILE_TIMEOUT_MS);
-  });
-  return Promise.race([turnstile.token, timeout]).finally(() =>
-    clearTimeout(timeoutId)
-  );
-}
-
 /**
  * Tag a failure with the sign-in step it came from (for analytics).
  * @template T
- * @param {'google' | 'turnstile' | 'supabase'} step
+ * @param {'google' | 'supabase'} step
  * @param {() => Promise<T>} run
  * @returns {Promise<T>}
  */
@@ -168,29 +94,16 @@ async function syncGoogleProfileMetadata(idToken) {
  * @param {string} idToken
  * @param {string} [nonce]
  * @param {string} [accessToken]
- * @param {string} [turnstileToken]
  * @returns {Promise<import('@supabase/supabase-js').User | null>}
  */
-export async function signInWithGoogleIdToken(
-  idToken,
-  nonce,
-  accessToken,
-  turnstileToken
-) {
+export async function signInWithGoogleIdToken(idToken, nonce, accessToken) {
   const supabase = requireClient();
-  // signInWithIdToken does not accept user `data` metadata. Turnstile must go
-  // through options.captchaToken → gotrue_meta_security.captcha_token (verified
-  // by GoTrue when Auth CAPTCHA protection is enabled).
   const /** @type {Record<string, any>} */ credentials = {
       provider: 'google',
       token: idToken,
       nonce,
       access_token: accessToken,
     };
-
-  if (turnstileToken) {
-    credentials.options = { captchaToken: turnstileToken };
-  }
 
   const { data, error } = await supabase.auth.signInWithIdToken(credentials);
 
@@ -207,24 +120,8 @@ export async function signInWithGoogle() {
     throw new Error('Auth is not fully configured');
   }
 
-  // Run Turnstile while the user is in Google's account picker, so the
-  // token is usually ready when they come back.
-  const turnstile = startTurnstile();
-  turnstile.token.catch(() => {});
-
-  let idToken;
-  try {
-    ({ idToken } = await signInStep('google', requestGoogleSignInPopup));
-  } catch (error) {
-    turnstile.cancel();
-    throw error;
-  }
-  const turnstileToken = await signInStep('turnstile', () =>
-    awaitTurnstile(turnstile)
-  );
-  return signInStep('supabase', () =>
-    signInWithGoogleIdToken(idToken, undefined, undefined, turnstileToken)
-  );
+  const { idToken } = await signInStep('google', requestGoogleSignInPopup);
+  return signInStep('supabase', () => signInWithGoogleIdToken(idToken));
 }
 
 export async function signOut() {

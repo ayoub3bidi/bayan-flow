@@ -11,8 +11,7 @@ import { sendTelegramAlert } from '../_shared/telegram.ts';
 
 const GENERIC_REJECT = {
   error: {
-    message:
-      'Sign-in is temporarily unavailable. Please try again later.',
+    message: 'Sign-in is temporarily unavailable. Please try again later.',
     http_code: 400,
   },
 };
@@ -68,12 +67,11 @@ export async function handleRequest(req) {
       'BEFORE_USER_CREATED_HOOK_SECRET'
     );
 
-    const metadata = /** @type {{ ip_address?: string }} */ (
-      payload.metadata ?? {}
-    );
-    const user = /** @type {{ email?: string, raw_user_meta_data?: Record<string, unknown> }} */ (
-      payload.user ?? {}
-    );
+    const metadata =
+      /** @type {{ ip_address?: string }} */ payload.metadata ?? {};
+    const user =
+      /** @type {{ email?: string, raw_user_meta_data?: Record<string, unknown> }} */ payload.user ??
+      {};
     const email = typeof user.email === 'string' ? user.email.trim() : '';
     const ip = metadata.ip_address ?? null;
 
@@ -88,10 +86,7 @@ export async function handleRequest(req) {
       return await reject('missing_ip');
     }
 
-    // Turnstile is NOT checked here. Google OIDC uses signInWithIdToken, which
-    // cannot attach custom raw_user_meta_data. The client sends the token as
-    // options.captchaToken; enable Auth → CAPTCHA protection (Turnstile) in the
-    // Supabase dashboard so GoTrue verifies it before this hook runs.
+    // Sign-in is Google-only (no CAPTCHA): a bot needs a real Google account.
     // This hook still enforces IP bans + signup rate limits.
 
     const supabase = getServiceClient();
@@ -142,7 +137,10 @@ export async function handleRequest(req) {
       });
 
     if (pendingError) {
-      console.error('before-signup: signup_pending insert failed', pendingError);
+      console.error(
+        'before-signup: signup_pending insert failed',
+        pendingError
+      );
       return await reject('pending_insert', {
         code: pendingError.code,
         message: pendingError.message,

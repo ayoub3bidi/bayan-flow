@@ -59,7 +59,7 @@ export const SIGN_IN_CLICKED = 'sign_in_clicked';
 /** Sign-in completed successfully */
 export const SIGN_IN_COMPLETED = 'sign_in_completed';
 
-/** A user-initiated sign-in failed; `step` says where (google/turnstile/supabase). */
+/** A user-initiated sign-in failed; `step` says where (google/supabase). */
 export const SIGN_IN_FAILED = 'sign_in_failed';
 
 /** Algorithm added to favorites */
