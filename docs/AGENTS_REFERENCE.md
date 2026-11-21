@@ -21,8 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **181** test files (~**2,118** tests, per `pnpm vitest run`)
-- Source surface: **252** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
+- Test surface: **182** test files (~**2,123** tests, per `pnpm vitest run`)
+- Source surface: **253** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth

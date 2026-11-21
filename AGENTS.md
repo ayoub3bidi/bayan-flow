@@ -14,8 +14,8 @@
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
 - Version: `0.5.0` in `package.json` — **45 algorithms** across **5 categories** (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph); optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
-- **Tests**: 174 test files (~2,021 tests)
-- **Source**: 252 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
+- **Tests**: 182 test files (~2,123 tests)
+- **Source**: 253 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
 - **Supabase**: `eu-central-1` region, Postgres 17; 14 migrations — public tables `profiles`, `favorite_algorithms`, `algorithm_notes`, `waitlist`, `keepalive` + abuse tables `banned_ips`, `trusted_ips`, `signup_events`, `signup_pending` (RLS on, no policies = service-role only); 6 edge functions (`before-signup`, `post-signup`, `platform-access`, `delete-account`, `waitlist-welcome`, `sync-contacts`); `keep-supabase-alive.yml` prevents free-tier pausing
 
 ## Routes
