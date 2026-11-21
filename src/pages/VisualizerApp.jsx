@@ -66,7 +66,6 @@ import {
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import {
   clampGraphAlgorithmNodeCount,
-  getGraphAlgorithmScenarioOptions,
   isGraphScenarioSupported,
 } from '../registry/graphAlgorithmRegistry.js';
 import {
@@ -108,10 +107,6 @@ function buildDefaultSelectedAlgorithms() {
       CATEGORY_CONFIG[type].defaultAlgorithm,
     ])
   );
-}
-
-function getDefaultGraphScenario(algorithmKey) {
-  return getGraphAlgorithmScenarioOptions(algorithmKey)[0]?.id ?? null;
 }
 
 function readStoredSoundPreference() {
@@ -187,11 +182,8 @@ function App() {
 
   useBodyScrollLock(isPythonPanelOpen || isInsightPanelOpen);
 
-  const [selectedGraphScenario, setSelectedGraphScenario] = useState(() =>
-    getDefaultGraphScenario(
-      CATEGORY_CONFIG[ALGORITHM_TYPES.GRAPH_ALGORITHM].defaultAlgorithm
-    )
-  );
+  // null = random graph (the default scenario)
+  const [selectedGraphScenario, setSelectedGraphScenario] = useState(null);
 
   // ── Active Algorithm Key / Name ───────────────────────────────────────────
   const activeAlgorithmKey = selectedAlgorithms[algorithmType];
@@ -309,7 +301,7 @@ function App() {
       selectedGraphScenario &&
       !isGraphScenarioSupported(graphAlgorithmKey, selectedGraphScenario)
     ) {
-      setSelectedGraphScenario(getDefaultGraphScenario(graphAlgorithmKey));
+      setSelectedGraphScenario(null);
     }
   }, [selectedAlgorithms, selectedGraphScenario, setSelectedGraphScenario]);
 

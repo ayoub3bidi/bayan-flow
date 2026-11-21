@@ -182,7 +182,9 @@
     "favoriteSlotsFull": "تم بلوغ حد المفضلات ({{limit}}). أزل واحدة لإضافة أخرى.",
     "addFavorite": "إضافة {{name}} إلى المفضلة",
     "removeFavorite": "إزالة {{name}} من المفضلة",
-    "useCases": "حالات الاستخدام"
+    "useCases": "حالات الاستخدام",
+    "comingSoonBadge": "قريبًا",
+    "categoryComingSoon": "{{name}} — قريبًا"
   },
   "modes": {
     "sorting": "الترتيب",
@@ -190,6 +192,8 @@
     "searching": "البحث",
     "treeTraversal": "اجتياز الشجرة",
     "graphAlgorithm": "خوارزميات الرسوم البيانية",
+    "dynamicProgramming": "البرمجة الديناميكية",
+    "stringAlgorithms": "خوارزميات النصوص",
     "manual": "يدوي",
     "autoplay": "تشغيل تلقائي"
   },

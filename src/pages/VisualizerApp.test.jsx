@@ -541,13 +541,14 @@ describe('VisualizerApp', () => {
     expect(screen.queryByTestId('grid-visualizer')).not.toBeInTheDocument();
   });
 
-  it('defaults graph algorithms to the first supported preset scenario', async () => {
+  it('defaults graph algorithms to a random graph', async () => {
     await renderApp();
 
     fireEvent.click(screen.getByText('graphAlgorithm'));
 
+    // null scenario = random graph
     expect(screen.getByTestId('selected-graph-scenario')).toHaveTextContent(
-      'linearChain'
+      'null'
     );
   });
 

@@ -191,6 +191,14 @@ pre.pseudocode-view .pc-line {
   background: var(--color-scrollbar-thumb-hover);
 }
 
+/* Firefox only: Chrome drops the ::-webkit-scrollbar styling once scrollbar-color is set */
+@supports not selector(::-webkit-scrollbar) {
+  .algo-dropdown {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+  }
+}
+
 /* Monaco editor: enable touch scrolling on mobile */
 .monaco-editor .monaco-scrollable-element,
 .monaco-editor [class*='scrollable'] {

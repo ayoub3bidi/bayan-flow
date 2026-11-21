@@ -182,7 +182,9 @@
     "favoriteSlotsFull": "Limite de favoris atteinte ({{limit}}). Retirez-en un pour en ajouter un autre.",
     "addFavorite": "Ajouter {{name}} aux favoris",
     "removeFavorite": "Retirer {{name}} des favoris",
-    "useCases": "Cas d'usage"
+    "useCases": "Cas d'usage",
+    "comingSoonBadge": "Bientôt",
+    "categoryComingSoon": "{{name}} — bientôt disponible"
   },
   "modes": {
     "sorting": "Tri",
@@ -190,6 +192,8 @@
     "searching": "Recherche",
     "treeTraversal": "Parcours d'arbres",
     "graphAlgorithm": "Algorithmes de graphe",
+    "dynamicProgramming": "Programmation dynamique",
+    "stringAlgorithms": "Algorithmes de chaînes",
     "manual": "Manuel",
     "autoplay": "Lecture Auto"
   },

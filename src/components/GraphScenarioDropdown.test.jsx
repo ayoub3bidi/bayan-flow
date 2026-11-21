@@ -32,9 +32,7 @@ describe('GraphScenarioDropdown', () => {
     expect(
       screen.getByRole('button', { name: 'Graph scenario' })
     ).toHaveTextContent('Linear Chain (A→B→C→D)');
-    expect(
-      screen.getByRole('option', { name: 'Random graph' })
-    ).toBeInTheDocument();
+    expect(screen.getAllByRole('option')[0]).toHaveTextContent('Random graph');
   });
 
   it('calls onScenarioSelect and closes the dropdown when an option is chosen', () => {

@@ -182,7 +182,9 @@
     "favoriteSlotsFull": "Favorite limit reached ({{limit}}). Remove one to add another.",
     "addFavorite": "Add {{name}} to favorites",
     "removeFavorite": "Remove {{name}} from favorites",
-    "useCases": "Use cases"
+    "useCases": "Use cases",
+    "comingSoonBadge": "Soon",
+    "categoryComingSoon": "{{name}} — coming soon"
   },
   "modes": {
     "sorting": "Sorting",
@@ -190,6 +192,8 @@
     "searching": "Searching",
     "treeTraversal": "Tree Traversals",
     "graphAlgorithm": "Graph Algorithms",
+    "dynamicProgramming": "Dynamic Programming",
+    "stringAlgorithms": "String Algorithms",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },

@@ -77,7 +77,9 @@ function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
         type="button"
         onClick={() => !isPlaying && setIsOpen(prev => !prev)}
         disabled={isPlaying}
-        className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-start flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
       >
         <span className="flex items-center gap-2 text-text-primary font-medium">
           <Star size={18} weight="fill" className="text-amber-500 shrink-0" />
@@ -104,7 +106,7 @@ function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
             animate={menuAnimate()}
             exit={menuExit(reduceMotion)}
             transition={menuTransition(reduceMotion)}
-            className="absolute z-10 w-full mt-2 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto"
+            className="absolute z-10 w-full mt-2 bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto algo-dropdown"
           >
             {count === 0 ? (
               <p className="px-4 py-3 text-sm text-text-secondary">
@@ -119,7 +121,7 @@ function FavoritesDropdown({ favorites, slotLimit, onSelect, isPlaying }) {
                     onSelect(item.category, item.algorithm_key);
                     setIsOpen(false);
                   }}
-                  className="w-full px-4 py-3 text-left flex flex-col gap-0.5 hover:bg-surface transition-colors"
+                  className="w-full px-4 py-3 text-start flex flex-col gap-0.5 hover:bg-surface transition-colors"
                 >
                   <span className="font-medium text-text-primary">
                     {resolveLabel(item.category, item.algorithm_key)}

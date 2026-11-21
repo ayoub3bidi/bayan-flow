@@ -102,7 +102,7 @@ describe('SettingsPanel', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders graph scenario options with random graph at the bottom', () => {
+  it('renders graph scenario options with random graph first', () => {
     renderWithI18n(<SettingsPanel {...getBaseProps()} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Graph scenario' }));
@@ -112,11 +112,60 @@ describe('SettingsPanel', () => {
       .map(option => option.textContent);
 
     expect(labels).toEqual([
+      'Random graph',
       'Linear Chain (A→B→C→D)',
       'Diamond Pattern (merge point)',
       'Single Node (trivial case)',
-      'Random graph',
     ]);
+  });
+
+  it('renders upcoming categories as disabled teasers, last one full width', () => {
+    const onAlgorithmTypeChange = vi.fn();
+    renderWithI18n(
+      <SettingsPanel {...getBaseProps({ onAlgorithmTypeChange })} />
+    );
+
+    const dp = screen.getByRole('button', {
+      name: 'Dynamic Programming — coming soon',
+    });
+    const strings = screen.getByRole('button', {
+      name: 'String Algorithms — coming soon',
+    });
+    expect(dp).toBeDisabled();
+    expect(strings).toBeDisabled();
+    expect(screen.getAllByText('Soon')).toHaveLength(2);
+
+    fireEvent.click(dp);
+    expect(onAlgorithmTypeChange).not.toHaveBeenCalled();
+
+    // 7 tiles on a 3-per-row grid: the 7th stretches across the last row.
+    expect(strings).toHaveClass('col-span-6');
+    expect(dp).toHaveClass('col-span-2');
+  });
+
+  it('labels mode buttons and sliders for assistive tech', () => {
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          mode: VISUALIZATION_MODES.AUTOPLAY,
+          selectedGraphScenario: null,
+        })}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Autoplay' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(screen.getByRole('button', { name: 'Manual' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
+    expect(screen.getByLabelText(/^Speed/)).toHaveAttribute('type', 'range');
+    expect(screen.getByLabelText(/^Graph vertices/)).toHaveAttribute(
+      'type',
+      'range'
+    );
   });
 
   it('forwards graph scenario changes', () => {
