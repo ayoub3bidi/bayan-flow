@@ -12,13 +12,15 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH_VERTICAL,
   VIDEO_HEIGHT_VERTICAL,
-  VIDEO_EXPORT_FRAMES_PER_STEP,
+  getExportTiming,
   COMPLEXITY_DURATION_FRAMES,
   DEFAULT_VIDEO_WATERMARK,
   DEFAULT_EXPORT_AUDIO_VOLUME,
 } from './constants.js';
 import { ALGORITHM_TYPES } from '../constants/index.js';
 import { normalizeExportLanguage } from './exportLanguage.js';
+import { buildExportAudioUrl } from './audio/mixExportAudio.js';
+import i18n from '../i18n/index.js';
 import { PRODUCTION_ORIGIN } from '../constants/siteSeo.js';
 
 const COMPOSITION_ID = 'AlgorithmVideo';
@@ -71,15 +73,6 @@ export function isExportCancelledError(err) {
           ? String(err.message)
           : '';
   return /\bcancel(?:led|ed)\b/i.test(message);
-}
-
-/** @param {Array<{ severity?: string, message?: string, type?: string }>} [issues] */
-export function summarizeRenderIssues(issues = []) {
-  const messages = getBlockingRenderIssues(issues)
-    .map(issue => issue.message)
-    .filter(Boolean);
-  if (messages.length) return messages.join(' ');
-  return issues[0]?.message ?? '';
 }
 
 /** @param {Array<{ type?: string }>} [issues] */
@@ -175,7 +168,14 @@ export function useVideoExporter() {
       exportLanguage,
     }) => {
       if (!steps?.length) {
-        setExportErrorMessage('No visualization steps to export.');
+        setExportErrorMessage(i18n.t('controls.exportNoSteps'));
+        setExportState('error');
+        return;
+      }
+
+      const { framesPerStep, exceedsLimit } = getExportTiming(steps.length);
+      if (exceedsLimit) {
+        setExportErrorMessage(i18n.t('controls.exportTooLong'));
         setExportState('error');
         return;
       }
@@ -185,7 +185,6 @@ export function useVideoExporter() {
       const width = isVertical ? VIDEO_WIDTH_VERTICAL : VIDEO_WIDTH;
       const height = isVertical ? VIDEO_HEIGHT_VERTICAL : VIDEO_HEIGHT;
 
-      const framesPerStep = VIDEO_EXPORT_FRAMES_PER_STEP;
       const mainDurationInFrames = exportSteps.length * framesPerStep;
       const durationInFrames =
         mainDurationInFrames + COMPLEXITY_DURATION_FRAMES;
@@ -196,7 +195,7 @@ export function useVideoExporter() {
       };
 
       let renderMuted = !includeExportAudio;
-      let exportAudioEnabled = includeExportAudio;
+      let exportAudioUrl = null;
 
       const inputProps = {
         steps: exportSteps,
@@ -206,8 +205,7 @@ export function useVideoExporter() {
         framesPerStep,
         gridSize,
         watermark,
-        includeExportAudio: exportAudioEnabled,
-        exportAudioVolume,
+        exportAudioSrc: null,
         exportTheme:
           exportTheme === 'light' || exportTheme === 'dark'
             ? exportTheme
@@ -251,8 +249,6 @@ export function useVideoExporter() {
           });
           if (canProceedWithExport(check)) {
             renderMuted = true;
-            exportAudioEnabled = false;
-            inputProps.includeExportAudio = false;
           }
         }
 
@@ -262,15 +258,11 @@ export function useVideoExporter() {
         setCanRenderOnWeb(canExport);
 
         if (!canExport) {
-          const issueSummary = summarizeRenderIssues(check.issues);
           console.warn(
             '[Export Video] Browser cannot render MP4:',
             check.issues
           );
-          setExportErrorMessage(
-            issueSummary ||
-              'Video export is not supported in this browser. Try Chrome 94+, Firefox 130+, or Safari 26+.'
-          );
+          setExportErrorMessage(i18n.t('controls.browserNotSupported'));
           setExportState('error');
           return;
         }
@@ -282,6 +274,26 @@ export function useVideoExporter() {
         }
 
         setExportState('rendering');
+
+        if (!renderMuted) {
+          try {
+            exportAudioUrl = await buildExportAudioUrl({
+              algorithmType: inputProps.algorithmType,
+              algorithmKey: inputProps.algorithmKey,
+              steps: exportSteps,
+              framesPerStep,
+              volume: exportAudioVolume,
+            });
+          } catch (err) {
+            console.warn(
+              '[Export Video] Could not prepare export audio; exporting without sound.',
+              err
+            );
+          }
+          if (userCancelledRef.current) return;
+          inputProps.exportAudioSrc = exportAudioUrl;
+          renderMuted = !exportAudioUrl;
+        }
 
         const { getBlob } = await renderMediaOnWeb({
           signal: abortRef.current.signal,
@@ -319,13 +331,12 @@ export function useVideoExporter() {
           return;
         }
         console.error('[Export Video]', err);
-        setExportErrorMessage(
-          err instanceof Error ? err.message : String(err ?? 'Export failed')
-        );
+        setExportErrorMessage(i18n.t('controls.exportFailedRetry'));
         setExportState('error');
         setExportProgress(0);
       } finally {
         abortRef.current = null;
+        if (exportAudioUrl) URL.revokeObjectURL(exportAudioUrl);
       }
     },
     [dismissExportSession]

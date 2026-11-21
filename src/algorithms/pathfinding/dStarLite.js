@@ -97,7 +97,11 @@ export function dStarLite(grid, start, end, rows, cols) {
   let stepCounter = 0;
   const VISUALIZATION_SAMPLE_RATE = 5;
 
-  while (!pq.isEmpty()) {
+  // Hard bound so a regression can never freeze the tab; a correct run expands far fewer nodes.
+  const maxIterations = rows * cols * 8;
+  let iterations = 0;
+
+  while (!pq.isEmpty() && ++iterations <= maxIterations) {
     const topItem = pq.dequeue();
     const u = topItem.val;
 
@@ -111,6 +115,9 @@ export function dStarLite(grid, start, end, rows, cols) {
     ) {
       break;
     }
+
+    // The queue has no decrease-key, so skip leftover entries for already-consistent nodes.
+    if (g[u.row][u.col] === rhs[u.row][u.col]) continue;
 
     // Mark as closed ONLY if it's not start or end
     if (
@@ -287,7 +294,11 @@ export function dStarLitePure(start, end, rows, cols) {
     { row: 0, col: 1 },
   ];
 
-  while (!pq.isEmpty()) {
+  // Hard bound so a regression can never freeze the tab; a correct run expands far fewer nodes.
+  const maxIterations = rows * cols * 8;
+  let iterations = 0;
+
+  while (!pq.isEmpty() && ++iterations <= maxIterations) {
     const topItem = pq.dequeue();
     const u = topItem.val;
 
@@ -302,6 +313,9 @@ export function dStarLitePure(start, end, rows, cols) {
     ) {
       break;
     }
+
+    // The queue has no decrease-key, so skip leftover entries for already-consistent nodes.
+    if (g[u.row][u.col] === rhs[u.row][u.col]) continue;
 
     const gVal = g[u.row][u.col];
     const rhsVal = rhs[u.row][u.col];

@@ -31,6 +31,9 @@ importers:
       '@fontsource-variable/source-serif-4':
         specifier: ^5.3.0
         version: 5.3.0
+      '@fontsource/ibm-plex-sans-arabic':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@monaco-editor/react':
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -44,11 +47,11 @@ importers:
         specifier: ^1.10.3
         version: 1.10.3(@types/react@19.2.7)(posthog-js@1.404.0)(react@19.2.1)
       '@remotion/media':
-        specifier: 4.0.436
-        version: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        specifier: 4.0.458
+        version: 4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@remotion/web-renderer':
-        specifier: ^4.0.436
-        version: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        specifier: 4.0.458
+        version: 4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@supabase/supabase-js':
         specifier: ^2.108.2
         version: 2.108.2
@@ -92,8 +95,8 @@ importers:
         specifier: ^7.12.0
         version: 7.18.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       remotion:
-        specifier: ^4.0.436
-        version: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        specifier: 4.0.458
+        version: 4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       tone:
         specifier: ^15.1.22
         version: 15.1.22
@@ -661,6 +664,9 @@ packages:
   '@fontsource-variable/source-serif-4@5.3.0':
     resolution: {integrity: sha512-9vch9WqxjaaA+1o9Ur8pOgIGbCYLjRReOUel23A6lOpD1syptgjtkORevvNmldJ5kGXQL29onQUqI5Ltz0s3bQ==}
 
+  '@fontsource/ibm-plex-sans-arabic@5.3.0':
+    resolution: {integrity: sha512-ZZ4g+JDgQY0NqSh4o0MNWU1sHQmtcee1g++aKAwyJvZxnT5y51JXsN1cIXnaQaMd40dcbK6QFYa+Z1LbaiNuqA==}
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -841,18 +847,18 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@mediabunny/aac-encoder@1.37.0':
-    resolution: {integrity: sha512-mYnF1sObnPE+7+QWn9H7c0rbl5Dwu50JejUD/GJefRl8ozYp0sz3tt+zBLCeif5GXBkPhABIX3JVg1eGfqx6tg==}
+  '@mediabunny/aac-encoder@1.42.0':
+    resolution: {integrity: sha512-Wcxn/Ez5oYNnHtNDjSV1kxrGeHm9Xq9SycdyXBLwbyd3VJvsagR9r/XwtHYOp2CGYKo+biN/NYhJuEORSXkkGQ==}
     peerDependencies:
       mediabunny: ^1.0.0
 
-  '@mediabunny/flac-encoder@1.37.0':
-    resolution: {integrity: sha512-VwKIL5p1WZE4dSwZ1SVv/bd2ksul8a4run4S1eEbPRysnG87nmCXddO5ajD3b2k2478XWitKnVDXl/kxdIIWBw==}
+  '@mediabunny/flac-encoder@1.42.0':
+    resolution: {integrity: sha512-yguntZRxJ9ghVVxV1okbehi5jUgmlGbvjknNAgTzkM0m6F+IGZn9hG6ztW4Pvfdmv8YH1m7WbcB8wj87UHVsyg==}
     peerDependencies:
       mediabunny: ^1.0.0
 
-  '@mediabunny/mp3-encoder@1.37.0':
-    resolution: {integrity: sha512-6tXBO3iHDA55WiMhOoaOmeCCOQ51U38mdXRxYNS9/hUCpR0ScRo+NtWu2YUa/jp2q99JNPrA4yYjahE5xHDxpg==}
+  '@mediabunny/mp3-encoder@1.42.0':
+    resolution: {integrity: sha512-J6TwGa6rbVpXxcOETL6NVTi8UFYkd/W+DcV0CsQEEEjjMnL9Y5SN1h36Vc1CDSGVDSq62E8PxbG8C8eOIDqbFg==}
     peerDependencies:
       mediabunny: ^1.0.0
 
@@ -971,17 +977,17 @@ packages:
   '@posthog/types@1.397.0':
     resolution: {integrity: sha512-Pa7FtsBo3V0XrhY4y8Xquwp8U07syuZ2IGQdlsRyxhz0yejQLceFjI58UssCXE5zDCDj3km5l7H3ufD6rHChCg==}
 
-  '@remotion/licensing@4.0.436':
-    resolution: {integrity: sha512-spELYcuv9n/7GdF7yjaip3YDDLg/mJ0SSOUoPP0iPHZRp+Zd7W7OkOeDBw2KkbyI0wOZiOMQtoXD+oxN8BAbuA==}
+  '@remotion/licensing@4.0.458':
+    resolution: {integrity: sha512-WCBBf45rSdLRaq38/pWxnZocEHS8BkSC3d9orzrgeLutiL2G0/Q9LyiWoS+Z+b/gXHcEM+lYZNE1SjnKx+HnWg==}
 
-  '@remotion/media@4.0.436':
-    resolution: {integrity: sha512-v2BCOaHiNXU2Ad2N3bJJMHVR+JsfRqV9+k/R8ijL3wXntlcR47XEMdjKuW4iiWZSKjrXN0pO2EqiuBbwOqZcVg==}
+  '@remotion/media@4.0.458':
+    resolution: {integrity: sha512-hJ2mMSxArfXVDfnhhdSjXOX1cTxIteAMaLNX1caMvP5GvTzOZtAHKfTARYIWATEokE42yczoKeZAYmXDU/75tQ==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/web-renderer@4.0.436':
-    resolution: {integrity: sha512-DJk7e+hNf4BX18nHo5iK742iyULBdV59gYVoIvJSqe9H/pTsdFTKPkudpL2Ougt4EHxVX82BsZ7r6wH8Y98tCA==}
+  '@remotion/web-renderer@4.0.458':
+    resolution: {integrity: sha512-NzJ0TvO0QjKRcDKChxqEW8L69lgC/BTl0HIVnWqUsM3P3eEeOHEqSD/SbmaPScHH5EK5jDCitdRO5Tk1pB5rzg==}
     peerDependencies:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
@@ -1894,6 +1900,7 @@ packages:
   eslint@9.39.1:
     resolution: {integrity: sha512-BhHmn2yNOFA9H9JmmIVKJmd288g9hrVRDkdoIgRCRuSySRUHH7r/DI6aAXW9T1WwUuY3DFgrcaqB+deURBLR5g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -2322,8 +2329,8 @@ packages:
   mdn-data@2.27.1:
     resolution: {integrity: sha512-9Yubnt3e8A0OKwxYSXyhLymGW4sCufcLG6VdiDdUGVkPhpqLxlvP5vl1983gQjJl3tqbrM731mjaZaP68AgosQ==}
 
-  mediabunny@1.37.0:
-    resolution: {integrity: sha512-eV7M9IJ29pr/8RNL1sYtIxNbdMfDMN1hMwMaOFfNLhwuKKGSC+eKwiJFpdVjEJ3zrMA4LGerF4Hps0SENFSAlg==}
+  mediabunny@1.42.0:
+    resolution: {integrity: sha512-s9ypTqLi6kbh95gC+YaJlG0PkLvMxu37Q/wO/pFZx0fUCA5Ym5mp+2dWoa83mKQ3Uo18aNlgev5iJ5ESZqWwgQ==}
 
   min-indent@1.0.1:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
@@ -2582,8 +2589,8 @@ packages:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
 
-  remotion@4.0.436:
-    resolution: {integrity: sha512-VCENxMQLXNqK0bh/2tm2avOeWM1s2nNXOU5XG/d5oC0vBmaKna27x8NP1+0t7zjjr5v9olqD3G9qYdpjy/o/WQ==}
+  remotion@4.0.458:
+    resolution: {integrity: sha512-UtKIbW7FBUAcrZVWlv4Jr97Gg0oq9F0kIaIBTp8LvWUZQSiN75bQT0hsHs4pTm8KIRSswdIeGrM4B4DTwaZC6A==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -2602,6 +2609,7 @@ packages:
   rolldown-vite@7.2.10:
     resolution: {integrity: sha512-v2ekZjuVLfumjp1Cr7LSQM1n2oOo3+gMruhOgT0Q4/cQ2J3nkTDLTAWLQQ86UHMbFYyVIN1wGh8BEZbvjkyctg==}
     engines: {node: ^20.19.0 || >=22.12.0}
+    deprecated: Use 7.3.1 for migration purposes. For the most recent updates, migrate to Vite 8 once you're ready.
     hasBin: true
     peerDependencies:
       '@types/node': ^20.19.0 || >=22.12.0
@@ -2901,6 +2909,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -3410,6 +3419,8 @@ snapshots:
 
   '@fontsource-variable/source-serif-4@5.3.0': {}
 
+  '@fontsource/ibm-plex-sans-arabic@5.3.0': {}
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.7':
@@ -3552,17 +3563,17 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@mediabunny/aac-encoder@1.37.0(mediabunny@1.37.0)':
+  '@mediabunny/aac-encoder@1.42.0(mediabunny@1.42.0)':
     dependencies:
-      mediabunny: 1.37.0
+      mediabunny: 1.42.0
 
-  '@mediabunny/flac-encoder@1.37.0(mediabunny@1.37.0)':
+  '@mediabunny/flac-encoder@1.42.0(mediabunny@1.42.0)':
     dependencies:
-      mediabunny: 1.37.0
+      mediabunny: 1.42.0
 
-  '@mediabunny/mp3-encoder@1.37.0(mediabunny@1.37.0)':
+  '@mediabunny/mp3-encoder@1.42.0(mediabunny@1.42.0)':
     dependencies:
-      mediabunny: 1.37.0
+      mediabunny: 1.42.0
 
   '@monaco-editor/loader@1.7.0':
     dependencies:
@@ -3685,26 +3696,26 @@ snapshots:
 
   '@posthog/types@1.397.0': {}
 
-  '@remotion/licensing@4.0.436': {}
+  '@remotion/licensing@4.0.458': {}
 
-  '@remotion/media@4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@remotion/media@4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
-      mediabunny: 1.37.0
+      mediabunny: 1.42.0
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
-      remotion: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      remotion: 4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       zod: 4.3.6
 
-  '@remotion/web-renderer@4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@remotion/web-renderer@4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
-      '@mediabunny/aac-encoder': 1.37.0(mediabunny@1.37.0)
-      '@mediabunny/flac-encoder': 1.37.0(mediabunny@1.37.0)
-      '@mediabunny/mp3-encoder': 1.37.0(mediabunny@1.37.0)
-      '@remotion/licensing': 4.0.436
-      mediabunny: 1.37.0
+      '@mediabunny/aac-encoder': 1.42.0(mediabunny@1.42.0)
+      '@mediabunny/flac-encoder': 1.42.0(mediabunny@1.42.0)
+      '@mediabunny/mp3-encoder': 1.42.0(mediabunny@1.42.0)
+      '@remotion/licensing': 4.0.458
+      mediabunny: 1.42.0
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
-      remotion: 4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      remotion: 4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
 
   '@rolldown/binding-android-arm64@1.0.0-beta.53':
     optional: true
@@ -5057,7 +5068,7 @@ snapshots:
 
   mdn-data@2.27.1: {}
 
-  mediabunny@1.37.0:
+  mediabunny@1.42.0:
     dependencies:
       '@types/dom-mediacapture-transform': 0.1.11
       '@types/dom-webcodecs': 0.1.13
@@ -5327,7 +5338,7 @@ snapshots:
       indent-string: 4.0.0
       strip-indent: 3.0.0
 
-  remotion@4.0.436(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
+  remotion@4.0.458(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
     dependencies:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)

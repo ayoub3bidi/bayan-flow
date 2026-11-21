@@ -40,6 +40,10 @@ describe('useTheme', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    // The mocks above are own properties; deleting them restores the real
+    // DOMTokenList methods so later test files can toggle <html> classes.
+    delete document.documentElement.classList.add;
+    delete document.documentElement.classList.remove;
     // Restore matchMedia mock to default state
     global.matchMedia = vi.fn(() => matchMediaMock);
   });

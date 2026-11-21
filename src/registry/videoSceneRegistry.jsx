@@ -39,11 +39,17 @@ export const VIDEO_SCENE_RENDERERS = {
       gridSize={gridSize}
     />
   ),
-  [ALGORITHM_TYPES.TREE_TRAVERSAL]: ({ steps, framesPerStep, exportTheme }) => (
+  [ALGORITHM_TYPES.TREE_TRAVERSAL]: ({
+    steps,
+    framesPerStep,
+    exportTheme,
+    lng,
+  }) => (
     <TreeTraversalScene
       steps={steps}
       framesPerStep={framesPerStep}
       exportTheme={exportTheme}
+      lng={lng}
     />
   ),
   [ALGORITHM_TYPES.GRAPH_ALGORITHM]: ({

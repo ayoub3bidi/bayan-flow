@@ -53,4 +53,14 @@ describe('privacy.en', () => {
     expect(body).toMatch(/Profile Settings|delete your account/i);
     expect(body).toMatch(/contact@bayanflow\.com/);
   });
+
+  it('discloses cookieless counting and the DNT/GPC opt-out', () => {
+    const body = PRIVACY_POLICY_SECTIONS.flatMap(section => [
+      ...section.paragraphs,
+      ...(section.list ?? []),
+    ]).join(' ');
+
+    expect(body).toMatch(/without setting cookies/i);
+    expect(body).toMatch(/Global Privacy Control/i);
+  });
 });

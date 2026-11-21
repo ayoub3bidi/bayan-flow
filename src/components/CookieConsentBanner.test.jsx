@@ -14,9 +14,9 @@ import CookieConsentBanner from './CookieConsentBanner';
 
 const STORAGE_KEY = 'bayanflow:cookie-consent';
 
-function renderBanner() {
+function renderBanner(path = '/') {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[path]}>
       <I18nextProvider i18n={i18n}>
         <ConsentProvider>
           <CookieConsentBanner />
@@ -45,6 +45,15 @@ describe('CookieConsentBanner', () => {
     );
     renderBanner();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('docks to the start corner on /app and the end corner elsewhere', () => {
+    const { unmount } = renderBanner('/app');
+    expect(screen.getByRole('dialog')).toHaveClass('sm:start-0');
+    unmount();
+
+    renderBanner('/');
+    expect(screen.getByRole('dialog')).toHaveClass('sm:end-0');
   });
 
   it('renders accept and decline buttons', () => {

@@ -52,7 +52,9 @@ function AlgorithmDropdown({
         type="button"
         onClick={() => !isPlaying && setIsDropdownOpen(!isDropdownOpen)}
         disabled={isPlaying}
-        className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-left flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)] touch-manipulation leading-consistent"
+        aria-haspopup="listbox"
+        aria-expanded={isDropdownOpen}
+        className="w-full px-4 py-3 min-h-[44px] bg-surface-elevated border-2 border-[var(--color-border-strong)] rounded-lg text-start flex items-center justify-between transition-all duration-200 hover:border-[#3b82f6] dark:hover:border-[#60a5fa] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] dark:focus:ring-[#60a5fa] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border-strong)] touch-manipulation leading-consistent"
       >
         <div className="flex flex-col">
           <span className="text-text-primary font-medium">
@@ -121,7 +123,7 @@ function AlgorithmDropdown({
                             onAlgorithmSelect(algo.value);
                           }
                         }}
-                        className="flex-1 min-w-0 px-4 py-3 text-left flex items-center justify-between"
+                        className="flex-1 min-w-0 px-4 py-3 text-start flex items-center justify-between"
                       >
                         <div className="flex flex-col min-w-0 flex-1">
                           <span

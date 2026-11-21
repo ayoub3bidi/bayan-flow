@@ -40,6 +40,24 @@ vi.mock('@/config/algorithmConfig', () => ({
 }));
 
 describe('FavoritesDropdown', () => {
+  it('exposes the open state via aria-expanded', () => {
+    render(
+      <FavoritesDropdown
+        favorites={[]}
+        slotLimit={20}
+        onSelect={vi.fn()}
+        isPlaying={false}
+      />
+    );
+
+    const trigger = screen.getByRole('button', {
+      name: /settings.favoriteAlgorithmsEmpty/,
+    });
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(trigger);
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  });
+
   it('shows empty state hint when dropdown is opened', async () => {
     render(
       <FavoritesDropdown

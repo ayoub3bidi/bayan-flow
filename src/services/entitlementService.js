@@ -16,10 +16,10 @@ import { DEFAULT_VIDEO_WATERMARK } from '@/video/constants';
 
 // Session limits for anonymous users
 export const ANONYMOUS_VISUALIZATION_LIMIT = 12;
-const ANONYMOUS_COMPLEXITY_VIEW_LIMIT = 2;
 
 // localStorage keys
 const STORAGE_KEY_VIZ_COUNT = 'anon_viz_count';
+// Legacy key from the old 2-view complexity cap; still cleared on sign-in.
 const STORAGE_KEY_COMPLEXITY_COUNT = 'anon_complexity_views';
 
 /**
@@ -54,35 +54,6 @@ export function canAccessAlgorithm(algorithmKey, categoryType, user) {
   }
   // Anonymous: check allowlist
   return isAlgorithmFreeForAnonymous(algorithmKey, categoryType);
-}
-
-/**
- * Check if user can use manual controls (step forward/backward, manual mode).
- * Anonymous users are locked to autoplay.
- * @param {object | null} user
- * @returns {boolean}
- */
-export function canUseManualControls(user) {
-  return getUserPlan(user) !== PLAN_TIERS.ANONYMOUS;
-}
-
-/**
- * Check if user can change animation speed.
- * Anonymous users are locked to MEDIUM speed.
- * @param {object | null} user
- * @returns {boolean}
- */
-export function canChangeSpeed(user) {
-  return getUserPlan(user) !== PLAN_TIERS.ANONYMOUS;
-}
-
-/**
- * Check if user can use category-specific controls (grid size, sort order, graph scenarios, tree node count).
- * @param {object | null} user
- * @returns {boolean}
- */
-export function canUseCategoryControls(user) {
-  return getUserPlan(user) !== PLAN_TIERS.ANONYMOUS;
 }
 
 /**
@@ -151,25 +122,6 @@ export function getRemainingVisualizations(user) {
 }
 
 /**
- * Check if user can view the complexity panel (ungated).
- * Anonymous users have a limit of 2 views per completion, then gated.
- * @param {object | null} user
- * @returns {boolean}
- */
-export function canViewComplexityPanel(user) {
-  const plan = getUserPlan(user);
-  if (plan === PLAN_TIERS.FREE || plan === PLAN_TIERS.PRO) {
-    return true; // Unlimited
-  }
-  // Anonymous: check view limit
-  const count = parseInt(
-    localStorage.getItem(STORAGE_KEY_COMPLEXITY_COUNT) || '0',
-    10
-  );
-  return count < ANONYMOUS_COMPLEXITY_VIEW_LIMIT;
-}
-
-/**
  * Check if the user can begin a video export.
  * Anonymous users must sign in. Signed-in users (Free and Pro) have unlimited
  * exports: rendering runs entirely client-side in the browser, so each export
@@ -203,18 +155,6 @@ export function getExportWatermarkConfig(user) {
  */
 export function canCustomizeExportWatermark(user) {
   return getUserPlan(user) === PLAN_TIERS.PRO;
-}
-
-/**
- * Increment the anonymous complexity view counter.
- * Should be called once per algorithm completion for anonymous users.
- */
-export function incrementComplexityViewCount() {
-  const count = parseInt(
-    localStorage.getItem(STORAGE_KEY_COMPLEXITY_COUNT) || '0',
-    10
-  );
-  localStorage.setItem(STORAGE_KEY_COMPLEXITY_COUNT, String(count + 1));
 }
 
 /**

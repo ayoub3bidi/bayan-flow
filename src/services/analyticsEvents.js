@@ -14,6 +14,9 @@ export const ALGORITHM_VIEWED = 'algorithm_viewed';
 /** Algorithm visualization playback completed */
 export const ALGORITHM_COMPLETED = 'algorithm_completed';
 
+/** A run started: first play, step-forward or seek of a newly generated input */
+export const VISUALIZATION_STARTED = 'visualization_started';
+
 /** New input generated for algorithm */
 export const ALGORITHM_REGENERATED = 'algorithm_regenerated';
 
@@ -70,9 +73,6 @@ export const NOTE_SAVED = 'note_saved';
 /** Upgrade modal viewed */
 export const UPGRADE_MODAL_VIEWED = 'upgrade_modal_viewed';
 
-/** Upgrade button clicked */
-export const UPGRADE_CLICKED = 'upgrade_clicked';
-
 /** Waitlist form submitted successfully */
 export const WAITLIST_JOINED = 'waitlist_joined';
 
@@ -93,6 +93,24 @@ export const CATEGORY_CHANGED = 'category_changed';
  */
 export function trackAlgorithmViewed(algorithmKey, category) {
   captureEvent(ALGORITHM_VIEWED, { algorithm_key: algorithmKey, category });
+}
+
+/**
+ * Capture a visualization run started event (once per generated input).
+ * @param {string} algorithmKey
+ * @param {string} category
+ * @param {boolean} isAuthenticated
+ */
+export function trackVisualizationStarted(
+  algorithmKey,
+  category,
+  isAuthenticated
+) {
+  captureEvent(VISUALIZATION_STARTED, {
+    algorithm_key: algorithmKey,
+    category,
+    is_authenticated: isAuthenticated,
+  });
 }
 
 /**
@@ -187,11 +205,11 @@ export function trackVideoExportStarted(orientation, algorithmKey) {
 }
 
 /**
- * Capture a video export completed event.
- * @param {number} durationMs
+ * Capture a video export completed event (video downloaded).
+ * @param {string} algorithmKey
  */
-export function trackVideoExportCompleted(durationMs) {
-  captureEvent(VIDEO_EXPORT_COMPLETED, { duration_ms: durationMs });
+export function trackVideoExportCompleted(algorithmKey) {
+  captureEvent(VIDEO_EXPORT_COMPLETED, { algorithm_key: algorithmKey });
 }
 
 /**
@@ -212,10 +230,11 @@ export function trackSignInClicked(source) {
 }
 
 /**
- * Capture a sign-in completed event.
+ * Capture a sign-in completed event (once per user-initiated sign-in).
+ * @param {{ isNewUser: boolean }} details - isNewUser: this sign-in created the account
  */
-export function trackSignInCompleted() {
-  captureEvent(SIGN_IN_COMPLETED);
+export function trackSignInCompleted({ isNewUser }) {
+  captureEvent(SIGN_IN_COMPLETED, { is_new_user: isNewUser });
 }
 
 /**
@@ -252,15 +271,6 @@ export function trackNoteSaved(algorithmKey, noteLength) {
  */
 export function trackUpgradeModalViewed(trigger) {
   captureEvent(UPGRADE_MODAL_VIEWED, { trigger });
-}
-
-/**
- * Capture an upgrade clicked event.
- * @param {string} planSelected
- * @param {string} trigger
- */
-export function trackUpgradeClicked(planSelected, trigger) {
-  captureEvent(UPGRADE_CLICKED, { plan_selected: planSelected, trigger });
 }
 
 /**

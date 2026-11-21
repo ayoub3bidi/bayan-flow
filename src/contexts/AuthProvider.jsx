@@ -51,6 +51,16 @@ function buildProfileView(user, profileRow, avatarSize) {
   };
 }
 
+/**
+ * True when this sign-in created the account (first sign-in).
+ * @param {import('@supabase/supabase-js').User | null | undefined} user
+ */
+function isNewlyCreatedUser(user) {
+  if (!user?.created_at) return false;
+  const lastSignIn = Date.parse(user.last_sign_in_at ?? user.created_at);
+  return Math.abs(lastSignIn - Date.parse(user.created_at)) < 60_000;
+}
+
 export function AuthProvider({ children }) {
   const isConfigured = isAuthConfigured();
   const [session, setSession] = useState(null);
@@ -185,7 +195,12 @@ export function AuthProvider({ children }) {
 
         if (event === 'SIGNED_IN' && nextSession?.user != null) {
           resetAllSessionCounters();
-          resetUser();
+          // Supabase re-emits SIGNED_IN on session recovery; only reset when the
+          // account changes, so the anonymous history merges into the person.
+          const previousUserId = userRef.current?.id;
+          if (previousUserId && previousUserId !== nextSession.user.id) {
+            resetUser();
+          }
 
           const fallbackDisplayName =
             nextSession.user.user_metadata?.full_name ||
@@ -196,7 +211,6 @@ export function AuthProvider({ children }) {
             displayName: fallbackDisplayName,
             plan: null,
           });
-          trackSignInCompleted();
           setTimeout(() => {
             authService
               .syncContactToResend({
@@ -238,7 +252,8 @@ export function AuthProvider({ children }) {
   }, [isConfigured, evaluateAccess]);
 
   const signInWithGoogle = useCallback(async () => {
-    await authService.signInWithGoogle();
+    const signedInUser = await authService.signInWithGoogle();
+    trackSignInCompleted({ isNewUser: isNewlyCreatedUser(signedInUser) });
   }, []);
 
   const signOut = useCallback(async () => {

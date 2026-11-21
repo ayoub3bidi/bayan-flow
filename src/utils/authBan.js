@@ -22,10 +22,8 @@ export function isAccountBannedError(error) {
     return true;
   }
 
-  const status =
-    'status' in error && typeof error.status === 'number' ? error.status : null;
-
-  return status === 403;
+  // Supabase also returns 403 for bad or expired JWTs (`bad_jwt`), which are not bans.
+  return 'code' in error && error.code === 'user_banned';
 }
 
 /**

@@ -71,6 +71,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests with coverage
+        timeout-minutes: 20
         run: pnpm test:coverage
         env:
           NODE_OPTIONS: --max-old-space-size=4096

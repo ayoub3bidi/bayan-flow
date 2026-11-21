@@ -59,8 +59,6 @@ import {
   canRunVisualization,
   incrementVisualizationCount,
   getRemainingVisualizations,
-  canUseManualControls,
-  canUseCategoryControls,
   canRunVideoExport,
   getExportWatermarkConfig,
   ANONYMOUS_VISUALIZATION_LIMIT,
@@ -68,7 +66,6 @@ import {
 import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate';
 import {
   clampGraphAlgorithmNodeCount,
-  getGraphAlgorithmScenarioOptions,
   isGraphScenarioSupported,
 } from '../registry/graphAlgorithmRegistry.js';
 import {
@@ -86,8 +83,12 @@ import {
   trackCodePanelOpened,
   trackInsightPanelOpened,
   trackVideoExportStarted,
+  trackVideoExportCompleted,
+  trackVideoShared,
+  trackVisualizationStarted,
   trackCategoryChanged,
   trackUpgradeLimitHit,
+  trackUpgradeModalViewed,
 } from '../services/analyticsEvents';
 
 const SOUND_PREFERENCE_STORAGE_KEY = 'bayan-flow:sound-enabled';
@@ -106,10 +107,6 @@ function buildDefaultSelectedAlgorithms() {
       CATEGORY_CONFIG[type].defaultAlgorithm,
     ])
   );
-}
-
-function getDefaultGraphScenario(algorithmKey) {
-  return getGraphAlgorithmScenarioOptions(algorithmKey)[0]?.id ?? null;
 }
 
 function readStoredSoundPreference() {
@@ -185,11 +182,8 @@ function App() {
 
   useBodyScrollLock(isPythonPanelOpen || isInsightPanelOpen);
 
-  const [selectedGraphScenario, setSelectedGraphScenario] = useState(() =>
-    getDefaultGraphScenario(
-      CATEGORY_CONFIG[ALGORITHM_TYPES.GRAPH_ALGORITHM].defaultAlgorithm
-    )
-  );
+  // null = random graph (the default scenario)
+  const [selectedGraphScenario, setSelectedGraphScenario] = useState(null);
 
   // ── Active Algorithm Key / Name ───────────────────────────────────────────
   const activeAlgorithmKey = selectedAlgorithms[algorithmType];
@@ -257,8 +251,10 @@ function App() {
   const [showShareModal, setShowShareModal] = useState(false);
   const pendingFeatureRef = useRef(null);
   const hasTouchedActivityRef = useRef(false);
+  const countedStepsRef = useRef(null);
 
   const openGatedFeature = (feature, metadata = {}) => {
+    trackUpgradeModalViewed(feature);
     setGatedFeature(feature);
     setGatedFeatureMetadata(metadata);
   };
@@ -305,7 +301,7 @@ function App() {
       selectedGraphScenario &&
       !isGraphScenarioSupported(graphAlgorithmKey, selectedGraphScenario)
     ) {
-      setSelectedGraphScenario(getDefaultGraphScenario(graphAlgorithmKey));
+      setSelectedGraphScenario(null);
     }
   }, [selectedAlgorithms, selectedGraphScenario, setSelectedGraphScenario]);
 
@@ -342,20 +338,6 @@ function App() {
       trackAlgorithmCompleted(activeAlgorithmKey, algorithmType);
     }
   }, [visualization.isComplete, activeAlgorithmKey, algorithmType]);
-
-  // Force autoplay mode for anonymous users
-  useEffect(() => {
-    if (!canUseManualControls(user) && mode === VISUALIZATION_MODES.MANUAL) {
-      setMode(VISUALIZATION_MODES.AUTOPLAY);
-    }
-  }, [user, mode]);
-
-  // Force medium grid for anonymous pathfinding users
-  useEffect(() => {
-    if (!canUseCategoryControls(user) && gridSize !== GRID_SIZES.MEDIUM) {
-      setGridSize(GRID_SIZES.MEDIUM);
-    }
-  }, [user, gridSize]);
 
   useEffect(() => {
     if (!isSoundEnabled || soundManager.getIsEnabled()) {
@@ -436,37 +418,49 @@ function App() {
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
-  /** Play handler with session limit check for anonymous users */
-  const handlePlay = () => {
+  /**
+   * Anonymous trial accounting: each run (one generated steps array) costs one
+   * credit, however it is advanced (play, manual step, seek). Pause/resume and
+   * replay of the same steps are free. Returns false when the limit blocks it.
+   */
+  const consumeRunIfNeeded = () => {
+    if (countedStepsRef.current === visualization.steps) return true;
+    if (user) {
+      countedStepsRef.current = visualization.steps;
+      trackVisualizationStarted(activeAlgorithmKey, algorithmType, true);
+      return true;
+    }
     if (!canRunVisualization(user)) {
       trackUpgradeLimitHit(ANONYMOUS_VISUALIZATION_LIMIT);
       openGatedFeature('session_limit', {
         limit: ANONYMOUS_VISUALIZATION_LIMIT,
       });
-      return;
+      return false;
     }
-    // Increment viz count for anonymous users on each play
-    if (!user) {
-      incrementVisualizationCount();
-    } else if (!hasTouchedActivityRef.current) {
+    incrementVisualizationCount();
+    countedStepsRef.current = visualization.steps;
+    trackVisualizationStarted(activeAlgorithmKey, algorithmType, false);
+    return true;
+  };
+
+  /** Play handler with session limit check for anonymous users */
+  const handlePlay = () => {
+    if (!consumeRunIfNeeded()) return;
+    if (user && !hasTouchedActivityRef.current) {
       hasTouchedActivityRef.current = true;
       void touchLastActive();
     }
     visualization.play();
   };
 
+  const handleSeek = step => {
+    if (!consumeRunIfNeeded()) return;
+    visualization.seekToStep(step);
+  };
+
   /** Handler for locked algorithm clicks (anonymous tier) */
   const handleLockedAlgorithmClick = algo => {
     openGatedFeature('algorithm_lock', { algorithmName: algo.label });
-  };
-
-  /** Handler for gated feature clicks from SettingsPanel and visualizers */
-  const handleGatedFeatureClick = feature => {
-    const metadata =
-      feature === 'session_limit'
-        ? { limit: ANONYMOUS_VISUALIZATION_LIMIT }
-        : {};
-    openGatedFeature(feature, metadata);
   };
 
   /** New random input data for the active category (array: regenerate values; grid: new start/end). */
@@ -612,13 +606,13 @@ function App() {
       gridSize,
       orientation,
       watermark: getExportWatermarkConfig(user),
-      includeExportAudio: isSoundEnabled,
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
     });
   };
 
   const handleDownloadComplete = () => {
+    trackVideoExportCompleted(activeAlgorithmKey);
     downloadVideo();
     setShowShareModal(true);
   };
@@ -681,6 +675,7 @@ function App() {
   };
 
   const handleStepForward = () => {
+    if (!consumeRunIfNeeded()) return;
     trackManualStepping(activeAlgorithmKey, 'forward');
     visualization.stepForward();
   };
@@ -700,7 +695,6 @@ function App() {
     onStepForward: handleStepForward,
     onStepBackward: handleStepBackward,
     mode,
-    onGatedFeatureClick: handleGatedFeatureClick,
   };
 
   const extraVisualizerProps = getExtraVisualizerProps(algorithmType, {
@@ -737,7 +731,6 @@ function App() {
     onModeChange: setMode,
     user,
     onLockedAlgorithmClick: handleLockedAlgorithmClick,
-    onGatedFeatureClick: handleGatedFeatureClick,
     favorites,
     favoriteSlotLimit: isAuthenticated ? favoriteSlotLimit : null,
     onFavoriteSelect: handleFavoriteNavigate,
@@ -759,9 +752,9 @@ function App() {
     onPlay: handlePlay,
     onPause: visualization.pause,
     onReset: visualization.reset,
-    onStepForward: visualization.stepForward,
-    onStepBackward: visualization.stepBackward,
-    onSeek: visualization.seekToStep,
+    onStepForward: handleStepForward,
+    onStepBackward: handleStepBackward,
+    onSeek: handleSeek,
     currentStep: visualization.currentStep,
     totalSteps: visualization.totalSteps,
     onGenerateInput: handleGenerateInput,
@@ -779,7 +772,6 @@ function App() {
     isSoundTogglePending,
     onToggleSound: handleGatedSoundToggle,
     isGated: !isAuthenticated,
-    onGatedFeatureClick: handleGatedFeatureClick,
     visualizationsRemaining: remainingVisualizations,
     onOpenSettings: isBelowLg ? () => setIsSettingsSheetOpen(true) : undefined,
   };
@@ -798,7 +790,7 @@ function App() {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg"
       >
-        Skip to main content
+        {t('a11y.skipToContent')}
       </a>
       <ProWaitlistBanner source="app" />
 
@@ -847,12 +839,14 @@ function App() {
                   <section
                     className="flex flex-col gap-3 flex-1 min-h-0 overflow-hidden"
                     role="region"
-                    aria-label="Algorithm visualization"
+                    aria-label={t('a11y.algorithmVisualization')}
                   >
                     <div
                       className="flex-1 min-h-0 overflow-hidden"
                       role="img"
-                      aria-label={`${activeAlgorithmKey} algorithm visualization`}
+                      aria-label={t('a11y.namedVisualization', {
+                        name: activeAlgorithmKey,
+                      })}
                     >
                       <VisualizerComponent
                         {...sharedVisualizerProps}
@@ -867,7 +861,7 @@ function App() {
                       <aside
                         className="lg:col-span-1"
                         role="complementary"
-                        aria-label="Algorithm settings"
+                        aria-label={t('a11y.algorithmSettings')}
                       >
                         <SettingsPanel {...settingsPanelProps} />
                       </aside>
@@ -875,12 +869,14 @@ function App() {
                       <section
                         className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-85px)]"
                         role="region"
-                        aria-label="Algorithm visualization"
+                        aria-label={t('a11y.algorithmVisualization')}
                       >
                         <div
                           className="flex-1 min-h-0"
                           role="img"
-                          aria-label={`${activeAlgorithmKey} algorithm visualization`}
+                          aria-label={t('a11y.namedVisualization', {
+                            name: activeAlgorithmKey,
+                          })}
                         >
                           <VisualizerComponent
                             {...sharedVisualizerProps}
@@ -973,6 +969,7 @@ function App() {
           exportState === 'error'
         }
         progress={exportProgress}
+        stepCount={visualization.steps?.length}
         phase={
           exportState === 'orientation'
             ? 'orientation'
@@ -997,6 +994,9 @@ function App() {
         algorithmName={activeAlgorithmName}
         videoBlob={getExportBlob()}
         videoFileName={exportFileName}
+        onShare={({ platform }) =>
+          trackVideoShared(platform, activeAlgorithmKey)
+        }
         onClose={handleShareModalClose}
       />
 

@@ -4,6 +4,7 @@
  * See LICENSE for details.
  */
 
+import { useTranslation } from 'react-i18next';
 import LegalDocument from '../components/LegalDocument';
 import {
   PRIVACY_POLICY_LAST_UPDATED,
@@ -11,9 +12,11 @@ import {
 } from '../content/legal/privacy.en';
 
 function PrivacyPolicy() {
+  const { t } = useTranslation();
+
   return (
     <LegalDocument
-      title="Privacy Policy"
+      title={t('legal.privacyTitle')}
       lastUpdated={PRIVACY_POLICY_LAST_UPDATED}
       sections={PRIVACY_POLICY_SECTIONS}
     />

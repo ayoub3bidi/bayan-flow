@@ -108,7 +108,11 @@ function GraphAlgorithmMatrixSceneInner({
       <svg
         viewBox="0 0 1280 720"
         preserveAspectRatio="xMidYMid meet"
-        style={{ width: '100%', height: '100%' }}
+        style={{
+          width: '100%',
+          height: '100%',
+          fontFamily: 'system-ui, sans-serif',
+        }}
         role="img"
       >
         <text

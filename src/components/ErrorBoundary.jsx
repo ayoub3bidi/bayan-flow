@@ -5,6 +5,7 @@
  */
 
 import { Component, createElement } from 'react';
+import i18n from '../i18n/index.js';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -39,7 +40,7 @@ class ErrorBoundary extends Component {
           createElement(
             'p',
             { className: 'text-lg font-semibold mb-2' },
-            'Something went wrong.'
+            i18n.t('errors.somethingWentWrong')
           ),
           createElement(
             'button',
@@ -49,7 +50,7 @@ class ErrorBoundary extends Component {
                 'mt-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700',
               onClick: () => this.setState({ hasError: false }),
             },
-            'Try again'
+            i18n.t('errors.tryAgain')
           )
         )
       );

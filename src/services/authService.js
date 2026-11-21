@@ -128,7 +128,7 @@ async function syncGoogleProfileMetadata(idToken) {
  * @param {string} [nonce]
  * @param {string} [accessToken]
  * @param {string} [turnstileToken]
- * @returns {Promise<void>}
+ * @returns {Promise<import('@supabase/supabase-js').User | null>}
  */
 export async function signInWithGoogleIdToken(
   idToken,
@@ -151,13 +151,14 @@ export async function signInWithGoogleIdToken(
     credentials.options = { captchaToken: turnstileToken };
   }
 
-  const { error } = await supabase.auth.signInWithIdToken(credentials);
+  const { data, error } = await supabase.auth.signInWithIdToken(credentials);
 
   if (error) {
     throw error;
   }
 
   await syncGoogleProfileMetadata(idToken);
+  return data?.user ?? null;
 }
 
 export async function signInWithGoogle() {
@@ -167,7 +168,7 @@ export async function signInWithGoogle() {
 
   const { idToken } = await requestGoogleSignInPopup();
   const turnstileToken = await getTurnstileToken();
-  await signInWithGoogleIdToken(idToken, undefined, undefined, turnstileToken);
+  return signInWithGoogleIdToken(idToken, undefined, undefined, turnstileToken);
 }
 
 export async function signOut() {
@@ -193,6 +194,20 @@ export async function deleteAccount() {
   }
 
   await signOut();
+}
+
+/**
+ * Whether Supabase has a persisted session in this browser, read synchronously
+ * (it may still be expired; `getSession()` is the authority).
+ * @returns {boolean}
+ */
+export function hasStoredSession() {
+  try {
+    const key = getSupabaseClient()?.auth?.storageKey;
+    return Boolean(key && window.localStorage.getItem(key));
+  } catch {
+    return false;
+  }
 }
 
 export async function getSession() {

@@ -6,15 +6,10 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   getUserPlan,
   canAccessAlgorithm,
-  canUseManualControls,
-  canChangeSpeed,
-  canUseCategoryControls,
   getFavoriteSlotLimit,
   canRunVisualization,
   incrementVisualizationCount,
   getRemainingVisualizations,
-  canViewComplexityPanel,
-  incrementComplexityViewCount,
   canRunVideoExport,
   getExportWatermarkConfig,
   canCustomizeExportWatermark,
@@ -100,39 +95,6 @@ describe('entitlementService', () => {
     });
   });
 
-  describe('canUseManualControls', () => {
-    it('should return false for anonymous users', () => {
-      expect(canUseManualControls(null)).toBe(false);
-    });
-
-    it('should return true for signed-in users', () => {
-      const user = { id: '123' };
-      expect(canUseManualControls(user)).toBe(true);
-    });
-  });
-
-  describe('canChangeSpeed', () => {
-    it('should return false for anonymous users', () => {
-      expect(canChangeSpeed(null)).toBe(false);
-    });
-
-    it('should return true for signed-in users', () => {
-      const user = { id: '123' };
-      expect(canChangeSpeed(user)).toBe(true);
-    });
-  });
-
-  describe('canUseCategoryControls', () => {
-    it('should return false for anonymous users', () => {
-      expect(canUseCategoryControls(null)).toBe(false);
-    });
-
-    it('should return true for signed-in users', () => {
-      const user = { id: '123' };
-      expect(canUseCategoryControls(user)).toBe(true);
-    });
-  });
-
   describe('getFavoriteSlotLimit', () => {
     it('should return 0 for anonymous users', () => {
       expect(getFavoriteSlotLimit(null)).toBe(0);
@@ -198,30 +160,6 @@ describe('entitlementService', () => {
     });
   });
 
-  describe('canViewComplexityPanel and incrementComplexityViewCount', () => {
-    it('should allow unlimited complexity views for signed-in users', () => {
-      const user = { id: '123' };
-      expect(canViewComplexityPanel(user)).toBe(true);
-      for (let i = 0; i < 10; i++) {
-        incrementComplexityViewCount();
-      }
-      expect(canViewComplexityPanel(user)).toBe(true);
-    });
-
-    it('should allow up to 2 complexity views for anonymous users', () => {
-      expect(canViewComplexityPanel(null)).toBe(true);
-      incrementComplexityViewCount();
-      expect(canViewComplexityPanel(null)).toBe(true);
-      incrementComplexityViewCount();
-      expect(canViewComplexityPanel(null)).toBe(false);
-    });
-
-    it('should persist count in localStorage', () => {
-      incrementComplexityViewCount();
-      expect(localStorage.getItem('anon_complexity_views')).toBe('1');
-    });
-  });
-
   describe('video export entitlements', () => {
     it('should block anonymous users from video export', () => {
       expect(canRunVideoExport(null)).toBe(false);
@@ -262,9 +200,9 @@ describe('entitlementService', () => {
     it('should clear all anonymous session counters', () => {
       incrementVisualizationCount();
       incrementVisualizationCount();
-      incrementComplexityViewCount();
+      // Legacy key from the removed complexity cap is still cleaned up.
+      localStorage.setItem('anon_complexity_views', '1');
       expect(localStorage.getItem('anon_viz_count')).toBe('2');
-      expect(localStorage.getItem('anon_complexity_views')).toBe('1');
 
       resetAllSessionCounters();
 
@@ -275,12 +213,10 @@ describe('entitlementService', () => {
     it('should reset counters to zero after clearing', () => {
       incrementVisualizationCount();
       incrementVisualizationCount();
-      incrementComplexityViewCount();
 
       resetAllSessionCounters();
 
       expect(getRemainingVisualizations(null)).toBe(12);
-      expect(canViewComplexityPanel(null)).toBe(true);
     });
   });
 });

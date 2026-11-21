@@ -126,15 +126,10 @@ describe('ControlPanel', () => {
     expect(screen.getByRole('button', { name: 'Sound Off' })).toBeDisabled();
   });
 
-  it('opens category_controls gate when anonymous user clicks sort order', () => {
-    const onGatedFeatureClick = vi.fn();
+  it('lets anonymous users toggle sort order during the trial', () => {
+    const onSortOrderChange = vi.fn();
     renderWithI18n(
-      <ControlPanel
-        {...getBaseProps({
-          isGated: true,
-          onGatedFeatureClick,
-        })}
-      />
+      <ControlPanel {...getBaseProps({ isGated: true, onSortOrderChange })} />
     );
 
     fireEvent.click(
@@ -143,7 +138,7 @@ describe('ControlPanel', () => {
       })
     );
 
-    expect(onGatedFeatureClick).toHaveBeenCalledWith('category_controls');
+    expect(onSortOrderChange).toHaveBeenCalledTimes(1);
   });
 
   it('shows a Settings button when onOpenSettings is provided on narrow viewports', () => {
@@ -209,48 +204,27 @@ describe('ControlPanel', () => {
     expect(screen.queryByTestId('seek-thumb')).not.toBeInTheDocument();
   });
 
-  it('shows a locked timeline for anonymous users that gates to sign-in on click', () => {
-    const onGatedFeatureClick = vi.fn();
+  it('lets anonymous users scrub the timeline during the trial', () => {
+    const onSeek = vi.fn();
     renderWithI18n(
       <ControlPanel
         {...getBaseProps({
           isGated: true,
           currentStep: 2,
           totalSteps: 5,
-          onGatedFeatureClick,
+          onSeek,
         })}
       />
     );
 
-    expect(
-      screen.queryByRole('slider', { name: 'Scrub through steps' })
-    ).not.toBeInTheDocument();
-    expect(screen.getByText(/step 3 of 5/i)).toBeInTheDocument();
-    expect(screen.getByText('Sign in to skip steps')).toBeInTheDocument();
-    expect(screen.getByTestId('seek-thumb')).toBeInTheDocument();
-    expect(
-      screen.queryByText('Drag the timeline to skip steps')
-    ).not.toBeInTheDocument();
-
-    const timeline = screen.getByRole('button', {
-      name: 'Sign in to skip steps',
-    });
-    fireEvent.click(timeline);
-    expect(onGatedFeatureClick).toHaveBeenCalledWith('timeline_scrub');
-
-    fireEvent.keyDown(timeline, { key: 'Enter' });
-    expect(onGatedFeatureClick).toHaveBeenCalledTimes(2);
-  });
-
-  it('hides the locked timeline affordances when a gated user has no steps', () => {
-    renderWithI18n(
-      <ControlPanel {...getBaseProps({ isGated: true, totalSteps: 0 })} />
+    fireEvent.change(
+      screen.getByRole('slider', { name: 'Scrub through steps' }),
+      { target: { value: '4' } }
     );
 
-    expect(screen.queryByTestId('seek-thumb')).not.toBeInTheDocument();
-    expect(screen.queryByText('Sign in to skip steps')).not.toBeInTheDocument();
+    expect(onSeek).toHaveBeenCalledWith(4);
     expect(
-      screen.queryByRole('button', { name: 'Sign in to skip steps' })
-    ).not.toBeInTheDocument();
+      screen.getByText('Drag the timeline to skip steps')
+    ).toBeInTheDocument();
   });
 });

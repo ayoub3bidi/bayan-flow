@@ -77,7 +77,6 @@ function getBaseProps(overrides = {}) {
     onModeChange: vi.fn(),
     user: { id: 'test-user' }, // Signed-in user by default for tests
     onLockedAlgorithmClick: vi.fn(),
-    onGatedFeatureClick: vi.fn(),
     ...overrides,
   };
 }
@@ -103,7 +102,7 @@ describe('SettingsPanel', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders graph scenario options with random graph at the bottom', () => {
+  it('renders graph scenario options with random graph first', () => {
     renderWithI18n(<SettingsPanel {...getBaseProps()} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Graph scenario' }));
@@ -113,11 +112,60 @@ describe('SettingsPanel', () => {
       .map(option => option.textContent);
 
     expect(labels).toEqual([
+      'Random graph',
       'Linear Chain (A→B→C→D)',
       'Diamond Pattern (merge point)',
       'Single Node (trivial case)',
-      'Random graph',
     ]);
+  });
+
+  it('renders upcoming categories as disabled teasers, last one full width', () => {
+    const onAlgorithmTypeChange = vi.fn();
+    renderWithI18n(
+      <SettingsPanel {...getBaseProps({ onAlgorithmTypeChange })} />
+    );
+
+    const dp = screen.getByRole('button', {
+      name: 'Dynamic Programming — coming soon',
+    });
+    const strings = screen.getByRole('button', {
+      name: 'String Algorithms — coming soon',
+    });
+    expect(dp).toBeDisabled();
+    expect(strings).toBeDisabled();
+    expect(screen.getAllByText('Soon')).toHaveLength(2);
+
+    fireEvent.click(dp);
+    expect(onAlgorithmTypeChange).not.toHaveBeenCalled();
+
+    // 7 tiles on a 3-per-row grid: the 7th stretches across the last row.
+    expect(strings).toHaveClass('col-span-6');
+    expect(dp).toHaveClass('col-span-2');
+  });
+
+  it('labels mode buttons and sliders for assistive tech', () => {
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          mode: VISUALIZATION_MODES.AUTOPLAY,
+          selectedGraphScenario: null,
+        })}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Autoplay' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(screen.getByRole('button', { name: 'Manual' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
+    expect(screen.getByLabelText(/^Speed/)).toHaveAttribute('type', 'range');
+    expect(screen.getByLabelText(/^Graph vertices/)).toHaveAttribute(
+      'type',
+      'range'
+    );
   });
 
   it('forwards graph scenario changes', () => {
@@ -179,74 +227,49 @@ describe('SettingsPanel', () => {
     expect(screen.getByText('6')).toBeInTheDocument();
   });
 
-  it('opens manual_controls gate for anonymous users clicking Manual', () => {
-    const onGatedFeatureClick = vi.fn();
+  it('lets anonymous users switch to manual mode during the trial', () => {
+    const onModeChange = vi.fn();
     renderWithI18n(
       <SettingsPanel
         {...getBaseProps({
           user: null,
           mode: VISUALIZATION_MODES.AUTOPLAY,
-          onGatedFeatureClick,
+          onModeChange,
         })}
       />
     );
 
     fireEvent.click(screen.getByRole('button', { name: /manual/i }));
 
-    expect(onGatedFeatureClick).toHaveBeenCalledWith('manual_controls');
+    expect(onModeChange).toHaveBeenCalledWith(VISUALIZATION_MODES.MANUAL);
   });
 
-  it('opens speed_control gate for anonymous users adjusting speed', () => {
-    const onGatedFeatureClick = vi.fn();
+  it('lets anonymous users change speed during the trial', () => {
+    const onSpeedChange = vi.fn();
     renderWithI18n(
       <SettingsPanel
         {...getBaseProps({
           user: null,
           mode: VISUALIZATION_MODES.AUTOPLAY,
-          onGatedFeatureClick,
+          onSpeedChange,
         })}
       />
     );
 
-    fireEvent.click(screen.getAllByRole('slider')[0]);
+    fireEvent.change(screen.getAllByRole('slider')[0], {
+      target: { value: '0' },
+    });
 
-    expect(onGatedFeatureClick).toHaveBeenCalledWith('speed_control');
+    expect(onSpeedChange).toHaveBeenCalledTimes(1);
   });
 
-  it('shows the graph scenario dropdown with locked options for anonymous users', () => {
-    const onGatedFeatureClick = vi.fn();
-    renderWithI18n(
-      <SettingsPanel
-        {...getBaseProps({
-          user: null,
-          selectedGraphScenario: '',
-          onGatedFeatureClick,
-        })}
-      />
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Graph scenario' }));
-
-    // Dropdown opens (does not immediately gate) and the first option stays free.
-    expect(onGatedFeatureClick).not.toHaveBeenCalled();
-
-    // Clicking a locked (non-first) option opens the gate.
-    fireEvent.click(
-      screen.getByRole('option', { name: 'Diamond Pattern (merge point)' })
-    );
-
-    expect(onGatedFeatureClick).toHaveBeenCalledWith('category_controls');
-  });
-
-  it('lets anonymous users pick the first (free) graph scenario option', () => {
-    const onGatedFeatureClick = vi.fn();
+  it('lets anonymous users pick any graph scenario during the trial', () => {
     const onGraphScenarioChange = vi.fn();
     renderWithI18n(
       <SettingsPanel
         {...getBaseProps({
           user: null,
           selectedGraphScenario: '',
-          onGatedFeatureClick,
           onGraphScenarioChange,
         })}
       />
@@ -254,11 +277,10 @@ describe('SettingsPanel', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Graph scenario' }));
     fireEvent.click(
-      screen.getByRole('option', { name: 'Linear Chain (A→B→C→D)' })
+      screen.getByRole('option', { name: 'Diamond Pattern (merge point)' })
     );
 
-    expect(onGraphScenarioChange).toHaveBeenCalledWith('linearChain');
-    expect(onGatedFeatureClick).not.toHaveBeenCalled();
+    expect(onGraphScenarioChange).toHaveBeenCalledWith('diamond');
   });
 
   it('shows the use-case line for the selected algorithm', () => {

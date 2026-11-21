@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 vi.mock('@/hooks/useAuth', () => ({
   useAuth: vi.fn(() => ({
@@ -27,8 +27,13 @@ vi.mock('@/pages/VisualizerApp', () => ({
   default: () => <div data-testid="visualizer-app">Visualizer</div>,
 }));
 
+const roadmapCrash = vi.hoisted(() => ({ enabled: false }));
+
 vi.mock('@/pages/Roadmap', () => ({
-  default: () => <div data-testid="roadmap">Roadmap</div>,
+  default: () => {
+    if (roadmapCrash.enabled) throw new Error('roadmap exploded');
+    return <div data-testid="roadmap">Roadmap</div>;
+  },
 }));
 
 vi.mock('@/pages/ProComingSoonPage', () => ({
@@ -49,6 +54,11 @@ vi.mock('@/pages/TermsOfUse', () => ({
 
 vi.mock('@/pages/ProfileSettingsPage', () => ({
   default: () => <div data-testid="profile-settings">Profile</div>,
+}));
+
+vi.mock('./services/authService.js', async importOriginal => ({
+  ...(await importOriginal()),
+  hasStoredSession: vi.fn(() => false),
 }));
 
 vi.mock('@/components/RequireAuth', () => ({
@@ -146,6 +156,30 @@ describe('AppRoutes', () => {
     await screen.findByTestId('terms');
   });
 
+  it('shows a recovery screen instead of a blank page when a route crashes', async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      accessBlock: null,
+      isLoading: false,
+    });
+    roadmapCrash.enabled = true;
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    try {
+      renderRoutes('/roadmap');
+
+      expect(
+        await screen.findByRole('heading', { name: 'Something went wrong' })
+      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Reload page' })).toBeVisible();
+
+      fireEvent.click(screen.getByRole('link', { name: 'Back to Home' }));
+      expect(await screen.findByTestId('landing-page')).toBeInTheDocument();
+    } finally {
+      roadmapCrash.enabled = false;
+      errorSpy.mockRestore();
+    }
+  });
+
   it('wraps /settings/profile in RequireAuth', async () => {
     vi.mocked(useAuth).mockReturnValue({
       accessBlock: null,
@@ -156,5 +190,90 @@ describe('AppRoutes', () => {
 
     await screen.findByTestId('require-auth');
     expect(screen.getByTestId('profile-settings')).toBeInTheDocument();
+  });
+});
+
+describe('AppRoutes returning signed-in visitor on /', () => {
+  // AppRoutes decides once per page load, so each case loads a fresh module.
+  async function loadRoutes({ stored, auth }) {
+    vi.resetModules();
+    const authService = await import('./services/authService.js');
+    vi.mocked(authService.hasStoredSession).mockReturnValue(stored);
+    const { useAuth: freshUseAuth } = await import('@/hooks/useAuth');
+    vi.mocked(freshUseAuth).mockReturnValue({ accessBlock: null, ...auth });
+    return { Routes: (await import('./AppRoutes')).default, freshUseAuth };
+  }
+
+  function renderAt(AppRoutesComponent, path) {
+    return render(
+      <MemoryRouter initialEntries={[path]}>
+        <AppRoutesComponent />
+      </MemoryRouter>
+    );
+  }
+
+  it('sends a returning signed-in visitor to /app', async () => {
+    const { Routes } = await loadRoutes({
+      stored: true,
+      auth: { isLoading: false, isAuthenticated: true },
+    });
+    renderAt(Routes, '/');
+    await screen.findByTestId('visualizer-app');
+    expect(screen.queryByTestId('landing-page')).not.toBeInTheDocument();
+  });
+
+  it('shows a loading state instead of the landing page while auth hydrates', async () => {
+    const { Routes } = await loadRoutes({
+      stored: true,
+      auth: { isLoading: true, isAuthenticated: false },
+    });
+    renderAt(Routes, '/');
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.queryByTestId('landing-page')).not.toBeInTheDocument();
+  });
+
+  it('shows the landing page when the stored session is no longer valid', async () => {
+    const { Routes } = await loadRoutes({
+      stored: true,
+      auth: { isLoading: false, isAuthenticated: false },
+    });
+    renderAt(Routes, '/');
+    expect(screen.getByTestId('landing-page')).toBeInTheDocument();
+  });
+
+  it('shows the landing page immediately without a stored session', async () => {
+    const { Routes } = await loadRoutes({
+      stored: false,
+      auth: { isLoading: true, isAuthenticated: false },
+    });
+    renderAt(Routes, '/');
+    expect(screen.getByTestId('landing-page')).toBeInTheDocument();
+  });
+
+  it('respects links to a landing section', async () => {
+    const { Routes } = await loadRoutes({
+      stored: true,
+      auth: { isLoading: false, isAuthenticated: true },
+    });
+    renderAt(Routes, '/#features');
+    expect(screen.getByTestId('landing-page')).toBeInTheDocument();
+  });
+
+  it('decides only once per page load, so coming back to / never redirects', async () => {
+    const { Routes, freshUseAuth } = await loadRoutes({
+      stored: true,
+      auth: { isLoading: false, isAuthenticated: false },
+    });
+    const first = renderAt(Routes, '/');
+    expect(screen.getByTestId('landing-page')).toBeInTheDocument();
+    first.unmount();
+
+    vi.mocked(freshUseAuth).mockReturnValue({
+      accessBlock: null,
+      isLoading: false,
+      isAuthenticated: true,
+    });
+    renderAt(Routes, '/');
+    expect(screen.getByTestId('landing-page')).toBeInTheDocument();
   });
 });

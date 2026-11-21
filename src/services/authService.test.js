@@ -234,4 +234,33 @@ describe('authService', () => {
     mockSupabaseConfigured(false);
     expect(authService.isAuthConfigured()).toBe(false);
   });
+
+  describe('hasStoredSession', () => {
+    afterEach(() => {
+      localStorage.removeItem(supabaseAuthMock.storageKey);
+      vi.restoreAllMocks();
+    });
+
+    it('is true when Supabase has a persisted session', () => {
+      localStorage.setItem(supabaseAuthMock.storageKey, '{"access_token":"t"}');
+      expect(authService.hasStoredSession()).toBe(true);
+    });
+
+    it('is false when nothing is persisted', () => {
+      expect(authService.hasStoredSession()).toBe(false);
+    });
+
+    it('is false when Supabase is not configured', () => {
+      mockSupabaseConfigured(false);
+      localStorage.setItem(supabaseAuthMock.storageKey, '{"access_token":"t"}');
+      expect(authService.hasStoredSession()).toBe(false);
+    });
+
+    it('is false when storage throws', () => {
+      vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('blocked');
+      });
+      expect(authService.hasStoredSession()).toBe(false);
+    });
+  });
 });

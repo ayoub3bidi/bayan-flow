@@ -40,6 +40,13 @@
     "message": "The page you're looking for doesn't exist or has been moved.",
     "backToHome": "Back to Home"
   },
+  "errors": {
+    "pageCrashTitle": "Something went wrong",
+    "pageCrashBody": "This page hit an unexpected error. Reload to try again, or head back home.",
+    "reload": "Reload page",
+    "somethingWentWrong": "Something went wrong.",
+    "tryAgain": "Try again"
+  },
   "profile": {
     "pageTitle": "Profile settings",
     "title": "Profile settings",
@@ -51,7 +58,6 @@
     "avatarTitle": "Profile picture",
     "avatarGoogle": "Profile Picture",
     "avatarGenerated": "Generated avatar",
-    "avatarCustomizationComingSoon": "You will be able to change your profile picture and customize your avatar very soon",
     "save": "Save changes",
     "saving": "Saving…",
     "saved": "Profile updated",
@@ -140,9 +146,7 @@
     "waitlistCount": "{{count}} learners are on the waitlist"
   },
   "settings_tabs": {
-    "profile": "Profile",
-    "notifications": "Notifications",
-    "connections": "Connected Accounts"
+    "profile": "Profile"
   },
   "settings": {
     "title": "Settings",
@@ -166,9 +170,7 @@
     "treeNodeCount": "Tree nodes",
     "graphNodeCount": "Graph vertices",
     "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it.",
-    "signInForManual": "Sign in for manual mode",
     "signInForSpeed": "Sign in to adjust speed",
-    "signInForCategoryControls": "Sign in for advanced controls",
     "favoriteAlgorithms": "Favorite algorithms",
     "favoriteAlgorithmsEmpty": "No favorites yet",
     "favoriteAlgorithmsCount": "{{count}} saved",
@@ -177,8 +179,9 @@
     "favoriteSlotsFull": "Favorite limit reached ({{limit}}). Remove one to add another.",
     "addFavorite": "Add {{name}} to favorites",
     "removeFavorite": "Remove {{name}} from favorites",
-    "signInForAdvancedFeatures": "Sign in to unlock manual mode, speed, and advanced controls.",
-    "useCases": "Use cases"
+    "useCases": "Use cases",
+    "comingSoonBadge": "Soon",
+    "categoryComingSoon": "{{name}} — coming soon"
   },
   "modes": {
     "sorting": "Sorting",
@@ -186,6 +189,8 @@
     "searching": "Searching",
     "treeTraversal": "Tree Traversals",
     "graphAlgorithm": "Graph Algorithms",
+    "dynamicProgramming": "Dynamic Programming",
+    "stringAlgorithms": "String Algorithms",
     "manual": "Manual",
     "autoplay": "Autoplay"
   },
@@ -360,7 +365,6 @@
     "stepBackward": "Step Backward",
     "seekTimeline": "Scrub through steps",
     "dragToSeek": "Drag the timeline to skip steps",
-    "dragToSeekLocked": "Sign in to skip steps",
     "reset": "Reset",
     "generateInput": "Generate New Input",
     "exportVideo": "Export Video",
@@ -380,6 +384,8 @@
     "exportOrientationHorizontalDesc": "16:9 • YouTube, presentations",
     "exportOrientationVertical": "Vertical",
     "exportOrientationVerticalDesc": "9:16 • Shorts, Reels, TikTok",
+    "exportEstimatedLength": "Video length: about {{duration}}",
+    "exportTooLong": "This run is too long to export (10 minutes max). Reduce the input size and try again.",
     "exportPreview": "Video ready",
     "exportPreviewDesc": "Preview, download, or share your video.",
     "downloadVideo": "Download",
@@ -398,7 +404,9 @@
     "openSettings": "Settings",
     "closeSettings": "Close settings",
     "settingsSheetTitle": "Algorithm settings",
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "exportNoSteps": "There is nothing to export yet. Run the visualization first.",
+    "exportFailedRetry": "Something went wrong while creating the video. Please try again."
   },
   "info": {
     "step": "Step {{current}} of {{total}}",
@@ -410,7 +418,10 @@
     "visualizationsRemaining": "{{count}} visualizations remaining"
   },
   "videoExport": {
-    "noSteps": "No steps to display"
+    "noSteps": "No steps to display",
+    "complexityUnavailable": "Complexity data not available",
+    "performance": "Performance",
+    "operations": "Operations"
   },
   "shareExport": {
     "title": "Share your visualization",
@@ -1047,8 +1058,6 @@
   "footer": {
     "description": "An interactive, educational web application for visualizing algorithms with clarity.",
     "descriptionNote": "Bayan (بيان) means clarity in Arabic.",
-    "madeWith": "Made with",
-    "by": "by",
     "license": "Licensed under Elastic License 2.0",
     "viewDocs": "View Documentation",
     "reportIssue": "Report Issue",
@@ -1083,7 +1092,9 @@
     "privacyTitle": "Privacy Policy",
     "termsTitle": "Terms of Use",
     "privacyDescription": "How Bayan Flow handles analytics, local preferences, and third-party services.",
-    "termsDescription": "Terms of Use for the Bayan Flow educational web application."
+    "termsDescription": "Terms of Use for the Bayan Flow educational web application.",
+    "lastUpdated": "Last updated: {{date}}",
+    "englishOnlyNote": ""
   },
   "legend": {
     "show": "Show legend",
@@ -1563,7 +1574,8 @@
     "timeline": {
       "sampleNote": "Timeline items are samples. Replace with actual roadmap content.",
       "readArticle": "Read Article"
-    }
+    },
+    "journeyContinues": "The journey continues..."
   },
   "featureGate": {
     "title": "Unlock {{feature}}",
@@ -1579,18 +1591,8 @@
     "algorithm_lock_description": "Sign in to access all 45 algorithms across 5 categories.",
     "session_limit": "Continue Learning",
     "session_limit_description": "You've explored {{limit}} visualizations. Sign in to continue with unlimited access.",
-    "speed_control": "Adjust Speed",
-    "speed_control_description": "Sign in to control animation speed from slow to lightning-fast.",
-    "complexity_limit": "Complexity Analysis",
-    "complexity_limit_description": "Sign in to see interactive complexity charts for every algorithm.",
-    "manual_controls": "Manual Step Control",
-    "manual_controls_description": "Sign in to step through algorithms at your own pace.",
-    "category_controls": "Advanced Controls",
-    "category_controls_description": "Sign in to customize grid sizes, sort order, graph scenarios, and more.",
     "favorite": "Favorite Algorithms",
-    "favorite_description": "Sign in to star algorithms and jump back to them quickly from your favorites list.",
-    "timeline_scrub": "Step scrubbing",
-    "timeline_scrub_description": "Jump to any step by scrubbing the timeline. Sign in to unlock it and the rest of the Free tier."
+    "favorite_description": "Sign in to star algorithms and jump back to them quickly from your favorites list."
   },
   "algorithmUses": {
     "aStar": "Used in nearly every video game for pathfinding, plus robot and autonomous vehicle navigation.",
@@ -1685,5 +1687,15 @@
     "timSort": "The sort behind Python and Java. Mention it to show you know what powers real codebases.",
     "topologicalSort": "Course scheduling and dependency problems are common interview questions.",
     "zigzagLevelOrderTraversal": "The spiral variant is a LeetCode favorite that tests BFS with direction control."
+  },
+  "a11y": {
+    "loadingPage": "Loading page",
+    "mainNavigation": "Main navigation",
+    "goToLanding": "Navigate to landing page",
+    "pathfindingGrid": "Pathfinding grid visualization",
+    "skipToContent": "Skip to main content",
+    "algorithmVisualization": "Algorithm visualization",
+    "namedVisualization": "{{name}} algorithm visualization",
+    "algorithmSettings": "Algorithm settings"
   }
 }

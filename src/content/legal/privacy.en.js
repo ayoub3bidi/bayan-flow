@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-export const PRIVACY_POLICY_LAST_UPDATED = '2026-07-10';
+export const PRIVACY_POLICY_LAST_UPDATED = '2026-11-19';
 
 export const PRIVACY_POLICY_SECTIONS = [
   {
@@ -23,7 +23,7 @@ export const PRIVACY_POLICY_SECTIONS = [
       'We designed Bayan Flow to minimize data collection. Depending on how you use the Service, the following may apply:',
     ],
     list: [
-      'Website analytics (PostHog): We use PostHog, a privacy-oriented analytics and product platform, on production and development deployments. PostHog collects aggregate usage metrics such as pages visited, referrer, browser type, device type, and user interactions with features like algorithm visualizations. PostHog uses a first-party proxy (e.bayanflow.com) to avoid ad-blocker interference. PostHog may assign a distinct visitor identifier; we treat this as pseudonymous data and disclose it for transparency. Session replay is enabled to help us understand and improve the user experience; text and media inputs are masked for privacy. We use a cookie consent banner to give you control over analytics tracking. You can accept or decline analytics cookies at any time via Cookie Preferences in the footer.',
+      'Website analytics (PostHog): We use PostHog, a privacy-oriented analytics and product platform, on production and development deployments. PostHog collects aggregate usage metrics such as pages visited, referrer, browser type, device type, and user interactions with features like algorithm visualizations. PostHog uses a first-party proxy (e.bayanflow.com) to avoid ad-blocker interference. Until you accept analytics cookies, or if you decline them, PostHog counts your visit anonymously without setting cookies or storing an identifier in your browser (only your cookie choice is remembered): visitors are grouped by a daily rotating hash computed on PostHog’s servers, no session replay is recorded, and your activity is not linked to a profile or account. If you accept, PostHog may set a first-party cookie with a distinct visitor identifier, which we treat as pseudonymous data, and may record a sample of sessions to help us improve the user experience; text and media inputs are masked for privacy. If your browser sends a Do Not Track or Global Privacy Control signal, we do not load analytics at all. You can change your choice at any time via Cookie Preferences in the footer.',
       'Server logs (Cloudflare): Our hosting provider, Cloudflare Workers, automatically records standard edge access logs, which may include your IP address, browser user agent, requested URL, and timestamp. See Cloudflare’s privacy documentation at https://www.cloudflare.com/privacypolicy/.',
       'Local storage on your device: Preferences such as theme, language, sound settings, Python panel layout, custom Python test cases, swipe tutorial state, and full-screen mode are stored in your browser’s localStorage. This data stays on your device and is not transmitted to our servers.',
       'GitHub API: The header badge and footer may request public release metadata and repository statistics from GitHub (api.github.com). Those requests are made to GitHub and may expose standard network metadata such as your IP address and user agent to GitHub.',

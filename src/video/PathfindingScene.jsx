@@ -69,14 +69,12 @@ function PathfindingSceneInner({ steps, framesPerStep, gridSize }) {
         boxSizing: 'border-box',
       }}
     >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${gridSize}, ${cellPx}px)`,
-          gridTemplateRows: `repeat(${gridSize}, ${cellPx}px)`,
-          gap: 0,
-        }}
+      {/* One <svg> instead of a div per cell: web-renderer draws every DOM element each frame. */}
+      <svg
+        width={gridSize * cellPx + 2}
+        height={gridSize * cellPx + 2}
         role="grid"
+        style={{ overflow: 'visible' }}
       >
         {states.map((row, rowIndex) =>
           row.map((state, colIndex) => {
@@ -96,23 +94,23 @@ function PathfindingSceneInner({ steps, framesPerStep, gridSize }) {
                   )
                 : currentColor;
 
+            // Same box as the old 1px-bordered cell: neighbours' borders overlap.
             return (
-              <div
-                key={`${stepIndex}-${rowIndex}-${colIndex}`}
-                style={{
-                  width: cellPx,
-                  height: cellPx,
-                  backgroundColor: color,
-                  borderWidth: 1,
-                  borderStyle: 'solid',
-                  borderColor: '#6b7280',
-                  borderRadius: 2,
-                }}
+              <rect
+                key={`${rowIndex}-${colIndex}`}
+                x={colIndex * cellPx + 0.5}
+                y={rowIndex * cellPx + 0.5}
+                width={cellPx + 1}
+                height={cellPx + 1}
+                rx={2}
+                fill={color}
+                stroke="#6b7280"
+                strokeWidth={1}
               />
             );
           })
         )}
-      </div>
+      </svg>
     </div>
   );
 }

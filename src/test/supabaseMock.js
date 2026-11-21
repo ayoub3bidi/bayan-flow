@@ -9,6 +9,7 @@ import { vi } from 'vitest';
 export const authStateChangeCallbackRef = { current: null };
 
 export const supabaseAuthMock = {
+  storageKey: 'sb-test-auth-token',
   signInWithIdToken: vi.fn(async () => ({
     data: { session: null },
     error: null,

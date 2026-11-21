@@ -10,7 +10,17 @@ import { isAccountBannedError, isSignInBlockedError } from './authBan.js';
 describe('authBan', () => {
   it('detects account ban errors', () => {
     expect(isAccountBannedError({ message: 'User is banned' })).toBe(true);
-    expect(isAccountBannedError({ status: 403 })).toBe(true);
+    expect(isAccountBannedError({ status: 403, code: 'user_banned' })).toBe(
+      true
+    );
+    expect(
+      isAccountBannedError({
+        status: 403,
+        code: 'bad_jwt',
+        message: 'invalid JWT: unable to parse or verify signature',
+      })
+    ).toBe(false);
+    expect(isAccountBannedError({ status: 403 })).toBe(false);
     expect(isAccountBannedError({ message: 'ok' })).toBe(false);
   });
 

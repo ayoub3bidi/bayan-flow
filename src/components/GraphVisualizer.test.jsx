@@ -180,7 +180,7 @@ describe('GraphVisualizer', () => {
     }
   });
 
-  it('shows blurred overlay when anonymous user exceeds complexity view limit', () => {
+  it('does not gate the complexity panel for anonymous users', () => {
     vi.useFakeTimers();
 
     try {
@@ -196,7 +196,7 @@ describe('GraphVisualizer', () => {
       });
 
       const blurOverlay = document.querySelector('.bg-black\\/80');
-      expect(blurOverlay).toBeInTheDocument();
+      expect(blurOverlay).not.toBeInTheDocument();
       expect(
         screen.getAllByText('Complexity Analysis').length
       ).toBeGreaterThanOrEqual(1);

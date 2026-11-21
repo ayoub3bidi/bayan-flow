@@ -21,8 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **152** `*.test.js` / `*.test.jsx` files under `src/` (~**1,823** tests)
-- Source surface: **224** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
+- Test surface: **181** test files (~**2,118** tests, per `pnpm vitest run`)
+- Source surface: **252** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -72,7 +72,7 @@
 - Mobile: horizontal swipe for manual step forward/back (`useSwipe`), one-time swipe tutorial (`SwipeTutorial`)
 - Full-screen visualization mode (`useFullScreen`) reuses the same control panel and visualizer registry
 - Light/dark theme with system preference fallback (`ThemeContext`, `ThemeToggle`, `useTheme`)
-- i18n: English, French, Arabic with RTL (`rtlManager`, `LanguageSwitcher`)
+- i18n: English, French, Arabic with RTL (`rtlManager`, `LanguageSwitcher`); Arabic UI font IBM Plex Sans Arabic (`@fontsource/ibm-plex-sans-arabic`, Arabic subsets imported in `src/main.jsx`)
 - Optional visualization sound (Tone.js); persisted in `localStorage` under `bayan-flow:sound-enabled`
 - Code panel (lazy): Python + pseudocode tabs in one panel (`PythonCodePanel`), Monaco editor, Pyodide worker execution, editable custom test cases, predefined tests (`TestCasesPanel`, `OutputConsole`)
 - Algorithm insight panel with history, intuition, facts, optional YouTube embed (`AlgorithmInsightPanel`, `InsightFloatingActionButton`)
@@ -104,7 +104,7 @@
   - `supabase/functions/delete-account/` — self-service account deletion
 - Shared email HTML: `supabase/functions/_shared/transactionalEmails.ts`
 - **Not in 0.5.0:** LemonSqueezy webhook, subscriptions / usage_events / referrals / user_sessions tables (dropped via `20260720180000_drop_premature_saas_scaffolding.sql`); no viz-limit email, weekly digest, Pro nudge, or referral invite sends (Pro nudge + referral templates may exist in Resend as parked drafts for later)
-- Analytics: `src/services/analytics.js`, `src/services/analyticsEvents.js` — PostHog SPA pageviews + growth events `waitlist_joined`, `upgrade_limit_hit`; surveys disabled in SDK
+- Analytics: `src/services/analytics.js`, `src/services/analyticsEvents.js` — PostHog SPA pageviews + growth events `waitlist_joined`, `upgrade_limit_hit`; surveys disabled in SDK. PostHog inits on mount via `PostHogProvider` (cookieless until consent, `setAnalyticsConsent()` on banner choice). Funnel events: `visualization_started` (once per run, `is_authenticated`), `upgrade_modal_viewed` (`trigger`), `sign_in_clicked` (`source`), `sign_in_completed` (`is_new_user`), `video_export_completed`, `video_shared` (`platform`). Dev and prod share PostHog project 517091 — filter insights on `$host`
 - Context: `src/contexts/AuthProvider.jsx`, `src/hooks/useAuth.js`
 - Avatar resolution: `src/utils/resolveUserAvatar.js` (`resolveUserAvatar`, `resolveDisplayName`, DiceBear notionists style)
 - Components: `src/components/UserMenu.jsx`, `src/components/UserAvatar.jsx`, `src/components/RequireAuth.jsx`
@@ -179,7 +179,8 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 
 ### Pages
 
-- `src/pages/LandingPage.jsx`
+- `src/pages/LandingPage.jsx` — served through `LandingRoute` in `src/AppRoutes.jsx`: returning signed-in visitors (`hasStoredSession()` + hydrated auth) go to `/app` on a fresh visit
+- `src/AppRoutes.jsx` wraps every route in `ErrorBoundary` (reset on path change) with a localized `RouteErrorFallback` (Reload / Back to Home), so a crashing page or a failed lazy chunk never blanks the app
 - `src/pages/VisualizerApp.jsx` — main visualizer shell and top-level state
 - `src/pages/Roadmap.jsx`
 - `src/pages/ProComingSoonPage.jsx` — Pro waitlist teaser + email capture (`/pro`)
@@ -249,9 +250,9 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 
 - `src/video/useVideoExporter.js`, `src/video/AlgorithmVideo.jsx`
 - Scenes: `SortingScene`, `PathfindingScene`, `SearchingVideoScene`, `GraphSearchingScene`, `TreeTraversalScene`, `GraphAlgorithmVideoScene`, `GraphAlgorithmScene`, `GraphAlgorithmMatrixScene`, `ComplexityScene`
-- `src/video/ExportAudioTracks.jsx`, `src/video/VideoWatermarkOverlay.jsx`
+- `src/video/VideoWatermarkOverlay.jsx`
 - `src/video/exportLanguage.js`, `src/video/videoExportTheme.js`, `src/video/constants.js`
-- `src/video/audio/buildExportSoundCues.js`, `src/video/audio/exportAudioAssets.js`
+- `src/video/audio/buildExportSoundCues.js`, `src/video/audio/exportAudioAssets.js`, `src/video/audio/mixExportAudio.js`
 - Static export SFX: `public/video-export/sfx/` — 18 pre-rendered WAV files (regenerated via `pnpm run generate:export-sfx`)
 
 ### Python and pseudocode
@@ -419,7 +420,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Full-screen mode uses the same `ControlPanel` and visualizer registry as normal mode.
 - Lazy panels (`PythonCodePanel`, `AlgorithmInsightPanel`) must remain optional overlays and should not block the main visualization path.
 - Swipe stepping applies only in manual playback mode on touch devices.
-- The step progress bar is seekable: Free-tier users (non-gated) get an invisible full-width range input driving seeking, a circular grab handle (`seek-thumb`) marking the fill edge, and the `controls.dragToSeek` microcopy under the bar. Anonymous/gated users see the **same grab handle** and a persistent `controls.dragToSeekLocked` microcopy ("Sign in to skip steps"), but no range input; the timeline wrapper is a focusable button (`role="button"`) whose click or Enter/Space fires `onGatedFeatureClick('timeline_scrub')` → `SignInPromptModal` (`featureGate.timeline_scrub`).
+- The step progress bar is seekable for everyone (anonymous trial included): an invisible full-width range input drives seeking, a circular grab handle (`seek-thumb`) marks the fill edge, and `controls.dragToSeek` microcopy sits under the bar. For anonymous users a seek on a fresh run consumes one trial credit via `VisualizerApp` `consumeRunIfNeeded()` (`session_limit` gate once the 12 runs are used).
 
 ## Sound And Export Notes
 
@@ -437,7 +438,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Pre-rendered export WAV assets live under `public/video-export/sfx/`; regenerate with `pnpm run generate:export-sfx` after changing instrument presets or event kinds.
 - Graph algorithm and Floyd-Warshall matrix sound parity must cover both interactive visualization and Remotion export.
 - Export uses `@remotion/web-renderer`, supports horizontal and vertical orientations, and renders MP4/H.264 when the browser supports it.
-- Export audio playback in Remotion uses `@remotion/media` (`ExportAudioTracks.jsx`).
+- Export audio is pre-mixed into one WAV before rendering (`buildExportAudioUrl()` in `src/video/audio/mixExportAudio.js`) and played by a single `@remotion/media` `<Audio>` in `AlgorithmVideo`.
 - `AlgorithmVideo` adds title, step counter, localized description, watermark, optional export audio, and final complexity scene.
 - `buildExportSoundCues()` should schedule cues from `getSoundEventsForStep()` and must not special-case translated copy.
 - Export descriptions use `resolveStepDescription()` and normalized export language (`exportLanguage.js`). Keep description keys localizable.
@@ -473,6 +474,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 8. Ensure `src/registry/complexityDatasetRegistry.js` contains the dataset key.
 9. Add settings config/i18n entries where needed.
 10. Add or update tests for category config, runtime completeness, visualizer selection, export scene selection, and settings UI.
+11. Add a runner for the category hook in `src/registry/generatorSmoke.test.jsx` (the test fails until one exists). Build hook inputs once per case, outside the render.
 
 ## Adding A New Algorithm
 
@@ -487,6 +489,17 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 9. Add/update semantic sound-event coverage in `src/utils/soundEvents.js` when the algorithm introduces new visual action states.
 10. Update `categoryConfig.js` `algorithmKeys` and `groupDefs` (and graph profile if applicable).
 11. Add or extend tests for algorithm logic, registry wiring, hook behavior, visualizers, export scenes, Python index, complexity metadata, pseudocode, sound events, and insight metadata.
+12. `src/registry/generatorSmoke.test.jsx` must stay green: the algorithm terminates at min/default/max size (and every graph scenario) and its default-size run fits the export limit.
+
+### Generator and export guardrails
+
+- Step generators run synchronously on the main thread; a non-terminating loop freezes the tab and hangs the smoke test. Loops driven by a queue without decrease-key (`src/utils/PriorityQueue.js`) must skip stale or already-consistent entries and carry an iteration bound (see `dStarLite.js`).
+- Export pacing comes from `getExportTiming()` in `src/video/constants.js`: 1.5 s per step when the video fits in 10 minutes, faster down to 0.2 s per step, and blocked in the format dialog above that. Scenes must derive all timing from the `framesPerStep` prop.
+- Export scenes may render any Unicode inside `<svg>` (Remotion `>= 4.0.458`, asserted by `src/video/remotionSvgEncoding.test.js`). Keep `remotion`, `@remotion/media` and `@remotion/web-renderer` on the same exact version.
+- Export audio is always mixed in; it does not follow the playback Sound toggle.
+- `@remotion/web-renderer` draws every DOM element on every frame, but rasterises an `<svg>` once with its children. Scenes with many cells or shapes draw them inside one `<svg>` (see `PathfindingScene.jsx`: a 35×35 grid of `<div>`s rendered at 7.7× real time, one `<svg>` at 1.2×).
+- `generatorSmoke.test.jsx` runs each generator under a watchdog thread that kills the test process after 20 s and names the case, because Vitest timeouts cannot interrupt a synchronous infinite loop.
+- Never mount one media element per step or cue in an export composition. `@remotion/media` keeps an iterator per element in a cache sized to half of system RAM, so ~2,000 per-step `<Audio>` elements crashed near-limit exports. Add new sounds as cues to the pre-mixed track instead.
 
 ## Adding A New Graph Algorithm
 
