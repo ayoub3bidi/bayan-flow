@@ -255,14 +255,18 @@ export function AuthProvider({ children }) {
   }, [isConfigured, evaluateAccess]);
 
   const signInWithGoogle = useCallback(async () => {
+    const startedAt = Date.now();
     let signedInUser;
     try {
       signedInUser = await authService.signInWithGoogle();
     } catch (error) {
-      trackSignInFailed(error);
+      trackSignInFailed(error, Date.now() - startedAt);
       throw error;
     }
-    trackSignInCompleted({ isNewUser: isNewlyCreatedUser(signedInUser) });
+    trackSignInCompleted({
+      isNewUser: isNewlyCreatedUser(signedInUser),
+      durationMs: Date.now() - startedAt,
+    });
   }, []);
 
   const signOut = useCallback(async () => {

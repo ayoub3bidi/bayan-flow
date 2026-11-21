@@ -202,6 +202,26 @@ describe('authService', () => {
     }
   });
 
+  it('signInWithGoogle starts Turnstile before the Google picker returns', async () => {
+    vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
+    const order = [];
+    globalThis.turnstile = {
+      render: vi.fn((_container, options) => {
+        order.push('turnstile');
+        options.callback('cf-turnstile-ok');
+        return 'widget-id';
+      }),
+    };
+    vi.mocked(requestGoogleSignInPopup).mockImplementationOnce(async () => {
+      order.push('google');
+      return { idToken: 'google-id-token' };
+    });
+
+    await authService.signInWithGoogle();
+
+    expect(order).toEqual(['turnstile', 'google']);
+  });
+
   it('signInWithGoogle tags Google and Supabase failures with their step', async () => {
     vi.mocked(requestGoogleSignInPopup).mockRejectedValueOnce(
       new Error('Google sign-in timed out')

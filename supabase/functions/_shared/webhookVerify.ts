@@ -28,8 +28,9 @@ export async function verifyStandardWebhook(req, secretEnvKey) {
   const payload = await req.text();
   const headers = Object.fromEntries(req.headers.entries());
   const webhook = new Webhook(secret);
-  return /** @type {Record<string, unknown>} */ (
-    webhook.verify(payload, headers)
+  return /** @type {Record<string, unknown>} */ webhook.verify(
+    payload,
+    headers
   );
 }
 
@@ -55,5 +56,10 @@ export function verifySharedSecret(req, secretEnvKey) {
   if (a.length !== b.length) {
     return false;
   }
-  return crypto.timingSafeEqual(a, b);
+  // Web Crypto has no timingSafeEqual in Deno; XOR every byte instead.
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a[i] ^ b[i];
+  }
+  return diff === 0;
 }

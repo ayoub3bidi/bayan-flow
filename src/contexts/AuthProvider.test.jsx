@@ -511,7 +511,7 @@ describe('AuthProvider', () => {
       await waitFor(() => {
         expect(analyticsMock.captureEvent).toHaveBeenCalledWith(
           'sign_in_completed',
-          { is_new_user: isNewUser }
+          { is_new_user: isNewUser, duration_ms: expect.any(Number) }
         );
       });
       expect(
@@ -542,6 +542,7 @@ describe('AuthProvider', () => {
 
     expect(analyticsMock.captureEvent).toHaveBeenCalledWith('sign_in_failed', {
       step: 'turnstile',
+      duration_ms: expect.any(Number),
       reason: expect.stringMatching(/Turnstile is not available/),
     });
     expect(analyticsMock.captureEvent).not.toHaveBeenCalledWith(
