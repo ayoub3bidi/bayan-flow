@@ -719,6 +719,7 @@ function App() {
   const settingsPanelProps = {
     algorithmType,
     algorithmTip,
+    showPlaybackSettings: isBelowLg,
     onAlgorithmTypeChange: handleAlgorithmTypeChange,
     selectedAlgorithm: activeAlgorithmKey,
     onAlgorithmChange: handleAlgorithmChange,
@@ -760,6 +761,9 @@ function App() {
     isPlaying: visualization.isPlaying,
     isComplete: visualization.isComplete,
     mode,
+    onModeChange: setMode,
+    speed,
+    onSpeedChange: handleSpeedChange,
     onPlay: handlePlay,
     onPause: visualization.pause,
     onReset: visualization.reset,

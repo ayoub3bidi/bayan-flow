@@ -83,11 +83,12 @@ export const GRAPH_ALGORITHMS = {
 };
 
 export const ANIMATION_SPEEDS = {
-  SLOW: 5000,
+  // Exact 0.5×/1×/2×/4×/8× of MEDIUM, shown as multipliers in the UI.
+  SLOW: 6000,
   MEDIUM: 3000,
   FAST: 1500,
-  VERY_FAST: 700,
-  ULTRA_FAST: 350,
+  VERY_FAST: 750,
+  ULTRA_FAST: 375,
 };
 
 export const ELEMENT_STATES = {

@@ -70,7 +70,7 @@ When docs drift, trust runtime config:
 - Complexity panel: interactive SVG chart with log/linear toggle; best/average/worst time + space complexity
 - Graph algorithms: `GraphAlgorithmCategoryVisualizer` routes node-link to `GraphVisualizer` and matrix (Floyd-Warshall) to `GraphAlgorithmMatrixVisualizer`; `GraphScenarioDropdown` for preset scenarios
 - Searching category: `SearchingCategoryVisualizer` routes array-based to `ArrayVisualizer` and node-link (DFS/BFS graph) to `GraphVisualizer`
-- Animation speeds: SLOW 5000ms, MEDIUM 3000ms, FAST 1500ms, VERY_FAST 700ms, ULTRA_FAST 350ms
+- Animation speeds: SLOW 6000ms, MEDIUM 3000ms, FAST 1500ms, VERY_FAST 750ms, ULTRA_FAST 375ms — shown as `0.5×/1×/2×/4×/8×`
 
 ## Ship It test ladder
 

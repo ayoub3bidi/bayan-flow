@@ -21,10 +21,16 @@ import {
   SpeakerHigh,
   SpeakerX,
   Gear,
+  Hand,
 } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
-import { ALGORITHM_TYPES, SORT_ORDERS } from '../constants';
+import {
+  ALGORITHM_TYPES,
+  SORT_ORDERS,
+  VISUALIZATION_MODES,
+} from '../constants';
+import { useSettingsConfig } from '../config/settingsConfig';
 import { getChromeTransition, ENTER_Y } from '../motion/chromeMotion';
 import { useIsBelowLg } from '../hooks/useIsBelowLg';
 
@@ -36,6 +42,9 @@ function ControlPanel({
   isPlaying,
   isComplete,
   mode,
+  onModeChange,
+  speed,
+  onSpeedChange,
   onPlay,
   onPause,
   onReset,
@@ -66,6 +75,7 @@ function ControlPanel({
   const reduceMotion = useReducedMotion();
   const isRTL = i18n.dir() === 'rtl';
   const isBelowLg = useIsBelowLg();
+  const { speedOptions } = useSettingsConfig();
 
   const buttonBaseClasses =
     'p-3 h-touch rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation leading-tight-consistent';
@@ -209,7 +219,61 @@ function ControlPanel({
       transition={getChromeTransition(reduceMotion)}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-center gap-2 sm:gap-4">
-        <div className="hidden sm:block flex-1 min-w-0" />
+        {!isBelowLg && onModeChange ? (
+          <div className="flex flex-1 min-w-0 items-center">
+            <div
+              role="group"
+              aria-label={t('settings.controlMode')}
+              className="flex h-touch shrink-0 rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated"
+            >
+              {[
+                {
+                  key: VISUALIZATION_MODES.MANUAL,
+                  isActive: mode === VISUALIZATION_MODES.MANUAL,
+                  onClick: () => onModeChange(VISUALIZATION_MODES.MANUAL),
+                  ariaLabel: t('modes.manual'),
+                  content: (
+                    <>
+                      <Hand size={16} weight="bold" aria-hidden="true" />
+                      <span>{t('modes.manual')}</span>
+                    </>
+                  ),
+                },
+                ...speedOptions.map(option => ({
+                  key: option.value,
+                  isActive:
+                    mode === VISUALIZATION_MODES.AUTOPLAY &&
+                    speed === option.value,
+                  onClick: () => {
+                    if (speed !== option.value) onSpeedChange?.(option.value);
+                    onModeChange(VISUALIZATION_MODES.AUTOPLAY);
+                  },
+                  ariaLabel: `${t('modes.autoplay')} ${option.label}`,
+                  content: <bdi dir="ltr">{option.label}</bdi>,
+                })),
+              ].map(segment => (
+                <button
+                  key={segment.key}
+                  type="button"
+                  onClick={segment.onClick}
+                  disabled={isPlaying}
+                  aria-pressed={segment.isActive}
+                  aria-label={segment.ariaLabel}
+                  title={segment.ariaLabel}
+                  className={`px-2 h-full flex items-center justify-center gap-1 text-sm font-semibold tabular-nums whitespace-nowrap transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 touch-manipulation ${
+                    segment.isActive
+                      ? 'bg-theme-primary-consistent text-white'
+                      : 'text-text-primary hover:bg-border'
+                  }`}
+                >
+                  {segment.content}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="hidden sm:block flex-1 min-w-0" />
+        )}
 
         <div className="flex items-center justify-center gap-2 shrink-0">
           <button

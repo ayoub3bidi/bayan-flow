@@ -345,4 +345,21 @@ describe('SettingsPanel', () => {
       'false'
     );
   });
+
+  it('hides control mode and speed when playback settings live in the control bar', () => {
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          mode: VISUALIZATION_MODES.AUTOPLAY,
+          showPlaybackSettings: false,
+        })}
+      />
+    );
+
+    expect(screen.queryByText('Control Mode')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Autoplay' })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Speed/)).not.toBeInTheDocument();
+  });
 });

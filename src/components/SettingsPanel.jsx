@@ -75,6 +75,7 @@ function SettingsPanel({
   onFavoriteGatedClick,
   isAuthenticated,
   algorithmTip,
+  showPlaybackSettings = true,
 }) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -349,55 +350,58 @@ function SettingsPanel({
         </div>
       ) : null}
 
-      <div>
-        <label className="block text-sm font-semibold text-text-primary mb-1.5 leading-tight-consistent">
-          {t('settings.controlMode')}
-        </label>
-        <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
-          <button
-            type="button"
-            onClick={() =>
-              !isPlaying && onModeChange(VISUALIZATION_MODES.AUTOPLAY)
-            }
-            disabled={isPlaying}
-            aria-pressed={mode === VISUALIZATION_MODES.AUTOPLAY}
-            aria-label={t('modes.autoplay')}
-            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
-              mode === VISUALIZATION_MODES.AUTOPLAY
-                ? 'bg-theme-primary-consistent text-white shadow-md'
-                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
-            } ${isPlaying ? 'opacity-50' : ''}`}
-          >
-            <Play size={16} weight="bold" />
-            <span className="hidden sm:inline">{t('modes.autoplay')}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              !isPlaying && onModeChange(VISUALIZATION_MODES.MANUAL)
-            }
-            disabled={isPlaying}
-            aria-pressed={mode === VISUALIZATION_MODES.MANUAL}
-            aria-label={t('modes.manual')}
-            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
-              mode === VISUALIZATION_MODES.MANUAL
-                ? 'bg-theme-primary-consistent text-white shadow-md'
-                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
-            } ${isPlaying ? 'opacity-50' : ''}`}
-          >
-            <Hand size={16} weight="bold" />
-            <span className="hidden sm:inline">{t('modes.manual')}</span>
-          </button>
+      {showPlaybackSettings && (
+        <div>
+          <label className="block text-sm font-semibold text-text-primary mb-1.5 leading-tight-consistent">
+            {t('settings.controlMode')}
+          </label>
+          <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
+            <button
+              type="button"
+              onClick={() =>
+                !isPlaying && onModeChange(VISUALIZATION_MODES.AUTOPLAY)
+              }
+              disabled={isPlaying}
+              aria-pressed={mode === VISUALIZATION_MODES.AUTOPLAY}
+              aria-label={t('modes.autoplay')}
+              className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
+                mode === VISUALIZATION_MODES.AUTOPLAY
+                  ? 'bg-theme-primary-consistent text-white shadow-md'
+                  : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
+              } ${isPlaying ? 'opacity-50' : ''}`}
+            >
+              <Play size={16} weight="bold" />
+              <span className="hidden sm:inline">{t('modes.autoplay')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                !isPlaying && onModeChange(VISUALIZATION_MODES.MANUAL)
+              }
+              disabled={isPlaying}
+              aria-pressed={mode === VISUALIZATION_MODES.MANUAL}
+              aria-label={t('modes.manual')}
+              className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
+                mode === VISUALIZATION_MODES.MANUAL
+                  ? 'bg-theme-primary-consistent text-white shadow-md'
+                  : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
+              } ${isPlaying ? 'opacity-50' : ''}`}
+            >
+              <Hand size={16} weight="bold" />
+              <span className="hidden sm:inline">{t('modes.manual')}</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {mode !== VISUALIZATION_MODES.MANUAL && (
+      {showPlaybackSettings && mode !== VISUALIZATION_MODES.MANUAL && (
         <div>
           <label
             htmlFor="settings-speed"
             className="block text-sm font-semibold text-text-primary mb-2"
           >
-            {t('settings.speed')}: {speedOptions[currentSpeedIndex]?.label}
+            {t('settings.speed')}:{' '}
+            <bdi dir="ltr">{speedOptions[currentSpeedIndex]?.label}</bdi>
           </label>
 
           <input
@@ -415,8 +419,8 @@ function SettingsPanel({
           />
 
           <div className="flex justify-between text-xs text-text-secondary mt-1">
-            <span>{speedOptions[0].label}</span>
-            <span>{speedOptions[speedOptions.length - 1].label}</span>
+            <bdi dir="ltr">{speedOptions[0].label}</bdi>
+            <bdi dir="ltr">{speedOptions[speedOptions.length - 1].label}</bdi>
           </div>
         </div>
       )}

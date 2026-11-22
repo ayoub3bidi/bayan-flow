@@ -17,11 +17,11 @@ export const useSettingsConfig = () => {
   ];
 
   const speedOptions = [
-    { value: ANIMATION_SPEEDS.SLOW, label: t('speeds.slow') },
-    { value: ANIMATION_SPEEDS.MEDIUM, label: t('speeds.medium') },
-    { value: ANIMATION_SPEEDS.FAST, label: t('speeds.fast') },
-    { value: ANIMATION_SPEEDS.VERY_FAST, label: t('speeds.veryFast') },
-    { value: ANIMATION_SPEEDS.ULTRA_FAST, label: t('speeds.ultraFast') },
+    { value: ANIMATION_SPEEDS.SLOW, label: '0.5×' },
+    { value: ANIMATION_SPEEDS.MEDIUM, label: '1×' },
+    { value: ANIMATION_SPEEDS.FAST, label: '2×' },
+    { value: ANIMATION_SPEEDS.VERY_FAST, label: '4×' },
+    { value: ANIMATION_SPEEDS.ULTRA_FAST, label: '8×' },
   ];
 
   return {

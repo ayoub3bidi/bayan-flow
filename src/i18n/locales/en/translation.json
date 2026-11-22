@@ -344,13 +344,6 @@
     "kosarajuAlgorithm": "O(V + E)",
     "floydWarshallAlgorithm": "O(V³)"
   },
-  "speeds": {
-    "slow": "Slow",
-    "medium": "Medium",
-    "fast": "Fast",
-    "veryFast": "Very Fast",
-    "ultraFast": "Ultra Fast"
-  },
   "gridSizes": {
     "small": "Small (15×15)",
     "medium": "Medium (25×25)",
