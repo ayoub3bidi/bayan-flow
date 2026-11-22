@@ -6,7 +6,10 @@
 
     <!-- Primary Meta Tags -->
     <title>Bayan Flow - Interactive Algorithm Visualizer</title>
-    <meta name="title" content="Bayan Flow - Interactive Algorithm Visualizer" />
+    <meta
+      name="title"
+      content="Bayan Flow - Interactive Algorithm Visualizer"
+    />
     <!-- Static fallback; DocumentTitle.jsx overwrites at runtime with computed count from CATEGORY_CONFIG -->
     <meta
       name="description"
@@ -70,10 +73,7 @@
       name="twitter:description"
       content="Learn 45 algorithms with interactive step-by-step visualizations — sorting, pathfinding, searching, tree traversal, and graph. Free educational app."
     />
-    <meta
-      name="twitter:image"
-      content="https://bayanflow.com/og-image.png"
-    />
+    <meta name="twitter:image" content="https://bayanflow.com/og-image.png" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
@@ -199,14 +199,15 @@
                 description:
                   'Interactive algorithm visualizer with 45+ algorithms across sorting, pathfinding, searching, tree traversal, and graph categories.',
                 url: 'https://bayanflow.com',
-                categories: args && args.category
-                  ? categories.filter(
-                      (c) =>
-                        c.name === args.category ||
-                        (args.category === 'tree' && c.name === 'tree') ||
-                        (args.category === 'graph' && c.name === 'graph'),
-                    )
-                  : categories,
+                categories:
+                  args && args.category
+                    ? categories.filter(
+                        c =>
+                          c.name === args.category ||
+                          (args.category === 'tree' && c.name === 'tree') ||
+                          (args.category === 'graph' && c.name === 'graph')
+                      )
+                    : categories,
               };
             },
             annotations: { readOnlyHint: true },
@@ -216,12 +217,6 @@
         }
       })();
     </script>
-    <!-- Cloudflare Turnstile — invisible CAPTCHA for bot signup prevention -->
-    <script
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-      async
-      defer
-    ></script>
   </head>
   <body>
     <div id="root"></div>

@@ -19,9 +19,11 @@ import {
 } from '../registry/complexityDatasetRegistry';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 
-// Fixed internal viewBox — CSS scales the SVG to its container
+// Fixed viewBox width; the height follows the chart box's aspect ratio so the plot fills it
 const VIEWBOX_WIDTH = 650;
 const VIEWBOX_HEIGHT = 350;
+const VIEWBOX_HEIGHT_MIN = 220;
+const VIEWBOX_HEIGHT_MAX = 650;
 
 /**
  * @param {string} algorithm - Current algorithm key
@@ -37,6 +39,8 @@ function ComplexityPanel({
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [animationProgress, setAnimationProgress] = useState(0);
   const svgRef = useRef(null);
+  const chartBoxRef = useRef(null);
+  const [viewBoxHeight, setViewBoxHeight] = useState(VIEWBOX_HEIGHT);
 
   const isSmall = useMediaQuery('(max-width: 639px)');
   const isBelowLg = useMediaQuery('(max-width: 1023px)');
@@ -71,6 +75,21 @@ function ComplexityPanel({
     requestAnimationFrame(animate);
   }, [algorithm]);
 
+  useEffect(() => {
+    const box = chartBoxRef.current;
+    if (!box || typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (!width || !height) return;
+      const next = Math.round((VIEWBOX_WIDTH * height) / width);
+      setViewBoxHeight(
+        Math.min(VIEWBOX_HEIGHT_MAX, Math.max(VIEWBOX_HEIGHT_MIN, next))
+      );
+    });
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [complexityData]);
+
   if (!complexityData) {
     return null;
   }
@@ -96,10 +115,10 @@ function ComplexityPanel({
   const margin = isSmall
     ? { top: 20, right: 25, bottom: 50, left: 50 }
     : isBelowLg
-      ? { top: 25, right: 35, bottom: 55, left: 55 }
-      : { top: 30, right: 50, bottom: 60, left: 60 };
+      ? { top: 25, right: 35, bottom: 55, left: 70 }
+      : { top: 30, right: 50, bottom: 60, left: 75 };
   const chartWidth = VIEWBOX_WIDTH - margin.left - margin.right;
-  const chartHeight = VIEWBOX_HEIGHT - margin.top - margin.bottom;
+  const chartHeight = viewBoxHeight - margin.top - margin.bottom;
 
   // Scales
   const maxN = Math.max(...graphData.map(d => d.n));
@@ -139,10 +158,10 @@ function ComplexityPanel({
       initial={modalPanelInitial(reduceMotion)}
       animate={modalPanelAnimate()}
       transition={modalPanelTransition(reduceMotion)}
-      className="w-full h-full bg-surface flex items-center justify-center p-3 sm:p-6 overflow-auto leading-consistent"
+      className="w-full h-full bg-surface flex flex-col p-3 sm:p-6 overflow-auto leading-consistent"
       dir="auto"
     >
-      <div className="rounded-xl p-3 sm:p-6 max-w-5xl w-full">
+      <div className="max-w-5xl w-full mx-auto flex-1 min-h-0 flex flex-col">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4 pb-3 border-b border-gray-200">
           <div>
             <h2 className="text-sm sm:text-xl font-bold text-text-primary">
@@ -180,7 +199,7 @@ function ComplexityPanel({
             </span>
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6">
+        <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-3 sm:gap-6">
           {/* Complexity badges */}
           <div
             className={`flex-shrink-0 w-full lg:w-auto ${
@@ -235,7 +254,7 @@ function ComplexityPanel({
           </div>
 
           {/* Chart */}
-          <div className="flex-1 w-full min-w-0">
+          <div className="flex-1 w-full min-w-0 min-h-0 flex flex-col">
             <h3 className="text-xs sm:text-sm font-semibold text-text-primary mb-1 sm:mb-2">
               {t('complexity_panel.performance')}
             </h3>
@@ -245,11 +264,15 @@ function ComplexityPanel({
               })}
             </div>
 
-            <div className="relative w-full" onClick={dismissTooltip}>
+            <div
+              ref={chartBoxRef}
+              className="relative w-full flex-1 min-h-[180px]"
+              onClick={dismissTooltip}
+            >
               <svg
                 ref={svgRef}
-                viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
-                className="border border-gray-200 rounded bg-bg w-full h-auto"
+                viewBox={`0 0 ${VIEWBOX_WIDTH} ${viewBoxHeight}`}
+                className="absolute inset-0 border border-gray-200 rounded bg-bg w-full h-full"
                 preserveAspectRatio="xMidYMid meet"
               >
                 <g transform={`translate(${margin.left}, ${margin.top})`}>

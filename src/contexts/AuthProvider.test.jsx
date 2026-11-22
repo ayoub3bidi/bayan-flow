@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { AuthProvider } from '../contexts/AuthProvider.jsx';
 import { useAuth } from '../hooks/useAuth.js';
+import { requestGoogleSignInPopup } from '../lib/googleIdentity';
 import {
   mockSupabaseConfigured,
   resetSupabaseMocks,
@@ -482,7 +483,6 @@ describe('AuthProvider', () => {
   ])(
     'tracks sign_in_completed once for %s',
     async (_label, createdAt, isNewUser) => {
-      vi.stubEnv('VITE_TURNSTILE_SITE_KEY', '');
       supabaseAuthMock.signInWithIdToken.mockResolvedValueOnce({
         data: {
           user: {
@@ -511,7 +511,7 @@ describe('AuthProvider', () => {
       await waitFor(() => {
         expect(analyticsMock.captureEvent).toHaveBeenCalledWith(
           'sign_in_completed',
-          { is_new_user: isNewUser }
+          { is_new_user: isNewUser, duration_ms: expect.any(Number) }
         );
       });
       expect(
@@ -521,6 +521,37 @@ describe('AuthProvider', () => {
       ).toHaveLength(1);
     }
   );
+
+  it('tracks sign_in_failed with the failing step', async () => {
+    vi.mocked(requestGoogleSignInPopup).mockRejectedValueOnce(
+      new Error('Google sign-in timed out')
+    );
+    let signIn;
+    function SignInGrabber() {
+      signIn = useAuth().signInWithGoogle;
+      return null;
+    }
+
+    render(
+      <AuthProvider>
+        <SignInGrabber />
+      </AuthProvider>
+    );
+
+    await act(async () => {
+      await expect(signIn()).rejects.toThrow(/Google sign-in timed out/);
+    });
+
+    expect(analyticsMock.captureEvent).toHaveBeenCalledWith('sign_in_failed', {
+      step: 'google',
+      duration_ms: expect.any(Number),
+      reason: 'Google sign-in timed out',
+    });
+    expect(analyticsMock.captureEvent).not.toHaveBeenCalledWith(
+      'sign_in_completed',
+      expect.anything()
+    );
+  });
 
   it('refreshProfile re-fetches profile for the current user', async () => {
     supabaseAuthMock.getSession.mockResolvedValueOnce({

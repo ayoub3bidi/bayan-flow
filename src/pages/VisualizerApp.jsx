@@ -17,7 +17,6 @@ import ExportProgressModal from '../components/ExportProgressModal';
 import ShareExportModal from '../components/ShareExportModal';
 import SignInPromptModal from '../components/SignInPromptModal';
 import ProWaitlistBanner from '../components/ProWaitlistBanner';
-import AlgorithmTipToast from '../components/AlgorithmTipToast';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 const PythonCodePanel = lazy(() => import('../components/PythonCodePanel'));
@@ -92,6 +91,7 @@ import {
 } from '../services/analyticsEvents';
 
 const SOUND_PREFERENCE_STORAGE_KEY = 'bayan-flow:sound-enabled';
+const ALGORITHM_TIP_DURATION_MS = 6000;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -245,6 +245,16 @@ function App() {
     shownAlgorithmTipsRef.current.add(algorithmKey);
     setAlgorithmTip(algorithmKey);
   };
+
+  // "Why it matters" shows briefly in the settings use-case box, then yields to use cases.
+  useEffect(() => {
+    if (!algorithmTip) return undefined;
+    const timer = window.setTimeout(
+      () => setAlgorithmTip(null),
+      ALGORITHM_TIP_DURATION_MS
+    );
+    return () => window.clearTimeout(timer);
+  }, [algorithmTip]);
 
   const [gatedFeature, setGatedFeature] = useState(null);
   const [gatedFeatureMetadata, setGatedFeatureMetadata] = useState({});
@@ -708,6 +718,8 @@ function App() {
 
   const settingsPanelProps = {
     algorithmType,
+    algorithmTip,
+    showPlaybackSettings: isBelowLg,
     onAlgorithmTypeChange: handleAlgorithmTypeChange,
     selectedAlgorithm: activeAlgorithmKey,
     onAlgorithmChange: handleAlgorithmChange,
@@ -749,6 +761,9 @@ function App() {
     isPlaying: visualization.isPlaying,
     isComplete: visualization.isComplete,
     mode,
+    onModeChange: setMode,
+    speed,
+    onSpeedChange: handleSpeedChange,
     onPlay: handlePlay,
     onPause: visualization.pause,
     onReset: visualization.reset,
@@ -803,11 +818,11 @@ function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="w-screen h-screen bg-gray-900 flex flex-col p-4"
+              className="fixed inset-0 z-40 h-dvh bg-gray-900 flex flex-col p-4"
               role="main"
               id="main-content"
             >
-              <div className="flex-1 mb-4">
+              <div className="flex-1 min-h-0 mb-4">
                 <VisualizerComponent
                   {...sharedVisualizerProps}
                   {...extraVisualizerProps}
@@ -906,15 +921,6 @@ function App() {
                       limit: favoriteSlotLimit,
                     })}
                   </motion.div>
-                )}
-              </AnimatePresence>
-
-              <AnimatePresence>
-                {algorithmTip && (
-                  <AlgorithmTipToast
-                    algorithmKey={algorithmTip}
-                    onClose={() => setAlgorithmTip(null)}
-                  />
                 )}
               </AnimatePresence>
 

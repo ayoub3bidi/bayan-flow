@@ -14,8 +14,8 @@
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
 - Version: `0.5.0` in `package.json` — **45 algorithms** across **5 categories** (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph); optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
-- **Tests**: 174 test files (~2,021 tests)
-- **Source**: 252 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
+- **Tests**: 182 test files (~2,118 tests)
+- **Source**: 253 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
 - **Supabase**: `eu-central-1` region, Postgres 17; 14 migrations — public tables `profiles`, `favorite_algorithms`, `algorithm_notes`, `waitlist`, `keepalive` + abuse tables `banned_ips`, `trusted_ips`, `signup_events`, `signup_pending` (RLS on, no policies = service-role only); 6 edge functions (`before-signup`, `post-signup`, `platform-access`, `delete-account`, `waitlist-welcome`, `sync-contacts`); `keep-supabase-alive.yml` prevents free-tier pausing
 
 ## Routes
@@ -70,7 +70,7 @@ When docs drift, trust runtime config:
 - Complexity panel: interactive SVG chart with log/linear toggle; best/average/worst time + space complexity
 - Graph algorithms: `GraphAlgorithmCategoryVisualizer` routes node-link to `GraphVisualizer` and matrix (Floyd-Warshall) to `GraphAlgorithmMatrixVisualizer`; `GraphScenarioDropdown` for preset scenarios
 - Searching category: `SearchingCategoryVisualizer` routes array-based to `ArrayVisualizer` and node-link (DFS/BFS graph) to `GraphVisualizer`
-- Animation speeds: SLOW 5000ms, MEDIUM 3000ms, FAST 1500ms, VERY_FAST 700ms, ULTRA_FAST 350ms
+- Animation speeds: SLOW 6000ms, MEDIUM 3000ms, FAST 1500ms, VERY_FAST 750ms, ULTRA_FAST 375ms — shown as `0.5×/1×/2×/4×/8×`
 
 ## Ship It test ladder
 
@@ -108,7 +108,7 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 - **Platform access** — signed-in users pass through `checkPlatformAccess()` → Supabase Edge Function `platform-access` (account ban gate); **fail-open** on transport/invoke errors, **fail-closed** only when `allowed: false` + `reason: account_banned`; signup path uses `before-signup` / `post-signup` hooks (ban logic fail-closed)
 - **Postgres-portable schema** — `profiles` keyed to `auth.users`; RLS on public tables; client-writable columns: `display_name`, `avatar_preference` only; `avatar_url` is OAuth/trigger-populated (not client-writable); `plan` is service role only. Through 0.5.0: **no** LemonSqueezy, subscriptions, referrals, or `user_sessions` tables in tree
 - **Pro through 0.5.0** — waitlist demand only (`/pro` + `waitlist`); no checkout or Pro entitlements beyond waitlist capture
-- **Analytics (PostHog)** — `src/services/analytics.js` + `analyticsEvents.js`; SPA pageviews via `capture_pageview: 'history_change'`; `disable_surveys: true`; session replay sampled (`sampleRate: 0.2`). Consent: `cookieless_mode: 'on_reject'` + `opt_out_capturing_by_default` — undecided/declined visitors are counted cookieless (no replay, no identify), Accept opts in to cookies; DNT/GPC never loads PostHog (requires cookieless enabled in the PostHog project). Identity: never `resetUser()` on a same-user `SIGNED_IN` (Supabase re-emits it); `sign_in_completed` fires once per user-initiated sign-in (in `AuthProvider.signInWithGoogle`) with `is_new_user`. `visualization_started` fires from `consumeRunIfNeeded()` once per run for all users. Growth events: `waitlist_joined`, `upgrade_limit_hit` (plus existing `sign_in_completed`). Anonymous viz limit stays hardcoded at `12` (no feature-flag A/B)
+- **Analytics (PostHog)** — `src/services/analytics.js` + `analyticsEvents.js`; SPA pageviews via `capture_pageview: 'history_change'`; `disable_surveys: true`; session replay sampled (`sampleRate: 0.2`). Consent: `cookieless_mode: 'on_reject'` + `opt_out_capturing_by_default` — undecided/declined visitors are counted cookieless (no replay, no identify), Accept opts in to cookies; DNT/GPC never loads PostHog (requires cookieless enabled in the PostHog project). Identity: never `resetUser()` on a same-user `SIGNED_IN` (Supabase re-emits it); `sign_in_completed` fires once per user-initiated sign-in (in `AuthProvider.signInWithGoogle`) with `is_new_user`. `visualization_started` fires from `consumeRunIfNeeded()` once per run for all users. Growth events: `waitlist_joined`, `upgrade_limit_hit` (plus existing `sign_in_completed`; `sign_in_failed` carries the failing `step` — google/supabase). Anonymous viz limit stays hardcoded at `12` (no feature-flag A/B)
 - **Email (Resend)** — `waitlist-welcome` (one styled transactional email per waitlist join); `sync-contacts` on `SIGNED_IN` upserts the contact **and** sends a one-time Free-account welcome (`profiles.welcome_email_sent_at`). No broadcasts, digests, referral, or Pro-nudge sends in 0.5.0. Stay under Resend free daily cap (100/day)
 - **Profile settings** — private route `/settings/profile` (`RequireAuth`); `updateProfile()` in `profileService.js`; security boundary = RLS row scope + `REVOKE UPDATE` + `GRANT UPDATE (display_name, avatar_preference)`; tabbed UI (Profile tab only); DiceBear notionists avatar fallback
 - **Session** — `getSession()`, `onAuthStateChange()`; `AuthProvider` in `src/main.jsx`; request-dedup via `requestRef`
@@ -154,7 +154,6 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 | `VITE_SUPABASE_URL` | Auth | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Auth | Publishable anon key |
 | `VITE_GOOGLE_WEB_CLIENT_ID` | Auth | Google OAuth client ID |
-| `VITE_TURNSTILE_SITE_KEY` | Auth | Cloudflare Turnstile site key; client sends `captchaToken` (secret lives in Supabase, never `VITE_*`) |
 | `VITE_POSTHOG_API_KEY` | Analytics | PostHog project token |
 | `VITE_POSTHOG_API_HOST` | Analytics | PostHog host (prod uses reverse proxy `https://e.bayanflow.com`) |
 | `VITE_PYODIDE_CDN_BASE` | Optional | Override default jsDelivr CDN for Pyodide |

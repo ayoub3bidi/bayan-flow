@@ -62,15 +62,18 @@ describe('useSettingsConfig', () => {
     });
   });
 
-  it('speed values should match ANIMATION_SPEEDS (5000, 3000, 1500, 700, 350)', () => {
+  it('labels speeds as exact multipliers of the default speed', () => {
     const { result } = renderHook(() => useSettingsConfig(), { wrapper });
 
-    const values = result.current.speedOptions.map(o => o.value);
-    expect(values).toContain(5000);
-    expect(values).toContain(3000);
-    expect(values).toContain(1500);
-    expect(values).toContain(700);
-    expect(values).toContain(350);
+    expect(
+      result.current.speedOptions.map(o => [o.label, 3000 / o.value])
+    ).toEqual([
+      ['0.5×', 0.5],
+      ['1×', 1],
+      ['2×', 2],
+      ['4×', 4],
+      ['8×', 8],
+    ]);
   });
 
   it('should use translated labels for grid sizes', () => {
@@ -81,13 +84,5 @@ describe('useSettingsConfig', () => {
     );
     expect(smallOption).toBeDefined();
     expect(i18n.t('gridSizes.small')).toBe(smallOption.label);
-  });
-
-  it('should use translated labels for speeds', () => {
-    const { result } = renderHook(() => useSettingsConfig(), { wrapper });
-
-    const slowOption = result.current.speedOptions.find(o => o.value === 5000);
-    expect(slowOption).toBeDefined();
-    expect(i18n.t('speeds.slow')).toBe(slowOption.label);
   });
 });

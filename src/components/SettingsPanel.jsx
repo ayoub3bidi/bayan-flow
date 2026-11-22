@@ -74,6 +74,8 @@ function SettingsPanel({
   onToggleFavorite,
   onFavoriteGatedClick,
   isAuthenticated,
+  algorithmTip,
+  showPlaybackSettings = true,
 }) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -90,6 +92,11 @@ function SettingsPanel({
   const algorithmUseCase = t(`algorithmUses.${selectedAlgorithm}`, {
     defaultValue: '',
   });
+  const algorithmTipText = t(`algorithmTips.${selectedAlgorithm}`, {
+    defaultValue: '',
+  });
+  const showTip =
+    algorithmTip === selectedAlgorithm && Boolean(algorithmTipText);
 
   const tileCount = ALGORITHM_TYPE_LIST.length + UPCOMING_CATEGORIES.length;
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
@@ -302,12 +309,26 @@ function SettingsPanel({
             className="shrink-0 mt-0.5 text-amber-500"
             aria-hidden="true"
           />
-          <p className="text-xs leading-relaxed text-text-secondary">
-            <span className="font-semibold text-text-primary">
-              {t('settings.useCases')}:
-            </span>{' '}
-            {algorithmUseCase}
-          </p>
+          {/* Both texts share one grid cell so the box keeps the taller height and never jumps. */}
+          <div className="grid flex-1 min-w-0" aria-live="polite">
+            {[
+              [showTip, t('app.algorithmTipTitle'), algorithmTipText],
+              [!showTip, t('settings.useCases'), algorithmUseCase],
+            ].map(([visible, title, text]) => (
+              <p
+                key={title}
+                aria-hidden={!visible}
+                className={`[grid-area:1/1] text-xs leading-relaxed text-text-secondary ${
+                  reduceMotion ? '' : 'transition-opacity duration-500'
+                } ${visible ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <span className="font-semibold text-text-primary">
+                  {title}:
+                </span>{' '}
+                {text}
+              </p>
+            ))}
+          </div>
         </div>
       )}
 
@@ -329,80 +350,80 @@ function SettingsPanel({
         </div>
       ) : null}
 
-      <div>
-        <label className="block text-sm font-semibold text-text-primary mb-1.5 leading-tight-consistent">
-          {t('settings.controlMode')}
-        </label>
-        <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
-          <button
-            type="button"
-            onClick={() =>
-              !isPlaying && onModeChange(VISUALIZATION_MODES.AUTOPLAY)
+      {showPlaybackSettings && (
+        <div>
+          <label className="block text-sm font-semibold text-text-primary mb-1.5 leading-tight-consistent">
+            {t('settings.controlMode')}
+          </label>
+          <div className="flex rounded-lg border-2 border-[var(--color-border-strong)] overflow-hidden bg-surface-elevated">
+            <button
+              type="button"
+              onClick={() =>
+                !isPlaying && onModeChange(VISUALIZATION_MODES.AUTOPLAY)
+              }
+              disabled={isPlaying}
+              aria-pressed={mode === VISUALIZATION_MODES.AUTOPLAY}
+              aria-label={t('modes.autoplay')}
+              className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
+                mode === VISUALIZATION_MODES.AUTOPLAY
+                  ? 'bg-theme-primary-consistent text-white shadow-md'
+                  : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
+              } ${isPlaying ? 'opacity-50' : ''}`}
+            >
+              <Play size={16} weight="bold" />
+              <span className="hidden sm:inline">{t('modes.autoplay')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                !isPlaying && onModeChange(VISUALIZATION_MODES.MANUAL)
+              }
+              disabled={isPlaying}
+              aria-pressed={mode === VISUALIZATION_MODES.MANUAL}
+              aria-label={t('modes.manual')}
+              className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
+                mode === VISUALIZATION_MODES.MANUAL
+                  ? 'bg-theme-primary-consistent text-white shadow-md'
+                  : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
+              } ${isPlaying ? 'opacity-50' : ''}`}
+            >
+              <Hand size={16} weight="bold" />
+              <span className="hidden sm:inline">{t('modes.manual')}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showPlaybackSettings && mode !== VISUALIZATION_MODES.MANUAL && (
+        <div>
+          <label
+            htmlFor="settings-speed"
+            className="block text-sm font-semibold text-text-primary mb-2"
+          >
+            {t('settings.speed')}:{' '}
+            <bdi dir="ltr">{speedOptions[currentSpeedIndex]?.label}</bdi>
+          </label>
+
+          <input
+            id="settings-speed"
+            type="range"
+            min={0}
+            max={speedOptions.length - 1}
+            step={1}
+            value={currentSpeedIndex}
+            onChange={e =>
+              onSpeedChange(speedOptions[parseInt(e.target.value, 10)].value)
             }
             disabled={isPlaying}
-            aria-pressed={mode === VISUALIZATION_MODES.AUTOPLAY}
-            aria-label={t('modes.autoplay')}
-            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
-              mode === VISUALIZATION_MODES.AUTOPLAY
-                ? 'bg-theme-primary-consistent text-white shadow-md'
-                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
-            } ${isPlaying ? 'opacity-50' : ''}`}
-          >
-            <Play size={16} weight="bold" />
-            <span className="hidden sm:inline">{t('modes.autoplay')}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              !isPlaying && onModeChange(VISUALIZATION_MODES.MANUAL)
-            }
-            disabled={isPlaying}
-            aria-pressed={mode === VISUALIZATION_MODES.MANUAL}
-            aria-label={t('modes.manual')}
-            className={`flex-1 px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed touch-manipulation ${
-              mode === VISUALIZATION_MODES.MANUAL
-                ? 'bg-theme-primary-consistent text-white shadow-md'
-                : 'bg-transparent text-text-primary hover:bg-bg cursor-pointer'
-            } ${isPlaying ? 'opacity-50' : ''}`}
-          >
-            <Hand size={16} weight="bold" />
-            <span className="hidden sm:inline">{t('modes.manual')}</span>
-          </button>
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+
+          <div className="flex justify-between text-xs text-text-secondary mt-1">
+            <bdi dir="ltr">{speedOptions[0].label}</bdi>
+            <bdi dir="ltr">{speedOptions[speedOptions.length - 1].label}</bdi>
+          </div>
         </div>
-      </div>
-
-      <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
-        <label
-          htmlFor="settings-speed"
-          className="block text-sm font-semibold text-text-primary mb-2"
-        >
-          {t('settings.speed')}: {speedOptions[currentSpeedIndex]?.label}
-          {mode === VISUALIZATION_MODES.MANUAL && (
-            <span className="text-xs text-text-secondary ms-2">
-              ({t('modes.autoplay')} {t('settings.autoplayOnly')})
-            </span>
-          )}
-        </label>
-
-        <input
-          id="settings-speed"
-          type="range"
-          min={0}
-          max={speedOptions.length - 1}
-          step={1}
-          value={currentSpeedIndex}
-          onChange={e =>
-            onSpeedChange(speedOptions[parseInt(e.target.value, 10)].value)
-          }
-          disabled={isPlaying || mode === VISUALIZATION_MODES.MANUAL}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-
-        <div className="flex justify-between text-xs text-text-secondary mt-1">
-          <span>{speedOptions[0].label}</span>
-          <span>{speedOptions[speedOptions.length - 1].label}</span>
-        </div>
-      </div>
+      )}
 
       {sizeControl.type === 'slider' && !isPresetGraphScenarioSelected && (
         <div>

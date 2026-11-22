@@ -166,7 +166,6 @@
     "experimental": "تجريبي",
     "autoplayDescription": "تشغيل الرسوم المتحركة تلقائياً بالسرعة المحددة",
     "manualDescription": "استخدم عناصر التحكم للتقدم يدوياً",
-    "autoplayOnly": "فقط",
     "treeNodeCount": "عقد الشجرة",
     "graphNodeCount": "رؤوس الرسم البياني",
     "graphScenarioNodeCountLocked": "تستخدم السيناريوهات الجاهزة عدداً ثابتاً من العقد. اختر رسماً عشوائياً لتغييره.",
@@ -344,13 +343,6 @@
     "tarjanAlgorithm": "O(V + E)",
     "kosarajuAlgorithm": "O(V + E)",
     "floydWarshallAlgorithm": "O(V³)"
-  },
-  "speeds": {
-    "slow": "بطيء",
-    "medium": "متوسط",
-    "fast": "سريع",
-    "veryFast": "سريع جداً",
-    "ultraFast": "سريع للغاية"
   },
   "gridSizes": {
     "small": "صغير (15×15)",

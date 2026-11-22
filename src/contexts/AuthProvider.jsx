@@ -17,7 +17,10 @@ import {
 } from '@/utils/resolveUserAvatar';
 import { AuthContext } from './AuthContextDefinition';
 import { identifyUser, resetUser } from '../services/analytics';
-import { trackSignInCompleted } from '../services/analyticsEvents';
+import {
+  trackSignInCompleted,
+  trackSignInFailed,
+} from '../services/analyticsEvents';
 
 /** @typedef {'account_banned' | null} AccessBlockReason */
 
@@ -252,8 +255,18 @@ export function AuthProvider({ children }) {
   }, [isConfigured, evaluateAccess]);
 
   const signInWithGoogle = useCallback(async () => {
-    const signedInUser = await authService.signInWithGoogle();
-    trackSignInCompleted({ isNewUser: isNewlyCreatedUser(signedInUser) });
+    const startedAt = Date.now();
+    let signedInUser;
+    try {
+      signedInUser = await authService.signInWithGoogle();
+    } catch (error) {
+      trackSignInFailed(error, Date.now() - startedAt);
+      throw error;
+    }
+    trackSignInCompleted({
+      isNewUser: isNewlyCreatedUser(signedInUser),
+      durationMs: Date.now() - startedAt,
+    });
   }, []);
 
   const signOut = useCallback(async () => {

@@ -202,10 +202,10 @@ describe('SettingsPanel', () => {
       <SettingsPanel {...getBaseProps({ selectedGraphScenario: null })} />
     );
 
-    const sliders = screen.getAllByRole('slider');
-
-    expect(sliders).toHaveLength(2);
-    expect(sliders[1]).toBeEnabled();
+    expect(screen.getAllByRole('slider')).toHaveLength(1);
+    expect(
+      screen.getByRole('slider', { name: /graph vertices/i })
+    ).toBeEnabled();
   });
 
   it('uses the Floyd-Warshall node cap for the graph size slider', () => {
@@ -219,10 +219,10 @@ describe('SettingsPanel', () => {
       />
     );
 
-    const sliders = screen.getAllByRole('slider');
+    const slider = screen.getByRole('slider', { name: /graph vertices/i });
 
-    expect(sliders[1]).toHaveAttribute('min', '3');
-    expect(sliders[1]).toHaveAttribute('max', '6');
+    expect(slider).toHaveAttribute('min', '3');
+    expect(slider).toHaveAttribute('max', '6');
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('6')).toBeInTheDocument();
   });
@@ -298,5 +298,68 @@ describe('SettingsPanel', () => {
     );
 
     expect(screen.queryByText('Use cases:')).not.toBeInTheDocument();
+  });
+
+  it('hides the speed control in manual mode and shows it in autoplay', () => {
+    const { rerender } = renderWithI18n(<SettingsPanel {...getBaseProps()} />);
+    expect(screen.queryByLabelText(/^Speed/)).not.toBeInTheDocument();
+
+    rerender(
+      <SettingsPanel
+        {...getBaseProps({ mode: VISUALIZATION_MODES.AUTOPLAY })}
+      />
+    );
+    expect(screen.getByLabelText(/^Speed/)).toBeInTheDocument();
+  });
+
+  it('swaps the use-case line for "Why it matters" while a tip is active', () => {
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          selectedAlgorithm: 'dijkstra',
+          algorithmTip: 'dijkstra',
+        })}
+      />
+    );
+
+    const tip = screen.getByText(/every navigation app/);
+    const useCase = screen.getByText(/GPS routing/);
+    expect(tip).toHaveAttribute('aria-hidden', 'false');
+    expect(useCase).toHaveAttribute('aria-hidden', 'true');
+    expect(tip).toHaveClass('opacity-100');
+    expect(useCase).toHaveClass('opacity-0');
+  });
+
+  it('ignores a tip meant for a different algorithm', () => {
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          selectedAlgorithm: 'dijkstra',
+          algorithmTip: 'quickSort',
+        })}
+      />
+    );
+
+    expect(screen.getByText(/GPS routing/)).toHaveAttribute(
+      'aria-hidden',
+      'false'
+    );
+  });
+
+  it('hides control mode and speed when playback settings live in the control bar', () => {
+    renderWithI18n(
+      <SettingsPanel
+        {...getBaseProps({
+          mode: VISUALIZATION_MODES.AUTOPLAY,
+          showPlaybackSettings: false,
+        })}
+      />
+    );
+
+    expect(screen.queryByText('Control Mode')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Autoplay' })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Speed/)).not.toBeInTheDocument();
   });
 });

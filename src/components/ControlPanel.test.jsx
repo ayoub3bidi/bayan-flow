@@ -5,9 +5,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fireEvent, renderWithI18n, screen } from '../test/testUtils';
+import { fireEvent, renderWithI18n, screen, within } from '../test/testUtils';
 import ControlPanel from './ControlPanel';
-import { ALGORITHM_TYPES } from '../constants';
+import { ALGORITHM_TYPES, ANIMATION_SPEEDS } from '../constants';
 import { BELOW_LG_MEDIA_QUERY } from '../hooks/useIsBelowLg';
 
 function stubMatchMedia(isBelowLg) {
@@ -226,5 +226,89 @@ describe('ControlPanel', () => {
     expect(
       screen.getByText('Drag the timeline to skip steps')
     ).toBeInTheDocument();
+  });
+
+  describe('playback row', () => {
+    const playbackProps = overrides =>
+      getBaseProps({
+        onModeChange: vi.fn(),
+        speed: ANIMATION_SPEEDS.MEDIUM,
+        onSpeedChange: vi.fn(),
+        ...overrides,
+      });
+
+    it('shows Manual and every speed in one row, Manual pressed by default', () => {
+      renderWithI18n(<ControlPanel {...playbackProps()} />);
+
+      const group = screen.getByRole('group', { name: 'Control Mode' });
+      expect(
+        within(group)
+          .getAllByRole('button')
+          .map(b => b.textContent)
+      ).toEqual(['Manual', '0.5×', '1×', '2×', '4×', '8×']);
+      expect(screen.getByRole('button', { name: 'Manual' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      );
+      expect(
+        screen.getByRole('button', { name: 'Autoplay 1×' })
+      ).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('picking a speed switches to autoplay at that speed', () => {
+      const props = playbackProps();
+      renderWithI18n(<ControlPanel {...props} />);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Autoplay 2×' }));
+
+      expect(props.onSpeedChange).toHaveBeenCalledWith(ANIMATION_SPEEDS.FAST);
+      expect(props.onModeChange).toHaveBeenCalledWith('autoplay');
+    });
+
+    it('does not report a speed change when re-picking the current speed', () => {
+      const props = playbackProps();
+      renderWithI18n(<ControlPanel {...props} />);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Autoplay 1×' }));
+
+      expect(props.onSpeedChange).not.toHaveBeenCalled();
+      expect(props.onModeChange).toHaveBeenCalledWith('autoplay');
+    });
+
+    it('marks the active speed in autoplay and switches back to manual', () => {
+      const props = playbackProps({
+        mode: 'autoplay',
+        speed: ANIMATION_SPEEDS.VERY_FAST,
+      });
+      renderWithI18n(<ControlPanel {...props} />);
+
+      expect(
+        screen.getByRole('button', { name: 'Autoplay 4×' })
+      ).toHaveAttribute('aria-pressed', 'true');
+
+      fireEvent.click(screen.getByRole('button', { name: 'Manual' }));
+      expect(props.onModeChange).toHaveBeenCalledWith('manual');
+    });
+
+    it('locks the row while playing', () => {
+      renderWithI18n(
+        <ControlPanel
+          {...playbackProps({ mode: 'autoplay', isPlaying: true })}
+        />
+      );
+
+      within(screen.getByRole('group', { name: 'Control Mode' }))
+        .getAllByRole('button')
+        .forEach(button => expect(button).toBeDisabled());
+    });
+
+    it('leaves playback settings to the settings sheet below lg', () => {
+      stubMatchMedia(true);
+      renderWithI18n(<ControlPanel {...playbackProps()} />);
+
+      expect(
+        screen.queryByRole('group', { name: 'Control Mode' })
+      ).not.toBeInTheDocument();
+    });
   });
 });

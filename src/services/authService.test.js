@@ -29,13 +29,10 @@ describe('authService', () => {
     vi.mocked(requestGoogleSignInPopup).mockResolvedValue({
       idToken: 'google-id-token',
     });
-    vi.stubEnv('VITE_TURNSTILE_SITE_KEY', '');
-    delete globalThis.turnstile;
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
-    delete globalThis.turnstile;
   });
 
   it('signInWithGoogleIdToken calls Supabase signInWithIdToken', async () => {
@@ -90,23 +87,6 @@ describe('authService', () => {
     });
   });
 
-  it('signInWithGoogleIdToken passes Turnstile token as captchaToken', async () => {
-    await authService.signInWithGoogleIdToken(
-      'token-123',
-      undefined,
-      undefined,
-      'turnstile-token'
-    );
-
-    expect(supabaseAuthMock.signInWithIdToken).toHaveBeenCalledWith({
-      provider: 'google',
-      token: 'token-123',
-      nonce: undefined,
-      access_token: undefined,
-      options: { captchaToken: 'turnstile-token' },
-    });
-  });
-
   it('signInWithGoogle uses GIS button then Supabase signInWithIdToken', async () => {
     await authService.signInWithGoogle();
 
@@ -119,79 +99,21 @@ describe('authService', () => {
     });
   });
 
-  it('signInWithGoogle omits Turnstile metadata when site key is unset', async () => {
-    await authService.signInWithGoogle();
-
-    expect(supabaseAuthMock.signInWithIdToken).toHaveBeenCalledWith({
-      provider: 'google',
-      token: 'google-id-token',
-      nonce: undefined,
-      access_token: undefined,
-    });
-  });
-
-  it('signInWithGoogle passes Turnstile token when widget succeeds', async () => {
-    vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
-    globalThis.turnstile = {
-      render: vi.fn((_container, options) => {
-        options.callback('cf-turnstile-ok');
-        return 'widget-id';
-      }),
-    };
-
-    await authService.signInWithGoogle();
-
-    expect(supabaseAuthMock.signInWithIdToken).toHaveBeenCalledWith({
-      provider: 'google',
-      token: 'google-id-token',
-      nonce: undefined,
-      access_token: undefined,
-      options: { captchaToken: 'cf-turnstile-ok' },
-    });
-  });
-
-  it('signInWithGoogle throws when site key is set but Turnstile script is missing', async () => {
-    vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
-
-    await expect(authService.signInWithGoogle()).rejects.toThrow(
-      /Turnstile is not available/
+  it('signInWithGoogle tags Google and Supabase failures with their step', async () => {
+    vi.mocked(requestGoogleSignInPopup).mockRejectedValueOnce(
+      new Error('Google sign-in timed out')
     );
-    expect(supabaseAuthMock.signInWithIdToken).not.toHaveBeenCalled();
-  });
+    await expect(authService.signInWithGoogle()).rejects.toMatchObject({
+      signInStep: 'google',
+    });
 
-  it('signInWithGoogle throws when Turnstile challenge errors', async () => {
-    vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
-    globalThis.turnstile = {
-      render: vi.fn((_container, options) => {
-        options['error-callback']();
-        return 'widget-id';
-      }),
-    };
-
-    await expect(authService.signInWithGoogle()).rejects.toThrow(
-      /Turnstile verification failed/
-    );
-    expect(supabaseAuthMock.signInWithIdToken).not.toHaveBeenCalled();
-  });
-
-  it('signInWithGoogle throws when Turnstile challenge times out', async () => {
-    vi.useFakeTimers();
-    try {
-      vi.stubEnv('VITE_TURNSTILE_SITE_KEY', 'test-site-key');
-      globalThis.turnstile = {
-        render: vi.fn(() => 'widget-id'),
-      };
-
-      const signInPromise = authService.signInWithGoogle();
-      const rejection = expect(signInPromise).rejects.toThrow(
-        /Turnstile verification timed out/
-      );
-      await vi.advanceTimersByTimeAsync(10000);
-      await rejection;
-      expect(supabaseAuthMock.signInWithIdToken).not.toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
+    supabaseAuthMock.signInWithIdToken.mockResolvedValueOnce({
+      data: null,
+      error: new Error('Database error saving new user'),
+    });
+    await expect(authService.signInWithGoogle()).rejects.toMatchObject({
+      signInStep: 'supabase',
+    });
   });
 
   it('signOut delegates to Supabase auth', async () => {

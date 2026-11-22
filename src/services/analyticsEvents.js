@@ -59,6 +59,9 @@ export const SIGN_IN_CLICKED = 'sign_in_clicked';
 /** Sign-in completed successfully */
 export const SIGN_IN_COMPLETED = 'sign_in_completed';
 
+/** A user-initiated sign-in failed; `step` says where (google/supabase). */
+export const SIGN_IN_FAILED = 'sign_in_failed';
+
 /** Algorithm added to favorites */
 export const FAVORITE_ADDED = 'favorite_added';
 
@@ -231,10 +234,27 @@ export function trackSignInClicked(source) {
 
 /**
  * Capture a sign-in completed event (once per user-initiated sign-in).
- * @param {{ isNewUser: boolean }} details - isNewUser: this sign-in created the account
+ * @param {{ isNewUser: boolean, durationMs?: number }} details - isNewUser: this sign-in created the account; durationMs: click to signed in
  */
-export function trackSignInCompleted({ isNewUser }) {
-  captureEvent(SIGN_IN_COMPLETED, { is_new_user: isNewUser });
+export function trackSignInCompleted({ isNewUser, durationMs }) {
+  captureEvent(SIGN_IN_COMPLETED, {
+    is_new_user: isNewUser,
+    duration_ms: durationMs,
+  });
+}
+
+/**
+ * Capture a failed user-initiated sign-in.
+ * @param {unknown} error - may carry `signInStep` set by authService
+ * @param {number} [durationMs] - click to failure
+ */
+export function trackSignInFailed(error, durationMs) {
+  const err = /** @type {any} */ (error);
+  captureEvent(SIGN_IN_FAILED, {
+    step: err?.signInStep ?? 'unknown',
+    duration_ms: durationMs,
+    reason: String(err?.message ?? err ?? 'unknown').slice(0, 200),
+  });
 }
 
 /**

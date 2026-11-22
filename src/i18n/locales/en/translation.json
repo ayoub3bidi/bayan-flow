@@ -166,7 +166,6 @@
     "experimental": "Experimental",
     "autoplayDescription": "Animation plays automatically at selected speed",
     "manualDescription": "Use step controls to advance manually",
-    "autoplayOnly": "only",
     "treeNodeCount": "Tree nodes",
     "graphNodeCount": "Graph vertices",
     "graphScenarioNodeCountLocked": "Preset scenarios use a fixed node count. Select Random graph to change it.",
@@ -344,13 +343,6 @@
     "tarjanAlgorithm": "O(V + E)",
     "kosarajuAlgorithm": "O(V + E)",
     "floydWarshallAlgorithm": "O(V³)"
-  },
-  "speeds": {
-    "slow": "Slow",
-    "medium": "Medium",
-    "fast": "Fast",
-    "veryFast": "Very Fast",
-    "ultraFast": "Ultra Fast"
   },
   "gridSizes": {
     "small": "Small (15×15)",
