@@ -6,7 +6,13 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithI18n, screen, fireEvent, waitFor } from '../test/testUtils';
+import {
+  renderWithI18n,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
 import { soundManager } from '../utils/soundManager';
@@ -267,8 +273,10 @@ vi.mock('../components/SettingsPanel', () => ({
     onAlgorithmTypeChange,
     onAlgorithmChange,
     onToggleFavorite,
+    algorithmTip,
   }) => (
     <div data-testid="settings-panel">
+      <div data-testid="algorithm-tip">{String(algorithmTip)}</div>
       <div data-testid="algorithm-type">{algorithmType}</div>
       <div data-testid="selected-algorithm">{selectedAlgorithm}</div>
       <div data-testid="selected-graph-scenario">
@@ -1071,11 +1079,13 @@ describe('VisualizerApp', () => {
     });
   });
 
-  describe('algorithm tip toast', () => {
+  describe('algorithm tip', () => {
+    const tip = () => screen.getByTestId('algorithm-tip').textContent;
+
     it('does not show a tip for the default algorithm on initial render', async () => {
       await renderApp();
 
-      expect(screen.queryByText('Why it matters')).not.toBeInTheDocument();
+      expect(tip()).toBe('null');
     });
 
     it('shows a tip when a new algorithm is selected', async () => {
@@ -1083,8 +1093,7 @@ describe('VisualizerApp', () => {
 
       fireEvent.click(screen.getByText('select-dijkstra'));
 
-      expect(screen.getByText('Why it matters')).toBeInTheDocument();
-      expect(screen.getByText(/every navigation app/)).toBeInTheDocument();
+      expect(tip()).toBe('dijkstra');
     });
 
     it('shows a tip for the new category default when switching category', async () => {
@@ -1092,26 +1101,34 @@ describe('VisualizerApp', () => {
 
       fireEvent.click(screen.getByText('pathfinding'));
 
-      expect(screen.getByText('Why it matters')).toBeInTheDocument();
-      expect(
-        screen.getByText(/shortest-path and level-order/)
-      ).toBeInTheDocument();
+      expect(tip()).toBe('bfs');
+    });
+
+    it('clears the tip after a few seconds', async () => {
+      await renderApp();
+      vi.useFakeTimers();
+      try {
+        fireEvent.click(screen.getByText('select-dijkstra'));
+        expect(tip()).toBe('dijkstra');
+
+        act(() => {
+          vi.advanceTimersByTime(6000);
+        });
+        expect(tip()).toBe('null');
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('shows a tip only once per algorithm per session', async () => {
       await renderApp();
 
       fireEvent.click(screen.getByText('select-dijkstra'));
-      expect(screen.getByText(/every navigation app/)).toBeInTheDocument();
-
       fireEvent.click(screen.getByText('select-quick-sort'));
-      expect(screen.getByText(/iconic interview sort/)).toBeInTheDocument();
+      expect(tip()).toBe('quickSort');
 
       fireEvent.click(screen.getByText('select-dijkstra'));
-      expect(
-        screen.queryByText(/every navigation app/)
-      ).not.toBeInTheDocument();
-      expect(screen.getByText(/iconic interview sort/)).toBeInTheDocument();
+      expect(tip()).toBe('quickSort');
     });
   });
 });

@@ -74,6 +74,7 @@ function SettingsPanel({
   onToggleFavorite,
   onFavoriteGatedClick,
   isAuthenticated,
+  algorithmTip,
 }) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -90,6 +91,11 @@ function SettingsPanel({
   const algorithmUseCase = t(`algorithmUses.${selectedAlgorithm}`, {
     defaultValue: '',
   });
+  const algorithmTipText = t(`algorithmTips.${selectedAlgorithm}`, {
+    defaultValue: '',
+  });
+  const showTip =
+    algorithmTip === selectedAlgorithm && Boolean(algorithmTipText);
 
   const tileCount = ALGORITHM_TYPE_LIST.length + UPCOMING_CATEGORIES.length;
   const categoryConfig = CATEGORY_CONFIG[algorithmType];
@@ -302,12 +308,26 @@ function SettingsPanel({
             className="shrink-0 mt-0.5 text-amber-500"
             aria-hidden="true"
           />
-          <p className="text-xs leading-relaxed text-text-secondary">
-            <span className="font-semibold text-text-primary">
-              {t('settings.useCases')}:
-            </span>{' '}
-            {algorithmUseCase}
-          </p>
+          {/* Both texts share one grid cell so the box keeps the taller height and never jumps. */}
+          <div className="grid flex-1 min-w-0" aria-live="polite">
+            {[
+              [showTip, t('app.algorithmTipTitle'), algorithmTipText],
+              [!showTip, t('settings.useCases'), algorithmUseCase],
+            ].map(([visible, title, text]) => (
+              <p
+                key={title}
+                aria-hidden={!visible}
+                className={`[grid-area:1/1] text-xs leading-relaxed text-text-secondary ${
+                  reduceMotion ? '' : 'transition-opacity duration-500'
+                } ${visible ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <span className="font-semibold text-text-primary">
+                  {title}:
+                </span>{' '}
+                {text}
+              </p>
+            ))}
+          </div>
         </div>
       )}
 
@@ -371,38 +391,35 @@ function SettingsPanel({
         </div>
       </div>
 
-      <div className={mode === VISUALIZATION_MODES.MANUAL ? 'opacity-50' : ''}>
-        <label
-          htmlFor="settings-speed"
-          className="block text-sm font-semibold text-text-primary mb-2"
-        >
-          {t('settings.speed')}: {speedOptions[currentSpeedIndex]?.label}
-          {mode === VISUALIZATION_MODES.MANUAL && (
-            <span className="text-xs text-text-secondary ms-2">
-              ({t('modes.autoplay')} {t('settings.autoplayOnly')})
-            </span>
-          )}
-        </label>
+      {mode !== VISUALIZATION_MODES.MANUAL && (
+        <div>
+          <label
+            htmlFor="settings-speed"
+            className="block text-sm font-semibold text-text-primary mb-2"
+          >
+            {t('settings.speed')}: {speedOptions[currentSpeedIndex]?.label}
+          </label>
 
-        <input
-          id="settings-speed"
-          type="range"
-          min={0}
-          max={speedOptions.length - 1}
-          step={1}
-          value={currentSpeedIndex}
-          onChange={e =>
-            onSpeedChange(speedOptions[parseInt(e.target.value, 10)].value)
-          }
-          disabled={isPlaying || mode === VISUALIZATION_MODES.MANUAL}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-        />
+          <input
+            id="settings-speed"
+            type="range"
+            min={0}
+            max={speedOptions.length - 1}
+            step={1}
+            value={currentSpeedIndex}
+            onChange={e =>
+              onSpeedChange(speedOptions[parseInt(e.target.value, 10)].value)
+            }
+            disabled={isPlaying}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          />
 
-        <div className="flex justify-between text-xs text-text-secondary mt-1">
-          <span>{speedOptions[0].label}</span>
-          <span>{speedOptions[speedOptions.length - 1].label}</span>
+          <div className="flex justify-between text-xs text-text-secondary mt-1">
+            <span>{speedOptions[0].label}</span>
+            <span>{speedOptions[speedOptions.length - 1].label}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {sizeControl.type === 'slider' && !isPresetGraphScenarioSelected && (
         <div>

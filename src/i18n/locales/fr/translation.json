@@ -166,7 +166,6 @@
     "experimental": "Expérimental",
     "autoplayDescription": "L'animation se joue automatiquement à la vitesse sélectionnée",
     "manualDescription": "Utilisez les contrôles d'étape pour avancer manuellement",
-    "autoplayOnly": "uniquement",
     "treeNodeCount": "Nœuds de l'arbre",
     "graphNodeCount": "Sommets du graphe",
     "graphScenarioNodeCountLocked": "Les scénarios prédéfinis utilisent un nombre fixe de nœuds. Sélectionnez Graphe aléatoire pour le modifier.",

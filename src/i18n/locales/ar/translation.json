@@ -166,7 +166,6 @@
     "experimental": "تجريبي",
     "autoplayDescription": "تشغيل الرسوم المتحركة تلقائياً بالسرعة المحددة",
     "manualDescription": "استخدم عناصر التحكم للتقدم يدوياً",
-    "autoplayOnly": "فقط",
     "treeNodeCount": "عقد الشجرة",
     "graphNodeCount": "رؤوس الرسم البياني",
     "graphScenarioNodeCountLocked": "تستخدم السيناريوهات الجاهزة عدداً ثابتاً من العقد. اختر رسماً عشوائياً لتغييره.",
