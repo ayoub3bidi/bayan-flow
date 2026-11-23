@@ -32,6 +32,7 @@ function SearchingCategoryVisualizer({
   onStepForward,
   onStepBackward,
   mode,
+  arrayView,
 }) {
   if (getSearchingSubstrate(algorithm) === SEARCHING_SUBSTRATES.NODE_LINK) {
     return (
@@ -63,6 +64,7 @@ function SearchingCategoryVisualizer({
       onStepBackward={onStepBackward}
       mode={mode}
       targetValue={targetValue}
+      arrayView={arrayView}
       visualizerVariant={visualizerVariant}
       complexityDataset={complexityDataset}
     />

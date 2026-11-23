@@ -17,7 +17,7 @@ import {
   DEFAULT_VIDEO_WATERMARK,
   DEFAULT_EXPORT_AUDIO_VOLUME,
 } from './constants.js';
-import { ALGORITHM_TYPES } from '../constants/index.js';
+import { ALGORITHM_TYPES, ARRAY_VIEWS } from '../constants/index.js';
 import { normalizeExportLanguage } from './exportLanguage.js';
 import { buildExportAudioUrl } from './audio/mixExportAudio.js';
 import i18n from '../i18n/index.js';
@@ -166,6 +166,7 @@ export function useVideoExporter() {
       exportAudioVolume = DEFAULT_EXPORT_AUDIO_VOLUME,
       exportTheme = 'dark',
       exportLanguage,
+      arrayView,
     }) => {
       if (!steps?.length) {
         setExportErrorMessage(i18n.t('controls.exportNoSteps'));
@@ -211,6 +212,10 @@ export function useVideoExporter() {
             ? exportTheme
             : 'dark',
         exportLanguage: normalizeExportLanguage(exportLanguage),
+        arrayView:
+          arrayView === ARRAY_VIEWS.BOXES
+            ? ARRAY_VIEWS.BOXES
+            : ARRAY_VIEWS.BARS,
       };
 
       setExportErrorMessage(null);

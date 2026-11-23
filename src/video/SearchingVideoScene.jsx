@@ -22,13 +22,14 @@ function isNodeLinkSearchingStepShape(step) {
  * Searching category exports bar steps (array search) or graph steps (node–link DFS).
  * Routes to the correct Remotion scene without splitting the category in export props.
  *
- * @param {{ steps: Array, framesPerStep: number, gridSize?: number, exportTheme?: string }} props
+ * @param {{ steps: Array, framesPerStep: number, gridSize?: number, exportTheme?: string, arrayView?: string }} props
  */
 export default function SearchingVideoScene({
   steps,
   framesPerStep,
   gridSize: _gridSize = 15,
   exportTheme = 'dark',
+  arrayView,
 }) {
   const first = steps[0];
   if (isNodeLinkSearchingStepShape(first)) {
@@ -40,5 +41,12 @@ export default function SearchingVideoScene({
       />
     );
   }
-  return <SortingScene steps={steps} framesPerStep={framesPerStep} />;
+  return (
+    <SortingScene
+      steps={steps}
+      framesPerStep={framesPerStep}
+      arrayView={arrayView}
+      exportTheme={exportTheme}
+    />
+  );
 }

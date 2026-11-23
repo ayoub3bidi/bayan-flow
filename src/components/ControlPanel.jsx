@@ -22,11 +22,14 @@ import {
   SpeakerX,
   Gear,
   Hand,
+  ChartBar,
+  SquaresFour,
 } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
 import {
   ALGORITHM_TYPES,
+  ARRAY_VIEWS,
   SORT_ORDERS,
   VISUALIZATION_MODES,
 } from '../constants';
@@ -57,6 +60,9 @@ function ControlPanel({
   algorithmType,
   sortOrder = SORT_ORDERS.ASCENDING,
   onSortOrderChange,
+  arrayView = ARRAY_VIEWS.BARS,
+  onArrayViewChange,
+  showArrayViewToggle = false,
   isFullScreen,
   onToggleFullScreen,
   onExportVideo,
@@ -98,6 +104,11 @@ function ControlPanel({
     );
   };
 
+  const isBarView = arrayView !== ARRAY_VIEWS.BOXES;
+  const handleArrayViewClick = () => {
+    onArrayViewChange?.(isBarView ? ARRAY_VIEWS.BOXES : ARRAY_VIEWS.BARS);
+  };
+
   const featureButtons = (
     <>
       {hasDataRefresh && (
@@ -130,6 +141,27 @@ function ControlPanel({
             <SortDescending size={20} weight="bold" aria-hidden="true" />
           ) : (
             <SortAscending size={20} weight="bold" aria-hidden="true" />
+          )}
+        </button>
+      )}
+
+      {showArrayViewToggle && onArrayViewChange && (
+        <button
+          type="button"
+          onClick={handleArrayViewClick}
+          className={`${buttonBaseClasses} bg-sky-600 hover:bg-sky-700 text-white`}
+          title={
+            isBarView
+              ? t('controls.arrayViewBars')
+              : t('controls.arrayViewBoxes')
+          }
+          aria-label={t('controls.arrayView')}
+          aria-pressed={isBarView}
+        >
+          {isBarView ? (
+            <ChartBar size={20} weight="bold" aria-hidden="true" />
+          ) : (
+            <SquaresFour size={20} weight="bold" aria-hidden="true" />
           )}
         </button>
       )}

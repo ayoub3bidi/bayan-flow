@@ -16,20 +16,32 @@ import GraphAlgorithmVideoScene from '../video/GraphAlgorithmVideoScene.jsx';
  * Each renderer receives unified props from AlgorithmVideo.
  */
 export const VIDEO_SCENE_RENDERERS = {
-  [ALGORITHM_TYPES.SORTING]: ({ steps, framesPerStep }) => (
-    <SortingScene steps={steps} framesPerStep={framesPerStep} />
+  [ALGORITHM_TYPES.SORTING]: ({
+    steps,
+    framesPerStep,
+    arrayView,
+    exportTheme,
+  }) => (
+    <SortingScene
+      steps={steps}
+      framesPerStep={framesPerStep}
+      arrayView={arrayView}
+      exportTheme={exportTheme}
+    />
   ),
   [ALGORITHM_TYPES.SEARCHING]: ({
     steps,
     framesPerStep,
     gridSize,
     exportTheme,
+    arrayView,
   }) => (
     <SearchingVideoScene
       steps={steps}
       framesPerStep={framesPerStep}
       gridSize={gridSize}
       exportTheme={exportTheme}
+      arrayView={arrayView}
     />
   ),
   [ALGORITHM_TYPES.PATHFINDING]: ({ steps, framesPerStep, gridSize }) => (

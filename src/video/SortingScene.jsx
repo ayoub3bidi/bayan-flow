@@ -4,24 +4,30 @@
  * See LICENSE for details.
  */
 
-import { memo } from 'react';
-import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+import { memo, useMemo } from 'react';
+import { useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion';
 import {
   STATE_COLORS,
   ELEMENT_STATES,
+  ARRAY_VIEWS,
   SEARCH_TARGET_RING_COLOR,
   SEARCH_TARGET_RING_RGB,
 } from '../constants/index.js';
+import { getVideoExportTheme } from './videoExportTheme.js';
+
+/** Same label cutoff as the interactive bar chart. */
+const BAR_LABEL_LIMIT = 25;
+/** Share of each step spent sliding / resizing bars. */
+const BAR_MOVE_FRACTION = 0.4;
 
 /**
- * Renders sorting visualization with smooth interpolated animations.
- * Uses Remotion's interpolate for swap and compare animations.
+ * Box view: numbered squares with swap / compare interpolation.
  *
  * @param {Object} props
  * @param {Array<{ array: number[], states: string[], description: string }>} props.steps
  * @param {number} props.framesPerStep
  */
-function SortingSceneInner({ steps, framesPerStep }) {
+function SortingBoxesScene({ steps, framesPerStep }) {
   const frame = useCurrentFrame();
   const { width: frameW, height: frameH } = useVideoConfig();
   const stepIndex = Math.min(
@@ -179,6 +185,161 @@ function SortingSceneInner({ steps, framesPerStep }) {
         );
       })}
     </div>
+  );
+}
+
+/**
+ * Bar view: height ∝ value. Each bar follows its element id (`step.ids`, from
+ * withElementIds) from its previous slot/value to the current one, so swaps
+ * slide and overwrites resize — the same motion as the interactive chart.
+ *
+ * @param {Object} props
+ * @param {Array<{ array: number[], states: string[], ids?: number[], targetValue?: number }>} props.steps
+ * @param {number} props.framesPerStep
+ * @param {string} [props.exportTheme]
+ */
+function SortingBarsScene({ steps, framesPerStep, exportTheme = 'dark' }) {
+  const frame = useCurrentFrame();
+  const { width: frameW } = useVideoConfig();
+  const maxValue = useMemo(
+    () =>
+      steps.reduce(
+        (max, s) => Math.max(max, ...(Array.isArray(s?.array) ? s.array : [])),
+        1
+      ),
+    [steps]
+  );
+
+  const stepIndex = Math.min(
+    Math.floor(frame / framesPerStep),
+    Math.max(0, steps.length - 1)
+  );
+  const step = steps[stepIndex] ?? steps[0];
+  if (!step) return null;
+  const prevStep = stepIndex > 0 ? steps[stepIndex - 1] : null;
+
+  const { array, states, targetValue, ids } = step;
+  const n = array.length;
+  const progress = interpolate(
+    frame - stepIndex * framesPerStep,
+    [0, framesPerStep * BAR_MOVE_FRACTION],
+    [0, 1],
+    {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+      easing: Easing.inOut(Easing.ease),
+    }
+  );
+
+  const canTrack =
+    prevStep &&
+    Array.isArray(ids) &&
+    Array.isArray(prevStep.ids) &&
+    prevStep.ids.length === n;
+  const prevSlotById = canTrack
+    ? new Map(prevStep.ids.map((id, i) => [id, i]))
+    : null;
+
+  const slotPct = 100 / Math.max(n, 1);
+  const gapPct = slotPct * (n <= 20 ? 0.18 : n <= 50 ? 0.12 : 0.06);
+  const showLabels = n <= BAR_LABEL_LIMIT;
+  const labelSize = Math.max(
+    10,
+    Math.min(22, Math.round(((frameW * 0.9) / Math.max(n, 1)) * 0.32))
+  );
+  const labelColor = getVideoExportTheme(exportTheme).headerText;
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        boxSizing: 'border-box',
+        padding: `${showLabels ? labelSize + 32 : 24}px 32px 24px`,
+        direction: 'ltr',
+      }}
+    >
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {array.map((value, i) => {
+          const from = canTrack ? (prevSlotById.get(ids[i]) ?? i) : i;
+          const prevValue = canTrack ? (prevStep.array[from] ?? value) : value;
+          const slot = from + (i - from) * progress;
+          const shown = prevValue + (value - prevValue) * progress;
+          const heightPct = Math.max(
+            4,
+            Math.min(100, (shown / maxValue) * 100)
+          );
+          const state = states[i] ?? ELEMENT_STATES.DEFAULT;
+          const isTarget = targetValue != null && value === targetValue;
+
+          return (
+            <div
+              key={ids?.[i] ?? i}
+              data-testid="video-bar"
+              data-slot={slot}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: `${slot * slotPct + gapPct / 2}%`,
+                width: `${slotPct - gapPct}%`,
+                height: `${heightPct}%`,
+                backgroundColor: STATE_COLORS[state] ?? STATE_COLORS.default,
+                borderRadius: '6px 6px 0 0',
+                boxShadow: isTarget
+                  ? `0 0 0 4px rgba(${SEARCH_TARGET_RING_RGB}, 0.95)`
+                  : undefined,
+              }}
+            >
+              {showLabels ? (
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    marginBottom: 6,
+                    fontSize: labelSize,
+                    fontWeight: 700,
+                    color: labelColor,
+                    whiteSpace: 'nowrap',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {value}
+                </span>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Renders the sorting / array-searching main scene in the chosen array view.
+ *
+ * @param {Object} props
+ * @param {Array} props.steps
+ * @param {number} props.framesPerStep
+ * @param {'bars'|'boxes'} [props.arrayView='bars']
+ * @param {string} [props.exportTheme]
+ */
+function SortingSceneInner({
+  steps,
+  framesPerStep,
+  arrayView = ARRAY_VIEWS.BARS,
+  exportTheme,
+}) {
+  if (arrayView === ARRAY_VIEWS.BOXES) {
+    return <SortingBoxesScene steps={steps} framesPerStep={framesPerStep} />;
+  }
+  return (
+    <SortingBarsScene
+      steps={steps}
+      framesPerStep={framesPerStep}
+      exportTheme={exportTheme}
+    />
   );
 }
 

@@ -65,10 +65,10 @@ pnpm run generate:export-sfx   # Regenerate public/video-export/sfx WAV assets (
 
 **Presentational (Dumb):**
 ```javascript
-// ArrayBar.jsx - Just renders, no logic
-function ArrayBar({ value, state, maxValue }) {
+// ArrayBox.jsx - Just renders, no logic
+function ArrayBox({ value, state }) {
   return (
-    <motion.div style={{ height: `${value/maxValue * 100}%` }}>
+    <motion.div style={{ backgroundColor: STATE_COLORS[state] }}>
       {value}
     </motion.div>
   );

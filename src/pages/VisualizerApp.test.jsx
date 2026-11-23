@@ -320,6 +320,9 @@ vi.mock('../components/ControlPanel', () => ({
     onToggleSound,
     sortOrder,
     onSortOrderChange,
+    arrayView,
+    onArrayViewChange,
+    showArrayViewToggle,
     onToggleFullScreen,
     visualizationsRemaining,
     onSeek,
@@ -330,6 +333,17 @@ vi.mock('../components/ControlPanel', () => ({
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
       <span data-testid="control-algorithm-type">{algorithmType}</span>
       <span data-testid="control-sort-order">{String(sortOrder)}</span>
+      <span data-testid="control-array-view">{String(arrayView)}</span>
+      {showArrayViewToggle && (
+        <button
+          type="button"
+          onClick={() =>
+            onArrayViewChange(arrayView === 'bars' ? 'boxes' : 'bars')
+          }
+        >
+          toggle-array-view
+        </button>
+      )}
       <span data-testid="sound-enabled">{String(isSoundEnabled)}</span>
       <span data-testid="sound-pending">{String(isSoundTogglePending)}</span>
       <button type="button" onClick={onGenerateInput}>
@@ -377,8 +391,8 @@ vi.mock('../components/ControlPanel', () => ({
 }));
 
 vi.mock('../components/ArrayVisualizer', () => ({
-  default: ({ array, algorithm }) => (
-    <div data-testid="array-visualizer">
+  default: ({ array, algorithm, arrayView }) => (
+    <div data-testid="array-visualizer" data-array-view={arrayView}>
       {algorithm}:{array.join(',')}
     </div>
   ),
@@ -687,8 +701,91 @@ describe('VisualizerApp', () => {
         }),
         exportTheme: expect.stringMatching(/^(light|dark)$/),
         exportLanguage: expect.any(String),
+        arrayView: 'bars',
       })
     );
+  });
+
+  describe('array view preference', () => {
+    it('defaults sorting to the bar view', async () => {
+      await renderApp();
+
+      expect(screen.getByTestId('control-array-view')).toHaveTextContent(
+        'bars'
+      );
+      expect(screen.getByTestId('array-visualizer')).toHaveAttribute(
+        'data-array-view',
+        'bars'
+      );
+    });
+
+    it('hydrates the box view from localStorage', async () => {
+      window.localStorage.setItem('bayan-flow:array-view', 'boxes');
+
+      await renderApp();
+
+      expect(screen.getByTestId('array-visualizer')).toHaveAttribute(
+        'data-array-view',
+        'boxes'
+      );
+    });
+
+    it('ignores unknown stored values', async () => {
+      window.localStorage.setItem('bayan-flow:array-view', 'sparkles');
+
+      await renderApp();
+
+      expect(screen.getByTestId('control-array-view')).toHaveTextContent(
+        'bars'
+      );
+    });
+
+    it('toggles and persists the view', async () => {
+      await renderApp();
+
+      fireEvent.click(screen.getByText('toggle-array-view'));
+
+      expect(screen.getByTestId('array-visualizer')).toHaveAttribute(
+        'data-array-view',
+        'boxes'
+      );
+      expect(window.localStorage.getItem('bayan-flow:array-view')).toBe(
+        'boxes'
+      );
+    });
+
+    it('falls back to bars when reading storage throws', async () => {
+      const getItemSpy = vi
+        .spyOn(Storage.prototype, 'getItem')
+        .mockImplementation(() => {
+          throw new Error('storage read failed');
+        });
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      try {
+        await renderApp();
+        expect(screen.getByTestId('control-array-view')).toHaveTextContent(
+          'bars'
+        );
+      } finally {
+        getItemSpy.mockRestore();
+        consoleSpy.mockRestore();
+      }
+    });
+
+    it('passes the chosen view to the video export', async () => {
+      window.localStorage.setItem('bayan-flow:array-view', 'boxes');
+      videoExporterMock.exportState = 'orientation';
+      await renderApp();
+
+      fireEvent.click(screen.getByText('pick-orientation'));
+
+      expect(exportVideo).toHaveBeenCalledWith(
+        expect.objectContaining({ arrayView: 'boxes' })
+      );
+    });
   });
 
   it('keeps export audio on when playback sound is off', async () => {

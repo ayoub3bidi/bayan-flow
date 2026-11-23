@@ -45,6 +45,8 @@ import {
   ALGORITHM_TYPES,
   SORT_ORDERS,
   GRID_SIZES,
+  ARRAY_VIEWS,
+  ARRAY_VIEW_STORAGE_KEY,
 } from '../constants';
 import { VISUALIZER_REGISTRY } from '../registry/visualizerRegistry';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig';
@@ -132,6 +134,29 @@ function writeStoredSoundPreference(isEnabled) {
   }
 }
 
+function readStoredArrayView() {
+  if (typeof window === 'undefined') return ARRAY_VIEWS.BARS;
+
+  try {
+    return window.localStorage.getItem(ARRAY_VIEW_STORAGE_KEY) ===
+      ARRAY_VIEWS.BOXES
+      ? ARRAY_VIEWS.BOXES
+      : ARRAY_VIEWS.BARS;
+  } catch {
+    return ARRAY_VIEWS.BARS;
+  }
+}
+
+function writeStoredArrayView(view) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(ARRAY_VIEW_STORAGE_KEY, view);
+  } catch {
+    // Ignore storage failures and keep the in-memory preference.
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Main Component
 // ---------------------------------------------------------------------------
@@ -170,6 +195,7 @@ function App() {
     readStoredSoundPreference()
   );
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
+  const [arrayView, setArrayView] = useState(readStoredArrayView);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
   const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
@@ -526,6 +552,11 @@ function App() {
     }
   };
 
+  const handleArrayViewChange = view => {
+    setArrayView(view);
+    writeStoredArrayView(view);
+  };
+
   const handleGatedSoundToggle = () => {
     if (isAuthenticated) {
       handleSoundToggle();
@@ -618,6 +649,7 @@ function App() {
       watermark: getExportWatermarkConfig(user),
       exportTheme: theme,
       exportLanguage: i18n.resolvedLanguage ?? i18n.language,
+      arrayView,
     });
   };
 
@@ -714,6 +746,7 @@ function App() {
     graphAlgorithmVisualization,
     gridSize,
     activeAlgorithmKey,
+    arrayView,
   });
 
   const settingsPanelProps = {
@@ -776,6 +809,12 @@ function App() {
     algorithmType,
     sortOrder,
     onSortOrderChange: setSortOrder,
+    arrayView,
+    onArrayViewChange: handleArrayViewChange,
+    showArrayViewToggle:
+      algorithmType === ALGORITHM_TYPES.SORTING ||
+      (algorithmType === ALGORITHM_TYPES.SEARCHING &&
+        !isNodeLinkSearchingAlgorithm(activeAlgorithmKey)),
     isFullScreen,
     onToggleFullScreen: handleGatedFullscreenToggle,
     onExportVideo: handleExportVideo,

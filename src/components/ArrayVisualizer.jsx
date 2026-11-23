@@ -7,11 +7,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import ArrayBar from './ArrayBar';
+import ArrayBox from './ArrayBox';
+import ArrayBarChart from './ArrayBarChart';
 import ComplexityPanel from './ComplexityPanel';
 import SwipeTutorial from './SwipeTutorial';
 import AutoHidingLegend from './AutoHidingLegend';
 import {
+  ARRAY_VIEWS,
   ELEMENT_STATES,
   STATE_COLORS,
   SEARCH_TARGET_RING_COLOR,
@@ -34,6 +36,9 @@ import { useIsBelowLg } from '../hooks/useIsBelowLg';
  * @param {boolean} [showChrome=true] - Legend, complexity panel, swipe tutorial
  * @param {boolean} [showCaption=true] - Step status caption under the bars
  * @param {boolean} [interactive=true] - Swipe / keyboard step navigation
+ * @param {'bars'|'boxes'} [arrayView='bars'] - Bar chart or numbered boxes
+ * @param {number[]|null} [elementIds] - Stable element ids (bars slide on swaps)
+ * @param {number} [maxValue] - Fixed bar scale max
  */
 function ArrayVisualizer({
   array,
@@ -50,6 +55,9 @@ function ArrayVisualizer({
   showChrome = true,
   showCaption = true,
   interactive = true,
+  arrayView = ARRAY_VIEWS.BARS,
+  elementIds = null,
+  maxValue,
 }) {
   const { t } = useTranslation();
   const isCompactArray = useIsBelowLg();
@@ -205,27 +213,47 @@ function ArrayVisualizer({
             )}
 
             {/* Array Visualization */}
-            <div
-              className={`flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 px-2 overflow-x-hidden touch-pan-y ${
-                showChrome || showCaption ? 'pb-10' : 'pb-2'
-              }`}
-            >
-              {array.map((value, index) => (
-                <ArrayBar
-                  key={`${index}-${value}`}
-                  value={value}
-                  state={states[index]}
-                  index={index}
-                  arrayLength={arrayLength}
+            {arrayView === ARRAY_VIEWS.BARS ? (
+              <div
+                className={`flex-1 min-h-0 flex flex-col px-2 touch-pan-y ${
+                  showChrome || showCaption ? 'pb-24 sm:pb-20' : 'pb-2'
+                }`}
+              >
+                <ArrayBarChart
+                  array={array}
+                  states={states}
+                  elementIds={elementIds}
+                  maxValue={maxValue}
                   compact={isCompactArray}
-                  highlightTarget={
-                    visualizerVariant === 'searching' &&
-                    targetValue != null &&
-                    value === targetValue
+                  targetValue={
+                    visualizerVariant === 'searching' ? targetValue : null
                   }
                 />
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div
+                dir="ltr"
+                className={`flex-1 flex items-center justify-center flex-wrap gap-2 sm:gap-3 px-2 overflow-x-hidden touch-pan-y ${
+                  showChrome || showCaption ? 'pb-10' : 'pb-2'
+                }`}
+              >
+                {array.map((value, index) => (
+                  <ArrayBox
+                    key={`${index}-${value}`}
+                    value={value}
+                    state={states[index]}
+                    index={index}
+                    arrayLength={arrayLength}
+                    compact={isCompactArray}
+                    highlightTarget={
+                      visualizerVariant === 'searching' &&
+                      targetValue != null &&
+                      value === targetValue
+                    }
+                  />
+                ))}
+              </div>
+            )}
 
             <AnimatePresence mode="wait">
               {showCaption && description && (

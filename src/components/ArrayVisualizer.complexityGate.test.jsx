@@ -21,7 +21,11 @@ vi.mock('./SwipeTutorial', () => ({
   default: () => null,
 }));
 
-vi.mock('./ArrayBar', () => ({
+vi.mock('./ArrayBox', () => ({
+  default: () => <div />,
+}));
+
+vi.mock('./ArrayBarChart', () => ({
   default: () => <div />,
 }));
 

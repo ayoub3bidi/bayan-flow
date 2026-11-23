@@ -48,6 +48,38 @@ describe('useSortingVisualization', () => {
     expect(result.current.totalSteps).toBe(expectedSteps.length);
   });
 
+  it('exposes element ids and a fixed scale that follow step, back, and seek', async () => {
+    const values = [3, 1, 2];
+    const { result } = renderHook(() =>
+      useSortingVisualization(
+        'bubbleSort',
+        values,
+        1000,
+        VISUALIZATION_MODES.MANUAL
+      )
+    );
+
+    await waitFor(() => expect(result.current.totalSteps).toBeGreaterThan(2));
+    expect(result.current.elementIds).toEqual([0, 1, 2]);
+    expect(result.current.maxValue).toBe(3);
+    expect(result.current.steps.every(s => Array.isArray(s.ids))).toBe(true);
+
+    // Step 1 compares 3 and 1; step 2 swaps them.
+    act(() => result.current.stepForward());
+    act(() => result.current.stepForward());
+    expect(result.current.array).toEqual([1, 3, 2]);
+    expect(result.current.elementIds).toEqual([1, 0, 2]);
+
+    act(() => result.current.stepBackward());
+    expect(result.current.elementIds).toEqual([0, 1, 2]);
+
+    const last = result.current.totalSteps - 1;
+    act(() => result.current.seekToStep(last));
+    expect(result.current.elementIds).toEqual(result.current.steps[last].ids);
+    // Sorted [1, 2, 3] came from original slots 1, 2, 0.
+    expect(result.current.elementIds).toEqual([1, 2, 0]);
+  });
+
   it('reloads steps when the algorithm key changes', async () => {
     const values = [4, 2, 1];
     const expectedQuickSortSteps = algorithms.quickSort(values);

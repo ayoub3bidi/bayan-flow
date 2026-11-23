@@ -141,6 +141,68 @@ describe('ControlPanel', () => {
     expect(onSortOrderChange).toHaveBeenCalledTimes(1);
   });
 
+  describe('array view toggle', () => {
+    const viewLabel = 'Switch between bar and box view';
+
+    it('is hidden unless the category opts in', () => {
+      renderWithI18n(
+        <ControlPanel {...getBaseProps({ onArrayViewChange: vi.fn() })} />
+      );
+      expect(
+        screen.queryByRole('button', { name: viewLabel })
+      ).not.toBeInTheDocument();
+    });
+
+    it('switches bars to boxes and back', () => {
+      const onArrayViewChange = vi.fn();
+      const { rerender } = renderWithI18n(
+        <ControlPanel
+          {...getBaseProps({
+            showArrayViewToggle: true,
+            arrayView: 'bars',
+            onArrayViewChange,
+          })}
+        />
+      );
+
+      const button = screen.getByRole('button', { name: viewLabel });
+      expect(button).toHaveAttribute('aria-pressed', 'true');
+      fireEvent.click(button);
+      expect(onArrayViewChange).toHaveBeenLastCalledWith('boxes');
+
+      rerender(
+        <ControlPanel
+          {...getBaseProps({
+            showArrayViewToggle: true,
+            arrayView: 'boxes',
+            onArrayViewChange,
+          })}
+        />
+      );
+      fireEvent.click(screen.getByRole('button', { name: viewLabel }));
+      expect(onArrayViewChange).toHaveBeenLastCalledWith('bars');
+    });
+
+    it('stays available to anonymous users and during playback', () => {
+      const onArrayViewChange = vi.fn();
+      renderWithI18n(
+        <ControlPanel
+          {...getBaseProps({
+            isGated: true,
+            isPlaying: true,
+            showArrayViewToggle: true,
+            onArrayViewChange,
+          })}
+        />
+      );
+
+      const button = screen.getByRole('button', { name: viewLabel });
+      expect(button).toBeEnabled();
+      fireEvent.click(button);
+      expect(onArrayViewChange).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('shows a Settings button when onOpenSettings is provided on narrow viewports', () => {
     stubMatchMedia(true);
     const onOpenSettings = vi.fn();

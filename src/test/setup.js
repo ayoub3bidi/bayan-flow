@@ -94,6 +94,12 @@ const constantsMockValue = {
     ASCENDING: 'ascending',
     DESCENDING: 'descending',
   },
+  ARRAY_VIEWS: {
+    BARS: 'bars',
+    BOXES: 'boxes',
+  },
+  ARRAY_VIEW_STORAGE_KEY: 'bayan-flow:array-view',
+  SEARCH_TARGET_RING_RGB: '234, 88, 12',
   SORTING_ALGORITHMS: {
     BUBBLE_SORT: 'bubbleSort',
     MERGE_SORT: 'mergeSort',

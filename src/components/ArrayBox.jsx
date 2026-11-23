@@ -13,17 +13,17 @@ import {
 } from '../constants';
 
 /**
- * ArrayBar Component
- * Displays a single bar in the sorting visualization with color-coded states
+ * ArrayBox Component
+ * Displays a single numbered box in the array visualization (box view) with color-coded states
  * and animated swap transitions
  *
- * @param {number} value - The numeric value of the bar
- * @param {string} state - The current state of the bar (comparing, swapping, etc.)
- * @param {number} index - Index of the bar in the array
+ * @param {number} value - The numeric value of the box
+ * @param {string} state - The current state of the box (comparing, swapping, etc.)
+ * @param {number} index - Index of the box in the array
  * @param {number} arrayLength - Total length of array (for label sizing)
- * @param {boolean} highlightTarget - Emphasize bar when value equals search target
+ * @param {boolean} highlightTarget - Emphasize box when value equals search target
  */
-const ArrayBar = memo(function ArrayBar({
+const ArrayBox = memo(function ArrayBox({
   value,
   state,
   index,
@@ -46,7 +46,7 @@ const ArrayBar = memo(function ArrayBar({
           : 30;
 
   // Animation variants for swap effect
-  const barVariants = {
+  const boxVariants = {
     default: {
       y: 0,
       scale: 1,
@@ -91,7 +91,7 @@ const ArrayBar = memo(function ArrayBar({
           minWidth: compact ? '20px' : '25px',
           minHeight: compact ? '20px' : '25px',
         }}
-        variants={barVariants}
+        variants={boxVariants}
         animate={
           state === 'swapping'
             ? 'swapping'
@@ -116,4 +116,4 @@ const ArrayBar = memo(function ArrayBar({
   );
 });
 
-export default ArrayBar;
+export default ArrayBox;
