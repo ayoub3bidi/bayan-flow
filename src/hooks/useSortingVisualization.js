@@ -12,6 +12,7 @@ import {
 } from '../constants/index.js';
 import { useVisualization } from './useVisualization.js';
 import { CATEGORY_CONFIG } from '../registry/categoryConfig.js';
+import { withElementIds } from '../utils/elementIds.js';
 
 /**
  * Thin adapter around useVisualization for sorting algorithms.
@@ -38,11 +39,13 @@ export function useSortingVisualization(
   const [states, setStates] = useState(() =>
     Array(initialArray.length).fill(ELEMENT_STATES.DEFAULT)
   );
+  const [elementIds, setElementIds] = useState(null);
 
   // ── Category-specific step executor ────────────────────────────────────────────
   const executeStep = useCallback(step => {
     setArray(step.array);
     setStates(step.states);
+    setElementIds(step.ids ?? null);
   }, []);
 
   // ── Shared playback engine ──────────────────────────────────────────────────
@@ -63,6 +66,7 @@ export function useSortingVisualization(
   const loadStepsForCurrentAlgorithm = useCallback(() => {
     setArray(initialArray);
     setStates(Array(initialArray.length).fill(ELEMENT_STATES.DEFAULT));
+    setElementIds(null);
 
     if (!algorithmKey || !initialArray?.length) {
       engine.loadSteps([]);
@@ -71,7 +75,7 @@ export function useSortingVisualization(
     const fn =
       CATEGORY_CONFIG[ALGORITHM_TYPES.SORTING].getAlgorithmFn(algorithmKey);
     if (fn) {
-      engine.loadSteps(fn(initialArray));
+      engine.loadSteps(withElementIds(fn(initialArray)));
       return;
     }
 
@@ -85,10 +89,18 @@ export function useSortingVisualization(
     loadStepsForCurrentAlgorithm();
   }, [loadStepsForCurrentAlgorithm]);
 
+  // Fixed bar scale: overwrite sorts can briefly drop the max mid-run.
+  const maxValue = useMemo(
+    () => (initialArray?.length ? Math.max(...initialArray) : 0),
+    [initialArray]
+  );
+
   return {
     // Sorting-specific domain state
     array,
     states,
+    elementIds,
+    maxValue,
     // Re-runs step loading for the current algorithm + initialArray from props (no new random data).
     reloadSteps: loadStepsForCurrentAlgorithm,
     // Shared playback engine (steps, isPlaying, isComplete, currentStep, …)

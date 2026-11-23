@@ -29,7 +29,8 @@ const RTL_FONT_STACK =
  * Shows complexity analysis for the last 5 seconds.
  * Receives inputProps: steps, algorithmType, algorithmName, algorithmKey, framesPerStep, gridSize,
  * watermark (partial), exportAudioSrc (pre-mixed WAV URL or null), exportTheme ('light' | 'dark'),
- * exportLanguage ('en' | 'fr' | 'ar') for step label and description keys.
+ * exportLanguage ('en' | 'fr' | 'ar') for step label and description keys,
+ * arrayView ('bars' | 'boxes') for sorting / array-searching scenes.
  */
 function AlgorithmVideo({
   steps = [],
@@ -42,6 +43,7 @@ function AlgorithmVideo({
   exportAudioSrc = null,
   exportTheme = 'dark',
   exportLanguage: exportLanguageInput = 'en',
+  arrayView,
 }) {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
@@ -232,6 +234,7 @@ function AlgorithmVideo({
                 exportTheme,
                 algorithmKey,
                 lng,
+                arrayView,
               })
             : null}
         </div>

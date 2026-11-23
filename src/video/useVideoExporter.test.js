@@ -198,6 +198,27 @@ describe('useVideoExporter hook', () => {
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:audio');
   });
 
+  it.each([
+    [undefined, 'bars'],
+    ['boxes', 'boxes'],
+    ['bars', 'bars'],
+    ['nonsense', 'bars'],
+  ])(
+    'passes arrayView %s to the composition as %s',
+    async (input, expected) => {
+      const { result } = renderHook(() => useVideoExporter());
+      const steps = [{ array: [1, 2], states: ['default', 'default'] }];
+
+      await act(async () => {
+        await result.current.exportVideo({ steps, arrayView: input });
+      });
+
+      expect(renderMediaOnWeb.mock.calls[0][0].inputProps.arrayView).toBe(
+        expected
+      );
+    }
+  );
+
   it('exports without sound when the sound track cannot be built', async () => {
     buildExportAudioUrl.mockRejectedValueOnce(new Error('decode failed'));
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});

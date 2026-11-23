@@ -39,6 +39,8 @@ function HeroVisualizerDemo() {
   const {
     array,
     states,
+    elementIds,
+    maxValue,
     description,
     isComplete,
     play,
@@ -83,6 +85,8 @@ function HeroVisualizerDemo() {
       <ArrayVisualizer
         array={displayArray}
         states={displayStates}
+        elementIds={reduceMotion ? null : elementIds}
+        maxValue={maxValue}
         description={reduceMotion ? '' : description}
         isComplete={false}
         algorithm={HERO_ALGORITHM_KEY}

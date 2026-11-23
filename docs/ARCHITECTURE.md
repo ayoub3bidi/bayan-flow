@@ -212,7 +212,7 @@ Roadmap
 - **GraphAlgorithmCategoryVisualizer**: node–link graph algorithms; matrix handoff for Floyd–Warshall
 - Presentational: swipe (`useSwipe`), auto-hiding legend, step descriptions, Framer Motion
 
-#### **ArrayBar/GridCell** (Atomic Components)
+#### **ArrayBarChart/ArrayBox/GridCell** (Atomic Components)
 - Individual visualization elements
 - Color-coded based on element state
 - Animated using Framer Motion
@@ -624,11 +624,11 @@ Non-visualization motion (drawers, modals, menus, banners, marketing entrances, 
 - One Framer tree per chrome surface (no dual desktop+mobile `motion` mounts)
 - Defer heavy content (e.g. Monaco) until drawer `onAnimationComplete`
 
-Visualization step springs (`ArrayBar`, `GridCell`, node fills) and Remotion remain separate from this contract.
+Visualization step springs (`ArrayBarChart`, `ArrayBox`, `GridCell`, node fills) and Remotion remain separate from this contract.
 
 ### Framer Motion Integration
 
-**ArrayBar Component Animation:**
+**ArrayBox Component Animation:**
 
 ```javascript
 <motion.div
@@ -1036,8 +1036,9 @@ const handlePlay = useCallback(() => {
 
 3. **Key Props for List Items**
 ```javascript
+// Key by stable element id (withElementIds) so bars slide between slots
 {array.map((value, index) => (
-  <ArrayBar key={`${index}-${value}`} {...} />
+  <motion.div key={elementIds?.[index] ?? index} layout="position" {...} />
 ))}
 ```
 

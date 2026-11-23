@@ -10,7 +10,11 @@ import { ALGORITHM_TYPES } from '../constants';
 import { GRAPH_REPRESENTATIONS } from './graphAlgorithmRegistry.js';
 
 describe('getExtraVisualizerProps', () => {
-  const sortingVisualization = { array: [3, 1, 2] };
+  const sortingVisualization = {
+    array: [3, 1, 2],
+    elementIds: [0, 1, 2],
+    maxValue: 3,
+  };
   const searchingVisualization = { array: [1, 2, 3], targetValue: 2 };
   const treeTraversalVisualization = {
     treeNodes: [{ id: '0', x: 0.5, y: 0.5, label: '1' }],
@@ -41,9 +45,10 @@ describe('getExtraVisualizerProps', () => {
     treeTraversalVisualization,
     graphAlgorithmVisualization,
     gridSize: 25,
+    arrayView: 'bars',
   };
 
-  it('returns array prop for sorting category', () => {
+  it('returns array, element ids, scale, and view for sorting category', () => {
     expect(
       getExtraVisualizerProps(ALGORITHM_TYPES.SORTING, {
         ...ctxBase,
@@ -51,6 +56,9 @@ describe('getExtraVisualizerProps', () => {
       })
     ).toEqual({
       array: [3, 1, 2],
+      elementIds: [0, 1, 2],
+      maxValue: 3,
+      arrayView: 'bars',
       complexityDataset: 'sorting',
     });
   });
@@ -64,6 +72,7 @@ describe('getExtraVisualizerProps', () => {
     ).toEqual({
       array: [1, 2, 3],
       targetValue: 2,
+      arrayView: 'bars',
       visualizerVariant: 'searching',
       complexityDataset: 'searching',
     });

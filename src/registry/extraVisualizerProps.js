@@ -19,6 +19,7 @@ import { isNodeLinkSearchingAlgorithm } from './searchingSubstrate';
  *   graphAlgorithmVisualization: Record<string, unknown>,
  *   gridSize: number,
  *   activeAlgorithmKey: string,
+ *   arrayView?: string,
  * }} ctx
  */
 export function getExtraVisualizerProps(
@@ -30,10 +31,17 @@ export function getExtraVisualizerProps(
     graphAlgorithmVisualization,
     gridSize,
     activeAlgorithmKey,
+    arrayView,
   }
 ) {
   if (algorithmType === ALGORITHM_TYPES.SORTING) {
-    return { array: sortingVisualization.array, complexityDataset: 'sorting' };
+    return {
+      array: sortingVisualization.array,
+      elementIds: sortingVisualization.elementIds,
+      maxValue: sortingVisualization.maxValue,
+      arrayView,
+      complexityDataset: 'sorting',
+    };
   }
   if (algorithmType === ALGORITHM_TYPES.SEARCHING) {
     if (isNodeLinkSearchingAlgorithm(activeAlgorithmKey)) {
@@ -48,6 +56,7 @@ export function getExtraVisualizerProps(
     return {
       array: searchingVisualization.array,
       targetValue: searchingVisualization.targetValue,
+      arrayView,
       visualizerVariant: 'searching',
       complexityDataset: 'searching',
     };

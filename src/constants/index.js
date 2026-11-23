@@ -22,6 +22,14 @@ export const SORT_ORDERS = {
   DESCENDING: 'descending',
 };
 
+/** How array-based categories (sorting, array searching) draw elements. */
+export const ARRAY_VIEWS = {
+  BARS: 'bars',
+  BOXES: 'boxes',
+};
+
+export const ARRAY_VIEW_STORAGE_KEY = 'bayan-flow:array-view';
+
 export const SORTING_ALGORITHMS = {
   BUBBLE_SORT: 'bubbleSort',
   MERGE_SORT: 'mergeSort',

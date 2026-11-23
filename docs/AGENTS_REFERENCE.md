@@ -238,7 +238,11 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 
 ### Visualizers
 
-- `src/components/ArrayVisualizer.jsx`, `src/components/ArrayBar.jsx`
+- `src/components/ArrayVisualizer.jsx` — renders `ArrayBarChart.jsx` (bar view, default) or `ArrayBox.jsx` (numbered box view)
+  - Array view (`ARRAY_VIEWS.BARS | BOXES`) is a per-browser preference (`bayan-flow:array-view`), toggled in `ControlPanel` for sorting + array searching, available to every tier
+  - Element identity: `withElementIds()` in `src/utils/elementIds.js` adds `ids` to each sorting step (`useSortingVisualization`); bars are keyed by id so swaps slide and overwrites resize in place. Never key bars by value
+  - Array row is always `dir="ltr"` (index 0 on the left), including Arabic, matching the export
+  - Export parity: `arrayView` flows `exportVideo` → `inputProps` → `SortingScene` (bars interpolate slot/height from `step.ids`)
 - `src/components/GridVisualizer.jsx`, `src/components/GridCell.jsx`
 - `src/components/SearchingCategoryVisualizer.jsx`
 - `src/components/GraphVisualizer.jsx`
