@@ -9,6 +9,11 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { getPyodideCdnBase, PYODIDE_VERSION } from '../constants/pyodideCdn';
+import {
+  BLOCKS_TRACER_PY,
+  BLOCKS_MAX_EVENTS,
+  BLOCKS_MAX_TICKS,
+} from '../workers/blocksTracer';
 
 const INIT_TIMEOUT = 60_000;
 const EXECUTION_TIMEOUT = 10_000;
@@ -21,6 +26,9 @@ export function usePythonExecution() {
   const [testResults, setTestResults] = useState([]);
   const [testStatus, setTestStatus] = useState('idle');
   const [testError, setTestError] = useState(null);
+  /** Result of the last block-program run: { events, finalArray } | { errorKind, error } */
+  const [vizResult, setVizResult] = useState(null);
+  const vizActiveRef = useRef(false);
   const workerRef = useRef(null);
   const runtimeReadyRef = useRef(false);
   const timeoutRef = useRef(null);
@@ -77,6 +85,15 @@ export function usePythonExecution() {
         case 'stderr':
           setError(prev => (prev || '') + (text || ''));
           break;
+        case 'viz-steps': {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+          vizActiveRef.current = false;
+          const { type: _type, ...result } = e.data;
+          setVizResult(result);
+          setStatus(result.errorKind ? 'error' : 'success');
+          break;
+        }
         case 'done':
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
@@ -99,6 +116,10 @@ export function usePythonExecution() {
           if (hadActiveTests) {
             setTestStatus('error');
             setTestError(message);
+          }
+          if (vizActiveRef.current) {
+            vizActiveRef.current = false;
+            setVizResult({ errorKind: 'runtime', error: message });
           }
           if (!runtimeReadyRef.current) {
             disposeWorker();
@@ -136,6 +157,10 @@ export function usePythonExecution() {
       if (hadActiveTests) {
         setTestStatus('error');
         setTestError(message);
+      }
+      if (vizActiveRef.current) {
+        vizActiveRef.current = false;
+        setVizResult({ errorKind: 'runtime', error: message });
       }
       disposeWorker();
     };
@@ -179,6 +204,67 @@ export function usePythonExecution() {
     [createWorker, disposeWorker]
   );
 
+  const ensureWorker = useCallback(() => {
+    if (workerRef.current) return;
+    workerRef.current = createWorker();
+    workerRef.current.postMessage({
+      type: 'init',
+      version: PYODIDE_VERSION,
+      cdnBase: getPyodideCdnBase(),
+    });
+  }, [createWorker]);
+
+  /** Starts downloading Pyodide early (e.g. when Blocks mode opens). */
+  const warmUp = useCallback(() => ensureWorker(), [ensureWorker]);
+
+  /**
+   * Runs a block program's executed code on `input` and records its steps.
+   * The result lands in `vizResult`.
+   * @param {string} code
+   * @param {number[]} input
+   * @param {{ functionName: string, target?: number|null }} options
+   */
+  const runVisualization = useCallback(
+    (code, input, { functionName, target = null }) => {
+      setOutput('');
+      setError(null);
+      setVizResult(null);
+      clearTimeout(timeoutRef.current);
+
+      ensureWorker();
+      vizActiveRef.current = true;
+      setStatus('running');
+      workerRef.current.postMessage({
+        type: 'run-viz',
+        code,
+        functionName,
+        input,
+        target,
+        tracer: BLOCKS_TRACER_PY,
+        maxEvents: BLOCKS_MAX_EVENTS,
+        maxTicks: BLOCKS_MAX_TICKS,
+      });
+
+      const effective = runtimeReadyRef.current
+        ? EXECUTION_TIMEOUT
+        : INIT_TIMEOUT;
+      timeoutRef.current = setTimeout(() => {
+        // Read before disposeWorker() resets it: a ready runtime means the
+        // program itself never finished.
+        const wasReady = runtimeReadyRef.current;
+        disposeWorker();
+        vizActiveRef.current = false;
+        timeoutRef.current = null;
+        setStatus('timeout');
+        setVizResult({
+          errorKind: wasReady ? 'loop-limit' : 'runtime',
+          error: `Execution timed out after ${effective / 1000}s`,
+        });
+      }, effective);
+    },
+    [ensureWorker, disposeWorker]
+  );
+
   const cancelExecution = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -191,6 +277,7 @@ export function usePythonExecution() {
     workerRef.current?.terminate();
     workerRef.current = null;
     runtimeReadyRef.current = false;
+    vizActiveRef.current = false;
     setStatus('idle');
     setTestStatus('idle');
   }, []);
@@ -266,9 +353,12 @@ export function usePythonExecution() {
     testResults,
     testStatus,
     testError,
+    vizResult,
     isRuntimeLoaded: status !== 'idle' && status !== 'loading',
     runCode,
     runTests,
+    runVisualization,
+    warmUp,
     cancelExecution,
     clearOutput,
     clearTestResults,

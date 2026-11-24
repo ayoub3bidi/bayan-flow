@@ -11,6 +11,51 @@
 let pyodide = null;
 let pendingRun = null;
 let pendingRunTests = null;
+let pendingRunViz = null;
+let tracerLoaded = false;
+
+/**
+ * Runs a block program's executed code and posts its recorded events.
+ * The tracer source arrives with the message (classic worker: no imports).
+ */
+async function executeRunViz({
+  code,
+  functionName,
+  input,
+  target,
+  tracer,
+  maxEvents,
+  maxTicks,
+}) {
+  try {
+    if (!tracerLoaded) {
+      await pyodide.runPythonAsync(tracer);
+      tracerLoaded = true;
+    }
+    const run = pyodide.globals.get('__bf_run');
+    try {
+      // `undefined` reaches Python as None (sorts take no target).
+      const targetJson = target == null ? undefined : JSON.stringify(target);
+      const json = run(
+        code,
+        functionName,
+        JSON.stringify(input ?? []),
+        targetJson,
+        maxEvents,
+        maxTicks
+      );
+      self.postMessage({ type: 'viz-steps', ...JSON.parse(json) });
+    } finally {
+      run.destroy();
+    }
+  } catch (err) {
+    self.postMessage({
+      type: 'viz-steps',
+      errorKind: 'runtime',
+      error: err.message,
+    });
+  }
+}
 
 async function executeRunTests(payload) {
   const { code, functionName, testCases } = payload;
@@ -96,6 +141,11 @@ self.onmessage = async e => {
         pendingRunTests = null;
         await executeRunTests(payload);
       }
+      if (pendingRunViz) {
+        const payload = pendingRunViz;
+        pendingRunViz = null;
+        await executeRunViz(payload);
+      }
     } catch (err) {
       self.postMessage({
         type: 'error',
@@ -133,5 +183,23 @@ self.onmessage = async e => {
       return;
     }
     await executeRunTests(payload);
+    return;
+  }
+
+  if (type === 'run-viz') {
+    const payload = {
+      code: e.data?.code,
+      functionName: e.data?.functionName,
+      input: e.data?.input,
+      target: e.data?.target,
+      tracer: e.data?.tracer,
+      maxEvents: e.data?.maxEvents,
+      maxTicks: e.data?.maxTicks,
+    };
+    if (!pyodide) {
+      pendingRunViz = payload;
+      return;
+    }
+    await executeRunViz(payload);
   }
 };
