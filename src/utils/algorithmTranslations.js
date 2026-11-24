@@ -30,6 +30,15 @@ export const ALGORITHM_STEPS = {
   BUBBLE_PASS_COMPLETE: 'bubblePassComplete',
   BUBBLE_EARLY_TERMINATION: 'bubbleEarlyTermination',
 
+  // Block programs (Blocks tab)
+  BLOCKS_READ: 'blocksRead',
+  BLOCKS_WRITE: 'blocksWrite',
+  BLOCKS_SHUFFLE: 'blocksShuffle',
+  BLOCKS_CHECK: 'blocksCheck',
+  BLOCKS_NOT_SORTED: 'blocksNotSorted',
+  BLOCKS_NOT_FOUND: 'blocksNotFound',
+  BLOCKS_WRONG_INDEX: 'blocksWrongIndex',
+
   // Quick Sort
   PIVOT_SELECTED: 'pivotSelected',
   PIVOT_PLACED: 'pivotPlaced',
