@@ -21,8 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **182** test files (~**2,118** tests, per `pnpm vitest run`)
-- Source surface: **253** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
+- Test surface: **188** test files (~**2,260** tests, per `pnpm vitest run`)
+- Source surface: **263** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -75,6 +75,7 @@
 - i18n: English, French, Arabic with RTL (`rtlManager`, `LanguageSwitcher`); Arabic UI font IBM Plex Sans Arabic (`@fontsource/ibm-plex-sans-arabic`, Arabic subsets imported in `src/main.jsx`)
 - Optional visualization sound (Tone.js); persisted in `localStorage` under `bayan-flow:sound-enabled`
 - Code panel (lazy): Python + pseudocode tabs in one panel (`PythonCodePanel`), Monaco editor, Pyodide worker execution, editable custom test cases, predefined tests (`TestCasesPanel`, `OutputConsole`)
+- Blocks tab (#234): the code panel has **Pseudocode | Python | Blocks** tabs; the Blocks tab exists only at ≥1280px. It opens on the **complete** program for the algorithm (a playground: no challenges, no solution button) for all **14 sorting algorithms and the 7 array searches** (`src/blocks/starters/`). DFS / BFS-graph searching and the Tree, Graph and Pathfinding categories show the tab muted with a "Soon" badge and a "Blocks coming soon for this algorithm" empty state (not docked). Blocks sit beside read-only generated Python at ≥1600px and above it at 1280–1599px. Run records the program's steps in the Pyodide worker and they play in the sorting or searching visualizer with the producing block and Python line highlighted. Searches run on the visualizer's array and `targetValue`. Toolbar: **Reset** (back to the starter) only; the Python tab is one click away. The workspace persists under `bayan-flow:blocks-workspace:v2:<algo>`. The Python tab is unchanged (editor, Run, Reset, test cases)
 - Algorithm insight panel with history, intuition, facts, optional YouTube embed (`AlgorithmInsightPanel`, `InsightFloatingActionButton`)
 - Pseudocode: localized strings and syntax highlighting inside `PythonCodePanel` (`pseudocodeHighlight.js`, `pseudocode/localize.js`) — not a separate overlay
 - Auto-hiding color legend on visualizers (`AutoHidingLegend`)
@@ -261,8 +262,11 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 
 ### Python and pseudocode
 
-- `src/hooks/usePythonExecution.js`
-- `src/workers/pyodide.worker.js`
+- `src/hooks/usePythonExecution.js` — also `runVisualization` / `warmUp` / `vizResult` for block programs
+- `src/workers/pyodide.worker.js` — `run-viz` message → `viz-steps`
+- `src/workers/blocksTracer.js` — Python `__bf` tracer source + caps (25k events, 1M loop ticks), sent with each `run-viz`; `__bf_run(code, fn_name, input, target, …)` returns `finalArray` (sorts) or `result` index (searches)
+- `src/blocks/` — `definitions.js` (custom blocks + i18n messages; `bf_call` / `bf_call_value` are JS blocks whose arity lives in `extraState.args`, no mutator UI), `generators.js` (display vs exec Python, line↔block map; helper hats `bf_define_helper` are emitted before the main function), `starters/` (`builders.js` JSON helpers, `sorting.js`, `searching.js`, `index.js` with `getBlocksStarter` + `toolboxFor`, which derives each flyout from the blocks its program uses; no Blockly import), `programSteps.js` (`buildProgramSteps` for sorts, `buildSearchProgramSteps` for searches → `withElementIds` steps). Hats: `bf_define_sort` / `bf_define_search` carry the whole signature in one `NAME` label (`bubble_sort(arr)`; a second field would render a gap before the parentheses). The generator takes the name before `(`; a missing `NAME` means `bubble_sort(arr)`, for workspaces saved before phase 2
+- `src/components/BlocksWorkspace.jsx` — lazy Blockly injection (RTL, theme, collapsible toolbox in the stacked layout); no trash can and no zooming (no buttons, wheel or pinch; the wheel scrolls); starters are tidied (`cleanUp`) and every load is fit to the view (`zoomToFit`, capped at 100%)
 - `src/algorithms/python/**`, `src/algorithms/python/index.js`, `src/algorithms/python/testCases.js`
 - `src/algorithms/pseudocode/**` — `strings.en.js`, `strings.fr.js`, `strings.ar.js`, `localize.js`, `index.js`
 
@@ -301,6 +305,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - `public/_headers` — security headers, cache rules, and `workers.dev` noindex for Cloudflare Workers static assets
 - `public/ui/sfx/` — interactive UI one-shot sounds (e.g. theme toggle); loaded via Web Audio in `src/utils/themeSwitchSound.js`
 - `public/video-export/sfx/` — 18 pre-rendered Remotion export WAV files (see Export sound contract)
+- `public/blockly-media/` — Blockly sprites/cursors vendored from `blockly@13.4.0` (no `.mp3`), plus Blockly's Apache-2.0 `LICENSE`; referenced via `media: '/blockly-media/'`
 
 ### Build, CI, and repo config
 
@@ -423,6 +428,20 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - Sorting is the only category with sort-order controls.
 - Full-screen mode uses the same `ControlPanel` and visualizer registry as normal mode.
 - Lazy panels (`PythonCodePanel`, `AlgorithmInsightPanel`) must remain optional overlays and should not block the main visualization path.
+- Blocks mode contracts:
+  - Blocks are the source of truth; Python is generated one way (shown read-only beside the blocks). The Python tab keeps the reference `.py`.
+  - Steps come from the generator's exec pass (`__bf.gt/lt/ge/le/cmp_target/swap/get/set/shuffle/is_sorted/tick` calls carrying block ids), never from tracing arbitrary Python. Only operations on `arr` are traced (compare, swap, read, write, shuffle, sorted check); helper lists (`[0] * n`, buckets, slices) are plain Python, matching the JS visualizations, which only show `arr`. Search steps come from target compares only (reads in formulas are skipped). Display code stays clean (no `global`, no `= None`); `arr`, `target` and helper names are reserved so learner variables can't shadow them.
+  - Starters sort in place like `src/algorithms/sorting/*.js` (not the `src/algorithms/python/*.py` references, some of which return new lists). Each stays under the 25k-event cap at the max input size (100); bogo sort gives up after 1000 shuffles like the JS version.
+  - Blockly stays out of the main bundle (lazy `BlocksWorkspace`). `vite.config.js` `blocklyNoAmd` strips Blockly's UMD AMD branch (Monaco's loader installs a global `define.amd`); keep it in both `plugins` and `optimizeDeps.rolldownOptions.plugins`.
+  - Inject with `sounds: false` (no UI sounds) and local `media` (CSP).
+  - Split: the divider between the workspace and its Python is draggable (and arrow keys on the focused divider); Python's share (20–70%, default 42%) is stored under `bayan-flow:blocks-python-percent`.
+  - Full screen is disabled while docked (button disabled with a tooltip; `useFullScreen({ canEnter })` ignores F), since it would hide the panel; exiting still works.
+  - Header: while docked, `body:has([data-docked]) header[role='banner']` (in `src/index.css`) lifts the header above the panel so the language and account menus open over it.
+  - Docking: on the Blocks tab of a supported algorithm the drawer docks non-modally at `min(60vw, 100vw - 820px)` (settings sidebar hidden, `<main>` padded, a close button replaces the backdrop click). Below 1600px blocks and Python stack and the toolbox is a collapsible category (an open flyout would cover the narrow workspace). Below 1280px there is no Blocks tab.
+  - Block-program playback goes through the active category's `visualization.loadSteps` and `consumeRunIfNeeded()` (`visualization_started` carries `source: 'blocks'`).
+  - `blocks_tab_opened` (`algorithm_key`, `supported`) fires when the Blocks tab is selected; `blocks_program_run` (`algorithm_key`, `success`) fires every run.
+  - Persistence: only edits are written to `bayan-flow:blocks-workspace:v2:<algo>` (an untouched algorithm keeps getting the latest starter); Reset removes the key; a stored workspace without blocks is ignored. Re-injection (theme, language, the 1600px layout switch) restores the in-memory workspace JSON, so block ids that already-played steps refer to stay valid.
+  - New algorithms: add a starter in `src/blocks/starters/` (the coverage test in `starters/index.test.js` lists which keys must have one) and run the CPython check below.
 - Swipe stepping applies only in manual playback mode on touch devices.
 - The step progress bar is seekable for everyone (anonymous trial included): an invisible full-width range input drives seeking, a circular grab handle (`seek-thumb`) marks the fill edge, and `controls.dragToSeek` microcopy sits under the bar. For anonymous users a seek on a fresh run consumes one trial credit via `VisualizerApp` `consumeRunIfNeeded()` (`session_limit` gate once the 12 runs are used).
 
@@ -607,6 +626,11 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - `pnpm vitest run src/algorithms/treeTraversal/*.test.js`
 - `pnpm vitest run src/algorithms/python/index.test.js`
 - `pnpm vitest run src/algorithms/pseudocode/index.test.js`
+
+**Blocks tab:**
+
+- `pnpm vitest run src/blocks src/hooks/usePythonExecution.test.js src/components/PythonCodePanel.test.jsx src/pages/VisualizerApp.test.jsx src/services/analyticsEvents.blocks.test.js`
+- The tracer (`src/workers/blocksTracer.js`) runs only in Pyodide in the app; check it in the browser (Run in Blocks mode) after changing it. It is plain Python, so it can also be exercised in CPython by `exec`-ing `BLOCKS_TRACER_PY` and calling `__bf_run` on each starter's `execCode`
 
 **Landing, roadmap, and i18n:**
 

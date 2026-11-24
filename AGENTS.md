@@ -14,8 +14,8 @@
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
 - Version: `0.5.0` in `package.json` — **45 algorithms** across **5 categories** (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph); optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
-- **Tests**: 182 test files (~2,118 tests)
-- **Source**: 253 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
+- **Tests**: 188 test files (~2,260 tests)
+- **Source**: 263 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
 - **Supabase**: `eu-central-1` region, Postgres 17; 14 migrations — public tables `profiles`, `favorite_algorithms`, `algorithm_notes`, `waitlist`, `keepalive` + abuse tables `banned_ips`, `trusted_ips`, `signup_events`, `signup_pending` (RLS on, no policies = service-role only); 6 edge functions (`before-signup`, `post-signup`, `platform-access`, `delete-account`, `waitlist-welcome`, `sync-contacts`); `keep-supabase-alive.yml` prevents free-tier pausing
 
 ## Routes
@@ -64,6 +64,7 @@ When docs drift, trust runtime config:
 - Regenerate control is category-neutral ("Generate New Input")
 - Sorting only category with sort-order controls
 - Lazy panels (`PythonCodePanel`, `AlgorithmInsightPanel`) stay optional overlays — Monaco editor, Pyodide worker execution, editable test cases, LeetCode-style pass/fail
+- Blocks tab (code panel: Pseudocode | Python | Blocks; desktop ≥1280px only; Free tier): a playground of complete programs for **21 array algorithms** (all 14 sorts + 7 array searches) in `src/blocks/starters/`; other algorithms show a disabled "coming soon" tab (DFS/BFS-graph, Tree, Graph, Pathfinding come per category later); no challenges and no Run tests in the tab; Blockly stays in the lazy `BlocksWorkspace` chunk; keep `blocklyNoAmd` in both `vite.config.js` plugin lists; inject with `sounds: false`; block-program playback goes through `consumeRunIfNeeded()` — details in REFERENCE
 - Full-screen mode (`useFullScreen`) uses same `ControlPanel` + visualizer registry; F key toggle, Escape exits
 - Touch: horizontal swipe (`useSwipe`) for manual step navigation; one-time `SwipeTutorial` on mobile
 - Video export: horizontal (1920×1080) or vertical (1080×1920) MP4 via `@remotion/web-renderer`; orientation → capability check → render → preview → download
