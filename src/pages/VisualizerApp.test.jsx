@@ -94,7 +94,14 @@ const useFavoritesMock = vi.hoisted(() => ({
   })),
 }));
 
+/** Steps a learner's block program produces (see buildProgramSteps). */
+const BLOCK_PROGRAM_STEPS = [
+  { array: [3, 1, 2], states: [], ids: [0, 1, 2], blockId: null },
+  { array: [3, 1, 2], states: [], ids: [0, 1, 2], blockId: 'cmp' },
+];
+
 const sortingVisualization = {
+  loadSteps: vi.fn(),
   array: [3, 1, 2],
   states: ['sorting-state'],
   description: 'Sorting description',
@@ -131,6 +138,7 @@ const pathfindingVisualization = {
 };
 
 const searchingVisualization = {
+  loadSteps: vi.fn(),
   array: [1, 2, 3],
   states: ['default', 'default', 'default'],
   targetValue: 2,
@@ -253,8 +261,29 @@ vi.mock('../components/FloatingActionButton', () => ({
 }));
 
 vi.mock('../components/PythonCodePanel', () => ({
-  default: ({ algorithm }) => (
-    <div data-testid="python-panel">{algorithm ?? 'none'}</div>
+  default: ({
+    algorithm,
+    activeBlockId,
+    currentTarget,
+    onProgramSteps,
+    onDockChange,
+  }) => (
+    <div
+      data-testid="python-panel"
+      data-active-block={activeBlockId ?? ''}
+      data-target={currentTarget ?? ''}
+    >
+      {algorithm ?? 'none'}
+      <button
+        type="button"
+        onClick={() => onProgramSteps?.(BLOCK_PROGRAM_STEPS)}
+      >
+        run-block-program
+      </button>
+      <button type="button" onClick={() => onDockChange?.('45vw')}>
+        dock-panel
+      </button>
+    </div>
   ),
 }));
 
@@ -286,6 +315,9 @@ vi.mock('../components/SettingsPanel', () => ({
       <button onClick={() => onAlgorithmTypeChange('sorting')}>sorting</button>
       <button onClick={() => onAlgorithmTypeChange('pathfinding')}>
         pathfinding
+      </button>
+      <button onClick={() => onAlgorithmTypeChange('searching')}>
+        searching
       </button>
       <button onClick={() => onAlgorithmTypeChange('graphAlgorithm')}>
         graphAlgorithm
@@ -1109,6 +1141,77 @@ describe('VisualizerApp', () => {
       );
       expect(runEvents).toHaveLength(1);
       expect(runEvents[0][1]).toMatchObject({ is_authenticated: true });
+    });
+
+    it('loads a block program into the sorting visualizer without autoplay in manual mode', async () => {
+      await renderApp();
+      sortingVisualization.loadSteps.mockClear();
+      sortingVisualization.play.mockClear();
+
+      fireEvent.click(screen.getByText('run-block-program'));
+
+      expect(sortingVisualization.loadSteps).toHaveBeenCalledWith(
+        BLOCK_PROGRAM_STEPS
+      );
+      expect(sortingVisualization.play).not.toHaveBeenCalled();
+    });
+
+    it('loads a block search into the searching visualizer with its target', async () => {
+      await renderApp();
+      fireEvent.click(screen.getByText('searching'));
+      searchingVisualization.loadSteps.mockClear();
+      sortingVisualization.loadSteps.mockClear();
+
+      expect(screen.getByTestId('python-panel')).toHaveAttribute(
+        'data-target',
+        '2'
+      );
+      fireEvent.click(screen.getByText('run-block-program'));
+
+      expect(searchingVisualization.loadSteps).toHaveBeenCalledWith(
+        BLOCK_PROGRAM_STEPS
+      );
+      expect(sortingVisualization.loadSteps).not.toHaveBeenCalled();
+    });
+
+    it('tags block-program runs and passes the active block to the panel', async () => {
+      const original = {
+        steps: sortingVisualization.steps,
+        currentStep: sortingVisualization.currentStep,
+      };
+      sortingVisualization.steps = BLOCK_PROGRAM_STEPS;
+      sortingVisualization.currentStep = 1;
+      try {
+        captureEventMock.mockClear();
+        await renderApp();
+
+        expect(screen.getByTestId('python-panel')).toHaveAttribute(
+          'data-active-block',
+          'cmp'
+        );
+        fireEvent.click(screen.getByText('step-forward'));
+
+        const runEvents = captureEventMock.mock.calls.filter(
+          ([name]) => name === 'visualization_started'
+        );
+        expect(runEvents).toHaveLength(1);
+        expect(runEvents[0][1]).toMatchObject({ source: 'blocks' });
+      } finally {
+        Object.assign(sortingVisualization, original);
+      }
+    });
+
+    it('hides the settings sidebar while the code panel is docked', async () => {
+      await renderApp();
+      expect(screen.getByRole('complementary')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('dock-panel'));
+
+      expect(screen.queryByRole('complementary')).not.toBeInTheDocument();
+      // jsdom normalizes calc() term order, so check the parts.
+      const padding = screen.getByRole('main').style.paddingInlineEnd;
+      expect(padding).toContain('45vw');
+      expect(padding).toContain('1.5rem');
     });
 
     it('does not gate features when authenticated', async () => {

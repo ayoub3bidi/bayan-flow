@@ -62,6 +62,24 @@ describe('ControlPanel', () => {
     vi.unstubAllGlobals();
   });
 
+  it('disables full screen while the Blocks tab is docked', () => {
+    const onToggleFullScreen = vi.fn();
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({ isFullScreenDisabled: true, onToggleFullScreen })}
+      />
+    );
+
+    const button = screen.getByRole('button', { name: /full screen/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute(
+      'title',
+      'Full screen is unavailable while the Blocks tab is open'
+    );
+    fireEvent.click(button);
+    expect(onToggleFullScreen).not.toHaveBeenCalled();
+  });
+
   it('shows data refresh shuffle when category has hasDataRefresh true (sorting)', () => {
     renderWithI18n(<ControlPanel {...getBaseProps()} />);
 

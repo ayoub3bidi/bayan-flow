@@ -197,6 +197,8 @@ function App() {
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [arrayView, setArrayView] = useState(readStoredArrayView);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
+  /** Code panel width while docked beside the visualizer (Blocks/Split), else null. */
+  const [codePanelDockWidth, setCodePanelDockWidth] = useState(null);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
   const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
   const isBelowLg = useIsBelowLg();
@@ -206,7 +208,9 @@ function App() {
     setSpeed(newSpeed);
   };
 
-  useBodyScrollLock(isPythonPanelOpen || isInsightPanelOpen);
+  useBodyScrollLock(
+    (isPythonPanelOpen && !codePanelDockWidth) || isInsightPanelOpen
+  );
 
   // null = random graph (the default scenario)
   const [selectedGraphScenario, setSelectedGraphScenario] = useState(null);
@@ -253,7 +257,10 @@ function App() {
     selectedGraphScenario
   );
 
-  const { isFullScreen, toggleFullScreen } = useFullScreen();
+  // The docked Blocks tab sits beside the visualizer; full screen would hide it.
+  const { isFullScreen, toggleFullScreen } = useFullScreen({
+    canEnter: !codePanelDockWidth,
+  });
   const { isAuthenticated, user } = useAuth();
   const {
     favorites,
@@ -461,9 +468,19 @@ function App() {
    */
   const consumeRunIfNeeded = () => {
     if (countedStepsRef.current === visualization.steps) return true;
+    // Block-program steps carry a blockId key (see buildProgramSteps).
+    const runSource =
+      visualization.steps[0] && 'blockId' in visualization.steps[0]
+        ? 'blocks'
+        : 'algorithm';
     if (user) {
       countedStepsRef.current = visualization.steps;
-      trackVisualizationStarted(activeAlgorithmKey, algorithmType, true);
+      trackVisualizationStarted(
+        activeAlgorithmKey,
+        algorithmType,
+        true,
+        runSource
+      );
       return true;
     }
     if (!canRunVisualization(user)) {
@@ -475,7 +492,12 @@ function App() {
     }
     incrementVisualizationCount();
     countedStepsRef.current = visualization.steps;
-    trackVisualizationStarted(activeAlgorithmKey, algorithmType, false);
+    trackVisualizationStarted(
+      activeAlgorithmKey,
+      algorithmType,
+      false,
+      runSource
+    );
     return true;
   };
 
@@ -488,6 +510,26 @@ function App() {
     }
     visualization.play();
   };
+
+  /** Load a learner's block program into the active (sorting/searching) visualizer. */
+  const pendingProgramAutoplayRef = useRef(false);
+  const handleProgramSteps = steps => {
+    pendingProgramAutoplayRef.current = mode === VISUALIZATION_MODES.AUTOPLAY;
+    visualization.loadSteps(steps);
+  };
+
+  // Autoplay starts once the program's steps are in state, through handlePlay
+  // so the run is counted like any other. Manual mode waits for the learner.
+  useEffect(() => {
+    if (!pendingProgramAutoplayRef.current) return;
+    pendingProgramAutoplayRef.current = false;
+    handlePlay();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visualization.steps]);
+
+  // Only block-program steps carry a blockId.
+  const activeBlockId =
+    visualization.steps[visualization.currentStep]?.blockId ?? null;
 
   const handleSeek = step => {
     if (!consumeRunIfNeeded()) return;
@@ -567,6 +609,7 @@ function App() {
   };
 
   const handleGatedFullscreenToggle = () => {
+    if (codePanelDockWidth && !isFullScreen) return;
     if (isAuthenticated) {
       trackFullscreenToggled(!isFullScreen);
       toggleFullScreen();
@@ -816,6 +859,7 @@ function App() {
       (algorithmType === ALGORITHM_TYPES.SEARCHING &&
         !isNodeLinkSearchingAlgorithm(activeAlgorithmKey)),
     isFullScreen,
+    isFullScreenDisabled: Boolean(codePanelDockWidth) && !isFullScreen,
     onToggleFullScreen: handleGatedFullscreenToggle,
     onExportVideo: handleExportVideo,
     onCancelExport: cancelExport,
@@ -886,6 +930,13 @@ function App() {
                 className={`flex-1 min-h-0 ${
                   isBelowLg ? 'flex flex-col p-3 gap-3 overflow-hidden' : 'p-6'
                 }`}
+                style={
+                  codePanelDockWidth && !isBelowLg
+                    ? {
+                        paddingInlineEnd: `calc(${codePanelDockWidth} + 1.5rem)`,
+                      }
+                    : undefined
+                }
                 role="main"
                 id="main-content"
               >
@@ -912,16 +963,19 @@ function App() {
                 ) : (
                   <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                      <aside
-                        className="lg:col-span-1"
-                        role="complementary"
-                        aria-label={t('a11y.algorithmSettings')}
-                      >
-                        <SettingsPanel {...settingsPanelProps} />
-                      </aside>
+                      {/* Docked blocks panel: give its room to the visualizer. */}
+                      {!codePanelDockWidth && (
+                        <aside
+                          className="lg:col-span-1"
+                          role="complementary"
+                          aria-label={t('a11y.algorithmSettings')}
+                        >
+                          <SettingsPanel {...settingsPanelProps} />
+                        </aside>
+                      )}
 
                       <section
-                        className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-85px)]"
+                        className={`${codePanelDockWidth ? 'lg:col-span-4' : 'lg:col-span-3'} flex flex-col gap-4 h-[calc(100vh-85px)]`}
                         role="region"
                         aria-label={t('a11y.algorithmVisualization')}
                       >
@@ -1051,6 +1105,11 @@ function App() {
             isOpen={isPythonPanelOpen}
             onClose={() => setIsPythonPanelOpen(false)}
             algorithm={activeAlgorithmKey}
+            currentArray={array}
+            currentTarget={searchingVisualization.targetValue}
+            activeBlockId={activeBlockId}
+            onProgramSteps={handleProgramSteps}
+            onDockChange={setCodePanelDockWidth}
           />
         </Suspense>
       </ErrorBoundary>

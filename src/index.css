@@ -107,6 +107,17 @@
   --color-pc-lineno: #64748b;
 }
 
+/* Blocks tab — Monaco decoration for the active block's Python lines (comparing amber) */
+.bf-active-line {
+  background-color: rgb(251 191 36 / 0.25);
+}
+
+/* The docked Blocks panel (z-60) leaves the page usable: keep the header's
+   language and account menus above it. Not on modal/mobile panels. */
+body:has([data-docked]) header[role='banner'] {
+  z-index: 61;
+}
+
 /* Pseudocode syntax — classes used inside dangerouslySetInnerHTML (must not rely on Tailwind JIT) */
 .pseudocode-view {
   background-color: var(--color-pc-bg);

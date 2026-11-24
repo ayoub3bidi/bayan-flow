@@ -50,4 +50,28 @@ describe('useFullScreen keyboard shortcuts', () => {
     expect(result.current.isFullScreen).toBe(false);
     editor.remove();
   });
+
+  it('ignores F while entering is blocked (docked Blocks tab), but still exits', () => {
+    const press = key =>
+      act(() => {
+        window.dispatchEvent(
+          new KeyboardEvent('keydown', { key, bubbles: true })
+        );
+      });
+    const { result, rerender } = renderHook(
+      ({ canEnter }) => useFullScreen({ canEnter }),
+      { initialProps: { canEnter: false } }
+    );
+
+    press('f');
+    expect(result.current.isFullScreen).toBe(false);
+
+    rerender({ canEnter: true });
+    press('f');
+    expect(result.current.isFullScreen).toBe(true);
+
+    rerender({ canEnter: false });
+    press('f');
+    expect(result.current.isFullScreen).toBe(false);
+  });
 });
