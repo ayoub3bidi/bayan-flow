@@ -66,7 +66,7 @@ const whileNotEmpty = (lst, statements) =>
   whileLoop(cmp(listLen(lst), '>', 0), statements);
 
 /** Walks the parent links back from `cell` and returns them start → cell. */
-const buildPath = {
+export const buildPath = {
   signature: 'build_path(parent, cell)',
   body: [
     set('path', list()),

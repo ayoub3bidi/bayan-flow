@@ -196,6 +196,7 @@ export function useGraphAlgorithmVisualization(
     directed,
     weighted,
     scenarioOptions,
+    graphContext,
     regenerateGraph: regenerateGraphStructure,
     reloadSteps: loadStepsForCurrentAlgorithm,
     ...engine,

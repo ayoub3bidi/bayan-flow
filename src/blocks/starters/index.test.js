@@ -22,13 +22,14 @@ import { getBlocksStarter, toolboxFor } from './index.js';
 // src/test/setup.js mocks constants with a partial algorithm list.
 vi.unmock('../../constants/index.js');
 
-// Node-link searches get blocks with the graph category.
+// Node-link searches are graph programs.
 const NODE_LINK_SEARCHES = new Set([
   SEARCHING_ALGORITHMS.DEPTH_FIRST_SEARCH,
   SEARCHING_ALGORITHMS.BREADTH_FIRST_SEARCH_GRAPH,
 ]);
 const PATHFINDING = Object.values(PATHFINDING_ALGORITHMS);
 const TREE = Object.values(TREE_TRAVERSAL_ALGORITHMS);
+const GRAPH = [...NODE_LINK_SEARCHES, ...Object.values(GRAPH_ALGORITHMS)];
 const SUPPORTED = [
   ...Object.values(SORTING_ALGORITHMS),
   ...Object.values(SEARCHING_ALGORITHMS).filter(
@@ -36,10 +37,12 @@ const SUPPORTED = [
   ),
   ...PATHFINDING,
   ...TREE,
+  ...GRAPH,
 ];
 const kindOf = key => {
   if (PATHFINDING.includes(key)) return 'path';
   if (TREE.includes(key)) return 'tree';
+  if (GRAPH.includes(key)) return 'graph';
   return Object.values(SEARCHING_ALGORITHMS).includes(key) ? 'search' : 'sort';
 };
 
@@ -49,15 +52,10 @@ describe('blocks starters', () => {
     registerBlocks();
   });
 
-  it('covers every sort, array search, pathfinding and tree algorithm, and nothing else', () => {
-    expect(SUPPORTED).toHaveLength(36);
+  it('covers every algorithm, and nothing else', () => {
+    expect(new Set(SUPPORTED).size).toBe(45);
     for (const key of SUPPORTED) expect(getBlocksStarter(key)).not.toBeNull();
-    const comingSoon = [
-      ...NODE_LINK_SEARCHES,
-      ...Object.values(GRAPH_ALGORITHMS),
-    ];
-    expect(SUPPORTED.length + comingSoon.length).toBe(45);
-    for (const key of comingSoon) expect(getBlocksStarter(key)).toBeNull();
+    expect(getBlocksStarter('futureAlgorithm')).toBeNull();
   });
 
   it.each(SUPPORTED)('%s loads and generates a complete program', key => {
@@ -71,9 +69,10 @@ describe('blocks starters', () => {
     expect(program.kind).toBe(kind);
     expect(program.functionName).toMatch(/^[a-z_]+$/);
     // No empty slots: no `pass` bodies and no unnamed/missing variables.
-    // Path and tree programs use None on purpose (parent links, missing children).
+    // Path, tree and graph programs use None on purpose (parent links,
+    // missing children, no answer).
     expect(program.displayCode).not.toMatch(
-      kind === 'path' || kind === 'tree'
+      kind === 'path' || kind === 'tree' || kind === 'graph'
         ? /\bpass\b|\bunnamed|\w2\b/
         : /\bpass\b|\bNone\b|\bunnamed/
     );

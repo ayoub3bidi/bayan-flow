@@ -4,7 +4,9 @@
  * See LICENSE for details.
  *
  * Custom Blockly blocks for the array algorithms (sorts and searches), the
- * grid pathfinding algorithms and the binary tree traversals.
+ * grid pathfinding algorithms, the binary tree traversals and the graph
+ * algorithms (graph search, ordering, spanning trees, components, all-pairs
+ * shortest paths).
  * Imported only from the lazy Blocks path, so Blockly stays out of the main bundle.
  */
 
@@ -159,6 +161,49 @@ export const DEFAULT_BLOCK_MESSAGES = {
   BF_IS: '%1 %2 %3',
   BF_IS_TOOLTIP:
     'Whether two things are the very same node (or both None). Use it to compare nodes.',
+  BF_DEFINE_GRAPH: 'define %1',
+  BF_DEFINE_GRAPH_TOOLTIP:
+    'Your graph function. Nodes are named by their labels (A, B, …); return the answer the algorithm asks for.',
+  BF_GRAPH: 'graph',
+  BF_GRAPH_TOOLTIP:
+    'The graph as a dictionary: each node maps to the list of its neighbours.',
+  BF_NODES: 'nodes',
+  BF_NODES_TOOLTIP: 'The list of node labels, in order.',
+  BF_EDGES: 'edges',
+  BF_EDGES_TOOLTIP: 'The list of edges as [from, to, weight].',
+  BF_GOAL: 'goal',
+  BF_GOAL_TOOLTIP: 'The node the search is looking for.',
+  BF_FOR_NEIGHBOR: 'for %1 %2 %3 [ %4 ]',
+  BF_FOR_NEIGHBOR_TOOLTIP:
+    'Repeat the inner steps for each neighbour of a node. Each edge lights up in the graph.',
+  BF_IN_ORDER: 'in',
+  BF_IN_REVERSED: 'in reversed',
+  BF_FOR_EDGE: 'for %1 in %2',
+  BF_FOR_EDGE_TOOLTIP:
+    'Repeat the inner steps for each edge of a list. Each edge lights up in the graph.',
+  BF_SORT_BY_WEIGHT: 'sorted( %1 , by weight )',
+  BF_SORT_BY_WEIGHT_TOOLTIP: 'A copy of the edges, lightest first.',
+  BF_MARK: '%1 .add( %2 )',
+  BF_MARK_TOOLTIP: 'Add a node to a set. The node lights up in the graph.',
+  BF_EMIT: '%1 .append( %2 )',
+  BF_EMIT_TOOLTIP:
+    'Add a node, an edge or a component to the answer. It is highlighted in the graph.',
+  BF_NEW_SET: 'set()',
+  BF_NEW_SET_TOOLTIP: 'A new, empty set.',
+  BF_SET_REMOVE: '%1 .remove( %2 )',
+  BF_SET_REMOVE_TOOLTIP: 'Take a value out of a set.',
+  BF_POP_TOP: '%1 .pop()',
+  BF_POP_TOP_TOOLTIP:
+    'Take the last node off the stack. It is explored in the graph.',
+  BF_MATRIX: 'n × n matrix of infinity, n = %1',
+  BF_MATRIX_TOOLTIP:
+    'A square table of distances, every one infinity (no path known yet).',
+  BF_CELL_GET: '%1 [ %2 ][ %3 ]',
+  BF_CELL_GET_TOOLTIP:
+    'Read one distance from the matrix. The cell lights up in the table.',
+  BF_CELL_SET: '%1 [ %2 ][ %3 ] = %4',
+  BF_CELL_SET_TOOLTIP:
+    'Write one distance into the matrix. The cell is updated in the table.',
 };
 
 export const BLOCK_TYPES = {
@@ -223,6 +268,22 @@ export const BLOCK_TYPES = {
   VISIT: 'bf_visit',
   SET_CHILD: 'bf_set_child',
   IS: 'bf_is',
+  DEFINE_GRAPH: 'bf_define_graph',
+  GRAPH: 'bf_graph',
+  NODES: 'bf_nodes',
+  EDGES: 'bf_edges',
+  GOAL: 'bf_goal',
+  FOR_NEIGHBOR: 'bf_for_neighbor',
+  FOR_EDGE: 'bf_for_edge',
+  SORT_BY_WEIGHT: 'bf_sort_by_weight',
+  MARK: 'bf_mark',
+  EMIT: 'bf_emit',
+  NEW_SET: 'bf_new_set',
+  SET_REMOVE: 'bf_set_remove',
+  POP_TOP: 'bf_pop_top',
+  MATRIX: 'bf_matrix',
+  CELL_GET: 'bf_cell_get',
+  CELL_SET: 'bf_cell_set',
 };
 
 /** Comparison ops shared by `bf_compare` and `bf_compare_target`. */
@@ -468,7 +529,8 @@ const BLOCK_DEFINITIONS = [
   simpleBlock(
     BLOCK_TYPES.LIST_SET,
     'BF_LIST_SET',
-    [any('LIST'), num('INDEX'), num('VALUE')],
+    // Dict values can be anything (a graph's transpose stores lists).
+    [any('LIST'), num('INDEX'), any('VALUE')],
     'statement',
     'list_blocks'
   ),
@@ -706,6 +768,121 @@ const BLOCK_DEFINITIONS = [
     style: 'logic_blocks',
     tooltip: '%{BKY_BF_IS_TOOLTIP}',
   },
+  {
+    type: BLOCK_TYPES.DEFINE_GRAPH,
+    message0: '%{BKY_BF_DEFINE_GRAPH}',
+    args0: [
+      {
+        type: 'field_label_serializable',
+        name: 'NAME',
+        text: 'topological_sort(graph)',
+      },
+    ],
+    message1: '%1',
+    args1: [{ type: 'input_statement', name: 'STACK' }],
+    style: 'procedure_blocks',
+    tooltip: '%{BKY_BF_DEFINE_GRAPH_TOOLTIP}',
+  },
+  simpleBlock(BLOCK_TYPES.GRAPH, 'BF_GRAPH', [], null, 'variable_blocks'),
+  simpleBlock(BLOCK_TYPES.NODES, 'BF_NODES', [], 'Array', 'variable_blocks'),
+  simpleBlock(BLOCK_TYPES.EDGES, 'BF_EDGES', [], 'Array', 'variable_blocks'),
+  simpleBlock(BLOCK_TYPES.GOAL, 'BF_GOAL', [], null, 'variable_blocks'),
+  {
+    type: BLOCK_TYPES.FOR_NEIGHBOR,
+    message0: '%{BKY_BF_FOR_NEIGHBOR}',
+    args0: [
+      { type: 'field_variable', name: 'VAR', variable: 'neighbor' },
+      {
+        type: 'field_dropdown',
+        name: 'ORDER',
+        options: [
+          ['%{BKY_BF_IN_ORDER}', 'FORWARD'],
+          ['%{BKY_BF_IN_REVERSED}', 'REVERSED'],
+        ],
+      },
+      any('GRAPH'),
+      any('NODE'),
+    ],
+    message1: '%{BKY_BF_DO}',
+    args1: [{ type: 'input_statement', name: 'DO' }],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'loop_blocks',
+    tooltip: '%{BKY_BF_FOR_NEIGHBOR_TOOLTIP}',
+  },
+  {
+    type: BLOCK_TYPES.FOR_EDGE,
+    message0: '%{BKY_BF_FOR_EDGE}',
+    args0: [
+      { type: 'field_variable', name: 'VAR', variable: 'edge' },
+      any('LIST'),
+    ],
+    message1: '%{BKY_BF_DO}',
+    args1: [{ type: 'input_statement', name: 'DO' }],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'loop_blocks',
+    tooltip: '%{BKY_BF_FOR_EDGE_TOOLTIP}',
+  },
+  simpleBlock(
+    BLOCK_TYPES.SORT_BY_WEIGHT,
+    'BF_SORT_BY_WEIGHT',
+    [any('LIST')],
+    'Array',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.MARK,
+    'BF_MARK',
+    [any('SET'), any('NODE')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.EMIT,
+    'BF_EMIT',
+    [any('LIST'), any('ITEM')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(BLOCK_TYPES.NEW_SET, 'BF_NEW_SET', [], null, 'list_blocks'),
+  simpleBlock(
+    BLOCK_TYPES.SET_REMOVE,
+    'BF_SET_REMOVE',
+    [any('SET'), any('VALUE')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.POP_TOP,
+    'BF_POP_TOP',
+    [any('LIST')],
+    null,
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.MATRIX,
+    'BF_MATRIX',
+    [num('SIZE')],
+    'Array',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.CELL_GET,
+    'BF_CELL_GET',
+    [any('MATRIX'), num('I'), num('J')],
+    null,
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.CELL_SET,
+    'BF_CELL_SET',
+    [any('MATRIX'), num('I'), num('J'), any('VALUE')],
+    'statement',
+    'list_blocks'
+  ),
 ];
 
 /**
@@ -764,6 +941,8 @@ export function registerBlocks() {
   Blockly.Blocks[BLOCK_TYPES.CALL_VALUE] = callBlock(true);
   // Lets the built-in `break` block accept our loop as its surrounding loop.
   loops.loopTypes.add(BLOCK_TYPES.FOR_RANGE);
+  loops.loopTypes.add(BLOCK_TYPES.FOR_NEIGHBOR);
+  loops.loopTypes.add(BLOCK_TYPES.FOR_EDGE);
   registered = true;
 }
 

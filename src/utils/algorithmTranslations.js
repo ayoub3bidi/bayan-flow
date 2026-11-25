@@ -47,6 +47,17 @@ export const ALGORITHM_STEPS = {
   BLOCKS_TREE_COMPLETE: 'blocksTreeComplete',
   BLOCKS_TREE_WRONG_ORDER: 'blocksTreeWrongOrder',
   BLOCKS_TREE_THREADS_LEFT: 'blocksTreeThreadsLeft',
+  BLOCKS_GRAPH_EDGE: 'blocksGraphEdge',
+  BLOCKS_GRAPH_PUSH: 'blocksGraphPush',
+  BLOCKS_GRAPH_POP: 'blocksGraphPop',
+  BLOCKS_GRAPH_MARK: 'blocksGraphMark',
+  BLOCKS_GRAPH_OUTPUT: 'blocksGraphOutput',
+  BLOCKS_GRAPH_COMPONENT: 'blocksGraphComponent',
+  BLOCKS_GRAPH_COMPLETE: 'blocksGraphComplete',
+  BLOCKS_GRAPH_NO_ORDER: 'blocksGraphNoOrder',
+  BLOCKS_GRAPH_WRONG: 'blocksGraphWrong',
+  BLOCKS_GRAPH_PATH_LONGER: 'blocksGraphPathLonger',
+  BLOCKS_MATRIX_WRITE: 'blocksMatrixWrite',
 
   // Quick Sort
   PIVOT_SELECTED: 'pivotSelected',

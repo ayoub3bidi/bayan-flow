@@ -9,8 +9,10 @@
  *   read, write, shuffle, sorted check) and every frontier/cost operation of a
  *   path program (push, pop, relax) calls the `__bf` tracer in the Pyodide
  *   worker so each step is recorded with the block that made it. Tree programs
- *   trace node visits, child-link changes and queue pushes/pops. Helper lists
- *   are plain Python: only `arr` (or the grid's cells, or the tree) is
+ *   trace node visits, child-link changes and queue pushes/pops. Graph programs
+ *   trace neighbour/edge loops, set marks, answer appends, stack/queue
+ *   pushes/pops and distance-matrix reads/writes. Helper lists are plain
+ *   Python: only `arr` (or the grid's cells, the tree or the graph) is
  *   visualized.
  */
 
@@ -86,8 +88,7 @@ class BayanPythonGenerator extends PythonGenerator {
       `${listOf(block, generator)}[${generator.valueToCode(block, 'INDEX', Order.NONE) || '0'}]`,
       Order.MEMBER,
     ];
-    this.forBlock[BLOCK_TYPES.LIST_SET] = (block, generator) =>
-      `${listOf(block, generator)}[${generator.valueToCode(block, 'INDEX', Order.NONE) || '0'}] = ${generator.valueToCode(block, 'VALUE', Order.NONE) || '0'}\n`;
+    this.forBlock[BLOCK_TYPES.LIST_SET] = listSet;
     this.forBlock[BLOCK_TYPES.APPEND] = (block, generator) =>
       `${listOf(block, generator)}.append(${generator.valueToCode(block, 'VALUE', Order.NONE) || '0'})\n`;
     this.forBlock[BLOCK_TYPES.LIST_LEN] = (block, generator) => [
@@ -183,8 +184,39 @@ class BayanPythonGenerator extends PythonGenerator {
       `${valueOf(generator, block, 'A', 'None', Order.RELATIONAL)} ${block.getFieldValue('OP') === 'IS_NOT' ? 'is not' : 'is'} ${valueOf(generator, block, 'B', 'None', Order.RELATIONAL)}`,
       Order.RELATIONAL,
     ];
+    this.forBlock[BLOCK_TYPES.DEFINE_GRAPH] = (block, generator) =>
+      `def ${block.getFieldValue('NAME')}:\n${generator.statementToCode(block, 'STACK') || generator.PASS}`;
+    this.forBlock[BLOCK_TYPES.GRAPH] = () => ['graph', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.NODES] = () => ['nodes', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.EDGES] = () => ['edges', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.GOAL] = () => ['goal', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.FOR_NEIGHBOR] = forNeighbor;
+    this.forBlock[BLOCK_TYPES.FOR_EDGE] = forEdge;
+    this.forBlock[BLOCK_TYPES.SORT_BY_WEIGHT] = (block, generator) => [
+      `sorted(${valueOf(generator, block, 'LIST', '[]')}, key=lambda e: e[2])`,
+      Order.FUNCTION_CALL,
+    ];
+    this.forBlock[BLOCK_TYPES.MARK] = markNode;
+    this.forBlock[BLOCK_TYPES.EMIT] = (block, generator) =>
+      tracedAppend(block, generator, 'LIST', 'ITEM', 'emit', 'append');
+    this.forBlock[BLOCK_TYPES.NEW_SET] = () => ['set()', Order.FUNCTION_CALL];
+    this.forBlock[BLOCK_TYPES.SET_REMOVE] = (block, generator) =>
+      `${valueOf(generator, block, 'SET', 'set()', Order.MEMBER)}.remove(${valueOf(generator, block, 'VALUE', 'None')})\n`;
+    this.forBlock[BLOCK_TYPES.POP_TOP] = (block, generator) =>
+      popCell(block, generator, 'pop_last', '.pop()');
+    this.forBlock[BLOCK_TYPES.MATRIX] = (block, generator) => {
+      const size = valueOf(generator, block, 'SIZE', '0');
+      return [
+        `[[float('inf')] * ${size} for _ in range(${size})]`,
+        Order.ATOMIC,
+      ];
+    };
+    this.forBlock[BLOCK_TYPES.CELL_GET] = cellGet;
+    this.forBlock[BLOCK_TYPES.CELL_SET] = cellSet;
     // The function's parameters: a learner variable must not shadow them.
-    this.addReservedWords('arr,target,grid,start,end,heapq,root');
+    this.addReservedWords(
+      'arr,target,grid,start,end,heapq,root,graph,nodes,edges,goal'
+    );
   }
 
   finish(code) {
@@ -267,6 +299,98 @@ function setChild(block, generator) {
   }
   const node = valueOf(generator, block, 'NODE', 'root', Order.MEMBER);
   return `${node}["${side}"] = ${value}\n`;
+}
+
+/** `for v in graph[node]:` (or `reversed(...)`); exec traces each edge. */
+function forNeighbor(block, generator) {
+  const variable = generator.getVariableName(block.getFieldValue('VAR'));
+  const graph = valueOf(generator, block, 'GRAPH', 'graph', Order.MEMBER);
+  const node = valueOf(generator, block, 'NODE', 'start');
+  let items = `${graph}[${node}]`;
+  if (block.getFieldValue('ORDER') === 'REVERSED') items = `reversed(${items})`;
+  if (generator.execMode) {
+    items = `__bf.each_edge(${items}, ${node}, ${generator.quote_(block.id)})`;
+  }
+  return `for ${variable} in ${items}:\n${loopBody(block, generator)}`;
+}
+
+/** `for edge in edges:`; exec traces each (from, to, weight) edge. */
+function forEdge(block, generator) {
+  const variable = generator.getVariableName(block.getFieldValue('VAR'));
+  let items = valueOf(generator, block, 'LIST', '[]');
+  if (generator.execMode) {
+    items = `__bf.each_edge(${items}, None, ${generator.quote_(block.id)})`;
+  }
+  return `for ${variable} in ${items}:\n${loopBody(block, generator)}`;
+}
+
+function loopBody(block, generator) {
+  return generator.addLoopTrap(
+    generator.statementToCode(block, 'DO') || generator.PASS,
+    block
+  );
+}
+
+/**
+ * `d[key] = value`. In graph programs exec records it with the variable's
+ * name (`in_degree`, `index`, `low`) so the visualizer can show the values.
+ */
+function listSet(block, generator) {
+  const list = listOf(block, generator);
+  const index = generator.valueToCode(block, 'INDEX', Order.NONE) || '0';
+  const value = generator.valueToCode(block, 'VALUE', Order.NONE) || '0';
+  if (generator.execMode && generator.traceStores) {
+    const target = valueOf(generator, block, 'LIST', '[]');
+    return `__bf.store(${target}, ${index}, ${value}, ${generator.quote_(list)}, ${generator.quote_(block.id)})\n`;
+  }
+  return `${list}[${index}] = ${value}\n`;
+}
+
+/** `s.add(node)`; exec records a mark event with the set's name. */
+function markNode(block, generator) {
+  if (!generator.execMode) {
+    return tracedAppend(block, generator, 'SET', 'NODE', 'mark', 'add');
+  }
+  const set = valueOf(generator, block, 'SET', 'set()');
+  const node = valueOf(generator, block, 'NODE', 'None');
+  return `__bf.mark(${set}, ${node}, ${generator.quote_(block.id)}, ${generator.quote_(set)})\n`;
+}
+
+/** `s.add(x)` / `lst.append(x)`; exec records a mark / output event. */
+function tracedAppend(block, generator, target, item, method, display) {
+  const value = valueOf(generator, block, item, 'None');
+  if (generator.execMode) {
+    const container = valueOf(generator, block, target, '[]');
+    return `__bf.${method}(${container}, ${value}, ${generator.quote_(block.id)})\n`;
+  }
+  const container = valueOf(generator, block, target, '[]', Order.MEMBER);
+  return `${container}.${display}(${value})\n`;
+}
+
+function cellGet(block, generator) {
+  const i = valueOf(generator, block, 'I', '0');
+  const j = valueOf(generator, block, 'J', '0');
+  if (generator.execMode) {
+    const matrix = valueOf(generator, block, 'MATRIX', '[]');
+    return [
+      `__bf.cell_get(${matrix}, ${i}, ${j}, ${generator.quote_(block.id)})`,
+      Order.FUNCTION_CALL,
+    ];
+  }
+  const matrix = valueOf(generator, block, 'MATRIX', '[]', Order.MEMBER);
+  return [`${matrix}[${i}][${j}]`, Order.MEMBER];
+}
+
+function cellSet(block, generator) {
+  const i = valueOf(generator, block, 'I', '0');
+  const j = valueOf(generator, block, 'J', '0');
+  const value = valueOf(generator, block, 'VALUE', '0');
+  if (generator.execMode) {
+    const matrix = valueOf(generator, block, 'MATRIX', '[]');
+    return `__bf.cell_set(${matrix}, ${i}, ${j}, ${value}, ${generator.quote_(block.id)})\n`;
+  }
+  const matrix = valueOf(generator, block, 'MATRIX', '[]', Order.MEMBER);
+  return `${matrix}[${i}][${j}] = ${value}\n`;
 }
 
 function valueOf(generator, block, input, fallback, order = Order.NONE) {
@@ -523,7 +647,7 @@ function generate(generator, workspace, hats) {
 
 /**
  * @param {import('blockly/core').Workspace} workspace
- * @returns {{ kind: 'sort'|'search'|'path'|'tree', functionName: string,
+ * @returns {{ kind: 'sort'|'search'|'path'|'tree'|'graph', functionName: string,
  *   displayCode: string, execCode: string,
  *   lineBlockIds: (string|null)[], statementIds: Record<string, string> } | null}
  *   null when the workspace has no `define …` block.
@@ -536,6 +660,7 @@ export function generateProgram(workspace) {
       ['search', hatOf(BLOCK_TYPES.DEFINE_SEARCH)],
       ['path', hatOf(BLOCK_TYPES.DEFINE_PATH)],
       ['tree', hatOf(BLOCK_TYPES.DEFINE_TREE)],
+      ['graph', hatOf(BLOCK_TYPES.DEFINE_GRAPH)],
     ].find(([, found]) => found) ?? [];
   if (!hat) return null;
   const helpers = workspace.getBlocksByType(BLOCK_TYPES.DEFINE_HELPER, true);
@@ -553,6 +678,8 @@ export function generateProgram(workspace) {
   generator.STATEMENT_PREFIX = null;
   generator.INFINITE_LOOP_TRAP = '__bf.tick()\n';
   generator.execMode = true;
+  // Sort/search/path/tree builders only know their own events.
+  generator.traceStores = kind === 'graph';
   const execCode = generate(generator, workspace, hats);
 
   return {

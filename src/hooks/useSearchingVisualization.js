@@ -199,6 +199,7 @@ export function useSearchingVisualization(
     graphEdges,
     graphNodeStates,
     graphStackOrder,
+    graphContext: isGraph ? graphContext : null,
     regenerateGraphStructure: regenerateGraphStructureOuter,
     reloadSteps,
     ...engine,

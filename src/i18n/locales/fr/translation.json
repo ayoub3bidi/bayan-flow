@@ -519,7 +519,10 @@
       "run_path_longer": "✓ Votre programme a trouvé un chemin valide de {{length}} cases en {{count}} étapes, mais ce n’est pas le plus court : le plus court compte {{shortest}} cases. C’est normal pour la recherche gloutonne ; pour les autres algorithmes, avancez pas à pas pour voir où il fait un détour.",
       "run_tree_ok": "✓ Votre programme a visité les {{length}} nœuds dans le bon ordre en {{count}} étapes. Regardez-le dans le visualiseur.",
       "run_tree_wrong_order": "✗ Votre programme a renvoyé {{got}}, mais l’ordre attendu est {{expected}} ({{count}} étapes). Avancez pas à pas pour voir où il se trompe.",
-      "run_tree_threads_left": "✗ Votre programme a visité les nœuds dans le bon ordre, mais il a laissé {{threads}} fil(s) temporaire(s) dans l’arbre ({{count}} étapes). Morris doit retirer chaque fil pour restaurer l’arbre."
+      "run_tree_threads_left": "✗ Votre programme a visité les nœuds dans le bon ordre, mais il a laissé {{threads}} fil(s) temporaire(s) dans l’arbre ({{count}} étapes). Morris doit retirer chaque fil pour restaurer l’arbre.",
+      "run_graph_ok": "✓ Votre programme a renvoyé une réponse correcte en {{count}} étapes. Regardez-le dans le visualiseur.",
+      "run_graph_wrong": "✗ Votre programme a renvoyé {{got}}, mais la réponse attendue est {{expected}} ({{count}} étapes). Parcourez-le pas à pas pour voir où il se trompe.",
+      "run_graph_path_longer": "✓ Votre programme a trouvé un chemin valide de {{length}} nœuds en {{count}} étapes, mais un BFS doit trouver un plus court chemin : {{shortest}} nœuds. Parcourez-le pas à pas pour voir où il fait un détour."
     }
   },
   "notes_panel": {
@@ -1408,7 +1411,18 @@
     "blocksTreePop": "Retrait du nœud {{node}} de la file",
     "blocksTreeComplete": "Parcours terminé. Ordre final : {{order}}",
     "blocksTreeWrongOrder": "Votre ordre : {{got}}. Attendu : {{expected}}",
-    "blocksTreeThreadsLeft": "Bon ordre, mais {{count}} fil(s) reste(nt) dans l’arbre : retirez chaque fil pour le restaurer."
+    "blocksTreeThreadsLeft": "Bon ordre, mais {{count}} fil(s) reste(nt) dans l’arbre : retirez chaque fil pour le restaurer.",
+    "blocksGraphEdge": "Examen de l’arête {{from}} → {{to}}",
+    "blocksGraphPush": "Ajout de {{item}}",
+    "blocksGraphPop": "Retrait de {{item}}",
+    "blocksGraphMark": "Entrée dans le nœud {{node}}",
+    "blocksGraphOutput": "Ajout de {{node}} à la réponse",
+    "blocksGraphComponent": "Composante fortement connexe trouvée : {{component}}",
+    "blocksGraphComplete": "Terminé. Votre réponse est correcte : {{answer}}",
+    "blocksGraphNoOrder": "Votre programme a renvoyé None : le graphe contient un cycle, il n’existe donc pas d’ordre topologique. Correct !",
+    "blocksGraphWrong": "Votre réponse : {{got}}. Attendu : {{expected}}",
+    "blocksGraphPathLonger": "Chemin trouvé : {{length}} nœuds, mais le plus court en a {{shortest}}. Valide, mais pas le plus court.",
+    "blocksMatrixWrite": "La distance {{from}} → {{to}} passe à {{value}}"
   },
   "landing": {
     "hero": {
@@ -1929,6 +1943,40 @@
     "BF_SET_CHILD": "%1 [ %2 ] = %3",
     "BF_SET_CHILD_TOOLTIP": "Faire pointer le lien gauche ou droit d’un nœud ailleurs (Morris s’en sert pour ses fils temporaires).",
     "BF_IS": "%1 %2 %3",
-    "BF_IS_TOOLTIP": "Si deux choses sont exactement le même nœud (ou toutes deux None). Utilisez-le pour comparer des nœuds."
+    "BF_IS_TOOLTIP": "Si deux choses sont exactement le même nœud (ou toutes deux None). Utilisez-le pour comparer des nœuds.",
+    "BF_DEFINE_GRAPH": "définir %1",
+    "BF_DEFINE_GRAPH_TOOLTIP": "Votre fonction de graphe. Les nœuds sont nommés par leurs étiquettes (A, B, …) ; renvoyez la réponse demandée par l’algorithme.",
+    "BF_GRAPH": "graph",
+    "BF_GRAPH_TOOLTIP": "Le graphe sous forme de dictionnaire : chaque nœud est associé à la liste de ses voisins.",
+    "BF_NODES": "nodes",
+    "BF_NODES_TOOLTIP": "La liste des étiquettes des nœuds, dans l’ordre.",
+    "BF_EDGES": "edges",
+    "BF_EDGES_TOOLTIP": "La liste des arêtes sous la forme [départ, arrivée, poids].",
+    "BF_GOAL": "goal",
+    "BF_GOAL_TOOLTIP": "Le nœud que la recherche doit trouver.",
+    "BF_FOR_NEIGHBOR": "pour %1 %2 %3 [ %4 ]",
+    "BF_FOR_NEIGHBOR_TOOLTIP": "Répéter les étapes internes pour chaque voisin d’un nœud. Chaque arête s’allume dans le graphe.",
+    "BF_IN_ORDER": "dans",
+    "BF_IN_REVERSED": "dans l’ordre inverse de",
+    "BF_FOR_EDGE": "pour %1 dans %2",
+    "BF_FOR_EDGE_TOOLTIP": "Répéter les étapes internes pour chaque arête d’une liste. Chaque arête s’allume dans le graphe.",
+    "BF_SORT_BY_WEIGHT": "trier( %1 , par poids )",
+    "BF_SORT_BY_WEIGHT_TOOLTIP": "Une copie des arêtes, de la plus légère à la plus lourde.",
+    "BF_MARK": "%1 .add( %2 )",
+    "BF_MARK_TOOLTIP": "Ajouter un nœud à un ensemble. Le nœud s’allume dans le graphe.",
+    "BF_EMIT": "%1 .append( %2 )",
+    "BF_EMIT_TOOLTIP": "Ajouter un nœud, une arête ou une composante à la réponse. Il est mis en évidence dans le graphe.",
+    "BF_NEW_SET": "set()",
+    "BF_NEW_SET_TOOLTIP": "Un nouvel ensemble vide.",
+    "BF_SET_REMOVE": "%1 .remove( %2 )",
+    "BF_SET_REMOVE_TOOLTIP": "Retirer une valeur d’un ensemble.",
+    "BF_POP_TOP": "%1 .pop()",
+    "BF_POP_TOP_TOOLTIP": "Retirer le dernier nœud de la pile. Il est exploré dans le graphe.",
+    "BF_MATRIX": "matrice n × n remplie d’infini, n = %1",
+    "BF_MATRIX_TOOLTIP": "Un tableau carré de distances, toutes infinies (aucun chemin connu pour l’instant).",
+    "BF_CELL_GET": "%1 [ %2 ][ %3 ]",
+    "BF_CELL_GET_TOOLTIP": "Lire une distance dans la matrice. La case s’allume dans le tableau.",
+    "BF_CELL_SET": "%1 [ %2 ][ %3 ] = %4",
+    "BF_CELL_SET_TOOLTIP": "Écrire une distance dans la matrice. La case est mise à jour dans le tableau."
   }
 }

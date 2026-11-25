@@ -240,6 +240,9 @@ vi.mock('../algorithms/python', () => ({
     if (algorithm === 'inorderTraversal') {
       return 'def inorder_traversal(root):\n    return []';
     }
+    if (algorithm === 'kahnAlgorithm') {
+      return 'def kahn_algorithm(graph):\n    return []';
+    }
     return null;
   }),
   getAlgorithmDisplayName: vi.fn(algorithm => {
@@ -956,7 +959,8 @@ describe('PythonCodePanel - Blocks tab', () => {
     const { trackBlocksTabOpened } =
       await import('../services/analyticsEvents');
     const onDockChange = vi.fn();
-    renderPanel({ algorithm: 'depthFirstSearch', onDockChange });
+    // Every algorithm has blocks now; a future one (no starter yet) doesn't.
+    renderPanel({ algorithm: 'futureAlgorithm', onDockChange });
 
     expect(blocksTab()).toHaveTextContent('Soon');
     fireEvent.click(blocksTab());
@@ -964,10 +968,7 @@ describe('PythonCodePanel - Blocks tab', () => {
     expect(
       screen.getByText('Blocks coming soon for this algorithm')
     ).toBeInTheDocument();
-    expect(trackBlocksTabOpened).toHaveBeenCalledWith(
-      'depthFirstSearch',
-      false
-    );
+    expect(trackBlocksTabOpened).toHaveBeenCalledWith('futureAlgorithm', false);
     expect(document.querySelector('[data-docked]')).not.toBeInTheDocument();
     expect(onDockChange).toHaveBeenLastCalledWith(null);
   });
@@ -981,7 +982,7 @@ describe('PythonCodePanel - Blocks tab', () => {
           <PythonCodePanel
             isOpen={true}
             onClose={vi.fn()}
-            algorithm="depthFirstSearch"
+            algorithm="futureAlgorithm"
             currentArray={[3, 1, 2]}
           />
         </ThemeProvider>
@@ -1285,6 +1286,58 @@ describe('PythonCodePanel - Blocks tab', () => {
     });
     expect(screen.getByTestId('output-content')).toHaveTextContent(
       'returned 2, 1, but the expected order is 1, 2'
+    );
+  });
+
+  it('runs a graph program on the visualizer graph, named by labels', async () => {
+    const graphProgram = {
+      ...FAKE_PROGRAM,
+      kind: 'graph',
+      functionName: 'kahn_algorithm',
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = {
+        events: [{ kind: 'output', node: 'A', blockId: 'e' }],
+        finalArray: ['A', 'B'],
+        result: null,
+      };
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    mockProgramRef.current = graphProgram;
+    await openBlocks({
+      algorithm: 'kahnAlgorithm',
+      currentGraph: {
+        nodes: [
+          { id: '0', label: 'A', x: 0, y: 0 },
+          { id: '1', label: 'B', x: 1, y: 0 },
+        ],
+        edges: [{ id: '0->1', from: '0', to: '1' }],
+        adjacency: { 0: ['1'], 1: [] },
+        directed: true,
+      },
+      onProgramSteps,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      graphProgram.execCode,
+      [{ A: ['B'], B: [] }],
+      { functionName: 'kahn_algorithm', kind: 'graph' }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[1]).toMatchObject({
+      blockId: 'e',
+      nodeStates: { 0: 'path', 1: 'default' },
+    });
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'returned a correct answer'
     );
   });
 

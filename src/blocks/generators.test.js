@@ -394,4 +394,91 @@ def inorder_traversal(root):
       expect(generateProgram(load(json)).displayCode).toContain('root2 = root');
     });
   });
+
+  describe('graph programs', () => {
+    const generate = key =>
+      generateProgram(load(getBlocksStarter(key).workspace));
+
+    it('generates a recursive DFS topological sort like the reference', () => {
+      const topo = generate('topologicalSort');
+      expect(topo.kind).toBe('graph');
+      expect(topo.functionName).toBe('topological_sort');
+      expect(topo.displayCode).toContain(`def topological_sort(graph):
+    visiting = set()
+    order = []
+    for node in graph:`);
+      expect(topo.displayCode).toContain('    for neighbor in graph[node]:\n');
+      expect(topo.execCode).toMatch(
+        /for neighbor in __bf\.each_edge\(graph\[node\], node, '[^']+'\):/
+      );
+      expect(topo.execCode).toMatch(
+        /__bf\.mark\(visiting, node, '[^']+', 'visiting'\)/
+      );
+      expect(topo.execCode).toMatch(/__bf\.emit\(order, node, '[^']+'\)/);
+      expect(topo.execCode).toContain('visiting.remove(node)');
+    });
+
+    it('walks DFS neighbours in reverse and pops the stack top', () => {
+      const dfs = generate('depthFirstSearch');
+      expect(dfs.displayCode).toContain('def dfs(graph, start, goal):');
+      expect(dfs.displayCode).toContain(
+        'for neighbor in reversed(graph[current]):'
+      );
+      expect(dfs.displayCode).toContain('current = stack.pop()');
+      expect(dfs.execCode).toMatch(
+        /__bf\.each_edge\(reversed\(graph\[current\]\), current, '[^']+'\)/
+      );
+      expect(dfs.execCode).toMatch(
+        /current = __bf\.pop_last\(stack, '[^']+'\)/
+      );
+    });
+
+    it('traces the sorted edge loop of Kruskal and the heap of Prim', () => {
+      const kruskal = generate('kruskalAlgorithm');
+      expect(kruskal.displayCode).toContain(
+        'for edge in sorted(edges, key=lambda e: e[2]):'
+      );
+      expect(kruskal.execCode).toMatch(
+        /__bf\.each_edge\(sorted\(edges, key=lambda e: e\[2\]\), None, '[^']+'\)/
+      );
+      const prim = generate('primAlgorithm');
+      expect(prim.displayCode).toContain(
+        'heapq.heappush(frontier, (edge[2], edge))'
+      );
+      expect(prim.execCode).toMatch(/__bf\.pop_min\(frontier, '[^']+'\)/);
+    });
+
+    it('reads and writes the Floyd-Warshall matrix through the tracer', () => {
+      const floyd = generate('floydWarshallAlgorithm');
+      expect(floyd.displayCode).toContain(
+        "dist = [[float('inf')] * n for _ in range(n)]"
+      );
+      expect(floyd.displayCode).toContain(
+        'dist[i][j] = dist[i][k] + dist[k][j]'
+      );
+      expect(floyd.execCode).toMatch(
+        /__bf\.cell_set\(dist, i, j, __bf\.cell_get\(dist, i, k, '[^']+'\) \+ __bf\.cell_get\(dist, k, j, '[^']+'\), '[^']+'\)/
+      );
+    });
+
+    it('records dict writes and marked sets by name, in graph programs only', () => {
+      const kahn = generate('kahnAlgorithm');
+      expect(kahn.displayCode).toContain('in_degree[node] = 0');
+      expect(kahn.execCode).toMatch(
+        /__bf\.store\(in_degree, node, 0, 'in_degree', '[^']+'\)/
+      );
+      expect(generate('kosarajuAlgorithm').execCode).toMatch(
+        /__bf\.mark\(assigned, node, '[^']+', 'assigned'\)/
+      );
+      // Other kinds keep plain writes: their step builders don't read stores.
+      expect(generate('countingSort').execCode).not.toContain('__bf.store');
+      expect(generate('bfs').execCode).not.toContain('__bf.store');
+    });
+
+    it('renames a learner variable that would shadow a graph parameter', () => {
+      const json = structuredClone(getBlocksStarter('kahnAlgorithm').workspace);
+      json.variables.find(variable => variable.name === 'order').name = 'edges';
+      expect(generateProgram(load(json)).displayCode).toContain('edges2 = []');
+    });
+  });
 });

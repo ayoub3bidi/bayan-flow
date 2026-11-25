@@ -1115,6 +1115,11 @@ function App() {
             currentTarget={searchingVisualization.targetValue}
             currentGrid={pathfindingGrid}
             currentTree={treeTraversalVisualization.treeContext}
+            currentGraph={
+              algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM
+                ? graphAlgorithmVisualization.graphContext
+                : searchingVisualization.graphContext
+            }
             activeBlockId={activeBlockId}
             onProgramSteps={handleProgramSteps}
             onDockChange={setCodePanelDockWidth}

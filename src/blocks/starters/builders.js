@@ -172,6 +172,25 @@ const is = (opName, a, b) =>
 export const isSame = (a, b) => is('IS', a, b);
 export const isNot = (a, b) => is('IS_NOT', a, b);
 
+// Graph values (graph programs).
+export const graph = () => value('bf_graph');
+export const nodes = () => value('bf_nodes');
+export const edges = () => value('bf_edges');
+export const goal = () => value('bf_goal');
+export const newSet = () => value('bf_new_set');
+export const sortByWeight = lst =>
+  value('bf_sort_by_weight', { inputs: { LIST: toValue(lst) } });
+/** `stack.pop()` as a value (traced leave). */
+export const popTop = lst =>
+  value('bf_pop_top', { inputs: { LIST: toValue(lst) } });
+export const matrix = size =>
+  value('bf_matrix', { inputs: { SIZE: toValue(size) } });
+/** `m[i][j]` (traced read). */
+export const cellGet = (m, i, j) =>
+  value('bf_cell_get', {
+    inputs: { MATRIX: toValue(m), I: toValue(i), J: toValue(j) },
+  });
+
 /** A helper call used as a value, e.g. `p = partition(arr, low, high)`. */
 export const callValue = (name, ...args) =>
   value('bf_call_value', callFields(name, args));
@@ -269,6 +288,30 @@ export const setChild = (node, side, x) => ({
   fields: { SIDE: side },
   inputs: { NODE: toValue(node), VALUE: toValue(x) },
 });
+/** `s.add(node)` (traced mark). */
+export const mark = (set, node) => ({
+  type: 'bf_mark',
+  inputs: { SET: toValue(set), NODE: toValue(node) },
+});
+/** `answer.append(item)` (traced output). */
+export const emit = (lst, item) => ({
+  type: 'bf_emit',
+  inputs: { LIST: toValue(lst), ITEM: toValue(item) },
+});
+export const setRemove = (set, x) => ({
+  type: 'bf_set_remove',
+  inputs: { SET: toValue(set), VALUE: toValue(x) },
+});
+/** `m[i][j] = x` (traced write). */
+export const cellSet = (m, i, j, x) => ({
+  type: 'bf_cell_set',
+  inputs: {
+    MATRIX: toValue(m),
+    I: toValue(i),
+    J: toValue(j),
+    VALUE: toValue(x),
+  },
+});
 export const cont = () => ({
   type: 'controls_flow_statements',
   fields: { FLOW: 'CONTINUE' },
@@ -321,6 +364,34 @@ export function forEach(name, items, statements) {
   };
 }
 
+/** `for name in graph[node]:` (traced edges); `reversed` walks it backwards. */
+export function forNeighbor(name, graphValue, node, statements, reversed) {
+  return {
+    type: 'bf_for_neighbor',
+    fields: {
+      VAR: { id: varId(name) },
+      ORDER: reversed ? 'REVERSED' : 'FORWARD',
+    },
+    inputs: {
+      GRAPH: toValue(graphValue),
+      NODE: toValue(node),
+      ...(body(statements) && { DO: body(statements) }),
+    },
+  };
+}
+
+/** `for name in items:` over (from, to, weight) edges (traced edges). */
+export function forEdge(name, items, statements) {
+  return {
+    type: 'bf_for_edge',
+    fields: { VAR: { id: varId(name) } },
+    inputs: {
+      LIST: toValue(items),
+      ...(body(statements) && { DO: body(statements) }),
+    },
+  };
+}
+
 export function whileLoop(cond, statements) {
   return {
     type: 'controls_whileUntil',
@@ -338,10 +409,10 @@ export function whileLoop(cond, statements) {
  * A starter workspace: the main function plus optional helpers. Helpers sit
  * below the main function; Python lists them first (see generateProgram).
  *
- * Path and tree helpers take every argument, so their calls drop the
+ * Path, tree and graph helpers take every argument, so their calls drop the
  * implicit `arr`.
  *
- * @param {{ variables: string[], kind: 'sort'|'search'|'path'|'tree', signature: string,
+ * @param {{ variables: string[], kind: 'sort'|'search'|'path'|'tree'|'graph', signature: string,
  *   main: object[], helpers?: Array<{ signature: string, body: object[] }> }} spec
  */
 const HAT_BY_KIND = {
@@ -349,6 +420,7 @@ const HAT_BY_KIND = {
   search: 'bf_define_search',
   path: 'bf_define_path',
   tree: 'bf_define_tree',
+  graph: 'bf_define_graph',
 };
 
 /** Marks every helper call under `block` so it doesn't add `arr`. */
@@ -378,7 +450,7 @@ export function program({ variables, kind, signature, main, helpers = [] }) {
       inputs: { STACK: body(helper.body) },
     })),
   ];
-  if (kind === 'path' || kind === 'tree') hats.forEach(withoutImplicitArr);
+  if (kind !== 'sort' && kind !== 'search') hats.forEach(withoutImplicitArr);
   return {
     variables: variables.map(name => ({ name, id: varId(name) })),
     blocks: {

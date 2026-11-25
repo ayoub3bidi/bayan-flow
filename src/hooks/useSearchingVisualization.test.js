@@ -208,6 +208,24 @@ describe('useSearchingVisualization', () => {
     expect(result.current.targetValue).toBeNull();
   });
 
+  it('exposes the search graph for Blocks only on a node-link search', async () => {
+    // A stable array: a new one each render would reload steps forever.
+    const values = [1, 2, 3];
+    const { result, rerender } = renderHook(
+      ({ key }) =>
+        useSearchingVisualization(key, values, 100, VISUALIZATION_MODES.MANUAL),
+      { initialProps: { key: 'depthFirstSearch' } }
+    );
+    await waitFor(() => expect(result.current.graphContext).not.toBeNull());
+    const { nodes, adjacency, rootId, goalId } = result.current.graphContext;
+    expect(nodes.length).toBeGreaterThan(0);
+    expect(adjacency[rootId]).toBeDefined();
+    expect(goalId).toBeDefined();
+
+    rerender({ key: 'binarySearch' });
+    expect(result.current.graphContext).toBeNull();
+  });
+
   it('loads no steps when algorithm key does not resolve', async () => {
     const values = [1, 2, 3];
     const { result } = renderHook(() =>

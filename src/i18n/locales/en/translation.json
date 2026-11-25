@@ -519,7 +519,10 @@
       "run_path_longer": "✓ Your program found a valid path of {{length}} cells in {{count}} steps, but it isn’t the shortest: the shortest path has {{shortest}} cells. That’s expected for greedy search; for the other algorithms, step through to see where it takes a detour.",
       "run_tree_ok": "✓ Your program visited all {{length}} nodes in the right order in {{count}} steps. Watch it play in the visualizer.",
       "run_tree_wrong_order": "✗ Your program returned {{got}}, but the expected order is {{expected}} ({{count}} steps). Step through it to see where it goes wrong.",
-      "run_tree_threads_left": "✗ Your program visited the nodes in the right order, but it left {{threads}} temporary thread(s) in the tree ({{count}} steps). Morris must remove each thread to restore the tree."
+      "run_tree_threads_left": "✗ Your program visited the nodes in the right order, but it left {{threads}} temporary thread(s) in the tree ({{count}} steps). Morris must remove each thread to restore the tree.",
+      "run_graph_ok": "✓ Your program returned a correct answer in {{count}} steps. Watch it play in the visualizer.",
+      "run_graph_wrong": "✗ Your program returned {{got}}, but the expected answer is {{expected}} ({{count}} steps). Step through it to see where it goes wrong.",
+      "run_graph_path_longer": "✓ Your program found a valid path of {{length}} nodes in {{count}} steps, but BFS should find a shortest one: {{shortest}} nodes. Step through to see where it takes a detour."
     }
   },
   "notes_panel": {
@@ -1407,7 +1410,18 @@
     "blocksTreePop": "Taking node {{node}} out of the queue",
     "blocksTreeComplete": "Traversal complete. Final order: {{order}}",
     "blocksTreeWrongOrder": "Your order: {{got}}. Expected: {{expected}}",
-    "blocksTreeThreadsLeft": "Right order, but {{count}} thread(s) are still in the tree: undo each thread to restore it."
+    "blocksTreeThreadsLeft": "Right order, but {{count}} thread(s) are still in the tree: undo each thread to restore it.",
+    "blocksGraphEdge": "Checking edge {{from}} → {{to}}",
+    "blocksGraphPush": "Adding {{item}}",
+    "blocksGraphPop": "Taking {{item}} out",
+    "blocksGraphMark": "Entering node {{node}}",
+    "blocksGraphOutput": "Adding {{node}} to the answer",
+    "blocksGraphComponent": "Found a strongly connected component: {{component}}",
+    "blocksGraphComplete": "Done. Your answer is correct: {{answer}}",
+    "blocksGraphNoOrder": "Your program returned None: the graph has a cycle, so there is no topological order. Correct!",
+    "blocksGraphWrong": "Your answer: {{got}}. Expected: {{expected}}",
+    "blocksGraphPathLonger": "Path found: {{length}} nodes, but the shortest path has {{shortest}}. Valid, just not the shortest.",
+    "blocksMatrixWrite": "Setting the distance {{from}} → {{to}} to {{value}}"
   },
   "landing": {
     "hero": {
@@ -1856,6 +1870,40 @@
     "BF_SET_CHILD": "%1 [ %2 ] = %3",
     "BF_SET_CHILD_TOOLTIP": "Point a node’s left or right link somewhere else (Morris uses it for temporary threads).",
     "BF_IS": "%1 %2 %3",
-    "BF_IS_TOOLTIP": "Whether two things are the very same node (or both None). Use it to compare nodes."
+    "BF_IS_TOOLTIP": "Whether two things are the very same node (or both None). Use it to compare nodes.",
+    "BF_DEFINE_GRAPH": "define %1",
+    "BF_DEFINE_GRAPH_TOOLTIP": "Your graph function. Nodes are named by their labels (A, B, …); return the answer the algorithm asks for.",
+    "BF_GRAPH": "graph",
+    "BF_GRAPH_TOOLTIP": "The graph as a dictionary: each node maps to the list of its neighbours.",
+    "BF_NODES": "nodes",
+    "BF_NODES_TOOLTIP": "The list of node labels, in order.",
+    "BF_EDGES": "edges",
+    "BF_EDGES_TOOLTIP": "The list of edges as [from, to, weight].",
+    "BF_GOAL": "goal",
+    "BF_GOAL_TOOLTIP": "The node the search is looking for.",
+    "BF_FOR_NEIGHBOR": "for %1 %2 %3 [ %4 ]",
+    "BF_FOR_NEIGHBOR_TOOLTIP": "Repeat the inner steps for each neighbour of a node. Each edge lights up in the graph.",
+    "BF_IN_ORDER": "in",
+    "BF_IN_REVERSED": "in reversed",
+    "BF_FOR_EDGE": "for %1 in %2",
+    "BF_FOR_EDGE_TOOLTIP": "Repeat the inner steps for each edge of a list. Each edge lights up in the graph.",
+    "BF_SORT_BY_WEIGHT": "sorted( %1 , by weight )",
+    "BF_SORT_BY_WEIGHT_TOOLTIP": "A copy of the edges, lightest first.",
+    "BF_MARK": "%1 .add( %2 )",
+    "BF_MARK_TOOLTIP": "Add a node to a set. The node lights up in the graph.",
+    "BF_EMIT": "%1 .append( %2 )",
+    "BF_EMIT_TOOLTIP": "Add a node, an edge or a component to the answer. It is highlighted in the graph.",
+    "BF_NEW_SET": "set()",
+    "BF_NEW_SET_TOOLTIP": "A new, empty set.",
+    "BF_SET_REMOVE": "%1 .remove( %2 )",
+    "BF_SET_REMOVE_TOOLTIP": "Take a value out of a set.",
+    "BF_POP_TOP": "%1 .pop()",
+    "BF_POP_TOP_TOOLTIP": "Take the last node off the stack. It is explored in the graph.",
+    "BF_MATRIX": "n × n matrix of infinity, n = %1",
+    "BF_MATRIX_TOOLTIP": "A square table of distances, every one infinity (no path known yet).",
+    "BF_CELL_GET": "%1 [ %2 ][ %3 ]",
+    "BF_CELL_GET_TOOLTIP": "Read one distance from the matrix. The cell lights up in the table.",
+    "BF_CELL_SET": "%1 [ %2 ][ %3 ] = %4",
+    "BF_CELL_SET_TOOLTIP": "Write one distance into the matrix. The cell is updated in the table."
   }
 }

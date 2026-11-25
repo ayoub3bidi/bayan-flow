@@ -37,6 +37,9 @@ import {
   buildPathProgramSteps,
   buildTreeProgramSteps,
   treeToDict,
+  buildGraphProgramSteps,
+  buildMatrixProgramSteps,
+  graphToArgs,
 } from '../blocks/programSteps';
 import {
   trackBlocksTabOpened,
@@ -59,6 +62,7 @@ const BLOCKS_OUTPUT_KEYS = {
   search: ['run_found', 'run_not_found'],
   path: ['run_path_found', 'run_path_not_found'],
   tree: ['run_tree_ok', 'run_tree_wrong_order'],
+  graph: ['run_graph_ok', 'run_graph_wrong'],
 };
 /**
  * Drawer width while the Blocks tab docks beside the visualizer. Always leaves
@@ -122,6 +126,8 @@ const clampBlocksPythonPercent = percent =>
  *   pathfinding program runs on
  * @param {object|null} [props.currentTree] - Tree a block traversal runs on
  *   (`generateTreeForTraversal()` output)
+ * @param {object|null} [props.currentGraph] - Graph a block graph program runs
+ *   on (the graph or graph-search hook's `graphContext`)
  * @param {string|null} [props.activeBlockId] - Block behind the playing step
  * @param {(steps: object[]) => void} [props.onProgramSteps] - Play a block program's steps
  * @param {(width: string|null) => void} [props.onDockChange] - Docked drawer width, or null
@@ -134,6 +140,7 @@ function PythonCodePanel({
   currentTarget = null,
   currentGrid = null,
   currentTree = null,
+  currentGraph = null,
   activeBlockId = null,
   onProgramSteps,
   onDockChange,
@@ -401,7 +408,7 @@ function PythonCodePanel({
   const blocksRef = useRef(null);
   const splitEditorRef = useRef(null);
   const splitDecorationsRef = useRef(null);
-  /** What the last Run used: { kind, functionName, array, target, grid, tree }. */
+  /** What the last Run used: { kind, functionName, array, target, grid, tree, graph }. */
   const runInputRef = useRef(null);
   const [program, setProgram] = useState(null);
 
@@ -489,6 +496,7 @@ function PythonCodePanel({
     if (kind === 'search' && currentTarget == null) return;
     if (kind === 'path' && !currentGrid?.start) return;
     if (kind === 'tree' && currentTree?.rootId == null) return;
+    if (kind === 'graph' && !currentGraph?.nodes?.length) return;
     const array = [...(currentArray ?? [])];
     const target = kind === 'search' ? currentTarget : null;
     runInputRef.current = {
@@ -498,6 +506,7 @@ function PythonCodePanel({
       target,
       grid: currentGrid,
       tree: currentTree,
+      graph: currentGraph,
     };
     let args = [array];
     if (kind === 'search') args = [array, target];
@@ -506,6 +515,7 @@ function PythonCodePanel({
       args = [grid, [start.row, start.col], [end.row, end.col]];
     }
     if (kind === 'tree') args = [treeToDict(currentTree)];
+    if (kind === 'graph') args = graphToArgs(currentGraph, algorithm);
     setBlocksRun(null);
     runVisualization(program.execCode, args, {
       functionName: program.functionName,
@@ -519,6 +529,8 @@ function PythonCodePanel({
     currentTarget,
     currentGrid,
     currentTree,
+    currentGraph,
+    algorithm,
     runVisualization,
   ]);
 
@@ -552,6 +564,21 @@ function PythonCodePanel({
         run.grid.grid,
         run.grid.start,
         run.grid.end,
+        vizResult.finalArray,
+        run.functionName
+      );
+    } else if (run.kind === 'graph' && algorithm === 'floydWarshallAlgorithm') {
+      built = buildMatrixProgramSteps(
+        events,
+        run.graph,
+        vizResult.finalArray,
+        run.functionName
+      );
+    } else if (run.kind === 'graph') {
+      built = buildGraphProgramSteps(
+        events,
+        run.graph,
+        algorithm,
         vizResult.finalArray,
         run.functionName
       );
@@ -605,7 +632,8 @@ function PythonCodePanel({
     blocksOutputKey = 'run_gave_up';
   } else if (blocksRun?.solved && blocksRun.length > blocksRun.shortest) {
     // A valid path still passes; say when it isn't a shortest one.
-    blocksOutputKey = 'run_path_longer';
+    blocksOutputKey =
+      blocksRun.kind === 'graph' ? 'run_graph_path_longer' : 'run_path_longer';
   } else if (blocksRun?.threadsLeft) {
     // Right order, but Morris left threads in the tree.
     blocksOutputKey = 'run_tree_threads_left';

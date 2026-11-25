@@ -11,6 +11,10 @@ import {
   buildPathProgramSteps,
   buildTreeProgramSteps,
   treeToDict,
+  buildGraphProgramSteps,
+  buildMatrixProgramSteps,
+  graphNodeNames,
+  graphToArgs,
   isValidGridPath,
   shortestPathLength,
   isSortedAscending,
@@ -488,5 +492,321 @@ describe('buildTreeProgramSteps', () => {
     expect(threadsLeft).toBe(1);
     expect(steps.at(-1).description).toContain('still in the tree');
     expect(steps.at(-1).edges).toContainEqual({ from: '1', to: '0' });
+  });
+});
+
+// A → B → C, directed; node ids differ from the labels the program sees.
+const node = (id, label) => ({ id, label, x: 0, y: 0 });
+const CHAIN = {
+  nodes: [node('0', 'A'), node('1', 'B'), node('2', 'C')],
+  edges: [
+    { id: '0->1', from: '0', to: '1' },
+    { id: '1->2', from: '1', to: '2' },
+  ],
+  adjacency: { 0: ['1'], 1: ['2'], 2: [] },
+  directed: true,
+};
+// A triangle with weights A-B 1, B-C 2, A-C 3 (MST weight 3).
+const TRIANGLE = {
+  nodes: CHAIN.nodes,
+  edges: [
+    { id: '0<->1', from: '0', to: '1', weight: 1 },
+    { id: '1<->2', from: '1', to: '2', weight: 2 },
+    { id: '0<->2', from: '0', to: '2', weight: 3 },
+  ],
+  adjacency: { 0: ['1', '2'], 1: ['0', '2'], 2: ['0', '1'] },
+  directed: false,
+  weighted: true,
+};
+const ev = (kind, extra) => ({ kind, blockId: 'b', ...extra });
+
+describe('graph program inputs', () => {
+  it('names nodes by label, or by id when labels repeat', () => {
+    expect(graphNodeNames(CHAIN.nodes)).toEqual({ 0: 'A', 1: 'B', 2: 'C' });
+    expect(graphNodeNames([node('0', 'A'), node('1', 'A')])).toEqual({
+      0: '0',
+      1: '1',
+    });
+  });
+
+  it('builds the arguments of each algorithm family', () => {
+    expect(graphToArgs(CHAIN, 'topologicalSort')).toEqual([
+      { A: ['B'], B: ['C'], C: [] },
+    ]);
+    expect(graphToArgs(TRIANGLE, 'kruskalAlgorithm')).toEqual([
+      ['A', 'B', 'C'],
+      [
+        ['A', 'B', 1],
+        ['B', 'C', 2],
+        ['A', 'C', 3],
+      ],
+    ]);
+    expect(
+      graphToArgs({ ...TRIANGLE, rootId: '0', goalId: '2' }, 'depthFirstSearch')
+    ).toEqual([{ A: ['B', 'C'], B: ['A', 'C'], C: ['A', 'B'] }, 'A', 'C']);
+  });
+});
+
+describe('buildGraphProgramSteps', () => {
+  const TOPO_EVENTS = [
+    ev('mark', { node: 'A' }),
+    ev('edge', { from: 'A', to: 'B' }),
+    ev('mark', { node: 'B' }),
+    ev('edge', { from: 'B', to: 'C' }),
+    ev('mark', { node: 'C' }),
+    ev('output', { node: 'C' }),
+    ev('output', { node: 'B' }),
+    ev('output', { node: 'A' }),
+  ];
+
+  it('lights edges, mirrors the recursion stack and accepts a valid order', () => {
+    const { steps, solved } = buildGraphProgramSteps(
+      TOPO_EVENTS,
+      CHAIN,
+      'topologicalSort',
+      ['A', 'B', 'C']
+    );
+    expect(solved).toBe(true);
+    expect(steps).toHaveLength(1 + TOPO_EVENTS.length + 1);
+    expect(steps[1].nodeStates[0]).toBe('current');
+    expect(steps[2].edgeStates['0->1']).toBe('active');
+    // The next event settles the lit edge.
+    expect(steps[3].edgeStates['0->1']).toBe('visited');
+    expect(steps[5].graphArtifacts.badges[0].text).toContain('A → B → C');
+    expect(steps[6].nodeStates[2]).toBe('path');
+    expect(steps.every(step => step.blockId !== undefined)).toBe(true);
+    expect(steps.at(-1).graphArtifacts.badges.map(b => b.id)).toEqual([
+      'order',
+    ]);
+  });
+
+  it('shows in-degrees, index/low-links and the Kosaraju pass from the program', () => {
+    const store = (name, key, value) => ev('store', { name, key, value });
+    const kahn = buildGraphProgramSteps(
+      [
+        store('in_degree', 'A', 0),
+        store('in_degree', 'B', 1),
+        ev('edge', { from: 'A', to: 'B' }),
+        store('in_degree', 'B', 0),
+        ev('output', { node: 'A' }),
+      ],
+      CHAIN,
+      'kahnAlgorithm',
+      null
+    );
+    // Stores add no step and don't settle the lit edge early.
+    expect(kahn.steps).toHaveLength(1 + 2 + 1);
+    expect(kahn.steps[1].edgeStates['0->1']).toBe('active');
+    const badgeOf = (step, id) =>
+      step.graphArtifacts.badges.find(b => b.id === id)?.text;
+    expect(badgeOf(kahn.steps[1], 'inDegree')).toContain('A:0, B:1');
+    expect(badgeOf(kahn.steps[2], 'inDegree')).toContain('A:0, B:0');
+
+    const tarjan = buildGraphProgramSteps(
+      [
+        store('index', 'A', 0),
+        store('low', 'A', 0),
+        ev('open', { cell: 'A' }),
+        store('index', 'B', 1),
+        ev('open', { cell: 'B' }),
+      ],
+      CHAIN,
+      'tarjanAlgorithm',
+      null
+    );
+    expect(badgeOf(tarjan.steps[2], 'lowLink')).toContain('A:0/0, B:1/1');
+
+    const kosaraju = buildGraphProgramSteps(
+      [
+        ev('mark', { node: 'A', set: 'visited' }),
+        ev('mark', { node: 'A', set: 'assigned' }),
+      ],
+      CHAIN,
+      'kosarajuAlgorithm',
+      null
+    );
+    expect(badgeOf(kosaraju.steps[0], 'pass')).toContain('1');
+    expect(badgeOf(kosaraju.steps[1], 'pass')).toContain('1');
+    expect(badgeOf(kosaraju.steps[2], 'pass')).toContain('2');
+  });
+
+  it('fails an invalid order and names a valid one', () => {
+    const { solved, got, expected } = buildGraphProgramSteps(
+      TOPO_EVENTS,
+      CHAIN,
+      'topologicalSort',
+      ['C', 'B', 'A']
+    );
+    expect(solved).toBe(false);
+    expect(got).toBe('C, B, A');
+    expect(expected).toBe('A, B, C');
+  });
+
+  it('expects None from Kahn on a cycle', () => {
+    const cycle = {
+      ...CHAIN,
+      edges: [...CHAIN.edges, { id: '2->0', from: '2', to: '0' }],
+      adjacency: { 0: ['1'], 1: ['2'], 2: ['0'] },
+    };
+    expect(
+      buildGraphProgramSteps([], cycle, 'kahnAlgorithm', null).solved
+    ).toBe(true);
+    expect(
+      buildGraphProgramSteps([], cycle, 'kahnAlgorithm', ['A']).solved
+    ).toBe(false);
+  });
+
+  it('selects spanning-tree edges, rejects the rest, and checks the weight', () => {
+    const events = [
+      ev('edge', { from: 'A', to: 'B' }),
+      ev('output', { node: ['A', 'B', 1] }),
+      ev('edge', { from: 'B', to: 'C' }),
+      ev('output', { node: ['B', 'C', 2] }),
+      ev('edge', { from: 'A', to: 'C' }),
+    ];
+    const tree = [
+      ['A', 'B', 1],
+      ['B', 'C', 2],
+    ];
+    const { steps, solved } = buildGraphProgramSteps(
+      events,
+      TRIANGLE,
+      'kruskalAlgorithm',
+      tree
+    );
+    expect(solved).toBe(true);
+    expect(steps.at(-1).edgeStates).toEqual({
+      '0<->1': 'selected',
+      '1<->2': 'selected',
+      '0<->2': 'cycle',
+    });
+    expect(steps.at(-1).graphArtifacts.badges[0].text).toContain('3');
+    // A cycle, a heavier tree, a made-up edge.
+    for (const answer of [
+      [...tree, ['A', 'C', 3]],
+      [
+        ['A', 'B', 1],
+        ['A', 'C', 3],
+      ],
+      [
+        ['A', 'B', 1],
+        ['B', 'C', 9],
+      ],
+    ]) {
+      expect(
+        buildGraphProgramSteps([], TRIANGLE, 'primAlgorithm', answer).solved
+      ).toBe(false);
+    }
+  });
+
+  it('highlights each component and compares partitions, not order', () => {
+    const { steps, solved } = buildGraphProgramSteps(
+      [ev('output', { node: ['C'] })],
+      CHAIN,
+      'tarjanAlgorithm',
+      [['C'], ['B'], ['A']]
+    );
+    expect(solved).toBe(true);
+    expect(steps[1].nodeStates[2]).toBe('path');
+    expect(
+      buildGraphProgramSteps([], CHAIN, 'kosarajuAlgorithm', [['A', 'B', 'C']])
+        .solved
+    ).toBe(false);
+  });
+
+  it('accepts a search path along edges and flags a long BFS path', () => {
+    const square = {
+      nodes: [node('0', '0'), node('1', '1'), node('2', '2'), node('3', '3')],
+      edges: [
+        { from: '0', to: '1' },
+        { from: '1', to: '2' },
+        { from: '2', to: '3' },
+        { from: '0', to: '3' },
+      ],
+      adjacency: { 0: ['1', '3'], 1: ['0', '2'], 2: ['1', '3'], 3: ['0', '2'] },
+      rootId: '0',
+      goalId: '2',
+    };
+    const events = [ev('open', { cell: '1' }), ev('visit', { cell: '1' })];
+    const bfs = buildGraphProgramSteps(
+      events,
+      square,
+      'breadthFirstSearchGraph',
+      ['0', '1', '2']
+    );
+    expect(bfs.solved).toBe(true);
+    expect(bfs.steps[1].stackOrder).toEqual(['1']);
+    expect(bfs.steps[1].nodeStates[1]).toBe('frontier');
+    expect(bfs.steps[2].nodeStates[1]).toBe('current');
+    expect(bfs.steps.at(-1).nodeStates[0]).toBe('root');
+    expect(bfs.steps.at(-1).goalNodeId).toBe('2');
+    expect(bfs.length).toBe(bfs.shortest);
+
+    const longer = buildGraphProgramSteps(
+      [],
+      { ...square, goalId: '3' },
+      'breadthFirstSearchGraph',
+      ['0', '1', '2', '3']
+    );
+    expect(longer.solved).toBe(true);
+    expect(longer.length).toBeGreaterThan(longer.shortest);
+    // DFS makes no shortest-path promise.
+    expect(
+      buildGraphProgramSteps([], square, 'depthFirstSearch', ['0', '3', '2'])
+        .shortest
+    ).toBeUndefined();
+    expect(
+      buildGraphProgramSteps([], square, 'depthFirstSearch', ['0', '2']).solved
+    ).toBe(false);
+    expect(
+      buildGraphProgramSteps([], square, 'depthFirstSearch', null).solved
+    ).toBe(false);
+  });
+});
+
+describe('buildMatrixProgramSteps', () => {
+  // A → B 1, B → C 1, A → C 5: going through B improves A → C to 2.
+  const GRAPH = {
+    nodes: CHAIN.nodes,
+    edges: [
+      { from: '0', to: '1', weight: 1 },
+      { from: '1', to: '2', weight: 1 },
+      { from: '0', to: '2', weight: 5 },
+    ],
+  };
+  const write = (i, j, value) => ev('write', { i, j, value });
+  const read = (i, j) => ev('read', { i, j });
+
+  it('replays writes and shows an improvement through k', () => {
+    const { steps, solved } = buildMatrixProgramSteps(
+      [write(0, 2, 5), read(0, 1), read(1, 2), write(0, 2, 2)],
+      GRAPH,
+      [
+        [0, 1, 2],
+        [null, 0, 1],
+        [null, null, 0],
+      ]
+    );
+    expect(solved).toBe(true);
+    expect(steps).toHaveLength(1 + 2 + 1);
+    expect(steps[1].matrix.cells[0][2]).toBe('5');
+    expect(steps[1].matrix.cellStates[0][2]).toBe('updated');
+    const update = steps[2].matrix;
+    expect(update.cells[0][2]).toBe('2');
+    expect(update.cellStates[1][1]).toBe('current');
+    expect(update.cellStates[0][1]).toBe('considering');
+    expect(update.cellStates[1][2]).toBe('considering');
+    expect(steps[2].blockId).toBe('b');
+  });
+
+  it('fails a wrong matrix and shows both', () => {
+    const { solved, got, expected } = buildMatrixProgramSteps([], GRAPH, [
+      [0, 1, 5],
+      [null, 0, 1],
+      [null, null, 0],
+    ]);
+    expect(solved).toBe(false);
+    expect(got).toBe('[0, 1, 5] [∞, 0, 1] [∞, ∞, 0]');
+    expect(expected).toBe('[0, 1, 2] [∞, 0, 1] [∞, ∞, 0]');
   });
 });

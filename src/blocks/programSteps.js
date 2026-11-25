@@ -4,16 +4,31 @@
  * See LICENSE for details.
  *
  * Converts tracer events from a block program into sorting, searching,
- * pathfinding or tree traversal visualizer steps.
+ * pathfinding, tree traversal or graph visualizer steps.
  * No Blockly import: this runs on the main thread after the worker replies.
  */
 
 import {
   ELEMENT_STATES,
+  GRAPH_EDGE_STATES,
+  GRAPH_NODE_STATES,
   GRID_ELEMENT_STATES,
   TREE_NODE_STATES,
 } from '../constants/index.js';
+import i18n from '../i18n/index.js';
 import { pureTreeTraversalAlgorithms } from '../algorithms/treeTraversal/index.js';
+import {
+  isValidTopologicalOrder,
+  kruskalAlgorithmPure,
+  pureGraphAlgorithms,
+} from '../algorithms/graphAlgorithm/index.js';
+import {
+  makeNodeLinkStep,
+  normalizeAdjacency,
+  sortNodeIds,
+} from '../algorithms/graphAlgorithm/shared.js';
+import { makeFloydMatrixStep } from '../algorithms/graphAlgorithm/floydWarshallAlgorithm.js';
+import { isNodeLinkSearchingAlgorithm } from '../registry/searchingSubstrate.js';
 import {
   getAlgorithmDescription,
   ALGORITHM_STEPS,
@@ -616,5 +631,724 @@ export function buildTreeProgramSteps(
     got: got.join(', '),
     expected: expectedOrder.join(', '),
     threadsLeft,
+  };
+}
+
+// ── Graphs ───────────────────────────────────────────────────────────────────
+
+const EDGE_LIST_ALGORITHMS = new Set([
+  'kruskalAlgorithm',
+  'primAlgorithm',
+  'floydWarshallAlgorithm',
+]);
+const MST_ALGORITHMS = new Set(['kruskalAlgorithm', 'primAlgorithm']);
+const ORDER_ALGORITHMS = new Set(['topologicalSort', 'kahnAlgorithm']);
+const SCC_ALGORITHMS = new Set(['tarjanAlgorithm', 'kosarajuAlgorithm']);
+
+/**
+ * The name a graph program sees for each node id: its label (what the
+ * visualizer shows), or the id when two nodes share a label.
+ * @param {Array<{ id: string, label?: string }>} nodes
+ * @returns {Record<string, string>}
+ */
+export function graphNodeNames(nodes) {
+  const labels = nodes.map(node => String(node.label ?? node.id));
+  const unique = new Set(labels).size === labels.length;
+  return Object.fromEntries(
+    nodes.map((node, i) => [node.id, unique ? labels[i] : String(node.id)])
+  );
+}
+
+/**
+ * The arguments a graph program takes, by algorithm family:
+ * `[graph, start, goal]` for searches, `[nodes, edges]` for spanning trees
+ * and Floyd-Warshall (`edges` as `[from, to, weight]`), `[graph]` otherwise.
+ * `graph` maps each node to its neighbours, in id order.
+ * @param {{ nodes: object[], edges: object[], adjacency: object,
+ *   rootId?: string, goalId?: string }} graph
+ * @param {string} algorithmKey
+ */
+export function graphToArgs(graph, algorithmKey) {
+  const names = graphNodeNames(graph.nodes);
+  const name = id => names[id] ?? String(id);
+  if (isNodeLinkSearchingAlgorithm(algorithmKey)) {
+    const adjacency = Object.fromEntries(
+      graph.nodes.map(node => [
+        name(node.id),
+        (graph.adjacency[node.id] ?? []).map(name),
+      ])
+    );
+    return [adjacency, name(graph.rootId), name(graph.goalId)];
+  }
+  if (EDGE_LIST_ALGORITHMS.has(algorithmKey)) {
+    return [
+      sortNodeIds(graph.nodes.map(node => node.id)).map(name),
+      graph.edges.map(edge => [
+        name(edge.from),
+        name(edge.to),
+        edge.weight ?? 0,
+      ]),
+    ];
+  }
+  const adjacency = normalizeAdjacency(graph.adjacency);
+  return [
+    Object.fromEntries(
+      sortNodeIds(Object.keys(adjacency)).map(id => [
+        name(id),
+        adjacency[id].map(name),
+      ])
+    ),
+  ];
+}
+
+const joinNames = (list, separator = ', ') => list.map(String).join(separator);
+const formatEdge = ([from, to, weight]) => `${from}-${to}(${weight})`;
+const formatComponents = components =>
+  components.map(component => `{${joinNames(component)}}`).join(' ');
+
+/** Shortest start → goal path length (in nodes) on a name adjacency, or 0. */
+function shortestGraphPath(adjacency, start, goal) {
+  const seen = new Set([start]);
+  let frontier = [start];
+  for (let length = 1; frontier.length > 0; length++) {
+    const next = [];
+    for (const node of frontier) {
+      if (node === goal) return length;
+      for (const neighbor of adjacency[node] ?? []) {
+        if (seen.has(neighbor)) continue;
+        seen.add(neighbor);
+        next.push(neighbor);
+      }
+    }
+    frontier = next;
+  }
+  return 0;
+}
+
+/**
+ * Whether the returned answer is right for the algorithm, plus both answers
+ * as text. Any valid answer passes: an order, a partition, a spanning tree of
+ * the right weight, a start → goal path.
+ */
+function judgeGraphAnswer(graph, algorithmKey, args, returned, names) {
+  const idByName = Object.fromEntries(
+    Object.entries(names).map(([id, name]) => [name, id])
+  );
+  const idOf = name => idByName[name];
+  const nameOf = id => names[id] ?? id;
+  if (isNodeLinkSearchingAlgorithm(algorithmKey)) {
+    const [adjacency, start, goal] = args;
+    const path = Array.isArray(returned) ? returned : [];
+    const solved =
+      path.length > 0 &&
+      path[0] === start &&
+      path[path.length - 1] === goal &&
+      path.every(
+        (node, i) => i === 0 || (adjacency[path[i - 1]] ?? []).includes(node)
+      );
+    return {
+      solved,
+      got: Array.isArray(returned) ? joinNames(path, ' → ') : 'None',
+      expected: `${start} → … → ${goal}`,
+      length: path.length,
+      // Only BFS promises a shortest path.
+      shortest:
+        algorithmKey === 'breadthFirstSearchGraph'
+          ? shortestGraphPath(adjacency, start, goal)
+          : undefined,
+    };
+  }
+
+  const pure = pureGraphAlgorithms[algorithmKey]?.(
+    EDGE_LIST_ALGORITHMS.has(algorithmKey) ? graph : graph.adjacency
+  );
+
+  if (ORDER_ALGORITHMS.has(algorithmKey)) {
+    const order = Array.isArray(returned) ? returned : null;
+    const solved = pure.hasCycle
+      ? returned === null
+      : order !== null &&
+        isValidTopologicalOrder(order.map(idOf), graph.adjacency);
+    return {
+      solved,
+      got: order ? joinNames(order) : 'None',
+      expected: pure.hasCycle ? 'None' : joinNames(pure.order.map(nameOf)),
+    };
+  }
+
+  if (SCC_ALGORITHMS.has(algorithmKey)) {
+    const key = components =>
+      components
+        .map(component => [...component].map(String).sort().join(','))
+        .sort()
+        .join('|');
+    const got = Array.isArray(returned) ? returned.filter(Array.isArray) : [];
+    const expected = pure.sccs.map(component => component.map(nameOf));
+    return {
+      solved:
+        Array.isArray(returned) &&
+        got.length === returned.length &&
+        key(got) === key(expected),
+      got: Array.isArray(returned) ? formatComponents(got) : 'None',
+      expected: formatComponents(expected),
+    };
+  }
+
+  if (MST_ALGORITHMS.has(algorithmKey)) {
+    const got = Array.isArray(returned) ? returned : [];
+    const exists = ([from, to, weight]) =>
+      graph.edges.some(
+        edge =>
+          (edge.weight ?? 0) === weight &&
+          ((edge.from === idOf(from) && edge.to === idOf(to)) ||
+            (edge.from === idOf(to) && edge.to === idOf(from)))
+      );
+    const valid = got.every(edge => Array.isArray(edge) && exists(edge));
+    const weightOf = edges => edges.reduce((sum, e) => sum + (e[2] ?? 0), 0);
+    // A forest keeps every edge when Kruskal re-runs on it; a cycle doesn't.
+    const acyclic =
+      valid &&
+      kruskalAlgorithmPure({
+        nodes: graph.nodes,
+        edges: got.map(([from, to, weight]) => ({
+          from: idOf(from),
+          to: idOf(to),
+          weight,
+        })),
+      }).mstEdges.length === got.length;
+    return {
+      solved:
+        Array.isArray(returned) &&
+        acyclic &&
+        got.length === pure.mstEdges.length &&
+        weightOf(got) === pure.totalWeight,
+      got: Array.isArray(returned)
+        ? `${got.map(formatEdge).join(', ')} = ${valid ? weightOf(got) : '?'}`
+        : 'None',
+      expected: `${pure.mstEdges.length} edges = ${pure.totalWeight}`,
+    };
+  }
+
+  return { solved: false, got: '', expected: '' };
+}
+
+/**
+ * Graph steps from a graph program's events (nodes and edges named as the
+ * program saw them). Edge loops light the edge (then visited, or rejected for
+ * an unselected spanning-tree edge); pushes/pops mirror the stack or queue;
+ * marks put a node on the recursion stack; appends to the answer highlight a
+ * node, a selected edge or a whole component. The final step gives the verdict.
+ *
+ * @param {object[]} events
+ * @param {{ nodes: object[], edges: object[], adjacency: object,
+ *   rootId?: string, goalId?: string, directed?: boolean }} graph
+ * @param {string} algorithmKey
+ * @param {unknown} returned - What the program returned (lists, or null).
+ * @param {string} [functionName]
+ */
+export function buildGraphProgramSteps(
+  events,
+  graph,
+  algorithmKey,
+  returned,
+  functionName = 'graph_algorithm'
+) {
+  const { nodes, edges } = graph;
+  const isSearch = isNodeLinkSearchingAlgorithm(algorithmKey);
+  const directed = isSearch ? false : (graph.directed ?? true);
+  const names = graphNodeNames(nodes);
+  const idByName = Object.fromEntries(
+    Object.entries(names).map(([id, name]) => [name, id])
+  );
+  const idOf = name => idByName[name];
+  const args = graphToArgs(graph, algorithmKey);
+
+  const edgeIdOf = (from, to) => {
+    const a = idOf(from);
+    const b = idOf(to);
+    const found =
+      edges.find(e => e.from === a && e.to === b) ??
+      // Undirected edges and Kosaraju's transpose walk an edge backwards.
+      edges.find(e => e.from === b && e.to === a);
+    return found ? (found.id ?? `${found.from}->${found.to}`) : null;
+  };
+
+  const edgeStates = {};
+  const done = new Set();
+  const frontier = new Set();
+  const answer = new Set();
+  const stack = [];
+  const recursion = [];
+  const outputOrder = [];
+  const selected = [];
+  const components = [];
+  const stores = {};
+  const markSets = new Set();
+  let pending = null;
+
+  const nodeStates = current => {
+    const states = {};
+    for (const node of nodes) {
+      let state = GRAPH_NODE_STATES.DEFAULT;
+      if (done.has(node.id)) state = GRAPH_NODE_STATES.VISITED;
+      if (frontier.has(node.id)) state = GRAPH_NODE_STATES.FRONTIER;
+      if (answer.has(node.id)) state = GRAPH_NODE_STATES.PATH;
+      if (node.id === current) state = GRAPH_NODE_STATES.CURRENT;
+      states[node.id] = state;
+    }
+    if (isSearch) {
+      states[graph.rootId] = GRAPH_NODE_STATES.ROOT;
+      states[graph.goalId] = GRAPH_NODE_STATES.GOAL;
+    }
+    return states;
+  };
+  const badgeText = (key, params) =>
+    i18n.t(`visualization.${key}`, {
+      ...params,
+      defaultValue: Object.values(params).join(' '),
+    });
+  const valuesOf = name => stores[name] ?? {};
+  const badges = () => {
+    const list = [];
+    if (algorithmKey === 'kosarajuAlgorithm') {
+      // Pass 2 marks nodes in a second set (assigned) on the transpose.
+      list.push({
+        id: 'pass',
+        text: badgeText('passBadge', {
+          pass: String(Math.max(1, markSets.size)),
+        }),
+      });
+    }
+    const waiting = stack.length ? stack : recursion;
+    if (waiting.length) {
+      let key = 'recursionStackBadge';
+      if (stack.length)
+        key = algorithmKey === 'kahnAlgorithm' ? 'queueBadge' : 'sccStackBadge';
+      list.push({
+        id: 'stack',
+        text: badgeText(key, {
+          order: joinNames(
+            waiting.map(id => names[id]),
+            ' → '
+          ),
+        }),
+      });
+    }
+    const inDegree = valuesOf('in_degree');
+    if (algorithmKey === 'kahnAlgorithm' && Object.keys(inDegree).length) {
+      list.push({
+        id: 'inDegree',
+        text: badgeText('inDegreeBadge', {
+          pairs: Object.entries(inDegree)
+            .map(([key, value]) => `${key}:${value}`)
+            .join(', '),
+        }),
+      });
+    }
+    const index = valuesOf('index');
+    const low = valuesOf('low');
+    if (algorithmKey === 'tarjanAlgorithm' && Object.keys(index).length) {
+      list.push({
+        id: 'lowLink',
+        text: badgeText('lowLinkBadge', {
+          pairs: Object.entries(index)
+            .map(([key, value]) => `${key}:${value}/${low[key] ?? value}`)
+            .join(', '),
+        }),
+      });
+    }
+    if (outputOrder.length) {
+      list.push({
+        id: 'order',
+        text: badgeText(
+          algorithmKey === 'kosarajuAlgorithm'
+            ? 'finishStackBadge'
+            : 'topologicalOrderBadge',
+          {
+            order: joinNames(
+              outputOrder.map(id => names[id]),
+              ' → '
+            ),
+          }
+        ),
+      });
+    }
+    if (selected.length) {
+      list.push({
+        id: 'weight',
+        text: badgeText('totalWeightBadge', {
+          weight: selected.reduce((sum, e) => sum + (e[2] ?? 0), 0),
+        }),
+      });
+    }
+    if (components.length) {
+      list.push({
+        id: 'sccs',
+        text: badgeText('sccListBadge', {
+          components: formatComponents(components),
+        }),
+      });
+    }
+    return list;
+  };
+
+  const step = (description, blockId = null, current = null) => ({
+    ...makeNodeLinkStep({
+      nodes,
+      edges,
+      nodeStates: nodeStates(current),
+      edgeStates,
+      stackOrder: isSearch ? stack.map(id => names[id]) : [],
+      outputOrder: [],
+      description,
+      graphArtifacts: { badges: badges() },
+      directed,
+      weighted: Boolean(graph.weighted),
+    }),
+    ...(isSearch && { goalNodeId: graph.goalId }),
+    blockId,
+  });
+  const describe = (key, params) => getAlgorithmDescription(key, params);
+
+  const steps = [
+    step(
+      describe(ALGORITHM_STEPS.STARTING, {
+        algorithm: functionName,
+      })
+    ),
+  ];
+
+  /** A lit edge settles once the next event comes. */
+  const settle = () => {
+    if (pending && edgeStates[pending.id] === GRAPH_EDGE_STATES.ACTIVE) {
+      edgeStates[pending.id] = pending.to;
+    }
+    pending = null;
+  };
+  const lightEdge = (from, to, settleTo) => {
+    const id = edgeIdOf(from, to);
+    if (id && edgeStates[id] !== GRAPH_EDGE_STATES.SELECTED) {
+      edgeStates[id] = GRAPH_EDGE_STATES.ACTIVE;
+      if (settleTo) pending = { id, to: settleTo };
+    }
+  };
+  const rejected = MST_ALGORITHMS.has(algorithmKey)
+    ? GRAPH_EDGE_STATES.CYCLE
+    : GRAPH_EDGE_STATES.VISITED;
+  const describeItem = item =>
+    Array.isArray(item) ? formatEdge(item) : String(item);
+
+  for (const event of events) {
+    const { kind, blockId } = event;
+    if (kind === 'store') {
+      // Values only feed the badges; the next step shows them.
+      (stores[event.name] ??= {})[event.key] = event.value;
+      continue;
+    }
+    settle();
+    switch (kind) {
+      case 'edge': {
+        lightEdge(event.from, event.to, rejected);
+        steps.push(
+          step(
+            describe(ALGORITHM_STEPS.BLOCKS_GRAPH_EDGE, {
+              from: event.from,
+              to: event.to,
+            }),
+            blockId
+          )
+        );
+        break;
+      }
+      case 'open':
+      case 'visit':
+      case 'leave': {
+        const { cell } = event;
+        if (Array.isArray(cell)) {
+          // Prim's heap holds edges: pushed edges stay lit until popped.
+          lightEdge(cell[0], cell[1], kind === 'open' ? null : rejected);
+        } else {
+          const id = idOf(cell);
+          if (id === undefined) continue;
+          if (kind === 'open') {
+            stack.push(id);
+            frontier.add(id);
+          } else {
+            const at =
+              kind === 'visit' ? stack.indexOf(id) : stack.lastIndexOf(id);
+            if (at !== -1) stack.splice(at, 1);
+            frontier.delete(id);
+          }
+        }
+        steps.push(
+          step(
+            describe(
+              kind === 'open'
+                ? ALGORITHM_STEPS.BLOCKS_GRAPH_PUSH
+                : ALGORITHM_STEPS.BLOCKS_GRAPH_POP,
+              { item: describeItem(cell) }
+            ),
+            blockId,
+            Array.isArray(cell) || kind === 'open' ? null : idOf(cell)
+          )
+        );
+        if (!Array.isArray(cell) && kind !== 'open') done.add(idOf(cell));
+        break;
+      }
+      case 'mark': {
+        const id = idOf(event.node);
+        if (id === undefined) continue;
+        if (event.set) markSets.add(event.set);
+        recursion.push(id);
+        frontier.add(id);
+        answer.delete(id);
+        steps.push(
+          step(
+            describe(ALGORITHM_STEPS.BLOCKS_GRAPH_MARK, { node: event.node }),
+            blockId,
+            id
+          )
+        );
+        break;
+      }
+      case 'output': {
+        const item = event.node;
+        let description;
+        if (Array.isArray(item) && MST_ALGORITHMS.has(algorithmKey)) {
+          const id = edgeIdOf(item[0], item[1]);
+          if (id) edgeStates[id] = GRAPH_EDGE_STATES.SELECTED;
+          for (const end of [item[0], item[1]]) {
+            const nodeId = idOf(end);
+            if (nodeId !== undefined) answer.add(nodeId);
+          }
+          selected.push(item);
+          description = describe(ALGORITHM_STEPS.PRIM_SELECT_EDGE, {
+            from: item[0],
+            to: item[1],
+            weight: item[2],
+            totalWeight: selected.reduce((sum, e) => sum + (e[2] ?? 0), 0),
+          });
+        } else if (Array.isArray(item)) {
+          components.push(item);
+          for (const member of item) {
+            const id = idOf(member);
+            if (id === undefined) continue;
+            answer.add(id);
+            frontier.delete(id);
+            done.add(id);
+            const at = recursion.indexOf(id);
+            if (at !== -1) recursion.splice(at, 1);
+          }
+          description = describe(ALGORITHM_STEPS.BLOCKS_GRAPH_COMPONENT, {
+            component: joinNames(item),
+          });
+        } else {
+          const id = idOf(item);
+          if (id === undefined) continue;
+          outputOrder.push(id);
+          answer.add(id);
+          frontier.delete(id);
+          done.add(id);
+          const at = recursion.lastIndexOf(id);
+          if (at !== -1) recursion.splice(at, 1);
+          description = describe(ALGORITHM_STEPS.BLOCKS_GRAPH_OUTPUT, {
+            node: item,
+          });
+        }
+        steps.push(step(description, blockId));
+        break;
+      }
+      default:
+        break;
+    }
+  }
+  settle();
+
+  const verdict = judgeGraphAnswer(graph, algorithmKey, args, returned, names);
+  stack.length = 0;
+  recursion.length = 0;
+  frontier.clear();
+  let description;
+  if (verdict.solved && isSearch) {
+    answer.clear();
+    for (const name of returned) {
+      const id = idOf(name);
+      if (id !== undefined) answer.add(id);
+    }
+    description =
+      verdict.shortest && verdict.length > verdict.shortest
+        ? describe(ALGORITHM_STEPS.BLOCKS_GRAPH_PATH_LONGER, {
+            length: verdict.length,
+            shortest: verdict.shortest,
+          })
+        : describe(ALGORITHM_STEPS.PATH_FOUND_GRAPH, {
+            length: verdict.length,
+          });
+  } else if (verdict.solved) {
+    description =
+      returned === null
+        ? describe(ALGORITHM_STEPS.BLOCKS_GRAPH_NO_ORDER)
+        : describe(ALGORITHM_STEPS.BLOCKS_GRAPH_COMPLETE, {
+            answer: verdict.got,
+          });
+  } else {
+    description = describe(ALGORITHM_STEPS.BLOCKS_GRAPH_WRONG, {
+      got: verdict.got,
+      expected: verdict.expected,
+    });
+  }
+  steps.push(step(description));
+
+  return { steps, ...verdict };
+}
+
+/**
+ * Floyd-Warshall table steps from a matrix program's events. Each write is
+ * a step; a write right after reading `dist[i][k]` and `dist[k][j]` is shown
+ * as an improvement through `k` (those cells considering, `k` current).
+ * Solved when the returned matrix equals the expected distances.
+ *
+ * @param {object[]} events
+ * @param {{ nodes: object[], edges: object[] }} graph
+ * @param {Array<Array<number|null>>|null} returned - `None` is infinity.
+ * @param {string} [functionName]
+ */
+export function buildMatrixProgramSteps(
+  events,
+  graph,
+  returned,
+  functionName = 'floyd_warshall'
+) {
+  const ids = sortNodeIds(graph.nodes.map(node => node.id));
+  const names = graphNodeNames(graph.nodes);
+  const labels = Object.fromEntries(ids.map(id => [id, names[id]]));
+  const size = ids.length;
+  const blank = () =>
+    Array.from({ length: size }, () => Array(size).fill('default'));
+  const distances = Array.from({ length: size }, () =>
+    Array(size).fill(Infinity)
+  );
+  const step = (
+    description,
+    cellStates = blank(),
+    extra = {},
+    blockId = null
+  ) => ({
+    ...makeFloydMatrixStep({
+      ids,
+      labels,
+      distances,
+      cellStates,
+      description,
+      ...extra,
+    }),
+    blockId,
+  });
+
+  const steps = [
+    step(
+      getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
+        algorithm: functionName,
+      })
+    ),
+  ];
+  let reads = [];
+  for (const { kind, i, j, value, blockId } of events) {
+    if (kind === 'read') {
+      reads.push([i, j]);
+      continue;
+    }
+    if (kind !== 'write' || distances[i]?.[j] === undefined) continue;
+    distances[i][j] = value ?? Infinity;
+    const cellStates = blank();
+    cellStates[i][j] = 'updated';
+    const [ik, kj] = reads.slice(-2);
+    const via =
+      ik && kj && ik[0] === i && kj[1] === j && ik[1] === kj[0] ? ik[1] : null;
+    let description;
+    if (via !== null) {
+      cellStates[via][via] = 'current';
+      cellStates[i][via] = 'considering';
+      cellStates[via][j] = 'considering';
+      cellStates[i][j] = 'updated';
+      description = getAlgorithmDescription(
+        ALGORITHM_STEPS.FLOYD_WARSHALL_UPDATE,
+        {
+          from: labels[ids[i]],
+          to: labels[ids[j]],
+          via: labels[ids[via]],
+          distance: value,
+        }
+      );
+    } else {
+      description = getAlgorithmDescription(
+        ALGORITHM_STEPS.BLOCKS_MATRIX_WRITE,
+        {
+          from: labels[ids[i]],
+          to: labels[ids[j]],
+          value: value ?? '∞',
+        }
+      );
+    }
+    steps.push(
+      step(
+        description,
+        cellStates,
+        via !== null ? { intermediateId: ids[via] } : {},
+        blockId
+      )
+    );
+    reads = [];
+  }
+
+  const pure = pureGraphAlgorithms.floydWarshallAlgorithm(graph);
+  const got = Array.isArray(returned) ? returned : [];
+  const solved =
+    got.length === size &&
+    got.every(
+      (row, r) =>
+        Array.isArray(row) &&
+        row.length === size &&
+        row.every((cell, c) => (cell ?? Infinity) === pure.distances[r][c])
+    );
+  const show = matrix =>
+    matrix
+      .map(
+        row =>
+          `[${row.map(x => (x == null || x === Infinity ? '∞' : x)).join(', ')}]`
+      )
+      .join(' ');
+  let description;
+  if (!solved) {
+    description = getAlgorithmDescription(ALGORITHM_STEPS.BLOCKS_GRAPH_WRONG, {
+      got: Array.isArray(returned) ? show(got) : 'None',
+      expected: show(pure.distances),
+    });
+  } else if (pure.hasNegativeCycle) {
+    description = getAlgorithmDescription(
+      ALGORITHM_STEPS.FLOYD_WARSHALL_NEGATIVE_CYCLE,
+      {
+        nodes: ids
+          .filter((_, k) => pure.distances[k][k] < 0)
+          .map(id => labels[id])
+          .join(', '),
+      }
+    );
+  } else {
+    description = getAlgorithmDescription(
+      ALGORITHM_STEPS.FLOYD_WARSHALL_FINISH
+    );
+  }
+  steps.push(
+    step(description, blank(), {
+      hasNegativeCycle: solved && pure.hasNegativeCycle,
+    })
+  );
+
+  return {
+    steps,
+    solved,
+    got: Array.isArray(returned) ? show(got) : 'None',
+    expected: show(pure.distances),
   };
 }

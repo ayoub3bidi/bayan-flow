@@ -12,12 +12,14 @@ import { SORTING_STARTERS } from './sorting.js';
 import { SEARCHING_STARTERS } from './searching.js';
 import { PATHFINDING_STARTERS } from './pathfinding.js';
 import { TREE_STARTERS } from './tree.js';
+import { GRAPH_STARTERS } from './graph.js';
 
 const HAT_TYPES = new Set([
   'bf_define_sort',
   'bf_define_search',
   'bf_define_path',
   'bf_define_tree',
+  'bf_define_graph',
   'bf_define_helper',
 ]);
 
@@ -27,6 +29,8 @@ function entryKey(block) {
     case 'variables_get':
     case 'variables_set':
       return `${block.type}:${block.fields.VAR.id}`;
+    case 'bf_for_neighbor':
+      return `${block.type}:${block.fields.ORDER}`;
     case 'bf_call':
     case 'bf_call_value':
       return `${block.type}:${block.fields.NAME}`;
@@ -75,6 +79,7 @@ const STARTERS = Object.fromEntries(
     ...SEARCHING_STARTERS,
     ...PATHFINDING_STARTERS,
     ...TREE_STARTERS,
+    ...GRAPH_STARTERS,
   }).map(([key, workspace]) => [
     key,
     { workspace, toolbox: toolboxFor(workspace) },
