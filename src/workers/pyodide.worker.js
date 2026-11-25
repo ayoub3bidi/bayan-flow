@@ -21,8 +21,8 @@ let tracerLoaded = false;
 async function executeRunViz({
   code,
   functionName,
-  input,
-  target,
+  args,
+  kind,
   tracer,
   maxEvents,
   maxTicks,
@@ -34,13 +34,11 @@ async function executeRunViz({
     }
     const run = pyodide.globals.get('__bf_run');
     try {
-      // `undefined` reaches Python as None (sorts take no target).
-      const targetJson = target == null ? undefined : JSON.stringify(target);
       const json = run(
         code,
         functionName,
-        JSON.stringify(input ?? []),
-        targetJson,
+        JSON.stringify(args ?? []),
+        kind,
         maxEvents,
         maxTicks
       );
@@ -190,8 +188,8 @@ self.onmessage = async e => {
     const payload = {
       code: e.data?.code,
       functionName: e.data?.functionName,
-      input: e.data?.input,
-      target: e.data?.target,
+      args: e.data?.args,
+      kind: e.data?.kind,
       tracer: e.data?.tracer,
       maxEvents: e.data?.maxEvents,
       maxTicks: e.data?.maxTicks,

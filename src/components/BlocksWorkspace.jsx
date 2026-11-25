@@ -100,9 +100,11 @@ function frameProgram(workspace) {
   const hat =
     workspace.getBlockById('bf_hat') ?? workspace.getTopBlocks(true)[0];
   if (!hat) return;
-  const { top, left } = hat.getBoundingRectangle();
+  // The hat's label sits at its start edge: the right one in RTL.
+  const { top, left, right } = hat.getBoundingRectangle();
+  const start = workspace.RTL ? right - 40 : left;
   workspace.scrollBoundsIntoView(
-    new Blockly.utils.Rect(top, top + 40, left, left + 40)
+    new Blockly.utils.Rect(top, top + 40, start, start + 40)
   );
 }
 

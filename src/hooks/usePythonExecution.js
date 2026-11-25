@@ -218,14 +218,14 @@ export function usePythonExecution() {
   const warmUp = useCallback(() => ensureWorker(), [ensureWorker]);
 
   /**
-   * Runs a block program's executed code on `input` and records its steps.
+   * Runs a block program's executed code on `args` and records its steps.
    * The result lands in `vizResult`.
    * @param {string} code
-   * @param {number[]} input
-   * @param {{ functionName: string, target?: number|null }} options
+   * @param {unknown[]} args - `[arr]`, `[arr, target]` or `[grid, start, end]`
+   * @param {{ functionName: string, kind: 'sort'|'search'|'path' }} options
    */
   const runVisualization = useCallback(
-    (code, input, { functionName, target = null }) => {
+    (code, args, { functionName, kind }) => {
       setOutput('');
       setError(null);
       setVizResult(null);
@@ -238,8 +238,8 @@ export function usePythonExecution() {
         type: 'run-viz',
         code,
         functionName,
-        input,
-        target,
+        args,
+        kind,
         tracer: BLOCKS_TRACER_PY,
         maxEvents: BLOCKS_MAX_EVENTS,
         maxTicks: BLOCKS_MAX_TICKS,

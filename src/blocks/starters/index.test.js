@@ -27,12 +27,18 @@ const NODE_LINK_SEARCHES = new Set([
   SEARCHING_ALGORITHMS.DEPTH_FIRST_SEARCH,
   SEARCHING_ALGORITHMS.BREADTH_FIRST_SEARCH_GRAPH,
 ]);
+const PATHFINDING = Object.values(PATHFINDING_ALGORITHMS);
 const SUPPORTED = [
   ...Object.values(SORTING_ALGORITHMS),
   ...Object.values(SEARCHING_ALGORITHMS).filter(
     key => !NODE_LINK_SEARCHES.has(key)
   ),
+  ...PATHFINDING,
 ];
+const kindOf = key => {
+  if (PATHFINDING.includes(key)) return 'path';
+  return Object.values(SEARCHING_ALGORITHMS).includes(key) ? 'search' : 'sort';
+};
 
 describe('blocks starters', () => {
   beforeAll(() => {
@@ -40,12 +46,11 @@ describe('blocks starters', () => {
     registerBlocks();
   });
 
-  it('covers every sorting algorithm and array search, and nothing else', () => {
-    expect(SUPPORTED).toHaveLength(21);
+  it('covers every sort, array search and pathfinding algorithm, and nothing else', () => {
+    expect(SUPPORTED).toHaveLength(30);
     for (const key of SUPPORTED) expect(getBlocksStarter(key)).not.toBeNull();
     const comingSoon = [
       ...NODE_LINK_SEARCHES,
-      ...Object.values(PATHFINDING_ALGORITHMS),
       ...Object.values(TREE_TRAVERSAL_ALGORITHMS),
       ...Object.values(GRAPH_ALGORITHMS),
     ];
@@ -60,11 +65,16 @@ describe('blocks starters', () => {
       workspace
     );
     const program = generateProgram(workspace);
-    const isSearch = Object.values(SEARCHING_ALGORITHMS).includes(key);
-    expect(program.kind).toBe(isSearch ? 'search' : 'sort');
+    const kind = kindOf(key);
+    expect(program.kind).toBe(kind);
     expect(program.functionName).toMatch(/^[a-z_]+$/);
     // No empty slots: no `pass` bodies and no unnamed/missing variables.
-    expect(program.displayCode).not.toMatch(/\bpass\b|\bNone\b|\bunnamed/);
+    // Path programs use None on purpose (parent links, "no jump point").
+    expect(program.displayCode).not.toMatch(
+      kind === 'path'
+        ? /\bpass\b|\bunnamed|\w2\b/
+        : /\bpass\b|\bNone\b|\bunnamed/
+    );
     // Every block id is reachable from the line map or a statement owner.
     for (const block of workspace.getAllBlocks(false)) {
       expect(program.statementIds[block.id]).toBeDefined();

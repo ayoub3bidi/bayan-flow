@@ -234,6 +234,9 @@ vi.mock('../algorithms/python', () => ({
     if (algorithm === 'bogoSort') {
       return 'def bogo_sort(arr):\n    return arr';
     }
+    if (algorithm === 'bfs') {
+      return 'def bfs(grid, start, end):\n    return []';
+    }
     return null;
   }),
   getAlgorithmDisplayName: vi.fn(algorithm => {
@@ -1007,8 +1010,8 @@ describe('PythonCodePanel - Blocks tab', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Run' }));
     expect(runVisualization).toHaveBeenCalledWith(
       FAKE_PROGRAM.execCode,
-      [3, 1, 2],
-      { functionName: 'bubble_sort', target: null }
+      [[3, 1, 2]],
+      { functionName: 'bubble_sort', kind: 'sort' }
     );
     // The real hook re-renders when its state updates; any re-render will do.
     fireEvent.click(
@@ -1104,8 +1107,8 @@ describe('PythonCodePanel - Blocks tab', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Run' }));
     expect(runVisualization).toHaveBeenCalledWith(
       searchProgram.execCode,
-      [1, 5, 9],
-      { functionName: 'linear_search', target: 5 }
+      [[1, 5, 9], 5],
+      { functionName: 'linear_search', kind: 'search' }
     );
     fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
 
@@ -1115,6 +1118,107 @@ describe('PythonCodePanel - Blocks tab', () => {
     expect(steps.at(-1).states).toEqual(['default', 'sorted', 'default']);
     expect(screen.getByTestId('output-content')).toHaveTextContent(
       'Your program found 5 at index 1'
+    );
+  });
+
+  it('runs a path program on the grid and draws the returned path', async () => {
+    const pathProgram = { ...FAKE_PROGRAM, kind: 'path', functionName: 'bfs' };
+    const vizResult = {
+      events: [
+        { kind: 'visit', cell: [0, 0], blockId: 'p' },
+        { kind: 'open', cell: [0, 1], blockId: 'q' },
+      ],
+      finalArray: [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ],
+      result: null,
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = vizResult;
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    mockProgramRef.current = pathProgram;
+    const grid = [[0, 0, 0]];
+    await openBlocks({
+      algorithm: 'bfs',
+      currentGrid: {
+        grid,
+        start: { row: 0, col: 0 },
+        end: { row: 0, col: 2 },
+      },
+      onProgramSteps,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      pathProgram.execCode,
+      [grid, [0, 0], [0, 2]],
+      { functionName: 'bfs', kind: 'path' }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[2]).toMatchObject({ blockId: 'q' });
+    expect(steps.at(-1).states).toEqual([['start', 'path', 'end']]);
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'Your program found a path of 3 cells'
+    );
+  });
+
+  it('warns when a valid path is not the shortest', async () => {
+    const vizResult = {
+      events: [],
+      // Down and back up before heading right: valid, 2 cells too long.
+      finalArray: [
+        [0, 0],
+        [1, 0],
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ],
+      result: null,
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = vizResult;
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    mockProgramRef.current = {
+      ...FAKE_PROGRAM,
+      kind: 'path',
+      functionName: 'bfs',
+    };
+    await openBlocks({
+      algorithm: 'bfs',
+      currentGrid: {
+        grid: [
+          [0, 0, 0],
+          [0, 0, 0],
+        ],
+        start: { row: 0, col: 0 },
+        end: { row: 0, col: 2 },
+      },
+      onProgramSteps: vi.fn(),
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+    await waitFor(() =>
+      expect(screen.getByTestId('output-content')).toHaveTextContent(
+        'valid path of 5 cells'
+      )
+    );
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'the shortest path has 3 cells'
     );
   });
 

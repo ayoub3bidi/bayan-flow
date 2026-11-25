@@ -236,6 +236,12 @@ function App() {
     speed,
     mode
   );
+  // The grid, start and end a pathfinding block program runs on.
+  const pathfindingGrid = {
+    grid: pathfindingVisualization.grid,
+    start: pathfindingVisualization.start,
+    end: pathfindingVisualization.end,
+  };
   const searchingVisualization = useSearchingVisualization(
     selectedAlgorithms[ALGORITHM_TYPES.SEARCHING],
     array,
@@ -511,7 +517,7 @@ function App() {
     visualization.play();
   };
 
-  /** Load a learner's block program into the active (sorting/searching) visualizer. */
+  /** Load a learner's block program into the active category's visualizer. */
   const pendingProgramAutoplayRef = useRef(false);
   const handleProgramSteps = steps => {
     pendingProgramAutoplayRef.current = mode === VISUALIZATION_MODES.AUTOPLAY;
@@ -1107,6 +1113,7 @@ function App() {
             algorithm={activeAlgorithmKey}
             currentArray={array}
             currentTarget={searchingVisualization.targetValue}
+            currentGrid={pathfindingGrid}
             activeBlockId={activeBlockId}
             onProgramSteps={handleProgramSteps}
             onDockChange={setCodePanelDockWidth}

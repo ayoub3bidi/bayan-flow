@@ -5,16 +5,18 @@
  *
  * Python source of the `__bf` tracer that block programs call in their
  * executed form (see src/blocks/generators.js). It records compare, swap,
- * read, write, shuffle and sorted-check events on `arr` with the block id that
- * produced them, and stops runaway loops.
- * `__bf_run` calls `fn_name(arr)` for sorts or `fn_name(arr, target)` for
- * searches (when a target is given).
+ * read, write, shuffle and sorted-check events on `arr`, and open / visit /
+ * leave events on grid cells, with the block id that produced them, and stops
+ * runaway loops.
+ * `__bf_run` calls `fn_name(*args)`: `[arr]` for sorts, `[arr, target]` for
+ * searches, `[grid, start, end]` for paths (start/end become tuples).
  */
 
 export const BLOCKS_MAX_EVENTS = 25_000;
 export const BLOCKS_MAX_TICKS = 1_000_000;
 
 export const BLOCKS_TRACER_PY = `
+import heapq
 import json
 import random
 
@@ -82,23 +84,58 @@ class _BF:
         arr[i], arr[j] = arr[j], arr[i]
         self._record("swap", arr, i, j, block_id)
 
+    def _record_cell(self, kind, cell, block_id):
+        if len(self.events) >= self.max_events:
+            raise BFLimit()
+        self.events.append({"kind": kind, "cell": list(cell), "blockId": block_id})
+
+    def push(self, lst, cell, block_id):
+        lst.append(cell)
+        self._record_cell("open", cell, block_id)
+
+    def push_priority(self, lst, priority, cell, block_id):
+        heapq.heappush(lst, (priority, cell))
+        self._record_cell("open", cell, block_id)
+
+    def pop(self, lst, block_id):
+        cell = lst.pop(0)
+        self._record_cell("visit", cell, block_id)
+        return cell
+
+    def pop_min(self, lst, block_id):
+        cell = heapq.heappop(lst)[1]
+        self._record_cell("visit", cell, block_id)
+        return cell
+
+    def pop_last(self, lst, block_id):
+        cell = lst.pop()
+        self._record_cell("leave", cell, block_id)
+        return cell
+
+    def relax(self, costs, cell, value, block_id):
+        costs[cell] = value
+        self._record_cell("open", cell, block_id)
+
     def tick(self):
         self.ticks += 1
         if self.ticks > self.max_ticks:
             raise BFLimit()
 
-def __bf_run(code, fn_name, input_json, target_json, max_events, max_ticks):
+def __bf_run(code, fn_name, args_json, kind, max_events, max_ticks):
     tracer = _BF(max_events, max_ticks)
     scope = {"__bf": tracer, "__name__": "__bayan_blocks__"}
     try:
         exec(code, scope)
-        args = [list(json.loads(input_json))]
-        if target_json is not None:
-            args.append(json.loads(target_json))
+        args = json.loads(args_json)
+        if kind == "path":
+            args[1], args[2] = tuple(args[1]), tuple(args[2])
         returned = scope[fn_name](*args)
+        if kind == "path" and returned is None:
+            returned = []
         is_index = isinstance(returned, int) and not isinstance(returned, bool)
         return json.dumps({
             "events": tracer.events,
+            # A path's (row, col) tuples serialize as [row, col] lists.
             "finalArray": list(returned) if isinstance(returned, list) else None,
             "result": returned if is_index else None,
         })

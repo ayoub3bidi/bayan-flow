@@ -262,7 +262,7 @@ describe('usePythonExecution', () => {
   });
 
   describe('block programs (runVisualization)', () => {
-    const OPTS = { functionName: 'bubble_sort' };
+    const OPTS = { functionName: 'bubble_sort', kind: 'sort' };
 
     it('posts run-viz with the tracer and caps, and warmUp only inits', () => {
       const { result } = renderHook(() => usePythonExecution());
@@ -274,9 +274,9 @@ describe('usePythonExecution', () => {
       );
 
       act(() =>
-        result.current.runVisualization('code', [3, 1], {
+        result.current.runVisualization('code', [[3, 1], 3], {
           functionName: 'binary_search',
-          target: 3,
+          kind: 'search',
         })
       );
       expect(Worker).toHaveBeenCalledTimes(1);
@@ -284,8 +284,8 @@ describe('usePythonExecution', () => {
         type: 'run-viz',
         code: 'code',
         functionName: 'binary_search',
-        input: [3, 1],
-        target: 3,
+        args: [[3, 1], 3],
+        kind: 'search',
         tracer: expect.stringContaining('def __bf_run'),
         maxEvents: 25_000,
         maxTicks: 1_000_000,

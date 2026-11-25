@@ -8,6 +8,9 @@ import { describe, it, expect } from 'vitest';
 import {
   buildProgramSteps,
   buildSearchProgramSteps,
+  buildPathProgramSteps,
+  isValidGridPath,
+  shortestPathLength,
   isSortedAscending,
 } from './programSteps.js';
 
@@ -192,5 +195,127 @@ describe('buildSearchProgramSteps', () => {
     );
     expect(solved).toBe(false);
     expect(steps.at(-1).states).toEqual(Array(4).fill('default'));
+  });
+});
+
+describe('buildPathProgramSteps', () => {
+  const GRID = [
+    [0, 0, 0],
+    [0, 1, 0],
+  ];
+  const START = { row: 0, col: 0 };
+  const END = { row: 1, col: 2 };
+  const PATH = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [1, 2],
+  ];
+  const EVENTS = [
+    { kind: 'visit', cell: [0, 0], blockId: 'pop' },
+    { kind: 'open', cell: [0, 1], blockId: 'push' },
+    { kind: 'open', cell: [1, 0], blockId: 'push' },
+    { kind: 'visit', cell: [0, 1], blockId: 'pop' },
+    { kind: 'leave', cell: [1, 0], blockId: 'back' },
+  ];
+
+  it('marks frontier and explored cells, never over start or end', () => {
+    const { steps, solved } = buildPathProgramSteps(
+      EVENTS,
+      GRID,
+      START,
+      END,
+      PATH,
+      'bfs'
+    );
+    expect(solved).toBe(true);
+    expect(steps).toHaveLength(EVENTS.length + 2);
+    expect(steps[0].states).toEqual([
+      ['start', 'default', 'default'],
+      ['default', 'default', 'end'],
+    ]);
+    expect(steps[1].states[0][0]).toBe('start');
+    expect(steps[2]).toMatchObject({ blockId: 'push', grid: GRID });
+    expect(steps[2].states[0][1]).toBe('open');
+    expect(steps[4].states[0][1]).toBe('closed');
+    expect(steps[5].states[1][0]).toBe('closed');
+    expect(steps.at(-1).states).toEqual([
+      ['start', 'path', 'path'],
+      ['closed', 'default', 'end'],
+    ]);
+    expect(steps.at(-1).blockId).toBeNull();
+  });
+
+  it('rejects an empty path and one that skips or leaves the start', () => {
+    expect(buildPathProgramSteps([], GRID, START, END, []).solved).toBe(false);
+    const { steps, solved } = buildPathProgramSteps([], GRID, START, END, [
+      [0, 0],
+      [1, 2],
+    ]);
+    expect(solved).toBe(false);
+    expect(steps.at(-1).states[0][1]).toBe('default');
+  });
+
+  it('passes a longer valid path but says it is not the shortest', () => {
+    const detour = [
+      [0, 0],
+      [1, 0],
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [1, 2],
+    ];
+    const { steps, solved, shortest } = buildPathProgramSteps(
+      [],
+      GRID,
+      START,
+      END,
+      detour
+    );
+    expect(solved).toBe(true);
+    expect(shortest).toBe(4);
+    expect(steps.at(-1).description).toBe(
+      'Path found: 6 cells, but the shortest path has 4. Valid, just not the shortest.'
+    );
+    const best = buildPathProgramSteps([], GRID, START, END, PATH);
+    expect(best.steps.at(-1).description).toBe('Path found! Length: 4 cells');
+  });
+
+  it('measures the shortest path around walls, 0 when unreachable', () => {
+    expect(shortestPathLength(GRID, START, END)).toBe(4);
+    expect(
+      shortestPathLength(
+        [
+          [0, 1, 0],
+          [0, 1, 0],
+        ],
+        START,
+        { row: 0, col: 2 }
+      )
+    ).toBe(0);
+  });
+
+  it('validates paths: adjacency, walls, bounds and endpoints', () => {
+    expect(isValidGridPath(PATH, GRID, START, END)).toBe(true);
+    const throughWall = [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [1, 2],
+    ];
+    expect(isValidGridPath(throughWall, GRID, START, END)).toBe(false);
+    expect(isValidGridPath(PATH.slice(1), GRID, START, END)).toBe(false);
+    expect(
+      isValidGridPath(
+        [
+          [0, 0],
+          [0, 3],
+        ],
+        GRID,
+        START,
+        END
+      )
+    ).toBe(false);
+    expect(isValidGridPath(null, GRID, START, END)).toBe(false);
   });
 });

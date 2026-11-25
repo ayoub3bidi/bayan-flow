@@ -34,6 +34,7 @@ import { getBlocksStarter } from '../blocks/starters/index.js';
 import {
   buildProgramSteps,
   buildSearchProgramSteps,
+  buildPathProgramSteps,
 } from '../blocks/programSteps';
 import {
   trackBlocksTabOpened,
@@ -54,6 +55,7 @@ const STORAGE_KEY_OUTPUT_PERCENT = 'python-panel-output-percent';
 const BLOCKS_OUTPUT_KEYS = {
   sort: ['run_sorted', 'run_not_sorted'],
   search: ['run_found', 'run_not_found'],
+  path: ['run_path_found', 'run_path_not_found'],
 };
 /**
  * Drawer width while the Blocks tab docks beside the visualizer. Always leaves
@@ -112,6 +114,9 @@ const clampBlocksPythonPercent = percent =>
  * @param {string} props.algorithm - Current algorithm name
  * @param {number[]} [props.currentArray] - Visualizer input a block program runs on
  * @param {number|null} [props.currentTarget] - Search target a block search runs with
+ * @param {{ grid: number[][], start: {row: number, col: number},
+ *   end: {row: number, col: number} }|null} [props.currentGrid] - Grid a block
+ *   pathfinding program runs on
  * @param {string|null} [props.activeBlockId] - Block behind the playing step
  * @param {(steps: object[]) => void} [props.onProgramSteps] - Play a block program's steps
  * @param {(width: string|null) => void} [props.onDockChange] - Docked drawer width, or null
@@ -122,6 +127,7 @@ function PythonCodePanel({
   algorithm,
   currentArray,
   currentTarget = null,
+  currentGrid = null,
   activeBlockId = null,
   onProgramSteps,
   onDockChange,
@@ -473,22 +479,38 @@ function PythonCodePanel({
 
   const handleRunBlocks = useCallback(() => {
     if (status === 'running' || !program) return;
-    const isSearch = program.kind === 'search';
-    if (isSearch && currentTarget == null) return;
-    const target = isSearch ? currentTarget : null;
+    const { kind } = program;
+    if (kind === 'search' && currentTarget == null) return;
+    if (kind === 'path' && !currentGrid?.start) return;
+    const array = [...(currentArray ?? [])];
+    const target = kind === 'search' ? currentTarget : null;
     runInputRef.current = {
-      kind: program.kind,
+      kind,
       functionName: program.functionName,
-      array: [...(currentArray ?? [])],
+      array,
       target,
+      grid: currentGrid,
     };
+    let args = [array];
+    if (kind === 'search') args = [array, target];
+    if (kind === 'path') {
+      const { grid, start, end } = currentGrid;
+      args = [grid, [start.row, start.col], [end.row, end.col]];
+    }
     setBlocksRun(null);
-    runVisualization(program.execCode, runInputRef.current.array, {
+    runVisualization(program.execCode, args, {
       functionName: program.functionName,
-      target,
+      kind,
     });
     setIsOutputExpanded(true);
-  }, [status, program, currentArray, currentTarget, runVisualization]);
+  }, [
+    status,
+    program,
+    currentArray,
+    currentTarget,
+    currentGrid,
+    runVisualization,
+  ]);
 
   const onProgramStepsRef = useRef(onProgramSteps);
   onProgramStepsRef.current = onProgramSteps;
@@ -505,21 +527,33 @@ function PythonCodePanel({
     const run = runInputRef.current;
     if (!run) return;
     const events = vizResult.events ?? [];
-    const { steps, solved, sorted } =
-      run.kind === 'search'
-        ? buildSearchProgramSteps(
-            events,
-            run.array,
-            run.target,
-            vizResult.result,
-            algorithm
-          )
-        : buildProgramSteps(
-            events,
-            run.array,
-            vizResult.finalArray,
-            run.functionName
-          );
+    let built;
+    if (run.kind === 'search') {
+      built = buildSearchProgramSteps(
+        events,
+        run.array,
+        run.target,
+        vizResult.result,
+        algorithm
+      );
+    } else if (run.kind === 'path') {
+      built = buildPathProgramSteps(
+        events,
+        run.grid.grid,
+        run.grid.start,
+        run.grid.end,
+        vizResult.finalArray,
+        run.functionName
+      );
+    } else {
+      built = buildProgramSteps(
+        events,
+        run.array,
+        vizResult.finalArray,
+        run.functionName
+      );
+    }
+    const { steps, solved, sorted, shortest } = built;
     const isSolved = Boolean(solved ?? sorted);
     setBlocksRun({
       kind: run.kind,
@@ -527,6 +561,8 @@ function PythonCodePanel({
       stepCount: steps.length,
       target: run.target,
       index: vizResult.result,
+      length: vizResult.finalArray?.length ?? 0,
+      shortest,
     });
     trackBlocksProgramRun(algorithm, isSolved);
     onProgramStepsRef.current?.(steps);
@@ -541,17 +577,22 @@ function PythonCodePanel({
   }, [clearOutput]);
 
   // A correct bogo sort usually gives up (1000 shuffles), like its visualization.
-  const blocksOutputKey =
-    blocksRun && !blocksRun.solved && algorithm === 'bogoSort'
-      ? 'run_gave_up'
-      : blocksRun &&
-        BLOCKS_OUTPUT_KEYS[blocksRun.kind]?.[blocksRun.solved ? 0 : 1];
+  let blocksOutputKey =
+    blocksRun && BLOCKS_OUTPUT_KEYS[blocksRun.kind]?.[blocksRun.solved ? 0 : 1];
+  if (blocksRun && !blocksRun.solved && algorithm === 'bogoSort') {
+    blocksOutputKey = 'run_gave_up';
+  } else if (blocksRun?.solved && blocksRun.length > blocksRun.shortest) {
+    // A valid path still passes; say when it isn't a shortest one.
+    blocksOutputKey = 'run_path_longer';
+  }
   const blocksOutput =
     blocksRun && !blocksRun.errorKind
       ? t(`python_code.blocks.${blocksOutputKey}`, {
           count: blocksRun.stepCount,
           target: blocksRun.target,
           index: blocksRun.index,
+          length: blocksRun.length,
+          shortest: blocksRun.shortest,
         })
       : '';
   const blocksError = !blocksRun?.errorKind

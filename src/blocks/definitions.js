@@ -3,7 +3,8 @@
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  *
- * Custom Blockly blocks for the array algorithms (sorts and searches).
+ * Custom Blockly blocks for the array algorithms (sorts and searches) and the
+ * grid pathfinding algorithms.
  * Imported only from the lazy Blocks path, so Blockly stays out of the main bundle.
  */
 
@@ -23,7 +24,8 @@ export const DEFAULT_BLOCK_MESSAGES = {
   BF_COMPARE_TARGET: 'arr[ %1 ] %2 target',
   BF_COMPARE_TARGET_TOOLTIP: 'Compare an element of the array with the target.',
   BF_RETURN_VALUE: 'return %1',
-  BF_RETURN_VALUE_TOOLTIP: 'Stop the function and give back this index.',
+  BF_RETURN_VALUE_TOOLTIP:
+    'Stop the function and give back this value (an index, or a path).',
   BF_FLOORDIV: '%1 // %2',
   BF_FLOORDIV_TOOLTIP: 'Divide and round down to a whole number.',
   BF_FOR_RANGE: 'for %1 in range( %2 , %3 )',
@@ -76,6 +78,67 @@ export const DEFAULT_BLOCK_MESSAGES = {
   BF_SORT_LIST: '%1 .sort()',
   BF_SORT_LIST_TOOLTIP:
     'Sort a small helper list (here: one bucket) with Python’s built-in sort.',
+  BF_DEFINE_PATH: 'define %1',
+  BF_RETURN_NO_PATH: 'return []',
+  BF_DEFINE_PATH_TOOLTIP:
+    'Your pathfinding function. Return the path from start to end as a list of cells; reaching the end returns [] (no path).',
+  BF_START: 'start',
+  BF_START_TOOLTIP: 'The start cell (row, col).',
+  BF_END: 'end',
+  BF_END_TOOLTIP: 'The goal cell (row, col).',
+  BF_NEIGHBORS: 'neighbors of %1',
+  BF_NEIGHBORS_TOOLTIP:
+    'The cells next to this one (up, down, left, right) that are inside the grid and not walls.',
+  BF_WALKABLE: '%1 is walkable',
+  BF_WALKABLE_TOOLTIP: 'True when the cell is inside the grid and not a wall.',
+  BF_MANHATTAN: 'manhattan( %1 , %2 )',
+  BF_MANHATTAN_TOOLTIP:
+    'Grid distance between two cells: rows apart plus columns apart.',
+  BF_CELL: '( %1 , %2 )',
+  BF_CELL_TOOLTIP: 'A cell from its row and column.',
+  BF_ROW: 'row of %1',
+  BF_ROW_TOOLTIP: 'The row of a cell (or of a direction).',
+  BF_COL: 'col of %1',
+  BF_COL_TOOLTIP: 'The column of a cell (or of a direction).',
+  BF_DIRECTIONS: 'up, down, left, right',
+  BF_DIRECTIONS_TOOLTIP: 'The four moves as (row step, column step).',
+  BF_PUSH: '%1 .append( %2 )',
+  BF_PUSH_TOOLTIP: 'Add a cell to the frontier. It turns open on the grid.',
+  BF_PUSH_PRIORITY: 'push %3 into %1 with priority %2',
+  BF_PUSH_PRIORITY_TOOLTIP:
+    'Add a cell to a priority queue. The lowest priority comes out first. It turns open on the grid.',
+  BF_POP: '%1 .pop(0)',
+  BF_POP_TOOLTIP:
+    'Take the oldest cell out of the queue. It is explored on the grid.',
+  BF_POP_MIN: 'pop lowest from %1',
+  BF_POP_MIN_TOOLTIP:
+    'Take the cell with the lowest priority out of the queue. It is explored on the grid.',
+  BF_POP_LAST: '%1 .pop()',
+  BF_POP_LAST_TOOLTIP:
+    'Take the last cell off the path (backtrack). It leaves the path on the grid.',
+  BF_RELAX: '%1 [ %2 ] = %3',
+  BF_RELAX_TOOLTIP:
+    'Record a better cost for a cell. It turns open on the grid.',
+  BF_NEW_DICT: '{}',
+  BF_NEW_DICT_TOOLTIP: 'A new, empty dictionary (cell → value).',
+  BF_DICT_GET_OR: '%1 .get( %2 , %3 )',
+  BF_DICT_GET_OR_TOOLTIP:
+    'The value stored for a key, or the default when there is none.',
+  BF_IN: '%1 %2 %3',
+  BF_IN_TOOLTIP: 'Whether a value is (or is not) in a list or dictionary.',
+  BF_INFINITY: 'infinity',
+  BF_INFINITY_TOOLTIP: 'A number bigger than every other number.',
+  BF_PAIR: '( %1 , %2 )',
+  BF_PAIR_TOOLTIP:
+    'Two values together. Pairs compare by the first value, then the second.',
+  BF_REVERSE: '%1 .reverse()',
+  BF_REVERSE_TOOLTIP: 'Reverse a list in place.',
+  BF_GRID: 'grid',
+  BF_GRID_TOOLTIP: 'The grid: 0 is a free cell, 1 is a wall.',
+  BF_ROWS: 'len(grid)',
+  BF_ROWS_TOOLTIP: 'The number of rows in the grid.',
+  BF_COLS: 'len(grid[0])',
+  BF_COLS_TOOLTIP: 'The number of columns in the grid.',
 };
 
 export const BLOCK_TYPES = {
@@ -108,6 +171,31 @@ export const BLOCK_TYPES = {
   APPEND: 'bf_append',
   LIST_LEN: 'bf_list_len',
   SORT_LIST: 'bf_sort_list',
+  DEFINE_PATH: 'bf_define_path',
+  START: 'bf_start',
+  END: 'bf_end',
+  NEIGHBORS: 'bf_neighbors',
+  WALKABLE: 'bf_walkable',
+  MANHATTAN: 'bf_manhattan',
+  CELL: 'bf_cell',
+  ROW: 'bf_row',
+  COL: 'bf_col',
+  DIRECTIONS: 'bf_directions',
+  PUSH: 'bf_push',
+  PUSH_PRIORITY: 'bf_push_priority',
+  POP: 'bf_pop',
+  POP_MIN: 'bf_pop_min',
+  POP_LAST: 'bf_pop_last',
+  RELAX: 'bf_relax',
+  NEW_DICT: 'bf_new_dict',
+  DICT_GET_OR: 'bf_dict_get_or',
+  IN: 'bf_in',
+  INFINITY: 'bf_infinity',
+  PAIR: 'bf_pair',
+  REVERSE: 'bf_reverse',
+  GRID: 'bf_grid',
+  ROWS: 'bf_rows',
+  COLS: 'bf_cols',
 };
 
 /** Comparison ops shared by `bf_compare` and `bf_compare_target`. */
@@ -237,7 +325,7 @@ const BLOCK_DEFINITIONS = [
   {
     type: BLOCK_TYPES.RETURN_VALUE,
     message0: '%{BKY_BF_RETURN_VALUE}',
-    args0: [{ type: 'input_value', name: 'VALUE', check: 'Number' }],
+    args0: [{ type: 'input_value', name: 'VALUE' }],
     inputsInline: true,
     previousStatement: null,
     style: 'procedure_blocks',
@@ -369,20 +457,171 @@ const BLOCK_DEFINITIONS = [
     'statement',
     'list_blocks'
   ),
+  {
+    type: BLOCK_TYPES.DEFINE_PATH,
+    message0: '%{BKY_BF_DEFINE_PATH}',
+    args0: [
+      {
+        type: 'field_label_serializable',
+        name: 'NAME',
+        text: 'bfs(grid, start, end)',
+      },
+    ],
+    message1: '%1',
+    args1: [{ type: 'input_statement', name: 'STACK' }],
+    message2: '%{BKY_BF_RETURN_NO_PATH}',
+    style: 'procedure_blocks',
+    tooltip: '%{BKY_BF_DEFINE_PATH_TOOLTIP}',
+  },
+  simpleBlock(BLOCK_TYPES.START, 'BF_START', [], null, 'variable_blocks'),
+  simpleBlock(BLOCK_TYPES.END, 'BF_END', [], null, 'variable_blocks'),
+  simpleBlock(
+    BLOCK_TYPES.NEIGHBORS,
+    'BF_NEIGHBORS',
+    [any('CELL')],
+    'Array',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.WALKABLE,
+    'BF_WALKABLE',
+    [any('CELL')],
+    'Boolean',
+    'logic_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.MANHATTAN,
+    'BF_MANHATTAN',
+    [any('A'), any('B')],
+    'Number',
+    'math_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.CELL,
+    'BF_CELL',
+    [num('ROW'), num('COL')],
+    null,
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.ROW,
+    'BF_ROW',
+    [any('CELL')],
+    'Number',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.COL,
+    'BF_COL',
+    [any('CELL')],
+    'Number',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.DIRECTIONS,
+    'BF_DIRECTIONS',
+    [],
+    'Array',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.PUSH,
+    'BF_PUSH',
+    [any('LIST'), any('CELL')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.PUSH_PRIORITY,
+    'BF_PUSH_PRIORITY',
+    [any('LIST'), any('PRIORITY'), any('CELL')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(BLOCK_TYPES.POP, 'BF_POP', [any('LIST')], null, 'list_blocks'),
+  simpleBlock(
+    BLOCK_TYPES.POP_MIN,
+    'BF_POP_MIN',
+    [any('LIST')],
+    null,
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.POP_LAST,
+    'BF_POP_LAST',
+    [any('LIST')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.RELAX,
+    'BF_RELAX',
+    [any('DICT'), any('CELL'), any('VALUE')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(BLOCK_TYPES.NEW_DICT, 'BF_NEW_DICT', [], null, 'list_blocks'),
+  simpleBlock(
+    BLOCK_TYPES.DICT_GET_OR,
+    'BF_DICT_GET_OR',
+    [any('DICT'), any('KEY'), any('DEFAULT')],
+    null,
+    'list_blocks'
+  ),
+  {
+    type: BLOCK_TYPES.IN,
+    message0: '%{BKY_BF_IN}',
+    args0: [
+      any('ITEM'),
+      {
+        type: 'field_dropdown',
+        name: 'OP',
+        options: [
+          ['in', 'IN'],
+          ['not in', 'NOT_IN'],
+        ],
+      },
+      any('COLLECTION'),
+    ],
+    inputsInline: true,
+    output: 'Boolean',
+    style: 'logic_blocks',
+    tooltip: '%{BKY_BF_IN_TOOLTIP}',
+  },
+  simpleBlock(BLOCK_TYPES.INFINITY, 'BF_INFINITY', [], 'Number', 'math_blocks'),
+  simpleBlock(
+    BLOCK_TYPES.PAIR,
+    'BF_PAIR',
+    [any('A'), any('B')],
+    null,
+    'list_blocks'
+  ),
+  simpleBlock(BLOCK_TYPES.GRID, 'BF_GRID', [], null, 'variable_blocks'),
+  simpleBlock(BLOCK_TYPES.ROWS, 'BF_ROWS', [], 'Number', 'list_blocks'),
+  simpleBlock(BLOCK_TYPES.COLS, 'BF_COLS', [], 'Number', 'list_blocks'),
+  simpleBlock(
+    BLOCK_TYPES.REVERSE,
+    'BF_REVERSE',
+    [any('LIST')],
+    'statement',
+    'list_blocks'
+  ),
 ];
 
 /**
  * `name(arr, a, b)` call to a helper. The arity lives in extraState (set by the
  * starter); there is no mutator UI, learners copy calls from the toolbox.
+ * `noArr` (path programs) drops the implicit `arr` first argument.
  * @param {boolean} isValue - value block (`p = partition(...)`) vs statement
  */
 function callBlock(isValue) {
   return {
     init() {
       this.argCount_ = 0;
+      this.noArr_ = false;
       this.appendDummyInput('HEAD')
         .appendField(new Blockly.FieldLabelSerializable('helper'), 'NAME')
-        .appendField('(arr');
+        .appendField('(arr', 'OPEN');
       this.appendDummyInput('TAIL').appendField(')');
       this.setInputsInline(true);
       if (isValue) this.setOutput(true, null);
@@ -394,12 +633,17 @@ function callBlock(isValue) {
       this.setTooltip(Blockly.Msg.BF_CALL_TOOLTIP);
     },
     saveExtraState() {
-      return { args: this.argCount_ };
+      return { args: this.argCount_, ...(this.noArr_ && { noArr: true }) };
     },
     loadExtraState(state) {
+      this.noArr_ = Boolean(state.noArr);
+      this.setFieldValue(this.noArr_ ? '(' : '(arr', 'OPEN');
       this.removeInput('TAIL');
       for (let i = this.argCount_; i < state.args; i++) {
-        this.appendValueInput(`ARG${i}`).appendField(',');
+        // Without arr the first argument needs no leading comma.
+        this.appendValueInput(`ARG${i}`).appendField(
+          this.noArr_ && i === 0 ? '' : ','
+        );
       }
       this.argCount_ = state.args;
       this.appendDummyInput('TAIL').appendField(')');

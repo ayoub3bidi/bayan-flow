@@ -38,6 +38,10 @@ export const ALGORITHM_STEPS = {
   BLOCKS_NOT_SORTED: 'blocksNotSorted',
   BLOCKS_NOT_FOUND: 'blocksNotFound',
   BLOCKS_WRONG_INDEX: 'blocksWrongIndex',
+  BLOCKS_OPEN: 'blocksOpen',
+  BLOCKS_NO_PATH: 'blocksNoPath',
+  BLOCKS_INVALID_PATH: 'blocksInvalidPath',
+  BLOCKS_PATH_LONGER: 'blocksPathLonger',
 
   // Quick Sort
   PIVOT_SELECTED: 'pivotSelected',

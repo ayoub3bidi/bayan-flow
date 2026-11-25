@@ -99,6 +99,58 @@ export const at = (list, i) =>
 export const listLen = list =>
   value('bf_list_len', { inputs: { LIST: toValue(list) } });
 
+// Grid / path values (pathfinding programs).
+export const start = () => value('bf_start');
+export const end = () => value('bf_end');
+export const none = () => value('logic_null');
+export const infinity = () => value('bf_infinity');
+export const grid = () => value('bf_grid');
+export const rows = () => value('bf_rows');
+export const cols = () => value('bf_cols');
+export const directions = () => value('bf_directions');
+export const newDict = () => value('bf_new_dict');
+export const neighbors = cell =>
+  value('bf_neighbors', { inputs: { CELL: toValue(cell) } });
+export const walkable = cell =>
+  value('bf_walkable', { inputs: { CELL: toValue(cell) } });
+export const manhattan = (a, b) =>
+  value('bf_manhattan', { inputs: { A: toValue(a), B: toValue(b) } });
+export const cell = (r, c) =>
+  value('bf_cell', { inputs: { ROW: toValue(r), COL: toValue(c) } });
+export const rowOf = x => value('bf_row', { inputs: { CELL: toValue(x) } });
+export const colOf = x => value('bf_col', { inputs: { CELL: toValue(x) } });
+export const pair = (a, b) =>
+  value('bf_pair', { inputs: { A: toValue(a), B: toValue(b) } });
+/** `[x, ...]` (Blockly's list block). */
+export const list = (...items) =>
+  value('lists_create_with', {
+    extraState: { itemCount: items.length },
+    inputs: Object.fromEntries(items.map((x, i) => [`ADD${i}`, toValue(x)])),
+  });
+/** `queue.pop(0)` (traced visit). */
+export const pop = lst => value('bf_pop', { inputs: { LIST: toValue(lst) } });
+/** `heapq.heappop(lst)[1]` (traced visit). */
+export const popMin = lst =>
+  value('bf_pop_min', { inputs: { LIST: toValue(lst) } });
+export const getOr = (dict, key, fallback) =>
+  value('bf_dict_get_or', {
+    inputs: {
+      DICT: toValue(dict),
+      KEY: toValue(key),
+      DEFAULT: toValue(fallback),
+    },
+  });
+export const isIn = (item, collection) =>
+  value('bf_in', {
+    fields: { OP: 'IN' },
+    inputs: { ITEM: toValue(item), COLLECTION: toValue(collection) },
+  });
+export const notIn = (item, collection) =>
+  value('bf_in', {
+    fields: { OP: 'NOT_IN' },
+    inputs: { ITEM: toValue(item), COLLECTION: toValue(collection) },
+  });
+
 /** A helper call used as a value, e.g. `p = partition(arr, low, high)`. */
 export const callValue = (name, ...args) =>
   value('bf_call_value', callFields(name, args));
@@ -161,6 +213,34 @@ export const sortList = list => ({
   type: 'bf_sort_list',
   inputs: { LIST: toValue(list) },
 });
+/** `queue.append(cell)` (traced open). */
+export const push = (lst, x) => ({
+  type: 'bf_push',
+  inputs: { LIST: toValue(lst), CELL: toValue(x) },
+});
+/** `heapq.heappush(lst, (priority, cell))` (traced open). */
+export const pushPriority = (lst, priority, x) => ({
+  type: 'bf_push_priority',
+  inputs: { LIST: toValue(lst), PRIORITY: toValue(priority), CELL: toValue(x) },
+});
+/** `path.pop()` (traced leave). */
+export const popLast = lst => ({
+  type: 'bf_pop_last',
+  inputs: { LIST: toValue(lst) },
+});
+/** `costs[cell] = x` (traced open). */
+export const relax = (dict, key, x) => ({
+  type: 'bf_relax',
+  inputs: { DICT: toValue(dict), CELL: toValue(key), VALUE: toValue(x) },
+});
+export const reverse = lst => ({
+  type: 'bf_reverse',
+  inputs: { LIST: toValue(lst) },
+});
+export const cont = () => ({
+  type: 'controls_flow_statements',
+  fields: { FLOW: 'CONTINUE' },
+});
 export const ret = x => ({ type: 'bf_return', inputs: { VALUE: toValue(x) } });
 export const brk = () => ({
   type: 'controls_flow_statements',
@@ -197,6 +277,18 @@ export function forRange(name, from, to, statements) {
   };
 }
 
+/** `for name in items: ...` */
+export function forEach(name, items, statements) {
+  return {
+    type: 'controls_forEach',
+    fields: { VAR: { id: varId(name) } },
+    inputs: {
+      LIST: toValue(items),
+      ...(body(statements) && { DO: body(statements) }),
+    },
+  };
+}
+
 export function whileLoop(cond, statements) {
   return {
     type: 'controls_whileUntil',
@@ -214,13 +306,19 @@ export function whileLoop(cond, statements) {
  * A starter workspace: the main function plus optional helpers. Helpers sit
  * below the main function; Python lists them first (see generateProgram).
  *
- * @param {{ variables: string[], kind: 'sort'|'search', signature: string,
+ * @param {{ variables: string[], kind: 'sort'|'search'|'path', signature: string,
  *   main: object[], helpers?: Array<{ signature: string, body: object[] }> }} spec
  */
+const HAT_BY_KIND = {
+  sort: 'bf_define_sort',
+  search: 'bf_define_search',
+  path: 'bf_define_path',
+};
+
 export function program({ variables, kind, signature, main, helpers = [] }) {
   const hats = [
     {
-      type: kind === 'search' ? 'bf_define_search' : 'bf_define_sort',
+      type: HAT_BY_KIND[kind],
       id: 'bf_hat',
       fields: { NAME: signature },
       inputs: { STACK: body(main) },

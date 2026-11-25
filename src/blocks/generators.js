@@ -6,9 +6,10 @@
  * Turns a blocks workspace into two Python programs:
  * - displayCode: clean Python shown to the learner (and used by "Run tests").
  * - execCode: the same program, but every operation on `arr` (compare, swap,
- *   read, write, shuffle, sorted check) calls the `__bf` tracer in the Pyodide
+ *   read, write, shuffle, sorted check) and every frontier/cost operation of a
+ *   path program (push, pop, relax) calls the `__bf` tracer in the Pyodide
  *   worker so each step is recorded with the block that made it. Helper lists
- *   are plain Python: only `arr` is visualized.
+ *   are plain Python: only `arr` (or the grid's cells) is visualized.
  */
 
 import { PythonGenerator, pythonGenerator, Order } from 'blockly/python';
@@ -93,8 +94,79 @@ class BayanPythonGenerator extends PythonGenerator {
     ];
     this.forBlock[BLOCK_TYPES.SORT_LIST] = (block, generator) =>
       `${listOf(block, generator)}.sort()\n`;
+    this.forBlock[BLOCK_TYPES.DEFINE_PATH] = definePath;
+    this.forBlock[BLOCK_TYPES.START] = () => ['start', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.END] = () => ['end', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.NEIGHBORS] = (block, generator) => [
+      `${provideHelper(generator, 'neighbors')}(grid, ${valueOf(generator, block, 'CELL', 'start')})`,
+      Order.FUNCTION_CALL,
+    ];
+    this.forBlock[BLOCK_TYPES.WALKABLE] = (block, generator) => [
+      `${provideHelper(generator, 'walkable')}(grid, ${valueOf(generator, block, 'CELL', 'start')})`,
+      Order.FUNCTION_CALL,
+    ];
+    this.forBlock[BLOCK_TYPES.MANHATTAN] = (block, generator) => [
+      `${provideHelper(generator, 'manhattan')}(${valueOf(generator, block, 'A', 'start')}, ${valueOf(generator, block, 'B', 'end')})`,
+      Order.FUNCTION_CALL,
+    ];
+    this.forBlock[BLOCK_TYPES.CELL] = (block, generator) => [
+      `(${valueOf(generator, block, 'ROW', '0')}, ${valueOf(generator, block, 'COL', '0')})`,
+      Order.ATOMIC,
+    ];
+    this.forBlock[BLOCK_TYPES.ROW] = (block, generator) => [
+      `${valueOf(generator, block, 'CELL', 'start', Order.MEMBER)}[0]`,
+      Order.MEMBER,
+    ];
+    this.forBlock[BLOCK_TYPES.COL] = (block, generator) => [
+      `${valueOf(generator, block, 'CELL', 'start', Order.MEMBER)}[1]`,
+      Order.MEMBER,
+    ];
+    this.forBlock[BLOCK_TYPES.DIRECTIONS] = () => [
+      '[(-1, 0), (1, 0), (0, -1), (0, 1)]',
+      Order.ATOMIC,
+    ];
+    this.forBlock[BLOCK_TYPES.PUSH] = push;
+    this.forBlock[BLOCK_TYPES.PUSH_PRIORITY] = pushPriority;
+    this.forBlock[BLOCK_TYPES.POP] = (block, generator) =>
+      popCell(block, generator, 'pop', '.pop(0)');
+    this.forBlock[BLOCK_TYPES.POP_MIN] = (block, generator) => {
+      if (generator.execMode) return popCell(block, generator, 'pop_min');
+      generator.definitions_['import_heapq'] = 'import heapq';
+      return [
+        `heapq.heappop(${valueOf(generator, block, 'LIST', '[]')})[1]`,
+        Order.MEMBER,
+      ];
+    };
+    this.forBlock[BLOCK_TYPES.POP_LAST] = (block, generator) =>
+      `${popCell(block, generator, 'pop_last', '.pop()')[0]}\n`;
+    this.forBlock[BLOCK_TYPES.RELAX] = relax;
+    this.forBlock[BLOCK_TYPES.NEW_DICT] = () => ['{}', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.DICT_GET_OR] = (block, generator) => [
+      `${valueOf(generator, block, 'DICT', '{}', Order.MEMBER)}.get(${valueOf(generator, block, 'KEY', 'None')}, ${valueOf(generator, block, 'DEFAULT', 'None')})`,
+      Order.FUNCTION_CALL,
+    ];
+    this.forBlock[BLOCK_TYPES.IN] = (block, generator) => [
+      `${valueOf(generator, block, 'ITEM', 'None', Order.RELATIONAL)} ${block.getFieldValue('OP') === 'NOT_IN' ? 'not in' : 'in'} ${valueOf(generator, block, 'COLLECTION', '[]', Order.RELATIONAL)}`,
+      Order.RELATIONAL,
+    ];
+    this.forBlock[BLOCK_TYPES.INFINITY] = () => [
+      "float('inf')",
+      Order.FUNCTION_CALL,
+    ];
+    this.forBlock[BLOCK_TYPES.PAIR] = (block, generator) => [
+      `(${valueOf(generator, block, 'A', '0')}, ${valueOf(generator, block, 'B', '0')})`,
+      Order.ATOMIC,
+    ];
+    this.forBlock[BLOCK_TYPES.GRID] = () => ['grid', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.ROWS] = () => ['len(grid)', Order.FUNCTION_CALL];
+    this.forBlock[BLOCK_TYPES.COLS] = () => [
+      'len(grid[0])',
+      Order.FUNCTION_CALL,
+    ];
+    this.forBlock[BLOCK_TYPES.REVERSE] = (block, generator) =>
+      `${valueOf(generator, block, 'LIST', '[]', Order.MEMBER)}.reverse()\n`;
     // The function's parameters: a learner variable must not shadow them.
-    this.addReservedWords('arr,target');
+    this.addReservedWords('arr,target,grid,start,end,heapq');
   }
 
   finish(code) {
@@ -144,6 +216,88 @@ function compareTarget(block, generator) {
     ];
   }
   return [`arr[${index}] ${TARGET_OPS[op]} target`, Order.RELATIONAL];
+}
+
+function definePath(block, generator) {
+  const body = generator.statementToCode(block, 'STACK') || generator.PASS;
+  const name = functionNameOf(block);
+  return `def ${name}(grid, start, end):\n${body}${generator.INDENT}return []\n`;
+}
+
+function valueOf(generator, block, input, fallback, order = Order.NONE) {
+  return generator.valueToCode(block, input, order) || fallback;
+}
+
+/** Untraced grid helpers, emitted once above the functions that use them. */
+const GRID_HELPERS = {
+  neighbors: `(grid, cell):
+  row, col = cell
+  result = []
+  for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+    r, c = row + dr, col + dc
+    if 0 <= r < len(grid) and 0 <= c < len(grid[0]) and grid[r][c] == 0:
+      result.append((r, c))
+  return result
+`,
+  walkable: `(grid, cell):
+  r, c = cell
+  return 0 <= r < len(grid) and 0 <= c < len(grid[0]) and grid[r][c] == 0
+`,
+  manhattan: `(a, b):
+  return abs(a[0] - b[0]) + abs(a[1] - b[1])
+`,
+};
+
+function provideHelper(generator, name) {
+  // provideFunction_ widens each 2-space indent to INDENT.
+  return generator.provideFunction_(
+    name,
+    `def ${generator.FUNCTION_NAME_PLACEHOLDER_}${GRID_HELPERS[name]}`
+  );
+}
+
+function push(block, generator) {
+  const list = valueOf(generator, block, 'LIST', '[]', Order.MEMBER);
+  const cell = valueOf(generator, block, 'CELL', 'start');
+  if (generator.execMode) {
+    return `__bf.push(${list}, ${cell}, ${generator.quote_(block.id)})\n`;
+  }
+  return `${list}.append(${cell})\n`;
+}
+
+function pushPriority(block, generator) {
+  const list = valueOf(generator, block, 'LIST', '[]');
+  const priority = valueOf(generator, block, 'PRIORITY', '0');
+  const cell = valueOf(generator, block, 'CELL', 'start');
+  if (generator.execMode) {
+    return `__bf.push_priority(${list}, ${priority}, ${cell}, ${generator.quote_(block.id)})\n`;
+  }
+  generator.definitions_['import_heapq'] = 'import heapq';
+  return `heapq.heappush(${list}, (${priority}, ${cell}))\n`;
+}
+
+/** `queue.pop(0)` / `path.pop()`; traced as `__bf.<method>(list, id)`. */
+function popCell(block, generator, method, display) {
+  if (generator.execMode) {
+    const list = valueOf(generator, block, 'LIST', '[]');
+    return [
+      `__bf.${method}(${list}, ${generator.quote_(block.id)})`,
+      Order.FUNCTION_CALL,
+    ];
+  }
+  const list = valueOf(generator, block, 'LIST', '[]', Order.MEMBER);
+  return [`${list}${display}`, Order.FUNCTION_CALL];
+}
+
+function relax(block, generator) {
+  const value = valueOf(generator, block, 'VALUE', '0');
+  const cell = valueOf(generator, block, 'CELL', 'start');
+  if (generator.execMode) {
+    const dict = valueOf(generator, block, 'DICT', '{}');
+    return `__bf.relax(${dict}, ${cell}, ${value}, ${generator.quote_(block.id)})\n`;
+  }
+  const dict = valueOf(generator, block, 'DICT', '{}', Order.MEMBER);
+  return `${dict}[${cell}] = ${value}\n`;
 }
 
 function returnValue(block, generator) {
@@ -204,7 +358,8 @@ function defineHelper(block, generator) {
 }
 
 function callCode(block, generator) {
-  const args = ['arr'];
+  // Array programs pass `arr` implicitly; path helpers take every argument.
+  const args = block.noArr_ ? [] : ['arr'];
   for (let i = 0; block.getInput(`ARG${i}`); i++) {
     args.push(generator.valueToCode(block, `ARG${i}`, Order.NONE) || '0');
   }
@@ -323,15 +478,19 @@ function generate(generator, workspace, hats) {
 
 /**
  * @param {import('blockly/core').Workspace} workspace
- * @returns {{ kind: 'sort'|'search', functionName: string,
+ * @returns {{ kind: 'sort'|'search'|'path', functionName: string,
  *   displayCode: string, execCode: string,
  *   lineBlockIds: (string|null)[], statementIds: Record<string, string> } | null}
  *   null when the workspace has no `define …` block.
  */
 export function generateProgram(workspace) {
-  const sortHat = workspace.getBlocksByType(BLOCK_TYPES.DEFINE_SORT, false)[0];
-  const hat =
-    sortHat ?? workspace.getBlocksByType(BLOCK_TYPES.DEFINE_SEARCH, false)[0];
+  const hatOf = type => workspace.getBlocksByType(type, false)[0];
+  const [kind, hat] =
+    [
+      ['sort', hatOf(BLOCK_TYPES.DEFINE_SORT)],
+      ['search', hatOf(BLOCK_TYPES.DEFINE_SEARCH)],
+      ['path', hatOf(BLOCK_TYPES.DEFINE_PATH)],
+    ].find(([, found]) => found) ?? [];
   if (!hat) return null;
   const helpers = workspace.getBlocksByType(BLOCK_TYPES.DEFINE_HELPER, true);
   const hats = [...helpers, hat];
@@ -351,7 +510,7 @@ export function generateProgram(workspace) {
   const execCode = generate(generator, workspace, hats);
 
   return {
-    kind: sortHat ? 'sort' : 'search',
+    kind,
     functionName: functionNameOf(hat),
     displayCode,
     execCode,

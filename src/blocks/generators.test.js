@@ -284,4 +284,57 @@ describe('helpers and new array blocks', () => {
     expect(displayCode).toMatch(/heapify2 = n - 1/);
     expect(displayCode).toContain('heapify(arr, heapify2, 0)');
   });
+
+  describe('path programs', () => {
+    const generate = key =>
+      generateProgram(load(getBlocksStarter(key).workspace));
+
+    it('generates a (grid, start, end) function with helpers and no implicit arr', () => {
+      const bfs = generate('bfs');
+      expect(bfs.kind).toBe('path');
+      expect(bfs.functionName).toBe('bfs');
+      expect(bfs.displayCode).toContain('def bfs(grid, start, end):');
+      expect(bfs.displayCode).toContain('def neighbors(grid, cell):');
+      expect(bfs.displayCode).toContain('def build_path(parent, cell):');
+      expect(bfs.displayCode).toContain('return build_path(parent, cell)');
+      expect(bfs.displayCode).toContain('cell = queue.pop(0)');
+      expect(bfs.displayCode).toContain('queue.append(nb)');
+      expect(bfs.displayCode).toMatch(/ {4}return \[\]\n$/);
+      expect(bfs.displayCode).not.toMatch(/\barr\b|__bf/);
+    });
+
+    it('traces frontier pushes and pops, and leaves helper lists alone', () => {
+      const bfs = generate('bfs');
+      expect(bfs.execCode).toMatch(/cell = __bf\.pop\(queue, '[^']+'\)/);
+      expect(bfs.execCode).toMatch(/__bf\.push\(queue, nb, '[^']+'\)/);
+      expect(bfs.execCode).toContain('path.append(cell)');
+      expect(bfs.execCode).toContain('parent[nb] = cell');
+    });
+
+    it('uses heapq for priority queues, traced in execCode', () => {
+      const aStar = generate('aStar');
+      expect(aStar.displayCode).toMatch(/^import heapq\n/);
+      expect(aStar.displayCode).toContain(
+        'heapq.heappush(open_set, (dist[nb] + manhattan(nb, end), nb))'
+      );
+      expect(aStar.displayCode).toContain('cell = heapq.heappop(open_set)[1]');
+      expect(aStar.execCode).toMatch(
+        /__bf\.push_priority\(open_set, dist\[nb\] \+ manhattan\(nb, end\), nb, '[^']+'\)/
+      );
+      expect(aStar.execCode).toMatch(/__bf\.pop_min\(open_set, '[^']+'\)/);
+      expect(aStar.execCode).not.toContain('import heapq');
+    });
+
+    it('traces backtracking and cost updates', () => {
+      expect(generate('idaStar').displayCode).toContain('path.pop()');
+      expect(generate('idaStar').execCode).toMatch(
+        /__bf\.pop_last\(path, '[^']+'\)/
+      );
+      const bellman = generate('bellmanFord');
+      expect(bellman.displayCode).toContain('dist[nb] = dist[cell] + 1');
+      expect(bellman.execCode).toMatch(
+        /__bf\.relax\(dist, nb, dist\[cell\] \+ 1, '[^']+'\)/
+      );
+    });
+  });
 });
