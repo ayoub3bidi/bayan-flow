@@ -1,7 +1,7 @@
 # AGENTS Reference (Bayan Flow)
 
 > Exhaustive agent lookup: inventories, architecture map, CI detail, test catalog, and add-algorithm checklists.
-> The lean always-on guide is **[`AGENTS.md`](../AGENTS.md)** — update *this* file when factual inventory changes; update the root file only for behavioral rules.
+> The lean always-on guide is **[`AGENTS.md`](../AGENTS.md)** — update _this_ file when factual inventory changes; update the root file only for behavioral rules.
 
 ## Project Snapshot
 
@@ -21,8 +21,8 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **188** test files (~**2,260** tests, per `pnpm vitest run`)
-- Source surface: **264** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
+- Test surface: **188** test files (~**2,300** tests, per `pnpm vitest run`)
+- Source surface: **265** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
 ## Source Of Truth
@@ -75,7 +75,7 @@
 - i18n: English, French, Arabic with RTL (`rtlManager`, `LanguageSwitcher`); Arabic UI font IBM Plex Sans Arabic (`@fontsource/ibm-plex-sans-arabic`, Arabic subsets imported in `src/main.jsx`)
 - Optional visualization sound (Tone.js); persisted in `localStorage` under `bayan-flow:sound-enabled`
 - Code panel (lazy): Python + pseudocode tabs in one panel (`PythonCodePanel`), Monaco editor, Pyodide worker execution, editable custom test cases, predefined tests (`TestCasesPanel`, `OutputConsole`)
-- Blocks tab (#234): the code panel has **Pseudocode | Python | Blocks** tabs; the Blocks tab exists only at ≥1280px. It opens on the **complete** program for the algorithm (a playground: no challenges, no solution button) for all **14 sorting algorithms, the 7 array searches and the 9 pathfinding algorithms** (`src/blocks/starters/`). DFS / BFS-graph searching and the Tree and Graph categories show the tab muted with a "Soon" badge and a "Blocks coming soon for this algorithm" empty state (not docked). Blocks sit beside read-only generated Python at ≥1600px and above it at 1280–1599px. Run records the program's steps in the Pyodide worker and they play in the sorting, searching or pathfinding visualizer with the producing block and Python line highlighted. Searches run on the visualizer's array and `targetValue`; pathfinding programs run on the visualizer's grid, start and end. Toolbar: **Reset** (back to the starter) only; the Python tab is one click away. The workspace persists under `bayan-flow:blocks-workspace:v2:<algo>`. The Python tab is unchanged (editor, Run, Reset, test cases)
+- Blocks tab (#234): the code panel has **Pseudocode | Python | Blocks** tabs; the Blocks tab exists only at ≥1280px. It opens on the **complete** program for the algorithm (a playground: no challenges, no solution button) for all **14 sorting algorithms, the 7 array searches, the 9 pathfinding algorithms and the 6 tree traversals** (`src/blocks/starters/`). DFS / BFS-graph searching and the Graph category show the tab muted with a "Soon" badge and a "Blocks coming soon for this algorithm" empty state (not docked). Blocks sit beside read-only generated Python at ≥1600px and above it at 1280–1599px. Run records the program's steps in the Pyodide worker and they play in the sorting, searching, pathfinding or tree visualizer with the producing block and Python line highlighted. Searches run on the visualizer's array and `targetValue`; pathfinding programs run on the visualizer's grid, start and end; tree programs run on the visualizer's tree (`treeContext` from `useTreeTraversalVisualization`). Toolbar: **Reset** (back to the starter) only; the Python tab is one click away. The workspace persists under `bayan-flow:blocks-workspace:v2:<algo>`. The Python tab is unchanged (editor, Run, Reset, test cases)
 - Algorithm insight panel with history, intuition, facts, optional YouTube embed (`AlgorithmInsightPanel`, `InsightFloatingActionButton`)
 - Pseudocode: localized strings and syntax highlighting inside `PythonCodePanel` (`pseudocodeHighlight.js`, `pseudocode/localize.js`) — not a separate overlay
 - Auto-hiding color legend on visualizers (`AutoHidingLegend`)
@@ -113,38 +113,38 @@
 
 ### `public.profiles` schema
 
-| Column | Client writable | Notes |
-|--------|-----------------|-------|
-| `id` | no | PK, FK → `auth.users` |
-| `email` | no | Set by `handle_new_user` trigger |
-| `plan` | no | `free` \| `pro`; service role / webhook only |
-| `provider` | no | Set on signup |
-| `created_at` | no | |
-| `display_name` | yes | Editable on profile settings page |
-| `avatar_url` | no | OAuth / trigger-populated HTTPS URL |
-| `avatar_preference` | yes | `google` (default) \| `generated` |
-| `welcome_email_sent_at` | no | Set atomically by `sync-contacts` when claiming the one-time welcome send |
+| Column                  | Client writable | Notes                                                                     |
+| ----------------------- | --------------- | ------------------------------------------------------------------------- |
+| `id`                    | no              | PK, FK → `auth.users`                                                     |
+| `email`                 | no              | Set by `handle_new_user` trigger                                          |
+| `plan`                  | no              | `free` \| `pro`; service role / webhook only                              |
+| `provider`              | no              | Set on signup                                                             |
+| `created_at`            | no              |                                                                           |
+| `display_name`          | yes             | Editable on profile settings page                                         |
+| `avatar_url`            | no              | OAuth / trigger-populated HTTPS URL                                       |
+| `avatar_preference`     | yes             | `google` (default) \| `generated`                                         |
+| `welcome_email_sent_at` | no              | Set atomically by `sync-contacts` when claiming the one-time welcome send |
 
 Future (post-0.5.0, not shipped): `username` (unique, set-once RLS), public `/u/:username` route; any referral/billing columns — new migrations then, not restore of dropped scaffolding. Through 0.5.0 Pro remains waitlist-only.
 
 ### Personal learning tables
 
-| Table | PK | Client access |
-|-------|-----|---------------|
+| Table                 | PK                                   | Client access                     |
+| --------------------- | ------------------------------------ | --------------------------------- |
 | `favorite_algorithms` | `(user_id, category, algorithm_key)` | SELECT / INSERT / DELETE own rows |
-| `algorithm_notes` | `(user_id, category, algorithm_key)` | SELECT / INSERT / UPDATE own rows |
+| `algorithm_notes`     | `(user_id, category, algorithm_key)` | SELECT / INSERT / UPDATE own rows |
 
 Migration: `supabase/migrations/*_personal_learning_favorites_notes.sql`. Free tier: 20 favorite slots (`getFavoriteSlotLimit` in `entitlementService.js`); notes unlimited per algorithm with HTML sanitization (`noteHtmlSanitizer.js`).
 
 ### `public.waitlist` (Pro demand validation)
 
-| Column | Client writable | Notes |
-|--------|-----------------|-------|
-| `id` | no | PK |
-| `user_id` | yes (on insert) | Nullable; FK → `profiles` when signed in |
-| `email` | yes (on insert) | Unique, normalized lowercase in service layer |
-| `source` | yes (on insert) | `landing` \| `app` \| `direct` |
-| `created_at` | no | |
+| Column       | Client writable | Notes                                         |
+| ------------ | --------------- | --------------------------------------------- |
+| `id`         | no              | PK                                            |
+| `user_id`    | yes (on insert) | Nullable; FK → `profiles` when signed in      |
+| `email`      | yes (on insert) | Unique, normalized lowercase in service layer |
+| `source`     | yes (on insert) | `landing` \| `app` \| `direct`                |
+| `created_at` | no              |                                               |
 
 Insert-only RLS for `anon` + `authenticated`; no client SELECT. Public count via `waitlist_public_count()` RPC. Welcome email via `waitlist-welcome` edge function (Resend).
 
@@ -265,7 +265,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - `src/hooks/usePythonExecution.js` — also `runVisualization` / `warmUp` / `vizResult` for block programs
 - `src/workers/pyodide.worker.js` — `run-viz` message → `viz-steps`
 - `src/workers/blocksTracer.js` — Python `__bf` tracer source + caps (25k events, 1M loop ticks), sent with each `run-viz`; `__bf_run(code, fn_name, input, target, …)` returns `finalArray` (sorts) or `result` index (searches)
-- `src/blocks/` — `definitions.js` (custom blocks + i18n messages; `bf_call` / `bf_call_value` are JS blocks whose arity lives in `extraState.args`, no mutator UI), `generators.js` (display vs exec Python, line↔block map; helper hats `bf_define_helper` are emitted before the main function), `starters/` (`builders.js` JSON helpers, `sorting.js`, `searching.js`, `pathfinding.js`, `index.js` with `getBlocksStarter` + `toolboxFor`, which derives each flyout from the blocks its program uses; no Blockly import), `programSteps.js` (`buildProgramSteps` for sorts, `buildSearchProgramSteps` for searches → `withElementIds` steps; `buildPathProgramSteps` for paths → grid steps). Hats: `bf_define_sort` / `bf_define_search` / `bf_define_path` carry the whole signature in one `NAME` label (`bubble_sort(arr)`; a second field would render a gap before the parentheses). The generator takes the name before `(`; a missing `NAME` means `bubble_sort(arr)`, for workspaces saved before phase 2
+- `src/blocks/` — `definitions.js` (custom blocks + i18n messages; `bf_call` / `bf_call_value` are JS blocks whose arity lives in `extraState.args`, no mutator UI), `generators.js` (display vs exec Python, line↔block map; helper hats `bf_define_helper` are emitted before the main function), `starters/` (`builders.js` JSON helpers, `sorting.js`, `searching.js`, `pathfinding.js`, `tree.js`, `index.js` with `getBlocksStarter` + `toolboxFor`, which derives each flyout from the blocks its program uses; no Blockly import), `programSteps.js` (`buildProgramSteps` for sorts, `buildSearchProgramSteps` for searches → `withElementIds` steps; `buildPathProgramSteps` for paths → grid steps; `treeToDict` + `buildTreeProgramSteps` for traversals → tree steps). Hats: `bf_define_sort` / `bf_define_search` / `bf_define_path` / `bf_define_tree` carry the whole signature in one `NAME` label (`bubble_sort(arr)`; a second field would render a gap before the parentheses). The generator takes the name before `(`; a missing `NAME` means `bubble_sort(arr)`, for workspaces saved before phase 2
 - `src/components/BlocksWorkspace.jsx` — lazy Blockly injection (RTL, theme, collapsible toolbox in the stacked layout); no trash can and no zooming (no buttons, wheel or pinch; the wheel scrolls); starters are tidied (`cleanUp`) and every load is fit to the view (`zoomToFit`, capped at 100%)
 - `src/algorithms/python/**`, `src/algorithms/python/index.js`, `src/algorithms/python/testCases.js`
 - `src/algorithms/pseudocode/**` — `strings.en.js`, `strings.fr.js`, `strings.ar.js`, `localize.js`, `index.js`
@@ -432,8 +432,9 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
   - Blocks are the source of truth; Python is generated one way (shown read-only beside the blocks). The Python tab keeps the reference `.py`.
   - Steps come from the generator's exec pass (`__bf.gt/lt/ge/le/cmp_target/swap/get/set/shuffle/is_sorted/tick` calls carrying block ids), never from tracing arbitrary Python. Only operations on `arr` are traced (compare, swap, read, write, shuffle, sorted check); helper lists (`[0] * n`, buckets, slices) are plain Python, matching the JS visualizations, which only show `arr`. Search steps come from target compares only (reads in formulas are skipped). Display code stays clean (no `global`, no `= None`); `arr`, `target`, `grid`, `start`, `end`, `heapq` and helper names are reserved so learner variables can't shadow them.
   - Path programs (`bf_define_path`, `def name(grid, start, end)` → path as a list of `(row, col)` cells, `[]` when the end is reached) trace only the frontier and costs: `__bf.push` / `push_priority` / `relax` → `open` (OPEN), `pop` / `pop_min` → `visit` (CLOSED), `pop_last` → `leave` (CLOSED, IDA*'s backtrack). Events carry `cell`, not an array copy. Parent maps, visited sets and the returned path are plain Python. `neighbors`, `walkable` and `manhattan` are untraced helpers emitted via `provideFunction_` (not reserved, or they'd be renamed `neighbors2`). Helper calls in path programs pass every argument (`build_path(parent, cell)`); sort/search helper calls get `arr` prepended. Verdict: a returned list is solved when it runs start → end through free cells, each 4-adjacent to the previous (`isValidGridPath`); a valid path longer than the BFS shortest (`shortestPathLength`) still passes but the final step and the output say so (`blocksPathLonger`, `run_path_longer`; expected for greedy search). The grid has no walls in the app yet: JPS skips forced-neighbour checks and D* Lite plans once (both marked `shortcut:` in `starters/pathfinding.js`); add those when walls can be drawn.
-  - Worker contract: `runVisualization(code, args, { functionName, kind })` → `__bf_run(code, fn_name, args_json, kind, …)`; `args` is `[arr]`, `[arr, target]` or `[grid, [r, c], [r, c]]` (start/end become tuples). A path comes back in `finalArray` as `[r, c]` lists.
-  - Starters sort in place like `src/algorithms/sorting/*.js` (not the `src/algorithms/python/*.py` references, some of which return new lists). Each stays under the 25k-event cap at the max input size (100); bogo sort gives up after 1000 shuffles like the JS version. Pathfinding starters stay far below it on the largest grid (35×35: ≤2.7k events; IDA* ≈200 on an empty grid but it blows up with random walls).
+  - Tree programs (`bf_define_tree`, `def name(root)` → node values in visit order, returned with an explicit `return result`) take the tree as nested dicts `{"value", "left", "right"}` (`treeToDict`); node values are unique (1..n), so a value names a node. Traced: `bf_visit` (`result.append(node["value"])`) → `output` (VISITING then VISITED, like the JS traversals); `push` / `pop` / `pop_last` on nodes → `open` / `visit` / `leave` events carrying the node value in `cell`, mirrored as the queue strip (hidden once `pop_last` shows the list is a stack; the starting `[root]` literal is untraced); `bf_set_child` → `thread` / `unthread` (extra `{from, to}` edge, Morris). Compare nodes with `bf_is` (`is` / `is not`): `==` on a threaded Morris tree recurses forever. `root` is reserved. Pre/in/post-order starters are recursive (`walk(node, result)` helper, like the `.py` references); level-order and zigzag use a queue. Verdict: solved when the returned list equals `pureTreeTraversalAlgorithms[algo]` mapped to values; otherwise the final step and the output show both orders (`blocksTreeWrongOrder`, `run_tree_wrong_order`). A right order that leaves Morris threads in the tree also fails (`blocksTreeThreadsLeft`, `run_tree_threads_left`): without the unthread, Morris still visits in order but corrupts the tree. Zigzag's scan-direction badge is derived, not traced: each level's direction comes from the layout `x` of its first two visits (a one-node level alternates by depth).
+  - Worker contract: `runVisualization(code, args, { functionName, kind })` → `__bf_run(code, fn_name, args_json, kind, …)`; `args` is `[arr]`, `[arr, target]`, `[grid, [r, c], [r, c]]` (start/end become tuples) or `[root]`. A path comes back in `finalArray` as `[r, c]` lists, a traversal as a list of values.
+  - Starters sort in place like `src/algorithms/sorting/*.js` (not the `src/algorithms/python/*.py` references, some of which return new lists). Each stays under the 25k-event cap at the max input size (100); bogo sort gives up after 1000 shuffles like the JS version. Pathfinding starters stay far below it on the largest grid (35×35: ≤2.7k events; IDA\* ≈200 on an empty grid but it blows up with random walls).
   - Blockly stays out of the main bundle (lazy `BlocksWorkspace`). `vite.config.js` `blocklyNoAmd` strips Blockly's UMD AMD branch (Monaco's loader installs a global `define.amd`); keep it in both `plugins` and `optimizeDeps.rolldownOptions.plugins`.
   - Inject with `sounds: false` (no UI sounds) and local `media` (CSP).
   - Split: the divider between the workspace and its Python is draggable (and arrow keys on the focused divider); Python's share (20–70%, default 42%) is stored under `bayan-flow:blocks-python-percent`.
@@ -670,20 +671,21 @@ Use focused tests first for registry/category changes, then broaden to the full 
 
 ### Static files (served from `public/`)
 
-| File | Content-Type | Purpose |
-|------|-------------|---------|
-| `/.well-known/api-catalog` | `application/linkset+json` | RFC 9727 API catalog with `linkset` array |
-| `/.well-known/mcp/server-card.json` | `application/json` | MCP Server Card (SEP-1649) with `serverInfo`, endpoint, capabilities |
-| `/.well-known/oauth-authorization-server` | `application/json` | OAuth discovery (Supabase issuer) with `agent_auth` block |
-| `/.well-known/oauth-protected-resource` | `application/json` | RFC 9728 Protected Resource Metadata |
-| `/.well-known/agent-card.json` | `application/json` | Agent card with capabilities and features |
-| `/.well-known/agent-skills/index.json` | `application/json` | Agent skills catalog |
-| `/auth.md` | `text/markdown` | Agent registration / authentication guide |
-| `/llms.txt` | `text/plain` | Machine-readable site description for AI agents |
+| File                                      | Content-Type               | Purpose                                                              |
+| ----------------------------------------- | -------------------------- | -------------------------------------------------------------------- |
+| `/.well-known/api-catalog`                | `application/linkset+json` | RFC 9727 API catalog with `linkset` array                            |
+| `/.well-known/mcp/server-card.json`       | `application/json`         | MCP Server Card (SEP-1649) with `serverInfo`, endpoint, capabilities |
+| `/.well-known/oauth-authorization-server` | `application/json`         | OAuth discovery (Supabase issuer) with `agent_auth` block            |
+| `/.well-known/oauth-protected-resource`   | `application/json`         | RFC 9728 Protected Resource Metadata                                 |
+| `/.well-known/agent-card.json`            | `application/json`         | Agent card with capabilities and features                            |
+| `/.well-known/agent-skills/index.json`    | `application/json`         | Agent skills catalog                                                 |
+| `/auth.md`                                | `text/markdown`            | Agent registration / authentication guide                            |
+| `/llms.txt`                               | `text/plain`               | Machine-readable site description for AI agents                      |
 
 ### Link headers (in `public/_headers`)
 
 The `/*` section includes `Link` headers pointing to:
+
 - `</.well-known/api-catalog>; rel="api-catalog"`
 - `</.well-known/oauth-protected-resource>; rel="oauth-protected-resource"`
 - `</.well-known/mcp/server-card.json>; rel="mcp-server-card"`
