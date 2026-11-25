@@ -140,20 +140,32 @@ export function buildProgramSteps(
   }
 
   const lastArray = steps[steps.length - 1].array;
-  const sorted =
+  const inOrder =
     Array.isArray(finalArray) &&
     finalArray.length === n &&
     isSortedAscending(finalArray);
+  // A sort may only rearrange: writing 0 everywhere is "in order" too.
+  const valuesChanged = inOrder && !haveSameValues(finalArray, inputArray);
+  const sorted = inOrder && !valuesChanged;
+  let finalKey = ALGORITHM_STEPS.BLOCKS_NOT_SORTED;
+  if (sorted) finalKey = ALGORITHM_STEPS.COMPLETED;
+  else if (valuesChanged) finalKey = ALGORITHM_STEPS.BLOCKS_VALUES_CHANGED;
   steps.push({
     array: [...lastArray],
     states: sorted ? Array(n).fill(ELEMENT_STATES.SORTED) : defaults(),
-    description: getAlgorithmDescription(
-      sorted ? ALGORITHM_STEPS.COMPLETED : ALGORITHM_STEPS.BLOCKS_NOT_SORTED
-    ),
+    description: getAlgorithmDescription(finalKey),
     blockId: null,
   });
 
-  return { steps: withElementIds(steps), sorted };
+  return { steps: withElementIds(steps), sorted, valuesChanged };
+}
+
+/** Same values, same counts, any order. */
+function haveSameValues(a, b) {
+  const byValue = (x, y) => x - y;
+  const sortedA = [...a].sort(byValue);
+  const sortedB = [...b].sort(byValue);
+  return sortedA.every((value, i) => value === sortedB[i]);
 }
 
 /** Start/found description keys per search; `check` stays generic. */
@@ -845,13 +857,16 @@ function judgeGraphAnswer(graph, algorithmKey, args, returned, names) {
  * @param {string} algorithmKey
  * @param {unknown} returned - What the program returned (lists, or null).
  * @param {string} [functionName]
+ * @param {boolean} [noReturn] - The program fell off its end (no `return`):
+ *   never right, even where `None` is the answer.
  */
 export function buildGraphProgramSteps(
   events,
   graph,
   algorithmKey,
   returned,
-  functionName = 'graph_algorithm'
+  functionName = 'graph_algorithm',
+  noReturn = false
 ) {
   const { nodes, edges } = graph;
   const isSearch = isNodeLinkSearchingAlgorithm(algorithmKey);
@@ -1164,7 +1179,8 @@ export function buildGraphProgramSteps(
   }
   settle();
 
-  const verdict = judgeGraphAnswer(graph, algorithmKey, args, returned, names);
+  const judged = judgeGraphAnswer(graph, algorithmKey, args, returned, names);
+  const verdict = noReturn ? { ...judged, solved: false, noReturn } : judged;
   stack.length = 0;
   recursion.length = 0;
   frontier.clear();
@@ -1191,6 +1207,10 @@ export function buildGraphProgramSteps(
         : describe(ALGORITHM_STEPS.BLOCKS_GRAPH_COMPLETE, {
             answer: verdict.got,
           });
+  } else if (noReturn) {
+    description = describe(ALGORITHM_STEPS.BLOCKS_GRAPH_NO_RETURN, {
+      expected: verdict.expected,
+    });
   } else {
     description = describe(ALGORITHM_STEPS.BLOCKS_GRAPH_WRONG, {
       got: verdict.got,

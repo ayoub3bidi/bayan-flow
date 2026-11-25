@@ -30,6 +30,9 @@ class BFLimit(Exception):
     pass
 
 class _BF:
+    # What a graph program's executed form returns when it falls off its end.
+    NO_RETURN = object()
+
     def __init__(self, max_events, max_ticks):
         self.events = []
         self.ticks = 0
@@ -212,6 +215,9 @@ def __bf_run(code, fn_name, args_json, kind, max_events, max_ticks):
         if kind == "path":
             args[1], args[2] = tuple(args[1]), tuple(args[2])
         returned = scope[fn_name](*args)
+        no_return = returned is _BF.NO_RETURN
+        if no_return:
+            returned = None
         if kind == "path" and returned is None:
             returned = []
         is_index = isinstance(returned, int) and not isinstance(returned, bool)
@@ -220,6 +226,7 @@ def __bf_run(code, fn_name, args_json, kind, max_events, max_ticks):
             # A path's (row, col) tuples serialize as [row, col] lists.
             "finalArray": _bf_json(returned) if isinstance(returned, list) else None,
             "result": returned if is_index else None,
+            "noReturn": no_return,
         })
     except BFLimit:
         return json.dumps({"errorKind": "loop-limit"})

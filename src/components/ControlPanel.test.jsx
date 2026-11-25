@@ -80,6 +80,24 @@ describe('ControlPanel', () => {
     expect(onToggleFullScreen).not.toHaveBeenCalled();
   });
 
+  it('disables export while a block program is loaded', () => {
+    const onExportVideo = vi.fn();
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({ isExportDisabled: true, onExportVideo })}
+      />
+    );
+
+    const button = screen.getByRole('button', { name: /export video/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute(
+      'title',
+      "Close the Blocks tab to export the algorithm's video"
+    );
+    fireEvent.click(button);
+    expect(onExportVideo).not.toHaveBeenCalled();
+  });
+
   it('shows data refresh shuffle when category has hasDataRefresh true (sorting)', () => {
     renderWithI18n(<ControlPanel {...getBaseProps()} />);
 

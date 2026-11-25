@@ -65,6 +65,7 @@ function ControlPanel({
   showArrayViewToggle = false,
   isFullScreen,
   isFullScreenDisabled = false,
+  isExportDisabled = false,
   onToggleFullScreen,
   onExportVideo,
   onCancelExport,
@@ -203,16 +204,18 @@ function ControlPanel({
         <button
           type="button"
           onClick={onExportVideo}
-          disabled={totalSteps === 0}
+          disabled={totalSteps === 0 || isExportDisabled}
           className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed ${isGated ? 'opacity-60 hover:opacity-80' : ''}`}
           title={
-            canRenderOnWeb === false
-              ? t('controls.browserNotSupported')
-              : exportState === 'done'
-                ? t('controls.exportDone')
-                : exportState === 'error'
-                  ? t('controls.exportError')
-                  : t('controls.exportVideo')
+            isExportDisabled
+              ? t('controls.exportUnavailableBlocks')
+              : canRenderOnWeb === false
+                ? t('controls.browserNotSupported')
+                : exportState === 'done'
+                  ? t('controls.exportDone')
+                  : exportState === 'error'
+                    ? t('controls.exportError')
+                    : t('controls.exportVideo')
           }
           aria-label={t('controls.exportVideo')}
         >

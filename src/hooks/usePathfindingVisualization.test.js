@@ -261,6 +261,26 @@ describe('usePathfindingVisualization', () => {
       expect(result.current.description).toBe(mockSteps[0].description);
     });
 
+    it("reloadSteps puts the algorithm's own steps back over loaded ones", () => {
+      const { result } = renderHook(() =>
+        usePathfindingVisualization(
+          TEST_ALGO_KEY,
+          2,
+          1000,
+          VISUALIZATION_MODES.MANUAL
+        )
+      );
+      const own = result.current.steps;
+      expect(own.length).toBeGreaterThan(0);
+
+      act(() => result.current.loadSteps(mockSteps));
+      expect(result.current.steps).toBe(mockSteps);
+
+      act(() => result.current.reloadSteps());
+      expect(result.current.steps).not.toBe(mockSteps);
+      expect(result.current.steps).toEqual(own);
+    });
+
     it('should handle empty steps array', () => {
       const { result } = renderHook(() =>
         usePathfindingVisualization(

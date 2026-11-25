@@ -341,6 +341,11 @@ function App() {
   });
 
   const visualization = visualizationMap[algorithmType];
+  // A learner's block program is loaded (its steps carry a blockId key, see
+  // buildProgramSteps) rather than the algorithm's own steps.
+  const isProgramRun = Boolean(
+    visualization.steps[0] && 'blockId' in visualization.steps[0]
+  );
 
   useEffect(() => {
     const graphAlgorithmKey =
@@ -474,11 +479,7 @@ function App() {
    */
   const consumeRunIfNeeded = () => {
     if (countedStepsRef.current === visualization.steps) return true;
-    // Block-program steps carry a blockId key (see buildProgramSteps).
-    const runSource =
-      visualization.steps[0] && 'blockId' in visualization.steps[0]
-        ? 'blocks'
-        : 'algorithm';
+    const runSource = isProgramRun ? 'blocks' : 'algorithm';
     if (user) {
       countedStepsRef.current = visualization.steps;
       trackVisualizationStarted(
@@ -536,6 +537,18 @@ function App() {
   // Only block-program steps carry a blockId.
   const activeBlockId =
     visualization.steps[visualization.currentStep]?.blockId ?? null;
+
+  // Leaving the Blocks tab (close, other tab, narrow viewport) puts the
+  // algorithm's own steps back: the learner's program must not stay labelled
+  // as the algorithm, nor be exported as it.
+  const isProgramRunRef = useRef(isProgramRun);
+  isProgramRunRef.current = isProgramRun;
+  const reloadStepsRef = useRef(visualization.reloadSteps);
+  reloadStepsRef.current = visualization.reloadSteps;
+  useEffect(() => {
+    if (codePanelDockWidth || !isProgramRunRef.current) return;
+    reloadStepsRef.current?.();
+  }, [codePanelDockWidth]);
 
   const handleSeek = step => {
     if (!consumeRunIfNeeded()) return;
@@ -665,7 +678,7 @@ function App() {
   };
 
   const handleExportVideo = () => {
-    if (visualization.totalSteps === 0) return;
+    if (visualization.totalSteps === 0 || isProgramRun) return;
     if (!isAuthenticated) {
       pendingFeatureRef.current = 'export';
       openGatedFeature('export');
@@ -681,6 +694,7 @@ function App() {
   };
 
   const handleOrientationSelected = orientation => {
+    if (isProgramRun) return;
     if (!canRunVideoExport(user)) {
       reportExportError(t('controls.exportTemporarilyUnavailable'));
       return;
@@ -866,6 +880,7 @@ function App() {
         !isNodeLinkSearchingAlgorithm(activeAlgorithmKey)),
     isFullScreen,
     isFullScreenDisabled: Boolean(codePanelDockWidth) && !isFullScreen,
+    isExportDisabled: isProgramRun,
     onToggleFullScreen: handleGatedFullscreenToggle,
     onExportVideo: handleExportVideo,
     onCancelExport: cancelExport,

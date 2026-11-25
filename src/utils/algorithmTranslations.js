@@ -36,6 +36,7 @@ export const ALGORITHM_STEPS = {
   BLOCKS_SHUFFLE: 'blocksShuffle',
   BLOCKS_CHECK: 'blocksCheck',
   BLOCKS_NOT_SORTED: 'blocksNotSorted',
+  BLOCKS_VALUES_CHANGED: 'blocksValuesChanged',
   BLOCKS_NOT_FOUND: 'blocksNotFound',
   BLOCKS_WRONG_INDEX: 'blocksWrongIndex',
   BLOCKS_OPEN: 'blocksOpen',
@@ -56,6 +57,7 @@ export const ALGORITHM_STEPS = {
   BLOCKS_GRAPH_COMPLETE: 'blocksGraphComplete',
   BLOCKS_GRAPH_NO_ORDER: 'blocksGraphNoOrder',
   BLOCKS_GRAPH_WRONG: 'blocksGraphWrong',
+  BLOCKS_GRAPH_NO_RETURN: 'blocksGraphNoReturn',
   BLOCKS_GRAPH_PATH_LONGER: 'blocksGraphPathLonger',
   BLOCKS_MATRIX_WRITE: 'blocksMatrixWrite',
 

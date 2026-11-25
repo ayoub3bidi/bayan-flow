@@ -30,6 +30,28 @@ const EVENTS = [
 ];
 
 describe('buildProgramSteps', () => {
+  it('only counts a rearrangement of the input as sorted', () => {
+    const overwritten = buildProgramSteps([], [3, 1, 2], [0, 0, 0]);
+    expect(overwritten).toMatchObject({ sorted: false, valuesChanged: true });
+    expect(overwritten.steps.at(-1).states).toEqual([
+      'default',
+      'default',
+      'default',
+    ]);
+    expect(overwritten.steps.at(-1).description).toContain(
+      'its values changed'
+    );
+
+    expect(buildProgramSteps([], [2, 2, 1], [1, 2, 2])).toMatchObject({
+      sorted: true,
+      valuesChanged: false,
+    });
+    expect(buildProgramSteps([], [3, 1, 2], [3, 1, 2])).toMatchObject({
+      sorted: false,
+      valuesChanged: false,
+    });
+  });
+
   it('turns events into compare/swap steps that carry their block id', () => {
     const { steps, sorted } = buildProgramSteps(EVENTS, [3, 1, 2], [1, 2, 3]);
     expect(sorted).toBe(true);
@@ -654,6 +676,29 @@ describe('buildGraphProgramSteps', () => {
     expect(
       buildGraphProgramSteps([], cycle, 'kahnAlgorithm', ['A']).solved
     ).toBe(false);
+  });
+
+  it('never passes a program that fell off its end, even where None is right', () => {
+    const cycle = {
+      ...CHAIN,
+      edges: [...CHAIN.edges, { id: '2->0', from: '2', to: '0' }],
+      adjacency: { 0: ['1'], 1: ['2'], 2: ['0'] },
+    };
+    for (const key of ['kahnAlgorithm', 'topologicalSort']) {
+      const { steps, solved, noReturn } = buildGraphProgramSteps(
+        [],
+        cycle,
+        key,
+        null,
+        'f',
+        true
+      );
+      expect(solved).toBe(false);
+      expect(noReturn).toBe(true);
+      expect(steps.at(-1).description).toContain(
+        'finished without returning an answer'
+      );
+    }
   });
 
   it('selects spanning-tree edges, rejects the rest, and checks the weight', () => {

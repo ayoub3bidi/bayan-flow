@@ -388,6 +388,7 @@
     "closePreview": "Fermer",
     "goFullScreen": "Plein Écran (F)",
     "fullScreenUnavailableBlocks": "Le plein écran est indisponible quand l’onglet Blocs est ouvert",
+    "exportUnavailableBlocks": "Fermez l’onglet Blocs pour exporter la vidéo de l’algorithme",
     "exitFullScreen": "Quitter le Plein Écran (Esc)",
     "ascending": "Ordre d'entrée aléatoire (appuyez pour ordre décroissant)",
     "descending": "Ordre d'entrée décroissant (appuyez pour aléatoire)",
@@ -501,8 +502,10 @@
     "actual_label": "Obtenu :",
     "blocks": {
       "reset_blocks": "Réinitialiser",
+      "reset_confirm": "Cliquez à nouveau pour réinitialiser",
       "run_sorted": "✓ Votre programme a trié le tableau en {{count}} étapes. Regardez-le dans le visualiseur.",
       "run_not_sorted": "✗ Votre programme est terminé, mais le tableau n'est pas encore trié ({{count}} étapes). Avancez pas à pas pour voir où ça coince.",
+      "run_values_changed": "✗ Votre tableau est dans l'ordre, mais ses valeurs ont changé ({{count}} étapes). Un tri ne fait que déplacer les valeurs : avancez pas à pas pour voir où elles sont écrasées.",
       "run_gave_up": "Le tri Bogo a abandonné après 1000 mélanges ({{count}} étapes), comme la visualisation. Votre programme est correct : un mélange aléatoire ne trie presque jamais plus de 8 éléments environ. Essayez un tableau plus petit.",
       "run_found": "✓ Votre programme a trouvé {{target}} à l’indice {{index}} en {{count}} étapes. Regardez-le dans le visualiseur.",
       "run_not_found": "✗ Votre programme est terminé, mais il n'a pas retourné l'indice de {{target}} ({{count}} étapes). Avancez pas à pas pour voir où ça coince.",
@@ -522,6 +525,8 @@
       "run_tree_threads_left": "✗ Votre programme a visité les nœuds dans le bon ordre, mais il a laissé {{threads}} fil(s) temporaire(s) dans l’arbre ({{count}} étapes). Morris doit retirer chaque fil pour restaurer l’arbre.",
       "run_graph_ok": "✓ Votre programme a renvoyé une réponse correcte en {{count}} étapes. Regardez-le dans le visualiseur.",
       "run_graph_wrong": "✗ Votre programme a renvoyé {{got}}, mais la réponse attendue est {{expected}} ({{count}} étapes). Parcourez-le pas à pas pour voir où il se trompe.",
+      "run_graph_no_return": "✗ Votre programme est terminé sans renvoyer de réponse ({{count}} étapes). Ajoutez un bloc « renvoyer » avec votre résultat.",
+      "run_input_changed": "L'entrée a changé pendant l'exécution de votre programme. Relancez-le pour le voir sur la nouvelle entrée.",
       "run_graph_path_longer": "✓ Votre programme a trouvé un chemin valide de {{length}} nœuds en {{count}} étapes, mais un BFS doit trouver un plus court chemin : {{shortest}} nœuds. Parcourez-le pas à pas pour voir où il fait un détour."
     }
   },
@@ -1222,6 +1227,7 @@
     "blocksShuffle": "Mélange de tout le tableau",
     "blocksCheck": "Vérification : le tableau est-il trié ?",
     "blocksNotSorted": "Votre programme est terminé, mais le tableau n'est pas encore trié. Vérifiez vos blocs et relancez.",
+    "blocksValuesChanged": "Votre tableau est dans l'ordre, mais ses valeurs ont changé. Un tri ne fait que déplacer les valeurs.",
     "blocksNotFound": "Votre programme a retourné -1, mais {{target}} est dans le tableau. Vérifiez vos blocs et relancez.",
     "blocksWrongIndex": "Votre programme a retourné l'indice {{index}}, mais {{target}} ne s'y trouve pas. Vérifiez vos blocs et relancez.",
     "pivotSelected": "Pivot sélectionné : {{pivot}} à l'index {{index}}",
@@ -1421,6 +1427,7 @@
     "blocksGraphComplete": "Terminé. Votre réponse est correcte : {{answer}}",
     "blocksGraphNoOrder": "Votre programme a renvoyé None : le graphe contient un cycle, il n’existe donc pas d’ordre topologique. Correct !",
     "blocksGraphWrong": "Votre réponse : {{got}}. Attendu : {{expected}}",
+    "blocksGraphNoReturn": "Votre programme est terminé sans renvoyer de réponse. Attendu : {{expected}}",
     "blocksGraphPathLonger": "Chemin trouvé : {{length}} nœuds, mais le plus court en a {{shortest}}. Valide, mais pas le plus court.",
     "blocksMatrixWrite": "La distance {{from}} → {{to}} passe à {{value}}"
   },

@@ -388,6 +388,7 @@
     "closePreview": "Close",
     "goFullScreen": "Go Full Screen (F)",
     "fullScreenUnavailableBlocks": "Full screen is unavailable while the Blocks tab is open",
+    "exportUnavailableBlocks": "Close the Blocks tab to export the algorithm's video",
     "exitFullScreen": "Exit Full Screen (Esc)",
     "ascending": "Random input order (tap for descending input)",
     "descending": "Descending input order (tap for random input)",
@@ -501,8 +502,10 @@
     "actual_label": "Actual:",
     "blocks": {
       "reset_blocks": "Reset",
+      "reset_confirm": "Click again to reset",
       "run_sorted": "✓ Your program sorted the array in {{count}} steps. Watch it play in the visualizer.",
       "run_not_sorted": "✗ Your program finished, but the array is not sorted yet ({{count}} steps). Step through it to see where it goes wrong.",
+      "run_values_changed": "✗ Your array is in order, but its values changed ({{count}} steps). A sort may only move values around: step through it to see where they get overwritten.",
       "run_gave_up": "Bogo sort gave up after 1000 shuffles ({{count}} steps), just like the visualization. Your program is fine: random shuffling almost never sorts more than about 8 elements. Try a smaller array.",
       "run_found": "✓ Your program found {{target}} at index {{index}} in {{count}} steps. Watch it play in the visualizer.",
       "run_not_found": "✗ Your program finished, but it did not return the index of {{target}} ({{count}} steps). Step through it to see where it goes wrong.",
@@ -522,6 +525,8 @@
       "run_tree_threads_left": "✗ Your program visited the nodes in the right order, but it left {{threads}} temporary thread(s) in the tree ({{count}} steps). Morris must remove each thread to restore the tree.",
       "run_graph_ok": "✓ Your program returned a correct answer in {{count}} steps. Watch it play in the visualizer.",
       "run_graph_wrong": "✗ Your program returned {{got}}, but the expected answer is {{expected}} ({{count}} steps). Step through it to see where it goes wrong.",
+      "run_graph_no_return": "✗ Your program finished without returning an answer ({{count}} steps). Add a return block with your result.",
+      "run_input_changed": "The input changed while your program ran. Run it again to see it on the new input.",
       "run_graph_path_longer": "✓ Your program found a valid path of {{length}} nodes in {{count}} steps, but BFS should find a shortest one: {{shortest}} nodes. Step through to see where it takes a detour."
     }
   },
@@ -1222,6 +1227,7 @@
     "blocksShuffle": "Shuffling the whole array",
     "blocksCheck": "Checking whether the array is sorted",
     "blocksNotSorted": "Your program finished, but the array is not sorted yet. Check your blocks and run again.",
+    "blocksValuesChanged": "Your array is in order, but its values changed. A sort may only move values around.",
     "blocksNotFound": "Your program returned -1, but {{target}} is in the array. Check your blocks and run again.",
     "blocksWrongIndex": "Your program returned index {{index}}, but that is not where {{target}} is. Check your blocks and run again.",
     "pivotSelected": "Selected pivot: {{pivot}} at index {{index}}",
@@ -1420,6 +1426,7 @@
     "blocksGraphComplete": "Done. Your answer is correct: {{answer}}",
     "blocksGraphNoOrder": "Your program returned None: the graph has a cycle, so there is no topological order. Correct!",
     "blocksGraphWrong": "Your answer: {{got}}. Expected: {{expected}}",
+    "blocksGraphNoReturn": "Your program finished without returning an answer. Expected: {{expected}}",
     "blocksGraphPathLonger": "Path found: {{length}} nodes, but the shortest path has {{shortest}}. Valid, just not the shortest.",
     "blocksMatrixWrite": "Setting the distance {{from}} → {{to}} to {{value}}"
   },

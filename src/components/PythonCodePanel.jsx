@@ -81,10 +81,12 @@ const MAX_OUTPUT_PERCENT = 70;
 
 /** Python's share of the Blocks tab (beside or below the workspace). */
 const STORAGE_KEY_BLOCKS_PYTHON_PERCENT = 'bayan-flow:blocks-python-percent';
-const DEFAULT_BLOCKS_PYTHON_PERCENT = 42;
+const DEFAULT_BLOCKS_PYTHON_PERCENT = 33;
 const MIN_BLOCKS_PYTHON_PERCENT = 20;
 const MAX_BLOCKS_PYTHON_PERCENT = 70;
 const KEYBOARD_RESIZE_STEP = 5;
+/** How long the Blocks "Reset" stays armed for its confirming second click. */
+const RESET_CONFIRM_MS = 3000;
 
 function getStoredPercent(key, min, max, fallback) {
   try {
@@ -103,6 +105,34 @@ function storePercent(key, value) {
     localStorage.setItem(key, String(value));
   } catch {
     // localStorage not available
+  }
+}
+
+const sameCell = (a, b) => a?.row === b?.row && a?.col === b?.col;
+
+/**
+ * Whether the visualizer still shows the input a block run was given.
+ * Trees and graphs are hook state, replaced (not mutated) on regenerate.
+ */
+function isSameRunInput(run, current) {
+  switch (run.kind) {
+    case 'path':
+      return (
+        sameCell(run.grid?.start, current.grid?.start) &&
+        sameCell(run.grid?.end, current.grid?.end)
+      );
+    case 'tree':
+      return run.tree === current.tree;
+    case 'graph':
+      return run.graph === current.graph;
+    default: {
+      const now = current.array ?? [];
+      return (
+        run.array.length === now.length &&
+        run.array.every((value, i) => value === now[i]) &&
+        (run.kind !== 'search' || run.target === current.target)
+      );
+    }
   }
 }
 
@@ -539,6 +569,16 @@ function PythonCodePanel({
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
+  // The visualizer's input now, to tell whether it changed during a run.
+  const currentInputRef = useRef(null);
+  currentInputRef.current = {
+    array: currentArray,
+    target: currentTarget,
+    grid: currentGrid,
+    tree: currentTree,
+    graph: currentGraph,
+  };
+
   useEffect(() => {
     if (!vizResult) return;
     if (vizResult.errorKind) {
@@ -548,6 +588,12 @@ function PythonCodePanel({
     }
     const run = runInputRef.current;
     if (!run) return;
+    // "Generate New Input" during a run (e.g. while Pyodide loads): these
+    // steps belong to the old input, so don't play them over the new one.
+    if (!isSameRunInput(run, currentInputRef.current)) {
+      setBlocksRun({ kind: run.kind, inputChanged: true });
+      return;
+    }
     const events = vizResult.events ?? [];
     let built;
     if (run.kind === 'search') {
@@ -580,7 +626,8 @@ function PythonCodePanel({
         run.graph,
         algorithm,
         vizResult.finalArray,
-        run.functionName
+        run.functionName,
+        Boolean(vizResult.noReturn)
       );
     } else if (run.kind === 'tree') {
       built = buildTreeProgramSteps(
@@ -598,8 +645,17 @@ function PythonCodePanel({
         run.functionName
       );
     }
-    const { steps, solved, sorted, shortest, got, expected, threadsLeft } =
-      built;
+    const {
+      steps,
+      solved,
+      sorted,
+      shortest,
+      got,
+      expected,
+      threadsLeft,
+      valuesChanged,
+      noReturn,
+    } = built;
     const isSolved = Boolean(solved ?? sorted);
     setBlocksRun({
       kind: run.kind,
@@ -612,6 +668,8 @@ function PythonCodePanel({
       got,
       expected,
       threadsLeft,
+      valuesChanged,
+      noReturn,
     });
     trackBlocksProgramRun(algorithm, isSolved);
     onProgramStepsRef.current?.(steps);
@@ -628,7 +686,13 @@ function PythonCodePanel({
   // A correct bogo sort usually gives up (1000 shuffles), like its visualization.
   let blocksOutputKey =
     blocksRun && BLOCKS_OUTPUT_KEYS[blocksRun.kind]?.[blocksRun.solved ? 0 : 1];
-  if (blocksRun && !blocksRun.solved && algorithm === 'bogoSort') {
+  if (blocksRun?.inputChanged) {
+    blocksOutputKey = 'run_input_changed';
+  } else if (blocksRun?.valuesChanged) {
+    blocksOutputKey = 'run_values_changed';
+  } else if (blocksRun?.noReturn) {
+    blocksOutputKey = 'run_graph_no_return';
+  } else if (blocksRun && !blocksRun.solved && algorithm === 'bogoSort') {
     blocksOutputKey = 'run_gave_up';
   } else if (blocksRun?.solved && blocksRun.length > blocksRun.shortest) {
     // A valid path still passes; say when it isn't a shortest one.
@@ -713,6 +777,24 @@ function PythonCodePanel({
     setBlocksRun(null);
     setSelectedBlockId(null);
   }, [algorithm]);
+
+  // Reset can't be undone (it also drops the saved program): the first click
+  // only arms it, a second one within RESET_CONFIRM_MS resets.
+  const [confirmReset, setConfirmReset] = useState(false);
+  useEffect(() => {
+    if (!confirmReset) return;
+    const timer = setTimeout(() => setConfirmReset(false), RESET_CONFIRM_MS);
+    return () => clearTimeout(timer);
+  }, [confirmReset]);
+  useEffect(() => setConfirmReset(false), [algorithm]);
+  const handleResetBlocks = () => {
+    if (!confirmReset) {
+      setConfirmReset(true);
+      return;
+    }
+    setConfirmReset(false);
+    blocksRef.current?.resetToStarter();
+  };
 
   const handleRun = useCallback(() => {
     if (status === 'running') return;
@@ -904,10 +986,17 @@ function PythonCodePanel({
                 <div className="mx-2 mt-2 shrink-0 flex justify-end text-xs">
                   <button
                     type="button"
-                    onClick={() => blocksRef.current?.resetToStarter()}
-                    className="rounded-md px-2 py-1 min-h-[32px] text-text-secondary hover:bg-surface-elevated hover:text-text-primary"
+                    onClick={handleResetBlocks}
+                    aria-live="polite"
+                    className={`rounded-md px-2 py-1 min-h-[32px] hover:bg-surface-elevated ${
+                      confirmReset
+                        ? 'font-medium text-red-600 dark:text-red-400'
+                        : 'text-text-secondary hover:text-text-primary'
+                    }`}
                   >
-                    {t('python_code.blocks.reset_blocks')}
+                    {confirmReset
+                      ? t('python_code.blocks.reset_confirm')
+                      : t('python_code.blocks.reset_blocks')}
                   </button>
                 </div>
               )}
@@ -1057,6 +1146,8 @@ function PythonCodePanel({
                                   wordWrap: 'on',
                                   automaticLayout: true,
                                   padding: { top: 12, bottom: 12 },
+                                  // Its pinned header hid the line below it.
+                                  stickyScroll: { enabled: false },
                                 }}
                               />
                             </div>

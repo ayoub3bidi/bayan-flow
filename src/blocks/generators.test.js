@@ -399,6 +399,14 @@ def inorder_traversal(root):
     const generate = key =>
       generateProgram(load(getBlocksStarter(key).workspace));
 
+    it('ends only the executed graph function with a no-return sentinel', () => {
+      const kahn = generate('kahnAlgorithm');
+      expect(kahn.execCode).toMatch(/\n {4}return __bf\.NO_RETURN\n$/);
+      expect(kahn.displayCode).not.toContain('NO_RETURN');
+      // Sorts keep their own `return arr` and get no sentinel.
+      expect(generate('bubbleSort').execCode).not.toContain('NO_RETURN');
+    });
+
     it('generates a recursive DFS topological sort like the reference', () => {
       const topo = generate('topologicalSort');
       expect(topo.kind).toBe('graph');

@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, screen, waitFor, fireEvent } from '@testing-library/react';
-import { useEffect } from 'react';
+import { useEffect, useImperativeHandle } from 'react';
 import PythonCodePanel from './PythonCodePanel';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { renderWithI18n } from '../test/testUtils';
@@ -127,9 +127,11 @@ const FAKE_PROGRAM = {
 };
 /** Program the mocked workspace reports; tests may swap it before render. */
 const mockProgramRef = { current: FAKE_PROGRAM };
+const mockResetToStarter = vi.fn();
 vi.mock('./BlocksWorkspace', () => {
   // Stable component identity so parent re-renders don't remount it.
-  function MockBlocksWorkspace({ onProgramChange }) {
+  function MockBlocksWorkspace({ onProgramChange, ref }) {
+    useImperativeHandle(ref, () => ({ resetToStarter: mockResetToStarter }));
     useEffect(() => {
       onProgramChange(mockProgramRef.current);
     }, [onProgramChange]);
@@ -878,7 +880,7 @@ describe('PythonCodePanel - Blocks tab', () => {
         python.querySelector('[data-testid=monaco-editor]')
       ).toHaveAttribute('data-read-only', 'true')
     );
-    expect(python.style.flex).toBe('0 0 42%');
+    expect(python.style.flex).toBe('0 0 33%');
     expect(screen.getByTestId('blocks-split-handle')).toHaveAttribute(
       'aria-orientation',
       'vertical'
@@ -1056,6 +1058,87 @@ describe('PythonCodePanel - Blocks tab', () => {
     fireEvent.click(screen.getByTestId('clear-output'));
 
     expect(screen.getByTestId('output-content')).toHaveTextContent('empty');
+  });
+
+  it('says when a sort put its array in order by changing its values', async () => {
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(() => {
+          currentResult = { events: [], finalArray: [0, 0, 0] };
+        }),
+        vizResult: currentResult,
+      })
+    );
+    const onProgramSteps = vi.fn();
+    await openBlocks({ onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    // Re-render so the mocked hook hands over the new result.
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'Your array is in order, but its values changed'
+    );
+  });
+
+  it('drops a result whose input changed while the program ran', async () => {
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(),
+        vizResult: currentResult,
+      })
+    );
+    const onProgramSteps = vi.fn();
+    const { rerender } = await openBlocks({ onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+
+    // "Generate New Input" lands before the worker replies. Same root as
+    // renderWithI18n, so the panel re-renders instead of remounting.
+    currentResult = { events: [], finalArray: [1, 2, 3] };
+    rerender(
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+            currentArray={[9, 8, 7]}
+            onProgramSteps={onProgramSteps}
+          />
+        </ThemeProvider>
+      </I18nextProvider>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('output-content')).toHaveTextContent(
+        'The input changed while your program ran'
+      )
+    );
+    expect(onProgramSteps).not.toHaveBeenCalled();
+  });
+
+  it('resets the blocks only on a confirming second click', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await openBlocks();
+      const confirmButton = () =>
+        screen.getByRole('button', { name: 'Click again to reset' });
+      fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+      expect(mockResetToStarter).not.toHaveBeenCalled();
+      expect(confirmButton()).toBeInTheDocument();
+
+      // Unconfirmed, it disarms itself.
+      act(() => vi.advanceTimersByTime(3000));
+      expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+      fireEvent.click(confirmButton());
+      expect(mockResetToStarter).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('tells a bogo sort that gave up its program is fine', async () => {

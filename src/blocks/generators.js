@@ -184,8 +184,7 @@ class BayanPythonGenerator extends PythonGenerator {
       `${valueOf(generator, block, 'A', 'None', Order.RELATIONAL)} ${block.getFieldValue('OP') === 'IS_NOT' ? 'is not' : 'is'} ${valueOf(generator, block, 'B', 'None', Order.RELATIONAL)}`,
       Order.RELATIONAL,
     ];
-    this.forBlock[BLOCK_TYPES.DEFINE_GRAPH] = (block, generator) =>
-      `def ${block.getFieldValue('NAME')}:\n${generator.statementToCode(block, 'STACK') || generator.PASS}`;
+    this.forBlock[BLOCK_TYPES.DEFINE_GRAPH] = defineGraph;
     this.forBlock[BLOCK_TYPES.GRAPH] = () => ['graph', Order.ATOMIC];
     this.forBlock[BLOCK_TYPES.NODES] = () => ['nodes', Order.ATOMIC];
     this.forBlock[BLOCK_TYPES.EDGES] = () => ['edges', Order.ATOMIC];
@@ -272,6 +271,17 @@ function definePath(block, generator) {
   const body = generator.statementToCode(block, 'STACK') || generator.PASS;
   const name = functionNameOf(block);
   return `def ${name}(grid, start, end):\n${body}${generator.INDENT}return []\n`;
+}
+
+function defineGraph(block, generator) {
+  const body = generator.statementToCode(block, 'STACK') || generator.PASS;
+  // `None` is a right answer (no topological order of a cyclic graph), so a
+  // program that never returns must not pass as one: the executed form
+  // returns a sentinel instead. The Python shown to the learner is unchanged.
+  const fallThrough = generator.execMode
+    ? `${generator.INDENT}return __bf.NO_RETURN\n`
+    : '';
+  return `def ${block.getFieldValue('NAME')}:\n${body}${fallThrough}`;
 }
 
 function defineTree(block, generator) {

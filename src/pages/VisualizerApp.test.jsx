@@ -102,6 +102,7 @@ const BLOCK_PROGRAM_STEPS = [
 
 const sortingVisualization = {
   loadSteps: vi.fn(),
+  reloadSteps: vi.fn(),
   array: [3, 1, 2],
   states: ['sorting-state'],
   description: 'Sorting description',
@@ -283,6 +284,9 @@ vi.mock('../components/PythonCodePanel', () => ({
       <button type="button" onClick={() => onDockChange?.('45vw')}>
         dock-panel
       </button>
+      <button type="button" onClick={() => onDockChange?.(null)}>
+        undock-panel
+      </button>
     </div>
   ),
 }));
@@ -346,6 +350,7 @@ vi.mock('../components/ControlPanel', () => ({
     totalSteps,
     algorithmType,
     onExportVideo,
+    isExportDisabled,
     onGenerateInput,
     isSoundEnabled,
     isSoundTogglePending,
@@ -381,7 +386,9 @@ vi.mock('../components/ControlPanel', () => ({
       <button type="button" onClick={onGenerateInput}>
         generate-data
       </button>
-      <button onClick={onExportVideo}>export</button>
+      <button onClick={onExportVideo} disabled={isExportDisabled}>
+        export
+      </button>
       <button type="button" onClick={onToggleSound}>
         toggle-sound
       </button>
@@ -1199,6 +1206,35 @@ describe('VisualizerApp', () => {
       } finally {
         Object.assign(sortingVisualization, original);
       }
+    });
+
+    it('blocks export during a block program and restores the algorithm on leaving Blocks', async () => {
+      const original = { steps: sortingVisualization.steps };
+      sortingVisualization.steps = BLOCK_PROGRAM_STEPS;
+      try {
+        await renderApp();
+        sortingVisualization.reloadSteps.mockClear();
+        expect(screen.getByText('export')).toBeDisabled();
+
+        fireEvent.click(screen.getByText('dock-panel'));
+        expect(sortingVisualization.reloadSteps).not.toHaveBeenCalled();
+
+        fireEvent.click(screen.getByText('undock-panel'));
+        expect(sortingVisualization.reloadSteps).toHaveBeenCalledTimes(1);
+      } finally {
+        Object.assign(sortingVisualization, original);
+      }
+    });
+
+    it("keeps the algorithm's own steps (and export) when no program ran", async () => {
+      await renderApp();
+      sortingVisualization.reloadSteps.mockClear();
+      expect(screen.getByText('export')).not.toBeDisabled();
+
+      fireEvent.click(screen.getByText('dock-panel'));
+      fireEvent.click(screen.getByText('undock-panel'));
+
+      expect(sortingVisualization.reloadSteps).not.toHaveBeenCalled();
     });
 
     it('hides the settings sidebar while the code panel is docked', async () => {
