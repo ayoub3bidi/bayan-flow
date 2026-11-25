@@ -35,6 +35,8 @@ import {
   buildProgramSteps,
   buildSearchProgramSteps,
   buildPathProgramSteps,
+  buildTreeProgramSteps,
+  treeToDict,
 } from '../blocks/programSteps';
 import {
   trackBlocksTabOpened,
@@ -56,6 +58,7 @@ const BLOCKS_OUTPUT_KEYS = {
   sort: ['run_sorted', 'run_not_sorted'],
   search: ['run_found', 'run_not_found'],
   path: ['run_path_found', 'run_path_not_found'],
+  tree: ['run_tree_ok', 'run_tree_wrong_order'],
 };
 /**
  * Drawer width while the Blocks tab docks beside the visualizer. Always leaves
@@ -117,6 +120,8 @@ const clampBlocksPythonPercent = percent =>
  * @param {{ grid: number[][], start: {row: number, col: number},
  *   end: {row: number, col: number} }|null} [props.currentGrid] - Grid a block
  *   pathfinding program runs on
+ * @param {object|null} [props.currentTree] - Tree a block traversal runs on
+ *   (`generateTreeForTraversal()` output)
  * @param {string|null} [props.activeBlockId] - Block behind the playing step
  * @param {(steps: object[]) => void} [props.onProgramSteps] - Play a block program's steps
  * @param {(width: string|null) => void} [props.onDockChange] - Docked drawer width, or null
@@ -128,6 +133,7 @@ function PythonCodePanel({
   currentArray,
   currentTarget = null,
   currentGrid = null,
+  currentTree = null,
   activeBlockId = null,
   onProgramSteps,
   onDockChange,
@@ -395,7 +401,7 @@ function PythonCodePanel({
   const blocksRef = useRef(null);
   const splitEditorRef = useRef(null);
   const splitDecorationsRef = useRef(null);
-  /** What the last Run used: { kind, array, target }. */
+  /** What the last Run used: { kind, functionName, array, target, grid, tree }. */
   const runInputRef = useRef(null);
   const [program, setProgram] = useState(null);
 
@@ -482,6 +488,7 @@ function PythonCodePanel({
     const { kind } = program;
     if (kind === 'search' && currentTarget == null) return;
     if (kind === 'path' && !currentGrid?.start) return;
+    if (kind === 'tree' && currentTree?.rootId == null) return;
     const array = [...(currentArray ?? [])];
     const target = kind === 'search' ? currentTarget : null;
     runInputRef.current = {
@@ -490,6 +497,7 @@ function PythonCodePanel({
       array,
       target,
       grid: currentGrid,
+      tree: currentTree,
     };
     let args = [array];
     if (kind === 'search') args = [array, target];
@@ -497,6 +505,7 @@ function PythonCodePanel({
       const { grid, start, end } = currentGrid;
       args = [grid, [start.row, start.col], [end.row, end.col]];
     }
+    if (kind === 'tree') args = [treeToDict(currentTree)];
     setBlocksRun(null);
     runVisualization(program.execCode, args, {
       functionName: program.functionName,
@@ -509,6 +518,7 @@ function PythonCodePanel({
     currentArray,
     currentTarget,
     currentGrid,
+    currentTree,
     runVisualization,
   ]);
 
@@ -545,6 +555,14 @@ function PythonCodePanel({
         vizResult.finalArray,
         run.functionName
       );
+    } else if (run.kind === 'tree') {
+      built = buildTreeProgramSteps(
+        events,
+        run.tree,
+        algorithm,
+        vizResult.finalArray,
+        run.functionName
+      );
     } else {
       built = buildProgramSteps(
         events,
@@ -553,7 +571,8 @@ function PythonCodePanel({
         run.functionName
       );
     }
-    const { steps, solved, sorted, shortest } = built;
+    const { steps, solved, sorted, shortest, got, expected, threadsLeft } =
+      built;
     const isSolved = Boolean(solved ?? sorted);
     setBlocksRun({
       kind: run.kind,
@@ -563,6 +582,9 @@ function PythonCodePanel({
       index: vizResult.result,
       length: vizResult.finalArray?.length ?? 0,
       shortest,
+      got,
+      expected,
+      threadsLeft,
     });
     trackBlocksProgramRun(algorithm, isSolved);
     onProgramStepsRef.current?.(steps);
@@ -584,6 +606,9 @@ function PythonCodePanel({
   } else if (blocksRun?.solved && blocksRun.length > blocksRun.shortest) {
     // A valid path still passes; say when it isn't a shortest one.
     blocksOutputKey = 'run_path_longer';
+  } else if (blocksRun?.threadsLeft) {
+    // Right order, but Morris left threads in the tree.
+    blocksOutputKey = 'run_tree_threads_left';
   }
   const blocksOutput =
     blocksRun && !blocksRun.errorKind
@@ -593,6 +618,9 @@ function PythonCodePanel({
           index: blocksRun.index,
           length: blocksRun.length,
           shortest: blocksRun.shortest,
+          got: blocksRun.got,
+          expected: blocksRun.expected,
+          threads: blocksRun.threadsLeft,
         })
       : '';
   const blocksError = !blocksRun?.errorKind

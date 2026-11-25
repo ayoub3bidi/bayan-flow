@@ -45,6 +45,9 @@ describe('useTreeTraversalVisualization', () => {
 
     expect(result.current.treeNodes.length).toBeGreaterThan(0);
     expect(result.current.description.length).toBeGreaterThan(0);
+    // Block programs run on the same tree.
+    expect(result.current.treeContext.rootId).not.toBeNull();
+    expect(Object.keys(result.current.treeContext.nodeValues)).toHaveLength(7);
   });
 
   it('loads steps for postorderTraversal on mount', async () => {

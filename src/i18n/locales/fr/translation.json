@@ -516,7 +516,10 @@
       "resize_split": "Redimensionner les blocs et le Python",
       "run_path_found": "✓ Votre programme a trouvé un chemin de {{length}} cases en {{count}} étapes. Regardez-le dans le visualiseur.",
       "run_path_not_found": "✗ Votre programme s’est terminé sans retourner de chemin du départ à l’arrivée ({{count}} étapes). Avancez pas à pas pour voir où il se trompe.",
-      "run_path_longer": "✓ Votre programme a trouvé un chemin valide de {{length}} cases en {{count}} étapes, mais ce n’est pas le plus court : le plus court compte {{shortest}} cases. C’est normal pour la recherche gloutonne ; pour les autres algorithmes, avancez pas à pas pour voir où il fait un détour."
+      "run_path_longer": "✓ Votre programme a trouvé un chemin valide de {{length}} cases en {{count}} étapes, mais ce n’est pas le plus court : le plus court compte {{shortest}} cases. C’est normal pour la recherche gloutonne ; pour les autres algorithmes, avancez pas à pas pour voir où il fait un détour.",
+      "run_tree_ok": "✓ Votre programme a visité les {{length}} nœuds dans le bon ordre en {{count}} étapes. Regardez-le dans le visualiseur.",
+      "run_tree_wrong_order": "✗ Votre programme a renvoyé {{got}}, mais l’ordre attendu est {{expected}} ({{count}} étapes). Avancez pas à pas pour voir où il se trompe.",
+      "run_tree_threads_left": "✗ Votre programme a visité les nœuds dans le bon ordre, mais il a laissé {{threads}} fil(s) temporaire(s) dans l’arbre ({{count}} étapes). Morris doit retirer chaque fil pour restaurer l’arbre."
     }
   },
   "notes_panel": {
@@ -1400,7 +1403,12 @@
     "blocksOpen": "Ajout de la case ({{row}}, {{col}}) à la frontière",
     "blocksNoPath": "Votre programme a retourné [], alors qu’un chemin existe entre le départ et l’arrivée. Vérifiez vos blocs et relancez.",
     "blocksInvalidPath": "Votre programme a retourné une liste qui n’est pas un chemin du départ à l’arrivée : chaque case doit toucher la précédente. Vérifiez vos blocs et relancez.",
-    "blocksPathLonger": "Chemin trouvé : {{length}} cases, mais le plus court en compte {{shortest}}. Valide, mais pas le plus court."
+    "blocksPathLonger": "Chemin trouvé : {{length}} cases, mais le plus court en compte {{shortest}}. Valide, mais pas le plus court.",
+    "blocksTreePush": "Ajout du nœud {{node}} à la file",
+    "blocksTreePop": "Retrait du nœud {{node}} de la file",
+    "blocksTreeComplete": "Parcours terminé. Ordre final : {{order}}",
+    "blocksTreeWrongOrder": "Votre ordre : {{got}}. Attendu : {{expected}}",
+    "blocksTreeThreadsLeft": "Bon ordre, mais {{count}} fil(s) reste(nt) dans l’arbre : retirez chaque fil pour le restaurer."
   },
   "landing": {
     "hero": {
@@ -1907,6 +1915,20 @@
     "BF_ROWS": "len(grid)",
     "BF_ROWS_TOOLTIP": "Le nombre de lignes de la grille.",
     "BF_COLS": "len(grid[0])",
-    "BF_COLS_TOOLTIP": "Le nombre de colonnes de la grille."
+    "BF_COLS_TOOLTIP": "Le nombre de colonnes de la grille.",
+    "BF_DEFINE_TREE": "définir %1",
+    "BF_DEFINE_TREE_TOOLTIP": "Votre fonction de parcours. Renvoyez les valeurs des nœuds dans l’ordre où vous les visitez.",
+    "BF_ROOT": "root",
+    "BF_ROOT_TOOLTIP": "Le nœud racine de l’arbre. Chaque nœud a une valeur, un enfant gauche et un enfant droit.",
+    "BF_CHILD": "%1 [ %2 ]",
+    "BF_CHILD_TOOLTIP": "L’enfant gauche ou droit d’un nœud (None s’il n’en a pas).",
+    "BF_NODE_VALUE": "%1 [ \"value\" ]",
+    "BF_NODE_VALUE_TOOLTIP": "La valeur stockée dans un nœud.",
+    "BF_VISIT": "%1 .append( %2 [ \"value\" ] )",
+    "BF_VISIT_TOOLTIP": "Visiter un nœud : ajouter sa valeur au résultat. Il devient vert dans l’arbre.",
+    "BF_SET_CHILD": "%1 [ %2 ] = %3",
+    "BF_SET_CHILD_TOOLTIP": "Faire pointer le lien gauche ou droit d’un nœud ailleurs (Morris s’en sert pour ses fils temporaires).",
+    "BF_IS": "%1 %2 %3",
+    "BF_IS_TOOLTIP": "Si deux choses sont exactement le même nœud (ou toutes deux None). Utilisez-le pour comparer des nœuds."
   }
 }

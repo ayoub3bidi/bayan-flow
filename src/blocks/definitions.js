@@ -3,8 +3,8 @@
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  *
- * Custom Blockly blocks for the array algorithms (sorts and searches) and the
- * grid pathfinding algorithms.
+ * Custom Blockly blocks for the array algorithms (sorts and searches), the
+ * grid pathfinding algorithms and the binary tree traversals.
  * Imported only from the lazy Blocks path, so Blockly stays out of the main bundle.
  */
 
@@ -139,6 +139,26 @@ export const DEFAULT_BLOCK_MESSAGES = {
   BF_ROWS_TOOLTIP: 'The number of rows in the grid.',
   BF_COLS: 'len(grid[0])',
   BF_COLS_TOOLTIP: 'The number of columns in the grid.',
+  BF_DEFINE_TREE: 'define %1',
+  BF_DEFINE_TREE_TOOLTIP:
+    'Your traversal function. Return the node values in the order you visit them.',
+  BF_ROOT: 'root',
+  BF_ROOT_TOOLTIP:
+    'The root node of the tree. Each node has a value, a left child and a right child.',
+  BF_CHILD: '%1 [ %2 ]',
+  BF_CHILD_TOOLTIP:
+    'The left or right child of a node (None when it has none).',
+  BF_NODE_VALUE: '%1 [ "value" ]',
+  BF_NODE_VALUE_TOOLTIP: 'The value stored in a node.',
+  BF_VISIT: '%1 .append( %2 [ "value" ] )',
+  BF_VISIT_TOOLTIP:
+    'Visit a node: add its value to the result. It turns green in the tree.',
+  BF_SET_CHILD: '%1 [ %2 ] = %3',
+  BF_SET_CHILD_TOOLTIP:
+    'Point a node’s left or right link somewhere else (Morris uses it for temporary threads).',
+  BF_IS: '%1 %2 %3',
+  BF_IS_TOOLTIP:
+    'Whether two things are the very same node (or both None). Use it to compare nodes.',
 };
 
 export const BLOCK_TYPES = {
@@ -196,6 +216,13 @@ export const BLOCK_TYPES = {
   GRID: 'bf_grid',
   ROWS: 'bf_rows',
   COLS: 'bf_cols',
+  DEFINE_TREE: 'bf_define_tree',
+  ROOT: 'bf_root',
+  CHILD: 'bf_child',
+  NODE_VALUE: 'bf_node_value',
+  VISIT: 'bf_visit',
+  SET_CHILD: 'bf_set_child',
+  IS: 'bf_is',
 };
 
 /** Comparison ops shared by `bf_compare` and `bf_compare_target`. */
@@ -205,6 +232,15 @@ const ORDER_OPS = [
   ['≥', 'GTE'],
   ['≤', 'LTE'],
 ];
+
+const SIDE_FIELD = {
+  type: 'field_dropdown',
+  name: 'SIDE',
+  options: [
+    ['"left"', 'left'],
+    ['"right"', 'right'],
+  ],
+};
 
 const num = name => ({ type: 'input_value', name, check: 'Number' });
 const any = name => ({ type: 'input_value', name });
@@ -606,12 +642,76 @@ const BLOCK_DEFINITIONS = [
     'statement',
     'list_blocks'
   ),
+  {
+    type: BLOCK_TYPES.DEFINE_TREE,
+    message0: '%{BKY_BF_DEFINE_TREE}',
+    args0: [
+      {
+        type: 'field_label_serializable',
+        name: 'NAME',
+        text: 'preorder_traversal(root)',
+      },
+    ],
+    message1: '%1',
+    args1: [{ type: 'input_statement', name: 'STACK' }],
+    style: 'procedure_blocks',
+    tooltip: '%{BKY_BF_DEFINE_TREE_TOOLTIP}',
+  },
+  simpleBlock(BLOCK_TYPES.ROOT, 'BF_ROOT', [], null, 'variable_blocks'),
+  simpleBlock(
+    BLOCK_TYPES.CHILD,
+    'BF_CHILD',
+    [any('NODE'), SIDE_FIELD],
+    null,
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.NODE_VALUE,
+    'BF_NODE_VALUE',
+    [any('NODE')],
+    'Number',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.VISIT,
+    'BF_VISIT',
+    [any('LIST'), any('NODE')],
+    'statement',
+    'list_blocks'
+  ),
+  simpleBlock(
+    BLOCK_TYPES.SET_CHILD,
+    'BF_SET_CHILD',
+    [any('NODE'), SIDE_FIELD, any('VALUE')],
+    'statement',
+    'list_blocks'
+  ),
+  {
+    type: BLOCK_TYPES.IS,
+    message0: '%{BKY_BF_IS}',
+    args0: [
+      any('A'),
+      {
+        type: 'field_dropdown',
+        name: 'OP',
+        options: [
+          ['is', 'IS'],
+          ['is not', 'IS_NOT'],
+        ],
+      },
+      any('B'),
+    ],
+    inputsInline: true,
+    output: 'Boolean',
+    style: 'logic_blocks',
+    tooltip: '%{BKY_BF_IS_TOOLTIP}',
+  },
 ];
 
 /**
  * `name(arr, a, b)` call to a helper. The arity lives in extraState (set by the
  * starter); there is no mutator UI, learners copy calls from the toolbox.
- * `noArr` (path programs) drops the implicit `arr` first argument.
+ * `noArr` (path and tree programs) drops the implicit `arr` first argument.
  * @param {boolean} isValue - value block (`p = partition(...)`) vs statement
  */
 function callBlock(isValue) {

@@ -11,11 +11,13 @@
 import { SORTING_STARTERS } from './sorting.js';
 import { SEARCHING_STARTERS } from './searching.js';
 import { PATHFINDING_STARTERS } from './pathfinding.js';
+import { TREE_STARTERS } from './tree.js';
 
 const HAT_TYPES = new Set([
   'bf_define_sort',
   'bf_define_search',
   'bf_define_path',
+  'bf_define_tree',
   'bf_define_helper',
 ]);
 
@@ -72,6 +74,7 @@ const STARTERS = Object.fromEntries(
     ...SORTING_STARTERS,
     ...SEARCHING_STARTERS,
     ...PATHFINDING_STARTERS,
+    ...TREE_STARTERS,
   }).map(([key, workspace]) => [
     key,
     { workspace, toolbox: toolboxFor(workspace) },

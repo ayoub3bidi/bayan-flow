@@ -9,6 +9,8 @@ import {
   buildProgramSteps,
   buildSearchProgramSteps,
   buildPathProgramSteps,
+  buildTreeProgramSteps,
+  treeToDict,
   isValidGridPath,
   shortestPathLength,
   isSortedAscending,
@@ -317,5 +319,174 @@ describe('buildPathProgramSteps', () => {
       )
     ).toBe(false);
     expect(isValidGridPath(null, GRID, START, END)).toBe(false);
+  });
+});
+
+// 2 at the root, 1 on the left, 3 on the right (values double as node names).
+const TREE = {
+  nodes: [
+    { id: '0', label: '2' },
+    { id: '1', label: '1' },
+    { id: '2', label: '3' },
+  ],
+  edges: [
+    { from: '0', to: '1' },
+    { from: '0', to: '2' },
+  ],
+  children: {
+    0: { left: '1', right: '2' },
+    1: { left: null, right: null },
+    2: { left: null, right: null },
+  },
+  rootId: '0',
+  nodeValues: { 0: 2, 1: 1, 2: 3 },
+};
+const output = (node, blockId = 'vis') => ({ kind: 'output', node, blockId });
+
+describe('treeToDict', () => {
+  it('nests nodes as { value, left, right } with null leaves', () => {
+    expect(treeToDict(TREE)).toEqual({
+      value: 2,
+      left: { value: 1, left: null, right: null },
+      right: { value: 3, left: null, right: null },
+    });
+  });
+});
+
+describe('buildTreeProgramSteps', () => {
+  it('plays each visit as visiting then visited and solves the right order', () => {
+    const { steps, solved } = buildTreeProgramSteps(
+      [output(1), output(2), output(3)],
+      TREE,
+      'inorderTraversal',
+      [1, 2, 3]
+    );
+    expect(solved).toBe(true);
+    expect(steps).toHaveLength(1 + 3 * 2 + 1);
+    expect(steps[1].nodeStates).toEqual({
+      0: 'default',
+      1: 'visiting',
+      2: 'default',
+    });
+    expect(steps[1].blockId).toBe('vis');
+    expect(steps[2].nodeStates[1]).toBe('visited');
+    expect(steps[2].visitOrder).toEqual(['1']);
+    expect(Object.values(steps.at(-1).nodeStates)).toEqual([
+      'visited',
+      'visited',
+      'visited',
+    ]);
+  });
+
+  it('fails a wrong order and names both orders', () => {
+    const { solved, got, expected, steps } = buildTreeProgramSteps(
+      [output(2), output(1), output(3)],
+      TREE,
+      'inorderTraversal',
+      [2, 1, 3]
+    );
+    expect(solved).toBe(false);
+    expect(got).toBe('2, 1, 3');
+    expect(expected).toBe('1, 2, 3');
+    expect(steps.at(-1).description).toContain('1, 2, 3');
+    expect(
+      buildTreeProgramSteps([], TREE, 'inorderTraversal', null).solved
+    ).toBe(false);
+  });
+
+  it('mirrors a queue (the untraced [root] included) but not a stack', () => {
+    const queue = buildTreeProgramSteps(
+      [
+        { kind: 'visit', cell: 2, blockId: 'pop' },
+        { kind: 'open', cell: 1, blockId: 'push' },
+        { kind: 'open', cell: 3, blockId: 'push' },
+        { kind: 'visit', cell: 1, blockId: 'pop' },
+      ],
+      TREE,
+      'levelOrderTraversal',
+      []
+    ).steps;
+    expect(queue.map(step => step.queueOrder)).toEqual([
+      [],
+      [],
+      ['1'],
+      ['1', '2'],
+      ['2'],
+      [],
+    ]);
+    const stack = buildTreeProgramSteps(
+      [
+        { kind: 'open', cell: 1, blockId: 'push' },
+        { kind: 'open', cell: 3, blockId: 'push' },
+        { kind: 'leave', cell: 3, blockId: 'pop' },
+      ],
+      TREE,
+      'preorderTraversal',
+      []
+    ).steps;
+    expect(stack[3].queueOrder).toEqual([]);
+  });
+
+  it('draws a Morris thread as an extra edge until it is removed', () => {
+    const { steps } = buildTreeProgramSteps(
+      [
+        { kind: 'thread', node: 1, other: 2, blockId: 'th' },
+        { kind: 'unthread', node: 1, other: null, blockId: 'un' },
+      ],
+      TREE,
+      'morrisTraversal',
+      []
+    );
+    expect(steps[1].edges).toContainEqual({ from: '1', to: '0' });
+    expect(steps[1].description).toContain('1 → 2');
+    expect(steps[2].edges).toEqual(TREE.edges);
+    expect(steps[2].blockId).toBe('un');
+  });
+
+  it('shows the zigzag scan direction of each level from its visits', () => {
+    const tree = {
+      ...TREE,
+      nodes: [
+        { id: '0', label: '2', x: 0.5 },
+        { id: '1', label: '1', x: 0 },
+        { id: '2', label: '3', x: 1 },
+      ],
+    };
+    // Root (one node: depth 0 → ltr), then level 1 right to left.
+    const { steps } = buildTreeProgramSteps(
+      [output(2), output(3), output(1)],
+      tree,
+      'zigzagLevelOrderTraversal',
+      [2, 3, 1]
+    );
+    expect(steps[1].levelScanDirection).toBe('ltr');
+    expect(steps[3].levelScanDirection).toBe('rtl');
+    expect(steps.at(-1).levelScanDirection).toBeUndefined();
+    // Other traversals have no badge.
+    const inorder = buildTreeProgramSteps(
+      [output(1)],
+      tree,
+      'inorderTraversal',
+      [1]
+    ).steps;
+    expect(inorder[1].levelScanDirection).toBeUndefined();
+  });
+
+  it('fails a right order that leaves a Morris thread in the tree', () => {
+    const { solved, threadsLeft, steps } = buildTreeProgramSteps(
+      [
+        { kind: 'thread', node: 1, other: 2, blockId: 'th' },
+        output(1),
+        output(2),
+        output(3),
+      ],
+      TREE,
+      'morrisTraversal',
+      [1, 2, 3]
+    );
+    expect(solved).toBe(false);
+    expect(threadsLeft).toBe(1);
+    expect(steps.at(-1).description).toContain('still in the tree');
+    expect(steps.at(-1).edges).toContainEqual({ from: '1', to: '0' });
   });
 });

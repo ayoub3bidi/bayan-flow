@@ -237,6 +237,9 @@ vi.mock('../algorithms/python', () => ({
     if (algorithm === 'bfs') {
       return 'def bfs(grid, start, end):\n    return []';
     }
+    if (algorithm === 'inorderTraversal') {
+      return 'def inorder_traversal(root):\n    return []';
+    }
     return null;
   }),
   getAlgorithmDisplayName: vi.fn(algorithm => {
@@ -1219,6 +1222,69 @@ describe('PythonCodePanel - Blocks tab', () => {
     );
     expect(screen.getByTestId('output-content')).toHaveTextContent(
       'the shortest path has 3 cells'
+    );
+  });
+
+  it('runs a tree program on the visualizer tree and checks the order', async () => {
+    const treeProgram = {
+      ...FAKE_PROGRAM,
+      kind: 'tree',
+      functionName: 'inorder_traversal',
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      // Preorder's order where inorder was expected.
+      currentResult = {
+        events: [{ kind: 'output', node: 2, blockId: 'v' }],
+        finalArray: [2, 1],
+        result: null,
+      };
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    mockProgramRef.current = treeProgram;
+    await openBlocks({
+      algorithm: 'inorderTraversal',
+      currentTree: {
+        nodes: [
+          { id: '0', label: '2' },
+          { id: '1', label: '1' },
+        ],
+        edges: [{ from: '0', to: '1' }],
+        children: {
+          0: { left: '1', right: null },
+          1: { left: null, right: null },
+        },
+        rootId: '0',
+        nodeValues: { 0: 2, 1: 1 },
+      },
+      onProgramSteps,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      treeProgram.execCode,
+      [
+        {
+          value: 2,
+          left: { value: 1, left: null, right: null },
+          right: null,
+        },
+      ],
+      { functionName: 'inorder_traversal', kind: 'tree' }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[1]).toMatchObject({
+      blockId: 'v',
+      nodeStates: { 0: 'visiting', 1: 'default' },
+    });
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'returned 2, 1, but the expected order is 1, 2'
     );
   });
 

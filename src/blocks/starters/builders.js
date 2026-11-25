@@ -151,6 +151,27 @@ export const notIn = (item, collection) =>
     inputs: { ITEM: toValue(item), COLLECTION: toValue(collection) },
   });
 
+// Tree values (traversal programs).
+export const root = () => value('bf_root');
+export const left = node =>
+  value('bf_child', {
+    fields: { SIDE: 'left' },
+    inputs: { NODE: toValue(node) },
+  });
+export const right = node =>
+  value('bf_child', {
+    fields: { SIDE: 'right' },
+    inputs: { NODE: toValue(node) },
+  });
+const is = (opName, a, b) =>
+  value('bf_is', {
+    fields: { OP: opName },
+    inputs: { A: toValue(a), B: toValue(b) },
+  });
+/** `a is b` (identity: threaded Morris trees make `==` recurse forever). */
+export const isSame = (a, b) => is('IS', a, b);
+export const isNot = (a, b) => is('IS_NOT', a, b);
+
 /** A helper call used as a value, e.g. `p = partition(arr, low, high)`. */
 export const callValue = (name, ...args) =>
   value('bf_call_value', callFields(name, args));
@@ -237,6 +258,17 @@ export const reverse = lst => ({
   type: 'bf_reverse',
   inputs: { LIST: toValue(lst) },
 });
+/** `result.append(node["value"])` (traced visit). */
+export const visit = (lst, node) => ({
+  type: 'bf_visit',
+  inputs: { LIST: toValue(lst), NODE: toValue(node) },
+});
+/** `node["left"|"right"] = x` (traced thread / unthread). */
+export const setChild = (node, side, x) => ({
+  type: 'bf_set_child',
+  fields: { SIDE: side },
+  inputs: { NODE: toValue(node), VALUE: toValue(x) },
+});
 export const cont = () => ({
   type: 'controls_flow_statements',
   fields: { FLOW: 'CONTINUE' },
@@ -306,14 +338,30 @@ export function whileLoop(cond, statements) {
  * A starter workspace: the main function plus optional helpers. Helpers sit
  * below the main function; Python lists them first (see generateProgram).
  *
- * @param {{ variables: string[], kind: 'sort'|'search'|'path', signature: string,
+ * Path and tree helpers take every argument, so their calls drop the
+ * implicit `arr`.
+ *
+ * @param {{ variables: string[], kind: 'sort'|'search'|'path'|'tree', signature: string,
  *   main: object[], helpers?: Array<{ signature: string, body: object[] }> }} spec
  */
 const HAT_BY_KIND = {
   sort: 'bf_define_sort',
   search: 'bf_define_search',
   path: 'bf_define_path',
+  tree: 'bf_define_tree',
 };
+
+/** Marks every helper call under `block` so it doesn't add `arr`. */
+function withoutImplicitArr(block) {
+  if (!block) return;
+  if (block.type === 'bf_call' || block.type === 'bf_call_value') {
+    block.extraState.noArr = true;
+  }
+  for (const input of Object.values(block.inputs ?? {})) {
+    withoutImplicitArr(input.block);
+  }
+  withoutImplicitArr(block.next?.block);
+}
 
 export function program({ variables, kind, signature, main, helpers = [] }) {
   const hats = [
@@ -330,6 +378,7 @@ export function program({ variables, kind, signature, main, helpers = [] }) {
       inputs: { STACK: body(helper.body) },
     })),
   ];
+  if (kind === 'path' || kind === 'tree') hats.forEach(withoutImplicitArr);
   return {
     variables: variables.map(name => ({ name, id: varId(name) })),
     blocks: {

@@ -28,15 +28,18 @@ const NODE_LINK_SEARCHES = new Set([
   SEARCHING_ALGORITHMS.BREADTH_FIRST_SEARCH_GRAPH,
 ]);
 const PATHFINDING = Object.values(PATHFINDING_ALGORITHMS);
+const TREE = Object.values(TREE_TRAVERSAL_ALGORITHMS);
 const SUPPORTED = [
   ...Object.values(SORTING_ALGORITHMS),
   ...Object.values(SEARCHING_ALGORITHMS).filter(
     key => !NODE_LINK_SEARCHES.has(key)
   ),
   ...PATHFINDING,
+  ...TREE,
 ];
 const kindOf = key => {
   if (PATHFINDING.includes(key)) return 'path';
+  if (TREE.includes(key)) return 'tree';
   return Object.values(SEARCHING_ALGORITHMS).includes(key) ? 'search' : 'sort';
 };
 
@@ -46,12 +49,11 @@ describe('blocks starters', () => {
     registerBlocks();
   });
 
-  it('covers every sort, array search and pathfinding algorithm, and nothing else', () => {
-    expect(SUPPORTED).toHaveLength(30);
+  it('covers every sort, array search, pathfinding and tree algorithm, and nothing else', () => {
+    expect(SUPPORTED).toHaveLength(36);
     for (const key of SUPPORTED) expect(getBlocksStarter(key)).not.toBeNull();
     const comingSoon = [
       ...NODE_LINK_SEARCHES,
-      ...Object.values(TREE_TRAVERSAL_ALGORITHMS),
       ...Object.values(GRAPH_ALGORITHMS),
     ];
     expect(SUPPORTED.length + comingSoon.length).toBe(45);
@@ -69,9 +71,9 @@ describe('blocks starters', () => {
     expect(program.kind).toBe(kind);
     expect(program.functionName).toMatch(/^[a-z_]+$/);
     // No empty slots: no `pass` bodies and no unnamed/missing variables.
-    // Path programs use None on purpose (parent links, "no jump point").
+    // Path and tree programs use None on purpose (parent links, missing children).
     expect(program.displayCode).not.toMatch(
-      kind === 'path'
+      kind === 'path' || kind === 'tree'
         ? /\bpass\b|\bunnamed|\w2\b/
         : /\bpass\b|\bNone\b|\bunnamed/
     );

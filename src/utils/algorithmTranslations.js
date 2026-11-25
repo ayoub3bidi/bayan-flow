@@ -42,6 +42,11 @@ export const ALGORITHM_STEPS = {
   BLOCKS_NO_PATH: 'blocksNoPath',
   BLOCKS_INVALID_PATH: 'blocksInvalidPath',
   BLOCKS_PATH_LONGER: 'blocksPathLonger',
+  BLOCKS_TREE_PUSH: 'blocksTreePush',
+  BLOCKS_TREE_POP: 'blocksTreePop',
+  BLOCKS_TREE_COMPLETE: 'blocksTreeComplete',
+  BLOCKS_TREE_WRONG_ORDER: 'blocksTreeWrongOrder',
+  BLOCKS_TREE_THREADS_LEFT: 'blocksTreeThreadsLeft',
 
   // Quick Sort
   PIVOT_SELECTED: 'pivotSelected',

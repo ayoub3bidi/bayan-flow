@@ -3,12 +3,17 @@
  * Licensed under Elastic License 2.0 OR Commercial
  * See LICENSE for details.
  *
- * Converts tracer events from a block program into sorting, searching or
- * pathfinding visualizer steps.
+ * Converts tracer events from a block program into sorting, searching,
+ * pathfinding or tree traversal visualizer steps.
  * No Blockly import: this runs on the main thread after the worker replies.
  */
 
-import { ELEMENT_STATES, GRID_ELEMENT_STATES } from '../constants/index.js';
+import {
+  ELEMENT_STATES,
+  GRID_ELEMENT_STATES,
+  TREE_NODE_STATES,
+} from '../constants/index.js';
+import { pureTreeTraversalAlgorithms } from '../algorithms/treeTraversal/index.js';
 import {
   getAlgorithmDescription,
   ALGORITHM_STEPS,
@@ -373,4 +378,243 @@ export function buildPathProgramSteps(
   steps.push(step(description));
 
   return { steps, solved, shortest };
+}
+
+/**
+ * The visualizer's tree as the nested dicts a tree program takes:
+ * `{ value, left, right }`, null for a missing child.
+ * @param {{ children: Record<string, {left: string|null, right: string|null}>,
+ *   rootId: string|null, nodeValues: Record<string, number> }} tree
+ */
+export function treeToDict({ children, rootId, nodeValues }) {
+  const toDict = id =>
+    id == null
+      ? null
+      : {
+          value: nodeValues[id],
+          left: toDict(children[id].left),
+          right: toDict(children[id].right),
+        };
+  return toDict(rootId);
+}
+
+/**
+ * Zigzag's "this level" badge for a block run: a level's direction comes from
+ * where its first two visits sit; a one-node level alternates by depth like
+ * the JS traversal.
+ * @returns {(id: string) => 'ltr'|'rtl'}
+ */
+function zigzagDirections(events, { nodes, children, rootId }, idByValue) {
+  const depth = {};
+  const stack = [[rootId, 0]];
+  while (stack.length) {
+    const [id, d] = stack.pop();
+    if (id == null) continue;
+    depth[id] = d;
+    stack.push([children[id]?.left, d + 1], [children[id]?.right, d + 1]);
+  }
+  const xById = Object.fromEntries(nodes.map(n => [n.id, n.x]));
+  const firstVisits = {};
+  for (const { kind, node } of events) {
+    const id = idByValue[node];
+    if (kind !== 'output' || id === undefined) continue;
+    const level = (firstVisits[depth[id]] ??= []);
+    if (level.length < 2) level.push(id);
+  }
+  return id => {
+    const [a, b] = firstVisits[depth[id]] ?? [];
+    if (b === undefined) return depth[id] % 2 === 0 ? 'ltr' : 'rtl';
+    return xById[b] > xById[a] ? 'ltr' : 'rtl';
+  };
+}
+
+/**
+ * Tree traversal steps from a tree program's events. Nodes are named by value.
+ * `output` (a visit) plays visiting then visited like the JS traversals;
+ * queue pushes/pops update the queue strip (hidden once the list is used as a
+ * stack); Morris threads show as extra edges. Solved when the returned values
+ * match the algorithm's order and no thread is left in the tree.
+ *
+ * @param {object[]} events
+ * @param {{ nodes: object[], edges: object[], children: object, rootId: string|null,
+ *   nodeValues: Record<string, number> }} tree
+ * @param {string} algorithmKey
+ * @param {number[]|null} returned
+ * @param {string} [functionName]
+ */
+export function buildTreeProgramSteps(
+  events,
+  tree,
+  algorithmKey,
+  returned,
+  functionName = 'traversal'
+) {
+  const { nodes, edges, children, rootId, nodeValues } = tree;
+  const idByValue = Object.fromEntries(
+    Object.entries(nodeValues).map(([id, value]) => [value, id])
+  );
+  const completed = [];
+  let queue = [];
+  let showQueue = true;
+  const threads = [];
+  const directionOf =
+    algorithmKey === 'zigzagLevelOrderTraversal'
+      ? zigzagDirections(events, tree, idByValue)
+      : null;
+  let scanDirection;
+  const step = (description, blockId = null, visitingId = null) => {
+    const nodeStates = Object.fromEntries(
+      nodes.map(n => [n.id, TREE_NODE_STATES.DEFAULT])
+    );
+    for (const id of completed) nodeStates[id] = TREE_NODE_STATES.VISITED;
+    if (visitingId != null) nodeStates[visitingId] = TREE_NODE_STATES.VISITING;
+    return {
+      nodes: nodes.map(n => ({ ...n })),
+      edges: [...edges, ...threads].map(e => ({ ...e })),
+      nodeStates,
+      visitOrder: [...completed],
+      queueOrder: showQueue ? [...queue] : [],
+      levelScanDirection: scanDirection,
+      description,
+      blockId,
+    };
+  };
+  const order = () => completed.map(id => nodeValues[id]).join(', ');
+
+  const steps = [
+    step(
+      getAlgorithmDescription(ALGORITHM_STEPS.STARTING, {
+        algorithm: `${functionName}(root)`,
+      })
+    ),
+  ];
+  for (const { kind, node, other, cell, blockId } of events) {
+    const id =
+      idByValue[
+        kind === 'open' || kind === 'visit' || kind === 'leave' ? cell : node
+      ];
+    if (id === undefined) continue;
+    switch (kind) {
+      case 'output':
+        scanDirection = directionOf?.(id);
+        steps.push(
+          step(
+            getAlgorithmDescription(ALGORITHM_STEPS.PREORDER_VISITING, {
+              node: nodeValues[id],
+            }),
+            blockId,
+            id
+          )
+        );
+        completed.push(id);
+        steps.push(
+          step(
+            getAlgorithmDescription(ALGORITHM_STEPS.PREORDER_VISITED, {
+              node: nodeValues[id],
+              order: order(),
+            }),
+            blockId
+          )
+        );
+        break;
+      case 'open':
+        queue.push(id);
+        steps.push(
+          step(
+            getAlgorithmDescription(ALGORITHM_STEPS.BLOCKS_TREE_PUSH, {
+              node: nodeValues[id],
+            }),
+            blockId
+          )
+        );
+        break;
+      case 'visit':
+      case 'leave': {
+        // The starting `[root]` isn't traced, so a node may be missing here.
+        const at = kind === 'visit' ? queue.indexOf(id) : queue.lastIndexOf(id);
+        if (at !== -1) queue.splice(at, 1);
+        if (kind === 'leave') showQueue = false;
+        steps.push(
+          step(
+            getAlgorithmDescription(ALGORITHM_STEPS.BLOCKS_TREE_POP, {
+              node: nodeValues[id],
+            }),
+            blockId
+          )
+        );
+        break;
+      }
+      case 'thread': {
+        const to = idByValue[other];
+        if (to === undefined) continue;
+        threads.push({ from: id, to });
+        steps.push(
+          step(
+            getAlgorithmDescription(ALGORITHM_STEPS.MORRIS_THREADING, {
+              from: nodeValues[id],
+              to: other,
+            }),
+            blockId
+          )
+        );
+        break;
+      }
+      case 'unthread': {
+        const at = threads.findIndex(e => e.from === id);
+        const to = at === -1 ? null : threads[at].to;
+        if (at !== -1) threads.splice(at, 1);
+        steps.push(
+          step(
+            getAlgorithmDescription(ALGORITHM_STEPS.MORRIS_UNTHREADING, {
+              from: nodeValues[id],
+              to: to == null ? '' : nodeValues[to],
+            }),
+            blockId
+          )
+        );
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  const expectedOrder = (
+    pureTreeTraversalAlgorithms[algorithmKey]?.(children, rootId) ?? []
+  ).map(id => nodeValues[id]);
+  const got = Array.isArray(returned) ? returned : [];
+  const rightOrder =
+    got.length === expectedOrder.length &&
+    got.every((value, i) => value === expectedOrder[i]);
+  // Morris without its unthread still visits in order, but breaks the tree.
+  const threadsLeft = threads.length;
+  const solved = rightOrder && threadsLeft === 0;
+  queue = [];
+  scanDirection = undefined;
+  let description;
+  if (solved) {
+    description = getAlgorithmDescription(
+      ALGORITHM_STEPS.BLOCKS_TREE_COMPLETE,
+      { order: got.join(', ') }
+    );
+  } else if (rightOrder) {
+    description = getAlgorithmDescription(
+      ALGORITHM_STEPS.BLOCKS_TREE_THREADS_LEFT,
+      { count: threadsLeft }
+    );
+  } else {
+    description = getAlgorithmDescription(
+      ALGORITHM_STEPS.BLOCKS_TREE_WRONG_ORDER,
+      { got: got.join(', '), expected: expectedOrder.join(', ') }
+    );
+  }
+  steps.push(step(description));
+
+  return {
+    steps,
+    solved,
+    got: got.join(', '),
+    expected: expectedOrder.join(', '),
+    threadsLeft,
+  };
 }

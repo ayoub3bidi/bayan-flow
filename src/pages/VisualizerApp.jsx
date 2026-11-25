@@ -1114,6 +1114,7 @@ function App() {
             currentArray={array}
             currentTarget={searchingVisualization.targetValue}
             currentGrid={pathfindingGrid}
+            currentTree={treeTraversalVisualization.treeContext}
             activeBlockId={activeBlockId}
             onProgramSteps={handleProgramSteps}
             onDockChange={setCodePanelDockWidth}

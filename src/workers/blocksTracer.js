@@ -5,11 +5,13 @@
  *
  * Python source of the `__bf` tracer that block programs call in their
  * executed form (see src/blocks/generators.js). It records compare, swap,
- * read, write, shuffle and sorted-check events on `arr`, and open / visit /
- * leave events on grid cells, with the block id that produced them, and stops
+ * read, write, shuffle and sorted-check events on `arr`, open / visit /
+ * leave events on grid cells or tree nodes, and output / thread / unthread
+ * events on tree nodes, with the block id that produced them, and stops
  * runaway loops.
  * `__bf_run` calls `fn_name(*args)`: `[arr]` for sorts, `[arr, target]` for
- * searches, `[grid, start, end]` for paths (start/end become tuples).
+ * searches, `[grid, start, end]` for paths (start/end become tuples), `[root]`
+ * for trees (nested `{"value", "left", "right"}` dicts; a value names a node).
  */
 
 export const BLOCKS_MAX_EVENTS = 25_000;
@@ -87,7 +89,9 @@ class _BF:
     def _record_cell(self, kind, cell, block_id):
         if len(self.events) >= self.max_events:
             raise BFLimit()
-        self.events.append({"kind": kind, "cell": list(cell), "blockId": block_id})
+        # A tree node is named by its (unique) value.
+        ref = cell["value"] if isinstance(cell, dict) else list(cell)
+        self.events.append({"kind": kind, "cell": ref, "blockId": block_id})
 
     def push(self, lst, cell, block_id):
         lst.append(cell)
@@ -115,6 +119,22 @@ class _BF:
     def relax(self, costs, cell, value, block_id):
         costs[cell] = value
         self._record_cell("open", cell, block_id)
+
+    def _record_node(self, kind, node, other, block_id):
+        if len(self.events) >= self.max_events:
+            raise BFLimit()
+        self.events.append({"kind": kind, "node": node, "other": other, "blockId": block_id})
+
+    def visit(self, result, node, block_id):
+        result.append(node["value"])
+        self._record_node("output", node["value"], None, block_id)
+
+    def set_child(self, node, side, child, block_id):
+        node[side] = child
+        if child is None:
+            self._record_node("unthread", node["value"], None, block_id)
+        else:
+            self._record_node("thread", node["value"], child["value"], block_id)
 
     def tick(self):
         self.ticks += 1

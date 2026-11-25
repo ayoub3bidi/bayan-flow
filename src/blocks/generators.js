@@ -8,8 +8,10 @@
  * - execCode: the same program, but every operation on `arr` (compare, swap,
  *   read, write, shuffle, sorted check) and every frontier/cost operation of a
  *   path program (push, pop, relax) calls the `__bf` tracer in the Pyodide
- *   worker so each step is recorded with the block that made it. Helper lists
- *   are plain Python: only `arr` (or the grid's cells) is visualized.
+ *   worker so each step is recorded with the block that made it. Tree programs
+ *   trace node visits, child-link changes and queue pushes/pops. Helper lists
+ *   are plain Python: only `arr` (or the grid's cells, or the tree) is
+ *   visualized.
  */
 
 import { PythonGenerator, pythonGenerator, Order } from 'blockly/python';
@@ -165,8 +167,24 @@ class BayanPythonGenerator extends PythonGenerator {
     ];
     this.forBlock[BLOCK_TYPES.REVERSE] = (block, generator) =>
       `${valueOf(generator, block, 'LIST', '[]', Order.MEMBER)}.reverse()\n`;
+    this.forBlock[BLOCK_TYPES.DEFINE_TREE] = defineTree;
+    this.forBlock[BLOCK_TYPES.ROOT] = () => ['root', Order.ATOMIC];
+    this.forBlock[BLOCK_TYPES.CHILD] = (block, generator) => [
+      `${valueOf(generator, block, 'NODE', 'root', Order.MEMBER)}["${block.getFieldValue('SIDE')}"]`,
+      Order.MEMBER,
+    ];
+    this.forBlock[BLOCK_TYPES.NODE_VALUE] = (block, generator) => [
+      `${valueOf(generator, block, 'NODE', 'root', Order.MEMBER)}["value"]`,
+      Order.MEMBER,
+    ];
+    this.forBlock[BLOCK_TYPES.VISIT] = visitNode;
+    this.forBlock[BLOCK_TYPES.SET_CHILD] = setChild;
+    this.forBlock[BLOCK_TYPES.IS] = (block, generator) => [
+      `${valueOf(generator, block, 'A', 'None', Order.RELATIONAL)} ${block.getFieldValue('OP') === 'IS_NOT' ? 'is not' : 'is'} ${valueOf(generator, block, 'B', 'None', Order.RELATIONAL)}`,
+      Order.RELATIONAL,
+    ];
     // The function's parameters: a learner variable must not shadow them.
-    this.addReservedWords('arr,target,grid,start,end,heapq');
+    this.addReservedWords('arr,target,grid,start,end,heapq,root');
   }
 
   finish(code) {
@@ -222,6 +240,33 @@ function definePath(block, generator) {
   const body = generator.statementToCode(block, 'STACK') || generator.PASS;
   const name = functionNameOf(block);
   return `def ${name}(grid, start, end):\n${body}${generator.INDENT}return []\n`;
+}
+
+function defineTree(block, generator) {
+  const body = generator.statementToCode(block, 'STACK') || generator.PASS;
+  return `def ${functionNameOf(block)}(root):\n${body}`;
+}
+
+function visitNode(block, generator) {
+  if (generator.execMode) {
+    const list = valueOf(generator, block, 'LIST', '[]');
+    const node = valueOf(generator, block, 'NODE', 'root');
+    return `__bf.visit(${list}, ${node}, ${generator.quote_(block.id)})\n`;
+  }
+  const list = valueOf(generator, block, 'LIST', '[]', Order.MEMBER);
+  const value = valueOf(generator, block, 'NODE', 'root', Order.MEMBER);
+  return `${list}.append(${value}["value"])\n`;
+}
+
+function setChild(block, generator) {
+  const side = block.getFieldValue('SIDE');
+  const value = valueOf(generator, block, 'VALUE', 'None');
+  if (generator.execMode) {
+    const node = valueOf(generator, block, 'NODE', 'root');
+    return `__bf.set_child(${node}, "${side}", ${value}, ${generator.quote_(block.id)})\n`;
+  }
+  const node = valueOf(generator, block, 'NODE', 'root', Order.MEMBER);
+  return `${node}["${side}"] = ${value}\n`;
 }
 
 function valueOf(generator, block, input, fallback, order = Order.NONE) {
@@ -478,7 +523,7 @@ function generate(generator, workspace, hats) {
 
 /**
  * @param {import('blockly/core').Workspace} workspace
- * @returns {{ kind: 'sort'|'search'|'path', functionName: string,
+ * @returns {{ kind: 'sort'|'search'|'path'|'tree', functionName: string,
  *   displayCode: string, execCode: string,
  *   lineBlockIds: (string|null)[], statementIds: Record<string, string> } | null}
  *   null when the workspace has no `define …` block.
@@ -490,6 +535,7 @@ export function generateProgram(workspace) {
       ['sort', hatOf(BLOCK_TYPES.DEFINE_SORT)],
       ['search', hatOf(BLOCK_TYPES.DEFINE_SEARCH)],
       ['path', hatOf(BLOCK_TYPES.DEFINE_PATH)],
+      ['tree', hatOf(BLOCK_TYPES.DEFINE_TREE)],
     ].find(([, found]) => found) ?? [];
   if (!hat) return null;
   const helpers = workspace.getBlocksByType(BLOCK_TYPES.DEFINE_HELPER, true);

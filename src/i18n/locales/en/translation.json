@@ -516,7 +516,10 @@
       "resize_split": "Resize blocks and Python",
       "run_path_found": "✓ Your program found a path of {{length}} cells in {{count}} steps. Watch it play in the visualizer.",
       "run_path_not_found": "✗ Your program finished, but it did not return a path from start to end ({{count}} steps). Step through it to see where it goes wrong.",
-      "run_path_longer": "✓ Your program found a valid path of {{length}} cells in {{count}} steps, but it isn’t the shortest: the shortest path has {{shortest}} cells. That’s expected for greedy search; for the other algorithms, step through to see where it takes a detour."
+      "run_path_longer": "✓ Your program found a valid path of {{length}} cells in {{count}} steps, but it isn’t the shortest: the shortest path has {{shortest}} cells. That’s expected for greedy search; for the other algorithms, step through to see where it takes a detour.",
+      "run_tree_ok": "✓ Your program visited all {{length}} nodes in the right order in {{count}} steps. Watch it play in the visualizer.",
+      "run_tree_wrong_order": "✗ Your program returned {{got}}, but the expected order is {{expected}} ({{count}} steps). Step through it to see where it goes wrong.",
+      "run_tree_threads_left": "✗ Your program visited the nodes in the right order, but it left {{threads}} temporary thread(s) in the tree ({{count}} steps). Morris must remove each thread to restore the tree."
     }
   },
   "notes_panel": {
@@ -1399,7 +1402,12 @@
     "blocksOpen": "Adding cell ({{row}}, {{col}}) to the frontier",
     "blocksNoPath": "Your program returned [], but a path from start to end exists. Check your blocks and run again.",
     "blocksInvalidPath": "Your program returned a list that is not a path from start to end: each cell must be next to the previous one. Check your blocks and run again.",
-    "blocksPathLonger": "Path found: {{length}} cells, but the shortest path has {{shortest}}. Valid, just not the shortest."
+    "blocksPathLonger": "Path found: {{length}} cells, but the shortest path has {{shortest}}. Valid, just not the shortest.",
+    "blocksTreePush": "Adding node {{node}} to the queue",
+    "blocksTreePop": "Taking node {{node}} out of the queue",
+    "blocksTreeComplete": "Traversal complete. Final order: {{order}}",
+    "blocksTreeWrongOrder": "Your order: {{got}}. Expected: {{expected}}",
+    "blocksTreeThreadsLeft": "Right order, but {{count}} thread(s) are still in the tree: undo each thread to restore it."
   },
   "landing": {
     "hero": {
@@ -1834,6 +1842,20 @@
     "BF_ROWS": "len(grid)",
     "BF_ROWS_TOOLTIP": "The number of rows in the grid.",
     "BF_COLS": "len(grid[0])",
-    "BF_COLS_TOOLTIP": "The number of columns in the grid."
+    "BF_COLS_TOOLTIP": "The number of columns in the grid.",
+    "BF_DEFINE_TREE": "define %1",
+    "BF_DEFINE_TREE_TOOLTIP": "Your traversal function. Return the node values in the order you visit them.",
+    "BF_ROOT": "root",
+    "BF_ROOT_TOOLTIP": "The root node of the tree. Each node has a value, a left child and a right child.",
+    "BF_CHILD": "%1 [ %2 ]",
+    "BF_CHILD_TOOLTIP": "The left or right child of a node (None when it has none).",
+    "BF_NODE_VALUE": "%1 [ \"value\" ]",
+    "BF_NODE_VALUE_TOOLTIP": "The value stored in a node.",
+    "BF_VISIT": "%1 .append( %2 [ \"value\" ] )",
+    "BF_VISIT_TOOLTIP": "Visit a node: add its value to the result. It turns green in the tree.",
+    "BF_SET_CHILD": "%1 [ %2 ] = %3",
+    "BF_SET_CHILD_TOOLTIP": "Point a node’s left or right link somewhere else (Morris uses it for temporary threads).",
+    "BF_IS": "%1 %2 %3",
+    "BF_IS_TOOLTIP": "Whether two things are the very same node (or both None). Use it to compare nodes."
   }
 }

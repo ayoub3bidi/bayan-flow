@@ -337,4 +337,61 @@ describe('helpers and new array blocks', () => {
       );
     });
   });
+
+  describe('tree programs', () => {
+    const generate = key =>
+      generateProgram(load(getBlocksStarter(key).workspace));
+
+    it('generates a recursive root function like the Python reference', () => {
+      const inorder = generate('inorderTraversal');
+      expect(inorder.kind).toBe('tree');
+      expect(inorder.functionName).toBe('inorder_traversal');
+      expect(inorder.displayCode).toBe(`def walk(node, result):
+    if node is not None:
+        walk(node["left"], result)
+        result.append(node["value"])
+        walk(node["right"], result)
+
+def inorder_traversal(root):
+    result = []
+    walk(root, result)
+    return result
+`);
+      expect(inorder.execCode).toMatch(/__bf\.visit\(result, node, '[^']+'\)/);
+      expect(inorder.execCode).not.toMatch(/\barr\b/);
+    });
+
+    it('traces queue pushes and pops on nodes', () => {
+      const level = generate('levelOrderTraversal');
+      expect(level.displayCode).toContain('queue.append(node["left"])');
+      expect(level.execCode).toMatch(/node = __bf\.pop\(queue, '[^']+'\)/);
+      expect(level.execCode).toMatch(
+        /__bf\.push\(queue, node\["right"\], '[^']+'\)/
+      );
+    });
+
+    it('compares Morris nodes by identity and traces thread changes', () => {
+      const morris = generate('morrisTraversal');
+      expect(morris.displayCode).toContain(
+        'while pred["right"] is not None and pred["right"] is not current:'
+      );
+      expect(morris.displayCode).toContain('pred["right"] = current');
+      expect(morris.displayCode).not.toMatch(/[!=]= /);
+      expect(morris.execCode).toMatch(
+        /__bf\.set_child\(pred, "right", current, '[^']+'\)/
+      );
+      expect(morris.execCode).toMatch(
+        /__bf\.set_child\(pred, "right", None, '[^']+'\)/
+      );
+    });
+
+    it('renames a learner variable that would shadow root', () => {
+      const json = structuredClone(
+        getBlocksStarter('morrisTraversal').workspace
+      );
+      json.variables.find(variable => variable.name === 'current').name =
+        'root';
+      expect(generateProgram(load(json)).displayCode).toContain('root2 = root');
+    });
+  });
 });

@@ -510,18 +510,6 @@ const dStarLite = program({
   ],
 });
 
-/** Path helpers take every argument: mark each call so it doesn't add `arr`. */
-function withoutImplicitArr(block) {
-  if (!block) return;
-  if (block.type === 'bf_call' || block.type === 'bf_call_value') {
-    block.extraState.noArr = true;
-  }
-  for (const input of Object.values(block.inputs ?? {})) {
-    withoutImplicitArr(input.block);
-  }
-  withoutImplicitArr(block.next?.block);
-}
-
 export const PATHFINDING_STARTERS = {
   bfs,
   dijkstra,
@@ -533,6 +521,3 @@ export const PATHFINDING_STARTERS = {
   jumpPointSearch,
   dStarLite,
 };
-for (const workspace of Object.values(PATHFINDING_STARTERS)) {
-  workspace.blocks.blocks.forEach(withoutImplicitArr);
-}
