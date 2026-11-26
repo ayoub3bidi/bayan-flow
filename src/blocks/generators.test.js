@@ -168,6 +168,19 @@ describe('generateProgram', () => {
     );
   });
 
+  it('gives an empty while or for-each loop a pass body', () => {
+    for (const type of ['controls_whileUntil', 'controls_forEach']) {
+      const workspace = load(getBlocksStarter('bubbleSort').workspace);
+      const stack = workspace.getTopBlocks(false)[0].getInput('STACK');
+      const first = stack.connection.targetBlock();
+      const loop = workspace.newBlock(type);
+      stack.connection.connect(loop.previousConnection);
+      loop.nextConnection.connect(first.previousConnection);
+      const { displayCode } = generateProgram(workspace);
+      expect(displayCode).toMatch(/\n(\s+)(while|for) [^\n]+:\n\1\s+pass\n/);
+    }
+  });
+
   it('evaluates a neighbor loop source once in the executed form', () => {
     const workspace = load(getBlocksStarter('depthFirstSearch').workspace);
     const loop = workspace.getBlocksByType('bf_for_neighbor', false)[0];

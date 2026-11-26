@@ -220,8 +220,14 @@ class BayanPythonGenerator extends PythonGenerator {
     // The function's parameters, and the executed form's tracer and its
     // temporaries: a learner variable must not shadow them.
     this.addReservedWords(
-      'arr,target,grid,start,end,heapq,root,graph,nodes,edges,goal,__bf,__bf_src'
+      'arr,target,grid,start,end,heapq,root,graph,nodes,edges,goal,__bf,__bf_src,__bf_adj'
     );
+  }
+
+  addLoopTrap(branch, block) {
+    // Blockly's own loops (while, for each) add `pass` only when the trapped
+    // body is empty, but the display markers make it non-empty: add it first.
+    return super.addLoopTrap(branch || this.PASS, block);
   }
 
   finish(code) {
