@@ -8,25 +8,32 @@ import {
 } from '@testing-library/react';
 import UserMenu from './UserMenu';
 import { useAuth } from '../hooks/useAuth';
-
-const navigateMock = vi.fn();
+import { MemoryRouter, useLocation, useNavigationType } from 'react-router-dom';
 
 vi.mock('../hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 
-vi.mock('react-router-dom', async importOriginal => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    useNavigate: () => navigateMock,
-  };
-});
+// A real router, not a mocked useNavigate: the module mock intermittently
+// missed under the single-fork coverage run, failing every test in the file.
+let lastNavigation;
+function NavigationProbe() {
+  lastNavigation = `${useNavigationType()} ${useLocation().pathname}`;
+  return null;
+}
+const renderMenu = ui =>
+  render(ui, {
+    wrapper: ({ children }) => (
+      <MemoryRouter>
+        {children}
+        <NavigationProbe />
+      </MemoryRouter>
+    ),
+  });
 
 describe('UserMenu', () => {
   beforeEach(() => {
     vi.mocked(useAuth).mockReset();
-    navigateMock.mockReset();
   });
 
   it('renders nothing when Supabase is not configured', () => {
@@ -39,7 +46,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    const { container } = render(<UserMenu />);
+    const { container } = renderMenu(<UserMenu />);
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -53,7 +60,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    const { container } = render(<UserMenu />);
+    const { container } = renderMenu(<UserMenu />);
     const skeleton = container.querySelector('[aria-hidden="true"]');
     expect(skeleton).toBeInTheDocument();
   });
@@ -68,7 +75,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    const { container } = render(<UserMenu hideAvatar />);
+    const { container } = renderMenu(<UserMenu hideAvatar />);
     expect(
       container.querySelector('[aria-hidden="true"]')
     ).not.toBeInTheDocument();
@@ -84,7 +91,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    render(<UserMenu variant="landing" />);
+    renderMenu(<UserMenu variant="landing" />);
     expect(
       screen.getByRole('button', { name: /sign in with google/i })
     ).toBeInTheDocument();
@@ -101,7 +108,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    render(<UserMenu variant="compact" />);
+    renderMenu(<UserMenu variant="compact" />);
     const button = screen.getByRole('button', { name: /sign in with google/i });
     expect(button).toBeInTheDocument();
     expect(screen.queryByText(/sign in with google/i)).not.toBeInTheDocument();
@@ -124,7 +131,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    render(<UserMenu variant="landing" />);
+    renderMenu(<UserMenu variant="landing" />);
     fireEvent.click(
       screen.getByRole('button', { name: /sign in with google/i })
     );
@@ -158,7 +165,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    render(<UserMenu variant="compact" />);
+    renderMenu(<UserMenu variant="compact" />);
     fireEvent.click(
       screen.getByRole('button', { name: /sign in with google/i })
     );
@@ -185,14 +192,14 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    render(<UserMenu variant="landing" />);
+    renderMenu(<UserMenu variant="landing" />);
     fireEvent.click(
       screen.getByRole('button', { name: /sign in with google/i })
     );
 
     await waitFor(() => {
       expect(signInWithGoogle).toHaveBeenCalled();
-      expect(navigateMock).toHaveBeenCalledWith('/app', { replace: true });
+      expect(lastNavigation).toBe('REPLACE /app');
     });
   });
 
@@ -209,7 +216,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    render(<UserMenu variant="landing" />);
+    renderMenu(<UserMenu variant="landing" />);
     fireEvent.click(
       screen.getByRole('button', { name: /sign in with google/i })
     );
@@ -217,7 +224,7 @@ describe('UserMenu', () => {
     await waitFor(() => {
       expect(signInWithGoogle).toHaveBeenCalled();
     });
-    expect(navigateMock).not.toHaveBeenCalled();
+    expect(lastNavigation).toBe('POP /');
     const dialog = await screen.findByRole('dialog', {
       name: /sign-in unavailable/i,
     });
@@ -240,7 +247,7 @@ describe('UserMenu', () => {
       signOut: vi.fn(),
     });
 
-    render(<UserMenu variant="landing" />);
+    renderMenu(<UserMenu variant="landing" />);
     fireEvent.click(
       screen.getByRole('button', { name: /sign in with google/i })
     );
@@ -251,7 +258,7 @@ describe('UserMenu', () => {
     expect(
       screen.getByText(/sign-in is temporarily unavailable/i)
     ).toBeInTheDocument();
-    expect(navigateMock).not.toHaveBeenCalled();
+    expect(lastNavigation).toBe('POP /');
   });
 
   it('handles sign-out error gracefully', async () => {
@@ -271,7 +278,7 @@ describe('UserMenu', () => {
       signOut,
     });
 
-    render(<UserMenu />);
+    renderMenu(<UserMenu />);
     fireEvent.click(
       screen.getByRole('button', { name: /account menu for test user/i })
     );
@@ -299,7 +306,7 @@ describe('UserMenu', () => {
       refreshProfile: vi.fn(),
     });
 
-    render(<UserMenu />);
+    renderMenu(<UserMenu />);
     fireEvent.click(
       screen.getByRole('button', { name: /account menu for test user/i })
     );
@@ -331,12 +338,12 @@ describe('UserMenu', () => {
       refreshProfile: vi.fn(),
     });
 
-    render(<UserMenu />);
+    renderMenu(<UserMenu />);
     fireEvent.click(
       screen.getByRole('button', { name: /account menu for test user/i })
     );
     fireEvent.click(screen.getByRole('menuitem', { name: /settings/i }));
 
-    expect(navigateMock).toHaveBeenCalledWith('/settings/profile');
+    expect(lastNavigation).toBe('PUSH /settings/profile');
   });
 });
