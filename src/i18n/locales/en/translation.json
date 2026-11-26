@@ -94,6 +94,10 @@
         "title": "Side-by-side comparison mode",
         "body": "Run two algorithms against the same scenario and inspect each decision."
       },
+      "blocks": {
+        "title": "Blocks for the classroom",
+        "body": "Save and share block programs, and build custom challenges for your students on top of the free Blocks playground."
+      },
       "export": {
         "title": "Unlimited video export",
         "body": "Create polished walkthroughs with no watermark (or customize it to your own branding)."
@@ -1502,6 +1506,11 @@
         "description": "Edit, run, and see real output for each algorithm. All in your browser. Learn by experimenting with live code.",
         "badge": "Experimental"
       },
+      "blocks": {
+        "title": "Build It With Blocks",
+        "description": "Snap blocks together to build any of the 45 algorithms, then watch your own program run in the visualizer, step by step.",
+        "badge": "New"
+      },
       "sound": {
         "title": "Interactive Sound",
         "description": "Enable audio feedback to hear algorithms in action.",
@@ -1544,6 +1553,9 @@
         "allAlgorithms": "Visualize All Algorithms",
         "customization": "Customizable: Adjust Array Size (5-100) or Grid Size (15×15 to 35×35)",
         "pythonCode": "Interactive Python Online Editor",
+        "blocks": "Block-Based Coding",
+        "blocksFree": "Playground for All 45 Algorithms",
+        "blocksPro": "Saved & Shareable Programs, Custom Challenges",
         "sound": "Interactive Sound",
         "fullscreen": "Full Screen Mode",
         "insight": "Algorithm Insight",

@@ -94,6 +94,10 @@
         "title": "Comparaison côte à côte",
         "body": "Lancez deux algorithmes sur le même scénario et inspectez chaque décision."
       },
+      "blocks": {
+        "title": "Les blocs en classe",
+        "body": "Enregistrez et partagez vos programmes en blocs, et créez des défis personnalisés pour vos élèves en plus du bac à sable gratuit."
+      },
       "export": {
         "title": "Export vidéo illimité",
         "body": "Créez des explications soignées sans filigrane, ou personnalisez-le avec votre propre marque."
@@ -1503,6 +1507,11 @@
         "description": "Modifiez, exécutez et voyez la sortie réelle pour chaque algorithme. Tout dans votre navigateur. Apprenez en expérimentant avec du code en direct.",
         "badge": "Expérimental"
       },
+      "blocks": {
+        "title": "Construisez avec des blocs",
+        "description": "Assemblez des blocs pour construire n'importe lequel des 45 algorithmes, puis regardez votre propre programme s'exécuter dans le visualiseur, étape par étape.",
+        "badge": "Nouveau"
+      },
       "sound": {
         "title": "Son Interactif",
         "description": "Activez le retour audio pour entendre les algorithmes en action.",
@@ -1545,6 +1554,9 @@
         "allAlgorithms": "Visualisez les 45 algorithmes",
         "customization": "Personnalisable : ajustez la taille du tableau (5-100) ou de la grille (15×15 à 35×35)",
         "pythonCode": "Python Interactif",
+        "blocks": "Programmation par blocs",
+        "blocksFree": "Bac à sable pour les 45 algorithmes",
+        "blocksPro": "Programmes enregistrés et partageables, défis personnalisés",
         "sound": "Son Interactif",
         "fullscreen": "Mode plein écran",
         "insight": "Aperçu des Algorithmes",

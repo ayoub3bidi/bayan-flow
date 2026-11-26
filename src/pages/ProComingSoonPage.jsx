@@ -14,6 +14,7 @@ import {
   Notebook,
   PlusCircle,
   Presentation,
+  PuzzlePiece,
   Sliders,
 } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +36,7 @@ import { trackWaitlistJoined } from '@/services/analyticsEvents';
 const FEATURE_ITEMS = [
   { key: 'customInput', Icon: Sliders },
   { key: 'comparison', Icon: Columns },
+  { key: 'blocks', Icon: PuzzlePiece },
   { key: 'export', Icon: Export },
   { key: 'presentation', Icon: Presentation },
   { key: 'quizExam', Icon: Exam },

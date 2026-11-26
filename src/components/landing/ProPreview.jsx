@@ -25,6 +25,7 @@ const TABLE_ROWS = [
   { key: 'allAlgorithms', free: true, pro: true },
   { key: 'customization', free: true, pro: true },
   { key: 'pythonCode', free: true, pro: true },
+  { key: 'blocks', free: 'blocksFree', pro: 'blocksPro' },
   { key: 'sound', free: true, pro: true },
   { key: 'fullscreen', free: true, pro: true },
   { key: 'insight', free: true, pro: true },
