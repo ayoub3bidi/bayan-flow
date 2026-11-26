@@ -846,7 +846,7 @@ function judgeGraphAnswer(
         got.length === pure.mstEdges.length &&
         weightOf(got) === pure.totalWeight,
       got: Array.isArray(returned)
-        ? `${got.map(formatEdge).join(', ')} = ${valid ? weightOf(got) : '?'}`
+        ? `${got.map(edge => (Array.isArray(edge) ? formatEdge(edge) : String(edge))).join(', ')} = ${valid ? weightOf(got) : '?'}`
         : 'None',
       expected: `${pure.mstEdges.length} edges = ${pure.totalWeight}`,
     };

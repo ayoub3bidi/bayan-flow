@@ -146,6 +146,28 @@ describe('generateProgram', () => {
     );
   });
 
+  it('captures a swap index that calls a helper, so it runs once', () => {
+    const workspace = load(getBlocksStarter('quickSort').workspace);
+    const swapBlock = workspace.getBlocksByType('bf_swap', false)[0];
+    const call = workspace.getBlocksByType('bf_call_value', false)[0];
+    swapBlock.getInput('A').connection.connect(call.outputConnection);
+    const { displayCode } = generateProgram(workspace);
+    expect(displayCode).toMatch(
+      /(\w+), (\w+) = partition\([^)]*\), [^\n]+\n\s+arr\[\1\], arr\[\2\] = arr\[\2\], arr\[\1\]/
+    );
+  });
+
+  it('hands the walked adjacency to the tracer, evaluated once', () => {
+    const workspace = load(getBlocksStarter('kosarajuAlgorithm').workspace);
+    const { execCode } = generateProgram(workspace);
+    expect(execCode).toMatch(
+      /__bf\.each_edge\(transpose\[node\], node, '[^']+', transpose\)/
+    );
+    expect(execCode).toMatch(
+      /__bf\.each_edge\(graph\[node\], node, '[^']+', graph\)/
+    );
+  });
+
   it('evaluates a neighbor loop source once in the executed form', () => {
     const workspace = load(getBlocksStarter('depthFirstSearch').workspace);
     const loop = workspace.getBlocksByType('bf_for_neighbor', false)[0];
@@ -468,7 +490,7 @@ def inorder_traversal(root):
     for node in graph:`);
       expect(topo.displayCode).toContain('    for neighbor in graph[node]:\n');
       expect(topo.execCode).toMatch(
-        /for neighbor in __bf\.each_edge\(graph\[node\], node, '[^']+'\):/
+        /for neighbor in __bf\.each_edge\(graph\[node\], node, '[^']+', graph\):/
       );
       expect(topo.execCode).toMatch(
         /__bf\.mark\(visiting, node, '[^']+', 'visiting'\)/
@@ -485,7 +507,7 @@ def inorder_traversal(root):
       );
       expect(dfs.displayCode).toContain('current = stack.pop()');
       expect(dfs.execCode).toMatch(
-        /__bf\.each_edge\(reversed\(graph\[current\]\), current, '[^']+'\)/
+        /__bf\.each_edge\(reversed\(graph\[current\]\), current, '[^']+', graph\)/
       );
       expect(dfs.execCode).toMatch(
         /current = __bf\.pop_last\(stack, '[^']+'\)/

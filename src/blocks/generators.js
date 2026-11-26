@@ -331,22 +331,25 @@ function setChild(block, generator) {
 /** `for v in graph[node]:` (or `reversed(...)`); exec traces each edge. */
 function forNeighbor(block, generator) {
   const variable = generator.getVariableName(block.getFieldValue('VAR'));
-  const graph = valueOf(generator, block, 'GRAPH', 'graph', Order.MEMBER);
+  let graph = valueOf(generator, block, 'GRAPH', 'graph', Order.MEMBER);
   let node = valueOf(generator, block, 'NODE', 'start');
-  // exec reads the source node twice (lookup + trace): evaluate it once, so
-  // e.g. a stack pop there pops one item, as in the displayed code.
+  // exec reads the source node and the adjacency twice (lookup + trace):
+  // evaluate each once, so e.g. a stack pop there pops one item, as in the
+  // displayed code.
   let capture = '';
   if (generator.execMode && !/^\w+$/.test(node)) {
     capture = `__bf_src = ${node}\n`;
     node = '__bf_src';
   }
+  if (generator.execMode && !/^\w+$/.test(graph)) {
+    capture += `__bf_adj = ${graph}\n`;
+    graph = '__bf_adj';
+  }
   let items = `${graph}[${node}]`;
   if (block.getFieldValue('ORDER') === 'REVERSED') items = `reversed(${items})`;
   if (generator.execMode) {
-    // An adjacency other than the input graph (Kosaraju's transpose) walks
-    // each original edge backwards.
-    const reversed = graph === 'graph' ? '' : ', True';
-    items = `__bf.each_edge(${items}, ${node}, ${generator.quote_(block.id)}${reversed})`;
+    // The tracer compares the adjacency with the input to spot a transpose.
+    items = `__bf.each_edge(${items}, ${node}, ${generator.quote_(block.id)}, ${graph})`;
   }
   return `${capture}for ${variable} in ${items}:\n${loopBody(block, generator)}`;
 }
@@ -647,9 +650,10 @@ function swap(block, generator) {
   if (generator.execMode) {
     return `__bf.swap(arr, ${a}, ${b}, ${generator.quote_(block.id)})\n`;
   }
-  // An index that reads a list (`arr[0]`) would see the first write: capture
-  // both first, as the tracer's swap does.
-  if (/\[/.test(a) || /\[/.test(b)) {
+  // An index that reads a list (`arr[0]`) would see the first write, and one
+  // that calls a helper (`partition(...)`) would run twice: capture both
+  // first, as the tracer's swap does.
+  if (/[[(]/.test(a) || /[[(]/.test(b)) {
     const i = generator.nameDB_.getDistinctName('i', Names.NameType.VARIABLE);
     const j = generator.nameDB_.getDistinctName('j', Names.NameType.VARIABLE);
     return `${i}, ${j} = ${a}, ${b}\narr[${i}], arr[${j}] = arr[${j}], arr[${i}]\n`;

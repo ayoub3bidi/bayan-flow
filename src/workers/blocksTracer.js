@@ -38,6 +38,8 @@ class _BF:
         self.ticks = 0
         self.max_events = max_events
         self.max_ticks = max_ticks
+        # The input adjacency: a neighbour walk over any other dict is a transpose.
+        self.graph = None
 
     def _record(self, kind, arr, i, j, block_id):
         if len(self.events) >= self.max_events:
@@ -150,9 +152,11 @@ class _BF:
         else:
             self._record_node("thread", node["value"], child["value"], block_id)
 
-    def each_edge(self, items, frm, block_id, reversed_edge=False):
+    def each_edge(self, items, frm, block_id, adjacency=None):
         # One edge per item: frm -> neighbour, or an (from, to, weight) edge.
-        # reversed_edge: the walk is over a transpose (original edge to -> from).
+        # A walk over an adjacency other than the input (Kosaraju's transpose)
+        # follows each original edge to -> from; an alias of the input doesn't.
+        reversed_edge = self.graph is not None and adjacency is not None and adjacency is not self.graph
         for item in items:
             if len(self.events) >= self.max_events:
                 raise BFLimit()
@@ -228,6 +232,8 @@ def __bf_run(code, fn_name, args_json, kind, max_events, max_ticks):
         args = json.loads(args_json)
         if kind == "path":
             args[1], args[2] = tuple(args[1]), tuple(args[2])
+        if args and isinstance(args[0], dict):
+            tracer.graph = args[0]
         returned = scope[fn_name](*args)
         no_return = returned is _BF.NO_RETURN
         if no_return:

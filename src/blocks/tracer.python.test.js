@@ -361,6 +361,18 @@ describe.skipIf(!hasPython3)('Blocks tracer under python3', () => {
     expect(scalar).toMatchObject({ returnedNone: false, noReturn: false });
   });
 
+  it('marks a walk reversed only over an adjacency other than the input', () => {
+    const [run] = runPython([
+      {
+        code: "def f(graph):\n    g = graph\n    t = {'A': [], 'B': ['A']}\n    list(__bf.each_edge(g['A'], 'A', 'x', g))\n    list(__bf.each_edge(t['B'], 'B', 'y', t))\n    return []\n",
+        fn: 'f',
+        args: [{ A: ['B'], B: [] }],
+        kind: 'graph',
+      },
+    ]);
+    expect(run.events.map(e => e.reversed)).toEqual([false, true]);
+  });
+
   it('fails an emptied Kahn program on a cycle instead of calling it correct', () => {
     const json = structuredClone(getBlocksStarter('kahnAlgorithm').workspace);
     const hat = json.blocks.blocks.find(b => b.type === 'bf_define_graph');

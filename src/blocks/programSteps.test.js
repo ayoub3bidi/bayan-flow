@@ -781,6 +781,10 @@ describe('buildGraphProgramSteps', () => {
       '0<->2': 'cycle',
     });
     expect(steps.at(-1).graphArtifacts.badges[0].text).toContain('3');
+    // A malformed entry is a wrong answer, not a crash.
+    expect(
+      buildGraphProgramSteps([], TRIANGLE, 'kruskalAlgorithm', [null]).solved
+    ).toBe(false);
     // A cycle, a heavier tree, a made-up edge.
     for (const answer of [
       [...tree, ['A', 'C', 3]],
