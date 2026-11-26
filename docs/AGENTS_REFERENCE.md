@@ -21,7 +21,7 @@
 - Contribution flow: PRs target `develop`, not `main`; PRs to `main` are gated by `.github/workflows/ensure-pr-source-develop.yml`
 - Algorithm inventory: **45** algorithms across **5** categories (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph algorithms)
 - Python parity: **45** `.py` files under `src/algorithms/python/` (one per algorithm)
-- Test surface: **189** test files (~**2,350** tests, per `pnpm vitest run`)
+- Test surface: **191** test files (~**2,380** tests, per `pnpm vitest run`)
 - Source surface: **266** non-test `*.js` / `*.jsx` files under `src/`, **45** Python files under `src/algorithms/python/`, **1** `src/index.css`
 - Path alias: `@/` → `src/` (Vite + Vitest)
 
@@ -266,7 +266,7 @@ Migrations: `20260710140000_pro_waitlist.sql`, `20260710150000_pro_waitlist_attr
 - `src/workers/pyodide.worker.js` — `run-viz` message → `viz-steps`
 - `src/workers/blocksTracer.js` — Python `__bf` tracer source + caps (25k events, 1M loop ticks), sent with each `run-viz`; `__bf_run(code, fn_name, input, target, …)` returns `finalArray` (sorts) or `result` index (searches)
 - `src/blocks/` — `definitions.js` (custom blocks + i18n messages; `bf_call` / `bf_call_value` are JS blocks whose arity lives in `extraState.args`, no mutator UI), `generators.js` (display vs exec Python, line↔block map; helper hats `bf_define_helper` are emitted before the main function), `starters/` (`builders.js` JSON helpers, `sorting.js`, `searching.js`, `pathfinding.js`, `tree.js`, `index.js` with `getBlocksStarter` + `toolboxFor`, which derives each flyout from the blocks its program uses; no Blockly import), `programSteps.js` (`buildProgramSteps` for sorts, `buildSearchProgramSteps` for searches → `withElementIds` steps; `buildPathProgramSteps` for paths → grid steps; `treeToDict` + `buildTreeProgramSteps` for traversals → tree steps). Hats: `bf_define_sort` / `bf_define_search` / `bf_define_path` / `bf_define_tree` carry the whole signature in one `NAME` label (`bubble_sort(arr)`; a second field would render a gap before the parentheses). The generator takes the name before `(`; a missing `NAME` means `bubble_sort(arr)`, for workspaces saved before phase 2
-- `src/components/BlocksWorkspace.jsx` — lazy Blockly injection (RTL, theme, collapsible toolbox in the stacked layout); no trash can and no zooming (no buttons, wheel or pinch; the wheel scrolls); starters are tidied (`cleanUp`) and every load is fit to the view (`zoomToFit`, capped at 100%)
+- `src/components/BlocksWorkspace.jsx` — lazy Blockly injection (RTL, theme, collapsible toolbox in the stacked layout); no trash can and no zooming (no buttons, wheel or pinch; the wheel scrolls); starters are tidied (`cleanUp`) and every load is fit to the view (`zoomToFit`, capped at 100%); Blockly messages load through `src/blocks/blocklyLocales.js` (falls back to English; if English fails too the workspace shows a retry)
 - `src/algorithms/python/**`, `src/algorithms/python/index.js`, `src/algorithms/python/testCases.js`
 - `src/algorithms/pseudocode/**` — `strings.en.js`, `strings.fr.js`, `strings.ar.js`, `localize.js`, `index.js`
 
