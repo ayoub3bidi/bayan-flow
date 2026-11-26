@@ -107,7 +107,8 @@ function buildGraphArtifacts(
   return { badges };
 }
 
-function makeStep({
+/** One matrix step; also used for Floyd-Warshall block programs. */
+export function makeFloydMatrixStep({
   ids,
   labels,
   distances,
@@ -213,7 +214,7 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
   let cellStates = createMatrix(size, 'default');
 
   steps.push(
-    makeStep({
+    makeFloydMatrixStep({
       ids,
       labels,
       distances,
@@ -229,7 +230,7 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
     cellStates[via][via] = 'current';
 
     steps.push(
-      makeStep({
+      makeFloydMatrixStep({
         ids,
         labels,
         distances,
@@ -261,7 +262,7 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
 
           const path = reconstructPath(ids, next, from, to);
           steps.push(
-            makeStep({
+            makeFloydMatrixStep({
               ids,
               labels,
               distances,
@@ -295,7 +296,7 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
     });
 
     steps.push(
-      makeStep({
+      makeFloydMatrixStep({
         ids,
         labels,
         distances,
@@ -313,7 +314,7 @@ export function floydWarshallAlgorithm({ nodes = [], edges = [] }) {
   }
 
   steps.push(
-    makeStep({
+    makeFloydMatrixStep({
       ids,
       labels,
       distances,

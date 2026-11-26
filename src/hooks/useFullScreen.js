@@ -19,18 +19,25 @@ function isTypingTarget(target) {
   );
 }
 
-export function useFullScreen() {
+/**
+ * @param {{ canEnter?: boolean }} [options] - false blocks entering full screen
+ *   (e.g. while the Blocks tab is docked); exiting always works.
+ */
+export function useFullScreen({ canEnter = true } = {}) {
   const [isFullScreen, setIsFullScreen] = useState(() => {
     return localStorage.getItem('flowModeEnabled') === 'true';
   });
 
   const toggleFullScreen = useCallback(() => {
     setIsFullScreen(prev => {
+      // Entering is blocked (e.g. a deferred sign-in action while docked);
+      // exiting always works.
+      if (!prev && !canEnter) return prev;
       const newValue = !prev;
       localStorage.setItem('flowModeEnabled', newValue.toString());
       return newValue;
     });
-  }, []);
+  }, [canEnter]);
 
   const exitFullScreen = useCallback(() => {
     setIsFullScreen(false);
@@ -48,6 +55,7 @@ export function useFullScreen() {
         if (event.metaKey || event.ctrlKey || event.altKey) {
           return;
         }
+        if (!canEnter && !isFullScreen) return;
         event.preventDefault();
         toggleFullScreen();
       } else if (event.key === 'Escape' && isFullScreen) {
@@ -58,7 +66,7 @@ export function useFullScreen() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleFullScreen, exitFullScreen, isFullScreen]);
+  }, [toggleFullScreen, exitFullScreen, isFullScreen, canEnter]);
 
   return {
     isFullScreen,

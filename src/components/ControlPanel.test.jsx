@@ -62,6 +62,54 @@ describe('ControlPanel', () => {
     vi.unstubAllGlobals();
   });
 
+  it('shows the settings gear on desktop only when onOpenSettings is set', () => {
+    const onOpenSettings = vi.fn();
+    const { rerender } = renderWithI18n(<ControlPanel {...getBaseProps()} />);
+    expect(
+      screen.queryByRole('button', { name: 'Settings' })
+    ).not.toBeInTheDocument();
+
+    rerender(<ControlPanel {...getBaseProps({ onOpenSettings })} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    expect(onOpenSettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables full screen while the Blocks tab is docked', () => {
+    const onToggleFullScreen = vi.fn();
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({ isFullScreenDisabled: true, onToggleFullScreen })}
+      />
+    );
+
+    const button = screen.getByRole('button', { name: /full screen/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute(
+      'title',
+      'Full screen is unavailable while the Blocks tab is open'
+    );
+    fireEvent.click(button);
+    expect(onToggleFullScreen).not.toHaveBeenCalled();
+  });
+
+  it('disables export while a block program is loaded', () => {
+    const onExportVideo = vi.fn();
+    renderWithI18n(
+      <ControlPanel
+        {...getBaseProps({ isExportDisabled: true, onExportVideo })}
+      />
+    );
+
+    const button = screen.getByRole('button', { name: /export video/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute(
+      'title',
+      "Close the Blocks tab to export the algorithm's video"
+    );
+    fireEvent.click(button);
+    expect(onExportVideo).not.toHaveBeenCalled();
+  });
+
   it('shows data refresh shuffle when category has hasDataRefresh true (sorting)', () => {
     renderWithI18n(<ControlPanel {...getBaseProps()} />);
 

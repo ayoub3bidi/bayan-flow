@@ -140,6 +140,13 @@ describe('ProPreview', () => {
       ).toBeInTheDocument();
       expect(screen.getByText('Step-by-step Pseudocode')).toBeInTheDocument();
       expect(screen.getByText('Study Notes')).toBeInTheDocument();
+      expect(screen.getByText('Block-Based Coding')).toBeInTheDocument();
+      expect(
+        screen.getByText('Playground for All 45 Algorithms')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Saved & Shareable Programs, Custom Challenges')
+      ).toBeInTheDocument();
     });
 
     it('should render check icon for features on both plans', () => {
@@ -234,7 +241,7 @@ describe('ProPreview', () => {
       const proColumnCells = [...container.querySelectorAll('tbody tr')].map(
         tr => tr.querySelectorAll('td')[2]
       );
-      expect(proColumnCells.length).toBe(14);
+      expect(proColumnCells.length).toBe(15);
     });
   });
 

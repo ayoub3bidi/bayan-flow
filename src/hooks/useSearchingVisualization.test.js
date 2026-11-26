@@ -178,6 +178,29 @@ describe('useSearchingVisualization', () => {
     expect(result.current.array).toEqual(expectedSteps[0].array);
   });
 
+  it('reloadSteps keeps the current target (no new random pick)', async () => {
+    const values = [1, 5, 9];
+    const { result } = renderHook(() =>
+      useSearchingVisualization(
+        'binarySearch',
+        values,
+        1000,
+        VISUALIZATION_MODES.MANUAL
+      )
+    );
+    await waitFor(() => expect(result.current.targetValue).toBe(1));
+
+    // A fresh pick would now land on the last value.
+    Math.random.mockReturnValue(0.99);
+    act(() => result.current.loadSteps([]));
+    act(() => result.current.reloadSteps());
+
+    await waitFor(() =>
+      expect(result.current.totalSteps).toBe(binarySearch(values, 1).length)
+    );
+    expect(result.current.targetValue).toBe(1);
+  });
+
   it('clears playback when algorithm key is missing or array is empty', async () => {
     const values = [1, 2];
     const initialSteps = binarySearch(values, values[0]);
@@ -206,6 +229,24 @@ describe('useSearchingVisualization', () => {
     expect(result.current.array).toEqual([]);
     expect(result.current.states).toEqual([]);
     expect(result.current.targetValue).toBeNull();
+  });
+
+  it('exposes the search graph for Blocks only on a node-link search', async () => {
+    // A stable array: a new one each render would reload steps forever.
+    const values = [1, 2, 3];
+    const { result, rerender } = renderHook(
+      ({ key }) =>
+        useSearchingVisualization(key, values, 100, VISUALIZATION_MODES.MANUAL),
+      { initialProps: { key: 'depthFirstSearch' } }
+    );
+    await waitFor(() => expect(result.current.graphContext).not.toBeNull());
+    const { nodes, adjacency, rootId, goalId } = result.current.graphContext;
+    expect(nodes.length).toBeGreaterThan(0);
+    expect(adjacency[rootId]).toBeDefined();
+    expect(goalId).toBeDefined();
+
+    rerender({ key: 'binarySearch' });
+    expect(result.current.graphContext).toBeNull();
   });
 
   it('loads no steps when algorithm key does not resolve', async () => {

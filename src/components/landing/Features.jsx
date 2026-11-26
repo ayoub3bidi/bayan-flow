@@ -15,6 +15,7 @@ import {
   VideoCamera,
   TextAlignLeft,
   NotePencil,
+  PuzzlePiece,
 } from '@phosphor-icons/react';
 import Container from '../ui/Container';
 import Section from '../ui/Section';
@@ -41,6 +42,13 @@ function Features() {
       title: t('landing.features.pythonCode.title'),
       description: t('landing.features.pythonCode.description'),
       gradient: 'from-amber-500 to-orange-500',
+    },
+    {
+      icon: PuzzlePiece,
+      title: t('landing.features.blocks.title'),
+      description: t('landing.features.blocks.description'),
+      gradient: 'from-lime-500 to-green-500',
+      badge: t('landing.features.blocks.badge'),
     },
     {
       icon: SpeakerHigh,

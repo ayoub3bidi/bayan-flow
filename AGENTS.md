@@ -14,23 +14,23 @@
 - Engines: Node `>=24.11.1`, pnpm `>=8.15.9` · alias `@/` → `src/`
 - Version: `0.5.0` in `package.json` — **45 algorithms** across **5 categories** (14 sorting, 9 pathfinding, 9 searching, 6 tree traversal, 7 graph); optional Google sign-in when Supabase env vars are set
 - **PRs target `develop`**, not `main` (gated by `ensure-pr-source-develop.yml`)
-- **Tests**: 182 test files (~2,118 tests)
-- **Source**: 253 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
+- **Tests**: 189 test files (~2,340 tests)
+- **Source**: 266 JS/JSX non-test files, 45 Python (one `.py` per algorithm), 1 `.css`
 - **Supabase**: `eu-central-1` region, Postgres 17; 14 migrations — public tables `profiles`, `favorite_algorithms`, `algorithm_notes`, `waitlist`, `keepalive` + abuse tables `banned_ips`, `trusted_ips`, `signup_events`, `signup_pending` (RLS on, no policies = service-role only); 6 edge functions (`before-signup`, `post-signup`, `platform-access`, `delete-account`, `waitlist-welcome`, `sync-contacts`); `keep-supabase-alive.yml` prevents free-tier pausing
 
 ## Routes
 
-| Path | Page | Auth |
-|------|------|------|
-| `/` | LandingPage (`LandingRoute`) | Public — a fresh visit with a stored, valid session redirects to `/app` (once per page load; `/#hash` links exempt) |
-| `/app` | VisualizerApp | Public |
-| `/roadmap` | Roadmap | Public |
-| `/pro` | ProComingSoonPage | Public |
-| `/privacy` | PrivacyPolicy (LegalDocument) | Public |
-| `/terms` | TermsOfUse (LegalDocument) | Public |
-| `/auth/google/callback` | GoogleAuthCallback | Public (OAuth redirect) |
-| `/settings/profile` | ProfileSettingsPage | `RequireAuth` |
-| `*` | NotFoundPage | Public |
+| Path                    | Page                          | Auth                                                                                                                |
+| ----------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `/`                     | LandingPage (`LandingRoute`)  | Public — a fresh visit with a stored, valid session redirects to `/app` (once per page load; `/#hash` links exempt) |
+| `/app`                  | VisualizerApp                 | Public                                                                                                              |
+| `/roadmap`              | Roadmap                       | Public                                                                                                              |
+| `/pro`                  | ProComingSoonPage             | Public                                                                                                              |
+| `/privacy`              | PrivacyPolicy (LegalDocument) | Public                                                                                                              |
+| `/terms`                | TermsOfUse (LegalDocument)    | Public                                                                                                              |
+| `/auth/google/callback` | GoogleAuthCallback            | Public (OAuth redirect)                                                                                             |
+| `/settings/profile`     | ProfileSettingsPage           | `RequireAuth`                                                                                                       |
+| `*`                     | NotFoundPage                  | Public                                                                                                              |
 
 Routes are declared in `src/AppRoutes.jsx`.
 
@@ -64,6 +64,7 @@ When docs drift, trust runtime config:
 - Regenerate control is category-neutral ("Generate New Input")
 - Sorting only category with sort-order controls
 - Lazy panels (`PythonCodePanel`, `AlgorithmInsightPanel`) stay optional overlays — Monaco editor, Pyodide worker execution, editable test cases, LeetCode-style pass/fail
+- Blocks tab (code panel: Pseudocode | Python | Blocks; desktop ≥1280px only; Free tier): a playground of complete programs for **all 45 algorithms** (14 sorts, 9 searches incl. DFS/BFS-graph, 9 pathfinding, 6 tree traversals, 7 graph) in `src/blocks/starters/`; an algorithm without a starter (future categories) shows a disabled "coming soon" tab; no challenges and no Run tests in the tab; Blockly stays in the lazy `BlocksWorkspace` chunk; keep `blocklyNoAmd` in both `vite.config.js` plugin lists; inject with `sounds: false`; block-program playback goes through `consumeRunIfNeeded()`; leaving the tab restores the algorithm's own steps (`reloadSteps`) and Video Export never renders a learner's program — details in REFERENCE
 - Full-screen mode (`useFullScreen`) uses same `ControlPanel` + visualizer registry; F key toggle, Escape exits
 - Touch: horizontal swipe (`useSwipe`) for manual step navigation; one-time `SwipeTutorial` on mobile
 - Video export: horizontal (1920×1080) or vertical (1080×1920) MP4 via `@remotion/web-renderer`; orientation → capability check → render → preview → download
@@ -74,10 +75,10 @@ When docs drift, trust runtime config:
 
 ## Ship It test ladder
 
-| Phase | Command |
-|-------|---------|
-| Iterate | `pnpm vitest run <touched tests>` |
-| Gate | `pnpm lint` → `pnpm format:check` → `pnpm test:coverage` → `pnpm build` |
+| Phase   | Command                                                                 |
+| ------- | ----------------------------------------------------------------------- |
+| Iterate | `pnpm vitest run <touched tests>`                                       |
+| Gate    | `pnpm lint` → `pnpm format:check` → `pnpm test:coverage` → `pnpm build` |
 
 ## i18n / user-facing changes
 
@@ -87,12 +88,12 @@ Audit all three locales (en/fr/ar) + pseudocode strings + export fallbacks when 
 
 Project-local skills in `.cursor/skills/` (use together on UI work):
 
-| Skill | Role |
-|-------|------|
+| Skill                  | Role                                                                                            |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
 | `bayan-ui-constraints` | **Wins on conflicts** — keep `src/index.css` tokens, Inter, Phosphor icons, `ThemeContext`, RTL |
-| `ui-ux-pro-max` | UX checklists + design-system search (`--stack react`) |
-| `bayan-visual-qa` | Post-change browser QA on `/`, `/app`, `/roadmap` |
-| `bayan-i18n-rtl` | Locale + RTL audit after copy/layout changes |
+| `ui-ux-pro-max`        | UX checklists + design-system search (`--stack react`)                                          |
+| `bayan-visual-qa`      | Post-change browser QA on `/`, `/app`, `/roadmap`                                               |
+| `bayan-i18n-rtl`       | Locale + RTL audit after copy/layout changes                                                    |
 
 Optional add-on: **[Impeccable](https://github.com/pbakaus/impeccable)** — installed in `.cursor/skills/impeccable/` with pre-edit hook (`.cursor/hooks.json`). Root context: `PRODUCT.md`, `DESIGN.md`, `.impeccable/design.json`, `.impeccable/config.json`. Run `/impeccable <command>` in Cursor; `bayan-ui-constraints` wins on token conflicts. High-value commands: `audit`, `polish`, `harden`, `adapt`, `clarify`, `critique` (landing/roadmap). Skip `typeset` font swaps unless user requests rebrand.
 
@@ -148,16 +149,16 @@ See reference doc for full checklists (JS, Python, pseudocode, sound, insight, t
 
 ## Build-time env vars
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `VITE_GIT_BRANCH` | CI | Deploy context; `isProductionMainBranch()` gates noindex/robots |
-| `VITE_SUPABASE_URL` | Auth | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Auth | Publishable anon key |
-| `VITE_GOOGLE_WEB_CLIENT_ID` | Auth | Google OAuth client ID |
-| `VITE_POSTHOG_API_KEY` | Analytics | PostHog project token |
-| `VITE_POSTHOG_API_HOST` | Analytics | PostHog host (prod uses reverse proxy `https://e.bayanflow.com`) |
-| `VITE_PYODIDE_CDN_BASE` | Optional | Override default jsDelivr CDN for Pyodide |
-| `VITE_DEV_SITE_URL` | CI | Dev site URL for build metadata |
+| Variable                    | Required  | Purpose                                                          |
+| --------------------------- | --------- | ---------------------------------------------------------------- |
+| `VITE_GIT_BRANCH`           | CI        | Deploy context; `isProductionMainBranch()` gates noindex/robots  |
+| `VITE_SUPABASE_URL`         | Auth      | Supabase project URL                                             |
+| `VITE_SUPABASE_ANON_KEY`    | Auth      | Publishable anon key                                             |
+| `VITE_GOOGLE_WEB_CLIENT_ID` | Auth      | Google OAuth client ID                                           |
+| `VITE_POSTHOG_API_KEY`      | Analytics | PostHog project token                                            |
+| `VITE_POSTHOG_API_HOST`     | Analytics | PostHog host (prod uses reverse proxy `https://e.bayanflow.com`) |
+| `VITE_PYODIDE_CDN_BASE`     | Optional  | Override default jsDelivr CDN for Pyodide                        |
+| `VITE_DEV_SITE_URL`         | CI        | Dev site URL for build metadata                                  |
 
 ## CI workflow summary
 

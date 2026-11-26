@@ -9,6 +9,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import {
+  drawerPanelVariants,
   fadeOverlayTransition,
   getChromeTransition,
   OVERLAY_CLASS,
@@ -19,10 +20,19 @@ import { getFocusableElements } from '../utils/focusableElements';
 import SettingsPanel from './SettingsPanel';
 
 /**
- * Full-viewport settings sheet for the canvas-first mobile shell (&lt; lg).
+ * Settings sheet: full viewport for the canvas-first mobile shell (&lt; lg), or
+ * a start-edge drawer (`placement="side"`) while the Blocks panel is docked at
+ * the end edge, so the learner's program stays in view.
+ * @param {{ placement?: 'full' | 'side' }} props
  */
-function SettingsSheet({ isOpen, onClose, settingsPanelProps }) {
-  const { t } = useTranslation();
+function SettingsSheet({
+  isOpen,
+  onClose,
+  settingsPanelProps,
+  placement = 'full',
+}) {
+  const { t, i18n } = useTranslation();
+  const isSide = placement === 'side';
   const reduceMotion = useReducedMotion();
   const panelRef = useRef(null);
 
@@ -57,12 +67,18 @@ function SettingsSheet({ isOpen, onClose, settingsPanelProps }) {
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (isOpen && panelRef.current) {
+    if (!isOpen) return undefined;
+    // Back to the control that opened the sheet (the settings gear) on close.
+    const opener = document.activeElement;
+    if (panelRef.current) {
       const closeButton = panelRef.current.querySelector(
         '[data-settings-sheet-close]'
       );
       closeButton?.focus();
     }
+    return () => {
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
+    };
   }, [isOpen]);
 
   return (
@@ -85,8 +101,14 @@ function SettingsSheet({ isOpen, onClose, settingsPanelProps }) {
             role="dialog"
             aria-modal="true"
             aria-label={t('controls.settingsSheetTitle')}
-            className="fixed inset-0 z-50 flex flex-col bg-surface shadow-2xl overflow-hidden overscroll-contain"
-            variants={sheetPanelVariants()}
+            className={`fixed z-50 flex flex-col bg-surface shadow-2xl overflow-hidden overscroll-contain ${
+              isSide ? 'top-14 bottom-0 start-0 w-96 max-w-[90vw]' : 'inset-0'
+            }`}
+            variants={
+              isSide
+                ? drawerPanelVariants(i18n.dir() !== 'rtl')
+                : sheetPanelVariants()
+            }
             initial="hidden"
             animate="visible"
             exit="exit"

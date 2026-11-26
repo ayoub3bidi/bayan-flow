@@ -112,29 +112,36 @@ export function useSearchingVisualization(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [algorithmKey, searchGraphNodeCount]);
 
-  const loadStepsForArrayAlgorithm = useCallback(() => {
-    setArray(initialArray);
-    setArrayStates(Array(initialArray.length).fill(ELEMENT_STATES.DEFAULT));
+  /** @param {number|null} [keepTarget] - Reuse this target if it's still in the array. */
+  const loadStepsForArrayAlgorithm = useCallback(
+    (keepTarget = null) => {
+      setArray(initialArray);
+      setArrayStates(Array(initialArray.length).fill(ELEMENT_STATES.DEFAULT));
 
-    if (!algorithmKey || !initialArray?.length) {
-      setTargetValue(null);
+      if (!algorithmKey || !initialArray?.length) {
+        setTargetValue(null);
+        engine.loadSteps([]);
+        return;
+      }
+
+      const target =
+        keepTarget !== null && initialArray.includes(keepTarget)
+          ? keepTarget
+          : pickTargetFromArray(initialArray);
+      setTargetValue(target);
+
+      const fn =
+        CATEGORY_CONFIG[ALGORITHM_TYPES.SEARCHING].getAlgorithmFn(algorithmKey);
+      if (fn && target !== null) {
+        engine.loadSteps(fn(initialArray, target));
+        return;
+      }
+
       engine.loadSteps([]);
-      return;
-    }
-
-    const target = pickTargetFromArray(initialArray);
-    setTargetValue(target);
-
-    const fn =
-      CATEGORY_CONFIG[ALGORITHM_TYPES.SEARCHING].getAlgorithmFn(algorithmKey);
-    if (fn && target !== null) {
-      engine.loadSteps(fn(initialArray, target));
-      return;
-    }
-
-    engine.loadSteps([]);
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [algorithmKey, initialArray]);
+    [algorithmKey, initialArray]
+  );
 
   const loadStepsForGraphAlgorithm = useCallback(() => {
     if (!isNodeLinkSearchingAlgorithm(algorithmKey)) {
@@ -181,13 +188,20 @@ export function useSearchingVisualization(
     }
   }, [algorithmKey, regenerateGraphStructure]);
 
+  // Restores the algorithm's steps on the same input (e.g. after a Blocks
+  // run): the target stays, like the graph does.
   const reloadSteps = useCallback(() => {
     if (isNodeLinkSearchingAlgorithm(algorithmKey)) {
       loadStepsForGraphAlgorithm();
       return;
     }
-    loadStepsForArrayAlgorithm();
-  }, [algorithmKey, loadStepsForGraphAlgorithm, loadStepsForArrayAlgorithm]);
+    loadStepsForArrayAlgorithm(targetValue);
+  }, [
+    algorithmKey,
+    loadStepsForGraphAlgorithm,
+    loadStepsForArrayAlgorithm,
+    targetValue,
+  ]);
 
   const isGraph = isNodeLinkSearchingAlgorithm(algorithmKey);
 
@@ -199,6 +213,7 @@ export function useSearchingVisualization(
     graphEdges,
     graphNodeStates,
     graphStackOrder,
+    graphContext: isGraph ? graphContext : null,
     regenerateGraphStructure: regenerateGraphStructureOuter,
     reloadSteps,
     ...engine,

@@ -48,6 +48,9 @@ describe('useGraphAlgorithmVisualization', () => {
     expect(result.current.representation).toBe(GRAPH_REPRESENTATIONS.NODE_LINK);
     expect(result.current.scenarioOptions).toHaveLength(6);
     expect(result.current.description.length).toBeGreaterThan(0);
+    // The graph a Blocks program runs on.
+    expect(result.current.graphContext.nodes).toHaveLength(6);
+    expect(result.current.graphContext.adjacency).toBeDefined();
   });
 
   it('regenerates graph structure and resets playback', async () => {

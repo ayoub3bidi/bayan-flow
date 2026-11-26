@@ -64,6 +64,8 @@ function ControlPanel({
   onArrayViewChange,
   showArrayViewToggle = false,
   isFullScreen,
+  isFullScreenDisabled = false,
+  isExportDisabled = false,
   onToggleFullScreen,
   onExportVideo,
   onCancelExport,
@@ -202,16 +204,18 @@ function ControlPanel({
         <button
           type="button"
           onClick={onExportVideo}
-          disabled={totalSteps === 0}
+          disabled={totalSteps === 0 || isExportDisabled}
           className={`${buttonBaseClasses} bg-teal-500 hover:bg-teal-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed ${isGated ? 'opacity-60 hover:opacity-80' : ''}`}
           title={
-            canRenderOnWeb === false
-              ? t('controls.browserNotSupported')
-              : exportState === 'done'
-                ? t('controls.exportDone')
-                : exportState === 'error'
-                  ? t('controls.exportError')
-                  : t('controls.exportVideo')
+            isExportDisabled
+              ? t('controls.exportUnavailableBlocks')
+              : canRenderOnWeb === false
+                ? t('controls.browserNotSupported')
+                : exportState === 'done'
+                  ? t('controls.exportDone')
+                  : exportState === 'error'
+                    ? t('controls.exportError')
+                    : t('controls.exportVideo')
           }
           aria-label={t('controls.exportVideo')}
         >
@@ -222,11 +226,14 @@ function ControlPanel({
       <button
         type="button"
         onClick={onToggleFullScreen}
-        className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white ${isGated ? 'opacity-60 hover:opacity-80' : ''}`}
+        disabled={isFullScreenDisabled}
+        className={`${buttonBaseClasses} bg-purple-500 hover:bg-purple-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed ${isGated ? 'opacity-60 hover:opacity-80' : ''}`}
         title={
-          isFullScreen
-            ? t('controls.exitFullScreen')
-            : t('controls.goFullScreen')
+          isFullScreenDisabled
+            ? t('controls.fullScreenUnavailableBlocks')
+            : isFullScreen
+              ? t('controls.exitFullScreen')
+              : t('controls.goFullScreen')
         }
         aria-label={
           isFullScreen
@@ -243,16 +250,40 @@ function ControlPanel({
     </>
   );
 
+  // Mobile always; on desktop only while the docked Blocks panel hides the sidebar.
+  const settingsButton = onOpenSettings ? (
+    <button
+      type="button"
+      onClick={onOpenSettings}
+      className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
+      title={t('controls.openSettings')}
+      aria-label={t('controls.openSettings')}
+    >
+      <Gear size={20} weight="bold" aria-hidden="true" />
+    </button>
+  ) : null;
+
+  // With the mode group (desktop) the full row needs ~760px; in a narrower
+  // column (docked code panel, small laptop) wrap it by the panel's own width
+  // instead of letting the side groups shrink over the nav buttons.
+  const hasModeGroup = !isBelowLg && onModeChange;
+
   return (
     <motion.div
-      className="bg-surface rounded-lg shadow-lg p-3 sm:p-4 leading-consistent shrink-0"
+      className="@container bg-surface rounded-lg shadow-lg p-3 sm:p-4 leading-consistent shrink-0"
       initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: ENTER_Y }}
       animate={{ opacity: 1, y: 0 }}
       transition={getChromeTransition(reduceMotion)}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-center gap-2 sm:gap-4">
-        {!isBelowLg && onModeChange ? (
-          <div className="flex flex-1 min-w-0 items-center">
+      <div
+        className={
+          hasModeGroup
+            ? 'flex flex-wrap items-center justify-center gap-x-4 gap-y-2 @min-[49rem]:flex-nowrap @min-[49rem]:justify-between'
+            : 'flex flex-col sm:flex-row sm:items-center sm:justify-between items-center gap-2 sm:gap-4'
+        }
+      >
+        {hasModeGroup ? (
+          <div className="flex items-center @min-[49rem]:flex-1 @min-[49rem]:min-w-0">
             <div
               role="group"
               aria-label={t('settings.controlMode')}
@@ -368,24 +399,23 @@ function ControlPanel({
           )}
         </div>
 
-        <div className="flex flex-1 justify-center sm:justify-end items-center gap-2 min-w-0 w-full sm:w-auto">
+        <div
+          className={
+            hasModeGroup
+              ? 'flex justify-center items-center gap-2 @min-[49rem]:flex-1 @min-[49rem]:justify-end @min-[49rem]:min-w-0'
+              : 'flex flex-1 justify-center sm:justify-end items-center gap-2 min-w-0 w-full sm:w-auto'
+          }
+        >
           {isBelowLg ? (
             <div className="flex items-center justify-center gap-2 flex-wrap">
-              {onOpenSettings ? (
-                <button
-                  type="button"
-                  onClick={onOpenSettings}
-                  className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-                  title={t('controls.openSettings')}
-                  aria-label={t('controls.openSettings')}
-                >
-                  <Gear size={20} weight="bold" aria-hidden="true" />
-                </button>
-              ) : null}
+              {settingsButton}
               {featureButtons}
             </div>
           ) : (
-            featureButtons
+            <>
+              {settingsButton}
+              {featureButtons}
+            </>
           )}
         </div>
       </div>

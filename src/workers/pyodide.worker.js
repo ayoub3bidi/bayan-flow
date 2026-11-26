@@ -11,6 +11,53 @@
 let pyodide = null;
 let pendingRun = null;
 let pendingRunTests = null;
+let pendingRunViz = null;
+// The tracer's own Python namespace, apart from the editor's globals, so a
+// Python-tab variable (say `json`) can't shadow the tracer's names.
+let tracerNs = null;
+
+/**
+ * Runs a block program's executed code and posts its recorded events.
+ * The tracer source arrives with the message (classic worker: no imports).
+ */
+async function executeRunViz({
+  code,
+  functionName,
+  args,
+  kind,
+  tracer,
+  maxEvents,
+  maxTicks,
+}) {
+  try {
+    if (!tracerNs) {
+      // toPy, not globals' `dict`: a learner may have rebound `dict`.
+      const ns = pyodide.toPy({});
+      await pyodide.runPythonAsync(tracer, { globals: ns });
+      tracerNs = ns;
+    }
+    const run = tracerNs.get('__bf_run');
+    try {
+      const json = run(
+        code,
+        functionName,
+        JSON.stringify(args ?? []),
+        kind,
+        maxEvents,
+        maxTicks
+      );
+      self.postMessage({ type: 'viz-steps', ...JSON.parse(json) });
+    } finally {
+      run.destroy();
+    }
+  } catch (err) {
+    self.postMessage({
+      type: 'viz-steps',
+      errorKind: 'runtime',
+      error: err.message,
+    });
+  }
+}
 
 async function executeRunTests(payload) {
   const { code, functionName, testCases } = payload;
@@ -96,6 +143,11 @@ self.onmessage = async e => {
         pendingRunTests = null;
         await executeRunTests(payload);
       }
+      if (pendingRunViz) {
+        const payload = pendingRunViz;
+        pendingRunViz = null;
+        await executeRunViz(payload);
+      }
     } catch (err) {
       self.postMessage({
         type: 'error',
@@ -133,5 +185,23 @@ self.onmessage = async e => {
       return;
     }
     await executeRunTests(payload);
+    return;
+  }
+
+  if (type === 'run-viz') {
+    const payload = {
+      code: e.data?.code,
+      functionName: e.data?.functionName,
+      args: e.data?.args,
+      kind: e.data?.kind,
+      tracer: e.data?.tracer,
+      maxEvents: e.data?.maxEvents,
+      maxTicks: e.data?.maxTicks,
+    };
+    if (!pyodide) {
+      pendingRunViz = payload;
+      return;
+    }
+    await executeRunViz(payload);
   }
 };

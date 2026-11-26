@@ -197,6 +197,8 @@ function App() {
   const [isSoundTogglePending, setIsSoundTogglePending] = useState(false);
   const [arrayView, setArrayView] = useState(readStoredArrayView);
   const [isPythonPanelOpen, setIsPythonPanelOpen] = useState(false);
+  /** Code panel width while docked beside the visualizer (Blocks/Split), else null. */
+  const [codePanelDockWidth, setCodePanelDockWidth] = useState(null);
   const [isInsightPanelOpen, setIsInsightPanelOpen] = useState(false);
   const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
   const isBelowLg = useIsBelowLg();
@@ -206,7 +208,9 @@ function App() {
     setSpeed(newSpeed);
   };
 
-  useBodyScrollLock(isPythonPanelOpen || isInsightPanelOpen);
+  useBodyScrollLock(
+    (isPythonPanelOpen && !codePanelDockWidth) || isInsightPanelOpen
+  );
 
   // null = random graph (the default scenario)
   const [selectedGraphScenario, setSelectedGraphScenario] = useState(null);
@@ -232,6 +236,12 @@ function App() {
     speed,
     mode
   );
+  // The grid, start and end a pathfinding block program runs on.
+  const pathfindingGrid = {
+    grid: pathfindingVisualization.grid,
+    start: pathfindingVisualization.start,
+    end: pathfindingVisualization.end,
+  };
   const searchingVisualization = useSearchingVisualization(
     selectedAlgorithms[ALGORITHM_TYPES.SEARCHING],
     array,
@@ -253,7 +263,10 @@ function App() {
     selectedGraphScenario
   );
 
-  const { isFullScreen, toggleFullScreen } = useFullScreen();
+  // The docked Blocks tab sits beside the visualizer; full screen would hide it.
+  const { isFullScreen, toggleFullScreen } = useFullScreen({
+    canEnter: !codePanelDockWidth,
+  });
   const { isAuthenticated, user } = useAuth();
   const {
     favorites,
@@ -328,6 +341,26 @@ function App() {
   });
 
   const visualization = visualizationMap[algorithmType];
+  // A learner's block program is loaded (its steps carry a blockId key, see
+  // buildProgramSteps) rather than the algorithm's own steps.
+  const isProgramRun = Boolean(
+    visualization.steps[0] && 'blockId' in visualization.steps[0]
+  );
+
+  // Switching category leaves the source category's hook holding a learner's
+  // program: put its algorithm's own steps back now, not on the way back.
+  const visualizationMapRef = useRef(visualizationMap);
+  visualizationMapRef.current = visualizationMap;
+  const previousAlgorithmTypeRef = useRef(algorithmType);
+  useEffect(() => {
+    const previous = previousAlgorithmTypeRef.current;
+    previousAlgorithmTypeRef.current = algorithmType;
+    if (previous === algorithmType) return;
+    const source = visualizationMapRef.current[previous];
+    if (source?.steps[0] && 'blockId' in source.steps[0]) {
+      source.reloadSteps?.();
+    }
+  }, [algorithmType]);
 
   useEffect(() => {
     const graphAlgorithmKey =
@@ -461,9 +494,15 @@ function App() {
    */
   const consumeRunIfNeeded = () => {
     if (countedStepsRef.current === visualization.steps) return true;
+    const runSource = isProgramRun ? 'blocks' : 'algorithm';
     if (user) {
       countedStepsRef.current = visualization.steps;
-      trackVisualizationStarted(activeAlgorithmKey, algorithmType, true);
+      trackVisualizationStarted(
+        activeAlgorithmKey,
+        algorithmType,
+        true,
+        runSource
+      );
       return true;
     }
     if (!canRunVisualization(user)) {
@@ -475,7 +514,12 @@ function App() {
     }
     incrementVisualizationCount();
     countedStepsRef.current = visualization.steps;
-    trackVisualizationStarted(activeAlgorithmKey, algorithmType, false);
+    trackVisualizationStarted(
+      activeAlgorithmKey,
+      algorithmType,
+      false,
+      runSource
+    );
     return true;
   };
 
@@ -488,6 +532,44 @@ function App() {
     }
     visualization.play();
   };
+
+  /** Load a learner's block program into the active category's visualizer. */
+  const pendingProgramAutoplayRef = useRef(false);
+  const handleProgramSteps = steps => {
+    pendingProgramAutoplayRef.current = mode === VISUALIZATION_MODES.AUTOPLAY;
+    visualization.loadSteps(steps);
+  };
+
+  // Autoplay starts once the program's steps are in state, through handlePlay
+  // so the run is counted like any other. Manual mode waits for the learner.
+  useEffect(() => {
+    if (!pendingProgramAutoplayRef.current) return;
+    pendingProgramAutoplayRef.current = false;
+    handlePlay();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visualization.steps]);
+
+  // Only block-program steps carry a blockId.
+  const activeBlockId =
+    visualization.steps[visualization.currentStep]?.blockId ?? null;
+
+  // Leaving the Blocks tab (close, other tab, narrow viewport) puts the
+  // algorithm's own steps back: the learner's program must not stay labelled
+  // as the algorithm, nor be exported as it.
+  const isProgramRunRef = useRef(isProgramRun);
+  isProgramRunRef.current = isProgramRun;
+  const reloadStepsRef = useRef(visualization.reloadSteps);
+  reloadStepsRef.current = visualization.reloadSteps;
+  useEffect(() => {
+    if (codePanelDockWidth) return;
+    // The docked-only settings drawer must not reappear on the next dock.
+    if (!isBelowLg) setIsSettingsSheetOpen(false);
+    if (isProgramRunRef.current) reloadStepsRef.current?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [codePanelDockWidth]);
+
+  const isSettingsSheetVisible =
+    (isBelowLg || Boolean(codePanelDockWidth)) && isSettingsSheetOpen;
 
   const handleSeek = step => {
     if (!consumeRunIfNeeded()) return;
@@ -567,6 +649,7 @@ function App() {
   };
 
   const handleGatedFullscreenToggle = () => {
+    if (codePanelDockWidth && !isFullScreen) return;
     if (isAuthenticated) {
       trackFullscreenToggled(!isFullScreen);
       toggleFullScreen();
@@ -616,7 +699,7 @@ function App() {
   };
 
   const handleExportVideo = () => {
-    if (visualization.totalSteps === 0) return;
+    if (visualization.totalSteps === 0 || isProgramRun) return;
     if (!isAuthenticated) {
       pendingFeatureRef.current = 'export';
       openGatedFeature('export');
@@ -632,6 +715,7 @@ function App() {
   };
 
   const handleOrientationSelected = orientation => {
+    if (isProgramRun) return;
     if (!canRunVideoExport(user)) {
       reportExportError(t('controls.exportTemporarilyUnavailable'));
       return;
@@ -816,6 +900,8 @@ function App() {
       (algorithmType === ALGORITHM_TYPES.SEARCHING &&
         !isNodeLinkSearchingAlgorithm(activeAlgorithmKey)),
     isFullScreen,
+    isFullScreenDisabled: Boolean(codePanelDockWidth) && !isFullScreen,
+    isExportDisabled: isProgramRun,
     onToggleFullScreen: handleGatedFullscreenToggle,
     onExportVideo: handleExportVideo,
     onCancelExport: cancelExport,
@@ -827,7 +913,11 @@ function App() {
     onToggleSound: handleGatedSoundToggle,
     isGated: !isAuthenticated,
     visualizationsRemaining: remainingVisualizations,
-    onOpenSettings: isBelowLg ? () => setIsSettingsSheetOpen(true) : undefined,
+    // The docked Blocks panel hides the sidebar, so settings open as a drawer.
+    onOpenSettings:
+      isBelowLg || codePanelDockWidth
+        ? () => setIsSettingsSheetOpen(true)
+        : undefined,
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -884,8 +974,17 @@ function App() {
               <Header />
               <main
                 className={`flex-1 min-h-0 ${
-                  isBelowLg ? 'flex flex-col p-3 gap-3 overflow-hidden' : 'p-6'
+                  isBelowLg
+                    ? 'flex flex-col p-3 gap-3 overflow-hidden'
+                    : 'p-6 transition-[padding-inline-end] duration-300 ease-out motion-reduce:transition-none'
                 }`}
+                style={
+                  codePanelDockWidth && !isBelowLg
+                    ? {
+                        paddingInlineEnd: `calc(${codePanelDockWidth} + 1.5rem)`,
+                      }
+                    : undefined
+                }
                 role="main"
                 id="main-content"
               >
@@ -912,16 +1011,19 @@ function App() {
                 ) : (
                   <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                      <aside
-                        className="lg:col-span-1"
-                        role="complementary"
-                        aria-label={t('a11y.algorithmSettings')}
-                      >
-                        <SettingsPanel {...settingsPanelProps} />
-                      </aside>
+                      {/* Docked blocks panel: give its room to the visualizer. */}
+                      {!codePanelDockWidth && (
+                        <aside
+                          className="lg:col-span-1"
+                          role="complementary"
+                          aria-label={t('a11y.algorithmSettings')}
+                        >
+                          <SettingsPanel {...settingsPanelProps} />
+                        </aside>
+                      )}
 
                       <section
-                        className="lg:col-span-3 flex flex-col gap-4 h-[calc(100vh-85px)]"
+                        className={`${codePanelDockWidth ? 'lg:col-span-4' : 'lg:col-span-3'} flex flex-col gap-4 h-[calc(100vh-85px)]`}
                         role="region"
                         aria-label={t('a11y.algorithmVisualization')}
                       >
@@ -1000,9 +1102,10 @@ function App() {
       </div>
 
       <SettingsSheet
-        isOpen={isBelowLg && isSettingsSheetOpen}
+        isOpen={isSettingsSheetVisible}
         onClose={() => setIsSettingsSheetOpen(false)}
         settingsPanelProps={settingsPanelProps}
+        placement={isBelowLg ? 'full' : 'side'}
       />
 
       <ExportProgressModal
@@ -1051,6 +1154,21 @@ function App() {
             isOpen={isPythonPanelOpen}
             onClose={() => setIsPythonPanelOpen(false)}
             algorithm={activeAlgorithmKey}
+            currentArray={array}
+            currentTarget={searchingVisualization.targetValue}
+            currentGrid={pathfindingGrid}
+            currentTree={treeTraversalVisualization.treeContext}
+            currentGraph={
+              algorithmType === ALGORITHM_TYPES.GRAPH_ALGORITHM
+                ? graphAlgorithmVisualization.graphContext
+                : searchingVisualization.graphContext
+            }
+            activeBlockId={activeBlockId}
+            onProgramSteps={handleProgramSteps}
+            onDockChange={setCodePanelDockWidth}
+            // The side settings drawer is modal: the docked panel stays in
+            // view but can't be clicked or focused meanwhile.
+            isInert={isSettingsSheetVisible && Boolean(codePanelDockWidth)}
           />
         </Suspense>
       </ErrorBoundary>

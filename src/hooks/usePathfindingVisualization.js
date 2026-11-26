@@ -122,6 +122,7 @@ export function usePathfindingVisualization(
     generateNewGrid,
     /** New random start/end on an empty grid; step reload runs via effect. */
     regenerateGrid: generateNewGrid,
+    reloadSteps: loadStepsForCurrentAlgorithm,
     // Shared playback engine (steps, isPlaying, isComplete, currentStep, …)
     ...engine,
   };

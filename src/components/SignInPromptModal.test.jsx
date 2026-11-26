@@ -17,7 +17,7 @@ vi.mock('../hooks/useAuth', () => ({
 const FEATURES = ['code', 'insight', 'export', 'sound', 'fullscreen'];
 
 const FEATURE_LABELS = {
-  code: 'Code Panel',
+  code: 'Code Panel & Blocks',
   insight: 'Algorithm Insight',
   export: 'Video Export',
   sound: 'Sound',

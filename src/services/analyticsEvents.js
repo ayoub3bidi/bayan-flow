@@ -42,6 +42,10 @@ export const CODE_PANEL_OPENED = 'code_panel_opened';
 /** Algorithm insight panel opened */
 export const INSIGHT_PANEL_OPENED = 'insight_panel_opened';
 
+/** Blocks tab (block-based code) */
+export const BLOCKS_TAB_OPENED = 'blocks_tab_opened';
+export const BLOCKS_PROGRAM_RUN = 'blocks_program_run';
+
 /** Video export started */
 export const VIDEO_EXPORT_STARTED = 'video_export_started';
 
@@ -107,12 +111,14 @@ export function trackAlgorithmViewed(algorithmKey, category) {
 export function trackVisualizationStarted(
   algorithmKey,
   category,
-  isAuthenticated
+  isAuthenticated,
+  source = 'algorithm'
 ) {
   captureEvent(VISUALIZATION_STARTED, {
     algorithm_key: algorithmKey,
     category,
     is_authenticated: isAuthenticated,
+    source,
   });
 }
 
@@ -185,6 +191,24 @@ export function trackSoundToggled(isEnabled) {
  */
 export function trackCodePanelOpened(algorithmKey) {
   captureEvent(CODE_PANEL_OPENED, { algorithm_key: algorithmKey });
+}
+
+/**
+ * Capture the code panel's Blocks tab being opened.
+ * @param {string} algorithmKey
+ * @param {boolean} supported - false when the tab shows "coming soon".
+ */
+export function trackBlocksTabOpened(algorithmKey, supported) {
+  captureEvent(BLOCKS_TAB_OPENED, { algorithm_key: algorithmKey, supported });
+}
+
+/**
+ * Capture a block program run.
+ * @param {string} algorithmKey
+ * @param {boolean} success - The program sorted the array / found the target.
+ */
+export function trackBlocksProgramRun(algorithmKey, success) {
+  captureEvent(BLOCKS_PROGRAM_RUN, { algorithm_key: algorithmKey, success });
 }
 
 /**

@@ -61,6 +61,7 @@ describe('ProComingSoonPage', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/what the pro plan unlocks/i)).toBeInTheDocument();
     expect(screen.getByText(/and more to come/i)).toBeInTheDocument();
+    expect(screen.getByText('Blocks for the classroom')).toBeInTheDocument();
     expect(document.querySelectorAll('.pro-sorting-tile')).toHaveLength(6);
   });
 

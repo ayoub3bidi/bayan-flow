@@ -28,6 +28,7 @@ vi.mock('@phosphor-icons/react', () => ({
   VideoCamera: () => <svg data-testid="video-icon" />,
   TextAlignLeft: () => <svg data-testid="pseudocode-icon" />,
   NotePencil: () => <svg data-testid="notes-icon" />,
+  PuzzlePiece: () => <svg data-testid="blocks-icon" />,
 }));
 
 describe('Features', () => {
@@ -97,10 +98,17 @@ describe('Features', () => {
       expect(screen.getByTestId('notes-icon')).toBeInTheDocument();
     });
 
-    it('should include all eight features from array', () => {
+    it('should display the Blocks feature with its badge', () => {
+      renderWithI18n(<Features />);
+      expect(screen.getByTestId('blocks-icon')).toBeInTheDocument();
+      expect(screen.getByText('Build It With Blocks')).toBeInTheDocument();
+      expect(screen.getByText('New')).toBeInTheDocument();
+    });
+
+    it('should include all nine features from array', () => {
       const { container } = renderWithI18n(<Features />);
       const icons = container.querySelectorAll('[data-testid$="-icon"]');
-      expect(icons.length).toBe(8);
+      expect(icons.length).toBe(9);
     });
   });
 

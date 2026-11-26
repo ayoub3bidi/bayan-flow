@@ -6,11 +6,12 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, screen, waitFor, fireEvent } from '@testing-library/react';
-import { useEffect } from 'react';
+import { useEffect, useImperativeHandle } from 'react';
 import PythonCodePanel from './PythonCodePanel';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { renderWithI18n } from '../test/testUtils';
 import i18n from '../i18n';
+import { I18nextProvider } from 'react-i18next';
 
 const { getPseudocodeForLocaleMock, usePythonExecutionMock, buildPythonExec } =
   vi.hoisted(() => {
@@ -34,6 +35,9 @@ const { getPseudocodeForLocaleMock, usePythonExecutionMock, buildPythonExec } =
         cancelExecution: vi.fn(),
         clearOutput: vi.fn(),
         clearTestResults: vi.fn(),
+        vizResult: null,
+        runVisualization: vi.fn(),
+        warmUp: vi.fn(),
         ...overrides,
       };
     }
@@ -71,6 +75,8 @@ vi.mock('@monaco-editor/react', () => ({
         if (!onMount) return;
         const mockEditor = {
           addAction: vi.fn(),
+          createDecorationsCollection: vi.fn(() => ({ set: vi.fn() })),
+          revealLineInCenterIfOutsideViewport: vi.fn(),
           getContainerDomNode: () => ({
             style: {},
             querySelector: sel =>
@@ -79,6 +85,7 @@ vi.mock('@monaco-editor/react', () => ({
         };
         const mockMonaco = {
           editor: { setTheme: vi.fn() },
+          Range: class {},
           KeyMod: { CtrlCmd: 2048 },
           KeyCode: { Enter: 3 },
         };
@@ -88,6 +95,7 @@ vi.mock('@monaco-editor/react', () => ({
       return (
         <div
           data-testid="monaco-editor"
+          data-read-only={String(Boolean(_options?.readOnly))}
           data-theme={theme}
           data-language={defaultLanguage ?? language}
           {...props}
@@ -108,6 +116,43 @@ vi.mock('@monaco-editor/react', () => ({
   },
 }));
 
+// Blockly can't run in jsdom: the mock reports a fixed generated program.
+const FAKE_PROGRAM = {
+  kind: 'sort',
+  functionName: 'bubble_sort',
+  displayCode: 'def bubble_sort(arr):\n    return arr\n',
+  execCode: 'def bubble_sort(arr):\n    __bf.tick()\n    return arr\n',
+  lineBlockIds: ['hat', 'hat'],
+  statementIds: { hat: 'hat' },
+};
+/** Program the mocked workspace reports; tests may swap it before render. */
+const mockProgramRef = { current: FAKE_PROGRAM };
+/** While true, the mock workspace doesn't publish (it's still loading). */
+const mockHoldPublishRef = { current: false };
+/** While true, the mock workspace throws, like a failed chunk load. */
+const mockThrowRef = { current: false };
+const mockResetToStarter = vi.fn();
+vi.mock('./BlocksWorkspace', () => {
+  // Stable component identity so parent re-renders don't remount it.
+  function MockBlocksWorkspace({ onProgramChange, algorithmKey, ref }) {
+    if (mockThrowRef.current) throw new Error('chunk failed');
+    useImperativeHandle(ref, () => ({ resetToStarter: mockResetToStarter }));
+    useEffect(() => {
+      // Like the real workspace: the program names its algorithm.
+      if (mockHoldPublishRef.current) return;
+      const program = mockProgramRef.current;
+      onProgramChange(program && { algorithmKey, ...program });
+    }, [onProgramChange, algorithmKey]);
+    return <div data-testid="blocks-workspace" />;
+  }
+  return { default: MockBlocksWorkspace };
+});
+
+vi.mock('../services/analyticsEvents', () => ({
+  trackBlocksTabOpened: vi.fn(),
+  trackBlocksProgramRun: vi.fn(),
+}));
+
 // Mock usePythonExecution hook (mutable via usePythonExecutionMock)
 vi.mock('../hooks/usePythonExecution', () => ({
   usePythonExecution: (...args) => usePythonExecutionMock(...args),
@@ -125,13 +170,18 @@ vi.mock('./OutputConsole', () => ({
     isModified,
     isExpanded,
     onToggleExpand,
+    onRunTests,
+    activeTab,
   }) => (
     <div
       data-testid="output-console"
+      data-active-tab={activeTab ?? 'uncontrolled'}
       data-status={status}
       data-expanded={String(isExpanded)}
+      data-has-tests={String(Boolean(onRunTests))}
     >
       <span data-testid="output-content">{output || 'empty'}</span>
+      <span data-testid="error-content">{error}</span>
       {onRun && (
         <button
           type="button"
@@ -184,6 +234,27 @@ vi.mock('../algorithms/python', () => ({
   getPythonCode: vi.fn(algorithm => {
     if (algorithm === 'bubbleSort') {
       return 'def bubble_sort(arr):\n    return arr';
+    }
+    if (algorithm === 'selectionSort') {
+      return 'def selection_sort(arr):\n    return arr';
+    }
+    if (algorithm === 'quickSort') {
+      return 'def quick_sort(arr):\n    return arr';
+    }
+    if (algorithm === 'linearSearch') {
+      return 'def linear_search(arr, target):\n    return -1';
+    }
+    if (algorithm === 'bogoSort') {
+      return 'def bogo_sort(arr):\n    return arr';
+    }
+    if (algorithm === 'bfs') {
+      return 'def bfs(grid, start, end):\n    return []';
+    }
+    if (algorithm === 'inorderTraversal') {
+      return 'def inorder_traversal(root):\n    return []';
+    }
+    if (algorithm === 'kahnAlgorithm') {
+      return 'def kahn_algorithm(graph):\n    return []';
     }
     return null;
   }),
@@ -419,6 +490,28 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
 
       fireEvent.keyDown(document, { key: 'Escape', bubbles: true });
       await waitFor(() => expect(onClose).toHaveBeenCalled());
+    });
+
+    it('leaves Escape inside another dialog to that dialog', () => {
+      const onClose = vi.fn();
+      localStorageMock.getItem.mockReturnValue('light');
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={onClose}
+            algorithm="bubbleSort"
+          />
+          <div role="dialog">
+            <button type="button">Inside the settings drawer</button>
+          </div>
+        </ThemeProvider>
+      );
+
+      fireEvent.keyDown(screen.getByText('Inside the settings drawer'), {
+        key: 'Escape',
+      });
+      expect(onClose).not.toHaveBeenCalled();
     });
 
     it('calls onClose when backdrop is clicked', () => {
@@ -707,13 +800,873 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
 
       await waitFor(() => screen.getByTestId('monaco-editor'));
 
-      const tablist = screen.getByRole('tablist');
+      const tablist = screen.getByRole('tablist', {
+        name: 'Python Implementation',
+      });
       const editor = screen.getByTestId('monaco-editor');
-      const tablistParent = tablist.parentElement;
+      // The tabs share a row with the docked-only close button.
+      const tabsRow = tablist.parentElement;
       const editorContainer = editor.parentElement?.parentElement;
 
-      expect(tablistParent).toContainElement(editorContainer);
-      expect(tablist.nextElementSibling).not.toHaveTextContent(/^Run$/);
+      expect(tabsRow.parentElement).toContainElement(editorContainer);
+      expect(tabsRow.nextElementSibling).not.toHaveTextContent(/^Run$/);
     });
+  });
+});
+
+describe('PythonCodePanel - Blocks tab', () => {
+  let store;
+
+  /** Desktop width: every min-width query matches (dock + side by side). */
+  function setWidth({ dock, split }) {
+    global.matchMedia = vi.fn(query => ({
+      matches:
+        query.includes('min-width') &&
+        (query.includes('1600px') ? split : dock),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+  }
+
+  function renderPanel(props = {}) {
+    return renderWithI18n(
+      <ThemeProvider>
+        <PythonCodePanel
+          isOpen={true}
+          onClose={vi.fn()}
+          algorithm="bubbleSort"
+          currentArray={[3, 1, 2]}
+          {...props}
+        />
+      </ThemeProvider>
+    );
+  }
+
+  const blocksTab = () => screen.getByRole('tab', { name: /^Blocks/ });
+
+  /** Opens the Blocks tab and waits for the (lazy) workspace. */
+  async function openBlocks(props) {
+    const utils = renderPanel(props);
+    fireEvent.click(blocksTab());
+    // First lazy load of the workspace chunk in this file can take a moment.
+    await screen.findByTestId('blocks-workspace', {}, { timeout: 5000 });
+    return utils;
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockProgramRef.current = FAKE_PROGRAM;
+    mockHoldPublishRef.current = false;
+    mockThrowRef.current = false;
+    usePythonExecutionMock.mockImplementation(() => buildPythonExec());
+    store = {};
+    global.localStorage = {
+      getItem: vi.fn(key => store[key] ?? null),
+      setItem: vi.fn((key, value) => {
+        store[key] = String(value);
+      }),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+    };
+    setWidth({ dock: true, split: true });
+  });
+
+  afterEach(() => {
+    setWidth({ dock: false, split: false });
+  });
+
+  it('shows three tabs and opens on Python with the editor and tests', async () => {
+    renderPanel();
+    expect(screen.getAllByRole('tab').map(tab => tab.textContent)).toEqual([
+      'Pseudocode',
+      'Python',
+      'Blocks',
+    ]);
+    expect(screen.getByRole('tab', { name: 'Python' })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    );
+    await waitFor(() => screen.getByTestId('monaco-editor'));
+    expect(screen.getByTestId('output-console')).toHaveAttribute(
+      'data-has-tests',
+      'true'
+    );
+    expect(screen.queryByTestId('blocks-workspace')).not.toBeInTheDocument();
+  });
+
+  it('keeps the tabs when the Blocks workspace fails to load', async () => {
+    mockThrowRef.current = true;
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    renderPanel();
+    fireEvent.click(blocksTab());
+    expect(
+      await screen.findByText(
+        i18n.t('errors.somethingWentWrong'),
+        {},
+        { timeout: 5000 }
+      )
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: 'Python' }));
+    await waitFor(() => screen.getByTestId('monaco-editor'));
+  });
+
+  it('hides the Blocks tab below laptop width', () => {
+    setWidth({ dock: false, split: false });
+    renderPanel();
+    expect(
+      screen.queryByRole('tab', { name: /^Blocks/ })
+    ).not.toBeInTheDocument();
+  });
+
+  it('docks beside the visualizer with blocks and read-only Python, no tests', async () => {
+    const { trackBlocksTabOpened } =
+      await import('../services/analyticsEvents');
+    const onDockChange = vi.fn();
+    await openBlocks({ onDockChange });
+
+    expect(trackBlocksTabOpened).toHaveBeenCalledWith('bubbleSort', true);
+    const python = screen.getByTestId('split-python');
+    await waitFor(() =>
+      expect(
+        python.querySelector('[data-testid=monaco-editor]')
+      ).toHaveAttribute('data-read-only', 'true')
+    );
+    expect(python.style.flex).toBe('0 0 33%');
+    expect(screen.getByTestId('blocks-split-handle')).toHaveAttribute(
+      'aria-orientation',
+      'vertical'
+    );
+    expect(document.querySelector('[data-docked]')).toBeInTheDocument();
+    expect(document.querySelector('.fixed.inset-0')).not.toBeInTheDocument();
+    expect(onDockChange).toHaveBeenLastCalledWith(
+      'min(60vw, calc(100vw - 820px))'
+    );
+    expect(screen.getByTestId('output-console')).toHaveAttribute(
+      'data-has-tests',
+      'false'
+    );
+    expect(
+      screen.queryByRole('button', { name: 'Show solution' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('stacks blocks above Python on laptop widths', async () => {
+    setWidth({ dock: true, split: false });
+    await openBlocks();
+    expect(screen.getByTestId('blocks-split-handle')).toHaveAttribute(
+      'aria-orientation',
+      'horizontal'
+    );
+  });
+
+  it('drags the split between blocks and Python and remembers it', async () => {
+    await openBlocks();
+    const split = screen.getByTestId('split-python').parentElement;
+    split.getBoundingClientRect = () => ({
+      left: 0,
+      right: 1000,
+      top: 0,
+      bottom: 500,
+      width: 1000,
+      height: 500,
+    });
+
+    fireEvent.mouseDown(screen.getByTestId('blocks-split-handle'));
+    // Divider at x=400: Python keeps the right 60%.
+    fireEvent.mouseMove(window, { clientX: 400, clientY: 0 });
+    fireEvent.mouseUp(window);
+
+    expect(screen.getByTestId('split-python').style.flex).toBe('0 0 60%');
+    expect(store['bayan-flow:blocks-python-percent']).toBe('60');
+
+    // Clamped so neither side disappears.
+    fireEvent.mouseDown(screen.getByTestId('blocks-split-handle'));
+    fireEvent.mouseMove(window, { clientX: 0, clientY: 0 });
+    fireEvent.mouseUp(window);
+    expect(screen.getByTestId('split-python').style.flex).toBe('0 0 70%');
+  });
+
+  it('resizes the split from the keyboard', async () => {
+    store['bayan-flow:blocks-python-percent'] = '50';
+    await openBlocks();
+    const handle = screen.getByTestId('blocks-split-handle');
+
+    fireEvent.keyDown(handle, { key: 'ArrowLeft' });
+    expect(screen.getByTestId('split-python').style.flex).toBe('0 0 55%');
+    fireEvent.keyDown(handle, { key: 'ArrowRight' });
+    fireEvent.keyDown(handle, { key: 'ArrowRight' });
+    expect(screen.getByTestId('split-python').style.flex).toBe('0 0 45%');
+    expect(store['bayan-flow:blocks-python-percent']).toBe('45');
+  });
+
+  it('offers an Exit Blocks button while docked (no backdrop to click)', async () => {
+    const onClose = vi.fn();
+    await openBlocks({ onClose });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Exit Blocks' }));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a disabled "coming soon" tab for an algorithm without blocks', async () => {
+    const onDockChange = vi.fn();
+    // Every algorithm has blocks now; a future one (no starter yet) doesn't.
+    renderPanel({ algorithm: 'futureAlgorithm', onDockChange });
+
+    expect(blocksTab()).toHaveTextContent('Soon');
+    expect(blocksTab()).toBeDisabled();
+    fireEvent.click(blocksTab());
+
+    expect(blocksTab()).toHaveAttribute('aria-selected', 'false');
+    expect(document.querySelector('[data-docked]')).not.toBeInTheDocument();
+    expect(onDockChange).toHaveBeenLastCalledWith(null);
+  });
+
+  it('stays on Blocks when the algorithm changes', async () => {
+    const { rerender } = await openBlocks();
+    // Same provider tree as renderWithI18n, so the panel keeps its state.
+    rerender(
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="futureAlgorithm"
+            currentArray={[3, 1, 2]}
+          />
+        </ThemeProvider>
+      </I18nextProvider>
+    );
+    expect(blocksTab()).toHaveAttribute('aria-selected', 'true');
+    expect(
+      screen.getByText('Blocks coming soon for this algorithm')
+    ).toBeInTheDocument();
+  });
+
+  it('runs the program on the visualizer input and hands its steps over', async () => {
+    // Like the real hook's state, vizResult keeps its identity across renders.
+    const vizResult = {
+      events: [{ kind: 'compare', i: 0, j: 1, array: [3, 1, 2], blockId: 'c' }],
+      finalArray: [1, 2, 3],
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = vizResult;
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    const onClose = vi.fn();
+    await openBlocks({ onProgramSteps, onClose });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      FAKE_PROGRAM.execCode,
+      [[3, 1, 2]],
+      { functionName: 'bubble_sort', kind: 'sort' }
+    );
+    // The real hook re-renders when its state updates; any re-render will do.
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Collapse output panel' })
+    );
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[1]).toMatchObject({ blockId: 'c' });
+    expect(steps.at(-1).states).toEqual(['sorted', 'sorted', 'sorted']);
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'Your program sorted the array'
+    );
+    // Docked: the visualizer stays visible, so the panel stays open.
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  describe('a run that finishes after the learner left Blocks', () => {
+    /** A run whose result only arrives when `deliver()` is called. */
+    function mockLateRun() {
+      const vizResult = { events: [], finalArray: [1, 2, 3] };
+      let currentResult = null;
+      const runVisualization = vi.fn();
+      usePythonExecutionMock.mockImplementation(() =>
+        buildPythonExec({ runVisualization, vizResult: currentResult })
+      );
+      return {
+        runVisualization,
+        deliver: () => {
+          currentResult = vizResult;
+        },
+      };
+    }
+
+    /** Clicks Run until the workspace has reported its program. */
+    async function startRun(runVisualization) {
+      await waitFor(() => {
+        fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+        expect(runVisualization).toHaveBeenCalledTimes(1);
+      });
+    }
+
+    it('is dropped after switching to the Python tab', async () => {
+      const { runVisualization, deliver } = mockLateRun();
+      const onProgramSteps = vi.fn();
+      await openBlocks({ onProgramSteps });
+      await startRun(runVisualization);
+
+      fireEvent.click(screen.getByRole('tab', { name: 'Python' }));
+      deliver();
+      // Any re-render hands the hook's new result to the panel.
+      fireEvent.click(screen.getByRole('tab', { name: 'Pseudocode' }));
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(onProgramSteps).not.toHaveBeenCalled();
+    });
+
+    it('is dropped after leaving Blocks and coming back', async () => {
+      const { runVisualization, deliver } = mockLateRun();
+      const onProgramSteps = vi.fn();
+      await openBlocks({ onProgramSteps });
+      await startRun(runVisualization);
+
+      fireEvent.click(screen.getByRole('tab', { name: 'Python' }));
+      fireEvent.click(blocksTab());
+      deliver();
+      fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(onProgramSteps).not.toHaveBeenCalled();
+    });
+
+    it('is dropped after the panel closes', async () => {
+      const { runVisualization, deliver } = mockLateRun();
+      const onProgramSteps = vi.fn();
+      const { rerender } = await openBlocks({ onProgramSteps });
+      await startRun(runVisualization);
+
+      const renderClosed = () =>
+        rerender(
+          <I18nextProvider i18n={i18n}>
+            <ThemeProvider>
+              <PythonCodePanel
+                isOpen={false}
+                onClose={vi.fn()}
+                algorithm="bubbleSort"
+                currentArray={[3, 1, 2]}
+                onProgramSteps={onProgramSteps}
+              />
+            </ThemeProvider>
+          </I18nextProvider>
+        );
+      renderClosed();
+      deliver();
+      renderClosed();
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(onProgramSteps).not.toHaveBeenCalled();
+    });
+  });
+
+  it('Clear empties the Blocks output', async () => {
+    const vizResult = { events: [], finalArray: [1, 2, 3] };
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(() => {
+          currentResult = { ...vizResult };
+        }),
+        vizResult: currentResult,
+      })
+    );
+    const onProgramSteps = vi.fn();
+    await openBlocks({ onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'Your program sorted the array'
+    );
+
+    fireEvent.click(screen.getByTestId('clear-output'));
+
+    expect(screen.getByTestId('output-content')).toHaveTextContent('empty');
+  });
+
+  it('says when a sort put its array in order by changing its values', async () => {
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(() => {
+          currentResult = { events: [], finalArray: [0, 0, 0] };
+        }),
+        vizResult: currentResult,
+      })
+    );
+    const onProgramSteps = vi.fn();
+    await openBlocks({ onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    // Re-render so the mocked hook hands over the new result.
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'Your array is in order, but its values changed'
+    );
+  });
+
+  it('drops a result whose input changed while the program ran', async () => {
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(),
+        vizResult: currentResult,
+      })
+    );
+    const onProgramSteps = vi.fn();
+    const { rerender } = await openBlocks({ onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+
+    // "Generate New Input" lands before the worker replies. Same root as
+    // renderWithI18n, so the panel re-renders instead of remounting.
+    currentResult = { events: [], finalArray: [1, 2, 3] };
+    rerender(
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bubbleSort"
+            currentArray={[9, 8, 7]}
+            onProgramSteps={onProgramSteps}
+          />
+        </ThemeProvider>
+      </I18nextProvider>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('output-content')).toHaveTextContent(
+        'The input changed while your program ran'
+      )
+    );
+    expect(onProgramSteps).not.toHaveBeenCalled();
+  });
+
+  it('resets the blocks only on a confirming second click', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await openBlocks();
+      const confirmButton = () =>
+        screen.getByRole('button', { name: 'Click again to reset' });
+      fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+      expect(mockResetToStarter).not.toHaveBeenCalled();
+      expect(confirmButton()).toBeInTheDocument();
+
+      // Unconfirmed, it disarms itself.
+      act(() => vi.advanceTimersByTime(3000));
+      expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+      fireEvent.click(confirmButton());
+      expect(mockResetToStarter).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it.each([
+    [1000, 'Bogo sort gave up after 1000 shuffles'],
+    // No shuffles at all: an ordinary unsorted result, not a give-up.
+    [0, 'not sorted'],
+  ])('after %i shuffles, says %s', async (count, message) => {
+    const shuffle = { kind: 'shuffle', i: null, j: null, array: [3, 1, 2] };
+    const vizResult = {
+      events: Array(count).fill(shuffle),
+      finalArray: [3, 1, 2],
+    };
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(() => {
+          currentResult = vizResult;
+        }),
+        vizResult: currentResult,
+      })
+    );
+    const onProgramSteps = vi.fn();
+    await openBlocks({ algorithm: 'bogoSort', onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId('output-content')).toHaveTextContent(message);
+  });
+
+  it('runs a search program with the target and reports the found index', async () => {
+    const searchProgram = {
+      ...FAKE_PROGRAM,
+      kind: 'search',
+      functionName: 'linear_search',
+    };
+    const vizResult = {
+      events: [
+        { kind: 'compare', i: 0, j: null, array: [1, 5, 9], blockId: 't' },
+      ],
+      finalArray: null,
+      result: 1,
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = vizResult;
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    mockProgramRef.current = searchProgram;
+    await openBlocks({
+      algorithm: 'linearSearch',
+      currentArray: [1, 5, 9],
+      currentTarget: 5,
+      onProgramSteps,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      searchProgram.execCode,
+      [[1, 5, 9], 5],
+      { functionName: 'linear_search', kind: 'search' }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[1]).toMatchObject({ blockId: 't', targetValue: 5 });
+    expect(steps.at(-1).states).toEqual(['default', 'sorted', 'default']);
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'Your program found 5 at index 1'
+    );
+  });
+
+  it('runs a path program on the grid and draws the returned path', async () => {
+    const pathProgram = { ...FAKE_PROGRAM, kind: 'path', functionName: 'bfs' };
+    const vizResult = {
+      events: [
+        { kind: 'visit', cell: [0, 0], blockId: 'p' },
+        { kind: 'open', cell: [0, 1], blockId: 'q' },
+      ],
+      finalArray: [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ],
+      result: null,
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = vizResult;
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    mockProgramRef.current = pathProgram;
+    const grid = [[0, 0, 0]];
+    await openBlocks({
+      algorithm: 'bfs',
+      currentGrid: {
+        grid,
+        start: { row: 0, col: 0 },
+        end: { row: 0, col: 2 },
+      },
+      onProgramSteps,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      pathProgram.execCode,
+      [grid, [0, 0], [0, 2]],
+      { functionName: 'bfs', kind: 'path' }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[2]).toMatchObject({ blockId: 'q' });
+    expect(steps.at(-1).states).toEqual([['start', 'path', 'end']]);
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'Your program found a path of 3 cells'
+    );
+  });
+
+  it('warns when a valid path is not the shortest', async () => {
+    const vizResult = {
+      events: [],
+      // Down and back up before heading right: valid, 2 cells too long.
+      finalArray: [
+        [0, 0],
+        [1, 0],
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ],
+      result: null,
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = vizResult;
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    mockProgramRef.current = {
+      ...FAKE_PROGRAM,
+      kind: 'path',
+      functionName: 'bfs',
+    };
+    await openBlocks({
+      algorithm: 'bfs',
+      currentGrid: {
+        grid: [
+          [0, 0, 0],
+          [0, 0, 0],
+        ],
+        start: { row: 0, col: 0 },
+        end: { row: 0, col: 2 },
+      },
+      onProgramSteps: vi.fn(),
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+    await waitFor(() =>
+      expect(screen.getByTestId('output-content')).toHaveTextContent(
+        'valid path of 5 cells'
+      )
+    );
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'the shortest path has 3 cells'
+    );
+  });
+
+  it('runs a tree program on the visualizer tree and checks the order', async () => {
+    const treeProgram = {
+      ...FAKE_PROGRAM,
+      kind: 'tree',
+      functionName: 'inorder_traversal',
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      // Preorder's order where inorder was expected.
+      currentResult = {
+        events: [{ kind: 'output', node: 2, blockId: 'v' }],
+        finalArray: [2, 1],
+        result: null,
+      };
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    mockProgramRef.current = treeProgram;
+    await openBlocks({
+      algorithm: 'inorderTraversal',
+      currentTree: {
+        nodes: [
+          { id: '0', label: '2' },
+          { id: '1', label: '1' },
+        ],
+        edges: [{ from: '0', to: '1' }],
+        children: {
+          0: { left: '1', right: null },
+          1: { left: null, right: null },
+        },
+        rootId: '0',
+        nodeValues: { 0: 2, 1: 1 },
+      },
+      onProgramSteps,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      treeProgram.execCode,
+      [
+        {
+          value: 2,
+          left: { value: 1, left: null, right: null },
+          right: null,
+        },
+      ],
+      { functionName: 'inorder_traversal', kind: 'tree' }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[1]).toMatchObject({
+      blockId: 'v',
+      nodeStates: { 0: 'visiting', 1: 'default' },
+    });
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'returned 2, 1, but the expected order is 1, 2'
+    );
+  });
+
+  it('runs a graph program on the visualizer graph, named by labels', async () => {
+    const graphProgram = {
+      ...FAKE_PROGRAM,
+      kind: 'graph',
+      functionName: 'kahn_algorithm',
+    };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = {
+        events: [{ kind: 'output', node: 'A', blockId: 'e' }],
+        finalArray: ['A', 'B'],
+        result: null,
+      };
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization, vizResult: currentResult })
+    );
+    const onProgramSteps = vi.fn();
+    mockProgramRef.current = graphProgram;
+    await openBlocks({
+      algorithm: 'kahnAlgorithm',
+      currentGraph: {
+        nodes: [
+          { id: '0', label: 'A', x: 0, y: 0 },
+          { id: '1', label: 'B', x: 1, y: 0 },
+        ],
+        edges: [{ id: '0->1', from: '0', to: '1' }],
+        adjacency: { 0: ['1'], 1: [] },
+        directed: true,
+      },
+      onProgramSteps,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).toHaveBeenCalledWith(
+      graphProgram.execCode,
+      [{ A: ['B'], B: [] }],
+      { functionName: 'kahn_algorithm', kind: 'graph' }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
+    const steps = onProgramSteps.mock.calls[0][0];
+    expect(steps[1]).toMatchObject({
+      blockId: 'e',
+      nodeStates: { 0: 'path', 1: 'default' },
+    });
+    expect(screen.getByTestId('output-content')).toHaveTextContent(
+      'returned a correct answer'
+    );
+  });
+
+  it('shows the friendly loop error for a runaway program', async () => {
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = { errorKind: 'loop-limit' };
+    });
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        status: currentResult ? 'error' : 'ready',
+        runVisualization,
+        vizResult: currentResult,
+      })
+    );
+    const onProgramSteps = vi.fn();
+    await openBlocks({ onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() =>
+      expect(screen.getByTestId('error-content')).toHaveTextContent(
+        'Your loop never ends'
+      )
+    );
+    expect(onProgramSteps).not.toHaveBeenCalled();
+  });
+
+  it("doesn't run the previous algorithm's program while the new one loads", async () => {
+    const runVisualization = vi.fn();
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization })
+    );
+    const { rerender } = await openBlocks();
+    mockHoldPublishRef.current = true;
+    rerender(
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="selectionSort"
+            currentArray={[3, 1, 2]}
+          />
+        </ThemeProvider>
+      </I18nextProvider>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).not.toHaveBeenCalled();
+  });
+
+  it('keeps the Blocks console on Output', async () => {
+    await openBlocks();
+    for (const console of screen.getAllByTestId('output-console')) {
+      expect(console).toHaveAttribute('data-active-tab', 'output');
+    }
+  });
+
+  it('drops a path result when the grid changed under the same endpoints', async () => {
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(),
+        vizResult: currentResult,
+      })
+    );
+    mockProgramRef.current = {
+      ...FAKE_PROGRAM,
+      kind: 'path',
+      functionName: 'bfs',
+    };
+    const onProgramSteps = vi.fn();
+    const endpoints = { start: { row: 0, col: 0 }, end: { row: 0, col: 2 } };
+    const panel = grid => (
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bfs"
+            currentGrid={{ grid, ...endpoints }}
+            onProgramSteps={onProgramSteps}
+          />
+        </ThemeProvider>
+      </I18nextProvider>
+    );
+    const { rerender } = await openBlocks({
+      algorithm: 'bfs',
+      currentGrid: { grid: [[0, 0, 0]], ...endpoints },
+      onProgramSteps,
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    currentResult = { events: [], finalArray: [[0, 0]], result: null };
+    rerender(panel([[0, 1, 0]]));
+
+    await waitFor(() =>
+      expect(screen.getByTestId('output-content')).toHaveTextContent(
+        'The input changed while your program ran'
+      )
+    );
+    expect(onProgramSteps).not.toHaveBeenCalled();
+  });
+
+  it('offers only Reset in the Blocks toolbar (the Python tab shows the code)', async () => {
+    await openBlocks();
+
+    expect(screen.getByRole('button', { name: 'Reset' })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Edit in Python' })
+    ).not.toBeInTheDocument();
   });
 });

@@ -66,6 +66,23 @@ function readBuildEnv(env, key) {
 }
 
 // https://vite.dev/config/
+/**
+ * Blockly ships UMD bundles that register via AMD when a global `define.amd`
+ * exists. Monaco's loader installs one, so Blockly would call Monaco's
+ * `define` and throw ("Can only have one anonymous define call per script
+ * file"). Drop the AMD branch so Blockly always takes its CommonJS path.
+ */
+const blocklyNoAmd = {
+  name: 'blockly-no-amd',
+  transform(code, id) {
+    if (!/[\\/]node_modules[\\/]blockly[\\/]/.test(id)) return null;
+    return code.replaceAll(
+      "typeof define === 'function' && define.amd",
+      'false'
+    );
+  },
+};
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const gitBranch = readBuildEnv(env, 'VITE_GIT_BRANCH') ?? '';
@@ -83,8 +100,12 @@ export default defineConfig(({ mode }) => {
     build: {
       target: 'es2022',
     },
+    optimizeDeps: {
+      rolldownOptions: { plugins: [blocklyNoAmd] },
+    },
     plugins: [
       react(),
+      blocklyNoAmd,
       {
         name: 'html-seo-robots',
         transformIndexHtml(html) {

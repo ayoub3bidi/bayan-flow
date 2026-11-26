@@ -125,6 +125,7 @@ export function useTreeTraversalVisualization(
     visitOrder,
     queueOrder,
     treeLevelScanDirection,
+    treeContext,
     regenerateTree: regenerateTreeOuter,
     reloadSteps,
     ...engine,

@@ -29,6 +29,7 @@ const TABLE_ROWS = [
   { key: 'fullscreen', free: true, pro: true },
   { key: 'insight', free: true, pro: true },
   { key: 'pseudocode', free: true, pro: true },
+  { key: 'blocks', free: 'blocksFree', pro: 'blocksPro' },
   { key: 'notes', free: 'notesFree', pro: 'notesPro' },
   { key: 'videoExport', free: 'videoExportFree', pro: 'videoExportPro' },
   { key: 'customInput', free: false, pro: true },
