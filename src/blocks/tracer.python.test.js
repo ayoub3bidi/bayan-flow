@@ -76,7 +76,10 @@ print(json.dumps([
     input: JSON.stringify(cases),
     encoding: 'utf8',
     maxBuffer: 1024 * 1024 * 1024,
+    // A regressed tick guard would hang the synchronous wait forever.
+    timeout: 120_000,
   });
+  if (out.error) throw out.error;
   if (out.status !== 0) throw new Error(out.stderr);
   return JSON.parse(out.stdout);
 }
@@ -316,7 +319,46 @@ describe.skipIf(!hasPython3)('Blocks tracer under python3', () => {
     expect(matrix.events[0]).toMatchObject({ kind: 'write', value: null });
     expect(matrix.finalArray).toEqual([[0, null]]);
     expect(noReturn).toMatchObject({ noReturn: true, finalArray: null });
-    expect(explicitNone).toMatchObject({ noReturn: false, finalArray: null });
+    expect(explicitNone).toMatchObject({
+      noReturn: false,
+      finalArray: null,
+      returnedNone: true,
+    });
+  });
+
+  it('records resolved indices and refuses values JSON cannot carry', () => {
+    const [array, matrix, minusInf, scalar] = runPython([
+      {
+        code: "def f(arr):\n    __bf.get(arr, -1, 'x')\n    __bf.swap(arr, 0, -1, 'y')\n    return arr\n",
+        fn: 'f',
+        args: [[3, 1]],
+        kind: 'sort',
+      },
+      {
+        code: "def f(nodes, edges):\n    m = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n    __bf.cell_get(m, 0, -1, 'x')\n    __bf.cell_set(m, -1, -2, 9, 'y')\n    return m\n",
+        fn: 'f',
+        args: [['A'], []],
+        kind: 'graph',
+      },
+      {
+        code: "def f(nodes, edges):\n    m = [[0]]\n    __bf.cell_set(m, 0, 0, 0 - float('inf'), 'x')\n    return m\n",
+        fn: 'f',
+        args: [['A'], []],
+        kind: 'graph',
+      },
+      {
+        code: 'def f(graph):\n    return 0\n',
+        fn: 'f',
+        args: [{}],
+        kind: 'graph',
+      },
+    ]);
+    expect(array.events[0]).toMatchObject({ kind: 'read', i: 1 });
+    expect(array.events[1]).toMatchObject({ kind: 'swap', i: 0, j: 1 });
+    expect(matrix.events[0]).toMatchObject({ kind: 'read', i: 0, j: 2 });
+    expect(matrix.events[1]).toMatchObject({ kind: 'write', i: 2, j: 1 });
+    expect(minusInf.errorKind).toBe('runtime');
+    expect(scalar).toMatchObject({ returnedNone: false, noReturn: false });
   });
 
   it('fails an emptied Kahn program on a cycle instead of calling it correct', () => {

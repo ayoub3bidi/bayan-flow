@@ -42,7 +42,8 @@ class _BF:
     def _record(self, kind, arr, i, j, block_id):
         if len(self.events) >= self.max_events:
             raise BFLimit()
-        self.events.append({"kind": kind, "i": i, "j": j, "array": list(arr), "blockId": block_id})
+        # Record the position Python resolved (arr[-1] is the last element).
+        self.events.append({"kind": kind, "i": _bf_index(arr, i), "j": _bf_index(arr, j), "array": list(arr), "blockId": block_id})
 
     def _compare(self, arr, i, j, block_id, result):
         self._record("compare", arr, i, j, block_id)
@@ -149,8 +150,9 @@ class _BF:
         else:
             self._record_node("thread", node["value"], child["value"], block_id)
 
-    def each_edge(self, items, frm, block_id):
+    def each_edge(self, items, frm, block_id, reversed_edge=False):
         # One edge per item: frm -> neighbour, or an (from, to, weight) edge.
+        # reversed_edge: the walk is over a transpose (original edge to -> from).
         for item in items:
             if len(self.events) >= self.max_events:
                 raise BFLimit()
@@ -158,8 +160,14 @@ class _BF:
                 edge = {"from": item[0], "to": item[1]}
             else:
                 edge = {"from": frm, "to": item}
-            self.events.append({"kind": "edge", **edge, "blockId": block_id})
+            self.events.append({"kind": "edge", **edge, "reversed": reversed_edge, "blockId": block_id})
             yield item
+
+    def sort_list(self, lst, block_id):
+        lst.sort()
+        if len(self.events) >= self.max_events:
+            raise BFLimit()
+        self.events.append({"kind": "reorder", "items": _bf_json(list(lst)), "blockId": block_id})
 
     def mark(self, s, node, block_id, name=None):
         s.add(node)
@@ -186,17 +194,23 @@ class _BF:
         self.events.append({"kind": kind, "i": i, "j": j, "value": _bf_json(value), "blockId": block_id})
 
     def cell_get(self, m, i, j, block_id):
-        self._record_matrix("read", i, j, None, block_id)
-        return m[i][j]
+        value = m[i][j]
+        self._record_matrix("read", _bf_index(m, i), _bf_index(m[i], j), None, block_id)
+        return value
 
     def cell_set(self, m, i, j, value, block_id):
         m[i][j] = value
-        self._record_matrix("write", i, j, value, block_id)
+        self._record_matrix("write", _bf_index(m, i), _bf_index(m[i], j), value, block_id)
 
     def tick(self):
         self.ticks += 1
         if self.ticks > self.max_ticks:
             raise BFLimit()
+
+def _bf_index(seq, i):
+    if isinstance(i, int) and not isinstance(i, bool) and i < 0:
+        return i + len(seq)
+    return i
 
 def _bf_json(value):
     # JSON has no infinity: an unreachable distance comes back as None.
@@ -218,16 +232,23 @@ def __bf_run(code, fn_name, args_json, kind, max_events, max_ticks):
         no_return = returned is _BF.NO_RETURN
         if no_return:
             returned = None
+        returned_none = returned is None and not no_return
         if kind == "path" and returned is None:
             returned = []
         is_index = isinstance(returned, int) and not isinstance(returned, bool)
-        return json.dumps({
+        payload = {
             "events": tracer.events,
             # A path's (row, col) tuples serialize as [row, col] lists.
             "finalArray": _bf_json(returned) if isinstance(returned, list) else None,
             "result": returned if is_index else None,
             "noReturn": no_return,
-        })
+            "returnedNone": returned_none,
+        }
+        try:
+            # JSON.parse rejects NaN / -Infinity, so refuse them here.
+            return json.dumps(payload, allow_nan=False)
+        except ValueError:
+            return json.dumps({"errorKind": "runtime", "error": "ValueError: the program produced a value JSON cannot represent (NaN or -infinity)"})
     except BFLimit:
         return json.dumps({"errorKind": "loop-limit"})
     except Exception as error:

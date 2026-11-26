@@ -339,6 +339,32 @@ describe('usePythonExecution', () => {
       });
     });
 
+    it('gives a run queued during loading a fresh 10s window on ready', () => {
+      vi.useFakeTimers();
+      const { result } = renderHook(() => usePythonExecution());
+      act(() => result.current.runVisualization('code', [1], OPTS));
+      act(() => vi.advanceTimersByTime(55_000));
+      act(() => mockWorker.onmessage?.({ data: { type: 'ready' } }));
+      // The old 60s init watchdog would fire here.
+      act(() => vi.advanceTimersByTime(9_000));
+      expect(mockWorker.terminate).not.toHaveBeenCalled();
+      act(() => vi.advanceTimersByTime(1_000));
+      expect(result.current.vizResult).toMatchObject({
+        errorKind: 'loop-limit',
+      });
+    });
+
+    it('reports a stalled load after a heartbeat in vizResult', () => {
+      vi.useFakeTimers();
+      const { result } = renderHook(() => usePythonExecution());
+      act(() => result.current.runVisualization('code', [1], OPTS));
+      act(() => mockWorker.onmessage?.({ data: { type: 'init-progress' } }));
+      act(() => vi.advanceTimersByTime(60_000));
+
+      expect(mockWorker.terminate).toHaveBeenCalled();
+      expect(result.current.vizResult).toMatchObject({ errorKind: 'runtime' });
+    });
+
     it('reports a worker crash during a block run as a runtime error', () => {
       const { result } = renderHook(() => usePythonExecution());
       act(() => result.current.runVisualization('code', [1], OPTS));

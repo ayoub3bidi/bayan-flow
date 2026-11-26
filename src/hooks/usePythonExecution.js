@@ -50,6 +50,31 @@ export function usePythonExecution() {
     runtimeReadyRef.current = false;
   }, []);
 
+  /**
+   * (Re)arms the watchdog of a block-program run. Expiry on a ready runtime
+   * means the program never finished; before that, Pyodide never loaded.
+   */
+  const armVizTimeout = useCallback(
+    ms => {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        // Read before disposeWorker() resets it.
+        const wasReady = runtimeReadyRef.current;
+        disposeWorker();
+        vizActiveRef.current = false;
+        timeoutRef.current = null;
+        setStatus('timeout');
+        setVizResult({
+          errorKind: wasReady ? 'loop-limit' : 'runtime',
+          error: wasReady
+            ? `Execution timed out after ${ms / 1000}s`
+            : 'Python runtime initialization timed out. Check your network connection.',
+        });
+      }, ms);
+    },
+    [disposeWorker]
+  );
+
   const createWorker = useCallback(() => {
     runtimeReadyRef.current = false;
     const worker = new Worker(
@@ -63,7 +88,13 @@ export function usePythonExecution() {
           setStatus('loading');
           break;
         case 'init-progress':
-          if (timeoutRef.current && !runtimeReadyRef.current) {
+          if (
+            timeoutRef.current &&
+            !runtimeReadyRef.current &&
+            vizActiveRef.current
+          ) {
+            armVizTimeout(INIT_TIMEOUT);
+          } else if (timeoutRef.current && !runtimeReadyRef.current) {
             clearTimeout(timeoutRef.current);
             timeoutRef.current = setTimeout(() => {
               disposeWorker();
@@ -77,6 +108,10 @@ export function usePythonExecution() {
           break;
         case 'ready':
           runtimeReadyRef.current = true;
+          // A block run queued during loading gets a full execution window.
+          if (vizActiveRef.current && timeoutRef.current) {
+            armVizTimeout(EXECUTION_TIMEOUT);
+          }
           setStatus('ready');
           break;
         case 'stdout':
@@ -166,7 +201,7 @@ export function usePythonExecution() {
     };
 
     return worker;
-  }, [appendOutput, disposeWorker]);
+  }, [appendOutput, armVizTimeout, disposeWorker]);
 
   const runCode = useCallback(
     code => {
@@ -245,24 +280,9 @@ export function usePythonExecution() {
         maxTicks: BLOCKS_MAX_TICKS,
       });
 
-      const effective = runtimeReadyRef.current
-        ? EXECUTION_TIMEOUT
-        : INIT_TIMEOUT;
-      timeoutRef.current = setTimeout(() => {
-        // Read before disposeWorker() resets it: a ready runtime means the
-        // program itself never finished.
-        const wasReady = runtimeReadyRef.current;
-        disposeWorker();
-        vizActiveRef.current = false;
-        timeoutRef.current = null;
-        setStatus('timeout');
-        setVizResult({
-          errorKind: wasReady ? 'loop-limit' : 'runtime',
-          error: `Execution timed out after ${effective / 1000}s`,
-        });
-      }, effective);
+      armVizTimeout(runtimeReadyRef.current ? EXECUTION_TIMEOUT : INIT_TIMEOUT);
     },
-    [ensureWorker, disposeWorker]
+    [ensureWorker, armVizTimeout]
   );
 
   const cancelExecution = useCallback(() => {

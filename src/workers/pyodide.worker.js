@@ -12,7 +12,9 @@ let pyodide = null;
 let pendingRun = null;
 let pendingRunTests = null;
 let pendingRunViz = null;
-let tracerLoaded = false;
+// The tracer's own Python namespace, apart from the editor's globals, so a
+// Python-tab variable (say `json`) can't shadow the tracer's names.
+let tracerNs = null;
 
 /**
  * Runs a block program's executed code and posts its recorded events.
@@ -28,11 +30,12 @@ async function executeRunViz({
   maxTicks,
 }) {
   try {
-    if (!tracerLoaded) {
-      await pyodide.runPythonAsync(tracer);
-      tracerLoaded = true;
+    if (!tracerNs) {
+      const ns = pyodide.globals.get('dict')();
+      await pyodide.runPythonAsync(tracer, { globals: ns });
+      tracerNs = ns;
     }
-    const run = pyodide.globals.get('__bf_run');
+    const run = tracerNs.get('__bf_run');
     try {
       const json = run(
         code,
