@@ -1035,6 +1035,75 @@ describe('PythonCodePanel - Blocks tab', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  describe('a run that finishes after the learner left Blocks', () => {
+    /** A run whose result only arrives when `deliver()` is called. */
+    function mockLateRun() {
+      const vizResult = { events: [], finalArray: [1, 2, 3] };
+      let currentResult = null;
+      const runVisualization = vi.fn();
+      usePythonExecutionMock.mockImplementation(() =>
+        buildPythonExec({ runVisualization, vizResult: currentResult })
+      );
+      return {
+        runVisualization,
+        deliver: () => {
+          currentResult = vizResult;
+        },
+      };
+    }
+
+    /** Clicks Run until the workspace has reported its program. */
+    async function startRun(runVisualization) {
+      await waitFor(() => {
+        fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+        expect(runVisualization).toHaveBeenCalledTimes(1);
+      });
+    }
+
+    it('is dropped after switching to the Python tab', async () => {
+      const { runVisualization, deliver } = mockLateRun();
+      const onProgramSteps = vi.fn();
+      await openBlocks({ onProgramSteps });
+      await startRun(runVisualization);
+
+      fireEvent.click(screen.getByRole('tab', { name: 'Python' }));
+      deliver();
+      // Any re-render hands the hook's new result to the panel.
+      fireEvent.click(screen.getByRole('tab', { name: 'Pseudocode' }));
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(onProgramSteps).not.toHaveBeenCalled();
+    });
+
+    it('is dropped after the panel closes', async () => {
+      const { runVisualization, deliver } = mockLateRun();
+      const onProgramSteps = vi.fn();
+      const { rerender } = await openBlocks({ onProgramSteps });
+      await startRun(runVisualization);
+
+      const renderClosed = () =>
+        rerender(
+          <I18nextProvider i18n={i18n}>
+            <ThemeProvider>
+              <PythonCodePanel
+                isOpen={false}
+                onClose={vi.fn()}
+                algorithm="bubbleSort"
+                currentArray={[3, 1, 2]}
+                onProgramSteps={onProgramSteps}
+              />
+            </ThemeProvider>
+          </I18nextProvider>
+        );
+      renderClosed();
+      deliver();
+      renderClosed();
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(onProgramSteps).not.toHaveBeenCalled();
+    });
+  });
+
   it('Clear empties the Blocks output', async () => {
     const vizResult = { events: [], finalArray: [1, 2, 3] };
     let currentResult = null;

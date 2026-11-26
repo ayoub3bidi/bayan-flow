@@ -568,6 +568,10 @@ function PythonCodePanel({
   onProgramStepsRef.current = onProgramSteps;
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  // A run can finish after the learner left Blocks (closed the panel, another
+  // tab, narrow viewport); its steps must not reach the visualizer then.
+  const isBlocksActiveRef = useRef(false);
+  isBlocksActiveRef.current = isOpen && isBlocksView;
 
   // The visualizer's input now, to tell whether it changed during a run.
   const currentInputRef = useRef(null);
@@ -580,7 +584,7 @@ function PythonCodePanel({
   };
 
   useEffect(() => {
-    if (!vizResult) return;
+    if (!vizResult || !isBlocksActiveRef.current) return;
     if (vizResult.errorKind) {
       setBlocksRun({ errorKind: vizResult.errorKind, error: vizResult.error });
       trackBlocksProgramRun(algorithm, false);
