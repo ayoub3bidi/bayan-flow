@@ -970,7 +970,7 @@ describe('PythonCodePanel - Blocks tab', () => {
     expect(store['bayan-flow:blocks-python-percent']).toBe('45');
   });
 
-  it('offers a labelled Exit Blocks button while docked (no backdrop to click)', async () => {
+  it('offers an Exit Blocks button while docked (no backdrop to click)', async () => {
     const onClose = vi.fn();
     await openBlocks({ onClose });
 
