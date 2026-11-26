@@ -16,6 +16,7 @@
  *   visualized.
  */
 
+import { Names } from 'blockly/core';
 import { PythonGenerator, pythonGenerator, Order } from 'blockly/python';
 import { BLOCK_TYPES } from './definitions.js';
 
@@ -96,7 +97,11 @@ class BayanPythonGenerator extends PythonGenerator {
       Order.FUNCTION_CALL,
     ];
     this.forBlock[BLOCK_TYPES.SORT_LIST] = (block, generator) =>
-      `${listOf(block, generator)}.sort()\n`;
+      // Graph programs trace the reorder so Kahn's queue strip keeps the
+      // program's dequeue order.
+      generator.execMode && generator.traceStores
+        ? `__bf.sort_list(${valueOf(generator, block, 'LIST', '[]')}, ${generator.quote_(block.id)})\n`
+        : `${listOf(block, generator)}.sort()\n`;
     this.forBlock[BLOCK_TYPES.DEFINE_PATH] = definePath;
     this.forBlock[BLOCK_TYPES.START] = () => ['start', Order.ATOMIC];
     this.forBlock[BLOCK_TYPES.END] = () => ['end', Order.ATOMIC];
@@ -212,9 +217,10 @@ class BayanPythonGenerator extends PythonGenerator {
     };
     this.forBlock[BLOCK_TYPES.CELL_GET] = cellGet;
     this.forBlock[BLOCK_TYPES.CELL_SET] = cellSet;
-    // The function's parameters: a learner variable must not shadow them.
+    // The function's parameters, and the executed form's tracer and its
+    // temporaries: a learner variable must not shadow them.
     this.addReservedWords(
-      'arr,target,grid,start,end,heapq,root,graph,nodes,edges,goal'
+      'arr,target,grid,start,end,heapq,root,graph,nodes,edges,goal,__bf,__bf_src'
     );
   }
 
@@ -241,16 +247,27 @@ function functionNameOf(hat) {
   return hat.getFieldValue('NAME').split('(')[0].trim();
 }
 
+/**
+ * A `return` the hat adds after the body. Its display line belongs to the hat,
+ * not to whatever block's marker came last.
+ */
+function synthesizedReturn(block, generator, value) {
+  const marker = generator.STATEMENT_PREFIX
+    ? generator.injectId(generator.STATEMENT_PREFIX, block)
+    : '';
+  return `${marker}${generator.INDENT}return ${value}\n`;
+}
+
 function defineSort(block, generator) {
   const body = generator.statementToCode(block, 'STACK') || generator.PASS;
   const name = functionNameOf(block);
-  return `def ${name}(arr):\n${body}${generator.INDENT}return arr\n`;
+  return `def ${name}(arr):\n${body}${synthesizedReturn(block, generator, 'arr')}`;
 }
 
 function defineSearch(block, generator) {
   const body = generator.statementToCode(block, 'STACK') || generator.PASS;
   const name = functionNameOf(block);
-  return `def ${name}(arr, target):\n${body}${generator.INDENT}return -1\n`;
+  return `def ${name}(arr, target):\n${body}${synthesizedReturn(block, generator, '-1')}`;
 }
 
 const TARGET_OPS = { EQ: '==', LT: '<', GT: '>', LTE: '<=', GTE: '>=' };
@@ -270,7 +287,7 @@ function compareTarget(block, generator) {
 function definePath(block, generator) {
   const body = generator.statementToCode(block, 'STACK') || generator.PASS;
   const name = functionNameOf(block);
-  return `def ${name}(grid, start, end):\n${body}${generator.INDENT}return []\n`;
+  return `def ${name}(grid, start, end):\n${body}${synthesizedReturn(block, generator, '[]')}`;
 }
 
 function defineGraph(block, generator) {
@@ -315,13 +332,23 @@ function setChild(block, generator) {
 function forNeighbor(block, generator) {
   const variable = generator.getVariableName(block.getFieldValue('VAR'));
   const graph = valueOf(generator, block, 'GRAPH', 'graph', Order.MEMBER);
-  const node = valueOf(generator, block, 'NODE', 'start');
+  let node = valueOf(generator, block, 'NODE', 'start');
+  // exec reads the source node twice (lookup + trace): evaluate it once, so
+  // e.g. a stack pop there pops one item, as in the displayed code.
+  let capture = '';
+  if (generator.execMode && !/^\w+$/.test(node)) {
+    capture = `__bf_src = ${node}\n`;
+    node = '__bf_src';
+  }
   let items = `${graph}[${node}]`;
   if (block.getFieldValue('ORDER') === 'REVERSED') items = `reversed(${items})`;
   if (generator.execMode) {
-    items = `__bf.each_edge(${items}, ${node}, ${generator.quote_(block.id)})`;
+    // An adjacency other than the input graph (Kosaraju's transpose) walks
+    // each original edge backwards.
+    const reversed = graph === 'graph' ? '' : ', True';
+    items = `__bf.each_edge(${items}, ${node}, ${generator.quote_(block.id)}${reversed})`;
   }
-  return `for ${variable} in ${items}:\n${loopBody(block, generator)}`;
+  return `${capture}for ${variable} in ${items}:\n${loopBody(block, generator)}`;
 }
 
 /** `for edge in edges:`; exec traces each (from, to, weight) edge. */
@@ -531,9 +558,29 @@ function compare(block, generator) {
   return [`arr[${a}] ${symbol} arr[${b}]`, Order.RELATIONAL];
 }
 
+/**
+ * The helper's signature label with each parameter named like its workspace
+ * variable (`var_<param>`, see starters/builders.js), so renaming `low` to
+ * `lo` renames the parameter too.
+ */
+function helperSignature(block, generator) {
+  const [name, params = ''] = block.getFieldValue('NAME').split('(');
+  const names = params
+    .replace(')', '')
+    .split(',')
+    .map(param => param.trim())
+    .filter(Boolean)
+    .map(param =>
+      block.workspace.getVariableMap().getVariableById(`var_${param}`)
+        ? generator.getVariableName(`var_${param}`)
+        : param
+    );
+  return `${name.trim()}(${names.join(', ')})`;
+}
+
 function defineHelper(block, generator) {
   const body = generator.statementToCode(block, 'STACK') || generator.PASS;
-  return `def ${block.getFieldValue('NAME')}:\n${body}`;
+  return `def ${helperSignature(block, generator)}:\n${body}`;
 }
 
 function callCode(block, generator) {
@@ -599,6 +646,13 @@ function swap(block, generator) {
   const [a, b] = indexes(block, generator);
   if (generator.execMode) {
     return `__bf.swap(arr, ${a}, ${b}, ${generator.quote_(block.id)})\n`;
+  }
+  // An index that reads a list (`arr[0]`) would see the first write: capture
+  // both first, as the tracer's swap does.
+  if (/\[/.test(a) || /\[/.test(b)) {
+    const i = generator.nameDB_.getDistinctName('i', Names.NameType.VARIABLE);
+    const j = generator.nameDB_.getDistinctName('j', Names.NameType.VARIABLE);
+    return `${i}, ${j} = ${a}, ${b}\narr[${i}], arr[${j}] = arr[${j}], arr[${i}]\n`;
   }
   return `arr[${a}], arr[${b}] = arr[${b}], arr[${a}]\n`;
 }

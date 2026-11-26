@@ -99,14 +99,17 @@ const insertionSort = program({
   ],
 });
 
-/** Insertion sort over elements `gap` apart, with a shrinking gap. */
+/** Insertion sort over elements `gap` apart; Knuth's gaps 1, 4, 13, 40… */
 const shellSort = program({
   variables: ['n', 'gap', 'i', 'j'],
   kind: 'sort',
   signature: 'shell_sort(arr)',
   main: [
     set('n', len()),
-    set('gap', floordiv('n', 2)),
+    set('gap', 1),
+    whileLoop(cmp('gap', '<', floordiv('n', 3)), [
+      set('gap', op(op('gap', '*', 3), '+', 1)),
+    ]),
     whileLoop(cmp('gap', '>', 0), [
       forRange('i', 'gap', 'n', [
         set('j', 'i'),
@@ -115,7 +118,7 @@ const shellSort = program({
           [swap(op('j', '-', 'gap'), 'j'), set('j', op('j', '-', 'gap'))]
         ),
       ]),
-      set('gap', floordiv('gap', 2)),
+      set('gap', floordiv(op('gap', '-', 1), 3)),
     ]),
   ],
 });

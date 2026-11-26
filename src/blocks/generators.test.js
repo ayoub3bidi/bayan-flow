@@ -107,6 +107,57 @@ describe('generateProgram', () => {
     expect(displayCode).toContain('if arr[target2] == target:');
   });
 
+  it('names a helper parameter after its (renamed) variable', () => {
+    const json = structuredClone(getBlocksStarter('quickSort').workspace);
+    json.variables.find(variable => variable.name === 'low').name = 'lo';
+    const { displayCode, execCode } = generateProgram(load(json));
+    expect(displayCode).toContain('def partition(arr, lo, high):');
+    expect(execCode).toContain('def partition(arr, lo, high):');
+    expect(displayCode).not.toMatch(/\blow\b/);
+  });
+
+  it('renames a learner variable called __bf away from the tracer', () => {
+    const json = structuredClone(getBlocksStarter('bubbleSort').workspace);
+    json.variables.find(variable => variable.name === 'n').name = '__bf';
+    const { execCode } = generateProgram(load(json));
+    expect(execCode).not.toMatch(/^\s*__bf = /m);
+    expect(execCode).toMatch(/__bf\.tick\(\)/);
+  });
+
+  it('maps a synthesized return to the hat, not the last block', () => {
+    const workspace = load(getBlocksStarter('bubbleSort').workspace);
+    const program = generateProgram(workspace);
+    const lines = program.displayCode.trimEnd().split('\n');
+    expect(lines.at(-1).trim()).toBe('return arr');
+    expect(program.lineBlockIds[lines.length - 1]).toBe('bf_hat');
+  });
+
+  it('captures both swap indices before writing when one reads the array', () => {
+    const workspace = load(getBlocksStarter('bubbleSort').workspace);
+    const swapBlock = workspace.getBlocksByType('bf_swap', false)[0];
+    const get = workspace.newBlock('bf_get');
+    get
+      .getInput('INDEX')
+      .connection.connect(swapBlock.getInputTargetBlock('A').outputConnection);
+    swapBlock.getInput('B').connection.connect(get.outputConnection);
+    const { displayCode } = generateProgram(workspace);
+    expect(displayCode).toMatch(
+      /(\w+), (\w+) = 0, arr\[j\]\n\s+arr\[\1\], arr\[\2\] = arr\[\2\], arr\[\1\]/
+    );
+  });
+
+  it('evaluates a neighbor loop source once in the executed form', () => {
+    const workspace = load(getBlocksStarter('depthFirstSearch').workspace);
+    const loop = workspace.getBlocksByType('bf_for_neighbor', false)[0];
+    const pop = workspace.newBlock('bf_pop_top');
+    loop.getInput('NODE').connection.connect(pop.outputConnection);
+    const { execCode } = generateProgram(workspace);
+    expect(execCode).toMatch(/__bf_src = __bf\.pop_last\(/);
+    expect(execCode).toMatch(
+      /__bf\.each_edge\((reversed\()?graph\[__bf_src\]\)?, __bf_src,/
+    );
+  });
+
   it('returns null without the define block', () => {
     expect(generateProgram(new Blockly.Workspace())).toBeNull();
   });

@@ -17,6 +17,7 @@ import {
 } from '../../constants/index.js';
 import { registerBlocks } from '../definitions.js';
 import { generateProgram } from '../generators.js';
+import { compare } from './builders.js';
 import { getBlocksStarter, toolboxFor } from './index.js';
 
 // src/test/setup.js mocks constants with a partial algorithm list.
@@ -56,6 +57,9 @@ describe('blocks starters', () => {
     expect(new Set(SUPPORTED).size).toBe(45);
     for (const key of SUPPORTED) expect(getBlocksStarter(key)).not.toBeNull();
     expect(getBlocksStarter('futureAlgorithm')).toBeNull();
+    expect(getBlocksStarter('constructor')).toBeNull();
+    // bf_compare has no equality: a starter can't ask for one.
+    expect(() => compare(0, '==', 1)).toThrow(/unsupported op/);
   });
 
   it.each(SUPPORTED)('%s loads and generates a complete program', key => {

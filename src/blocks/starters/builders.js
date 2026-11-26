@@ -65,19 +65,17 @@ export const and = (a, b) => logic('AND', a, b);
 export const or = (a, b) => logic('OR', a, b);
 export const not = a => value('logic_negate', { inputs: { BOOL: toValue(a) } });
 
-const ORDER_OPS = {
-  '>': 'GT',
-  '<': 'LT',
-  '>=': 'GTE',
-  '<=': 'LTE',
-  '==': 'EQ',
-};
+// bf_compare offers only ordering ops; equality is compareTarget's.
+const PAIR_OPS = { '>': 'GT', '<': 'LT', '>=': 'GTE', '<=': 'LTE' };
+const ORDER_OPS = { ...PAIR_OPS, '==': 'EQ' };
 /** `arr[i] op arr[j]` (traced compare). */
-export const compare = (i, symbol, j) =>
-  value('bf_compare', {
-    fields: { OP: ORDER_OPS[symbol] },
+export const compare = (i, symbol, j) => {
+  if (!PAIR_OPS[symbol]) throw new Error(`compare: unsupported op ${symbol}`);
+  return value('bf_compare', {
+    fields: { OP: PAIR_OPS[symbol] },
     inputs: { A: toValue(i), B: toValue(j) },
   });
+};
 /** `arr[i] op target` (traced compare). */
 export const compareTarget = (i, symbol) =>
   value('bf_compare_target', {

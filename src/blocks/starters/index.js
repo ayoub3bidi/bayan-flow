@@ -92,5 +92,6 @@ const STARTERS = Object.fromEntries(
  *   algorithm has no blocks yet (the tab shows "coming soon").
  */
 export function getBlocksStarter(algorithmKey) {
-  return STARTERS[algorithmKey] ?? null;
+  // Own keys only: `constructor` must not resolve to Object.
+  return Object.hasOwn(STARTERS, algorithmKey) ? STARTERS[algorithmKey] : null;
 }
