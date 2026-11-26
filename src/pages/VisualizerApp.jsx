@@ -956,7 +956,9 @@ function App() {
               <Header />
               <main
                 className={`flex-1 min-h-0 ${
-                  isBelowLg ? 'flex flex-col p-3 gap-3 overflow-hidden' : 'p-6'
+                  isBelowLg
+                    ? 'flex flex-col p-3 gap-3 overflow-hidden'
+                    : 'p-6 transition-[padding-inline-end] duration-300 ease-out motion-reduce:transition-none'
                 }`}
                 style={
                   codePanelDockWidth && !isBelowLg

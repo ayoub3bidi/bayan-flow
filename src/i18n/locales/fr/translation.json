@@ -501,6 +501,7 @@
     "error_label": "Erreur :",
     "actual_label": "Obtenu :",
     "blocks": {
+      "exit": "Quitter les blocs",
       "reset_blocks": "Réinitialiser",
       "reset_confirm": "Cliquez à nouveau pour réinitialiser",
       "run_sorted": "✓ Votre programme a trié le tableau en {{count}} étapes. Regardez-le dans le visualiseur.",

@@ -981,15 +981,16 @@ function PythonCodePanel({
                     </button>
                   )}
                 </div>
-                {/* Docked: no backdrop to click and the sidebar is hidden, so close here. */}
+                {/* Docked: no backdrop to click and the sidebar is hidden, so
+                    say plainly how to get the normal layout back. */}
                 {isDocked && (
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex items-center justify-center h-touch w-touch min-h-touch min-w-touch rounded-lg bg-surface-elevated text-text-primary hover:bg-border"
-                    aria-label={t('python_code.close')}
+                    className="inline-flex items-center justify-center gap-1.5 h-touch min-h-touch px-3 rounded-lg bg-surface-elevated text-sm font-medium text-text-primary hover:bg-border whitespace-nowrap"
                   >
-                    <X size={20} weight="bold" aria-hidden="true" />
+                    <X size={18} weight="bold" aria-hidden="true" />
+                    {t('python_code.blocks.exit')}
                   </button>
                 )}
               </div>

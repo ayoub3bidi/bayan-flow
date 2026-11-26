@@ -501,6 +501,7 @@
     "error_label": "Error:",
     "actual_label": "Actual:",
     "blocks": {
+      "exit": "Exit Blocks",
       "reset_blocks": "Reset",
       "reset_confirm": "Click again to reset",
       "run_sorted": "✓ Your program sorted the array in {{count}} steps. Watch it play in the visualizer.",
