@@ -516,6 +516,8 @@
       "run_not_found": "✗ Your program finished, but it did not return the index of {{target}} ({{count}} steps). Step through it to see where it goes wrong.",
       "loop_error": "Your loop never ends: make sure each pass moves it closer to the end, so its condition eventually stops it.",
       "runtime_error": "Your program stopped with an error: {{error}}",
+      "load_failed": "The blocks editor couldn't load. Check your connection and try again.",
+      "load_retry": "Try again",
       "workspaceLabel": "Blocks workspace",
       "toolbox": "Blocks",
       "coming_soon": "Blocks coming soon for this algorithm",

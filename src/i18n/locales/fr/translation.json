@@ -516,6 +516,8 @@
       "run_not_found": "✗ Votre programme est terminé, mais il n'a pas retourné l'indice de {{target}} ({{count}} étapes). Avancez pas à pas pour voir où ça coince.",
       "loop_error": "Votre boucle ne s'arrête jamais : vérifiez que chaque tour la rapproche de la fin, pour que sa condition finisse par l'arrêter.",
       "runtime_error": "Votre programme s'est arrêté sur une erreur : {{error}}",
+      "load_failed": "L'éditeur de blocs n'a pas pu se charger. Vérifiez votre connexion et réessayez.",
+      "load_retry": "Réessayer",
       "workspaceLabel": "Espace de travail des blocs",
       "toolbox": "Blocs",
       "coming_soon": "Les blocs arrivent bientôt pour cet algorithme",

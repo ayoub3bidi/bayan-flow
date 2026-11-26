@@ -56,6 +56,9 @@ import {
 const BlocksWorkspace = lazy(() => import('./BlocksWorkspace'));
 
 const STORAGE_KEY_OUTPUT_PERCENT = 'python-panel-output-percent';
+/** The bogo sort starter's (and visualization's) shuffle budget. */
+const BOGO_SHUFFLE_BUDGET = 1000;
+
 /** Console message keys per program kind: [solved, not solved]. */
 const BLOCKS_OUTPUT_KEYS = {
   sort: ['run_sorted', 'run_not_sorted'],
@@ -109,6 +112,12 @@ function storePercent(key, value) {
 }
 
 const sameCell = (a, b) => a?.row === b?.row && a?.col === b?.col;
+const sameGrid = (a = [], b = []) =>
+  a.length === b.length &&
+  a.every(
+    (row, r) =>
+      row.length === b[r].length && row.every((cell, c) => cell === b[r][c])
+  );
 
 /**
  * Whether the visualizer still shows the input a block run was given.
@@ -119,7 +128,8 @@ function isSameRunInput(run, current) {
     case 'path':
       return (
         sameCell(run.grid?.start, current.grid?.start) &&
-        sameCell(run.grid?.end, current.grid?.end)
+        sameCell(run.grid?.end, current.grid?.end) &&
+        sameGrid(run.grid?.grid, current.grid?.grid)
       );
     case 'tree':
       return run.tree === current.tree;
@@ -167,6 +177,7 @@ function isInOtherDialog(event, panel) {
  * @param {string|null} [props.activeBlockId] - Block behind the playing step
  * @param {(steps: object[]) => void} [props.onProgramSteps] - Play a block program's steps
  * @param {(width: string|null) => void} [props.onDockChange] - Docked drawer width, or null
+ * @param {boolean} [props.isInert] - Not clickable or focusable (a modal is open over it)
  */
 function PythonCodePanel({
   isOpen,
@@ -180,6 +191,7 @@ function PythonCodePanel({
   activeBlockId = null,
   onProgramSteps,
   onDockChange,
+  isInert = false,
 }) {
   const { t, i18n } = useTranslation();
   const isMobile = useIsBelowLg();
@@ -448,7 +460,11 @@ function PythonCodePanel({
   const splitDecorationsRef = useRef(null);
   /** What the last Run used: { kind, functionName, array, target, grid, tree, graph }. */
   const runInputRef = useRef(null);
-  const [program, setProgram] = useState(null);
+  const [publishedProgram, setProgram] = useState(null);
+  // Until the new algorithm's workspace publishes, the last program belongs
+  // to the previous algorithm: don't run or show it.
+  const program =
+    publishedProgram?.algorithmKey === algorithm ? publishedProgram : null;
 
   // Adjustable split between the workspace and its Python (like the output).
   const blocksSplitRef = useRef(null);
@@ -499,6 +515,17 @@ function PythonCodePanel({
     };
   }, [isResizingBlocksSplit, canSplit]);
 
+  // Closing the panel (Escape) mid-drag never sees the mouseup: end it here.
+  useEffect(() => {
+    if (isResizingBlocksSplit && !(isOpen && isBlocksView)) {
+      setIsResizingBlocksSplit(false);
+      storePercent(
+        STORAGE_KEY_BLOCKS_PYTHON_PERCENT,
+        blocksPythonPercentRef.current
+      );
+    }
+  }, [isResizingBlocksSplit, isOpen, isBlocksView]);
+
   const handleBlocksSplitKeyDown = useCallback(
     e => {
       // Arrows move the divider: toward the workspace grows Python.
@@ -538,11 +565,16 @@ function PythonCodePanel({
     const array = [...(currentArray ?? [])];
     const target = kind === 'search' ? currentTarget : null;
     runInputRef.current = {
+      visit: blocksVisitRef.current,
       kind,
       functionName: program.functionName,
       array,
       target,
-      grid: currentGrid,
+      // A snapshot: compared cell by cell when the result arrives.
+      grid: currentGrid && {
+        ...currentGrid,
+        grid: currentGrid.grid?.map(row => [...row]),
+      },
       tree: currentTree,
       graph: currentGraph,
     };
@@ -579,6 +611,12 @@ function PythonCodePanel({
   // A run can finish after the learner left Blocks (closed the panel, another
   // tab, narrow viewport); its steps must not reach the visualizer then.
   const isBlocksActiveRef = useRef(false);
+  // Each time the learner (re)enters Blocks: a run from an earlier visit is
+  // abandoned, even if Blocks is active again when it finishes.
+  const blocksVisitRef = useRef(0);
+  if (isOpen && isBlocksView && !isBlocksActiveRef.current) {
+    blocksVisitRef.current += 1;
+  }
   isBlocksActiveRef.current = isOpen && isBlocksView;
 
   // The visualizer's input now, to tell whether it changed during a run.
@@ -599,7 +637,7 @@ function PythonCodePanel({
       return;
     }
     const run = runInputRef.current;
-    if (!run) return;
+    if (!run || run.visit !== blocksVisitRef.current) return;
     // "Generate New Input" during a run (e.g. while Pyodide loads): these
     // steps belong to the old input, so don't play them over the new one.
     if (!isSameRunInput(run, currentInputRef.current)) {
@@ -639,7 +677,8 @@ function PythonCodePanel({
         algorithm,
         vizResult.finalArray,
         run.functionName,
-        Boolean(vizResult.noReturn)
+        Boolean(vizResult.noReturn),
+        Boolean(vizResult.returnedNone)
       );
     } else if (run.kind === 'tree') {
       built = buildTreeProgramSteps(
@@ -667,6 +706,7 @@ function PythonCodePanel({
       threadsLeft,
       valuesChanged,
       noReturn,
+      shuffles,
     } = built;
     const isSolved = Boolean(solved ?? sorted);
     setBlocksRun({
@@ -682,6 +722,7 @@ function PythonCodePanel({
       threadsLeft,
       valuesChanged,
       noReturn,
+      shuffles,
     });
     trackBlocksProgramRun(algorithm, isSolved);
     onProgramStepsRef.current?.(steps);
@@ -704,7 +745,12 @@ function PythonCodePanel({
     blocksOutputKey = 'run_values_changed';
   } else if (blocksRun?.noReturn) {
     blocksOutputKey = 'run_graph_no_return';
-  } else if (blocksRun && !blocksRun.solved && algorithm === 'bogoSort') {
+  } else if (
+    blocksRun &&
+    !blocksRun.solved &&
+    algorithm === 'bogoSort' &&
+    blocksRun.shuffles >= BOGO_SHUFFLE_BUDGET
+  ) {
     blocksOutputKey = 'run_gave_up';
   } else if (blocksRun?.solved && blocksRun.length > blocksRun.shortest) {
     // A valid path still passes; say when it isn't a shortest one.
@@ -744,9 +790,12 @@ function PythonCodePanel({
     );
   }, [program, activeBlockId, selectedBlockId]);
 
-  useEffect(() => {
+  const highlightedLinesRef = useRef(highlightedLines);
+  highlightedLinesRef.current = highlightedLines;
+  const applySplitHighlight = useCallback(() => {
     const editor = splitEditorRef.current;
     if (!editor || !monacoRef.current) return;
+    const highlightedLines = highlightedLinesRef.current;
     const { Range } = monacoRef.current;
     const decorations = highlightedLines.map(line => ({
       range: new Range(line, 1, line, 1),
@@ -760,7 +809,11 @@ function PythonCodePanel({
     }
     if (highlightedLines[0])
       editor.revealLineInCenterIfOutsideViewport(highlightedLines[0]);
-  }, [highlightedLines, isBlocksView, canSplit]);
+  }, []);
+
+  useEffect(() => {
+    applySplitHighlight();
+  }, [highlightedLines, isBlocksView, canSplit, applySplitHighlight]);
 
   const handleRunTests = useCallback(() => {
     if (!predefined?.functionName || testCases.length === 0) return;
@@ -843,6 +896,8 @@ function PythonCodePanel({
         isExpanded: isOutputExpanded,
         onToggleExpand: toggleOutput,
         onRun: handleRunBlocks,
+        // No test cases here: never keep the Python tab's Test Cases view.
+        activeTab: 'output',
       }
     : {
         output,
@@ -888,6 +943,7 @@ function PythonCodePanel({
           {/* Panel */}
           <motion.div
             ref={panelRef}
+            inert={isInert || undefined}
             className={`
               fixed z-[60] bg-surface shadow-xl overscroll-contain
               ${
@@ -965,11 +1021,16 @@ function PythonCodePanel({
                       type="button"
                       role="tab"
                       aria-selected={isBlocksTab}
+                      // No starter yet: the tab shows its badge but can't open.
+                      disabled={!supportsBlocks}
+                      aria-disabled={!supportsBlocks}
                       onClick={selectBlocksTab}
                       className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 touch-manipulation ${
                         isBlocksTab
                           ? 'bg-theme-primary-consistent text-white shadow-md'
-                          : `bg-transparent hover:bg-bg cursor-pointer ${supportsBlocks ? 'text-text-primary' : 'text-text-tertiary'}`
+                          : supportsBlocks
+                            ? 'bg-transparent hover:bg-bg cursor-pointer text-text-primary'
+                            : 'bg-transparent cursor-not-allowed text-text-tertiary'
                       }`}
                     >
                       {t('python_code.tabBlocks')}
@@ -1148,6 +1209,8 @@ function PythonCodePanel({
                                   splitEditorRef.current = editor;
                                   splitDecorationsRef.current = null;
                                   monacoRef.current = monaco;
+                                  // A block selected while Monaco loaded.
+                                  applySplitHighlight();
                                 }}
                                 options={{
                                   readOnly: true,

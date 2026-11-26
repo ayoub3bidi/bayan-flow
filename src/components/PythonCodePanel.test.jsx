@@ -127,14 +127,19 @@ const FAKE_PROGRAM = {
 };
 /** Program the mocked workspace reports; tests may swap it before render. */
 const mockProgramRef = { current: FAKE_PROGRAM };
+/** While true, the mock workspace doesn't publish (it's still loading). */
+const mockHoldPublishRef = { current: false };
 const mockResetToStarter = vi.fn();
 vi.mock('./BlocksWorkspace', () => {
   // Stable component identity so parent re-renders don't remount it.
-  function MockBlocksWorkspace({ onProgramChange, ref }) {
+  function MockBlocksWorkspace({ onProgramChange, algorithmKey, ref }) {
     useImperativeHandle(ref, () => ({ resetToStarter: mockResetToStarter }));
     useEffect(() => {
-      onProgramChange(mockProgramRef.current);
-    }, [onProgramChange]);
+      // Like the real workspace: the program names its algorithm.
+      if (mockHoldPublishRef.current) return;
+      const program = mockProgramRef.current;
+      onProgramChange(program && { algorithmKey, ...program });
+    }, [onProgramChange, algorithmKey]);
     return <div data-testid="blocks-workspace" />;
   }
   return { default: MockBlocksWorkspace };
@@ -163,14 +168,17 @@ vi.mock('./OutputConsole', () => ({
     isExpanded,
     onToggleExpand,
     onRunTests,
+    activeTab,
   }) => (
     <div
       data-testid="output-console"
+      data-active-tab={activeTab ?? 'uncontrolled'}
       data-status={status}
       data-expanded={String(isExpanded)}
       data-has-tests={String(Boolean(onRunTests))}
     >
       <span data-testid="output-content">{output || 'empty'}</span>
+      <span data-testid="error-content">{error}</span>
       {onRun && (
         <button
           type="button"
@@ -845,6 +853,7 @@ describe('PythonCodePanel - Blocks tab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockProgramRef.current = FAKE_PROGRAM;
+    mockHoldPublishRef.current = false;
     usePythonExecutionMock.mockImplementation(() => buildPythonExec());
     store = {};
     global.localStorage = {
@@ -979,20 +988,16 @@ describe('PythonCodePanel - Blocks tab', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('shows "coming soon" for an algorithm without blocks, undocked', async () => {
-    const { trackBlocksTabOpened } =
-      await import('../services/analyticsEvents');
+  it('shows a disabled "coming soon" tab for an algorithm without blocks', async () => {
     const onDockChange = vi.fn();
     // Every algorithm has blocks now; a future one (no starter yet) doesn't.
     renderPanel({ algorithm: 'futureAlgorithm', onDockChange });
 
     expect(blocksTab()).toHaveTextContent('Soon');
+    expect(blocksTab()).toBeDisabled();
     fireEvent.click(blocksTab());
 
-    expect(
-      screen.getByText('Blocks coming soon for this algorithm')
-    ).toBeInTheDocument();
-    expect(trackBlocksTabOpened).toHaveBeenCalledWith('futureAlgorithm', false);
+    expect(blocksTab()).toHaveAttribute('aria-selected', 'false');
     expect(document.querySelector('[data-docked]')).not.toBeInTheDocument();
     expect(onDockChange).toHaveBeenLastCalledWith(null);
   });
@@ -1092,6 +1097,21 @@ describe('PythonCodePanel - Blocks tab', () => {
       deliver();
       // Any re-render hands the hook's new result to the panel.
       fireEvent.click(screen.getByRole('tab', { name: 'Pseudocode' }));
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(onProgramSteps).not.toHaveBeenCalled();
+    });
+
+    it('is dropped after leaving Blocks and coming back', async () => {
+      const { runVisualization, deliver } = mockLateRun();
+      const onProgramSteps = vi.fn();
+      await openBlocks({ onProgramSteps });
+      await startRun(runVisualization);
+
+      fireEvent.click(screen.getByRole('tab', { name: 'Python' }));
+      fireEvent.click(blocksTab());
+      deliver();
+      fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
 
       await new Promise(resolve => setTimeout(resolve, 0));
       expect(onProgramSteps).not.toHaveBeenCalled();
@@ -1232,8 +1252,16 @@ describe('PythonCodePanel - Blocks tab', () => {
     }
   });
 
-  it('tells a bogo sort that gave up its program is fine', async () => {
-    const vizResult = { events: [], finalArray: [3, 1, 2] };
+  it.each([
+    [1000, 'Bogo sort gave up after 1000 shuffles'],
+    // No shuffles at all: an ordinary unsorted result, not a give-up.
+    [0, 'not sorted'],
+  ])('after %i shuffles, says %s', async (count, message) => {
+    const shuffle = { kind: 'shuffle', i: null, j: null, array: [3, 1, 2] };
+    const vizResult = {
+      events: Array(count).fill(shuffle),
+      finalArray: [3, 1, 2],
+    };
     let currentResult = null;
     usePythonExecutionMock.mockImplementation(() =>
       buildPythonExec({
@@ -1248,9 +1276,7 @@ describe('PythonCodePanel - Blocks tab', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Run' }));
     fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
     await waitFor(() => expect(onProgramSteps).toHaveBeenCalledTimes(1));
-    expect(screen.getByTestId('output-content')).toHaveTextContent(
-      'Bogo sort gave up after 1000 shuffles'
-    );
+    expect(screen.getByTestId('output-content')).toHaveTextContent(message);
   });
 
   it('runs a search program with the target and reports the found index', async () => {
@@ -1516,12 +1542,102 @@ describe('PythonCodePanel - Blocks tab', () => {
   });
 
   it('shows the friendly loop error for a runaway program', async () => {
-    const vizResult = { errorKind: 'loop-limit' };
+    let currentResult = null;
+    const runVisualization = vi.fn(() => {
+      currentResult = { errorKind: 'loop-limit' };
+    });
     usePythonExecutionMock.mockImplementation(() =>
-      buildPythonExec({ status: 'error', vizResult })
+      buildPythonExec({
+        status: currentResult ? 'error' : 'ready',
+        runVisualization,
+        vizResult: currentResult,
+      })
     );
     const onProgramSteps = vi.fn();
     await openBlocks({ onProgramSteps });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    fireEvent.click(screen.getByRole('button', { name: /output panel/ }));
+
+    await waitFor(() =>
+      expect(screen.getByTestId('error-content')).toHaveTextContent(
+        'Your loop never ends'
+      )
+    );
+    expect(onProgramSteps).not.toHaveBeenCalled();
+  });
+
+  it("doesn't run the previous algorithm's program while the new one loads", async () => {
+    const runVisualization = vi.fn();
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({ runVisualization })
+    );
+    const { rerender } = await openBlocks();
+    mockHoldPublishRef.current = true;
+    rerender(
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="selectionSort"
+            currentArray={[3, 1, 2]}
+          />
+        </ThemeProvider>
+      </I18nextProvider>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(runVisualization).not.toHaveBeenCalled();
+  });
+
+  it('keeps the Blocks console on Output', async () => {
+    await openBlocks();
+    for (const console of screen.getAllByTestId('output-console')) {
+      expect(console).toHaveAttribute('data-active-tab', 'output');
+    }
+  });
+
+  it('drops a path result when the grid changed under the same endpoints', async () => {
+    let currentResult = null;
+    usePythonExecutionMock.mockImplementation(() =>
+      buildPythonExec({
+        runVisualization: vi.fn(),
+        vizResult: currentResult,
+      })
+    );
+    mockProgramRef.current = {
+      ...FAKE_PROGRAM,
+      kind: 'path',
+      functionName: 'bfs',
+    };
+    const onProgramSteps = vi.fn();
+    const endpoints = { start: { row: 0, col: 0 }, end: { row: 0, col: 2 } };
+    const panel = grid => (
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={vi.fn()}
+            algorithm="bfs"
+            currentGrid={{ grid, ...endpoints }}
+            onProgramSteps={onProgramSteps}
+          />
+        </ThemeProvider>
+      </I18nextProvider>
+    );
+    const { rerender } = await openBlocks({
+      algorithm: 'bfs',
+      currentGrid: { grid: [[0, 0, 0]], ...endpoints },
+      onProgramSteps,
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+    currentResult = { events: [], finalArray: [[0, 0]], result: null };
+    rerender(panel([[0, 1, 0]]));
+
+    await waitFor(() =>
+      expect(screen.getByTestId('output-content')).toHaveTextContent(
+        'The input changed while your program ran'
+      )
+    );
     expect(onProgramSteps).not.toHaveBeenCalled();
   });
 

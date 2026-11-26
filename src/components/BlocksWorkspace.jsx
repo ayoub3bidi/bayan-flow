@@ -7,18 +7,14 @@
  * Blockly never ships with the main bundle.
  */
 
-import { useEffect, useImperativeHandle, useRef } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Blockly from 'blockly/core';
 import 'blockly/blocks';
 import { registerBlocks, applyBlockMessages } from '../blocks/definitions';
 import { generateProgram } from '../blocks/generators';
+import { loadBlocklyLocale } from '../blocks/blocklyLocales';
 
-const BLOCKLY_LOCALES = {
-  en: () => import('blockly/msg/en'),
-  fr: () => import('blockly/msg/fr'),
-  ar: () => import('blockly/msg/ar'),
-};
 const SAVE_DELAY_MS = 300;
 
 const getWorkspaceStorageKey = algorithmKey =>
@@ -116,7 +112,8 @@ function frameProgram(workspace) {
  * @param {boolean} props.isDark
  * @param {boolean} [props.isCompact] - Narrow drawer or phone: collapsible toolbox, smaller zoom.
  * @param {string|null} props.activeBlockId - Block that produced the playing step.
- * @param {(program: ReturnType<typeof generateProgram>) => void} props.onProgramChange
+ * @param {(program: (ReturnType<typeof generateProgram> & { algorithmKey: string }) | null) => void} props.onProgramChange
+ *   The program is tagged with the algorithm whose workspace generated it.
  * @param {(blockId: string|null) => void} props.onSelectBlock
  * @param {import('react').Ref<{ resetToStarter: () => void }>} props.ref
  */
@@ -142,19 +139,42 @@ function BlocksWorkspace({
   const sessionJsonRef = useRef({});
   const callbacksRef = useRef({ onProgramChange, onSelectBlock });
   callbacksRef.current = { onProgramChange, onSelectBlock };
+  const activeBlockIdRef = useRef(activeBlockId);
+  activeBlockIdRef.current = activeBlockId;
+  /** The pending debounced save; Reset cancels it so it can't write the old program back. */
+  const saveTimerRef = useRef(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const language = (i18n.resolvedLanguage ?? i18n.language ?? 'en').slice(0, 2);
+
+  const publish = workspace => {
+    const program = generateProgram(workspace);
+    callbacksRef.current.onProgramChange(
+      program && { ...program, algorithmKey }
+    );
+  };
+
+  /** Highlight the playing step's block, if this workspace has it. */
+  const highlight = workspace => {
+    const id = activeBlockIdRef.current;
+    workspace.highlightBlock(id && workspace.getBlockById(id) ? id : null);
+  };
 
   useImperativeHandle(ref, () => {
     return {
       resetToStarter: () => {
         const workspace = workspaceRef.current;
         if (!workspace) return;
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
         loadInto(workspace, starter.workspace, true);
         writeStoredWorkspace(algorithmKey, null);
         delete sessionJsonRef.current[algorithmKey];
-        callbacksRef.current.onProgramChange(generateProgram(workspace));
+        publish(workspace);
       },
     };
+    // `publish` only reads refs and algorithmKey.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [algorithmKey, starter]);
 
   // Inject (and re-inject on language/RTL/theme change: Blockly can't switch
@@ -162,13 +182,12 @@ function BlocksWorkspace({
   useEffect(() => {
     let cancelled = false;
     let workspace = null;
-    let saveTimer = null;
     let resizeObserver = null;
     const listeners = new AbortController();
     const sessionJson = sessionJsonRef.current;
 
     const save = () => {
-      saveTimer = null;
+      saveTimerRef.current = null;
       if (workspace) {
         writeStoredWorkspace(
           algorithmKey,
@@ -178,8 +197,16 @@ function BlocksWorkspace({
     };
 
     (async () => {
-      const locale = await (BLOCKLY_LOCALES[language] ?? BLOCKLY_LOCALES.en)();
+      let locale;
+      try {
+        locale = await loadBlocklyLocale(language);
+      } catch {
+        // Even English failed (offline, stale chunk): offer a retry.
+        if (!cancelled) setLoadFailed(true);
+        return;
+      }
       if (cancelled || !containerRef.current) return;
+      setLoadFailed(false);
       Blockly.setLocale(locale);
       applyBlockMessages(t);
       registerBlocks();
@@ -227,7 +254,9 @@ function BlocksWorkspace({
       } catch {
         loadInto(workspace, starter.workspace, true);
       }
-      callbacksRef.current.onProgramChange(generateProgram(workspace));
+      publish(workspace);
+      // A re-injected workspace (theme, layout) keeps a paused step's highlight.
+      highlight(workspace);
 
       workspace.addChangeListener(event => {
         if (event.type === Blockly.Events.SELECTED) {
@@ -235,9 +264,9 @@ function BlocksWorkspace({
           return;
         }
         if (event.isUiEvent) return;
-        callbacksRef.current.onProgramChange(generateProgram(workspace));
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(save, SAVE_DELAY_MS);
+        publish(workspace);
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = setTimeout(save, SAVE_DELAY_MS);
       });
 
       // Re-frame while the panel animates/resizes, until the learner scrolls
@@ -258,10 +287,11 @@ function BlocksWorkspace({
 
     return () => {
       cancelled = true;
-      clearTimeout(saveTimer);
+      const pendingSave = saveTimerRef.current;
+      clearTimeout(pendingSave);
       resizeObserver?.disconnect();
       listeners.abort();
-      if (saveTimer) save();
+      if (pendingSave) save();
       if (workspace) {
         sessionJson[algorithmKey] =
           Blockly.serialization.workspaces.save(workspace);
@@ -271,23 +301,36 @@ function BlocksWorkspace({
     };
     // `t` changes with the language, which is already a dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [algorithmKey, starter, language, isRTL, isDark, isCompact]);
+  }, [algorithmKey, starter, language, isRTL, isDark, isCompact, loadAttempt]);
 
   useEffect(() => {
-    const workspace = workspaceRef.current;
-    if (!workspace) return;
-    const exists = activeBlockId && workspace.getBlockById(activeBlockId);
-    workspace.highlightBlock(exists ? activeBlockId : null);
+    if (workspaceRef.current) highlight(workspaceRef.current);
   }, [activeBlockId]);
 
   return (
     <div
       ref={containerRef}
-      className="h-full w-full min-h-[240px]"
+      className="relative h-full w-full min-h-[240px]"
       data-testid="blocks-workspace"
       aria-label={t('python_code.blocks.workspaceLabel')}
       role="region"
-    />
+    >
+      {loadFailed && (
+        <div
+          role="alert"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center text-sm text-text-secondary"
+        >
+          <p>{t('python_code.blocks.load_failed')}</p>
+          <button
+            type="button"
+            onClick={() => setLoadAttempt(attempt => attempt + 1)}
+            className="rounded-md border border-[var(--color-border-strong)] px-3 py-1.5 font-medium text-text-primary hover:bg-surface-elevated focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            {t('python_code.blocks.load_retry')}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
