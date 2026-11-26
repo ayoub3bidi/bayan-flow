@@ -250,6 +250,19 @@ function ControlPanel({
     </>
   );
 
+  // Mobile always; on desktop only while the docked Blocks panel hides the sidebar.
+  const settingsButton = onOpenSettings ? (
+    <button
+      type="button"
+      onClick={onOpenSettings}
+      className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
+      title={t('controls.openSettings')}
+      aria-label={t('controls.openSettings')}
+    >
+      <Gear size={20} weight="bold" aria-hidden="true" />
+    </button>
+  ) : null;
+
   // With the mode group (desktop) the full row needs ~760px; in a narrower
   // column (docked code panel, small laptop) wrap it by the panel's own width
   // instead of letting the side groups shrink over the nav buttons.
@@ -395,21 +408,14 @@ function ControlPanel({
         >
           {isBelowLg ? (
             <div className="flex items-center justify-center gap-2 flex-wrap">
-              {onOpenSettings ? (
-                <button
-                  type="button"
-                  onClick={onOpenSettings}
-                  className={`${buttonBaseClasses} bg-surface-elevated hover:bg-border text-text-primary`}
-                  title={t('controls.openSettings')}
-                  aria-label={t('controls.openSettings')}
-                >
-                  <Gear size={20} weight="bold" aria-hidden="true" />
-                </button>
-              ) : null}
+              {settingsButton}
               {featureButtons}
             </div>
           ) : (
-            featureButtons
+            <>
+              {settingsButton}
+              {featureButtons}
+            </>
           )}
         </div>
       </div>

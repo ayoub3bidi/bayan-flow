@@ -43,4 +43,19 @@ describe('SettingsSheet', () => {
     fireEvent.click(document.querySelector('[aria-hidden="true"]'));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('opens as a start-edge drawer with placement="side"', () => {
+    renderWithI18n(
+      <SettingsSheet
+        isOpen
+        onClose={vi.fn()}
+        settingsPanelProps={{}}
+        placement="side"
+      />
+    );
+
+    const dialog = screen.getByRole('dialog', { name: 'Algorithm settings' });
+    expect(dialog.className).toContain('start-0');
+    expect(dialog.className).not.toContain('inset-0');
+  });
 });

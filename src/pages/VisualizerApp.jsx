@@ -546,8 +546,11 @@ function App() {
   const reloadStepsRef = useRef(visualization.reloadSteps);
   reloadStepsRef.current = visualization.reloadSteps;
   useEffect(() => {
-    if (codePanelDockWidth || !isProgramRunRef.current) return;
-    reloadStepsRef.current?.();
+    if (codePanelDockWidth) return;
+    // The docked-only settings drawer must not reappear on the next dock.
+    if (!isBelowLg) setIsSettingsSheetOpen(false);
+    if (isProgramRunRef.current) reloadStepsRef.current?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [codePanelDockWidth]);
 
   const handleSeek = step => {
@@ -892,7 +895,11 @@ function App() {
     onToggleSound: handleGatedSoundToggle,
     isGated: !isAuthenticated,
     visualizationsRemaining: remainingVisualizations,
-    onOpenSettings: isBelowLg ? () => setIsSettingsSheetOpen(true) : undefined,
+    // The docked Blocks panel hides the sidebar, so settings open as a drawer.
+    onOpenSettings:
+      isBelowLg || codePanelDockWidth
+        ? () => setIsSettingsSheetOpen(true)
+        : undefined,
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -1075,9 +1082,12 @@ function App() {
       </div>
 
       <SettingsSheet
-        isOpen={isBelowLg && isSettingsSheetOpen}
+        isOpen={
+          (isBelowLg || Boolean(codePanelDockWidth)) && isSettingsSheetOpen
+        }
         onClose={() => setIsSettingsSheetOpen(false)}
         settingsPanelProps={settingsPanelProps}
+        placement={isBelowLg ? 'full' : 'side'}
       />
 
       <ExportProgressModal

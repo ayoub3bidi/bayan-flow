@@ -12,6 +12,7 @@ import {
   fireEvent,
   waitFor,
   act,
+  within,
 } from '../test/testUtils';
 import VisualizerApp from './VisualizerApp.jsx';
 import { ThemeProvider } from '../contexts/ThemeContext.jsx';
@@ -365,8 +366,14 @@ vi.mock('../components/ControlPanel', () => ({
     onSeek,
     onPlay,
     onStepForward,
+    onOpenSettings,
   }) => (
     <div data-testid="control-panel">
+      {onOpenSettings && (
+        <button type="button" onClick={onOpenSettings}>
+          open-settings
+        </button>
+      )}
       <span data-testid="control-total-steps">{String(totalSteps)}</span>
       <span data-testid="control-algorithm-type">{algorithmType}</span>
       <span data-testid="control-sort-order">{String(sortOrder)}</span>
@@ -1248,6 +1255,27 @@ describe('VisualizerApp', () => {
       const padding = screen.getByRole('main').style.paddingInlineEnd;
       expect(padding).toContain('45vw');
       expect(padding).toContain('1.5rem');
+    });
+
+    it('opens the settings as a drawer while the code panel is docked', async () => {
+      await renderApp();
+      expect(screen.queryByText('open-settings')).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('dock-panel'));
+      fireEvent.click(screen.getByText('open-settings'));
+
+      const drawer = screen.getByRole('dialog', { name: 'Algorithm settings' });
+      expect(drawer.className).toContain('start-0');
+      expect(within(drawer).getByTestId('settings-panel')).toBeInTheDocument();
+
+      // Leaving Blocks closes it, and it doesn't come back on the next dock.
+      fireEvent.click(screen.getByText('undock-panel'));
+      fireEvent.click(screen.getByText('dock-panel'));
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('dialog', { name: 'Algorithm settings' })
+        ).not.toBeInTheDocument()
+      );
     });
 
     it('does not gate features when authenticated', async () => {

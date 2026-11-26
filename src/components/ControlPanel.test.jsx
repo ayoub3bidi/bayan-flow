@@ -62,6 +62,18 @@ describe('ControlPanel', () => {
     vi.unstubAllGlobals();
   });
 
+  it('shows the settings gear on desktop only when onOpenSettings is set', () => {
+    const onOpenSettings = vi.fn();
+    const { rerender } = renderWithI18n(<ControlPanel {...getBaseProps()} />);
+    expect(
+      screen.queryByRole('button', { name: 'Settings' })
+    ).not.toBeInTheDocument();
+
+    rerender(<ControlPanel {...getBaseProps({ onOpenSettings })} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    expect(onOpenSettings).toHaveBeenCalledTimes(1);
+  });
+
   it('disables full screen while the Blocks tab is docked', () => {
     const onToggleFullScreen = vi.fn();
     renderWithI18n(

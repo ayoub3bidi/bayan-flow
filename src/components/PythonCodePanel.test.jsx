@@ -481,6 +481,28 @@ describe('PythonCodePanel - Monaco Editor Theme Integration', () => {
       await waitFor(() => expect(onClose).toHaveBeenCalled());
     });
 
+    it('leaves Escape inside another dialog to that dialog', () => {
+      const onClose = vi.fn();
+      localStorageMock.getItem.mockReturnValue('light');
+      renderWithI18n(
+        <ThemeProvider>
+          <PythonCodePanel
+            isOpen={true}
+            onClose={onClose}
+            algorithm="bubbleSort"
+          />
+          <div role="dialog">
+            <button type="button">Inside the settings drawer</button>
+          </div>
+        </ThemeProvider>
+      );
+
+      fireEvent.keyDown(screen.getByText('Inside the settings drawer'), {
+        key: 'Escape',
+      });
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
     it('calls onClose when backdrop is clicked', () => {
       const onClose = vi.fn();
       localStorageMock.getItem.mockReturnValue('light');

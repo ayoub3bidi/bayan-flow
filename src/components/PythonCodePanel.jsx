@@ -144,6 +144,12 @@ const clampBlocksPythonPercent = percent =>
     )
   );
 
+/** Keys pressed inside another dialog (e.g. the settings drawer) are its own. */
+function isInOtherDialog(event, panel) {
+  const dialog = event.target.closest?.('[role="dialog"]');
+  return Boolean(dialog) && dialog !== panel;
+}
+
 /**
  * @param {Object} props
  * @param {boolean} props.isOpen - Whether the panel is open
@@ -190,6 +196,7 @@ function PythonCodePanel({
   // Handle escape key
   useEffect(() => {
     const handleEscape = event => {
+      if (isInOtherDialog(event, panelRef.current)) return;
       if (event.key === 'Escape' && isOpen) {
         onClose();
       }
@@ -219,6 +226,7 @@ function PythonCodePanel({
   useEffect(() => {
     if (isOpen && !isDocked && panelRef.current) {
       const handleKeyDown = event => {
+        if (isInOtherDialog(event, panelRef.current)) return;
         if (event.key === 'Escape') {
           onClose();
         } else if (event.key === 'Tab') {
