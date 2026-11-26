@@ -339,6 +339,13 @@ describe('usePythonExecution', () => {
       });
     });
 
+    it('stays running when the runtime gets ready under a queued run', () => {
+      const { result } = renderHook(() => usePythonExecution());
+      act(() => result.current.runVisualization('code', [1], OPTS));
+      act(() => mockWorker.onmessage?.({ data: { type: 'ready' } }));
+      expect(result.current.status).toBe('running');
+    });
+
     it('gives a run queued during loading a fresh 10s window on ready', () => {
       vi.useFakeTimers();
       const { result } = renderHook(() => usePythonExecution());

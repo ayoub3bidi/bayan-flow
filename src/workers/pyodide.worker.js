@@ -31,7 +31,8 @@ async function executeRunViz({
 }) {
   try {
     if (!tracerNs) {
-      const ns = pyodide.globals.get('dict')();
+      // toPy, not globals' `dict`: a learner may have rebound `dict`.
+      const ns = pyodide.toPy({});
       await pyodide.runPythonAsync(tracer, { globals: ns });
       tracerNs = ns;
     }

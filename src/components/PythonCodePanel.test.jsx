@@ -129,10 +129,13 @@ const FAKE_PROGRAM = {
 const mockProgramRef = { current: FAKE_PROGRAM };
 /** While true, the mock workspace doesn't publish (it's still loading). */
 const mockHoldPublishRef = { current: false };
+/** While true, the mock workspace throws, like a failed chunk load. */
+const mockThrowRef = { current: false };
 const mockResetToStarter = vi.fn();
 vi.mock('./BlocksWorkspace', () => {
   // Stable component identity so parent re-renders don't remount it.
   function MockBlocksWorkspace({ onProgramChange, algorithmKey, ref }) {
+    if (mockThrowRef.current) throw new Error('chunk failed');
     useImperativeHandle(ref, () => ({ resetToStarter: mockResetToStarter }));
     useEffect(() => {
       // Like the real workspace: the program names its algorithm.
@@ -854,6 +857,7 @@ describe('PythonCodePanel - Blocks tab', () => {
     vi.clearAllMocks();
     mockProgramRef.current = FAKE_PROGRAM;
     mockHoldPublishRef.current = false;
+    mockThrowRef.current = false;
     usePythonExecutionMock.mockImplementation(() => buildPythonExec());
     store = {};
     global.localStorage = {
@@ -888,6 +892,22 @@ describe('PythonCodePanel - Blocks tab', () => {
       'true'
     );
     expect(screen.queryByTestId('blocks-workspace')).not.toBeInTheDocument();
+  });
+
+  it('keeps the tabs when the Blocks workspace fails to load', async () => {
+    mockThrowRef.current = true;
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    renderPanel();
+    fireEvent.click(blocksTab());
+    expect(
+      await screen.findByText(
+        i18n.t('errors.somethingWentWrong'),
+        {},
+        { timeout: 5000 }
+      )
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: 'Python' }));
+    await waitFor(() => screen.getByTestId('monaco-editor'));
   });
 
   it('hides the Blocks tab below laptop width', () => {

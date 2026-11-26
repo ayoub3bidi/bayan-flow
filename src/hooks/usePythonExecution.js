@@ -112,7 +112,7 @@ export function usePythonExecution() {
           if (vizActiveRef.current && timeoutRef.current) {
             armVizTimeout(EXECUTION_TIMEOUT);
           }
-          setStatus('ready');
+          setStatus(vizActiveRef.current ? 'running' : 'ready');
           break;
         case 'stdout':
           appendOutput(text);

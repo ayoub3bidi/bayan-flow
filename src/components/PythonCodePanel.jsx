@@ -52,6 +52,7 @@ import {
   fadeOverlayTransition,
   OVERLAY_CLASS_LIGHT,
 } from '../motion/chromeMotion';
+import ErrorBoundary from './ErrorBoundary';
 
 const BlocksWorkspace = lazy(() => import('./BlocksWorkspace'));
 
@@ -1146,26 +1147,29 @@ function PythonCodePanel({
                             className={`flex h-full min-h-0 ${canSplit ? 'flex-row' : 'flex-col'}`}
                           >
                             <div className="flex-1 min-w-0 min-h-0 rounded-lg overflow-hidden border border-[var(--color-border-strong)]">
-                              <Suspense
-                                fallback={
-                                  <div className="flex h-full items-center justify-center text-text-secondary">
-                                    {t('python_code.loading')}
-                                  </div>
-                                }
-                              >
-                                <BlocksWorkspace
-                                  ref={blocksRef}
-                                  algorithmKey={algorithm}
-                                  starter={blocksStarter}
-                                  isRTL={isRTL}
-                                  isDark={isDark}
-                                  // Stacked layout: too narrow for an always-open flyout.
-                                  isCompact={!canSplit}
-                                  activeBlockId={activeBlockId}
-                                  onProgramChange={setProgram}
-                                  onSelectBlock={setSelectedBlockId}
-                                />
-                              </Suspense>
+                              {/* A failed workspace chunk stays in the panel, so tabs and Exit still work. */}
+                              <ErrorBoundary resetKey={algorithm}>
+                                <Suspense
+                                  fallback={
+                                    <div className="flex h-full items-center justify-center text-text-secondary">
+                                      {t('python_code.loading')}
+                                    </div>
+                                  }
+                                >
+                                  <BlocksWorkspace
+                                    ref={blocksRef}
+                                    algorithmKey={algorithm}
+                                    starter={blocksStarter}
+                                    isRTL={isRTL}
+                                    isDark={isDark}
+                                    // Stacked layout: too narrow for an always-open flyout.
+                                    isCompact={!canSplit}
+                                    activeBlockId={activeBlockId}
+                                    onProgramChange={setProgram}
+                                    onSelectBlock={setSelectedBlockId}
+                                  />
+                                </Suspense>
+                              </ErrorBoundary>
                             </div>
                             <div
                               role="separator"
