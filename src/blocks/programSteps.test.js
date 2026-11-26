@@ -30,6 +30,14 @@ const EVENTS = [
 ];
 
 describe('buildProgramSteps', () => {
+  it('shows the returned array in a solved final frame', () => {
+    // The program sorted a copy; the traced arr is still [2, 1].
+    const { steps, sorted, shuffles } = buildProgramSteps([], [2, 1], [1, 2]);
+    expect(sorted).toBe(true);
+    expect(steps.at(-1).array).toEqual([1, 2]);
+    expect(shuffles).toBe(0);
+  });
+
   it('only counts a rearrangement of the input as sorted', () => {
     const overwritten = buildProgramSteps([], [3, 1, 2], [0, 0, 0]);
     expect(overwritten).toMatchObject({ sorted: false, valuesChanged: true });
@@ -600,6 +608,13 @@ describe('buildGraphProgramSteps', () => {
     expect(steps.at(-1).graphArtifacts.badges.map(b => b.id)).toEqual([
       'order',
     ]);
+    // Appends are the finish order; the end shows the returned order.
+    expect(steps[6].graphArtifacts.badges.at(-1).text).toContain(
+      'Finish order: C'
+    );
+    expect(steps.at(-1).graphArtifacts.badges[0].text).toContain(
+      'Topological order: A → B → C'
+    );
   });
 
   it('shows in-degrees, index/low-links and the Kosaraju pass from the program', () => {
@@ -676,6 +691,46 @@ describe('buildGraphProgramSteps', () => {
     expect(
       buildGraphProgramSteps([], cycle, 'kahnAlgorithm', ['A']).solved
     ).toBe(false);
+    // `return 0` arrives as a null list, but it isn't None.
+    expect(
+      buildGraphProgramSteps(
+        [],
+        cycle,
+        'kahnAlgorithm',
+        null,
+        'f',
+        false,
+        false
+      ).solved
+    ).toBe(false);
+  });
+
+  it('keeps the queue strip in sorted order and lights transpose edges backwards', () => {
+    const both = {
+      ...CHAIN,
+      edges: [...CHAIN.edges, { id: '1->0', from: '1', to: '0' }],
+    };
+    const { steps } = buildGraphProgramSteps(
+      [
+        ev('open', { cell: 'C' }),
+        ev('open', { cell: 'B' }),
+        ev('reorder', { items: ['B', 'C'] }),
+        ev('edge', { from: 'A', to: 'B', reversed: true }),
+        ev('visit', { cell: 'B' }),
+      ],
+      both,
+      'kahnAlgorithm',
+      null
+    );
+    const queueOf = step =>
+      step.graphArtifacts.badges.find(b => b.id === 'stack')?.text;
+    expect(queueOf(steps[1])).toContain('C');
+    // The reorder adds no step: the push before it shows the sorted queue,
+    // and so does the next step.
+    expect(queueOf(steps[2])).toContain('B → C');
+    expect(queueOf(steps[3])).toContain('B → C');
+    expect(steps[3].edgeStates['1->0']).toBe('active');
+    expect(steps[3].edgeStates['0->1']).toBeUndefined();
   });
 
   it('never passes a program that fell off its end, even where None is right', () => {
@@ -853,5 +908,29 @@ describe('buildMatrixProgramSteps', () => {
     expect(solved).toBe(false);
     expect(got).toBe('[0, 1, 5] [∞, 0, 1] [∞, ∞, 0]');
     expect(expected).toBe('[0, 1, 2] [∞, 0, 1] [∞, ∞, 0]');
+    // The final table is the returned matrix, even with no writes traced.
+    expect(
+      buildMatrixProgramSteps([], GRAPH, [
+        [0, 1, 5],
+        [null, 0, 1],
+        [null, null, 0],
+      ]).steps.at(-1).matrix.cells[0][2]
+    ).toBe('5');
+  });
+
+  it('fails a list of node names without throwing', () => {
+    const { solved, got } = buildMatrixProgramSteps([], GRAPH, ['A', 'B', 'C']);
+    expect(solved).toBe(false);
+    expect(got).toBe('A B C');
+  });
+
+  it('describes a higher write as a plain write, not an improvement', () => {
+    const { steps } = buildMatrixProgramSteps(
+      [write(0, 2, 5), read(0, 1), read(1, 2), write(0, 2, 8)],
+      GRAPH,
+      null
+    );
+    expect(steps[2].matrix.cellStates[1][1]).not.toBe('current');
+    expect(steps[2].intermediateId ?? null).toBeNull();
   });
 });

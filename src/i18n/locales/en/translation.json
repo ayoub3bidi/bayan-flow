@@ -1209,6 +1209,7 @@
     "sccStackBadge": "SCC stack: {{order}}",
     "lowLinkBadge": "Index/low: {{pairs}}",
     "sccListBadge": "SCCs: {{components}}",
+    "finishOrderBadge": "Finish order: {{order}}",
     "finishStackBadge": "Finish stack: {{order}}",
     "passBadge": "Pass {{pass}}",
     "matrixIntermediateBadge": "Intermediate: {{node}}",

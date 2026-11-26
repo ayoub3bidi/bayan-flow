@@ -109,7 +109,8 @@ function describeEvent({ kind, i, j, array }, n) {
  * @param {number[]} inputArray
  * @param {number[]|null} finalArray - What the program returned.
  * @param {string} [functionName] - Named in the starting step.
- * @returns {{ steps: object[], sorted: boolean }}
+ * @returns {{ steps: object[], sorted: boolean, valuesChanged: boolean,
+ *   shuffles: number }}
  */
 export function buildProgramSteps(
   events,
@@ -151,13 +152,15 @@ export function buildProgramSteps(
   if (sorted) finalKey = ALGORITHM_STEPS.COMPLETED;
   else if (valuesChanged) finalKey = ALGORITHM_STEPS.BLOCKS_VALUES_CHANGED;
   steps.push({
-    array: [...lastArray],
+    // A program may sort a copy: show the array it returned once it's right.
+    array: sorted ? [...finalArray] : [...lastArray],
     states: sorted ? Array(n).fill(ELEMENT_STATES.SORTED) : defaults(),
     description: getAlgorithmDescription(finalKey),
     blockId: null,
   });
+  const shuffles = events.filter(event => event.kind === 'shuffle').length;
 
-  return { steps: withElementIds(steps), sorted, valuesChanged };
+  return { steps: withElementIds(steps), sorted, valuesChanged, shuffles };
 }
 
 /** Same values, same counts, any order. */
@@ -742,7 +745,14 @@ function shortestGraphPath(adjacency, start, goal) {
  * as text. Any valid answer passes: an order, a partition, a spanning tree of
  * the right weight, a start → goal path.
  */
-function judgeGraphAnswer(graph, algorithmKey, args, returned, names) {
+function judgeGraphAnswer(
+  graph,
+  algorithmKey,
+  args,
+  returned,
+  names,
+  returnedNone = returned === null
+) {
   const idByName = Object.fromEntries(
     Object.entries(names).map(([id, name]) => [name, id])
   );
@@ -777,13 +787,14 @@ function judgeGraphAnswer(graph, algorithmKey, args, returned, names) {
 
   if (ORDER_ALGORITHMS.has(algorithmKey)) {
     const order = Array.isArray(returned) ? returned : null;
+    // On a cycle only an explicit `return None` is right, not e.g. `return 0`.
     const solved = pure.hasCycle
-      ? returned === null
+      ? returnedNone
       : order !== null &&
         isValidTopologicalOrder(order.map(idOf), graph.adjacency);
     return {
       solved,
-      got: order ? joinNames(order) : 'None',
+      got: order ? joinNames(order) : returnedNone ? 'None' : '—',
       expected: pure.hasCycle ? 'None' : joinNames(pure.order.map(nameOf)),
     };
   }
@@ -859,6 +870,8 @@ function judgeGraphAnswer(graph, algorithmKey, args, returned, names) {
  * @param {string} [functionName]
  * @param {boolean} [noReturn] - The program fell off its end (no `return`):
  *   never right, even where `None` is the answer.
+ * @param {boolean} [returnedNone] - The program returned `None` explicitly
+ *   (the worker's `returnedNone`; a scalar also arrives as a null list).
  */
 export function buildGraphProgramSteps(
   events,
@@ -866,7 +879,8 @@ export function buildGraphProgramSteps(
   algorithmKey,
   returned,
   functionName = 'graph_algorithm',
-  noReturn = false
+  noReturn = false,
+  returnedNone = returned === null && !noReturn
 ) {
   const { nodes, edges } = graph;
   const isSearch = isNodeLinkSearchingAlgorithm(algorithmKey);
@@ -878,13 +892,16 @@ export function buildGraphProgramSteps(
   const idOf = name => idByName[name];
   const args = graphToArgs(graph, algorithmKey);
 
-  const edgeIdOf = (from, to) => {
+  const edgeIdOf = (from, to, reversed = false) => {
     const a = idOf(from);
     const b = idOf(to);
-    const found =
-      edges.find(e => e.from === a && e.to === b) ??
-      // Undirected edges and Kosaraju's transpose walk an edge backwards.
-      edges.find(e => e.from === b && e.to === a);
+    const forward = e => e.from === a && e.to === b;
+    const backward = e => e.from === b && e.to === a;
+    // Undirected edges walk either way; Kosaraju's transpose walk (reversed)
+    // is the original edge to -> from, even when from -> to exists too.
+    const found = reversed
+      ? (edges.find(backward) ?? edges.find(forward))
+      : (edges.find(forward) ?? edges.find(backward));
     return found ? (found.id ?? `${found.from}->${found.to}`) : null;
   };
 
@@ -895,6 +912,7 @@ export function buildGraphProgramSteps(
   const stack = [];
   const recursion = [];
   const outputOrder = [];
+  let showsReturnedOrder = false;
   const selected = [];
   const components = [];
   const stores = {};
@@ -978,7 +996,10 @@ export function buildGraphProgramSteps(
         text: badgeText(
           algorithmKey === 'kosarajuAlgorithm'
             ? 'finishStackBadge'
-            : 'topologicalOrderBadge',
+            : // DFS appends in finish order; it returns the reverse.
+              algorithmKey === 'topologicalSort' && !showsReturnedOrder
+              ? 'finishOrderBadge'
+              : 'topologicalOrderBadge',
           {
             order: joinNames(
               outputOrder.map(id => names[id]),
@@ -1040,8 +1061,8 @@ export function buildGraphProgramSteps(
     }
     pending = null;
   };
-  const lightEdge = (from, to, settleTo) => {
-    const id = edgeIdOf(from, to);
+  const lightEdge = (from, to, settleTo, reversed = false) => {
+    const id = edgeIdOf(from, to, reversed);
     if (id && edgeStates[id] !== GRAPH_EDGE_STATES.SELECTED) {
       edgeStates[id] = GRAPH_EDGE_STATES.ACTIVE;
       if (settleTo) pending = { id, to: settleTo };
@@ -1060,10 +1081,24 @@ export function buildGraphProgramSteps(
       (stores[event.name] ??= {})[event.key] = event.value;
       continue;
     }
+    if (kind === 'reorder') {
+      // A sorted queue: show it in the order the program will pop it.
+      const ids = (event.items ?? []).map(idOf);
+      if (ids.length === stack.length && ids.every(id => id !== undefined)) {
+        stack.splice(0, stack.length, ...ids);
+        // The sort follows the push in the same block flow: show the push's
+        // step with the sorted queue, so the next pop takes its first item.
+        const last = steps.at(-1);
+        if (steps.length > 1) {
+          last.graphArtifacts = { ...last.graphArtifacts, badges: badges() };
+        }
+      }
+      continue;
+    }
     settle();
     switch (kind) {
       case 'edge': {
-        lightEdge(event.from, event.to, rejected);
+        lightEdge(event.from, event.to, rejected, Boolean(event.reversed));
         steps.push(
           step(
             describe(ALGORITHM_STEPS.BLOCKS_GRAPH_EDGE, {
@@ -1179,7 +1214,14 @@ export function buildGraphProgramSteps(
   }
   settle();
 
-  const judged = judgeGraphAnswer(graph, algorithmKey, args, returned, names);
+  const judged = judgeGraphAnswer(
+    graph,
+    algorithmKey,
+    args,
+    returned,
+    names,
+    returnedNone
+  );
   const verdict = noReturn ? { ...judged, solved: false, noReturn } : judged;
   stack.length = 0;
   recursion.length = 0;
@@ -1201,6 +1243,10 @@ export function buildGraphProgramSteps(
             length: verdict.length,
           });
   } else if (verdict.solved) {
+    if (ORDER_ALGORITHMS.has(algorithmKey) && Array.isArray(returned)) {
+      outputOrder.splice(0, outputOrder.length, ...returned.map(idOf));
+      showsReturnedOrder = true;
+    }
     description =
       returned === null
         ? describe(ALGORITHM_STEPS.BLOCKS_GRAPH_NO_ORDER)
@@ -1279,12 +1325,22 @@ export function buildMatrixProgramSteps(
       continue;
     }
     if (kind !== 'write' || distances[i]?.[j] === undefined) continue;
+    const prior = distances[i][j];
     distances[i][j] = value ?? Infinity;
     const cellStates = blank();
     cellStates[i][j] = 'updated';
     const [ik, kj] = reads.slice(-2);
+    // An improvement through k: dist[i][k] + dist[k][j], written lower.
     const via =
-      ik && kj && ik[0] === i && kj[1] === j && ik[1] === kj[0] ? ik[1] : null;
+      ik &&
+      kj &&
+      ik[0] === i &&
+      kj[1] === j &&
+      ik[1] === kj[0] &&
+      distances[ik[1]] !== undefined &&
+      (value ?? Infinity) < prior
+        ? ik[1]
+        : null;
     let description;
     if (via !== null) {
       cellStates[via][via] = 'current';
@@ -1331,13 +1387,26 @@ export function buildMatrixProgramSteps(
         row.length === size &&
         row.every((cell, c) => (cell ?? Infinity) === pure.distances[r][c])
     );
+  // A wrong answer may be any list (say the node names): show it as given.
   const show = matrix =>
     matrix
-      .map(
-        row =>
-          `[${row.map(x => (x == null || x === Infinity ? '∞' : x)).join(', ')}]`
+      .map(row =>
+        Array.isArray(row)
+          ? `[${row.map(x => (x == null || x === Infinity ? '∞' : x)).join(', ')}]`
+          : String(row)
       )
       .join(' ');
+  const rightShape =
+    got.length === size &&
+    got.every(row => Array.isArray(row) && row.length === size);
+  // The final table is the matrix the verdict judged.
+  if (rightShape) {
+    got.forEach((row, r) =>
+      row.forEach((cell, c) => {
+        distances[r][c] = cell ?? Infinity;
+      })
+    );
+  }
   let description;
   if (!solved) {
     description = getAlgorithmDescription(ALGORITHM_STEPS.BLOCKS_GRAPH_WRONG, {

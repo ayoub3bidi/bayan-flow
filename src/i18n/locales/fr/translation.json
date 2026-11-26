@@ -1209,6 +1209,7 @@
     "sccStackBadge": "Pile CFC : {{order}}",
     "lowLinkBadge": "Indice/low-link : {{pairs}}",
     "sccListBadge": "CFC : {{components}}",
+    "finishOrderBadge": "Ordre de fin : {{order}}",
     "finishStackBadge": "Pile de fin : {{order}}",
     "passBadge": "Passage {{pass}}",
     "matrixIntermediateBadge": "Intermédiaire : {{node}}",

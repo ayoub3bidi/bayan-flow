@@ -1209,6 +1209,7 @@
     "sccStackBadge": "مكدس المكونات القوية الاتصال: {{order}}",
     "lowLinkBadge": "الفهرس/الربط المنخفض: {{pairs}}",
     "sccListBadge": "المكونات القوية الاتصال: {{components}}",
+    "finishOrderBadge": "ترتيب الانتهاء: {{order}}",
     "finishStackBadge": "مكدس الانتهاء: {{order}}",
     "passBadge": "المرور {{pass}}",
     "matrixIntermediateBadge": "الرأس الوسيط: {{node}}",
