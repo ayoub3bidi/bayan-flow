@@ -269,9 +269,11 @@ vi.mock('../components/PythonCodePanel', () => ({
     currentTarget,
     onProgramSteps,
     onDockChange,
+    isInert,
   }) => (
     <div
       data-testid="python-panel"
+      data-inert={String(Boolean(isInert))}
       data-active-block={activeBlockId ?? ''}
       data-target={currentTarget ?? ''}
     >
@@ -1233,6 +1235,20 @@ describe('VisualizerApp', () => {
       }
     });
 
+    it("restores the source category's steps when switching category mid-program", async () => {
+      const original = { steps: sortingVisualization.steps };
+      sortingVisualization.steps = BLOCK_PROGRAM_STEPS;
+      try {
+        await renderApp();
+        sortingVisualization.reloadSteps.mockClear();
+
+        fireEvent.click(screen.getByText('pathfinding'));
+        expect(sortingVisualization.reloadSteps).toHaveBeenCalledTimes(1);
+      } finally {
+        Object.assign(sortingVisualization, original);
+      }
+    });
+
     it("keeps the algorithm's own steps (and export) when no program ran", async () => {
       await renderApp();
       sortingVisualization.reloadSteps.mockClear();
@@ -1267,6 +1283,11 @@ describe('VisualizerApp', () => {
       const drawer = screen.getByRole('dialog', { name: 'Algorithm settings' });
       expect(drawer.className).toContain('start-0');
       expect(within(drawer).getByTestId('settings-panel')).toBeInTheDocument();
+      // Modal: the docked panel stays in view but can't be used meanwhile.
+      expect(screen.getByTestId('python-panel')).toHaveAttribute(
+        'data-inert',
+        'true'
+      );
 
       // Leaving Blocks closes it, and it doesn't come back on the next dock.
       fireEvent.click(screen.getByText('undock-panel'));

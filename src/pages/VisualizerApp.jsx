@@ -347,6 +347,21 @@ function App() {
     visualization.steps[0] && 'blockId' in visualization.steps[0]
   );
 
+  // Switching category leaves the source category's hook holding a learner's
+  // program: put its algorithm's own steps back now, not on the way back.
+  const visualizationMapRef = useRef(visualizationMap);
+  visualizationMapRef.current = visualizationMap;
+  const previousAlgorithmTypeRef = useRef(algorithmType);
+  useEffect(() => {
+    const previous = previousAlgorithmTypeRef.current;
+    previousAlgorithmTypeRef.current = algorithmType;
+    if (previous === algorithmType) return;
+    const source = visualizationMapRef.current[previous];
+    if (source?.steps[0] && 'blockId' in source.steps[0]) {
+      source.reloadSteps?.();
+    }
+  }, [algorithmType]);
+
   useEffect(() => {
     const graphAlgorithmKey =
       selectedAlgorithms[ALGORITHM_TYPES.GRAPH_ALGORITHM];
@@ -552,6 +567,9 @@ function App() {
     if (isProgramRunRef.current) reloadStepsRef.current?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [codePanelDockWidth]);
+
+  const isSettingsSheetVisible =
+    (isBelowLg || Boolean(codePanelDockWidth)) && isSettingsSheetOpen;
 
   const handleSeek = step => {
     if (!consumeRunIfNeeded()) return;
@@ -1084,9 +1102,7 @@ function App() {
       </div>
 
       <SettingsSheet
-        isOpen={
-          (isBelowLg || Boolean(codePanelDockWidth)) && isSettingsSheetOpen
-        }
+        isOpen={isSettingsSheetVisible}
         onClose={() => setIsSettingsSheetOpen(false)}
         settingsPanelProps={settingsPanelProps}
         placement={isBelowLg ? 'full' : 'side'}
@@ -1150,6 +1166,9 @@ function App() {
             activeBlockId={activeBlockId}
             onProgramSteps={handleProgramSteps}
             onDockChange={setCodePanelDockWidth}
+            // The side settings drawer is modal: the docked panel stays in
+            // view but can't be clicked or focused meanwhile.
+            isInert={isSettingsSheetVisible && Boolean(codePanelDockWidth)}
           />
         </Suspense>
       </ErrorBoundary>

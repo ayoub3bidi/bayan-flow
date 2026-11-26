@@ -30,11 +30,14 @@ export function useFullScreen({ canEnter = true } = {}) {
 
   const toggleFullScreen = useCallback(() => {
     setIsFullScreen(prev => {
+      // Entering is blocked (e.g. a deferred sign-in action while docked);
+      // exiting always works.
+      if (!prev && !canEnter) return prev;
       const newValue = !prev;
       localStorage.setItem('flowModeEnabled', newValue.toString());
       return newValue;
     });
-  }, []);
+  }, [canEnter]);
 
   const exitFullScreen = useCallback(() => {
     setIsFullScreen(false);

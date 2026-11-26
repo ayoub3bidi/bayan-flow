@@ -67,12 +67,18 @@ function SettingsSheet({
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (isOpen && panelRef.current) {
+    if (!isOpen) return undefined;
+    // Back to the control that opened the sheet (the settings gear) on close.
+    const opener = document.activeElement;
+    if (panelRef.current) {
       const closeButton = panelRef.current.querySelector(
         '[data-settings-sheet-close]'
       );
       closeButton?.focus();
     }
+    return () => {
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
+    };
   }, [isOpen]);
 
   return (

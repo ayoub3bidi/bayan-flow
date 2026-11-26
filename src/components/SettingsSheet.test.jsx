@@ -44,6 +44,22 @@ describe('SettingsSheet', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('returns focus to the control that opened it on close', () => {
+    const gear = document.createElement('button');
+    document.body.appendChild(gear);
+    gear.focus();
+    const { rerender } = renderWithI18n(
+      <SettingsSheet isOpen onClose={vi.fn()} settingsPanelProps={{}} />
+    );
+    expect(document.activeElement).not.toBe(gear);
+
+    rerender(
+      <SettingsSheet isOpen={false} onClose={vi.fn()} settingsPanelProps={{}} />
+    );
+    expect(document.activeElement).toBe(gear);
+    gear.remove();
+  });
+
   it('opens as a start-edge drawer with placement="side"', () => {
     renderWithI18n(
       <SettingsSheet
