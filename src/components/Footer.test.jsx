@@ -66,6 +66,20 @@ describe('Footer', () => {
     expect(link).toHaveAttribute('href', '/terms');
   });
 
+  it('links to the Mortakaz project page in a new tab', () => {
+    renderFooter();
+
+    const link = screen.getByRole('link', {
+      name: i18n.t('footer.mortakazAria'),
+    });
+    expect(link).toHaveAttribute(
+      'href',
+      'https://www.mortakaz.com/projects/6a9d1ce779759dd574b7d42a'
+    );
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('renders pro plan link', () => {
     renderFooter();
 

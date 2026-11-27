@@ -267,6 +267,7 @@ function Footer() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                className="block rounded-[10px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6] focus-visible:ring-offset-2"
               >
                 <img
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1033547&theme=light&t=1762155508930"
@@ -276,6 +277,32 @@ function Footer() {
                   loading="lazy"
                   className="w-[250px] h-[54px]"
                 />
+              </motion.a>
+              {/* Mortakaz has no embeddable badge; this mirrors the Product Hunt one */}
+              <motion.a
+                href="https://www.mortakaz.com/projects/6a9d1ce779759dd574b7d42a"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t('footer.mortakazAria')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                className="mt-3 flex items-center justify-center w-[250px] h-[54px] px-3 rounded-[10px] bg-white border border-[#0D5FB3] text-[#0D5FB3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6] focus-visible:ring-offset-2"
+              >
+                <span className="flex flex-col items-center gap-0.5">
+                  <span className="text-[9px] font-semibold uppercase tracking-wide leading-none">
+                    {t('footer.mortakazLabel')}
+                  </span>
+                  {/* Official Mortakaz logo (mortakaz.com/logo-light.svg) */}
+                  <img
+                    src="/badges/mortakaz-logo.svg"
+                    alt=""
+                    width={132}
+                    height={36}
+                    loading="lazy"
+                    className="w-[132px] h-[36px]"
+                  />
+                </span>
               </motion.a>
             </div>
           </div>
