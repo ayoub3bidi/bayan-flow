@@ -38,6 +38,12 @@ function Features() {
       gradient: 'from-emerald-500 to-teal-500',
     },
     {
+      icon: TextAlignLeft,
+      title: t('landing.features.pseudocode.title'),
+      description: t('landing.features.pseudocode.description'),
+      gradient: 'from-sky-500 to-blue-500',
+    },
+    {
       icon: Code,
       title: t('landing.features.pythonCode.title'),
       description: t('landing.features.pythonCode.description'),
@@ -49,6 +55,18 @@ function Features() {
       description: t('landing.features.blocks.description'),
       gradient: 'from-lime-500 to-green-500',
       badge: t('landing.features.blocks.badge'),
+    },
+    {
+      icon: Lightbulb,
+      title: t('landing.features.insight.title'),
+      description: t('landing.features.insight.description'),
+      gradient: 'from-amber-500 to-yellow-500',
+    },
+    {
+      icon: NotePencil,
+      title: t('landing.features.notes.title'),
+      description: t('landing.features.notes.description'),
+      gradient: 'from-violet-500 to-fuchsia-500',
     },
     {
       icon: SpeakerHigh,
@@ -63,28 +81,10 @@ function Features() {
       gradient: 'from-indigo-500 to-purple-500',
     },
     {
-      icon: Lightbulb,
-      title: t('landing.features.insight.title'),
-      description: t('landing.features.insight.description'),
-      gradient: 'from-amber-500 to-yellow-500',
-    },
-    {
       icon: VideoCamera,
       title: t('landing.features.videoExport.title'),
       description: t('landing.features.videoExport.description'),
       gradient: 'from-teal-500 to-cyan-500',
-    },
-    {
-      icon: TextAlignLeft,
-      title: t('landing.features.pseudocode.title'),
-      description: t('landing.features.pseudocode.description'),
-      gradient: 'from-sky-500 to-blue-500',
-    },
-    {
-      icon: NotePencil,
-      title: t('landing.features.notes.title'),
-      description: t('landing.features.notes.description'),
-      gradient: 'from-violet-500 to-fuchsia-500',
     },
   ];
 
